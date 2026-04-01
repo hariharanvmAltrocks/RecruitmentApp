@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useUpdateMainRecord } from "./useUpdateMainRecord";
-import { NationalityCode } from "../../../../../../utilities/ConditionConfig";
+import { NationalityCode, RecuritmentHRMsg } from "../../../../../../utilities/ConditionConfig";
 import { CommonServices, RecruitmentServices } from "../../../../../../services/ServiceExport";
 import SPServices from "../../../../../../services/SPService/spservice";
 import { ListNames } from "../../../../../../utilities/Config";
@@ -14,7 +14,7 @@ const serialize = (arr: any[], mapFn: (item: any) => object) =>
   arr && arr.length > 0 ? JSON.stringify(arr.map(mapFn)) : "[]";
 
 export const useHRLeadProcess = (form: IDptData, currentRoleID: number, onemDocs: IDocFiles[], BgvData: CheckboxGroupOption[]) => {
-        
+
   const { updateMainRecord } = useUpdateMainRecord(form, currentRoleID);
 
   const handleHRLeadProcess = useCallback(
@@ -22,20 +22,20 @@ export const useHRLeadProcess = (form: IDptData, currentRoleID: number, onemDocs
 
       const filterConditions = [
         {
-          FilterKey: "JobCode",
+          FilterKey: "JobCodeId",
           Operator: "eq",
           FilterValue: form.JobCodeId,
         },
       ];
       const Conditions = "";
 
-       const IsActive = 1
+      const IsActive = 1
       const IsExtened = 0
 
       const JobBasedBGVVerification = serialize(
-              BgvData,
-              (i) => ({ verificationType: i.key, isActive: i.checked })
-            )
+        BgvData,
+        (i) => ({ verificationType: i.key, isActive: i.checked })
+      )
 
       const portalRes = await RecruitmentServices.UploadAdvertisementInPortal(
         filterConditions,
@@ -43,11 +43,12 @@ export const useHRLeadProcess = (form: IDptData, currentRoleID: number, onemDocs
         form,
         IsActive,
         IsExtened,
-        JobBasedBGVVerification
+        JobBasedBGVVerification,
+        onemDocs
       );
       if (portalRes?.status !== 200) throw new Error("Portal Error");
 
-      
+
 
       const bgvData = BgvData
         .filter((i: any) => i.checked)
@@ -62,22 +63,17 @@ export const useHRLeadProcess = (form: IDptData, currentRoleID: number, onemDocs
       const bgvRes = await RecruitmentServices.UpsertBGVJobMaster(bgvData);
       if (bgvRes.status !== ResponeStatus.SUCCESS) throw new Error("BGV Error");
       const todaydate = new Date();
- const vaildFrom = todaydate
-        const VaildTo = AddCalculateDate(todaydate, 13)
+      const vaildFrom = todaydate
+      const VaildTo = AddCalculateDate(todaydate, 13)
       await Promise.all([
         updateMainRecord({
           JobPostingStartDate: SpiltDateOnly(vaildFrom),
           JobPostingEndDate: SpiltDateOnly(VaildTo),
         }),
-        CommonServices.uploadAttachmentToLibrary(
-          form.JobCode,
-         onemDocs || [],
-          "ONAMSignedStampDocuments"
-        ),
       ]);
 
-    //   finalize(RecuritmentHRMsg.ONEMDocumentMsg);
-    finalize("Submitted ONEM Document");
+      //   finalize(RecuritmentHRMsg.ONEMDocumentMsg);
+      finalize(RecuritmentHRMsg.ONEMDocumentMsg);
     },
     [form, updateMainRecord]
   );

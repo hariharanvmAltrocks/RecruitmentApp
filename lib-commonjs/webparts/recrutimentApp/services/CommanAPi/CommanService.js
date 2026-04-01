@@ -8,11 +8,12 @@ var CommonService = /** @class */ (function () {
     function CommonService() {
         var _this = this;
         this.uploadAttachmentToLibrary = function (PositionCode, AttachFile, Listname) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            var error_1;
+            var response, error_1;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
+                        response = void 0;
                         if (!(AttachFile.length > 0)) return [3 /*break*/, 2];
                         return [4 /*yield*/, spservice_1.default.addDocLibFiles({
                                 FilePath: Listname,
@@ -20,9 +21,9 @@ var CommonService = /** @class */ (function () {
                                 Datas: AttachFile,
                             })];
                     case 1:
-                        _a.sent();
+                        response = _a.sent();
                         return [2 /*return*/, {
-                                data: "Successfully Replaced Document",
+                                data: response,
                                 status: 200,
                                 message: "Attachment replaced successfully",
                             }];

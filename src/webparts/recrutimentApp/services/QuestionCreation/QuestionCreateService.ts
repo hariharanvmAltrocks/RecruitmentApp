@@ -3,83 +3,78 @@ import { getQuestionById, UpsertQuestions } from "../../models/Icareerportal";
 import { DataType } from "../../utilities/ConditionConfig";
 import { QuestionnaireApi } from "../AxiosService/CareerPortalAPI";
 import { ViewQuestion } from "../CareerPortal/ICareerPortal";
+import { stripHtml } from "../RecruitmentTable/IRecruitmentService";
 import { CareerPotalServices } from "../ServiceExport";
 import { IQuestionCreation } from "./IQuestionCreation";
 
 export default class QuestionCreateService implements IQuestionCreation {
 
-   async GetQuestionaireByScope(
-  GetExistingQuestion: getQuestionById
-): Promise<ApiResponse<ViewQuestion[] | null>> {
-  try {
-    const serviceResponse  = await CareerPotalServices.GetQuestionaireByScope(GetExistingQuestion);
-
-     const rawData: any[] = (serviceResponse as any)?.data?.data ?? [];
-    if (!rawData?.length) {
-      return { data: [], status: serviceResponse?.status ?? 200, message: "Get Candidate details" };
-    }
-
-    const GetQuestionnaire: ViewQuestion[] = rawData.reduce(
-      (acc: ViewQuestion[], item: any, index: number) => {
-        const q = item?.question;
-        const content = q?.quesContent;
-
-        const question = content?.contentEn;
-        const expectedAnswer = q?.questionXAnswers;
-        if (!question || !expectedAnswer?.length) return acc;
-
+  async GetQuestionaireByScope(
+    GetExistingQuestion: getQuestionById
+  ): Promise<ApiResponse<ViewQuestion[] | null>> {
+    try {
+      const response = await QuestionnaireApi.GetQuestionaireByScope(GetExistingQuestion);
+      const GetQuestionnaire: ViewQuestion[] = response.data.data.map((item: any, index: number) => {
         const incrementedIndex = index + 1;
 
-        const mappedAnswers = expectedAnswer.map((ans: any, i: number) => ({
-          key: i,
-          text: ans?.optContent?.contentEn,
-          textFr: ans?.optContent?.contentFr,
-          isCorrect: false,
-        }));
+        const question = stripHtml(item?.question?.quesContent?.contentEn);
+        const questionFr = stripHtml(item?.question?.quesContent?.contentFr);
+        const expectedAnswer = item?.question?.questionXAnswers.map((item: any) => stripHtml(item?.optContent?.contentEn));
+        const expectedAnswerFr = item?.question?.questionXAnswers.map((item: any) => stripHtml(item?.optContent?.contentFr));
 
-        const options = q?.questionXOptions?.map((opt: any) => ({
-          key: opt?.questionId,
-          text: opt?.optContent?.contentEn,
-          textFr: opt?.optContent?.contentFr,
-          isCorrect: false,
-        })) ?? [];
+        if (!question || !expectedAnswer) {
+          return null;
+        }
 
-        acc.push({
-          id: incrementedIndex,
-          Checked: false,
-          header: `Q${incrementedIndex}`,
-          HeaderLabel: `Question${incrementedIndex}`,
-          discipline: q?.scopeId,
-          scope: q?.questionType?.displayText,
-          questionType: q?.questionTypeId,
-          question,
-          questionFr: content?.contentFr,
-          expectedAnswer: mappedAnswers.map((a: any) => a.text),
-          expectedAnswerFr: mappedAnswers.map((a: any) => a.textFr),
-          CareerportalAnswer: mappedAnswers,
-          options,
-          Disqualification: q?.isQualifier,
-          Type: DataType.Existing,
-          createdBy: item.createdBy
+        const options = item?.question?.questionXOptions.map((item: any) => {
+          return {
+            key: item?.questionId,
+            text: stripHtml(item?.optContent?.contentEn),
+            textFr: stripHtml(item?.optContent?.contentFr),
+            isCorrect: false,
+          };
         });
 
-        return acc;
-      },
-      []
-    );
+        const CareerportalAnswer = item?.question?.questionXAnswers?.map((item: any, index: number) => {
+          return {
+            key: index,
+            text: stripHtml(item?.optContent?.contentEn),
+            textFr: stripHtml(item?.optContent?.contentFr),
+            isCorrect: false,
+          };
+        });
 
-    return {
-      data: GetQuestionnaire,
-      status: serviceResponse.status,
-      message: "Get Candidate details",
-    };
-  } catch (error) {
-    console.error("Error Get Candidate details:", error);
-    return { data: [], status: 500, message: "Error Get Candidate details" };
+        return {
+          id: incrementedIndex,
+          Checked: false,
+          header: "Q" + incrementedIndex,
+          HeaderLabel: "Question" + incrementedIndex,
+          discipline: item?.question?.scopeId,
+          scope: item?.question?.questionType?.displayText,
+          questionType: item?.question?.questionTypeId,
+          question: question,
+          questionFr: questionFr,
+          expectedAnswer: expectedAnswer,
+          expectedAnswerFr: expectedAnswerFr,
+          CareerportalAnswer: CareerportalAnswer,
+          options: options,
+          Disqualification: item?.question?.isQualifier,
+          Type: DataType.Existing,
+        };
+      }).filter((item: null) => item !== null);
+
+      return {
+        data: GetQuestionnaire,
+        status: response.status,
+        message: "Get Candidate details",
+      };
+    } catch (error) {
+      console.error("Error Get Candidate details:", error);
+      return { data: [], status: 500, message: "Error Get Candidate details" };
+    }
   }
-}
 
- async UpsertQuestions(data: UpsertQuestions[]): Promise<ApiResponse<any | null>> {
+  async UpsertQuestions(data: UpsertQuestions[]): Promise<ApiResponse<any | null>> {
     try {
       let UpsertQuestions: UpsertQuestions[] = data.map((item) => ({
         questionEn: item.questionEn,

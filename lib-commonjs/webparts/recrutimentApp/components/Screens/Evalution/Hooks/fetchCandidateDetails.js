@@ -10,7 +10,7 @@ function useCandidateDetails(_a) {
     var _b, _c;
     var candidateId = _a.candidateId, interviewLevel = _a.interviewLevel, grade = _a.grade;
     var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
-    var currentUserEmail = (_c = (_b = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _b === void 0 ? void 0 : _b[0]) !== null && _c !== void 0 ? _c : '';
+    var currentUserEmail = (_c = (_b = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _b === void 0 ? void 0 : _b[0]) !== null && _c !== void 0 ? _c : "";
     var _d = React.useState(null), candidate = _d[0], setCandidate = _d[1];
     var _e = React.useState([]), questions = _e[0], setQuestions = _e[1];
     var _f = React.useState(true), loading = _f[0], setLoading = _f[1];
@@ -39,7 +39,7 @@ function useCandidateDetails(_a) {
                         if (!isMounted)
                             return [2 /*return*/];
                         if (!result.success) {
-                            setError('Failed to load candidate data. Please retry.');
+                            setError("Failed to load candidate data. Please retry.");
                             return [2 /*return*/];
                         }
                         jobRequestId = (_a = result._jobRequestId) !== null && _a !== void 0 ? _a : '';
@@ -85,7 +85,9 @@ function useCandidateDetails(_a) {
                         err_1 = _b.sent();
                         console.error('[useCandidateDetails] error:', err_1);
                         if (isMounted)
-                            setError(err_1 instanceof Error ? err_1.message : 'Unable to load candidate details.');
+                            setError(err_1 instanceof Error
+                                ? err_1.message
+                                : "Unable to load candidate details.");
                         return [3 /*break*/, 5];
                     case 4:
                         if (isMounted)
@@ -95,8 +97,10 @@ function useCandidateDetails(_a) {
                 }
             });
         }); };
-        load();
-        return function () { isMounted = false; };
+        void load();
+        return function () {
+            isMounted = false;
+        };
     }, [candidateId, currentUserEmail, grade, interviewLevel, refreshKey]);
     var reload = React.useCallback(function () { return setRefreshKey(function (k) { return k + 1; }); }, []);
     return { candidate: candidate, questions: questions, loading: loading, error: error, reload: reload };

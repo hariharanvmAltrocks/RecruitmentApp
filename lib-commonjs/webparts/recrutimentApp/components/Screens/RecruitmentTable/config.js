@@ -8,16 +8,19 @@ var react_2 = tslib_1.__importDefault(require("react"));
 var useRecruitmentColumns = function (_a) {
     var _b;
     var role = _a.role, actionMode = _a.actionMode, onAction = _a.onAction;
+    var onActionRef = (0, react_1.useRef)(onAction);
+    (0, react_1.useEffect)(function () {
+        onActionRef.current = onAction;
+    }, [onAction]);
     var actionColumn = (0, react_1.useMemo)(function () { return ({
         id: "actions",
         header: "Actions",
         align: "right",
         cellClassName: "data-table__cell--actions",
-        render: function (item) { return (react_2.default.createElement("button", { className: "data-table__action-btn", onClick: function () { return onAction(item); }, type: "button", "aria-label": actionMode === "Upload" ? "Upload document" : "View vacancy" },
+        render: function (item) { return (react_2.default.createElement("button", { className: "data-table__action-btn", onClick: function () { return onActionRef.current(item); }, type: "button", "aria-label": actionMode === "Upload" ? "Upload document" : "View vacancy" },
             actionMode === "Upload" ? react_2.default.createElement(lucide_react_1.Upload, { size: 16 }) : react_2.default.createElement(lucide_react_1.Eye, { size: 16 }),
             actionMode === "Upload" ? "Upload" : "View")); },
-    }); }, [actionMode, onAction]);
-    // ── Role: default ─────────────────────────────────────────────────────────
+    }); }, [actionMode]);
     var defaultColumns = (0, react_1.useMemo)(function () { return [
         {
             id: "jobCode",

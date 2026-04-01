@@ -12,18 +12,18 @@ var defaultService = {
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log('[fetchQuestionBank] getQuestions start', jobCode);
+                    console.log("[fetchQuestionBank] getQuestions start", jobCode);
                     return [4 /*yield*/, questionnaireApi.getQuestionnaire(jobCode)];
                 case 1:
                     response = _a.sent();
                     if (!response.data || response.data.length === 0) {
-                        console.log('[fetchQuestionBank] getQuestions empty');
+                        console.log("[fetchQuestionBank] getQuestions empty");
                         return [2 /*return*/, []];
                     }
                     return [2 /*return*/, response.data.map(function (item) { return ({
                             id: item.id,
                             text: item.question,
-                            expectedResponse: item.answer || '',
+                            expectedResponse: item.answer || "",
                         }); })];
             }
         });
@@ -32,7 +32,7 @@ var defaultService = {
 function useQuestionBank(jobCode, service) {
     var _this = this;
     if (service === void 0) { service = defaultService; }
-    console.log('[useQuestionBank] jobCode', jobCode);
+    console.log("[useQuestionBank] jobCode", jobCode);
     var _a = React.useState([]), data = _a[0], setData = _a[1];
     var _b = React.useState(true), loading = _b[0], setLoading = _b[1];
     var _c = React.useState(null), error = _c[0], setError = _c[1];
@@ -61,9 +61,11 @@ function useQuestionBank(jobCode, service) {
                         return [3 /*break*/, 5];
                     case 3:
                         err_1 = _a.sent();
-                        console.error('[useQuestionBank] getQuestions error', err_1);
+                        console.error("[useQuestionBank] getQuestions error", err_1);
                         if (isMounted)
-                            setError(err_1 instanceof Error ? err_1.message : 'Unable to load interview questions.');
+                            setError(err_1 instanceof Error
+                                ? err_1.message
+                                : "Unable to load interview questions.");
                         return [3 /*break*/, 5];
                     case 4:
                         if (isMounted)
@@ -73,8 +75,10 @@ function useQuestionBank(jobCode, service) {
                 }
             });
         }); };
-        load();
-        return function () { isMounted = false; };
+        void load();
+        return function () {
+            isMounted = false;
+        };
     }, [jobCode, service, refreshKey]);
     var reload = React.useCallback(function () { return setRefreshKey(function (k) { return k + 1; }); }, []);
     return { data: data, loading: loading, error: error, reload: reload };

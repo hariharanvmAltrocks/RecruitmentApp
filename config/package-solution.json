@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
     "name": "recruitment-app-client-side-solution",
-    "id": "e8c4a654-4040-4559-b1dd-165db4384c3a",
+    "id":  "e8c4a654-4040-4559-b1dd-165db4384c3a",
     "version": "1.0.0.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,

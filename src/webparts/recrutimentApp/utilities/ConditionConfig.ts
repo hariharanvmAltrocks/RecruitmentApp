@@ -20,6 +20,14 @@ export const MatricID = {
   AdvertReviewHOD: 16,
   InterviewQuestionLM: 17,
   ReviewProfileLM: 21,
+  MySubmission: 22,
+  AssignAgencies: 23,
+
+  BackgroundCheck: 24,
+  LabourHire: 25,
+  Kcsa: 26, 
+
+  ReviewScoredHOD: 27
 };
 
 export const RoleName = {
@@ -27,7 +35,7 @@ export const RoleName = {
   RecruitmentHR: "RecruitmentHR",
   HOD: "HOD",
   EXCO: "EXCO",
-  InterviewPanel: "InterviewPanel"
+  InterviewPanel: "InterviewPanel",
 };
 
 export const CategoryID = {
@@ -56,28 +64,28 @@ export const CategoryID = {
   ProofofIdentity: 23,
   TitleforProfile: 24,
   DocumentType: 26,
-  VerificationType: 41
-}
+  VerificationType: 41,
+};
 
 export const agentCode = {
   RecruitmentHR: "HRMS001",
-}
+};
 
 export const quesContentId = {
   WillingRelocate: "FD889B9C1B51F13738596ACFB206E881EAC9",
-}
+};
 
 export const DataType = {
   New: "New",
-  Existing: "Existing"
-}
+  Existing: "Existing",
+};
 
 export const ListEmailName = {
   HR: "AssignedHR",
   LM: "LineManager",
   HOD: "HOD",
-  HRLead: "RecruitmentHRLead"
-}
+  HRLead: "RecruitmentHRLead",
+};
 
 export const menuID = {
   Dashboard: 1,
@@ -85,8 +93,8 @@ export const menuID = {
   PreSelectionProcess: 30,
   PostSelectionProcess: 31,
   ReviewProfile: 32,
-  RecrutimentTable: 28,
-}
+  RecruitmentProcess: 28,
+};
 
 export const Nationality = {
   Nationals: "Nationals (Congolese)",
@@ -101,25 +109,27 @@ export const NationalityCode = {
 export const TabNames = {
   ReviewProfile: "Review Profile",
   AssignInterviewPanel: "Assign Interview Panel",
-  ReviewScorecard: "Review Score card"
-}
+  ReviewScorecard: "Review Score card",
+  MySubmission: "My Submission",
+  AssignAgencies: "Assign Agencies",
+};
 
 export const InterviewLevel = {
   Level1: "Level 1",
   Level2: "Level 2",
-  Level3: "Level 3"
-}
+  Level3: "Level 3",
+};
 
 export const QuestionCreatedBy = {
   LM: "LM",
-  HR: "HR"
-}
+  HR: "HR",
+};
 
 export const InterviewLevels = {
   Level1: "Level 1",
   Level2: "Level 2",
   Level3: "Level 3",
-  Levels2: "Level 1 & 2"
+  Levels2: "Level 1 & 2",
 };
 
 export const ActionID = {
@@ -127,8 +137,8 @@ export const ActionID = {
   View: 2,
   Approve: 3,
   onHold: 4,
-  schedule: 5
-}
+  schedule: 5,
+};
 
 export const EmailTemplateCodes = {
   LineManagerEmail: "CANDIDATE_PROFILE_SHORTLISTED",
@@ -137,7 +147,7 @@ export const EmailTemplateCodes = {
   HODSelection: "INTERVIEW_SELECTED",
   HODSelectionLevel1: "HOD1_SelectCandidate",
   InterviewScheduleLevel1: "RecuritmentHR_ScheduleInterview_Level1",
-}
+};
 
 export const RecuritmentHRMsg = {
   HRSuccess: "Recruitment HR Assigned for the Selected Job Titles.",
@@ -145,16 +155,17 @@ export const RecuritmentHRMsg = {
 
   ONEMDocumentMsg: "Signed and Stamped ONEM Document Uploaded Successfully.",
 
-  AdvertisementSubmitMsg:
-    "Advertisement Document Uploaded Successfully.",
+  AdvertisementSubmitMsg: "Advertisement Document Uploaded Successfully.",
   AdvertisementReveiwMsg: "Advertisement Reviewed Successfully.",
 
   AgencySucess: "Agencies Assigned for the Selected Job Titles.",
   SingleAgencyMsg: "Agencies Assigned for the Selected Job Title.",
 
   InterviewPanalAssignedSuccessfully: "Interview Panel Assigned Successfully.",
-  InterviewPanalLevel1: "Interview Panel members for Level 1 have been Assigned Successfully.",
-  InterviewPanalLevel2: "Interview Panel members for Level 2 have been Assigned Successfully.",
+  InterviewPanalLevel1:
+    "Interview Panel members for Level 1 have been Assigned Successfully.",
+  InterviewPanalLevel2:
+    "Interview Panel members for Level 2 have been Assigned Successfully.",
 
   RescheduleSuccessMsg: "Interview Rescheduled Successfully.",
   AdvertExtendsionSuccessMsg: "Advertisement Extension Submitted Successfully.",
@@ -162,10 +173,13 @@ export const RecuritmentHRMsg = {
 
   ScoreCardSubmitMsg:
     "The Candidate has been Interviewed and Scorecard Submitted for successfully ",
-  ScoreCardMsgLevel2: "The candidate has successfully completed the Level 2 interview.",
+  ScoreCardMsgLevel2:
+    "The candidate has successfully completed the Level 2 interview.",
 
-  InterviewQuestionSuccessMsg: "Interview Panel  questionnaires has been created successfully.",
-  CareerportalSuccessMsg: "Career Portal questionnaires has been created successfully.",
+  InterviewQuestionSuccessMsg:
+    "Interview Panel  questionnaires has been created successfully.",
+  CareerportalSuccessMsg:
+    "Career Portal questionnaires has been created successfully.",
 
   ProfileReviewed:
     "Candidate Profile for the Job Title Reviewed and Shortlisted.",
@@ -182,7 +196,6 @@ export const RecuritmentHRMsg = {
   CandidateRejectedLevel2: "Candidate Level 1 Rejected Successfully",
   CandidateonholdLevel2: "Candidate Level 1 On-Hold Successfully",
   RecuritmentSubmitMsg: "Submitted Successfully.",
-
 
   ApprovedMsg:
     "Advertisement Reviewed Successfully. Ready for ONEM Process (Offline).",
@@ -205,53 +218,74 @@ export const RecuritmentHRMsg = {
   deleteMsg: "Are you sure you want to delete this Question?",
 
   SelectedErrorMsg: "Please Choose the Disciplines.",
-  WarningMsg: "Are you sure want to Change the Disciplines? Any unsaved changes will be lost",
+  WarningMsg:
+    "Are you sure want to Change the Disciplines? Any unsaved changes will be lost",
   ClearWarning: "Are you sure you want to close? Unsaved changes will be lost.",
-  SelectedCandidateValidation: "The requested headcount for the position has already been selected.",
-  QuestionAlertMsg: "Interview questions are not available. Kindly reschedule the interview date.",
+  SelectedCandidateValidation:
+    "The requested headcount for the position has already been selected.",
+  QuestionAlertMsg:
+    "Interview questions are not available. Kindly reschedule the interview date.",
 
   UploadMsg: "Candidate CV Upload Successfully",
   ValidationMsg: "This Candidate Already Exists",
 
   BGverificationMsg: "Background Verification has been initiated successfully.",
   BGReviewedMsg: "Background Verification has been completed successfully.",
-  BGReviewinitBGV: "Verified the background documents and initiated the Dot's Africa verification process.",
+  BGReviewinitBGV:
+    "Verified the background documents and initiated the Dot's Africa verification process.",
 
   RevertWGDocs: "The Background Document Reverted successfully.",
 
   OfferLetterMsg: "The offer letter has been uploaded successfully.",
-  OfferLetterinit: "The Offer Letter process has been successfully initiated to the Labour Hire.",
-  ReviewLaborHireOffer: "The Labour Hire offer has been reviewed successfully and forwarded to the candidate.",
-  ReviewOfferLetterMsg: "The offer letter has been reviewed successfully and initiated the WorkPermit Document ",
+  OfferLetterinit:
+    "The Offer Letter process has been successfully initiated to the Labour Hire.",
+  ReviewLaborHireOffer:
+    "The Labour Hire offer has been reviewed successfully and forwarded to the candidate.",
+  ReviewOfferLetterMsg:
+    "The offer letter has been reviewed successfully and initiated the WorkPermit Document ",
 
-  RevertedOfferLetter: "The offer letter has been reverted to candidate successfully.",
-  RevertLabourOffer: "The Labour Hire Offer Release has been successfully reverted",
+  RevertedOfferLetter:
+    "The offer letter has been reverted to candidate successfully.",
+  RevertLabourOffer:
+    "The Labour Hire Offer Release has been successfully reverted",
 
   WorkPermitDocs: "The WorkPermit Documents has been reviewed successfully",
-  WPacknowledgeUploadContract: "WorkPermit acknowledge and Employee contract Document Upload Successfully",
+  WPacknowledgeUploadContract:
+    "WorkPermit acknowledge and Employee contract Document Upload Successfully",
 
-  RevertWorkPermitDocs: "The Work Permit Document has been successfully reverted",
+  RevertWorkPermitDocs:
+    "The Work Permit Document has been successfully reverted",
 
-  EmploymentContractMsg: "The employment contract has been uploaded successfully.",
-  EmployeementInit: "The Employment Contract process has been successfully initiated to the Labour Hire",
-  ReviewEmploymentContractMsg: "The Labour Hire Employment Contract has been reviewed successfully and forwarded to the candidate.",
+  EmploymentContractMsg:
+    "The employment contract has been uploaded successfully.",
+  EmployeementInit:
+    "The Employment Contract process has been successfully initiated to the Labour Hire",
+  ReviewEmploymentContractMsg:
+    "The Labour Hire Employment Contract has been reviewed successfully and forwarded to the candidate.",
   ReviewECMsg: "The Employement Contract Reviewed Successfully",
-  ReviewOfferLetterInitEC: "The offer letter has been reviewed successfully and initiated the Employment Contract ",
+  ReviewOfferLetterInitEC:
+    "The offer letter has been reviewed successfully and initiated the Employment Contract ",
 
-  RevertedEmploymentContractMsg: "The employment contract has been reverted successfully.",
-  RevertECCocs: "The Labour Hire Employment Contract has been successfully reverted",
+  RevertedEmploymentContractMsg:
+    "The employment contract has been reverted successfully.",
+  RevertECCocs:
+    "The Labour Hire Employment Contract has been successfully reverted",
 
-  FinancePaymentReviewMsg: "Finance Payment Review has been completed successfully.",
-  RevertedFinancePaymentMsg: "Payment Review has been reverted to LaborHire successfully..",
+  FinancePaymentReviewMsg:
+    "Finance Payment Review has been completed successfully.",
+  RevertedFinancePaymentMsg:
+    "Payment Review has been reverted to LaborHire successfully..",
 
   ReviewOtherDocsMsg: "Candidate documents has been reviewed successfully",
   RevertOtherDocsMsg: "Candidate documents have been reverted successfully.",
 
   OnboardingMsg: "Onboarding has been initiated successfully.",
 
-  NationalityErrorMsg: "Please select the Nationality filter before proceeding.",
+  NationalityErrorMsg:
+    "Please select the Nationality filter before proceeding.",
   QuestionValiErrorMsg: "Please add at least 5 questions before proceeding.",
-  COIWarningMsg: "This is the COI profile. Are you sure you're ready to proceed?",
+  COIWarningMsg:
+    "This is the COI profile. Are you sure you're ready to proceed?",
   FormValidationMsg: "One or more required actions are missing.",
   NationalityMsgError: "Please select the any one Nationality",
 
@@ -260,15 +294,18 @@ export const RecuritmentHRMsg = {
   UpdateLabourHireMsg: "Labour Hire details Updated successfully.",
   AddAgentSuccessMsg: "Agent details added successfully.",
   UpdateagentMsg: "Agent details Updated Successfully.",
-  NoOfUserLimitMsg: "User limit reached. Kindly upgrade or extend your user limit.",
+  NoOfUserLimitMsg:
+    "User limit reached. Kindly upgrade or extend your user limit.",
   ResetPassword: "Are you sure you want to reset the password?",
-  ResetPasswordMsg: "A password reset link has been sent to your registered email. Please check your inbox to proceed.",
+  ResetPasswordMsg:
+    "A password reset link has been sent to your registered email. Please check your inbox to proceed.",
 
-  duplicatedquestionMsg: "Duplicate questions are not allowed. Please modify the question and try again.",
+  duplicatedquestionMsg:
+    "Duplicate questions are not allowed. Please modify the question and try again.",
   ReinitiateBGVProcess: "The BGV process has been re-initiated successfully.",
-  ReinitiateBGVWarningMsg: "Are you sure you want to re-initiate the Criminal Check (Fingerprint Search) as part of the BGV process for this candidate?",
-}
-
+  ReinitiateBGVWarningMsg:
+    "Are you sure you want to re-initiate the Criminal Check (Fingerprint Search) as part of the BGV process for this candidate?",
+};
 
 export const DocumentFolderName = {
   Offerletter: "OfferLetter",
@@ -290,7 +327,7 @@ export const DocumentFolderName = {
   BGVConsentform: "BGVConsentForm",
   ProofOfDocument: "ProofOfPaymentDocument",
   BGVProofOfDocument: "BGVProofOfDocument",
-}
+};
 
 export const TabName = {
   //HR Lead
@@ -347,6 +384,6 @@ export const TabName = {
   Agent: "Agent",
   CreateAdminPage: "Create Admin Page",
 
-  EnglishAdvertisment: "English",//"Job Advertisement",
-  FrenchAdvertisement: "French"//"Offre d'emploi"
+  EnglishAdvertisment: "English", //"Job Advertisement",
+  FrenchAdvertisement: "French", //"Offre d'emploi"
 };

@@ -23,13 +23,19 @@ exports.MatricID = {
     AdvertReviewHOD: 16,
     InterviewQuestionLM: 17,
     ReviewProfileLM: 21,
+    MySubmission: 22,
+    AssignAgencies: 23,
+    BackgroundCheck: 24,
+    LabourHire: 25,
+    Kcsa: 26,
+    ReviewScoredHOD: 27
 };
 exports.RoleName = {
     LineManager: "Line Manager",
     RecruitmentHR: "RecruitmentHR",
     HOD: "HOD",
     EXCO: "EXCO",
-    InterviewPanel: "InterviewPanel"
+    InterviewPanel: "InterviewPanel",
 };
 exports.CategoryID = {
     Department: 1,
@@ -57,7 +63,7 @@ exports.CategoryID = {
     ProofofIdentity: 23,
     TitleforProfile: 24,
     DocumentType: 26,
-    VerificationType: 41
+    VerificationType: 41,
 };
 exports.agentCode = {
     RecruitmentHR: "HRMS001",
@@ -67,13 +73,13 @@ exports.quesContentId = {
 };
 exports.DataType = {
     New: "New",
-    Existing: "Existing"
+    Existing: "Existing",
 };
 exports.ListEmailName = {
     HR: "AssignedHR",
     LM: "LineManager",
     HOD: "HOD",
-    HRLead: "RecruitmentHRLead"
+    HRLead: "RecruitmentHRLead",
 };
 exports.menuID = {
     Dashboard: 1,
@@ -81,7 +87,7 @@ exports.menuID = {
     PreSelectionProcess: 30,
     PostSelectionProcess: 31,
     ReviewProfile: 32,
-    RecrutimentTable: 28,
+    RecruitmentProcess: 28,
 };
 exports.Nationality = {
     Nationals: "Nationals (Congolese)",
@@ -94,29 +100,31 @@ exports.NationalityCode = {
 exports.TabNames = {
     ReviewProfile: "Review Profile",
     AssignInterviewPanel: "Assign Interview Panel",
-    ReviewScorecard: "Review Score card"
+    ReviewScorecard: "Review Score card",
+    MySubmission: "My Submission",
+    AssignAgencies: "Assign Agencies",
 };
 exports.InterviewLevel = {
     Level1: "Level 1",
     Level2: "Level 2",
-    Level3: "Level 3"
+    Level3: "Level 3",
 };
 exports.QuestionCreatedBy = {
     LM: "LM",
-    HR: "HR"
+    HR: "HR",
 };
 exports.InterviewLevels = {
     Level1: "Level 1",
     Level2: "Level 2",
     Level3: "Level 3",
-    Levels2: "Level 1 & 2"
+    Levels2: "Level 1 & 2",
 };
 exports.ActionID = {
     Review: 1,
     View: 2,
     Approve: 3,
     onHold: 4,
-    schedule: 5
+    schedule: 5,
 };
 exports.EmailTemplateCodes = {
     LineManagerEmail: "CANDIDATE_PROFILE_SHORTLISTED",
@@ -291,6 +299,6 @@ exports.TabName = {
     Agent: "Agent",
     CreateAdminPage: "Create Admin Page",
     EnglishAdvertisment: "English", //"Job Advertisement",
-    FrenchAdvertisement: "French" //"Offre d'emploi"
+    FrenchAdvertisement: "French", //"Offre d'emploi"
 };
 //# sourceMappingURL=ConditionConfig.js.map

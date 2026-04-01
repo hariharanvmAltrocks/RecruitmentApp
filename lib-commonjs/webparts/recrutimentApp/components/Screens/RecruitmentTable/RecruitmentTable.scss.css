@@ -160,19 +160,58 @@
   font-weight: 700;
   color: #1e293b;
 }
-.submission-header__button {
+.submission-header__actions {
   display: flex;
   align-items: center;
+  gap: 10px;
+}
+.submission-header__button, .submission-header__refresh-btn {
+  display: inline-flex;
+  align-items: center;
   gap: 0.5rem;
+  padding: 0;
+  background: transparent;
+  border: 0;
   color: #64748b;
   font-weight: 700;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  cursor: pointer;
   transition: color 0.2s ease;
-  border: 0px;
-  background-color: white;
+  white-space: nowrap;
+  line-height: 1;
 }
-.submission-header__button:hover {
+.submission-header__button svg, .submission-header__refresh-btn svg {
+  flex-shrink: 0;
+}
+.submission-header__button:hover, .submission-header__refresh-btn:hover {
   color: #2563eb;
+}
+.submission-header__refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.submission-header__refresh-btn:disabled:hover {
+  color: #64748b;
+}
+.submission-header__refresh-btn svg.spin {
+  animation: refresh-spin 0.8s linear infinite;
+}
+
+@keyframes refresh-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes refresh-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

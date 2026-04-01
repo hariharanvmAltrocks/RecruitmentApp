@@ -1,6 +1,7 @@
 import { ApiResponse } from "../../models/apimodels";
 import { AutoCompleteItem } from "../../models/fieldmodels";
-import { UpsertBGV } from "../../models/Icareerportal";
+import { profileXagent, UpsertBGV } from "../../models/Icareerportal";
+import { IDocFiles } from "../SPService/Ispservice";
 
 export type DataSyncToRecruitmentResponse = {
   ID: number,
@@ -90,11 +91,13 @@ export type PostRecuritmentData = {
     DateRequried: Date | null,
     DataFrom: string,
     StatusId: number,
-    ActionId: number,
+    // ActionId: number,
     JobCodeId: number,
     AssignedHR: string,
     RecruitmentHRLead: string
     Location: string;
+    LineManager?: string;
+    HOD?: string;
   },
   PositionData: {
     JobTitleEnglishId: number,
@@ -109,6 +112,16 @@ export type PostRecuritmentData = {
     ItemCreated: string,
     IsDataSyncToRecruitment: string,
   }
+}
+
+export type PostAgentData = {
+  Data: {
+    AgentId: number,
+    JobCodeId: number,
+    RecrutimentId: number,
+  },
+  AgentProfileData: profileXagent,
+  CommentsList: InsertComments,
 }
 
 export type QualificationValue = {
@@ -181,9 +194,11 @@ export type IRecruitmentService = {
     RecuritmentDetails: IDptData,
     IsActive: number,
     IsExtened: number,
-    JobBasedBGVVerification?: string
+    JobBasedBGVVerification?: string,
+    onemDocs?: IDocFiles[]
   ): Promise<ApiResponse<null>>;
   UpsertBGVJobMaster(UpsertData: UpsertBGV[]): Promise<ApiResponse<any | null>>;
+  InsertExternalAgencyDetails(payloads: PostAgentData[]): Promise<ApiResponse<any[]>>;
 };
 
 

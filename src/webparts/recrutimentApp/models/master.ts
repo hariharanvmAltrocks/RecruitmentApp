@@ -192,9 +192,16 @@ export type IUserDetails = {
 }
 
 export type IJobGrade = {
-    GradeLevel : string;
+    GradeLevel: string;
 }
 
 export type IUniqueJobCode = {
-    JobCode : string;
+    JobCode: string;
+}
+
+export type IBUCodeEmailIDs = {
+    LineManagerEmail: string;
+    HODEmail: string;
+    HREmail: string;
+    EXCOEmail: string;
 }

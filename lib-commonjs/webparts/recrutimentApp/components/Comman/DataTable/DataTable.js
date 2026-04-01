@@ -20,7 +20,7 @@ var buildCellValue = function (row, column) {
     return "-";
 };
 var DataTable = function (_a) {
-    var columns = _a.columns, data = _a.data, _b = _a.enableCheckbox, enableCheckbox = _b === void 0 ? false : _b, _c = _a.selectedRowIds, selectedRowIds = _c === void 0 ? [] : _c, _d = _a.getRowId, getRowId = _d === void 0 ? getRowIdFallback : _d, onToggleRow = _a.onToggleRow, onToggleAll = _a.onToggleAll, pageSize = _a.pageSize, currentPage = _a.currentPage, totalCount = _a.totalCount, onPageChange = _a.onPageChange, _e = _a.pageSizeOptions, pageSizeOptions = _e === void 0 ? [5, 10, 20, 50] : _e, onPageSizeChange = _a.onPageSizeChange, _f = _a.loading, loading = _f === void 0 ? false : _f, _g = _a.emptyMessage, emptyMessage = _g === void 0 ? "No records found." : _g;
+    var columns = _a.columns, data = _a.data, _b = _a.enableCheckbox, enableCheckbox = _b === void 0 ? false : _b, _c = _a.selectedRowIds, selectedRowIds = _c === void 0 ? [] : _c, _d = _a.getRowId, getRowId = _d === void 0 ? getRowIdFallback : _d, onToggleRow = _a.onToggleRow, onToggleAll = _a.onToggleAll, pageSize = _a.pageSize, currentPage = _a.currentPage, totalCount = _a.totalCount, onPageChange = _a.onPageChange, _e = _a.pageSizeOptions, pageSizeOptions = _e === void 0 ? [5, 10, 20, 50] : _e, onPageSizeChange = _a.onPageSizeChange, _f = _a.loading, loading = _f === void 0 ? false : _f, _g = _a.emptyMessage, emptyMessage = _g === void 0 ? "No records found." : _g, onRowClick = _a.onRowClick;
     var rowIds = (0, react_1.useMemo)(function () { return data.map(function (row, index) { return getRowId(row, index); }); }, [data, getRowId]);
     var allSelected = enableCheckbox && rowIds.length > 0 && rowIds.every(function (id) { return selectedRowIds.includes(id); });
     var someSelected = enableCheckbox && rowIds.some(function (id) { return selectedRowIds.includes(id); }) && !allSelected;
@@ -77,7 +77,7 @@ var DataTable = function (_a) {
                     data.map(function (row, index) {
                         var rowId = getRowId(row, index);
                         var isSelected = selectedRowIds.includes(rowId);
-                        return (react_1.default.createElement("tr", { key: rowId, className: "data-table__row ".concat(isSelected ? "data-table__row--selected" : "").trim() },
+                        return (react_1.default.createElement("tr", { key: rowId, onClick: onRowClick ? function () { return onRowClick(row); } : undefined, style: onRowClick ? { cursor: "pointer" } : undefined, className: "data-table__row ".concat(isSelected ? "data-table__row--selected" : "").trim() },
                             enableCheckbox && (react_1.default.createElement("td", { className: "data-table__cell data-table__checkbox-cell" },
                                 react_1.default.createElement("button", { className: "data-table__checkbox ".concat(isSelected ? "data-table__checkbox--checked" : "").trim(), type: "button", "aria-pressed": isSelected, "aria-label": "Select row", onClick: function () { return onToggleRow === null || onToggleRow === void 0 ? void 0 : onToggleRow(rowId); }, disabled: !onToggleRow }, isSelected ? react_1.default.createElement(lucide_react_1.Check, { size: 12 }) : null))),
                             columns.map(function (column) {

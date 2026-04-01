@@ -33,15 +33,15 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
       return;
     }
     setIsSubmitting(true);
-     try {
-    await onConfirm({
-      vacancies: selectedItems,
-      member: assignedMember,
-      comments,
-    });
-  } finally {
-    setIsSubmitting(false); 
-  }
+    try {
+      await onConfirm({
+        vacancies: selectedItems,
+        member: assignedMember,
+        comments,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }, [comments, onConfirm, assignedMember, selectedItems, isSubmitting, isCommentsValid]);
 
   if (!isOpen) {
@@ -98,9 +98,6 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
             onBlur={() => setCommentsTouched(true)}
             disabled={isSubmitting}
           />
-          {/* {showCommentsError && (
-            <div className="modal-popup__error">Comments are required.</div>
-          )} */}
         </div>
 
         <div className="modal-popup__footer">

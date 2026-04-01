@@ -7,30 +7,8 @@ var MenuDataContext_1 = require("../../../../utilities/hooks/MenuDataContext");
 var UIStateContext_1 = require("../../../RecrutimentApp/UIStateContext");
 var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
 var Config_1 = require("../../../../utilities/Config");
+var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
 var reusehooks_1 = require("../../../Hooks/reusehooks");
-// const mockTabs: TabItem[] = [
-//   {
-//     key: "mySubmission",
-//     label: "My Submission",
-//     description: "Requests submitted by you",
-//     tableMode: "normal",
-//     actionMode: "view",
-//   },
-//   {
-//     key: "assignRecruitmentHR",
-//     label: "Assign Recruitment HR",
-//     description: "Assign an HR partner to vacancies",
-//     tableMode: "checkbox",
-//     actionMode: "view",
-//   },
-//   {
-//     key: "uploadOnemDoc",
-//     label: "Upload ONEM Doc",
-//     description: "Attach ONEM documentation",
-//     tableMode: "normal",
-//     actionMode: "upload",
-//   },
-// ];
 var getTabDetails = function (items, roleIDs) {
     var _a;
     return (_a = items === null || items === void 0 ? void 0 : items.map(function (item, index) {
@@ -60,7 +38,9 @@ var useTabDetails = function () {
                     acc.push.apply(acc, getTabDetails(match.TabDetails, roleIDs));
                 return acc;
             }, [])) !== null && _a !== void 0 ? _a : [];
-            var normalize = function (value) { return value.replace(/\s+/g, "").toLowerCase(); };
+            var normalize = function (value) {
+                return value.replace(/\s+/g, "").toLowerCase();
+            };
             var orderedTabDetails = tslib_1.__spreadArray([], selectedTabDetails, true);
             var mySubmissionIndex = orderedTabDetails.findIndex(function (tab) { var _a; return normalize((_a = tab.TabName) !== null && _a !== void 0 ? _a : "") === "mysubmission"; });
             if (mySubmissionIndex > 0) {
@@ -75,7 +55,10 @@ var useTabDetails = function () {
                     key: tab.Value,
                     label: tab.TabName,
                     description: tab.TabName,
-                    tableMode: ((HRLead && tab.Value === "tab1") || (HR && tab.Value === "tab2"))
+                    tableMode: (HRLead && tab.Value === "tab1") ||
+                        (tab.TabName != ConditionConfig_1.TabName.AssignInterviewPanel &&
+                            HR &&
+                            tab.Value === "tab2")
                         ? "checkbox"
                         : "normal",
                     actionMode: (Array.isArray((_a = tab.StatusDetails[0]) === null || _a === void 0 ? void 0 : _a.Action)

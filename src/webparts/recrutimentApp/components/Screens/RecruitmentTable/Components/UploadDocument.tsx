@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {  FileText, FileUpIcon, X } from "lucide-react";
+import { FileText, FileUpIcon, X } from "lucide-react";
 import "./UploadDocument.scss";
 
 export interface UploadedFile {
@@ -16,6 +16,8 @@ export interface UploadDocumentProps {
   label?: string;
   required?: boolean;
   onChange?: (files: UploadedFile[]) => void;
+  hasError?: boolean;
+  disabled?: boolean;
 }
 
 const DEFAULT_ACCEPTED = ".pdf,.doc,.docx,.xls,.xlsx";
@@ -24,7 +26,7 @@ const DEFAULT_MAX_MB = 15;
 const parseAcceptedFormats = (acceptedFormats: string) =>
   acceptedFormats
     .split(",")
-    .map((format) => format.trim().toLowerCase())
+    .map((f) => f.trim().toLowerCase())
     .filter(Boolean);
 
 const getExtension = (name: string) => {
@@ -33,23 +35,12 @@ const getExtension = (name: string) => {
 };
 
 const isAcceptedFile = (file: File, accepted: string[]) => {
-  if (accepted.length === 0) {
-    return true;
-  }
-
+  if (accepted.length === 0) return true;
   const ext = getExtension(file.name);
   const mime = file.type.toLowerCase();
-
   return accepted.some((rule) => {
-    if (rule.endsWith("/*")) {
-      const base = rule.replace("/*", "/");
-      return mime.startsWith(base);
-    }
-
-    if (rule.includes("/")) {
-      return mime === rule;
-    }
-
+    if (rule.endsWith("/*")) return mime.startsWith(rule.replace("/*", "/"));
+    if (rule.includes("/")) return mime === rule;
     return ext === rule;
   });
 };
@@ -61,6 +52,8 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
   label = "Upload documents",
   required = false,
   onChange,
+  hasError = false,
+  disabled = false
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [files, setFiles] = useState<UploadedFile[]>([]);
@@ -68,12 +61,18 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [touched, setTouched] = useState(false);
 
-  const acceptedList = useMemo(() => parseAcceptedFormats(acceptedFormats), [acceptedFormats]);
+  const acceptedList = useMemo(
+    () => parseAcceptedFormats(acceptedFormats),
+    [acceptedFormats]
+  );
   const maxBytes = useMemo(() => maxFileSizeMB * 1024 * 1024, [maxFileSizeMB]);
 
-  useEffect(() => () => {
-    files.forEach((file) => URL.revokeObjectURL(file.previewUrl));
-  }, [files]);
+  useEffect(
+    () => () => {
+      files.forEach((f) => URL.revokeObjectURL(f.previewUrl));
+    },
+    [files]
+  );
 
   const updateFiles = useCallback(
     (nextFiles: UploadedFile[]) => {
@@ -83,16 +82,10 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
     [onChange]
   );
 
-  const buildUploadedFile = useCallback(async (file: File) => {
+  const buildUploadedFile = useCallback(async (file: File): Promise<UploadedFile> => {
     const fileContent = await file.arrayBuffer();
     const previewUrl = URL.createObjectURL(file);
-
-    return {
-      name: file.name,
-      file,
-      fileContent,
-      previewUrl,
-    } as UploadedFile;
+    return { name: file.name, file, fileContent, previewUrl };
   }, []);
 
   const processFiles = useCallback(
@@ -110,18 +103,15 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
           nextErrors.push(`${file.name}: Invalid file format.`);
           return;
         }
-
         if (file.size > maxBytes) {
           nextErrors.push(`${file.name}: File size exceeds ${maxFileSizeMB} MB.`);
           return;
         }
-
         validFiles.push(file);
       });
 
       const mapped = await Promise.all(validFiles.map(buildUploadedFile));
       const nextFiles = multiple ? [...files, ...mapped] : mapped;
-
       setErrors(nextErrors);
       updateFiles(nextFiles);
     },
@@ -129,49 +119,39 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
   );
 
   const handleInputChange = useCallback(
-    async (event: React.ChangeEvent<HTMLInputElement>) => {
-      const fileList = event.target.files;
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
       setTouched(true);
-
-      if (!fileList || fileList.length === 0) {
-        return;
-      }
-
-      await processFiles(fileList);
-      if (inputRef.current) {
-        inputRef.current.value = "";
-      }
+      if (!e.target.files || e.target.files.length === 0) return;
+      await processFiles(e.target.files);
+      if (inputRef.current) inputRef.current.value = "";
     },
     [processFiles]
   );
 
   const handleRemove = useCallback(
     (index: number) => {
-      const nextFiles = [...files];
-      const removed = nextFiles.splice(index, 1)[0];
-      if (removed) {
-        URL.revokeObjectURL(removed.previewUrl);
-      }
-      updateFiles(nextFiles);
+      const next = [...files];
+      const removed = next.splice(index, 1)[0];
+      if (removed) URL.revokeObjectURL(removed.previewUrl);
+      updateFiles(next);
       setTouched(true);
     },
     [files, updateFiles]
   );
 
   const handleClearAll = useCallback(() => {
-    files.forEach((file) => URL.revokeObjectURL(file.previewUrl));
+    files.forEach((f) => URL.revokeObjectURL(f.previewUrl));
     updateFiles([]);
     setTouched(true);
   }, [files, updateFiles]);
 
   const handleDrop = useCallback(
-    async (event: React.DragEvent<HTMLDivElement>) => {
-      event.preventDefault();
+    async (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
       setIsDragging(false);
       setTouched(true);
-
-      if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
-        await processFiles(event.dataTransfer.files);
+      if (e.dataTransfer.files?.length > 0) {
+        await processFiles(e.dataTransfer.files);
       }
     },
     [processFiles]
@@ -184,6 +164,7 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
 
   return (
     <div className="upload-document">
+      {/* ── Header ── */}
       <div className="upload-document__header">
         <div>
           <div className="upload-document__label">
@@ -191,7 +172,7 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
             {required && <span className="upload-document__required">*</span>}
           </div>
           <div className="upload-document__hint">
-            {multiple ? "Upload one or more files" : "Upload a single file"} � Max {maxFileSizeMB} MB
+            {multiple ? "Upload one or more files" : "Upload a single file"} — Max {maxFileSizeMB} MB
           </div>
         </div>
         {files.length > 0 && (
@@ -201,20 +182,24 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
         )}
       </div>
 
+      {/* ── Dropzone — red border + bg when hasError=true ── */}
       <div
-        className={`upload-document__dropzone ${isDragging ? "is-dragging" : ""}`.trim()}
+        className={[
+          "upload-document__dropzone",
+          isDragging ? "is-dragging" : "",
+          hasError ? "upload-document__dropzone--error" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
         onClick={() => inputRef.current?.click()}
-        onDragOver={(event) => {
-          event.preventDefault();
-          setIsDragging(true);
-        }}
+        onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
         role="button"
         tabIndex={0}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
             inputRef.current?.click();
           }
         }}
@@ -233,19 +218,31 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
         accept={acceptedFormats}
         multiple={multiple}
         onChange={handleInputChange}
+        disabled={disabled}
       />
 
+      {/* ── Format / size errors ── */}
       {(errors.length > 0 || requiredError) && (
         <div className="upload-document__errors">
-          {requiredError && <div className="upload-document__error">{requiredError}</div>}
-          {errors.map((error, idx) => (
-            <div key={`${error}-${idx}`} className="upload-document__error">
-              {error}
+          {requiredError && (
+            <div className="upload-document__error">{requiredError}</div>
+          )}
+          {errors.map((err, idx) => (
+            <div key={`${err}-${idx}`} className="upload-document__error">
+              {err}
             </div>
           ))}
         </div>
       )}
 
+      {/* ── Parent-driven submit error ── */}
+      {hasError && (
+        <span className="upload-document__error-text">
+          Upload document is required.
+        </span>
+      )}
+
+      {/* ── File list ── */}
       <div className="upload-document__list">
         {files.length === 0 ? (
           <div className="upload-document__empty">No files selected yet.</div>
@@ -256,7 +253,11 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
                 <FileText size={16} />
                 <span>{file.name}</span>
               </div>
-              <button type="button" className="upload-document__remove" onClick={() => handleRemove(index)}>
+              <button
+                type="button"
+                className="upload-document__remove"
+                onClick={() => handleRemove(index)}
+              >
                 <X size={14} />
                 Remove
               </button>

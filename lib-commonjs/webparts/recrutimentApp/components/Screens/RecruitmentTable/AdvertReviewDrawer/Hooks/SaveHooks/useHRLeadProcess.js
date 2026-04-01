@@ -20,7 +20,7 @@ var useHRLeadProcess = function (form, currentRoleID, onemDocs, BgvData) {
                 case 0:
                     filterConditions = [
                         {
-                            FilterKey: "JobCode",
+                            FilterKey: "JobCodeId",
                             Operator: "eq",
                             FilterValue: form.JobCodeId,
                         },
@@ -29,7 +29,7 @@ var useHRLeadProcess = function (form, currentRoleID, onemDocs, BgvData) {
                     IsActive = 1;
                     IsExtened = 0;
                     JobBasedBGVVerification = serialize(BgvData, function (i) { return ({ verificationType: i.key, isActive: i.checked }); });
-                    return [4 /*yield*/, ServiceExport_1.RecruitmentServices.UploadAdvertisementInPortal(filterConditions, Conditions, form, IsActive, IsExtened, JobBasedBGVVerification)];
+                    return [4 /*yield*/, ServiceExport_1.RecruitmentServices.UploadAdvertisementInPortal(filterConditions, Conditions, form, IsActive, IsExtened, JobBasedBGVVerification, onemDocs)];
                 case 1:
                     portalRes = _a.sent();
                     if ((portalRes === null || portalRes === void 0 ? void 0 : portalRes.status) !== 200)
@@ -56,12 +56,11 @@ var useHRLeadProcess = function (form, currentRoleID, onemDocs, BgvData) {
                                 JobPostingStartDate: (0, dateConfigfn_1.SpiltDateOnly)(vaildFrom),
                                 JobPostingEndDate: (0, dateConfigfn_1.SpiltDateOnly)(VaildTo),
                             }),
-                            ServiceExport_1.CommonServices.uploadAttachmentToLibrary(form.JobCode, onemDocs || [], "ONAMSignedStampDocuments"),
                         ])];
                 case 3:
                     _a.sent();
                     //   finalize(RecuritmentHRMsg.ONEMDocumentMsg);
-                    finalize("Submitted ONEM Document");
+                    finalize(ConditionConfig_1.RecuritmentHRMsg.ONEMDocumentMsg);
                     return [2 /*return*/];
             }
         });

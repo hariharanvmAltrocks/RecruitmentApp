@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { DashboardServices, RecruitmentServices } from "../../../../../services/ServiceExport";
+import {
+  DashboardServices,
+  RecruitmentServices,
+} from "../../../../../services/ServiceExport";
 import { ResponeStatus } from "../../../../../utilities/ApiConfig";
 import { useUIState } from "../../../../RecrutimentApp/UIStateContext";
 import { MetricQueryConfig } from "../../../Dashboard/metricColumns.config";
@@ -28,11 +31,11 @@ export interface PositionDetails {
   JobCodeID: number;
 }
 
-export const usePositionDetails = (jobId: number | null,type: string) => {
+export const usePositionDetails = (jobId: number | null, type: string) => {
   const [data, setData] = useState<DataSyncToRecruitmentResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const {MatricID} = useUIState();
+  const { MatricID } = useUIState();
 
   useEffect(() => {
     if (!jobId) {
@@ -43,30 +46,25 @@ export const usePositionDetails = (jobId: number | null,type: string) => {
 
     setLoading(true);
     const timer = setTimeout(async () => {
+      const condition = "and";
+      let response: any;
+      const IDFilter = [
+        { FilterKey: "ID", Operator: "in", FilterValue: jobId },
+      ];
+      if (MatricID === 1) {
+        response = await RecruitmentServices.GetNPAEPVRRDetails(
+          IDFilter,
+          condition,
+          type,
+        );
+      } else {
+        response = await RecruitmentServices.GetRecruitmentDetails(
+          IDFilter,
+          condition,
+        );
+      }
 
-         const Filter = MetricQueryConfig[MatricID];
-              const condition = "and";
-                        let response: any;
-                       const IDFilter = [
-       { FilterKey: "ID", Operator: "in", FilterValue: jobId },
-       ] 
-              if(MatricID != 0){
-                           
-      
-       const filterObj = Array.isArray(Filter) ? Filter[0] : Filter;
-      
-                        switch (filterObj.ListName) {
-                            case ListNames.HRMSNewPositionRequest:
-                                response = await RecruitmentServices.GetNPAEPVRRDetails(IDFilter, condition,type);
-                                break;
-                            case ListNames.HRMSRecruitmentDptDetails:
-                                response = await RecruitmentServices.GetRecruitmentDetails(IDFilter, condition);
-                                break;
-                        }
-              }else {
-                response = await RecruitmentServices.GetRecruitmentDetails(IDFilter, condition);
-              }
-      if(response.status === ResponeStatus.SUCCESS){
+      if (response.status === ResponeStatus.SUCCESS) {
         const data = response.data[0];
         setData(data);
         setLoading(false);

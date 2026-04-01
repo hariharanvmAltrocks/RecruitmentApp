@@ -1,15 +1,31 @@
 import { useCallback, useRef, useState } from "react";
 import { CandidateProfile } from "../../../../models/Icareerportal";
-import { CandidateTable, MeetingSchedules } from "../../../../services/ServiceExport";
-import { RoleID, StatusId, WorkflowAction, workflowStatusApi } from "../../../../utilities/Config";
-import { DocumentFolderName, EmailTemplateCodes, InterviewLevels, MatricID, RecuritmentHRMsg, RoleName } from "../../../../utilities/ConditionConfig";
+import {
+  CandidateTable,
+  MeetingSchedules,
+} from "../../../../services/ServiceExport";
+import {
+  RoleID,
+  StatusId,
+  WorkflowAction,
+  workflowStatusApi,
+} from "../../../../utilities/Config";
+import {
+  DocumentFolderName,
+  EmailTemplateCodes,
+  InterviewLevels,
+  MatricID,
+  RecuritmentHRMsg,
+  RoleName,
+} from "../../../../utilities/ConditionConfig";
 import { ConvertUtc } from "../../../Hooks/dateConfigfn";
 import { Choices, ResponeStatus } from "../../../../utilities/ApiConfig";
 import { useUIState } from "../../../RecrutimentApp/UIStateContext";
 import { userInfo } from "../../../../utilities/hooks/RoleContext";
 import { IDocFiles } from "../../../../services/SPService/Ispservice";
 import { DataSyncToRecruitmentResponse } from "../../../../services/RecruitmentTable/IRecruitmentService";
-
+import { useToast } from "../../../Hooks/useToast";
+import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
 
 export type DecisionType = "YES" | "NO" | "HOLD";
 
@@ -26,8 +42,8 @@ export interface InterviewScheduleForm {
 }
 
 interface panelmembers {
-  key : number,
-  text: string
+  key: number;
+  text: string;
 }
 
 export interface SubmitPayload {
@@ -48,44 +64,48 @@ export interface SubmitPayload {
 
 interface UseSubmitCandidateReviewReturn {
   submitting: boolean;
-  submitError: string | null;
-  submitSuccess: boolean;
   submit: (payload: SubmitPayload, COIButtonAction?: string) => Promise<void>;
-  reset: () => void;
+  modalState: any;
+  closeModal: () => void;
 }
 
-
 export const useSubmitCandidateReview = (
-    showError: (message: string) => void
+  onClose: () => void,
+  handleRefresh: () => void,
 ): UseSubmitCandidateReviewReturn => {
-    const { MatricID: matricID} = useUIState();
-    const {roleIDs} = userInfo();
+  const { MatricID: matricID } = useUIState();
+  const { roleIDs } = userInfo();
   const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
-
+  const { modalState, showModal, closeModal } = useModalPopup();
 
   const splitDateOnly = (date: Date): string => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-    return new Date(Date.UTC(Number(year), Number(month) - 1, Number(day))).toISOString();
+    return new Date(
+      Date.UTC(Number(year), Number(month) - 1, Number(day)),
+    ).toISOString();
   };
 
-
-    const uploadCandidateDetails = useCallback(
+  const uploadCandidateDetails = useCallback(
     async (payload: SubmitPayload) => {
-      const { CandidateDetails: cp, recrutimentData, interviewLevel1, COIDetails, interviewPanelL1 } = payload;
+      const {
+        CandidateDetails: cp,
+        recrutimentData,
+        interviewLevel1,
+        COIDetails,
+        interviewPanelL1,
+      } = payload;
       if (!cp) throw new Error("CandidateDetails is null");
 
       const dobValue = cp.DOB ? new Date(cp.DOB) : new Date();
       const dobData = splitDateOnly(dobValue);
-      const startDate = interviewLevel1?.startDate  //? interviewLevel1?.startDate.toISOString() : "";
-      const endDate = interviewLevel1?.endDate  //? interviewLevel1?.startDate.toISOString() : "";
+      const startDate = interviewLevel1?.startDate; //? interviewLevel1?.startDate.toISOString() : "";
+      const endDate = interviewLevel1?.endDate; //? interviewLevel1?.startDate.toISOString() : "";
 
       const candidateDetails: any = {
-        RecruitmentIDId: recrutimentData?.RecordID,
+        RecruitmentIDId: recrutimentData?.ID,
         JobCodeId: recrutimentData?.JobCodeId,
         FristName: cp.FristName,
         MiddleName: cp.MiddleName,
@@ -108,6 +128,7 @@ export const useSubmitCandidateReview = (
         InterviewTime: endDate,
         CandidateResumeLink: cp.CandidateResumeLink ?? "",
         ActionId: WorkflowAction.Approved,
+        // StatusId: StatusId.InterviewScheduled,
         ConflictsOfInterest: cp.ConflictsOfInterest,
         Disability: cp.disability,
         DisabilityDetails: cp.disabilityReason,
@@ -134,7 +155,9 @@ export const useSubmitCandidateReview = (
         ResidencyStatus: cp.residentStatus,
         MaritalStatus: cp.maritalStatus,
         ChildrenDetails: JSON.stringify(cp.childrenDetails),
-        ReferenceEmployeeDetails: JSON.stringify([cp?.employeeReferenceDetails || {}]),
+        ReferenceEmployeeDetails: JSON.stringify([
+          cp?.employeeReferenceDetails || {},
+        ]),
         hasIvanhoeZijinExperience: cp?.hasIvanhoeZijinExperience,
         OperationRoleRegion: JSON.stringify([cp?.companyDetails || {}]),
         NationalityCode: cp?.NatioCode || "",
@@ -149,19 +172,32 @@ export const useSubmitCandidateReview = (
         CandidateID: 0,
       }));
 
-      return CandidateTable.InsertCandidateDetailsInList(candidateDetails, selectedPanel);
+      return CandidateTable.InsertCandidateDetailsInList(
+        candidateDetails,
+        selectedPanel,
+      );
     },
-    [ CandidateTable]
+    [CandidateTable],
   );
-
 
   const scheduleMeeting = useCallback(
     async (payload: SubmitPayload) => {
-      const { CandidateDetails: cp, recrutimentData, interviewLevel1,interviewLevel2, StatusId, interviewPanelL1 } = payload;
+      const {
+        CandidateDetails: cp,
+        recrutimentData,
+        interviewLevel1,
+        interviewLevel2,
+        StatusId,
+        interviewPanelL1,
+      } = payload;
       if (!cp) throw new Error("CandidateDetails is null");
 
-      const organizer = interviewPanelL1.find((i: any) => i.Role === RoleName.RecruitmentHR);
-      const requiredAttendees = interviewPanelL1.map((i: any) => i.Email) as string[];
+      const organizer = interviewPanelL1.find(
+        (i: any) => i.Role === RoleName.RecruitmentHR,
+      );
+      const requiredAttendees = interviewPanelL1.map(
+        (i: any) => i.Email,
+      ) as string[];
 
       // const startdate = StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview ?  ConvertUtc(interviewLevel1.startDate ?? new Date()) : ConvertUtc(interviewLevel2.startDate ?? new Date());
       // const enddate = StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview ?  ConvertUtc(interviewLevel1.endDate ?? new Date()) :  ConvertUtc(interviewLevel2.endDate ?? new Date());
@@ -169,8 +205,8 @@ export const useSubmitCandidateReview = (
       const meetingObj = {
         organizerEmail: organizer?.text ?? "",
         subject: `Interview for ${cp.FristName} ${cp.MiddleName} - ${recrutimentData?.JobTitleEnglish}`,
-        startUtc: "",// startdate,
-        endUtc:  "", //enddate,
+        startUtc: "", // startdate,
+        endUtc: "", //enddate,
         location: "",
         requiredAttendees,
         optionalAttendees: [],
@@ -181,9 +217,8 @@ export const useSubmitCandidateReview = (
 
       return MeetingSchedules.createMeeting(meetingObj);
     },
-    [ MeetingSchedules]
+    [MeetingSchedules],
   );
-
 
   // const buildInterviewObject = useCallback(
   //   (payload: SubmitPayload) => {
@@ -220,22 +255,38 @@ export const useSubmitCandidateReview = (
   //   [config]
   // );
 
-
   const buildWorkflowData = useCallback(
     async (payload: SubmitPayload, COIButtonAction: string) => {
-      const { COIDetails, CandidateDetails: cp,candidateId, decisionComments, decision, HRReviewComents,COIFlag,  StatusId} = payload;
+      const {
+        COIDetails,
+        CandidateDetails: cp,
+        candidateId,
+        decisionComments,
+        decision,
+        HRReviewComents,
+        COIFlag,
+        StatusId,
+      } = payload;
 
-      const currentUserRole = roleIDs.includes(RoleID.RecruitmentHR) ? RoleName.RecruitmentHR : RoleName.LineManager;
+      const currentUserRole = roleIDs.includes(RoleID.RecruitmentHR)
+        ? RoleName.RecruitmentHR
+        : RoleName.LineManager;
 
       const createFilter = (workflowStatus: string) => ({
         workflowStatus,
         jobRequestId: candidateId,
         comments: decisionComments,
         actionBy: currentUserRole,
-        hrComments: HRReviewComents
+        hrComments: HRReviewComents,
       });
 
-      let candidateData: any = { workflowStatus: "", jobRequestId: 0, comments: "", actionBy: "", hrComments: "" };
+      let candidateData: any = {
+        workflowStatus: "",
+        jobRequestId: 0,
+        comments: "",
+        actionBy: "",
+        hrComments: "",
+      };
       let emailNot: any = { jobRequestId: candidateId, templateCode: "" };
       let popupMessage = "";
 
@@ -252,9 +303,10 @@ export const useSubmitCandidateReview = (
             candidateData = createFilter(
               isLevel2
                 ? workflowStatusApi.PendingRecruitmentHRscheduleInterview
-                : workflowStatusApi.LineManagerL2Pending
+                : workflowStatusApi.LineManagerL2Pending,
             );
-            if (isLevel2) emailNot.templateCode = EmailTemplateCodes.LineManagerEmail;
+            if (isLevel2)
+              emailNot.templateCode = EmailTemplateCodes.LineManagerEmail;
             popupMessage = RecuritmentHRMsg.ProfileReviewed;
             break;
 
@@ -262,7 +314,7 @@ export const useSubmitCandidateReview = (
             candidateData = createFilter(
               isLevel2
                 ? workflowStatusApi.LineManagerLevel2Rejected
-                : workflowStatusApi.LineManagerLevel1Rejected
+                : workflowStatusApi.LineManagerLevel1Rejected,
             );
             emailNot.templateCode = EmailTemplateCodes.CandidateRejected;
             popupMessage = RecuritmentHRMsg.ProfileReviewedNo;
@@ -272,7 +324,7 @@ export const useSubmitCandidateReview = (
             candidateData = createFilter(
               isLevel2
                 ? workflowStatusApi.LineManagerLevel2OnHold
-                : workflowStatusApi.LineManagerLevel1OnHold
+                : workflowStatusApi.LineManagerLevel1OnHold,
             );
             popupMessage = RecuritmentHRMsg.ProfileReviewedWaitingList;
             break;
@@ -282,25 +334,26 @@ export const useSubmitCandidateReview = (
           candidateData = createFilter(workflowStatusApi.InterviewScheduled);
           emailNot.templateCode = EmailTemplateCodes.InterviewSchedule;
           popupMessage =
-            String(StatusId) === workflowStatusApi.PendingRecruitmentHRscheduleInterview
+            String(StatusId) ===
+            workflowStatusApi.PendingRecruitmentHRscheduleInterview
               ? RecuritmentHRMsg.InterviewPanalLevel1
               : RecuritmentHRMsg.InterviewPanalAssignedSuccessfully;
         } else {
-            candidateData = createFilter(workflowStatusApi.LineManagerL1Pending);
-            popupMessage = RecuritmentHRMsg.HRReviewCandidate;
+          candidateData = createFilter(workflowStatusApi.LineManagerL1Pending);
+          popupMessage = RecuritmentHRMsg.HRReviewCandidate;
         }
       }
 
-      if (
-        COIFlag &&
-        String(StatusId) === workflowStatusApi.HRPending
-      ) {
+      if (COIFlag && String(StatusId) === workflowStatusApi.HRPending) {
         let attachmentPath = "";
 
         if (COIDetails.attachment && COIDetails.attachment.length > 0) {
           const docResponse = await CandidateTable.UploadCOIAttachment(
-            { RequestID: String(cp?.profileID), DocumentName: DocumentFolderName.COIAttach },
-            COIDetails.attachment
+            {
+              RequestID: String(cp?.profileID),
+              DocumentName: DocumentFolderName.COIAttach,
+            },
+            COIDetails.attachment,
           );
           attachmentPath = String(docResponse.data[0]?.content ?? "");
         }
@@ -315,9 +368,8 @@ export const useSubmitCandidateReview = (
 
       return { candidateData, emailNot, popupMessage };
     },
-    [CandidateTable]
+    [CandidateTable],
   );
-
 
   // const handleInterviewReschedule = useCallback(
   //   async (payload: SubmitPayload) => {
@@ -353,16 +405,18 @@ export const useSubmitCandidateReview = (
   //   [buildInterviewObject, config, CandidateTable, callbacks]
   // );
 
-
   const handleWorkflowProcess = useCallback(
     async (payload: SubmitPayload, COIButtonAction: string) => {
+      const { candidateData, emailNot, popupMessage } = await buildWorkflowData(
+        payload,
+        COIButtonAction,
+      );
 
-      const { candidateData, emailNot, popupMessage } = await buildWorkflowData(payload, COIButtonAction);
+      const { StatusId, interviewLevel1, interviewLevel2 } = payload;
 
-       const { StatusId, interviewLevel1, interviewLevel2} = payload;
-
-
-      if (StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview) {
+      if (
+        StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview
+      ) {
         emailNot.templateCode = EmailTemplateCodes.InterviewSchedule;
         emailNot.dynamicFields = {
           InterviewDate: interviewLevel1?.startDate,
@@ -372,47 +426,77 @@ export const useSubmitCandidateReview = (
         };
       }
 
-      if (StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview) {
+      if (
+        StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview
+      ) {
         const uploadRes = await uploadCandidateDetails(payload);
         if (uploadRes.status !== ResponeStatus.SUCCESS) {
-        showError(RecuritmentHRMsg.APIErrorMsg,);
+          showModal({
+            type: "success",
+            title: "Submitted Successfully",
+            message: popupMessage,
+            confirmLabel: "Go to Candidate Table",
+            onConfirm: () => {
+              closeModal();
+              onClose();
+              handleRefresh();
+            },
+          });
           return;
         }
       }
 
       const res = await CandidateTable.UpdateCandidateStatus(candidateData);
+      // const res = { status: 400 };
       if (res.status === 200) {
         if (
-         StatusId === workflowStatusApi.LineManagerL2Pending ||
+          StatusId === workflowStatusApi.LineManagerL2Pending ||
           StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview
         ) {
-          if (emailNot.templateCode) await CandidateTable.SendEmailNotification(emailNot);
+          if (emailNot.templateCode)
+            await CandidateTable.SendEmailNotification(emailNot);
         }
-        showError(popupMessage)
+        showModal({
+          type: "success",
+          title: "Submitted Successfully",
+          message: popupMessage,
+          confirmLabel: "Go to Candidate Table",
+          onConfirm: () => {
+            closeModal();
+            onClose();
+            handleRefresh();
+          },
+        });
       } else {
-       showError(RecuritmentHRMsg.APIErrorMsg);
+        showModal({
+          type: "error",
+          title: "Error",
+          message: RecuritmentHRMsg.APIErrorMsg,
+          confirmLabel: "Go to Candidate Table",
+          onConfirm: () => {
+            closeModal();
+            onClose();
+            handleRefresh();
+          },
+        });
       }
     },
-    [buildWorkflowData, uploadCandidateDetails, CandidateTable]
+    [buildWorkflowData, uploadCandidateDetails, CandidateTable],
   );
 
-
-  const submit = useCallback(
-    async (payload: SubmitPayload, COIButtonAction: string = "") => {
+  const executeSubmit = useCallback(
+    async (payload: SubmitPayload, COIButtonAction: string) => {
       abortRef.current?.abort();
       abortRef.current = new AbortController();
 
       setSubmitting(true);
-      setSubmitError(null);
-      setSubmitSuccess(false);
       try {
-        await scheduleMeeting(payload);
-
         const scheduleResponse =
-          payload.StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview
+          payload.StatusId ===
+          workflowStatusApi.PendingRecruitmentHRscheduleInterview
             ? { status: 201 }
             : { status: 201 };
-
+        await scheduleMeeting(payload);
         if (scheduleResponse?.status !== 201) return;
 
         // const isReschedulePath =
@@ -425,26 +509,44 @@ export const useSubmitCandidateReview = (
         // }
 
         await handleWorkflowProcess(payload, COIButtonAction);
-
-        setSubmitSuccess(true);
       } catch (err: any) {
         if (err?.name === "AbortError") return;
         console.error("Submit failed:", err);
-        setSubmitError("Failed to submit. Please try again.");
         // callbacks.showAlert("Server is tempory unavailable", HRMSAlertOptions.Error);
       } finally {
         setSubmitting(false);
         // callbacks.setIsLoading(false);
       }
     },
-    [scheduleMeeting, handleWorkflowProcess]
+    [scheduleMeeting, handleWorkflowProcess],
   );
 
+  const submit = useCallback(
+    async (payload: SubmitPayload, COIButtonAction: string = "") => {
+      if (payload.COIFlag) {
+        showModal({
+          type: "confirmation",
+          title: "Conflict Of Interest",
+          message:
+            "This is the COI profile. Are you sure you're ready to proceed?",
+          confirmLabel: "Yes",
+          cancelLabel: "No",
+          onConfirm: () => {
+            closeModal();
+            void executeSubmit(payload, COIButtonAction);
+          },
+          onCancel: () => {
+            closeModal();
+            void executeSubmit(payload, "NO");
+          },
+        });
+        return;
+      }
 
-  const reset = useCallback(() => {
-    setSubmitError(null);
-    setSubmitSuccess(false);
-  }, []);
+      await executeSubmit(payload, COIButtonAction);
+    },
+    [scheduleMeeting, handleWorkflowProcess],
+  );
 
-  return { submitting, submitError, submitSuccess, submit, reset };
+  return { submitting, submit, modalState, closeModal };
 };

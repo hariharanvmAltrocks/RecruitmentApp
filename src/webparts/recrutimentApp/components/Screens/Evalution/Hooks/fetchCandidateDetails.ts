@@ -4,9 +4,9 @@ import type { Candidate, InterviewQuestion } from '../State/CommonStateManagemen
 import { EvaluationFormResult, getEvaluationFormData } from '../Evaluationservice/Evaluationformservice';
 
 export interface UseCandidateDetailsParams {
-  candidateId:     number;
+  candidateId: number;
   interviewLevel?: string;
-  grade?:          string;
+  grade?: string;
 }
 
 export interface CandidateDetailsHookResult {
@@ -23,12 +23,12 @@ export function useCandidateDetails({
   grade,
 }: UseCandidateDetailsParams): CandidateDetailsHookResult {
   const { ADGroupData } = userInfo();
-  const currentUserEmail = ADGroupData?.EmailId?.[0] ?? '';
+  const currentUserEmail = ADGroupData?.EmailId?.[0] ?? "";
 
-  const [candidate,  setCandidate]  = React.useState<Candidate | null>(null);
-  const [questions,  setQuestions]  = React.useState<InterviewQuestion[]>([]);
-  const [loading,    setLoading]    = React.useState(true);
-  const [error,      setError]      = React.useState<string | null>(null);
+  const [candidate, setCandidate] = React.useState<Candidate | null>(null);
+  const [questions, setQuestions] = React.useState<InterviewQuestion[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
   const [refreshKey, setRefreshKey] = React.useState(0);
 
   React.useEffect(() => {
@@ -45,7 +45,7 @@ export function useCandidateDetails({
 
         if (!isMounted) return;
         if (!result.success) {
-          setError('Failed to load candidate data. Please retry.');
+          setError("Failed to load candidate data. Please retry.");
           return;
         }
 
@@ -94,14 +94,20 @@ export function useCandidateDetails({
       } catch (err) {
         console.error('[useCandidateDetails] error:', err);
         if (isMounted)
-          setError(err instanceof Error ? err.message : 'Unable to load candidate details.');
+          setError(
+            err instanceof Error
+              ? err.message
+              : "Unable to load candidate details.",
+          );
       } finally {
         if (isMounted) setLoading(false);
       }
     };
 
-    load();
-    return () => { isMounted = false; };
+    void load();
+    return () => {
+      isMounted = false;
+    };
   }, [candidateId, currentUserEmail, grade, interviewLevel, refreshKey]);
 
   const reload = React.useCallback(() => setRefreshKey((k) => k + 1), []);

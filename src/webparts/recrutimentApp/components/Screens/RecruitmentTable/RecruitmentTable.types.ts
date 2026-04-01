@@ -4,9 +4,9 @@ export type TableMode = "normal" | "checkbox";
 
 export type TableActionMode = "View" | "Upload";
 
-export interface TableAction   { 
-   View: "View";
-    Upload: "Upload";
+export interface TableAction {
+  View: "View";
+  Upload: "Upload";
 
 }
 
@@ -29,7 +29,8 @@ export interface RecruitmentItem {
   requestType: string;
   nationality: string;
   status: string;
-  statusId: number
+  statusId: number;
+  jobCodeID: number;
 }
 
 export interface EvalutionItem {
@@ -42,7 +43,8 @@ export interface EvalutionItem {
   interviewLevels: number;
   grade: string;
   status: string;
-  statusId: number
+  statusId: number;
+  jobCodeID?: number;
 }
 
 export interface HrMember {

@@ -14,7 +14,7 @@ export const useDashboardMetrics = () => {
 
 
     const queries = useMemo(() => {
-        return getRoleBasedFilters(roleIDs);
+        return getRoleBasedFilters(roleIDs, ADGroupData.EmailId[0]);
     }, [roleIDs]);
 
 

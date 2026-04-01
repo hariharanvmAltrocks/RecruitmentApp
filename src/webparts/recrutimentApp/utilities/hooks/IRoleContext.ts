@@ -1,3 +1,5 @@
+import { IUserDetails } from "../../models/master";
+
 export type UserRoleData = {
   ID: number;
   RoleTitle: string;
@@ -10,6 +12,7 @@ export type ResolvedRole = {
   RoleTitle: string;
   ADGroupID: string;
   EmailId: string;
+  userDetails: IUserDetails;
 }
 
 export type ADGroupData = {
@@ -19,6 +22,7 @@ export type ADGroupData = {
   ADGroupIDs: string[];
   RoleDetails: ResolvedRole[];
   EmailId: string[];
+  userDetails: IUserDetails[];
 }
 
 export type ApiUrls = {

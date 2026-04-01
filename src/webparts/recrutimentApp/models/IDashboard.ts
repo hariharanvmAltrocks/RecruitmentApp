@@ -40,6 +40,6 @@ export interface ExternalApiCountItem {
 }
 
 export interface ExternalApiParams {
-    jobCode: string[];
-    workflowStausId: string[];
+    jobCodes: string[];
+    workflowStatus: string[];
 }

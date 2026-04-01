@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ExternalUserType = exports.WorkflowAction = exports.DataFrom = exports.ApplicationStatusId = exports.workflowStatusApi = exports.StatusId = exports.RoleID = exports.DocumentLibraray = exports.ListNames = void 0;
+exports.JobAdvertAlertMsg = exports.PendingCandidateAlertMsg = exports.ExternalUserType = exports.WorkflowAction = exports.DataFrom = exports.ApplicationStatusId = exports.workflowStatusApi = exports.StatusId = exports.RoleID = exports.DocumentLibraray = exports.ListNames = void 0;
 exports.ListNames = {
     HRMSSageList: "HRMS_Sage_List",
     HRMSGradeMaster: "HRMS_Grade_Master",
@@ -98,7 +98,6 @@ exports.StatusId = {
     PendingwithHODtoselectthecandidate: 121,
     Selected: 122,
     InterviewQustionHRLM: 39,
-    InterviewScheduled: 40,
     Completed: 13,
     ReadyforRecruitmentProcess: 155,
     PendingInterviewquestion: 124,
@@ -174,7 +173,9 @@ exports.StatusId = {
     FailedmedicalscreeningUnfit: 156,
     offerdecline: 27,
     onboardingInProcess: 46,
-    Onboarded: 157
+    Onboarded: 157,
+    InterviewScheduled: 40,
+    InterviewInProcess: 39
 };
 exports.workflowStatusApi = {
     HRPending: "WS01",
@@ -250,4 +251,12 @@ exports.ExternalUserType = {
     Agent: "Agent",
     LabourHire: "Labour Hire",
 };
+var PendingCandidateAlertMsg = function (pendingcount) {
+    return "\n          <div style=\"text-align: center;\">\n            <h3>\u26A0\uFE0F Pending Candidate Review.</h3>\n            <p>There is ".concat(pendingcount, " pending candidate currently on hold</p>\n            <p>Please review the candidate and take the necessary action to proceed with interview scheduling.</p>\n          </div>");
+};
+exports.PendingCandidateAlertMsg = PendingCandidateAlertMsg;
+var JobAdvertAlertMsg = function (Dateformat) {
+    return "\n              <div style=\"text-align: center;\">\n                <h3>\u26A0\uFE0F Action cannot be performed.</h3>\n                <p>This job advert is still active and open for recruitment.</p>\n                <p><strong>Expiry Date:</strong> ".concat(Dateformat, "</p>\n                <p>Please try again after it expires.</p>\n              </div>");
+};
+exports.JobAdvertAlertMsg = JobAdvertAlertMsg;
 //# sourceMappingURL=Config.js.map

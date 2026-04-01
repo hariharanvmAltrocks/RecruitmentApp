@@ -799,6 +799,59 @@ var MasterService = /** @class */ (function () {
             });
         });
     };
+    MasterService.prototype.fetchJDEEmailIDs = function (BUCodeID) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var GridResult_3, error_9;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        GridResult_3 = {
+                            LineManagerEmail: "",
+                            HODEmail: "",
+                            HREmail: "",
+                            EXCOEmail: ""
+                        };
+                        if (!BUCodeID) return [3 /*break*/, 2];
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.JDEDataMapping,
+                                Select: "*,BUC/BusineesUnitCode, LineManager/EMail, HOD/EMail, HR/EMail, EXCO/EMail",
+                                Filter: [{ FilterKey: "BUCId", Operator: "eq", FilterValue: BUCodeID }],
+                                FilterCondition: "and",
+                                Expand: "BUC, LineManager, HOD, HR, EXCO",
+                                Topcount: ApiConfig_1.count.Topcount,
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            }).then(function (data) {
+                                var _a, _b, _c, _d;
+                                GridResult_3 = {
+                                    LineManagerEmail: (_a = data[0].LineManager) === null || _a === void 0 ? void 0 : _a.EMail,
+                                    HODEmail: (_b = data[0].HOD) === null || _b === void 0 ? void 0 : _b.EMail,
+                                    HREmail: (_c = data[0].HR) === null || _c === void 0 ? void 0 : _c.EMail,
+                                    EXCOEmail: (_d = data[0].EXCO) === null || _d === void 0 ? void 0 : _d.EMail
+                                };
+                            })];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2: return [2 /*return*/, {
+                            data: GridResult_3,
+                            status: 200,
+                            message: "GetRecruitmentDetails fetched successfully",
+                        }];
+                    case 3:
+                        error_9 = _a.sent();
+                        console.error("Error fetching data in GetRecruitmentDetails:", error_9);
+                        return [2 /*return*/, {
+                                data: {},
+                                status: 500,
+                                message: "Error fetching data from GetRecruitmentDetails",
+                            }];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
     return MasterService;
 }());
 exports.default = MasterService;

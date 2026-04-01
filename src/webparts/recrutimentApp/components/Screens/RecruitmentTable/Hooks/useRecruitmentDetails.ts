@@ -1,14 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
-import {
-  EvalutionItem,
-  RecruitmentItem,
-  RecruitmentTabKey,
-} from "../RecruitmentTable.types";
+import { useEffect, useState } from "react";
+import { EvalutionItem, RecruitmentItem, RecruitmentTabKey } from "../RecruitmentTable.types";
 import { DashboardServices } from "../../../../services/ServiceExport";
 import { ListNames } from "../../../../utilities/Config";
 import { MetricQueryConfig } from "../../Dashboard/metricColumns.config";
 import { useUIState } from "../../../RecrutimentApp/UIStateContext";
 import { MatricID } from "../../../../utilities/ConditionConfig";
+import { userInfo } from "../../../../utilities/hooks/RoleContext";
+import { fetchByMetricId } from "../../../Hooks/reusehooks";
 
 interface UseRecruitmentDetailsResult {
   items: RecruitmentItem[];
@@ -16,239 +14,109 @@ interface UseRecruitmentDetailsResult {
   error?: string;
 }
 
-// const mockRecruitmentItems: RecruitmentItem[] = [
-//   {
-//     id: "vac-1",
-//     jobCode: "MIN-100",
-//     title: "Senior Mining Engineer - Mining",
-//     department: "Mining",
-//     count: 1,
-//     requestType: "New Position",
-//     nationality: "Local",
-//     status: "READY FOR RECRUITMENT",
-//   },
-//   {
-//     id: "vac-2",
-//     jobCode: "ENG-101",
-//     title: "Underground Shift Supervisor - Engineering",
-//     department: "Engineering",
-//     count: 2,
-//     requestType: "New Position",
-//     nationality: "Local",
-//     status: "READY FOR RECRUITMENT",
-//   },
-//   {
-//     id: "vac-3",
-//     jobCode: "SHE-102",
-//     title: "Geotechnical Technician - SHEQ",
-//     department: "SHEQ",
-//     count: 3,
-//     requestType: "New Position",
-//     nationality: "Local",
-//     status: "READY FOR RECRUITMENT",
-//   },
-//   {
-//     id: "vac-4",
-//     jobCode: "PRO-103",
-//     title: "Mechanical Foreman - Processing",
-//     department: "Processing",
-//     count: 4,
-//     requestType: "New Position",
-//     nationality: "Local",
-//     status: "READY FOR RECRUITMENT",
-//   },
-//   {
-//     id: "vac-5",
-//     jobCode: "HUM-104",
-//     title: "Safety Officer - Human Resources",
-//     department: "Human Resources",
-//     count: 5,
-//     requestType: "New Position",
-//     nationality: "Local",
-//     status: "READY FOR RECRUITMENT",
-//   },
-//   {
-//     id: "vac-6",
-//     jobCode: "SUP-105",
-//     title: "Plant Electrician - Supply Chain",
-//     department: "Supply Chain",
-//     count: 1,
-//     requestType: "New Position",
-//     nationality: "Local",
-//     status: "READY FOR RECRUITMENT",
-//   },
-//   {
-//     id: "vac-7",
-//     jobCode: "ICT-106",
-//     title: "HR Coordinator - ICT",
-//     department: "ICT",
-//     count: 2,
-//     requestType: "New Position",
-//     nationality: "Local",
-//     status: "READY FOR RECRUITMENT",
-//   },
-// ];
+
+const mapEvaluationItem = (item: any): EvalutionItem => ({
+  id: item.RecordID,
+  ItemID: item.ID,
+  applicantName: item.ApplicantName,
+  title: item.PositionTitle,
+  nationlity: item.Nationality,
+  interviewDate: item.InterviewDate,
+  interviewLevels: item.interviewLevels,
+  grade: item.JobGrade,
+  status: item.Status,
+  statusId: item.StatusId,
+  jobCodeID: item.JobCodeId,
+});
+
+const mapCandidateItem = (item: any): RecruitmentItem => {
+  const dept = item.DeptDetails?.[0];
+  return {
+    id: dept?.RecordID,
+    ItemID: dept?.ID,
+    jobCode: dept?.JobCode,
+    title: dept?.JobTitleEnglish ?? "",
+    department: dept?.Department,
+    count: dept?.NumberOfPersonNeeded,
+    requestType: dept?.Type,
+    nationality: dept?.Nationality,
+    status: dept?.Status,
+    statusId: dept?.StatusId,
+    jobCodeID: dept?.JobCodeId,
+  };
+};
+
+const mapRecruitmentItem = (item: any): RecruitmentItem => ({
+  id: item?.RecordID,
+  ItemID: item?.ID,
+  jobCode: item?.JobCode,
+  title: item?.JobTitleEnglish ?? "",
+  department: item?.Department,
+  count: item?.NumberOfPersonNeeded,
+  requestType: item?.Type,
+  nationality: item?.Nationality,
+  status: item?.Status,
+  statusId: item?.StatusId,
+  jobCodeID: item?.JobCodeId,
+});
+
 
 export const useRecruitmentDetails = (
   activeTabKey: RecruitmentTabKey,
+  refreshKey: number = 0
 ): UseRecruitmentDetailsResult => {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
+  
+ const { ADGroupData } = userInfo();
   const { MatricID: matricID } = useUIState();
 
+
   useEffect(() => {
-    let isMounted = true;
+    let cancelled = false;
     setLoading(true);
 
     const timer = setTimeout(async () => {
-      if (!isMounted) {
-        return;
+      try {
+        const data = await fetchByMetricId(
+          matricID,
+          ADGroupData.EmailId[0]
+        );
+
+        if (cancelled) return;
+
+        const isEvaluation =
+          matricID === MatricID.EvalutionHR ||
+          matricID === MatricID.EvalutionHOD ||
+          matricID === MatricID.EvalutionLM;
+
+        const mappedItems: any[] = data.map((item: any) => {
+          if (isEvaluation) return mapEvaluationItem(item);
+
+          if (item.__listName === ListNames.HRMSRecruitmentCandidatePersonalDetails) {
+            return mapCandidateItem(item);
+          }
+
+          return mapRecruitmentItem(item);
+        });
+
+        setItems(mappedItems);
+
+      } catch (error) {
+        console.error(error);
+        if (!cancelled) setItems([]);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      const Filter = MetricQueryConfig[matricID];
-      const condition = "and";
-      let response: any;
-      const filterObj = Array.isArray(Filter) ? Filter[0] : Filter;
-
-      if (matricID != 0) {
-        switch (filterObj.ListName) {
-          case ListNames.HRMSNewPositionRequest:
-            response = await DashboardServices.GetNPAEPVRRDetails(
-              filterObj.Filter,
-              condition,
-            );
-            break;
-          case ListNames.HRMSRecruitmentDptDetails:
-            //  if(matricID === Ma)
-            response = await DashboardServices.GetRecruitmentDetails(
-              filterObj.Filter[0],
-              condition,
-            );
-            break;
-          case ListNames.HRMSRecruitmentCandidatePersonalDetails:
-            response = await DashboardServices.GetCandidateDetails(
-              filterObj.Filter[0],
-              condition,
-            );
-            break;
-          case ListNames.HRMSSelectedCandidateDetailsByHOD:
-            response = await DashboardServices.GetSelectedCandidate(
-              filterObj.Filter[0],
-              condition,
-            );
-            break;
-        }
-      } else {
-        response = await DashboardServices.GetRecruitmentDetails([], condition);
-      }
-      let mappedItems: any[];
-    if (matricID === MatricID.EvalutionHR || matricID === MatricID.EvalutionHOD || matricID === MatricID.EvalutionLM) {
-
-        mappedItems = response?.data?.map((item: any) => ({
-
-          id: item.RecordID,
-
-          ItemID: item.ID,
-
-          applicantName: item.ApplicantName,
-
-          title: item.PositionTitle,
-
-          nationlity: item.Nationality,
-
-          interviewDate: item.InterviewDate,
-
-          interviewLevels: item.interviewLevels,
-
-          grade: item.JobGrade,
-
-          status: item.Status,
-
-          statusId: item.StatusId,
-
-          jobCodeID: item.JobCodeId,
-
-        })) ?? [];
-
-      } else {
-
-        if (filterObj.ListName === ListNames.HRMSRecruitmentCandidatePersonalDetails) {
-
-          mappedItems = response?.data?.map((item: any) => ({
-
-            id: item.DeptDetails[0]?.RecordID,
-
-            ItemID: item.DeptDetails[0]?.ID,
-
-            jobCode: item?.DeptDetails[0]?.JobCode,
-
-            title: item?.DeptDetails[0]?.JobTitleEnglish ?? "",
-
-            department: item?.DeptDetails[0]?.Department,
-
-            count: item.DeptDetails[0]?.NumberOfPersonNeeded,
-
-            requestType: item.DeptDetails[0]?.Type,
-
-            nationality: item.DeptDetails[0]?.Nationality,
-
-            status: item.DeptDetails[0]?.Status,
-
-            statusId: item.DeptDetails[0]?.StatusId,
-
-            jobCodeID: item.DeptDetails[0]?.JobCodeId,
-
-          })) ?? [];
-
-        } else {  
-
-
-
-          mappedItems = response?.data?.map((item: any) => ({
-
-            id: item?.RecordID,
-
-            ItemID: item?.ID,
-
-            jobCode: item?.JobCode,
-
-            title: item?.JobTitleEnglish ?? "",
-
-            department: item?.Department,
-
-            count: item.NumberOfPersonNeeded,
-
-            requestType: item.Type,
-
-            nationality: item.Nationality,
-
-            status: item.Status,
-
-            statusId: item.StatusId,
-
-            jobCodeID: item.JobCodeId,
-
-          })) ?? [];
-
-        }
-
-      }
-      setItems(mappedItems);
-      setLoading(false);
     }, 1100);
 
     return () => {
-      isMounted = false;
+      cancelled = true;
       clearTimeout(timer);
     };
-  }, [matricID]);
+  }, [matricID, refreshKey]);
 
-  const memoizedItems = useMemo(() => items, [items]);
-
-  return {
-    items: memoizedItems,
-    loading,
-  };
+  return { items, loading };
 };
 
 export type { UseRecruitmentDetailsResult };
