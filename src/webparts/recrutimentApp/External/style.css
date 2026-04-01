@@ -73,6 +73,13 @@
   display: none !important;
 } 
 
+#CommentsWrapper {
+  display: none !important;
+}
+#SimpleFooter {
+  display: none !important;
+}
+
 :global(#workbenchPageContent),
 :global(body),
 :global(*) {
