@@ -174,16 +174,18 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   to   { opacity: 1; transform: translateY(0);    }
 }
 
-// ── Flat doc grid (Background Verification) ───────────────────────────────────
+// ── Flat doc grid ─────────────────────────────────────────────────────────────
 .docGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
   gap: 10px;
   padding: 16px 20px;
+  animation: fadeDown .2s ease both;
 }
 
 // ── Document row ──────────────────────────────────────────────────────────────
 .docRow {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -191,7 +193,6 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   background: $bg-doc;
   border: 1px solid $border;
   border-radius: $radius-doc;
-  text-decoration: none;
   transition: background $transition, border-color $transition, transform $transition, box-shadow $transition;
 
   &:hover {
@@ -199,7 +200,13 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
     border-color: #C5CEDF;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(11,17,32,.08);
+
+    .docRowActions {
+      opacity: 1;
+      pointer-events: auto;
+    }
   }
+
   &:active { transform: translateY(0); }
 }
 
@@ -239,37 +246,59 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   font-weight: 400;
 }
 
-.docRowDownload {
+// ── Document row action buttons (eye + download) ───────────────────────────────
+.docRowActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   flex-shrink: 0;
-  width: 18px;
-  height: 18px;
-  color: #CBD5E1;
-  transition: color $transition;
-  svg { width: 16px; height: 16px; }
-
-  .docRow:hover & { color: #3B82F6; }
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity $transition;
 }
 
-// ── Sub-category list (nested groups: Offer Letter, Work Permit, etc.) ────────
+.docActionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  border: 1px solid #D4DCE9;
+  background: #FFFFFF;
+  color: #5A6E94;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background $transition, color $transition, border-color $transition, transform $transition;
+
+  svg { width: 15px; height: 15px; }
+
+  &:hover {
+    background: #3B82F6;
+    border-color: #3B82F6;
+    color: #fff;
+    transform: scale(1.05);
+  }
+
+  &:active { transform: scale(0.97); }
+}
+
+// ── Sub-category list ─────────────────────────────────────────────────────────
 .subCategoryList {
   display: flex;
   flex-direction: column;
 }
 
-// thin divider between sub-categories
 .subDivider {
   height: 1px;
   background: $border;
   margin: 0 20px;
 }
 
-// // ── Sub-category wrapper ──────────────────────────────────────────────────────
 .subCategory {
   background: none;
 }
 
-// ── Sub-category header ───────────────────────────────────────────────────────
-// Compact row — NOT a card, NOT a large icon block
 .subCategoryHeader {
   display: flex;
   align-items: center;
@@ -285,7 +314,6 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   &:hover { background: rgba(0,0,0,.02); }
 }
 
-// Thin coloured left pill using --sub-accent
 .subCategoryBar {
   flex-shrink: 0;
   width: 3px;
@@ -294,7 +322,6 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   background: var(--sub-accent, #94A3B8);
 }
 
-// Small tinted icon — 32px, NOT 44px
 .subCategoryIconWrap {
   flex-shrink: 0;
   display: flex;
@@ -332,7 +359,6 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   color: $text-muted;
 }
 
-// Plain chevron (no bubble)
 .subChevron {
   flex-shrink: 0;
   display: flex;
@@ -345,23 +371,162 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   svg { width: 14px; height: 14px; }
 }
 
-// .subChevronOpen {
-//   // pointing up = open (no rotation needed; polyline already points up)
-// }
-
-// When closed, rotate to point down
 .subChevron:not(.subChevronOpen) {
   transform: rotate(180deg);
 }
 
-// ── Sub-category document grid ────────────────────────────────────────────────
-// Same card style as .docGrid but indented to sit under the sub-header label
 .subDocGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 8px;
-  // left indent = bar(3) + gap(10) + icon(32) + gap(10) + 16px left padding = ~71px
   padding: 4px 20px 14px 71px;
+}
+
+// ── Iframe Preview Modal ───────────────────────────────────────────────────────
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 17, 32, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: overlayFadeIn .18s ease both;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modalBox {
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 900px;
+  height: 82vh;
+  max-height: 860px;
+  overflow: hidden;
+  box-shadow:
+    0 4px 16px rgba(11,17,32,.08),
+    0 24px 80px rgba(11,17,32,.28);
+  animation: modalSlideUp .24s cubic-bezier(.34,1.3,.64,1) both;
+}
+
+@keyframes modalSlideUp {
+  from { transform: translateY(28px) scale(0.97); opacity: 0; }
+  to   { transform: translateY(0)    scale(1);    opacity: 1; }
+}
+
+// ── Modal header bar ──────────────────────────────────────────────────────────
+.modalHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid $border;
+  background: #F7F9FC;
+  flex-shrink: 0;
+}
+
+.modalFileIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #DDE4F0;
+  color: #5A6E94;
+  flex-shrink: 0;
+
+  svg { width: 16px; height: 16px; }
+}
+
+.modalFileName {
+  flex: 1;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: $text-body;
+  font-family: $font;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modalHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+// Download button inside modal header
+.modalDownloadBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #D4DCE9;
+  background: #FFFFFF;
+  color: $text-body;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: $font;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background $transition, border-color $transition, color $transition;
+
+  svg { width: 14px; height: 14px; }
+
+  &:hover {
+    background: #3B82F6;
+    border-color: #3B82F6;
+    color: #fff;
+  }
+}
+
+// Close (X) button inside modal header
+.modalCloseBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #D4DCE9;
+  background: #FFFFFF;
+  color: $text-muted;
+  cursor: pointer;
+  transition: background $transition, color $transition, border-color $transition;
+
+  svg { width: 14px; height: 14px; }
+
+  &:hover {
+    background: #FEE2E2;
+    border-color: #FECACA;
+    color: #DC2626;
+  }
+}
+
+// ── iframe wrapper ────────────────────────────────────────────────────────────
+.modalIframeWrap {
+  flex: 1;
+  overflow: hidden;
+  background: #F1F4F9;
+}
+
+.modalIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
 }
 
 // ── Responsive ────────────────────────────────────────────────────────────────
@@ -371,4 +536,9 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   .docGrid, .subDocGrid { grid-template-columns: 1fr; padding-left: 14px; }
   .categoryHeader { padding: 14px; }
   .subCategoryHeader { padding: 10px 14px 10px 12px; }
+
+  .modalOverlay { padding: 12px; }
+  .modalBox { height: 90vh; border-radius: 14px; }
+  .modalHeader { padding: 12px; }
+  .modalDownloadBtn span { display: none; } // hide text label on tiny screens
 }
