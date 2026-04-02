@@ -19,7 +19,7 @@ var ReviewScoreCardContent = function () {
                 hook.setSelectedPositionId(id);
                 hook.setSelectedPositionText(text);
                 hook.setErrors(tslib_1.__assign(tslib_1.__assign({}, hook.errors), { position: false }));
-            }, onSubmit: hook.submitDecision, onClose: hook.closeReview, currentRoleId: currentRoleId, isLevel2Status: hook.isLevel2(hook.reviewingCandidate.statusId) })))));
+            }, onClose: hook.closeReview, currentRoleId: currentRoleId, isLevel2Status: hook.isLevel2(hook.reviewingCandidate.statusId), submitDeps: hook.submitDeps })))));
 };
 var ReviewScoreCard = function (props) {
     var _a;

@@ -20,6 +20,7 @@ var Useconfirmassignment_1 = require("./Hooks/Useconfirmassignment");
 var useModalPopup_1 = require("../../Comman/ModalPopup/useModalPopup");
 var Tabs_1 = tslib_1.__importDefault(require("../../Comman/Tabs/Tabs"));
 var RoleContext_1 = require("../../../utilities/hooks/RoleContext");
+var Evaluationformservice_1 = require("../Evalution/Evaluationservice/Evaluationformservice");
 var AssignHRPopup = react_1.default.lazy(function () {
     return Promise.resolve().then(function () { return tslib_1.__importStar(require("./Components/AssignHRPopup/AssignHRPopup")); }).then(function (module) { return ({
         default: module.AssignHRPopup,
@@ -121,56 +122,59 @@ var RecruitmentTable = function () {
     // };
     var processingRef = (0, react_1.useRef)(false);
     var handleAction = (0, react_1.useCallback)(function (item) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var ItemID, statusId, isEvaluationFlow, evalutionIDs, routeMap, route;
+        var ItemID, statusId, isEvaluationFlow, alreadySubmitted, evalutionIDs, routeMap, route;
         var _a;
         return tslib_1.__generator(this, function (_b) {
-            if (processingRef.current)
-                return [2 /*return*/];
-            processingRef.current = true;
-            try {
-                ItemID = item.ItemID, statusId = item.statusId;
-                isEvaluationFlow = matricID === ConditionConfig_1.MatricID.EvalutionHR ||
-                    matricID === ConditionConfig_1.MatricID.EvalutionLM ||
-                    matricID === ConditionConfig_1.MatricID.EvalutionHOD ||
-                    matricID === ConditionConfig_1.MatricID.EvalutionEXCO;
-                if (isEvaluationFlow) {
-                    // const data: IEvaluValidate = {
-                    //   ID: ItemID,
-                    //   currentEmailID: ADGroupData.EmailId[0],
-                    //   statusId,
-                    // };
-                    // const res = await DashboardServices.EvalutionValidation(data);
-                    // if (!res.data) {
-                    //   showModal({
-                    //     type: "warning",
-                    //     title: "Already Submitted",
-                    //     message: "You have already submitted the evaluation.",
-                    //     confirmLabel: "OK",
-                    //     onConfirm: closeModal,
-                    //   });
-                    //   return; // processingRef resets in finally ✅
-                    // }
-                }
-                evalutionIDs = [
-                    ConditionConfig_1.MatricID.EvalutionHR,
-                    ConditionConfig_1.MatricID.EvalutionLM,
-                    ConditionConfig_1.MatricID.EvalutionHOD,
-                    ConditionConfig_1.MatricID.EvalutionEXCO,
-                ];
-                routeMap = tslib_1.__assign((_a = {}, _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.ReviewProfileHR] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewProfileLM] = "/CandidateTable", _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/ReviewScoreCard", _a), Object.fromEntries(evalutionIDs.map(function (id) { return [id, "/Evalution"]; })));
-                route = routeMap[matricID];
-                if (route) {
-                    navigate(route, { state: { ID: ItemID, department: item.department } });
-                    return [2 /*return*/];
-                }
-                drawerMeta.current = { isOpen: true, selectedType: item.requestType };
-                openDrawer(ItemID);
+            switch (_b.label) {
+                case 0:
+                    if (processingRef.current)
+                        return [2 /*return*/];
+                    processingRef.current = true;
+                    _b.label = 1;
+                case 1:
+                    _b.trys.push([1, , 4, 5]);
+                    ItemID = item.ItemID, statusId = item.statusId;
+                    isEvaluationFlow = matricID === ConditionConfig_1.MatricID.EvalutionHR ||
+                        matricID === ConditionConfig_1.MatricID.EvalutionLM ||
+                        matricID === ConditionConfig_1.MatricID.EvalutionHOD ||
+                        matricID === ConditionConfig_1.MatricID.EvalutionEXCO;
+                    if (!isEvaluationFlow) return [3 /*break*/, 3];
+                    return [4 /*yield*/, (0, Evaluationformservice_1.checkIsAlreadySubmitted)(ItemID, ADGroupData.EmailId[0])];
+                case 2:
+                    alreadySubmitted = _b.sent();
+                    if (alreadySubmitted) {
+                        showModal({
+                            type: "warning",
+                            title: "Already Submitted",
+                            message: "The scorecard for this candidate has already been submitted.",
+                            confirmLabel: "OK",
+                            onConfirm: closeModal,
+                        });
+                        return [2 /*return*/];
+                    }
+                    _b.label = 3;
+                case 3:
+                    evalutionIDs = [
+                        ConditionConfig_1.MatricID.EvalutionHR,
+                        ConditionConfig_1.MatricID.EvalutionLM,
+                        ConditionConfig_1.MatricID.EvalutionHOD,
+                        ConditionConfig_1.MatricID.EvalutionEXCO,
+                    ];
+                    routeMap = tslib_1.__assign((_a = {}, _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.ReviewProfileHR] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewProfileLM] = "/CandidateTable", _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/ReviewScoreCard", _a), Object.fromEntries(evalutionIDs.map(function (id) { return [id, "/Evalution"]; })));
+                    route = routeMap[matricID];
+                    if (route) {
+                        navigate(route, { state: { ID: ItemID, department: item.department } });
+                        return [2 /*return*/];
+                    }
+                    drawerMeta.current = { isOpen: true, selectedType: item.requestType };
+                    openDrawer(ItemID);
+                    return [3 /*break*/, 5];
+                case 4:
+                    // ✅ ALWAYS resets, no matter which return path was taken
+                    processingRef.current = false;
+                    return [7 /*endfinally*/];
+                case 5: return [2 /*return*/];
             }
-            finally {
-                // ✅ ALWAYS resets, no matter which return path was taken
-                processingRef.current = false;
-            }
-            return [2 /*return*/];
         });
     }); }, 
     // ✅ Complete dependency array

@@ -81,3 +81,10 @@ export interface SubmitParams {
   recruitmentID:    number;
   statusId:         number;
 }
+
+export type ErrorsType = {
+  decision: boolean;
+  comment:  boolean;
+  checkbox: boolean;
+  position: boolean;
+};

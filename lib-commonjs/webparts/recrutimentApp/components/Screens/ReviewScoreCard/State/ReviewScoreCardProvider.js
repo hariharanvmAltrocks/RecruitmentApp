@@ -1,4 +1,7 @@
 "use strict";
+// State/ReviewScoreCardProvider.tsx
+// submitDeps object context-இல் expose பண்ணப்படுகிறது.
+// CandidateReviewModal → HODDecisionPanel → SubmitReviewScoreCard இந்த chain-க்கு தேவை.
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReviewScoreCardProvider = exports.useReviewScoreCardContext = void 0;
 var tslib_1 = require("tslib");
@@ -15,8 +18,31 @@ exports.useReviewScoreCardContext = useReviewScoreCardContext;
 var ReviewScoreCardProvider = function (_a) {
     var recruitmentId = _a.recruitmentId, currentUserEmail = _a.currentUserEmail, department = _a.department, children = _a.children;
     var hook = (0, useReviewScorecard_1.useReviewScorecard)(recruitmentId, currentUserEmail, department);
+    var submitDeps = {
+        reviewingCandidate: hook.reviewingCandidate,
+        reviewData: hook.reviewData,
+        hodDecision: hook.hodDecision,
+        decisionComment: hook.decisionComment,
+        confirmed: hook.confirmed,
+        selectedPositionId: hook.selectedPositionId,
+        currentUserEmail: currentUserEmail,
+        shouldShowPositionId: hook.shouldShowPositionId,
+        onSuccess: function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        hook.closeReview();
+                        return [4 /*yield*/, hook.refreshCandidates()];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        }); },
+    };
     var value = {
         recruitmentId: recruitmentId,
+        currentUserEmail: currentUserEmail,
         candidates: hook.candidates,
         candidatesLoading: hook.candidatesLoading,
         paginatedCandidates: hook.paginatedCandidates,
@@ -63,6 +89,7 @@ var ReviewScoreCardProvider = function (_a) {
         shouldShowPositionId: hook.shouldShowPositionId,
         submitDecision: hook.submitDecision,
         isLevel2: hook.isLevel2,
+        submitDeps: submitDeps,
     };
     return (React.createElement(ReviewScoreCardContext.Provider, { value: value }, children));
 };

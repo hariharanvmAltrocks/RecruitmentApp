@@ -55,10 +55,10 @@ const ReviewScoreCardContent: React.FC = () => {
                             hook.setSelectedPositionText(text);
                             hook.setErrors({ ...hook.errors, position: false });
                         }}
-                        onSubmit={hook.submitDecision}
                         onClose={hook.closeReview}
                         currentRoleId={currentRoleId}
                         isLevel2Status={hook.isLevel2(hook.reviewingCandidate.statusId)}
+                        submitDeps={hook.submitDeps}
                     />
                 )}
             </AnimatePresence>

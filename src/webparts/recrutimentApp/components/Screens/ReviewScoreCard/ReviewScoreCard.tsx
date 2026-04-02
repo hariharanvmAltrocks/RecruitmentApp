@@ -15,8 +15,7 @@ interface ReviewScoreCardProps {
 const ReviewScoreCardContent: React.FC = () => {
   const { ADGroupData }  = useRoleContext();
   const currentRoleId    = ADGroupData?.roleIDs?.[0] || 0;
-
-  const hook = useReviewScoreCardContext();
+  const hook             = useReviewScoreCardContext();
 
   return (
     <div>
@@ -68,20 +67,21 @@ const ReviewScoreCardContent: React.FC = () => {
               hook.setSelectedPositionText(text);
               hook.setErrors({ ...hook.errors, position: false });
             }}
-            onSubmit={hook.submitDecision}
             onClose={hook.closeReview}
 
             currentRoleId={currentRoleId}
             isLevel2Status={hook.isLevel2(hook.reviewingCandidate.statusId)}
+            submitDeps={hook.submitDeps}
           />
         )}
       </AnimatePresence>
     </div>
   );
 };
+
 const ReviewScoreCard: React.FC<ReviewScoreCardProps> = ({ recruitmentId }) => {
-  const location = useLocation();
-  const routeState = location.state as {
+  const location    = useLocation();
+  const routeState  = location.state as {
     recruitmentId?: number;
     ID?:            number;
     candidateId?:   number;
@@ -89,13 +89,13 @@ const ReviewScoreCard: React.FC<ReviewScoreCardProps> = ({ recruitmentId }) => {
   } | undefined;
 
   const effectiveRecruitmentId = Number(
-    recruitmentId ?? routeState?.recruitmentId ?? routeState?.ID ?? 0
+    recruitmentId ?? routeState?.recruitmentId ?? routeState?.ID ?? 0,
   );
   const departmentFromRoute = routeState?.department || '';
-  console.log('[ReviewScoreCard],departmentFromRoute:', departmentFromRoute);
-  console.log('[ReviewScoreCard] recruitmentId:', effectiveRecruitmentId, 'routeState:', routeState);
-  const { ADGroupData } = useRoleContext();
+
+  const { ADGroupData }  = useRoleContext();
   const currentUserEmail = ADGroupData?.EmailId?.[0] || '';
+
   return (
     <ReviewScoreCardProvider
       recruitmentId={effectiveRecruitmentId}

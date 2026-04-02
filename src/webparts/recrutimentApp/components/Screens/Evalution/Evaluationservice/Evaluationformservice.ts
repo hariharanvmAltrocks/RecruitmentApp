@@ -13,8 +13,6 @@ const _common   = new CommonService();
 const _master   = new MasterService();
 const _questApi = new GetPortalJobs();
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
 export interface EvaluationFormQuestion {
   id:       number;
   question: string;
@@ -46,13 +44,14 @@ export interface EvaluationFormResult {
   jobTitleEn:          string;
   jobTitleFr:          string;
   questions:           EvaluationFormQuestion[];
+  isAlreadySubmitted:  boolean;   
 }
 
 export interface SubmitScorecardParams {
   recruitmentId:         number;
   panelId:               number;
   roleId:                number;
-  interviewPersonNameId: string;      // SP user numeric ID as string
+  interviewPersonNameId: string;     
   qualifications:        number | null;
   experience:            number | null;
   knowledge:             number | null;
@@ -62,15 +61,13 @@ export interface SubmitScorecardParams {
   expatLocal:            number | null;
   otherCriteria:         number | null;
   recommendation:        'consider' | 'doNotConsider';
-  evaluationFeedback:    string;      // conditional (shown when any rating ≤ 2)
+  evaluationFeedback:    string;   
   overallFeedback:       string;
-  /** Formatted as [{"Q1":3},{"Q2":1},...] — old code format */
   questionScores:        Record<string, number>[];
   candidateId:           number;
-  jobRequestId:          string;      // for portal UpdateCandidateStatus
+  jobRequestId:          string;      
 }
 
-// ── Empty result ──────────────────────────────────────────────────────────────
 
 const EMPTY = (candidateId: number): EvaluationFormResult => ({
   success: false, candidateId, applicantName: '', nationality: '', nationalityCode: '',
@@ -78,10 +75,8 @@ const EMPTY = (candidateId: number): EvaluationFormResult => ({
   interviewLevel: '', disability: '', conflictsOfInterest: '', positionTitle: '',
   grade: '', recruitmentId: 0, jobCodeId: 0, panelMembers: [],
   currentUserPanelId: null, currentUserGuid: null,
-  reviewerName: '', jobTitleEn: '', jobTitleFr: '', questions: [],
+  reviewerName: '', jobTitleEn: '', jobTitleFr: '', questions: [], isAlreadySubmitted: false,
 });
-
-// ── getEvaluationFormData ─────────────────────────────────────────────────────
 
 export async function getEvaluationFormData(
   candidateId:      number,
@@ -90,7 +85,6 @@ export async function getEvaluationFormData(
   console.log('[getEvaluationFormData] START — candidateId:', candidateId, 'email:', currentUserEmail);
 
   try {
-    // ── Step 1: Get current user SP Id + candidate data ───────────────────────
     const [candidateRows, currentUserGuid] = await Promise.all([
       SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
@@ -123,23 +117,11 @@ export async function getEvaluationFormData(
       NationalityCode: raw.NationalityCode,
     });
     console.log('[getEvaluationFormData] currentUserGuid (SP user Id):', currentUserGuid);
-
-    // ── Step 2: Fetch HRMSInterviewPanelDetails ───────────────────────────────
-    // OLD CODE FILTER: FilterKey: "CandidateIDId" (NOT "CandidateID/Id")
-    // OLD CODE SELECT: does NOT expand InterviewPanel, stores InterviewPanel as Id number
-    //
-    // InterviewServices.GetInterviewPanelDetails uses:
-    //   Select: "ID, CandidateID/ID, RecruitmentID/ID, InterviewLevel, InterviewPanel/Id,
-    //            InterviewPanel/Title, InterviewPanel/EMail, IsScoreSheetUploaded"
-    //   Expand: "InterviewPanel, RecruitmentID, CandidateID"
-    //   Filter: [{ FilterKey: "CandidateIDId", ... }]   ← CandidateIDId (NOT CandidateID/Id)
-
     const [panelRows, reviewerRes] = await Promise.all([
       SPServices.SPReadItems({
         Listname: ListNames.HRMSInterviewPanelDetails,
         Select:   'ID,CandidateID/ID,RecruitmentID/ID,InterviewLevel,InterviewPanel/Id,InterviewPanel/Title,InterviewPanel/EMail,IsScoreSheetUploaded',
         Expand:   'InterviewPanel,RecruitmentID,CandidateID',
-        // ✅ OLD CODE EXACT FILTER KEY: "CandidateIDId" (not "CandidateID/Id")
         Filter:   [{ FilterKey: 'CandidateIDId', Operator: 'eq', FilterValue: candidateId }],
       }),
       _master.GetUserDetails(
@@ -151,7 +133,7 @@ export async function getEvaluationFormData(
     console.log('[getEvaluationFormData] panelRows detail:', JSON.stringify(
       (panelRows as any[]).map((p: any) => ({
         ID:               p.ID,
-        InterviewPanelId: p.InterviewPanel?.Id,    // SP user Id (numeric)
+        InterviewPanelId: p.InterviewPanel?.Id,   
         Email:            p.InterviewPanel?.EMail,
         Level:            p.InterviewLevel,
         Uploaded:         p.IsScoreSheetUploaded,
@@ -160,15 +142,9 @@ export async function getEvaluationFormData(
       }))
     ));
 
-    // ── Step 3: Find current user's panel entry ────────────────────────────────
-    // OLD CODE: panel.InterviewPanel === Number(currentUserKey)
-    // InterviewPanel field after expand = { Id, Title, EMail }
-    // So compare: InterviewPanel.Id (number) === Number(currentUserGuid)
-
     let currentUserPanel: any = null;
 
     if (currentUserGuid) {
-      // Primary: match by InterviewPanel.Id (SP user numeric Id)
       currentUserPanel = (panelRows as any[]).find(
         (p: any) => Number(p.InterviewPanel?.Id) === Number(currentUserGuid)
       );
@@ -177,8 +153,6 @@ export async function getEvaluationFormData(
         'vs currentUserGuid:', currentUserGuid
       );
     }
-
-    // Fallback: match by email (in case SP Id resolution differs)
     if (!currentUserPanel && currentUserEmail) {
       currentUserPanel = (panelRows as any[]).find(
         (p: any) =>
@@ -186,10 +160,7 @@ export async function getEvaluationFormData(
       );
       console.log('[getEvaluationFormData] Panel match by Email fallback:', currentUserPanel?.ID ?? 'NOT FOUND');
     }
-
-    // Fallback 2: match by recruitmentId too (old code also checks RecruitmentID)
     if (!currentUserPanel && currentUserGuid && recruitmentId) {
-      // Old code: matchingPanels filters by CandidateID AND RecruitmentID
       const matchingByRecruit = (panelRows as any[]).filter(
         (p: any) => p.RecruitmentID?.ID === recruitmentId
       );
@@ -210,8 +181,6 @@ export async function getEvaluationFormData(
       console.warn('[getEvaluationFormData] Panel Ids list:', (panelRows as any[]).map((p: any) => p.InterviewPanel?.Id));
       console.warn('[getEvaluationFormData] Expected currentUserGuid:', currentUserGuid, '(type:', typeof currentUserGuid, ')');
     }
-
-    // ── Step 4: Build panel member display names ───────────────────────────────
     const uniqueEmails: string[] = Array.from(new Set(
       (panelRows as any[]).map((p: any) => p.InterviewPanel?.EMail).filter(Boolean)
     ));
@@ -249,8 +218,6 @@ export async function getEvaluationFormData(
 
     console.log('[getEvaluationFormData] reviewerName:', reviewerName);
     console.log('[getEvaluationFormData] panelMembers:', panelMembers);
-
-    // ── Step 5: Grade + questions ──────────────────────────────────────────────
     let grade          = raw.JobGrade ?? '';
     let interviewLevel = raw.InterviewLevel ?? '';
     let questions: EvaluationFormQuestion[] = [];
@@ -314,6 +281,7 @@ export async function getEvaluationFormData(
       jobTitleEn,
       jobTitleFr,
       questions,
+      isAlreadySubmitted:  currentUserPanel?.IsScoreSheetUploaded === 'Yes',
     };
 
     console.log('[getEvaluationFormData] RESULT:', {
@@ -326,8 +294,6 @@ export async function getEvaluationFormData(
       recruitmentId:      result.recruitmentId,
       jobRequestId,
     });
-
-    // Store jobRequestId on result for submit use
     (result as any)._jobRequestId = jobRequestId;
 
     return result;
@@ -362,8 +328,6 @@ export async function submitScorecard(
   });
 
   try {
-    // ── Step 1: Build scorecard payload — exact old code column names ──────────
-    // List: HRMSCandidateScoreCard
     const scorecardObj: Record<string, any> = {
       RelevantQualification:            String(params.qualifications  ?? ''),
       ReleventExperience:               String(params.experience      ?? ''),
@@ -371,26 +335,20 @@ export async function submitScorecard(
       EnergyLevel:                      String(params.energyLevel     ?? ''),
       MeetJobRequirement:               String(params.jobRequirements ?? ''),
       ContributeTowardsCultureRequried: String(params.cultureFit      ?? ''),
-      Experience:                       String(params.expatLocal      ?? ''),  // Expat/Congolese column
+      Experience:                       String(params.expatLocal      ?? ''),  
       OtherCriteriaScore:               String(params.otherCriteria   ?? ''),
       ConsiderForEmployment:            params.recommendation === 'consider' ? 'Yes' : 'No',
       OverAllEvaluationFeedback:        params.overallFeedback,
-      // Conditional feedback — only when any rating ≤ 2 (old code: shouldShowTextArea)
       ...(params.evaluationFeedback ? { Feedback: params.evaluationFeedback } : {}),
-      // Relation columns
       RecruitmentIDId:       params.recruitmentId,
       InterviewPanelIDId:    params.panelId,
       RoleId:                params.roleId      ? Number(params.roleId)               : null,
       InterviewPersonNameId: params.interviewPersonNameId
         ? Number(params.interviewPersonNameId)
         : null,
-      // QuestionJson: [{"Q1":3},{"Q2":1},...] — old code exact format
       QuestionJson: JSON.stringify(params.questionScores),
     };
-
     console.log('[submitScorecard] Inserting into HRMSCandidateScoreCard:', scorecardObj);
-
-    // ── Step 2: Insert scorecard ───────────────────────────────────────────────
     const insertResponse: any = await SPServices.SPAddItem({
       Listname:    ListNames.HRMSCandidateScoreCard,
       RequestJSON: scorecardObj,
@@ -407,8 +365,6 @@ export async function submitScorecard(
       return { success: false, message: 'Failed to submit scorecard.' };
     }
 
-    // ── Step 3: Mark panel IsScoreSheetUploaded = 'Yes' ───────────────────────
-    // List: HRMSInterviewPanelDetails
     console.log('[submitScorecard] Updating HRMSInterviewPanelDetails ID:', params.panelId, '→ IsScoreSheetUploaded: Yes');
     await SPServices.SPUpdateItem({
       Listname:    ListNames.HRMSInterviewPanelDetails,
@@ -416,13 +372,10 @@ export async function submitScorecard(
       ID:          params.panelId,
     });
 
-    // ── Step 4: Re-fetch all panels for this candidate, count Level 1 uploaded ─
-    // OLD CODE: FilterKey: "CandidateID" (not CandidateIDId — different from fetch above!)
     console.log('[submitScorecard] Re-fetching panels for candidateId:', params.candidateId);
     const updatedPanelRows: any[] = await SPServices.SPReadItems({
       Listname: ListNames.HRMSInterviewPanelDetails,
       Select:   'ID,InterviewLevel,IsScoreSheetUploaded',
-      // OLD CODE uses: FilterKey: "CandidateID" in updatedInterviewPanelResponse
       Filter:   [{ FilterKey: 'CandidateIDId', Operator: 'eq', FilterValue: params.candidateId }],
     });
 
@@ -431,12 +384,8 @@ export async function submitScorecard(
 
     console.log('[submitScorecard] Level1 panels total:', level1Panels.length, '| uploaded:', uploadedCount);
 
-    // ── Step 5: If ALL Level 1 panels submitted → trigger HOD workflow ─────────
     if (level1Panels.length > 0 && uploadedCount === level1Panels.length) {
       console.log('[submitScorecard] ALL Level1 submitted → triggering HOD workflow');
-
-      // ── Step 5a: Portal API — UpdateCandidateStatus(pendingHODSelection) ──────
-      // OLD CODE: uses CandidateData.JobRequestID (from SP candidate record)
       if (params.jobRequestId) {
         try {
           const portalPayload = {
@@ -454,19 +403,12 @@ export async function submitScorecard(
       } else {
         console.warn('[submitScorecard] No jobRequestId — skipping portal API call');
       }
-
-      // ── Step 5b: SP update candidate record ────────────────────────────────
-      // List: HRMSRecruitmentCandidatePersonalDetails
-      //   IsScoreSheetUploaded = 'Yes'
-      //   ActionId = 1 (WorkflowAction.Approved)
-      //   ItemCreated = 'Yes'
-      // OLD CODE: ID = props.stateValue?.ID (candidateId)
       console.log('[submitScorecard] Updating HRMSRecruitmentCandidatePersonalDetails ID:', params.candidateId);
       await SPServices.SPUpdateItem({
         Listname:    ListNames.HRMSRecruitmentCandidatePersonalDetails,
         RequestJSON: {
           IsScoreSheetUploaded: 'Yes',
-          ActionId:    WorkflowAction.Approved,  // 1
+          ActionId:    WorkflowAction.Approved, 
           ItemCreated: 'Yes',
         },
         ID: params.candidateId,
@@ -487,7 +429,50 @@ export async function submitScorecard(
   }
 }
 
-// ── Helper — SP user Id by email ──────────────────────────────────────────────
+export async function checkIsAlreadySubmitted(
+  candidateId:      number,
+  currentUserEmail: string
+): Promise<boolean> {
+  console.log('[checkIsAlreadySubmitted] candidateId:', candidateId, 'email:', currentUserEmail);
+  try {
+    const [currentUserGuid, panelRows] = await Promise.all([
+      _getUserGuid(currentUserEmail),
+      SPServices.SPReadItems({
+        Listname: ListNames.HRMSInterviewPanelDetails,
+        Select:   'ID,InterviewPanel/Id,InterviewPanel/EMail,IsScoreSheetUploaded',
+        Expand:   'InterviewPanel',
+        Filter:   [{ FilterKey: 'CandidateIDId', Operator: 'eq', FilterValue: candidateId }],
+      }),
+    ]);
+
+    const rows = panelRows as any[];
+    console.log('[checkIsAlreadySubmitted] panelRows count:', rows.length, '| currentUserGuid:', currentUserGuid);
+    let userPanel: any = null;
+
+    if (currentUserGuid) {
+      userPanel = rows.find(
+        (p: any) => Number(p.InterviewPanel?.Id) === Number(currentUserGuid)
+      );
+    }
+    if (!userPanel && currentUserEmail) {
+      userPanel = rows.find(
+        (p: any) => (p.InterviewPanel?.EMail || '').toLowerCase() === currentUserEmail.toLowerCase()
+      );
+    }
+
+    if (!userPanel) {
+      console.warn('[checkIsAlreadySubmitted] Current user not found in panel rows — treating as not submitted');
+      return false;
+    }
+
+    const alreadySubmitted = userPanel.IsScoreSheetUploaded === 'Yes';
+    console.log('[checkIsAlreadySubmitted] panelID:', userPanel.ID, '| IsScoreSheetUploaded:', userPanel.IsScoreSheetUploaded, '| result:', alreadySubmitted);
+    return alreadySubmitted;
+  } catch (err) {
+    console.error('[checkIsAlreadySubmitted] error:', err);
+    return false; 
+  }
+}
 
 async function _getUserGuid(email: string): Promise<string | null> {
   console.log('[_getUserGuid] email:', email);

@@ -1,4 +1,4 @@
-  import React, {
+import React, {
     Suspense,
     useCallback,
     useEffect,
@@ -32,6 +32,7 @@
   import { IEvaluValidate } from "../../../services/Dashboard/IDashboard";
   import { userInfo } from "../../../utilities/hooks/RoleContext";
   import { DashboardServices } from "../../../services/ServiceExport";
+  import { checkIsAlreadySubmitted } from "../Evalution/Evaluationservice/Evaluationformservice";
   import moment from "moment";
 
   const AssignHRPopup = React.lazy(() =>
@@ -225,23 +226,20 @@
             matricID === MatricID.EvalutionEXCO;
 
           if (isEvaluationFlow) {
-            // const data: IEvaluValidate = {
-            //   ID: ItemID,
-            //   currentEmailID: ADGroupData.EmailId[0],
-            //   statusId,
-            // };
-
-            // const res = await DashboardServices.EvalutionValidation(data);
-            // if (!res.data) {
-            //   showModal({
-            //     type: "warning",
-            //     title: "Already Submitted",
-            //     message: "You have already submitted the evaluation.",
-            //     confirmLabel: "OK",
-            //     onConfirm: closeModal,
-            //   });
-            //   return; // processingRef resets in finally ✅
-            // }
+            const alreadySubmitted = await checkIsAlreadySubmitted(
+              ItemID,
+              ADGroupData.EmailId[0]
+            );
+            if (alreadySubmitted) {
+              showModal({
+                type: "warning",
+                title: "Already Submitted",
+                message: "The scorecard for this candidate has already been submitted.",
+                confirmLabel: "OK",
+                onConfirm: closeModal,
+              });
+              return;
+            }
           }
 
           const evalutionIDs = [
