@@ -27,6 +27,7 @@ var Coicard_1 = tslib_1.__importDefault(require("./Component/Coicard/Coicard"));
 var Statusbadge_1 = tslib_1.__importDefault(require("../../../Comman/Statusbadge/Statusbadge"));
 var useStatusDetails_1 = require("./Hooks/useStatusDetails");
 var Usesubmitworkflow_1 = require("./saveHooks/Usesubmitworkflow");
+var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
 var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
     return (react_1.default.createElement("div", { className: "review-document__skeleton", style: { width: width, height: height } }));
@@ -48,12 +49,13 @@ var ReviewDocument = function (_a) {
     var _g = (0, useReviewDocumentManage_1.useStateOfferRelease)(), consentVerification = _g.consentVerification, consentFile = _g.consentFile, showConsentErrors = _g.showConsentErrors, handleConsentVerification = _g.handleConsentVerification, handleConsentFile = _g.handleConsentFile, coiState = _g.coiState, showCoiErrors = _g.showCoiErrors, handleCoiChange = _g.handleCoiChange, validateAll = _g.validateAll;
     var _h = (0, getCandidateDetails_1.useCandidatDetails)(selectedJobId, CandidateID, selectedcandidateID, jobrequestID), positionDetails = _h.data, positionLoading = _h.loading;
     var _j = (0, useStatusDetails_1.useBGVStatusDetails)(jobrequestID), bgvStatusDetails = _j.data, bgvStatusLoading = _j.loading, allCompleted = _j.allCompleted, rejectFlag = _j.rejectFlag;
-    var _k = (0, Usesubmitworkflow_1.useSubmitWorkflow)({
-        positionDetails: positionDetails,
-        BGVerifiedStatus: BGVerifiedStatus,
+    var data = {
+        data: positionDetails,
         uploadDocs: uploadDocs,
-        rejectFlag: rejectFlag,
-    }), submitisLoading = _k.submitisLoading, alertOpen = _k.alertOpen, alertProps = _k.alertProps, submit = _k.submit, closeAlert = _k.closeAlert;
+        BGVerifiedStatus: bgvStatusDetails,
+        rejectflag: rejectFlag,
+    };
+    var _k = (0, Usesubmitworkflow_1.useSubmitWorkflow)(data), SubmitLoading = _k.isLoading, SubmitModalState = _k.modalState, SubmitCloseModal = _k.closeModal, submit = _k.submit;
     var docData = (0, Userequireddocuments_1.useRequiredDocuments)((_b = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.ProfileID) !== null && _b !== void 0 ? _b : "", (_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobRequestID) !== null && _c !== void 0 ? _c : "").data;
     var _l = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _l.data, signatureLoading = _l.loading;
     var isLoading = signatureLoading;
@@ -107,6 +109,7 @@ var ReviewDocument = function (_a) {
                 return [2 /*return*/];
             isSubmittingRef.current = true;
             try {
+                submit(ConditionConfig_1.ButtonAction.Initiated);
                 showSuccessModal("Your review has been submitted successfully.");
             }
             catch (error) {
@@ -141,7 +144,8 @@ var ReviewDocument = function (_a) {
                                 react_1.default.createElement("span", { className: "review-document__badge" }, headerMeta.code),
                                 react_1.default.createElement("span", { className: "review-document__dot" }),
                                 react_1.default.createElement("span", { className: "review-document__meta-text" }, headerMeta.department)))))),
-                    react_1.default.createElement(Statusbadge_1.default, { steps: bgvStatusDetails }),
+                    react_1.default.createElement("div", null,
+                        react_1.default.createElement(Statusbadge_1.default, { steps: bgvStatusDetails !== null && bgvStatusDetails !== void 0 ? bgvStatusDetails : [] })),
                     react_1.default.createElement("button", { type: "button", className: "review-document__close", onClick: onClose },
                         react_1.default.createElement(lucide_react_1.X, { size: 18 }))),
                 react_1.default.createElement("div", { className: "review-document__content" },
@@ -150,9 +154,9 @@ var ReviewDocument = function (_a) {
                     react_1.default.createElement(ResueComponent_1.VerificationToggle, { value: consentVerification, onChange: handleConsentVerification, hasError: showConsentErrors && consentVerification === null }),
                     react_1.default.createElement(consentform_1.default, { onFileChange: handleConsentFile, downloadUrl: (_d = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.DotAfricaCF) === null || _d === void 0 ? void 0 : _d.downloadUrl, disabled: isSubmittingRef.current, hasFileError: showConsentErrors && consentFile === null, consentform: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.DotAfricaCF }),
                     react_1.default.createElement(Coicard_1.default, { consultOptions: CONSULT_OPTIONS, isReadOnly: isSubmittingRef.current, hasError: showCoiErrors, onChange: handleCoiChange }),
-                    showUploadONEM && (react_1.default.createElement(UploadDocument_1.UploadDocument, { multiple: false, acceptedFormats: ".pdf", label: "Draft ONEM AdvertDoc French (Only PDF)", required: true, onChange: function (files) {
+                    react_1.default.createElement(UploadDocument_1.UploadDocument, { multiple: false, acceptedFormats: ".pdf", label: "Draft ONEM AdvertDoc French (Only PDF)", required: true, onChange: function (files) {
                             setUploadDocs(files);
-                        }, disabled: isSubmittingRef.current })),
+                        }, disabled: isSubmittingRef.current }),
                     react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, disabled: isSubmittingRef.current }),
                     react_1.default.createElement("div", { className: "review-document__footer" },
                         react_1.default.createElement("div", { className: "review-document__footer-actions" },
@@ -162,7 +166,8 @@ var ReviewDocument = function (_a) {
                                 "Sending...")) : (react_1.default.createElement(react_1.default.Fragment, null,
                                 react_1.default.createElement(lucide_react_1.Send, { size: 16, style: { marginRight: 8 } }),
                                 "Submit")))))))),
-        react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal }))))));
+        react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal })),
+        react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, SubmitModalState, { onClose: SubmitCloseModal }))))));
 };
 exports.ReviewDocument = ReviewDocument;
 //# sourceMappingURL=ReviewDocument.js.map

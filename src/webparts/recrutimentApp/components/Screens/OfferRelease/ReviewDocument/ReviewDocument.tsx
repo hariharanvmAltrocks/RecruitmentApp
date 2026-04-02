@@ -22,8 +22,9 @@ import ConsentFormSection from "./Component/ConsentForm/consentform";
 import COICard from "./Component/Coicard/Coicard";
 import StatusBadge from "../../../Comman/Statusbadge/Statusbadge";
 import { useBGVStatusDetails } from "./Hooks/useStatusDetails";
-import { useSubmitWorkflow } from "./saveHooks/Usesubmitworkflow";
+import { SubmitWorkflowDeps, useSubmitWorkflow } from "./saveHooks/Usesubmitworkflow";
 import { IDocFiles } from "../../../../services/SPService/Ispservice";
+import { ButtonAction } from "../../../../utilities/ConditionConfig";
 
 
 export interface ReviewDocumentProps {
@@ -98,13 +99,14 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
 
   const { data: bgvStatusDetails, loading: bgvStatusLoading, allCompleted, rejectFlag } = useBGVStatusDetails(jobrequestID);
 
-  const { submitisLoading, alertOpen, alertProps, submit, closeAlert } = 
-  useSubmitWorkflow({
-  positionDetails,
-  BGVerifiedStatus,
-  uploadDocs,
-  rejectFlag,
-});
+  let data: SubmitWorkflowDeps = {
+      data: positionDetails!,
+      uploadDocs: uploadDocs,
+      BGVerifiedStatus: bgvStatusDetails!,
+      rejectflag: rejectFlag!,
+  }
+
+  const {  isLoading:SubmitLoading , modalState:SubmitModalState, closeModal:SubmitCloseModal, submit } = useSubmitWorkflow( data );
 
   const { data: docData } = useRequiredDocuments(
     positionDetails?.ProfileID   ?? "",
@@ -175,6 +177,8 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     isSubmittingRef.current = true;
 
     try {
+
+      submit(ButtonAction.Initiated);
       
       showSuccessModal("Your review has been submitted successfully.");
     } catch (error) {
@@ -240,8 +244,11 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                     </div>
                   </div>
                 </div>
+                
+                <div>
+                <StatusBadge steps={bgvStatusDetails ?? []} />
 
-                <StatusBadge steps={bgvStatusDetails} />
+                </div>
 
                 <button
                   type="button"
@@ -285,7 +292,6 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                     onChange={handleCoiChange}
                   />
 
-                {showUploadONEM && (
                   <UploadDocument
                     multiple={false}
                     acceptedFormats=".pdf"
@@ -296,7 +302,6 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                     }}
                     disabled={isSubmittingRef.current}
                   />
-                )}
 
                 <ReviewCommentSignature
                   reviewerComments={reviewerComments}
@@ -306,6 +311,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                   onCommentsChange={onCommentsChange}
                   onToggleAcknowledgement={onToggleAcknowledgement}
                   disabled={isSubmittingRef.current}
+                  // hasError={showCommentsErrors}
                 />
 
                 <div className="review-document__footer">
@@ -344,6 +350,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
           </div>
 
           <ModalPopup {...modalState} onClose={closeModal} />
+          <ModalPopup {...SubmitModalState} onClose={SubmitCloseModal} />
         </>
       )}
     </AnimatePresence>

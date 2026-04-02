@@ -26,7 +26,10 @@ import { IselectedPosition } from "../PositionFrame";
 import { VerificationStep } from "../../../../Comman/Statusbadge/Statusbadge";
 import { IDocFiles } from "../../../../../services/SPService/Ispservice";
 import { UploadedFile } from "../../../RecruitmentTable/Components/UploadDocument";
-import { useModalPopup } from "../../../../Comman/ModalPopup/useModalPopup";
+import {
+  ModalState,
+  useModalPopup,
+} from "../../../../Comman/ModalPopup/useModalPopup";
 import { ModalType } from "../../../../Comman/ModalPopup/ModalPopup";
 import { useNavigate } from "react-router-dom";
 import {
@@ -37,6 +40,7 @@ import { userInfo } from "../../../../../utilities/hooks/RoleContext";
 import { SpiltDateOnly } from "../../../../Hooks/dateConfigfn";
 import { WorkflowJson } from "../../../../../models/Icareerportal";
 import { DocumentCategory } from "../Hooks/Userequireddocuments";
+import { ConsentFormFile } from "../Component/ResueComponent";
 
 export interface AlertProps {
   Message: string;
@@ -48,16 +52,15 @@ export interface AlertProps {
 export interface SubmitWorkflowDeps {
   data: IselectedPosition;
   uploadDocs: UploadedFile[];
-  BGVerifiedStatus: VerificationStep[];
+  BGVerifiedStatus: DocumentCategory[];
   rejectflag: boolean;
 }
 
 interface SubmitWorkflowResult {
   isLoading: boolean;
-  alertOpen: boolean;
-  alertProps: AlertProps | null;
-  submit: (btnAction: string) => Promise<void>;
-  closeAlert: () => void;
+  closeModal: () => void;
+  modalState: ModalState;
+  submit: (btnAction: number) => Promise<void>;
 }
 
 function makeDocData(
@@ -84,7 +87,7 @@ type ResolveResult = {
 
 async function resolveStatus(
   data: IselectedPosition,
-  consentFile: UploadedFile[],
+  consentFile: ConsentFormFile | null,
   documents: UploadedFile[],
   btnAction: number,
   email: string,
@@ -124,17 +127,15 @@ async function resolveStatus(
 
         let documentResponse = ok;
 
-        if (!isNational) {
-          const doc: IDocFiles[] = consentFile.map((file) => {
-            return {
-              name: file.name,
-              content: file.fileContent,
-              type: "New",
-            };
-          });
+        if (!isNational && consentFile) {
+          const doc: IDocFiles = {
+            name: consentFile.name,
+            content: String(consentFile.content),
+            type: "New",
+          };
           documentResponse = await OfferServices.UploadCandidateDocument(
             makeDocData(pid, rid, DocumentFolderName.BGVConsentform),
-            [...doc],
+            [doc],
           );
         }
 
@@ -192,9 +193,9 @@ async function resolveStatus(
         patersonGrade: data.patersonGrade,
         drcGrade: data.drcGrade,
         reportingManager: "",
-        dateOfJoining: SpiltDateOnly(data.JoiningDate),
+        dateOfJoining: data.JoiningDate ? new Date(data.JoiningDate) : null,
         typeOfContract: data.TypeofContract,
-        noOfMonths: Number(data.NoticePeriod),
+        noOfMonths: data.NoticePeriod,
         createdOn: new Date(),
         createdBy: RoleName.RecruitmentHR,
         createrEmail: email,
@@ -448,7 +449,7 @@ function buildCandidateData(
     jobRequestId: Number(data?.jobRequestID),
     comments: data.comments,
     actionBy: RoleName.RecruitmentHR,
-    HrUserId: isBGVStatus ? String(userDetails[0]?.ID) : "",
+    HrUserId: isBGVStatus ? "" : "",
     HrUserEmail: isBGVStatus ? EmailId : "",
   };
 
@@ -554,18 +555,18 @@ export function useSubmitWorkflow(
   );
 
   const submit = useCallback(
-    async (btnAction: string) => {
+    async (btnAction: number) => {
       setIsLoading(true);
 
       try {
         const resolved = await resolveStatus(
-          data,
+          data.data,
           consentFile,
-          documentFile,
+          data.uploadDocs,
           btnAction,
           ADGroupData.EmailId[0],
           coiState,
-          rejectflag,
+          data.rejectflag,
         );
         let Verified = consentVerification === "verified";
         if (resolved.documentResponse?.status !== ResponeStatus.SUCCESS) {
@@ -579,6 +580,7 @@ export function useSubmitWorkflow(
           resolved.documentResponse,
           resolved.workPermitDocs,
           ADGroupData.EmailId[0],
+          data.BGVerifiedStatus,
         );
 
         // Special case: work permit docs review with "Yes" — skip workflow update
@@ -630,5 +632,5 @@ export function useSubmitWorkflow(
 
   const closeAlert = useCallback(() => closeModal(), []);
 
-  return { isLoading, modalState, closeModal, submit, closeAlert };
+  return { isLoading, modalState, closeModal, submit };
 }

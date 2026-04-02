@@ -75,15 +75,13 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                         ? ConditionConfig_1.RecuritmentHRMsg.BGReviewedMsg
                         : ConditionConfig_1.RecuritmentHRMsg.BGReviewinitBGV;
                     documentResponse = ok;
-                    if (!!isNational) return [3 /*break*/, 4];
-                    doc = consentFile.map(function (file) {
-                        return {
-                            name: file.name,
-                            content: file.fileContent,
-                            type: "New",
-                        };
-                    });
-                    return [4 /*yield*/, ServiceExport_1.OfferServices.UploadCandidateDocument(makeDocData(pid, rid, ConditionConfig_1.DocumentFolderName.BGVConsentform), tslib_1.__spreadArray([], doc, true))];
+                    if (!(!isNational && consentFile)) return [3 /*break*/, 4];
+                    doc = {
+                        name: consentFile.name,
+                        content: String(consentFile.content),
+                        type: "New",
+                    };
+                    return [4 /*yield*/, ServiceExport_1.OfferServices.UploadCandidateDocument(makeDocData(pid, rid, ConditionConfig_1.DocumentFolderName.BGVConsentform), [doc])];
                 case 3:
                     documentResponse = _b.sent();
                     _b.label = 4;
@@ -128,9 +126,9 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                         patersonGrade: data.patersonGrade,
                         drcGrade: data.drcGrade,
                         reportingManager: "",
-                        dateOfJoining: (0, dateConfigfn_1.SpiltDateOnly)(data.JoiningDate),
+                        dateOfJoining: data.JoiningDate ? new Date(data.JoiningDate) : null,
                         typeOfContract: data.TypeofContract,
-                        noOfMonths: Number(data.NoticePeriod),
+                        noOfMonths: data.NoticePeriod,
                         createdOn: new Date(),
                         createdBy: ConditionConfig_1.RoleName.RecruitmentHR,
                         createrEmail: email,
@@ -332,7 +330,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
     });
 }
 function buildCandidateData(data, workflowStatusValue, documentResponse, workPermitDocs, EmailId, bgvStatus) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
     var isBGVStatus = data.StatusId === EvaluationConfig_1.StatusId.PendingHRBGVInitiation ||
         data.StatusId === EvaluationConfig_1.StatusId.PendingHRReviewBGCheck;
     var base = {
@@ -340,37 +338,37 @@ function buildCandidateData(data, workflowStatusValue, documentResponse, workPer
         jobRequestId: Number(data === null || data === void 0 ? void 0 : data.jobRequestID),
         comments: data.comments,
         actionBy: ConditionConfig_1.RoleName.RecruitmentHR,
-        HrUserId: isBGVStatus ? String((_a = userDetails[0]) === null || _a === void 0 ? void 0 : _a.ID) : "",
+        HrUserId: isBGVStatus ? "" : "",
         HrUserEmail: isBGVStatus ? EmailId : "",
     };
     if (data.StatusId === EvaluationConfig_1.StatusId.PendingHROfferInitiate &&
         data.EmploymentCategory === ConditionConfig_1.EmployeementCategory.KCSAEmployee) {
-        var offerDoc = (_b = documentResponse.data) === null || _b === void 0 ? void 0 : _b.find(function (d) { var _a; return (_a = d.name) === null || _a === void 0 ? void 0 : _a.includes("OfferLetter"); });
+        var offerDoc = (_a = documentResponse.data) === null || _a === void 0 ? void 0 : _a.find(function (d) { var _a; return (_a = d.name) === null || _a === void 0 ? void 0 : _a.includes("OfferLetter"); });
         base.OfferLatterPath = offerDoc === null || offerDoc === void 0 ? void 0 : offerDoc.content;
     }
     if (data.StatusId === EvaluationConfig_1.StatusId.WorkPermitAcknowledgedContractUploaded) {
-        base.EmpContractLatterPath = (_d = (_c = documentResponse.data) === null || _c === void 0 ? void 0 : _c[0]) === null || _d === void 0 ? void 0 : _d.content;
-        base.signedWorkPermitPath = (_f = (_e = workPermitDocs === null || workPermitDocs === void 0 ? void 0 : workPermitDocs.data) === null || _e === void 0 ? void 0 : _e[0]) === null || _f === void 0 ? void 0 : _f.content;
+        base.EmpContractLatterPath = (_c = (_b = documentResponse.data) === null || _b === void 0 ? void 0 : _b[0]) === null || _c === void 0 ? void 0 : _c.content;
+        base.signedWorkPermitPath = (_e = (_d = workPermitDocs === null || workPermitDocs === void 0 ? void 0 : workPermitDocs.data) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e.content;
     }
     if (data.StatusId === EvaluationConfig_1.StatusId.PendingHROfferReview) {
         var labourOffer = bgvStatus.find(function (d) { return d.categoryName === ConditionConfig_1.DisplayFolderName.LabourHireOffer; });
-        base.OfferLatterPath = (_g = labourOffer === null || labourOffer === void 0 ? void 0 : labourOffer.documents[0]) === null || _g === void 0 ? void 0 : _g.downloadUrl;
+        base.OfferLatterPath = (_f = labourOffer === null || labourOffer === void 0 ? void 0 : labourOffer.documents[0]) === null || _f === void 0 ? void 0 : _f.downloadUrl;
     }
     if (data.StatusId === EvaluationConfig_1.StatusId.PendingHREmploymentContractReview) {
         var labourEC = bgvStatus.find(function (d) { return d.categoryName === ConditionConfig_1.DisplayFolderName.LabourHireEC; });
-        base.EmpContractLatterPath = (_h = labourEC === null || labourEC === void 0 ? void 0 : labourEC.documents[0]) === null || _h === void 0 ? void 0 : _h.downloadUrl;
+        base.EmpContractLatterPath = (_g = labourEC === null || labourEC === void 0 ? void 0 : labourEC.documents[0]) === null || _g === void 0 ? void 0 : _g.downloadUrl;
     }
     if (data.StatusId === EvaluationConfig_1.StatusId.PendingFinancePaymentReview) {
-        base.proofOfPaymentPath = (_k = (_j = documentResponse.data) === null || _j === void 0 ? void 0 : _j[0]) === null || _k === void 0 ? void 0 : _k.content;
+        base.proofOfPaymentPath = (_j = (_h = documentResponse.data) === null || _h === void 0 ? void 0 : _h[0]) === null || _j === void 0 ? void 0 : _j.content;
     }
     if (data.StatusId === EvaluationConfig_1.StatusId.PendingHREmploymentContractInit) {
         var wpDoc = bgvStatus.find(function (d) { return d.categoryName === ConditionConfig_1.DisplayFolderName.WorkPermitDocument; });
-        base.signedWorkPermitPath = (_l = wpDoc === null || wpDoc === void 0 ? void 0 : wpDoc.documents[0]) === null || _l === void 0 ? void 0 : _l.downloadUrl;
+        base.signedWorkPermitPath = (_k = wpDoc === null || wpDoc === void 0 ? void 0 : wpDoc.documents[0]) === null || _k === void 0 ? void 0 : _k.downloadUrl;
     }
     if (data.StatusId ===
         EvaluationConfig_1.StatusId.PendingHRReviewOfferanduploadEmployementContract &&
         data.RadioAction === "Yes") {
-        base.EmpContractLatterPath = (_o = (_m = documentResponse.data) === null || _m === void 0 ? void 0 : _m[0]) === null || _o === void 0 ? void 0 : _o.content;
+        base.EmpContractLatterPath = (_m = (_l = documentResponse.data) === null || _l === void 0 ? void 0 : _l[0]) === null || _m === void 0 ? void 0 : _m.content;
     }
     return base;
 }
@@ -413,7 +411,7 @@ function useSubmitWorkflow(data) {
                     _d.label = 1;
                 case 1:
                     _d.trys.push([1, 9, 10, 11]);
-                    return [4 /*yield*/, resolveStatus(data, consentFile, documentFile, btnAction, ADGroupData.EmailId[0], coiState, rejectflag)];
+                    return [4 /*yield*/, resolveStatus(data.data, consentFile, data.uploadDocs, btnAction, ADGroupData.EmailId[0], coiState, data.rejectflag)];
                 case 2:
                     resolved = _d.sent();
                     Verified = consentVerification === "verified";
@@ -421,7 +419,7 @@ function useSubmitWorkflow(data) {
                         showError(false);
                         return [2 /*return*/];
                     }
-                    candidateData = buildCandidateData(data, resolved.workflowStatusValue, resolved.documentResponse, resolved.workPermitDocs, ADGroupData.EmailId[0]);
+                    candidateData = buildCandidateData(data, resolved.workflowStatusValue, resolved.documentResponse, resolved.workPermitDocs, ADGroupData.EmailId[0], data.BGVerifiedStatus);
                     skipWorkflow = data.data.StatusID === EvaluationConfig_1.StatusId.PendingHRReviewWorkpermitDocs &&
                         Verified;
                     if (!skipWorkflow) return [3 /*break*/, 3];
@@ -473,6 +471,6 @@ function useSubmitWorkflow(data) {
         });
     }); }, [data, showSuccess, showError]);
     var closeAlert = (0, react_1.useCallback)(function () { return closeModal(); }, []);
-    return { isLoading: isLoading, modalState: modalState, closeModal: closeModal, submit: submit, closeAlert: closeAlert };
+    return { isLoading: isLoading, modalState: modalState, closeModal: closeModal, submit: submit };
 }
 //# sourceMappingURL=Usesubmitworkflow.js.map

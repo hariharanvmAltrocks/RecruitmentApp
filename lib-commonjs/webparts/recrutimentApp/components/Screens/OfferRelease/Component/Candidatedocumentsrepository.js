@@ -101,4 +101,4 @@ var CandidateDocumentsRepository = function (_a) {
         react_1.default.createElement("div", { className: CandidateDocumentsRepository_module_scss_1.default.categoryList }, data === null || data === void 0 ? void 0 : data.categories.map(function (cat, idx) { return (react_1.default.createElement(CategoryCard, { key: cat.categoryId, category: cat, defaultOpen: idx === 0 })); }))));
 };
 exports.default = CandidateDocumentsRepository;
-//# sourceMappingURL=Candidatedocumentsrepository.js.map
+//# sourceMappingURL=CandidateDocumentsRepository.js.map

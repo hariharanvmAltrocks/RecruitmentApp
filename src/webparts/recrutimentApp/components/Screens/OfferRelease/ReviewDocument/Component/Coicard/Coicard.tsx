@@ -98,15 +98,6 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
   return (
     <div className="coi-card">
-      <div className="coi-card__alert">
-        <span className="coi-card__alert-icon">
-          <AlertTriangle size={18} />
-        </span>
-        <div className="coi-card__alert-content">
-          <span className="coi-card__alert-title">Conflict of Interest Declared</span>
-        </div>
-      </div>
-
       <div className="coi-card__fields">
         <div className={`coi-card__field ${consultedWithError ? "coi-card__field--error" : ""}`}>
           <label className="coi-card__label">

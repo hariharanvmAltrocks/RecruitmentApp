@@ -69,11 +69,6 @@ var COICard = function (_a) {
     var commentsError = hasError && !state.comments.trim();
     var attachmentError = hasError && state.attachment.length === 0;
     return (react_1.default.createElement("div", { className: "coi-card" },
-        react_1.default.createElement("div", { className: "coi-card__alert" },
-            react_1.default.createElement("span", { className: "coi-card__alert-icon" },
-                react_1.default.createElement(lucide_react_1.AlertTriangle, { size: 18 })),
-            react_1.default.createElement("div", { className: "coi-card__alert-content" },
-                react_1.default.createElement("span", { className: "coi-card__alert-title" }, "Conflict of Interest Declared"))),
         react_1.default.createElement("div", { className: "coi-card__fields" },
             react_1.default.createElement("div", { className: "coi-card__field ".concat(consultedWithError ? "coi-card__field--error" : "") },
                 react_1.default.createElement("label", { className: "coi-card__label" },
