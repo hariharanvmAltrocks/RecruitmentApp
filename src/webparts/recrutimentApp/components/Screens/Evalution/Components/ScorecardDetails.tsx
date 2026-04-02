@@ -66,13 +66,10 @@ export default function ScorecardDetails({
   const jobTitleFr   = candidate?.jobTitleFr   || '';
   const userInitial  = (reviewerName || 'J').charAt(0).toUpperCase();
 
-  // Nationality-based label: "N0" = Congolese
   const expatLocalLabel =
     candidate?.nationalityCode === NationalityCode.Nationals
       ? 'CONGOLESE EXPERIENCE'
       : 'EXPAT EXPERIENCE';
-
-  // Show EvaluationFeedback when any scorecard rating ≤ 2 (old code shouldShowTextArea logic)
   const shouldShowEvalFeedback = Object.values(scorecard).some(
     (v) => v !== null && Number(v) <= 2
   );
@@ -95,8 +92,6 @@ export default function ScorecardDetails({
       </div>
 
       <div className={styles.scorecardCard}>
-
-        {/* 8-field scorecard grid */}
         <div className={styles.scorecardGrid}>
           {BASE_SCORECARD_FIELDS.map((field) => {
             const label    = field.isDynamic ? expatLocalLabel : field.label;
@@ -126,8 +121,6 @@ export default function ScorecardDetails({
             );
           })}
         </div>
-
-        {/* Conditional EvaluationFeedback — shows when any rating ≤ 2 */}
         {shouldShowEvalFeedback && (
           <div className={styles.evalFeedbackBox}>
             <p className={[styles.fieldLabel, evalFeedbackError ? styles.errLabel : ''].filter(Boolean).join(' ')}>

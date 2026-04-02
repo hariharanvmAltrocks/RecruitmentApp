@@ -69,13 +69,6 @@ export default function InterviewQuestionList({
                 dangerouslySetInnerHTML={{ __html: cleanHTML(question.text) }}
               />
             </div>
-          {/* 
-            {showError && (
-              <div className={styles.errorBox}>
-                Please select a rating before submitting.
-              </div>
-            )} */}
-
             {/* Expected response guide */}
             {question.expectedResponse && (
               <div className={styles.guideBox}>

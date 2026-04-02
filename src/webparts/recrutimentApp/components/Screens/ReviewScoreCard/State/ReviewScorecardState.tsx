@@ -68,9 +68,6 @@ const ReviewScoreCardContent: React.FC = () => {
 
 const ReviewScoreCard: React.FC<any> = (props) => {
     const location = useLocation();
-
-    // ID comes from location.state (navigated via navigate('/ReviewScoreCard', { state: { ID: 636 } }))
-    // OR from props directly
     const locState = location.state as any;
     const recruitmentId = Number(
         locState?.ID ||
@@ -81,12 +78,8 @@ const ReviewScoreCard: React.FC<any> = (props) => {
         props?.RecruitmentID ||
         0
     );
-
-    console.log('[ReviewScoreCard] recruitmentId resolved:', recruitmentId, 'from state:', locState, 'props:', props);
-
     const { ADGroupData } = useRoleContext();
     const currentUserEmail = ADGroupData?.EmailId?.[0] || '';
-
     return (
         <ReviewScoreCardProvider recruitmentId={recruitmentId} currentUserEmail={currentUserEmail}>
             <ReviewScoreCardContent />

@@ -1,11 +1,4 @@
 "use strict";
-// ReviewScoreCard.tsx
-// Main entry point. Route passes recruitmentId via props or router state.
-// Renders:
-//   1. CandidateDrawer  — always visible, shows candidates for recruitmentId
-//   2. CandidateReviewModal — opens when a candidate is clicked (pencil/eye)
-//
-// All state lives in ReviewScoreCardProvider (via useReviewScorecard hook).
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importDefault(require("react"));
@@ -15,7 +8,6 @@ var ReviewScoreCardProvider_1 = require("./State/ReviewScoreCardProvider");
 var CandidateDrawer_1 = tslib_1.__importDefault(require("./Components/CandidateDrawer"));
 var CandidateReviewModal_1 = tslib_1.__importDefault(require("./Components/CandidateReviewModal"));
 var RoleContext_1 = require("../../../utilities/hooks/RoleContext");
-// ── Inner content (has access to context) ─────────────────────────────────────
 var ReviewScoreCardContent = function () {
     var _a;
     var ADGroupData = (0, RoleContext_1.useRoleContext)().ADGroupData;
@@ -29,7 +21,6 @@ var ReviewScoreCardContent = function () {
                 hook.setErrors(tslib_1.__assign(tslib_1.__assign({}, hook.errors), { position: false }));
             }, onSubmit: hook.submitDecision, onClose: hook.closeReview, currentRoleId: currentRoleId, isLevel2Status: hook.isLevel2(hook.reviewingCandidate.statusId) })))));
 };
-// ── Public export with Provider wrapper ───────────────────────────────────────
 var ReviewScoreCard = function (_a) {
     var _b, _c, _d;
     var recruitmentId = _a.recruitmentId;
@@ -37,6 +28,7 @@ var ReviewScoreCard = function (_a) {
     var routeState = location.state;
     var effectiveRecruitmentId = Number((_c = (_b = recruitmentId !== null && recruitmentId !== void 0 ? recruitmentId : routeState === null || routeState === void 0 ? void 0 : routeState.recruitmentId) !== null && _b !== void 0 ? _b : routeState === null || routeState === void 0 ? void 0 : routeState.ID) !== null && _c !== void 0 ? _c : 0);
     var departmentFromRoute = (routeState === null || routeState === void 0 ? void 0 : routeState.department) || '';
+    console.log('[ReviewScoreCard],departmentFromRoute:', departmentFromRoute);
     console.log('[ReviewScoreCard] recruitmentId:', effectiveRecruitmentId, 'routeState:', routeState);
     var ADGroupData = (0, RoleContext_1.useRoleContext)().ADGroupData;
     var currentUserEmail = ((_d = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _d === void 0 ? void 0 : _d[0]) || '';

@@ -29,12 +29,9 @@ function EvalutionContent(_a) {
     var handleCancel = React.useCallback(function () {
         onBack ? onBack() : navigate('/RecruitmentTable');
     }, [navigate, onBack]);
-    // ── Data ──────────────────────────────────────────────────────────────────
     var _b = (0, fetchCandidateDetails_1.useCandidateDetails)({ candidateId: candidateId }), candidate = _b.candidate, questions = _b.questions, candidateLoading = _b.loading, candidateError = _b.error, reloadCandidate = _b.reload;
     var _c = (0, fetchScoreCard_1.useScoreCard)(candidateId), scoreCardData = _c.data, scoreCardLoading = _c.loading, scoreCardError = _c.error, reloadScoreCard = _c.reload;
-    // ── Context ────────────────────────────────────────────────────────────────
     var _d = (0, CommonStateManagement_1.useEvaluationState)(), answers = _d.answers, initializeAnswers = _d.initializeAnswers, updateAnswer = _d.updateAnswer, scorecard = _d.scorecard, updateScorecard = _d.updateScorecard, recommendation = _d.recommendation, setRecommendation = _d.setRecommendation, overallFeedback = _d.overallFeedback, setOverallFeedback = _d.setOverallFeedback, evaluationFeedback = _d.evaluationFeedback, setEvaluationFeedback = _d.setEvaluationFeedback, acknowledged = _d.acknowledged, setAcknowledged = _d.setAcknowledged;
-    // ── Validation ─────────────────────────────────────────────────────────────
     var _e = React.useState({}), ratingErrors = _e[0], setRatingErrors = _e[1];
     var _f = React.useState({}), scorecardErrors = _f[0], setScorecardErrors = _f[1];
     var _g = React.useState(false), recError = _g[0], setRecError = _g[1];
@@ -42,11 +39,9 @@ function EvalutionContent(_a) {
     var _j = React.useState(false), evalFeedbackError = _j[0], setEvalFeedbackError = _j[1];
     var _k = React.useState(false), ackError = _k[0], setAckError = _k[1];
     var _l = React.useState(false), submitAttempted = _l[0], setSubmitAttempted = _l[1];
-    // ── UI ─────────────────────────────────────────────────────────────────────
     var _m = React.useState(''), alertMsg = _m[0], setAlertMsg = _m[1];
     var _o = React.useState(''), alertType = _o[0], setAlertType = _o[1];
     var _p = React.useState(false), submitting = _p[0], setSubmitting = _p[1];
-    // shouldShowTextArea — any scorecard field ≤ 2 (old code logic exact)
     var shouldShowTextArea = React.useMemo(function () { return Object.values(scorecard).some(function (v) { return v !== null && Number(v) <= 2; }); }, [scorecard]);
     React.useEffect(function () {
         if (questions.length > 0)
@@ -73,7 +68,6 @@ function EvalutionContent(_a) {
             return (tslib_1.__assign(tslib_1.__assign({}, prev), (_a = {}, _a[key] = false, _a)));
         });
     }, [updateScorecard]);
-    // ── Submit ─────────────────────────────────────────────────────────────────
     var handleSubmit = React.useCallback(function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
         var valid, newRatingErrors, newScorecardErrors, currentRoleIDs, roleId, questionScoresFormatted, result, err_1;
         var _a, _b;
@@ -102,14 +96,12 @@ function EvalutionContent(_a) {
                     });
                     setScorecardErrors(newScorecardErrors);
                     console.log('[Evalution] scorecardErrors:', newScorecardErrors);
-                    // 3. Recommendation
                     if (!recommendation) {
                         setRecError(true);
                         valid = false;
                     }
                     else
                         setRecError(false);
-                    // 4. Conditional EvaluationFeedback (when any rating ≤ 2)
                     if (shouldShowTextArea && !evaluationFeedback.trim()) {
                         setEvalFeedbackError(true);
                         valid = false;
@@ -117,14 +109,12 @@ function EvalutionContent(_a) {
                     else {
                         setEvalFeedbackError(false);
                     }
-                    // 5. Overall feedback
                     if (!overallFeedback.trim()) {
                         setFeedbackError(true);
                         valid = false;
                     }
                     else
                         setFeedbackError(false);
-                    // 6. Acknowledgement
                     if (!acknowledged) {
                         setAckError(true);
                         valid = false;
@@ -137,7 +127,6 @@ function EvalutionContent(_a) {
                         setAlertType('error');
                         return [2 /*return*/];
                     }
-                    // Check currentUserPanelId — if null, user is not in interview panel
                     if (!(candidate === null || candidate === void 0 ? void 0 : candidate.currentUserPanelId)) {
                         console.error('[Evalution] currentUserPanelId is null — check HRMSInterviewPanelDetails for candidateId:', candidateId);
                         setAlertMsg('Could not identify your panel entry. Please contact HR.');

@@ -1,25 +1,4 @@
 "use strict";
-// ReviewScoreCardServies/ReviewScoreCardServices.ts
-//
-// submitHODDecision — fully mirrors old HodViewScorecard Submit_fn:
-//
-//  BRANCH 1 (isLevel2 = true):
-//    1. _insertOrUpdateLevel2Comment → HRMSCandidateLevel2ScoreCard
-//    2. Mark current user panel IsScoreSheetUploaded = "Yes" → HRMSInterviewPanelDetails
-//    3. If ALL Level2 panels uploaded → update HRMSRecruitmentCandidatePersonalDetails:
-//         { ScoreCardLevelItemCreated:"Yes", ActionId:Approved, ItemCreated:"Yes" }
-//
-//  BRANCH 2 (HOD selection — Review Score Card tab):
-//    1. OthersInterviewed count
-//    2. SPUpdate HRMSRecruitmentCandidatePersonalDetails: { ActionId, ItemCreated:"Yes", GPA, OthersInterviewed }
-//    3. Portal UpdateCandidateStatus API (workflowStatusApi)
-//    4. _insertOrUpdateLevel1Comment → HRMSRecruitmentCandidateComments
-//    5. If Yes + positionId → _assignPositionID (add HRMSSelectedCandidateDetailsByHOD + update HRMSPositionIDMaster)
-//    6. If No/OnHold + positionId → revert HRMSPositionIDMaster → "Recruitment Initiated"
-//
-//  Pre-populate on VIEW:
-//    _getHODDecision reads HRMSSelectedCandidateDetailsByHOD (positionId)
-//    Comments from HRMSRecruitmentCandidatePersonalDetails.Comments (raw.Comments)
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isLevel2 = exports.canView = exports.canEdit = exports.VIEW_ONLY_STATUS_IDS = exports.EDITABLE_STATUS_IDS = exports.HOD_SCORECARD_STATUS_IDS = void 0;
 var tslib_1 = require("tslib");
@@ -29,12 +8,11 @@ var CommonServices_1 = tslib_1.__importDefault(require("../../SelectionProcess/C
 var QuestionnaireApi_1 = tslib_1.__importDefault(require("../../Evalution/Evaluationservice/QuestionnaireApi/QuestionnaireApi"));
 var CareerPortalService_1 = tslib_1.__importDefault(require("../../../../services/CareerPortal/CareerPortalService"));
 var Config_1 = require("../../../../utilities/Config");
-// InterviewLevels.Level2 = 'Level 2' (from Config)
+var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
 var _common = new CommonServices_1.default();
 var _master = new MasterService_1.default();
 var _questApi = new QuestionnaireApi_1.default();
 var _careerPortal = new CareerPortalService_1.default();
-// ── Status constants ──────────────────────────────────────────────────────────
 exports.HOD_SCORECARD_STATUS_IDS = [121, 122, 123, 15, 127, 130, 165, 166, 167, 168];
 exports.EDITABLE_STATUS_IDS = [121, 123, 127, 130, 165, 166];
 exports.VIEW_ONLY_STATUS_IDS = [122, 15, 167, 168];
@@ -42,14 +20,8 @@ var canEdit = function (statusId) { return exports.EDITABLE_STATUS_IDS.includes(
 exports.canEdit = canEdit;
 var canView = function (statusId) { return exports.VIEW_ONLY_STATUS_IDS.includes(statusId); };
 exports.canView = canView;
-// isLevel2 — Branch 1 (Panel Level2 scorecard submit) only when StatusId === InterviewScheduledforLevel2 (129)
-// Old code: if (props.stateValue?.StatusId === StatusId.InterviewScheduledforLevel2) → Branch A
-// 127 = PendingwithHODtoselectthecandidateLevel2 → HOD selects candidate (Branch 2, not Branch 1)
-// 130 = PendingwithHODtoAssignPositionID        → HOD assigns position (Branch 2)
-// 129 = InterviewScheduledforLevel2             → Interview panel submits scorecard (Branch 1)
-var isLevel2 = function (statusId) { return statusId === 129; }; // ONLY InterviewScheduledforLevel2
+var isLevel2 = function (statusId) { return statusId === 129; };
 exports.isLevel2 = isLevel2;
-// ── Private helpers ───────────────────────────────────────────────────────────
 function _parseJson(raw) {
     if (!raw)
         return [];
@@ -146,7 +118,6 @@ function _getUserGuid(email) {
         });
     });
 }
-// Count candidates in same job — for OthersInterviewed
 function _getOthersInterviewed(jobCodeID) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
         var rows, _a;
@@ -170,7 +141,6 @@ function _getOthersInterviewed(jobCodeID) {
         });
     });
 }
-// Mirror old insertOrUpdateCandidateCommentLevel1
 function _insertOrUpdateLevel1Comment(candidateId, roleId, comments, level) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
         var existing, match, e_2;
@@ -211,7 +181,6 @@ function _insertOrUpdateLevel1Comment(candidateId, roleId, comments, level) {
         });
     });
 }
-// Mirror old insertOrUpdateLevel2ScorecardComment
 function _insertOrUpdateLevel2Comment(candidateId, roleId, comments, level) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
         var existing, match, e_3;
@@ -252,7 +221,6 @@ function _insertOrUpdateLevel2Comment(candidateId, roleId, comments, level) {
         });
     });
 }
-// Mirror old handleAssignPosition
 function _assignPositionID(p) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
         var posRes, pos, e_4;
@@ -295,20 +263,16 @@ function _assignPositionID(p) {
         });
     });
 }
-// Portal workflow API — mirrors old UpdateCandidateStatus
 function _updatePortalWorkflowStatus(workflowStatus, jobRequestId, comments) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
-        var e_5;
+        var data, e_5;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, _careerPortal.UpdateCandidateStatus({
-                            workflowStatus: workflowStatus,
-                            jobRequestId: Number(jobRequestId),
-                            comments: comments,
-                            actionBy: 'HOD',
-                        })];
+                    data = { workflowStatus: workflowStatus, jobRequestId: Number(jobRequestId), comments: comments, actionBy: ConditionConfig_1.RoleName.HOD };
+                    console.log('[_updatePortalWorkflowStatus] Sending data:', data);
+                    return [4 /*yield*/, _careerPortal.UpdateCandidateStatus(data)];
                 case 1:
                     _a.sent();
                     return [3 /*break*/, 3];
@@ -329,9 +293,8 @@ var EMPTY = function (id) { return ({
     panelMembers: [], currentUserPanelId: null, currentUserGuid: null,
     reviewerName: '', jobTitleEn: '', jobTitleFr: '', questions: [],
     scorecard: null, level2Scorecard: null, hodDecision: null,
-    positionOptions: [], level1Comments: [], level2Comments: [], statusId: 0,
+    positionOptions: [], level1Comments: [], level2Comments: [], statusId: 0, jobRequestId: null,
 }); };
-// ── Service ───────────────────────────────────────────────────────────────────
 var ReviewScoreCardServices = /** @class */ (function () {
     function ReviewScoreCardServices() {
     }
@@ -422,13 +385,13 @@ var ReviewScoreCardServices = /** @class */ (function () {
     };
     ReviewScoreCardServices.prototype.getReviewScoreCardData = function (candidateId, currentUserEmail, candidate) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var _a, candidateRows, currentUserGuid_1, raw, recruitmentId, jobCodeId, jobCodeStr, department, statusId, fullName, interviewDate, existingComment, _b, panelRows, reviewerRes, currentUserPanel, uniqueEmails, emailToDetails_1, panelMembers, reviewer, reviewerName, jobTitleEn, jobTitleFr, grade, interviewLevel, _c, gradeRes, questionsResult, scorecardData, level2ScorecardData, hodDecisionData, positionOptionsData, commentsData, hodDecisionMerged, error_1;
+            var _a, candidateRows, currentUserGuid_1, raw, recruitmentId, jobCodeId, jobCodeStr, department, statusId, fullName, interviewDate, existingComment, jobRequestId, _b, panelRows, reviewerRes, currentUserPanel, uniqueEmails, emailToDetails_1, panelMembers, reviewer, reviewerName, jobTitleEn, jobTitleFr, grade, interviewLevel, _c, gradeRes, questionsResult, scorecardData, level2ScorecardData, hodDecisionData, positionOptionsData, commentsData, hodDecisionMerged, error_1;
             var _this = this;
-            var _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13;
-            return tslib_1.__generator(this, function (_14) {
-                switch (_14.label) {
+            var _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15;
+            return tslib_1.__generator(this, function (_16) {
+                switch (_16.label) {
                     case 0:
-                        _14.trys.push([0, 5, , 6]);
+                        _16.trys.push([0, 5, , 6]);
                         return [4 /*yield*/, Promise.all([
                                 spservice_1.default.SPReadItems({
                                     Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
@@ -436,7 +399,7 @@ var ReviewScoreCardServices = /** @class */ (function () {
                                         'ID', 'FristName', 'MiddleName', 'LastName', 'Nationality', 'Gender', 'Qualification',
                                         'TotalYearOfExperiance', 'ReleventExperience', 'InterviewDate', 'InterviewDateLevel2',
                                         'Disability', 'ConflictsOfInterest', 'PositionTitle', 'JobGrade', 'JobCodeId', 'StatusId',
-                                        'Comments', // ← needed for pre-populate on VIEW
+                                        'Comments', 'JobRequestID',
                                         'RecruitmentID/ID', 'JobCode/JobCode', 'JobCode/ID',
                                     ].join(','),
                                     Expand: 'RecruitmentID,JobCode',
@@ -445,7 +408,7 @@ var ReviewScoreCardServices = /** @class */ (function () {
                                 _getUserGuid(currentUserEmail),
                             ])];
                     case 1:
-                        _a = _14.sent(), candidateRows = _a[0], currentUserGuid_1 = _a[1];
+                        _a = _16.sent(), candidateRows = _a[0], currentUserGuid_1 = _a[1];
                         raw = (_d = candidateRows === null || candidateRows === void 0 ? void 0 : candidateRows[0]) !== null && _d !== void 0 ? _d : {};
                         recruitmentId = (_g = (_f = (_e = raw.RecruitmentID) === null || _e === void 0 ? void 0 : _e.ID) !== null && _f !== void 0 ? _f : raw.RecruitmentIDId) !== null && _g !== void 0 ? _g : 0;
                         jobCodeId = (_l = (_k = (_h = raw.JobCodeId) !== null && _h !== void 0 ? _h : (_j = raw.JobCode) === null || _j === void 0 ? void 0 : _j.ID) !== null && _k !== void 0 ? _k : candidate === null || candidate === void 0 ? void 0 : candidate.jobCodeID) !== null && _l !== void 0 ? _l : 0;
@@ -455,6 +418,7 @@ var ReviewScoreCardServices = /** @class */ (function () {
                         fullName = [raw.FristName, raw.MiddleName, raw.LastName].filter(Boolean).join(' ').trim();
                         interviewDate = (raw.InterviewDateLevel2 || raw.InterviewDate || '').split('T')[0];
                         existingComment = raw.Comments || '';
+                        jobRequestId = (_v = (_u = raw.JobRequestID) !== null && _u !== void 0 ? _u : raw.JobRequestId) !== null && _v !== void 0 ? _v : null;
                         return [4 /*yield*/, Promise.all([
                                 spservice_1.default.SPReadItems({
                                     Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
@@ -465,7 +429,7 @@ var ReviewScoreCardServices = /** @class */ (function () {
                                 _master.GetUserDetails([{ FilterKey: 'EmailId', Operator: 'eq', FilterValue: currentUserEmail }], 'and'),
                             ])];
                     case 2:
-                        _b = _14.sent(), panelRows = _b[0], reviewerRes = _b[1];
+                        _b = _16.sent(), panelRows = _b[0], reviewerRes = _b[1];
                         currentUserPanel = panelRows.find(function (p) { var _a; return String((_a = p.InterviewPanel) === null || _a === void 0 ? void 0 : _a.Id) === String(currentUserGuid_1); });
                         uniqueEmails = Array.from(new Set(panelRows.map(function (p) { var _a; return (_a = p.InterviewPanel) === null || _a === void 0 ? void 0 : _a.EMail; }).filter(Boolean)));
                         emailToDetails_1 = {};
@@ -493,7 +457,7 @@ var ReviewScoreCardServices = /** @class */ (function () {
                                 });
                             }); }))];
                     case 3:
-                        _14.sent();
+                        _16.sent();
                         panelMembers = panelRows
                             .map(function (p) {
                             var _a, _b, _c, _d, _e, _f, _g;
@@ -506,10 +470,10 @@ var ReviewScoreCardServices = /** @class */ (function () {
                             .filter(function (m) { return !!m.name; });
                         reviewer = reviewerRes === null || reviewerRes === void 0 ? void 0 : reviewerRes.data;
                         reviewerName = reviewer ? [reviewer.FirstName, reviewer.MiddleName, reviewer.LastName].filter(Boolean).join(' ').trim() : '';
-                        jobTitleEn = (_u = reviewer === null || reviewer === void 0 ? void 0 : reviewer.JopTitleEnglish) !== null && _u !== void 0 ? _u : '';
-                        jobTitleFr = (_v = reviewer === null || reviewer === void 0 ? void 0 : reviewer.JopTitleFrench) !== null && _v !== void 0 ? _v : '';
-                        grade = (_x = (_w = raw.JobGrade) !== null && _w !== void 0 ? _w : candidate === null || candidate === void 0 ? void 0 : candidate.grade) !== null && _x !== void 0 ? _x : '';
-                        interviewLevel = (_z = (_y = raw.InterviewLevel) !== null && _y !== void 0 ? _y : candidate === null || candidate === void 0 ? void 0 : candidate.interviewLevel) !== null && _z !== void 0 ? _z : '';
+                        jobTitleEn = (_w = reviewer === null || reviewer === void 0 ? void 0 : reviewer.JopTitleEnglish) !== null && _w !== void 0 ? _w : '';
+                        jobTitleFr = (_x = reviewer === null || reviewer === void 0 ? void 0 : reviewer.JopTitleFrench) !== null && _x !== void 0 ? _x : '';
+                        grade = (_z = (_y = raw.JobGrade) !== null && _y !== void 0 ? _y : candidate === null || candidate === void 0 ? void 0 : candidate.grade) !== null && _z !== void 0 ? _z : '';
+                        interviewLevel = (_2 = (_0 = raw.InterviewLevel) !== null && _0 !== void 0 ? _0 : candidate === null || candidate === void 0 ? void 0 : candidate.interviewLevel) !== null && _2 !== void 0 ? _2 : '';
                         return [4 /*yield*/, Promise.all([
                                 grade ? Promise.resolve(null) : _master.GetGradeLevel(raw.JobGrade || jobCodeStr).catch(function () { return null; }),
                                 jobCodeId
@@ -532,35 +496,35 @@ var ReviewScoreCardServices = /** @class */ (function () {
                                     : Promise.resolve([]),
                                 this._getCandidateScorecard(candidateId),
                                 this._getLevel2Scorecard(candidateId),
-                                this._getHODDecision(candidateId), // positionId from HRMSSelectedCandidateDetailsByHOD
+                                this._getHODDecision(candidateId),
                                 this.fetchPositionOptions(jobCodeId, department),
                                 this.fetchComments(candidateId),
                             ])];
                     case 4:
-                        _c = _14.sent(), gradeRes = _c[0], questionsResult = _c[1], scorecardData = _c[2], level2ScorecardData = _c[3], hodDecisionData = _c[4], positionOptionsData = _c[5], commentsData = _c[6];
+                        _c = _16.sent(), gradeRes = _c[0], questionsResult = _c[1], scorecardData = _c[2], level2ScorecardData = _c[3], hodDecisionData = _c[4], positionOptionsData = _c[5], commentsData = _c[6];
                         if (!grade && (gradeRes === null || gradeRes === void 0 ? void 0 : gradeRes.data))
-                            grade = (_2 = (_0 = gradeRes.data) === null || _0 === void 0 ? void 0 : _0.GradeLevel) !== null && _2 !== void 0 ? _2 : '';
+                            grade = (_4 = (_3 = gradeRes.data) === null || _3 === void 0 ? void 0 : _3.GradeLevel) !== null && _4 !== void 0 ? _4 : '';
                         if (!interviewLevel)
-                            interviewLevel = raw.InterviewLevel || ((_3 = String(raw.JobGrade || '').match(/Level\s*\d+/i)) === null || _3 === void 0 ? void 0 : _3[0]) || '';
+                            interviewLevel = raw.InterviewLevel || ((_5 = String(raw.JobGrade || '').match(/Level\s*\d+/i)) === null || _5 === void 0 ? void 0 : _5[0]) || '';
                         hodDecisionMerged = hodDecisionData
                             ? tslib_1.__assign(tslib_1.__assign({}, hodDecisionData), { Comments: hodDecisionData.Comments || existingComment }) : existingComment ? { Comments: existingComment } : null;
                         return [2 /*return*/, {
                                 success: true,
                                 candidateId: candidateId,
-                                applicantName: fullName, nationality: (_4 = raw.Nationality) !== null && _4 !== void 0 ? _4 : '',
-                                gender: (_5 = raw.Gender) !== null && _5 !== void 0 ? _5 : '', qualification: (_6 = raw.Qualification) !== null && _6 !== void 0 ? _6 : '',
-                                miningExp: (_7 = raw.TotalYearOfExperiance) !== null && _7 !== void 0 ? _7 : '', relevantExp: (_8 = raw.ReleventExperience) !== null && _8 !== void 0 ? _8 : '',
+                                applicantName: fullName, nationality: (_6 = raw.Nationality) !== null && _6 !== void 0 ? _6 : '',
+                                gender: (_7 = raw.Gender) !== null && _7 !== void 0 ? _7 : '', qualification: (_8 = raw.Qualification) !== null && _8 !== void 0 ? _8 : '',
+                                miningExp: (_9 = raw.TotalYearOfExperiance) !== null && _9 !== void 0 ? _9 : '', relevantExp: (_10 = raw.ReleventExperience) !== null && _10 !== void 0 ? _10 : '',
                                 interviewDate: interviewDate,
                                 interviewLevel: interviewLevel,
-                                disability: (_10 = (_9 = raw.Disability) !== null && _9 !== void 0 ? _9 : raw.disability) !== null && _10 !== void 0 ? _10 : '',
-                                conflictsOfInterest: (_11 = raw.ConflictsOfInterest) !== null && _11 !== void 0 ? _11 : '', positionTitle: (_12 = raw.PositionTitle) !== null && _12 !== void 0 ? _12 : '',
+                                disability: (_12 = (_11 = raw.Disability) !== null && _11 !== void 0 ? _11 : raw.disability) !== null && _12 !== void 0 ? _12 : '',
+                                conflictsOfInterest: (_13 = raw.ConflictsOfInterest) !== null && _13 !== void 0 ? _13 : '', positionTitle: (_14 = raw.PositionTitle) !== null && _14 !== void 0 ? _14 : '',
                                 grade: grade,
                                 recruitmentId: recruitmentId,
                                 jobCodeId: jobCodeId,
                                 jobCode: jobCodeStr,
                                 department: department,
                                 panelMembers: panelMembers,
-                                currentUserPanelId: (_13 = currentUserPanel === null || currentUserPanel === void 0 ? void 0 : currentUserPanel.ID) !== null && _13 !== void 0 ? _13 : null,
+                                currentUserPanelId: (_15 = currentUserPanel === null || currentUserPanel === void 0 ? void 0 : currentUserPanel.ID) !== null && _15 !== void 0 ? _15 : null,
                                 currentUserGuid: currentUserGuid_1,
                                 reviewerName: reviewerName,
                                 jobTitleEn: jobTitleEn,
@@ -571,9 +535,10 @@ var ReviewScoreCardServices = /** @class */ (function () {
                                 positionOptions: positionOptionsData,
                                 level1Comments: commentsData.level1, level2Comments: commentsData.level2,
                                 statusId: statusId,
+                                jobRequestId: jobRequestId,
                             }];
                     case 5:
-                        error_1 = _14.sent();
+                        error_1 = _16.sent();
                         console.error('[getReviewScoreCardData]', error_1);
                         return [2 /*return*/, EMPTY(candidateId)];
                     case 6: return [2 /*return*/];
@@ -647,7 +612,6 @@ var ReviewScoreCardServices = /** @class */ (function () {
             });
         });
     };
-    // Reads HRMSSelectedCandidateDetailsByHOD — positionId pre-fill on VIEW
     ReviewScoreCardServices.prototype._getHODDecision = function (candidateId) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var res, _a;
@@ -874,10 +838,9 @@ var ReviewScoreCardServices = /** @class */ (function () {
             });
         });
     };
-    // ── SUBMIT HOD DECISION — mirrors old HodViewScorecard Submit_fn exactly ──
     ReviewScoreCardServices.prototype.submitHODDecision = function (params) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var candidateId_1, hodDecision, comments, currentUserEmail, currentRoleId, gpa, positionId, lv2, jobCodeID, recruitmentID, statusId, currentUserGuid_2, allPanels, matchingPanels, userPanels, _i, userPanels_1, panel, refreshed, level2Panels, uploadedCount, othersInterviewed, isLevel2StatusId, actionId, workflowStatus, successMsg, e_10;
+            var candidateId_1, hodDecision, comments, currentUserEmail, currentRoleId, gpa, positionId, lv2, jobCodeID, recruitmentID, statusId, jobRequestId, currentUserGuid_2, allPanels, matchingPanels, userPanels, _i, userPanels_1, panel, refreshed, level2Panels, uploadedCount, othersInterviewed, isLevel2StatusId, actionId, workflowStatus, successMsg, e_10;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -885,16 +848,14 @@ var ReviewScoreCardServices = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 21, , 22]);
-                        candidateId_1 = params.candidateId, hodDecision = params.hodDecision, comments = params.comments, currentUserEmail = params.currentUserEmail, currentRoleId = params.currentRoleId, gpa = params.gpa, positionId = params.positionId, lv2 = params.isLevel2, jobCodeID = params.jobCodeID, recruitmentID = params.recruitmentID, statusId = params.statusId;
+                        candidateId_1 = params.candidateId, hodDecision = params.hodDecision, comments = params.comments, currentUserEmail = params.currentUserEmail, currentRoleId = params.currentRoleId, gpa = params.gpa, positionId = params.positionId, lv2 = params.isLevel2, jobCodeID = params.jobCodeID, recruitmentID = params.recruitmentID, statusId = params.statusId, jobRequestId = params.jobRequestId;
                         console.log('[ReviewScoreCardServices] submitHODDecision branch: isLevel2 =', lv2);
                         if (!lv2) return [3 /*break*/, 12];
-                        // Step 1: Save comment to HRMSCandidateLevel2ScoreCard
                         console.log('Branch 1 Step 1: Saving Level 2 comment');
                         return [4 /*yield*/, _insertOrUpdateLevel2Comment(candidateId_1, currentRoleId, comments)];
                     case 2:
                         _a.sent();
                         console.log('Branch 1 Step 1: Level 2 comment saved');
-                        // Step 2: Get current user's SP ID → find their panel row → mark IsScoreSheetUploaded = "Yes"
                         console.log('Branch 1 Step 2: Marking user panel as uploaded');
                         return [4 /*yield*/, _getUserGuid(currentUserEmail)];
                     case 3:
@@ -926,7 +887,6 @@ var ReviewScoreCardServices = /** @class */ (function () {
                         return [3 /*break*/, 5];
                     case 8:
                         console.log('Branch 1 Step 2: User panels marked as uploaded');
-                        // Step 3: Re-fetch Level2 panels — if ALL uploaded → update candidate
                         console.log('Branch 1 Step 3: Checking if all Level 2 panels uploaded');
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
@@ -952,8 +912,6 @@ var ReviewScoreCardServices = /** @class */ (function () {
                         console.log('Branch 1 Step 3: Checked panels, uploadedCount =', uploadedCount, 'total =', level2Panels.length);
                         return [2 /*return*/, { success: true, message: '✓ Level 2 scorecard submitted successfully.' }];
                     case 12:
-                        // ── BRANCH 2: HOD Level1 / Level2 selection ───────────────────────────
-                        // Step 1: OthersInterviewed
                         console.log('Branch 2 Step 1: Calculating OthersInterviewed');
                         return [4 /*yield*/, _getOthersInterviewed(jobCodeID)];
                     case 13:
@@ -982,8 +940,6 @@ var ReviewScoreCardServices = /** @class */ (function () {
                                 return [2 /*return*/, { success: false, message: 'Invalid decision.' }];
                         }
                         console.log('Branch 2 Step 2: Mapped decision', hodDecision, 'to actionId =', actionId, 'workflowStatus =', workflowStatus);
-                        // Step 3: CandidateSeletionApi → update HRMSRecruitmentCandidatePersonalDetails
-                        // ItemCreated = "Yes" (Review Score Card tab = non-Evaluation tab always)
                         return [4 /*yield*/, spservice_1.default.SPUpdateItem({
                                 Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
                                 RequestJSON: {
@@ -995,22 +951,16 @@ var ReviewScoreCardServices = /** @class */ (function () {
                                 ID: candidateId_1,
                             })];
                     case 14:
-                        // Step 3: CandidateSeletionApi → update HRMSRecruitmentCandidatePersonalDetails
-                        // ItemCreated = "Yes" (Review Score Card tab = non-Evaluation tab always)
                         _a.sent();
                         console.log('Branch 2 Step 3: Candidate updated with actionId =', actionId, 'GPA =', gpa, 'OthersInterviewed =', othersInterviewed);
-                        // Step 4: Portal workflow API — UpdateCandidateStatus
-                        return [4 /*yield*/, _updatePortalWorkflowStatus(workflowStatus, Number(recruitmentID), comments)];
+                        return [4 /*yield*/, _updatePortalWorkflowStatus(workflowStatus, Number(jobRequestId), comments)];
                     case 15:
-                        // Step 4: Portal workflow API — UpdateCandidateStatus
                         _a.sent();
                         console.log('Branch 2 Step 4: Portal workflow updated to', workflowStatus);
-                        // Step 5: Insert/update Level1 comment in HRMSRecruitmentCandidateComments
-                        return [4 /*yield*/, _insertOrUpdateLevel1Comment(candidateId_1, currentRoleId, comments)];
+                        return [4 /*yield*/, _insertOrUpdateLevel1Comment(candidateId_1, currentRoleId, comments, "Level 1")];
                     case 16:
-                        // Step 5: Insert/update Level1 comment in HRMSRecruitmentCandidateComments
                         _a.sent();
-                        console.log('Branch 2 Step 5: Level 1 comment saved');
+                        console.log('Branch 2 Step 5: Level 1 comment saved (Level 1)');
                         if (!(hodDecision === 'Yes' && positionId)) return [3 /*break*/, 18];
                         console.log('Branch 2 Step 6: Assigning position ID', positionId);
                         return [4 /*yield*/, _assignPositionID({ positionId: positionId, candidateId: candidateId_1, recruitmentID: recruitmentID })];

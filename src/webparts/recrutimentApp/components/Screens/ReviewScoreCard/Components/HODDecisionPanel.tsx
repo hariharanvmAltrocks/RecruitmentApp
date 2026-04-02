@@ -1,44 +1,35 @@
-// Components/HODDecisionPanel.tsx
-// Exact old-code UI (Hoddecisionpanel.tsx):
-//   View-only mode: shows existing decision, position, comment, VIEW COMMENTS, CLOSE
-//   Edit mode: YES/NO/ON HOLD buttons, position dropdown, textarea, checkbox, reviewer card, submit
-
 import * as React from "react";
 import { Zap, CheckCircle2, Activity, Eye, FileText, X } from "lucide-react";
 import styles from "../ReviewScorecard.module.scss";
 import { HODDecision, PositionOption } from "../State/types";
-
-// StatusId constants (inlined to avoid import issues)
-// PendingwithHODtoAssignPositionID = 130, InterviewScheduledforLevel2 = 129
 const _FEEDBACK_LEVEL2_STATUS_IDS = [130, 129];
-
 interface Props {
-  canEdit:              boolean;
-  isLevel2Status:       boolean;
-  statusId:             number;
-  hodDecision:          HODDecision;
-  decisionComment:      string;
-  confirmed:            boolean;
-  selectedPositionId:   number | null;
+  canEdit: boolean;
+  isLevel2Status: boolean;
+  statusId: number;
+  hodDecision: HODDecision;
+  decisionComment: string;
+  confirmed: boolean;
+  selectedPositionId: number | null;
   selectedPositionText: string;
-  positionOptions:      PositionOption[];
-  submitting:           boolean;
-  submitError:          string;
-  successMessage:       string;
-  reviewerName:         string;
-  jobTitleEn:           string;
-  jobTitleFr:           string;
-  userInitial:          string;
+  positionOptions: PositionOption[];
+  submitting: boolean;
+  submitError: string;
+  successMessage: string;
+  reviewerName: string;
+  jobTitleEn: string;
+  jobTitleFr: string;
+  userInitial: string;
   errors: { decision: boolean; comment: boolean; checkbox: boolean; position: boolean };
 
   shouldShowPositionId: (statusId: number, decision: HODDecision) => boolean;
-  onDecisionChange:     (d: HODDecision) => void;
-  onCommentChange:      (v: string) => void;
-  onConfirmChange:      (v: boolean) => void;
-  onPositionChange:     (id: number | null, text: string) => void;
-  onViewComments:       () => void;
-  onSubmit:             () => void;
-  onClose:              () => void;
+  onDecisionChange: (d: HODDecision) => void;
+  onCommentChange: (v: string) => void;
+  onConfirmChange: (v: boolean) => void;
+  onPositionChange: (id: number | null, text: string) => void;
+  onViewComments: () => void;
+  onSubmit: () => void;
+  onClose: () => void;
 }
 
 const HODDecisionPanel: React.FC<Props> = ({
@@ -50,16 +41,9 @@ const HODDecisionPanel: React.FC<Props> = ({
   onDecisionChange, onCommentChange, onConfirmChange, onPositionChange,
   onViewComments, onSubmit, onClose,
 }) => {
-  // feedbackLabel — mirrors old code HodViewScorecard.tsx lines 1394-1400 EXACTLY:
-  //   StatusId.PendingwithHODtoAssignPositionID (130) → "Feedback — Level 2"
-  //   StatusId.InterviewScheduledforLevel2      (129) → "Feedback — Level 2"
-  //   ALL others (127, 121, 123, 165, 166...)   → "Feedback — Level 1"
-  // 127 (PendingwithHODtoselectthecandidateLevel2) is HOD selection → Level 1 label
   const feedbackLabel = _FEEDBACK_LEVEL2_STATUS_IDS.includes(statusId)
     ? "Feedback — Level 2"
     : "Feedback — Level 1";
-
-  // ── VIEW-ONLY MODE ──────────────────────────────────────────────────────────
   if (!canEdit) {
     return (
       <div className={styles.mDecisionCard} style={{ borderColor: "#e2e8f0", background: "#f8fafc" }}>
@@ -86,7 +70,7 @@ const HODDecisionPanel: React.FC<Props> = ({
               padding: "0.5rem 1rem", borderRadius: "0.5rem", fontWeight: 700,
               fontSize: "0.875rem", display: "inline-block",
               background: hodDecision === "Yes" ? "#f0fdf4" : hodDecision === "No" ? "#fef2f2" : "#fffbeb",
-              color:      hodDecision === "Yes" ? "#16a34a" : hodDecision === "No" ? "#dc2626" : "#d97706",
+              color: hodDecision === "Yes" ? "#16a34a" : hodDecision === "No" ? "#dc2626" : "#d97706",
             }}>
               {hodDecision === "Yes" ? "✓ SELECTED" : hodDecision === "No" ? "✗ REJECTED" : "⏸ ON HOLD"}
             </div>
@@ -120,8 +104,6 @@ const HODDecisionPanel: React.FC<Props> = ({
       </div>
     );
   }
-
-  // ── EDIT MODE ───────────────────────────────────────────────────────────────
   return (
     <div className={styles.mDecisionCard}>
       {/* Header */}
@@ -136,9 +118,9 @@ const HODDecisionPanel: React.FC<Props> = ({
       {/* YES / NO / ON HOLD buttons */}
       <div className={styles.mDecisionGrid}>
         {([
-          { val: "Yes"     as HODDecision, cls: styles.mDCardYes,  Icon: CheckCircle2, label: "YES, SELECT" },
-          { val: "No"      as HODDecision, cls: styles.mDCardNo,   Icon: X,            label: "NO, REJECT"  },
-          { val: "On Hold" as HODDecision, cls: styles.mDCardHold, Icon: Activity,     label: "ON HOLD"     },
+          { val: "Yes" as HODDecision, cls: styles.mDCardYes, Icon: CheckCircle2, label: "YES, SELECT" },
+          { val: "No" as HODDecision, cls: styles.mDCardNo, Icon: X, label: "NO, REJECT" },
+          { val: "On Hold" as HODDecision, cls: styles.mDCardHold, Icon: Activity, label: "ON HOLD" },
         ]).map(({ val, cls, Icon, label }) => (
           <button
             key={val}

@@ -66,7 +66,7 @@ function useCandidateDetails(_a) {
                             currentUserGuid: result.currentUserGuid,
                             recruitmentId: result.recruitmentId,
                             jobCodeID: result.jobCodeId,
-                            jobRequestId: jobRequestId, // ← for portal API
+                            jobRequestId: jobRequestId,
                             currentRoleIDs: (ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.roleIDs) || [4],
                         });
                         setQuestions(result.questions.map(function (q) { return ({

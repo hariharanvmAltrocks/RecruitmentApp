@@ -8,7 +8,6 @@ export interface IQuestionBankService {
 
 const questionnaireApi = new QuestionnaireApi();
 
-// Default service — fetches real questions by jobCode from the portal API
 const defaultService: IQuestionBankService = {
   getQuestions: async (jobCode: string) => {
     console.log("[fetchQuestionBank] getQuestions start", jobCode);

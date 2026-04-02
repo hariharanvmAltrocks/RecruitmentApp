@@ -1,8 +1,3 @@
-// Components/CandidateDrawer.tsx
-// FIXES:
-//   1. Action column icons — always visible, properly right-aligned
-//   2. Pagination — rows per page selector + prev/next controls (mirrors Image 2)
-//   3. onClose (X button + CLOSE button) → navigate('/RecruitmentTable')
 
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -43,14 +38,9 @@ const CandidateDrawer: React.FC<Props> = ({
   recruitmentId,
 }) => {
   const navigate = useNavigate();
-
-  // ── Pagination state ────────────────────────────────────────────────────────
   const [currentPage, setCurrentPage] = React.useState(1);
   const [pageSize,    setPageSize]    = React.useState(5);
-
-  // Reset page to 1 when candidates list changes
   React.useEffect(() => { setCurrentPage(1); }, [candidates.length]);
-
   const totalRecords  = candidates.length;
   const totalPages    = Math.max(1, Math.ceil(totalRecords / pageSize));
   const startIndex    = (currentPage - 1) * pageSize;
@@ -169,8 +159,6 @@ const CandidateDrawer: React.FC<Props> = ({
                               {c.status || ""}
                             </span>
                           </td>
-
-                          {/* ── ACTION COLUMN — always renders, icon shown by status ── */}
                           <td style={{ textAlign: "center", verticalAlign: "middle" }}>
                             {edit ? (
                               <button
@@ -274,9 +262,11 @@ const CandidateDrawer: React.FC<Props> = ({
                       ) : (
                         <button
                           key={pg}
-                          className={`${styles.pageBtn} ${
-                            currentPage === pg ? styles.pageBtnActive : ""
-                          }`}
+                          className={
+                            currentPage === pg
+                              ? `${styles.pageBtn} ${styles.pageBtnActive}`
+                              : styles.pageBtn
+                          }
                           onClick={() => setCurrentPage(pg as number)}
                         >
                           {pg}

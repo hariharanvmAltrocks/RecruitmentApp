@@ -160,7 +160,7 @@ var RecruitmentTable = function () {
                 routeMap = tslib_1.__assign((_a = {}, _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.ReviewProfileHR] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewProfileLM] = "/CandidateTable", _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/ReviewScoreCard", _a), Object.fromEntries(evalutionIDs.map(function (id) { return [id, "/Evalution"]; })));
                 route = routeMap[matricID];
                 if (route) {
-                    navigate(route, { state: { ID: ItemID } });
+                    navigate(route, { state: { ID: ItemID, department: item.department } });
                     return [2 /*return*/];
                 }
                 drawerMeta.current = { isOpen: true, selectedType: item.requestType };

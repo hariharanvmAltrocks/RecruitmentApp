@@ -48,8 +48,6 @@ export function useCandidateDetails({
           setError("Failed to load candidate data. Please retry.");
           return;
         }
-
-        // jobRequestId stored on _jobRequestId by service
         const jobRequestId = (result as any)._jobRequestId ?? '';
 
         setCandidate({
@@ -75,7 +73,7 @@ export function useCandidateDetails({
           currentUserGuid:     result.currentUserGuid,
           recruitmentId:       result.recruitmentId,
           jobCodeID:           result.jobCodeId,
-          jobRequestId,                                    // ← for portal API
+          jobRequestId,                                  
           currentRoleIDs:      ADGroupData?.roleIDs || [4],
         });
 

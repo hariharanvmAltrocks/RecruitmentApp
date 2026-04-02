@@ -1,21 +1,15 @@
-// State/ReviewScoreCardProvider.tsx
-// Context provider — wraps useReviewScorecard hook,
-// exposes everything to child components via context.
 
 import * as React from 'react';
 import { Dispatch, SetStateAction } from 'react';
 import { useReviewScorecard } from '../Hooks/useReviewScorecard';
 import { ScorecardCandidateRow, HODDecision, CommentEntry, PositionOption, CandidateReviewData } from './types';
-
 type ErrorsType = { decision: boolean; comment: boolean; checkbox: boolean; position: boolean };
-
 interface ReviewScoreCardProviderProps {
   recruitmentId:    number;
   currentUserEmail: string;
   department?:      string;
   children:         React.ReactNode;
 }
-
 interface ReviewScoreCardContextType {
   recruitmentId:        number;
   candidates:           ScorecardCandidateRow[];

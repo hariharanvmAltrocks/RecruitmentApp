@@ -24,8 +24,6 @@ var ReviewScoreCardContent = function () {
 var ReviewScoreCard = function (props) {
     var _a;
     var location = (0, react_router_dom_1.useLocation)();
-    // ID comes from location.state (navigated via navigate('/ReviewScoreCard', { state: { ID: 636 } }))
-    // OR from props directly
     var locState = location.state;
     var recruitmentId = Number((locState === null || locState === void 0 ? void 0 : locState.ID) ||
         (locState === null || locState === void 0 ? void 0 : locState.recruitmentId) ||
@@ -34,7 +32,6 @@ var ReviewScoreCard = function (props) {
         (props === null || props === void 0 ? void 0 : props.recruitmentId) ||
         (props === null || props === void 0 ? void 0 : props.RecruitmentID) ||
         0);
-    console.log('[ReviewScoreCard] recruitmentId resolved:', recruitmentId, 'from state:', locState, 'props:', props);
     var ADGroupData = (0, RoleContext_1.useRoleContext)().ADGroupData;
     var currentUserEmail = ((_a = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _a === void 0 ? void 0 : _a[0]) || '';
     return (React.createElement(ReviewScoreCardProvider_1.ReviewScoreCardProvider, { recruitmentId: recruitmentId, currentUserEmail: currentUserEmail },

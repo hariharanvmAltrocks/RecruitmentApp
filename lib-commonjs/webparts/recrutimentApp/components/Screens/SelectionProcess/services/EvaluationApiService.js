@@ -1280,7 +1280,7 @@ exports.evaluationService = {
                         filterConditions = [
                             { FilterKey: "JobCode", Operator: "eq", FilterValue: jobCodeID },
                             { FilterKey: "Department", Operator: "eq", FilterValue: department },
-                            { FilterKey: "PositionIDStatus", Operator: "eq", FilterValue: "Recruitment Initiator" },
+                            { FilterKey: "PositionIDStatus", Operator: "eq", FilterValue: "" },
                         ];
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSPositionIDMaster,
@@ -1303,7 +1303,7 @@ exports.evaluationService = {
                                 Select: "*",
                                 Filter: [
                                     { FilterKey: "Department", Operator: "eq", FilterValue: department },
-                                    { FilterKey: "PositionIDStatus", Operator: "eq", FilterValue: "Recruitment Initiator" },
+                                    { FilterKey: "PositionIDStatus", Operator: "eq", FilterValue: "Recruitment Initiated" },
                                 ],
                                 Topcount: 100,
                             })];

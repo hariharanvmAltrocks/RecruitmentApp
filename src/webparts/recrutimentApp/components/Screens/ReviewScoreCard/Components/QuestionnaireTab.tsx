@@ -1,11 +1,6 @@
-// Components/QuestionnaireTab.tsx
-// Exact old-code UI (Questionnairetab.tsx):
-//   - Q-badge cards with rating label (EXCELLENT/ACCEPTABLE/NOT ACCEPTABLE) + score /3
-//   - SCORECARD DETAILS section below: progress bars 1-5, recommendation badge, feedback
 
 import * as React from "react";
 import styles from "../ReviewScorecard.module.scss";
-
 const SCORECARD_BAR_LABELS = [
   { key: "RelevantQualification",            label: "QUALIFICATIONS" },
   { key: "ReleventExperience",               label: "EXPERIENCE"     },
@@ -19,8 +14,8 @@ const SCORECARD_BAR_LABELS = [
 
 interface Props {
   questions:         any[];
-  activeScore:       any;    // scorecard for the active panel tab
-  activeQJson:       any[];  // parsed QuestionJson for active panel
+  activeScore:       any;    
+  activeQJson:       any[];  
   panelMemberName:   string;
   fetchingQuestions: boolean;
 }
@@ -45,8 +40,6 @@ const QuestionnaireTab: React.FC<Props> = ({
         </div>
       </div>
     </div>
-
-    {/* Scrollable area for Q cards + scorecard bars */}
     <div style={{ maxHeight: "500px", overflowY: "auto" }}>
 
       {/* Q cards */}
@@ -99,8 +92,6 @@ const QuestionnaireTab: React.FC<Props> = ({
           </div>
         );
       })}
-
-      {/* Scorecard progress bars for the active panel member */}
       {activeScore && (
         <div style={{ marginTop: "1.5rem" }}>
           <div className={styles.mSectionHeader}>

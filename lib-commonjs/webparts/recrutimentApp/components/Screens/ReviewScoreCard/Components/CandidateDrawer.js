@@ -1,9 +1,4 @@
 "use strict";
-// Components/CandidateDrawer.tsx
-// FIXES:
-//   1. Action column icons — always visible, properly right-aligned
-//   2. Pagination — rows per page selector + prev/next controls (mirrors Image 2)
-//   3. onClose (X button + CLOSE button) → navigate('/RecruitmentTable')
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
@@ -31,10 +26,8 @@ var getInterviewLevelLabel = function (interviewLevel) {
 var CandidateDrawer = function (_a) {
     var candidates = _a.candidates, loading = _a.loading, onClose = _a.onClose, onReview = _a.onReview, recruitmentId = _a.recruitmentId;
     var navigate = (0, react_router_dom_1.useNavigate)();
-    // ── Pagination state ────────────────────────────────────────────────────────
     var _b = React.useState(1), currentPage = _b[0], setCurrentPage = _b[1];
     var _c = React.useState(5), pageSize = _c[0], setPageSize = _c[1];
-    // Reset page to 1 when candidates list changes
     React.useEffect(function () { setCurrentPage(1); }, [candidates.length]);
     var totalRecords = candidates.length;
     var totalPages = Math.max(1, Math.ceil(totalRecords / pageSize));
@@ -137,7 +130,9 @@ var CandidateDrawer = function (_a) {
                                 return acc;
                             }, [])
                                 .map(function (pg, i) {
-                                return pg === "…" ? (React.createElement("span", { key: "ellipsis-".concat(i), style: { padding: "0 0.25rem", color: "#94a3b8" } }, "\u2026")) : (React.createElement("button", { key: pg, className: "".concat(ReviewScorecard_module_scss_1.default.pageBtn, " ").concat(currentPage === pg ? ReviewScorecard_module_scss_1.default.pageBtnActive : ""), onClick: function () { return setCurrentPage(pg); } }, pg));
+                                return pg === "…" ? (React.createElement("span", { key: "ellipsis-".concat(i), style: { padding: "0 0.25rem", color: "#94a3b8" } }, "\u2026")) : (React.createElement("button", { key: pg, className: currentPage === pg
+                                        ? "".concat(ReviewScorecard_module_scss_1.default.pageBtn, " ").concat(ReviewScorecard_module_scss_1.default.pageBtnActive)
+                                        : ReviewScorecard_module_scss_1.default.pageBtn, onClick: function () { return setCurrentPage(pg); } }, pg));
                             }),
                             React.createElement("button", { className: ReviewScorecard_module_scss_1.default.pageBtn, onClick: function () {
                                     return setCurrentPage(function (p) { return Math.min(totalPages, p + 1); });

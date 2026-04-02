@@ -1,7 +1,4 @@
 "use strict";
-// State/ReviewScoreCardProvider.tsx
-// Context provider — wraps useReviewScorecard hook,
-// exposes everything to child components via context.
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReviewScoreCardProvider = exports.useReviewScoreCardContext = void 0;
 var tslib_1 = require("tslib");

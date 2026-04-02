@@ -1,8 +1,4 @@
 "use strict";
-// Components/QuestionnaireTab.tsx
-// Exact old-code UI (Questionnairetab.tsx):
-//   - Q-badge cards with rating label (EXCELLENT/ACCEPTABLE/NOT ACCEPTABLE) + score /3
-//   - SCORECARD DETAILS section below: progress bars 1-5, recommendation badge, feedback
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));

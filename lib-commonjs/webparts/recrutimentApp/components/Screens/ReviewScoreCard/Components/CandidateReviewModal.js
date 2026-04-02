@@ -17,7 +17,6 @@ var ScoreTable_1 = tslib_1.__importDefault(require("./ScoreTable"));
 var HODDecisionPanel_1 = tslib_1.__importDefault(require("./HODDecisionPanel"));
 var Commentsmodal_1 = tslib_1.__importDefault(require("./Commentsmodal"));
 var useReviewScorecard_1 = require("../Hooks/useReviewScorecard");
-// ── Score criteria for Overall Evaluation table ───────────────────────────────
 var SCORE_CRITERIA = [
     { field: "RelevantQualification", label: "Qualification (Relevant)" },
     { field: "ReleventExperience", label: "Experience (Relevant)" },
@@ -28,31 +27,24 @@ var SCORE_CRITERIA = [
     { field: "Experience", label: "Experience" },
     { field: "OtherCriteriaScore", label: "Other Criteria Recognized by Panel" },
 ];
-// Max score per panel member (8 criteria × 5)
 var MAX_OVERALL_PER_PANEL = 40;
-// ── Small field component (left sidebar) ──────────────────────────────────────
 var MField = function (_a) {
     var label = _a.label, value = _a.value;
     return (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mfField },
         React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mfLabel }, label),
         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mfValue }, value || "—")));
 };
-// ── Component ─────────────────────────────────────────────────────────────────
 var CandidateReviewModal = function (_a) {
     var candidate = _a.candidate, reviewData = _a.reviewData, reviewLoading = _a.reviewLoading, job = _a.job, scoreData = _a.scoreData, scoreLoading = _a.scoreLoading, showComments = _a.showComments, level1Comments = _a.level1Comments, level2Comments = _a.level2Comments, commentsLoading = _a.commentsLoading, onViewComments = _a.onViewComments, onCloseComments = _a.onCloseComments, hodDecision = _a.hodDecision, decisionComment = _a.decisionComment, confirmed = _a.confirmed, selectedPositionId = _a.selectedPositionId, selectedPositionText = _a.selectedPositionText, positionOptions = _a.positionOptions, submitting = _a.submitting, submitError = _a.submitError, successMessage = _a.successMessage, errors = _a.errors, shouldShowPositionId = _a.shouldShowPositionId, onDecisionChange = _a.onDecisionChange, onCommentChange = _a.onCommentChange, onConfirmChange = _a.onConfirmChange, onPositionChange = _a.onPositionChange, onSubmit = _a.onSubmit, onClose = _a.onClose, currentRoleId = _a.currentRoleId, isLevel2Status = _a.isLevel2Status;
     var _b = React.useState(0), activePanelTab = _b[0], setActivePanelTab = _b[1];
     var _c = React.useState("questions"), activeScorecardTab = _c[0], setActiveScorecardTab = _c[1];
-    // ── Panel members list ─────────────────────────────────────────────────────
-    // Prefer reviewData.panelMembers, fallback to scoreData InterviewPersonName
     var panelMembers = React.useMemo(function () {
         var fromReview = (reviewData === null || reviewData === void 0 ? void 0 : reviewData.panelMembers) || [];
         if (fromReview.length > 0)
             return fromReview;
         return (scoreData || []).map(function (s, i) { return s.InterviewPersonName || "Interviewer ".concat(i + 1); });
     }, [reviewData, scoreData]);
-    // ── Active panel scorecard ─────────────────────────────────────────────────
     var activeScore = (scoreData || [])[activePanelTab] || null;
-    // ── Parsed QuestionJson for active panel member ────────────────────────────
     var activeQJson = React.useMemo(function () {
         if (!(activeScore === null || activeScore === void 0 ? void 0 : activeScore.QuestionJson))
             return [];
@@ -65,8 +57,6 @@ var CandidateReviewModal = function (_a) {
             return [];
         }
     }, [activeScore]);
-    // ── Question Evaluation table rows (qEval tab) ────────────────────────────
-    // Key = question label, columns = per-panel score
     var questionTableRows = React.useMemo(function () {
         var qMap = {};
         (scoreData || []).forEach(function (s, i) {
@@ -89,8 +79,6 @@ var CandidateReviewModal = function (_a) {
         });
         return Object.values(qMap);
     }, [scoreData]);
-    // ── Overall Evaluation table rows (overall tab) ───────────────────────────
-    // 8 criteria rows + Total row, per-panel columns + grand total
     var overallTableRows = React.useMemo(function () {
         var rows = SCORE_CRITERIA.map(function (_a) {
             var field = _a.field, label = _a.label;
@@ -102,7 +90,6 @@ var CandidateReviewModal = function (_a) {
             });
             return row;
         });
-        // Total row: per-panel sum as "X / 40", grand total
         var totalRow = { criteria: "Total", total: 0 };
         (scoreData || []).forEach(function (_, i) {
             var sum = rows.reduce(function (acc, r) {
@@ -115,7 +102,6 @@ var CandidateReviewModal = function (_a) {
         rows.push(totalRow);
         return rows;
     }, [scoreData]);
-    // ── Derived display values ─────────────────────────────────────────────────
     var raw = (reviewData === null || reviewData === void 0 ? void 0 : reviewData.candidateData) || {};
     var formattedDate = (raw.InterviewDate || raw.InterviewDateLevel2 || candidate.interviewDate || "")
         .split("T")[0] || "";
@@ -128,18 +114,9 @@ var CandidateReviewModal = function (_a) {
         return (candidate.nationality || "").toUpperCase() || "";
     })();
     var userInitial = ((reviewData === null || reviewData === void 0 ? void 0 : reviewData.reviewerName) || "").charAt(0).toUpperCase();
-    // Scorecard tab definitions
-    var SCORECARD_TABS = [
-        { key: "questions", icon: lucide_react_1.HelpCircle, label: "Interview Questionnaires" },
-        { key: "qEval", icon: lucide_react_1.BarChart2, label: "Question Evaluation Scorecard" },
-        { key: "overall", icon: lucide_react_1.BarChart2, label: "Overall Evaluation Scorecard" },
-    ];
-    // Safe arrays for CommentsModal — never undefined
     var safeLevel1 = Array.isArray(level1Comments) ? level1Comments : [];
     var safeLevel2 = Array.isArray(level2Comments) ? level2Comments : [];
-    return (
-    // FIX: modalOverlay must be position:fixed with high z-index for popup to appear
-    React.createElement("div", { className: ReviewScorecard_module_scss_1.default.modalOverlay },
+    return (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.modalOverlay },
         React.createElement(framer_motion_1.motion.div, { initial: { opacity: 0, scale: 0.96 }, animate: { opacity: 1, scale: 1 }, exit: { opacity: 0, scale: 0.96 }, transition: { duration: 0.2 }, className: ReviewScorecard_module_scss_1.default.modalWindow },
             React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mHeader },
                 React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mHeaderLeft },
@@ -192,13 +169,6 @@ var CandidateReviewModal = function (_a) {
                     !scoreLoading && (scoreData || []).length > 0 && (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.panelTabBar }, (scoreData || []).map(function (s, i) { return (React.createElement("button", { key: i, className: "".concat(ReviewScorecard_module_scss_1.default.panelTab, " ").concat(activePanelTab === i ? ReviewScorecard_module_scss_1.default.panelTabActive : ""), onClick: function () { return setActivePanelTab(i); }, type: "button" },
                         React.createElement("span", { className: ReviewScorecard_module_scss_1.default.panelTabNum }, i + 1),
                         React.createElement("span", { className: ReviewScorecard_module_scss_1.default.panelTabName }, panelMembers[i] || s.InterviewPersonName || "Interviewer ".concat(i + 1)))); }))),
-                    React.createElement("div", { className: ReviewScorecard_module_scss_1.default.scorecardTabBar }, SCORECARD_TABS.map(function (_a) {
-                        var key = _a.key, Icon = _a.icon, label = _a.label;
-                        return (React.createElement("button", { key: key, className: "".concat(ReviewScorecard_module_scss_1.default.scorecardTab, " ").concat(activeScorecardTab === key ? ReviewScorecard_module_scss_1.default.scorecardTabActive : ""), onClick: function () { return setActiveScorecardTab(key); }, type: "button" },
-                            React.createElement(Icon, { size: 14 }),
-                            " ",
-                            label));
-                    })),
                     activeScorecardTab === "questions" && (React.createElement(QuestionnaireTab_1.default, { questions: (reviewData === null || reviewData === void 0 ? void 0 : reviewData.questions) || [], activeScore: activeScore, activeQJson: activeQJson, panelMemberName: panelMembers[activePanelTab] || "", fetchingQuestions: reviewLoading })),
                     activeScorecardTab === "qEval" && (React.createElement(ScoreTable_1.default, { title: "QUESTION EVALUATION SCORECARD", subtitle: "Panel-wise Question Scores \u2014 All Interviewers", accentColor: "#6366f1", rows: questionTableRows, panelMembers: panelMembers, showTotal: false, emptyText: "No question data available." })),
                     activeScorecardTab === "overall" && (React.createElement(ScoreTable_1.default, { title: "OVERALL EVALUATION SCORECARD", subtitle: "Core Criteria Scores \u2014 All Interviewers (Max 5 per criterion)", accentColor: "#22c55e", rows: overallTableRows, panelMembers: panelMembers, showTotal: true, emptyText: "No scorecard data available." })),

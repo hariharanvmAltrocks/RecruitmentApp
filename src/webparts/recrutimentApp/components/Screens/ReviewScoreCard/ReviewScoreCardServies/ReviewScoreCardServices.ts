@@ -1,24 +1,3 @@
-// ReviewScoreCardServies/ReviewScoreCardServices.ts
-//
-// submitHODDecision — fully mirrors old HodViewScorecard Submit_fn:
-//
-//  BRANCH 1 (isLevel2 = true):
-//    1. _insertOrUpdateLevel2Comment → HRMSCandidateLevel2ScoreCard
-//    2. Mark current user panel IsScoreSheetUploaded = "Yes" → HRMSInterviewPanelDetails
-//    3. If ALL Level2 panels uploaded → update HRMSRecruitmentCandidatePersonalDetails:
-//         { ScoreCardLevelItemCreated:"Yes", ActionId:Approved, ItemCreated:"Yes" }
-//
-//  BRANCH 2 (HOD selection — Review Score Card tab):
-//    1. OthersInterviewed count
-//    2. SPUpdate HRMSRecruitmentCandidatePersonalDetails: { ActionId, ItemCreated:"Yes", GPA, OthersInterviewed }
-//    3. Portal UpdateCandidateStatus API (workflowStatusApi)
-//    4. _insertOrUpdateLevel1Comment → HRMSRecruitmentCandidateComments
-//    5. If Yes + positionId → _assignPositionID (add HRMSSelectedCandidateDetailsByHOD + update HRMSPositionIDMaster)
-//    6. If No/OnHold + positionId → revert HRMSPositionIDMaster → "Recruitment Initiated"
-//
-//  Pre-populate on VIEW:
-//    _getHODDecision reads HRMSSelectedCandidateDetailsByHOD (positionId)
-//    Comments from HRMSRecruitmentCandidatePersonalDetails.Comments (raw.Comments)
 
 import SPServices       from '../../../../services/SPService/spservice';
 import MasterService    from '../../../../services/MasterService/MasterService';
@@ -31,30 +10,19 @@ import {
   StatusId,
   workflowStatusApi,
 } from '../../../../utilities/Config';
-// InterviewLevels.Level2 = 'Level 2' (from Config)
-
+import { RoleName } from '../../../../utilities/ConditionConfig';
 const _common       = new CommonService();
 const _master       = new MasterService();
 const _questApi     = new QuestionnaireApi();
 const _careerPortal = new CareerPortalService();
-
-// ── Status constants ──────────────────────────────────────────────────────────
 export const HOD_SCORECARD_STATUS_IDS = [121, 122, 123, 15, 127, 130, 165, 166, 167, 168];
 export const EDITABLE_STATUS_IDS      = [121, 123, 127, 130, 165, 166];
 export const VIEW_ONLY_STATUS_IDS     = [122, 15, 167, 168];
 
 export const canEdit  = (statusId: number) => EDITABLE_STATUS_IDS.includes(statusId);
 export const canView  = (statusId: number) => VIEW_ONLY_STATUS_IDS.includes(statusId);
-// isLevel2 — Branch 1 (Panel Level2 scorecard submit) only when StatusId === InterviewScheduledforLevel2 (129)
-// Old code: if (props.stateValue?.StatusId === StatusId.InterviewScheduledforLevel2) → Branch A
-// 127 = PendingwithHODtoselectthecandidateLevel2 → HOD selects candidate (Branch 2, not Branch 1)
-// 130 = PendingwithHODtoAssignPositionID        → HOD assigns position (Branch 2)
-// 129 = InterviewScheduledforLevel2             → Interview panel submits scorecard (Branch 1)
-export const isLevel2 = (statusId: number) => statusId === 129; // ONLY InterviewScheduledforLevel2
-
+export const isLevel2 = (statusId: number) => statusId === 129; 
 export type HODDecision = "Yes" | "No" | "On Hold" | "";
-
-// ── Types ─────────────────────────────────────────────────────────────────────
 export interface CandidateListItem {
   id: number; recruitmentID: number; fullName: string; positionTitle: string;
   interviewLevel: string; grade: string; gpa: string; status: string; statusId: number;
@@ -88,7 +56,7 @@ export interface ReviewScoreCardResult {
   currentUserGuid: string | null; reviewerName: string; jobTitleEn: string;
   jobTitleFr: string; questions: ReviewScoreCardQuestion[]; scorecard: any[] | null;
   level2Scorecard: any | null; hodDecision: any | null; positionOptions: PositionOption[];
-  level1Comments: CommentEntry[]; level2Comments: CommentEntry[]; statusId: number;
+  level1Comments: CommentEntry[]; level2Comments: CommentEntry[]; statusId: number; jobRequestId: number | null;
 }
 
 export interface HODSubmitParams {
@@ -105,9 +73,8 @@ export interface HODSubmitParams {
   statusId:          number;
   scoreCardId?:      number | null;
   othersInterviewed?: string;
+  jobRequestId?:     number; // Added for portal workflow update
 }
-
-// ── Private helpers ───────────────────────────────────────────────────────────
 
 function _parseJson(raw: any): Record<string, number>[] {
   if (!raw) return [];
@@ -157,8 +124,6 @@ async function _getUserGuid(email: string): Promise<string | null> {
     return null;
   } catch { return null; }
 }
-
-// Count candidates in same job — for OthersInterviewed
 async function _getOthersInterviewed(jobCodeID: number): Promise<string> {
   try {
     const rows: any[] = await SPServices.SPReadItems({
@@ -169,8 +134,6 @@ async function _getOthersInterviewed(jobCodeID: number): Promise<string> {
     return rows.length > 1 ? 'Yes' : 'No';
   } catch { return 'No'; }
 }
-
-// Mirror old insertOrUpdateCandidateCommentLevel1
 async function _insertOrUpdateLevel1Comment(
   candidateId: number, roleId: number, comments: string, level?: string,
 ): Promise<void> {
@@ -194,8 +157,6 @@ async function _insertOrUpdateLevel1Comment(
     }
   } catch (e) { console.error('[_insertOrUpdateLevel1Comment]', e); }
 }
-
-// Mirror old insertOrUpdateLevel2ScorecardComment
 async function _insertOrUpdateLevel2Comment(
   candidateId: number, roleId: number, comments: string, level?: string,
 ): Promise<void> {
@@ -219,8 +180,6 @@ async function _insertOrUpdateLevel2Comment(
     }
   } catch (e) { console.error('[_insertOrUpdateLevel2Comment]', e); }
 }
-
-// Mirror old handleAssignPosition
 async function _assignPositionID(p: { positionId: number; candidateId: number; recruitmentID: number; }): Promise<void> {
   try {
     const posRes: any[] = await SPServices.SPReadItems({
@@ -243,15 +202,13 @@ async function _assignPositionID(p: { positionId: number; candidateId: number; r
     });
   } catch (e) { console.error('[_assignPositionID]', e); }
 }
-
-// Portal workflow API — mirrors old UpdateCandidateStatus
 async function _updatePortalWorkflowStatus(
   workflowStatus: string, jobRequestId: number, comments: string,
 ): Promise<void> {
   try {
-    await _careerPortal.UpdateCandidateStatus({
-      workflowStatus, jobRequestId: Number(jobRequestId), comments, actionBy: 'HOD',
-    });
+    const data = { workflowStatus, jobRequestId: Number(jobRequestId), comments, actionBy: RoleName.HOD };
+    console.log('[_updatePortalWorkflowStatus] Sending data:', data);
+    await _careerPortal.UpdateCandidateStatus(data);
   } catch (e) { console.error('[_updatePortalWorkflowStatus]', e); }
 }
 
@@ -263,10 +220,8 @@ const EMPTY = (id: number): ReviewScoreCardResult => ({
   panelMembers: [], currentUserPanelId: null, currentUserGuid: null,
   reviewerName: '', jobTitleEn: '', jobTitleFr: '', questions: [],
   scorecard: null, level2Scorecard: null, hodDecision: null,
-  positionOptions: [], level1Comments: [], level2Comments: [], statusId: 0,
+  positionOptions: [], level1Comments: [], level2Comments: [], statusId: 0,jobRequestId: null,
 });
-
-// ── Service ───────────────────────────────────────────────────────────────────
 class ReviewScoreCardServices {
   [x: string]: any;
 
@@ -330,7 +285,7 @@ class ReviewScoreCardServices {
             'ID','FristName','MiddleName','LastName','Nationality','Gender','Qualification',
             'TotalYearOfExperiance','ReleventExperience','InterviewDate','InterviewDateLevel2',
             'Disability','ConflictsOfInterest','PositionTitle','JobGrade','JobCodeId','StatusId',
-            'Comments',   // ← needed for pre-populate on VIEW
+            'Comments','JobRequestID', 
             'RecruitmentID/ID','JobCode/JobCode','JobCode/ID',
           ].join(','),
           Expand: 'RecruitmentID,JobCode',
@@ -346,8 +301,8 @@ class ReviewScoreCardServices {
       const statusId      = raw.StatusId   ?? candidate?.statusId   ?? 0;
       const fullName      = [raw.FristName, raw.MiddleName, raw.LastName].filter(Boolean).join(' ').trim();
       const interviewDate = (raw.InterviewDateLevel2 || raw.InterviewDate || '').split('T')[0];
-      // Existing comment (pre-populate on VIEW)
       const existingComment = raw.Comments || '';
+      const jobRequestId = raw.JobRequestID ?? raw.JobRequestId ?? null;
 
       const [panelRows, reviewerRes] = await Promise.all([
         SPServices.SPReadItems({
@@ -404,7 +359,7 @@ class ReviewScoreCardServices {
             : Promise.resolve([]),
           this._getCandidateScorecard(candidateId),
           this._getLevel2Scorecard(candidateId),
-          this._getHODDecision(candidateId),    // positionId from HRMSSelectedCandidateDetailsByHOD
+          this._getHODDecision(candidateId),   
           this.fetchPositionOptions(jobCodeId, department),
           this.fetchComments(candidateId),
         ]);
@@ -412,7 +367,6 @@ class ReviewScoreCardServices {
       if (!grade && gradeRes?.data) grade = (gradeRes.data as any)?.GradeLevel ?? '';
       if (!interviewLevel) interviewLevel = raw.InterviewLevel || String(raw.JobGrade || '').match(/Level\s*\d+/i)?.[0] || '';
 
-      // Merge existingComment into hodDecision for pre-populate
       const hodDecisionMerged = hodDecisionData
         ? { ...hodDecisionData, Comments: hodDecisionData.Comments || existingComment }
         : existingComment ? { Comments: existingComment } : null;
@@ -431,6 +385,7 @@ class ReviewScoreCardServices {
         hodDecision: hodDecisionMerged,
         positionOptions: positionOptionsData,
         level1Comments: commentsData.level1, level2Comments: commentsData.level2, statusId,
+        jobRequestId,
       };
     } catch (error) { console.error('[getReviewScoreCardData]', error); return EMPTY(candidateId); }
   }
@@ -463,8 +418,6 @@ class ReviewScoreCardServices {
       return res?.[0] ?? null;
     } catch { return null; }
   }
-
-  // Reads HRMSSelectedCandidateDetailsByHOD — positionId pre-fill on VIEW
   async _getHODDecision(candidateId: number): Promise<any> {
     try {
       const res: any[] = await SPServices.SPReadItems({
@@ -618,27 +571,19 @@ class ReviewScoreCardServices {
     return [];
   }
 }
-
-  // ── SUBMIT HOD DECISION — mirrors old HodViewScorecard Submit_fn exactly ──
   async submitHODDecision(params: HODSubmitParams): Promise<{ success: boolean; message: string }> {
     console.log('[ReviewScoreCardServices] submitHODDecision params:', params);
     try {
       const {
         candidateId, hodDecision, comments, currentUserEmail,
-        currentRoleId, gpa, positionId, isLevel2: lv2, jobCodeID, recruitmentID, statusId,
+        currentRoleId, gpa, positionId, isLevel2: lv2, jobCodeID, recruitmentID, statusId, jobRequestId,
       } = params;
 
       console.log('[ReviewScoreCardServices] submitHODDecision branch: isLevel2 =', lv2);
-
-      // ── BRANCH 1: Level 2 interview panel submit ──────────────────────────
-      // Mirrors: StatusId.InterviewScheduledforLevel2 block in old Submit_fn
       if (lv2) {
-        // Step 1: Save comment to HRMSCandidateLevel2ScoreCard
         console.log('Branch 1 Step 1: Saving Level 2 comment');
         await _insertOrUpdateLevel2Comment(candidateId, currentRoleId, comments);
         console.log('Branch 1 Step 1: Level 2 comment saved');
-
-        // Step 2: Get current user's SP ID → find their panel row → mark IsScoreSheetUploaded = "Yes"
         console.log('Branch 1 Step 2: Marking user panel as uploaded');
         const currentUserGuid = await _getUserGuid(currentUserEmail);
         const allPanels: any[] = await SPServices.SPReadItems({
@@ -657,8 +602,6 @@ class ReviewScoreCardServices {
         }
 
         console.log('Branch 1 Step 2: User panels marked as uploaded');
-
-        // Step 3: Re-fetch Level2 panels — if ALL uploaded → update candidate
         console.log('Branch 1 Step 3: Checking if all Level 2 panels uploaded');
         const refreshed: any[] = await SPServices.SPReadItems({
           Listname: ListNames.HRMSInterviewPanelDetails,
@@ -679,14 +622,9 @@ class ReviewScoreCardServices {
         console.log('Branch 1 Step 3: Checked panels, uploadedCount =', uploadedCount, 'total =', level2Panels.length);
         return { success: true, message: '✓ Level 2 scorecard submitted successfully.' };
       }
-
-      // ── BRANCH 2: HOD Level1 / Level2 selection ───────────────────────────
-      // Step 1: OthersInterviewed
       console.log('Branch 2 Step 1: Calculating OthersInterviewed');
       const othersInterviewed = await _getOthersInterviewed(jobCodeID);
-      console.log('Branch 2 Step 1: OthersInterviewed =', othersInterviewed);
-
-      // Step 2: Map decision → ActionId, workflowStatus, successMessage
+      console.log('Branch 2 Step 1: OthersInterviewed =', othersInterviewed)
       const isLevel2StatusId =
         statusId === StatusId.PendingwithHODtoselectthecandidateLevel2 ||
         statusId === StatusId.CandidateOnHoldbyHODLevel1;
@@ -713,9 +651,6 @@ class ReviewScoreCardServices {
       }
 
       console.log('Branch 2 Step 2: Mapped decision', hodDecision, 'to actionId =', actionId, 'workflowStatus =', workflowStatus);
-
-      // Step 3: CandidateSeletionApi → update HRMSRecruitmentCandidatePersonalDetails
-      // ItemCreated = "Yes" (Review Score Card tab = non-Evaluation tab always)
       await SPServices.SPUpdateItem({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
         RequestJSON: {
@@ -728,25 +663,15 @@ class ReviewScoreCardServices {
       });
 
       console.log('Branch 2 Step 3: Candidate updated with actionId =', actionId, 'GPA =', gpa, 'OthersInterviewed =', othersInterviewed);
-
-      // Step 4: Portal workflow API — UpdateCandidateStatus
-      await _updatePortalWorkflowStatus(workflowStatus, Number(recruitmentID), comments);
-
+      await _updatePortalWorkflowStatus(workflowStatus, Number(jobRequestId), comments);
       console.log('Branch 2 Step 4: Portal workflow updated to', workflowStatus);
-
-      // Step 5: Insert/update Level1 comment in HRMSRecruitmentCandidateComments
-      await _insertOrUpdateLevel1Comment(candidateId, currentRoleId, comments);
-
-      console.log('Branch 2 Step 5: Level 1 comment saved');
-
-      // Step 6: If Selected + positionId → assign position ID
+      await _insertOrUpdateLevel1Comment(candidateId, currentRoleId, comments, "Level 1");
+      console.log('Branch 2 Step 5: Level 1 comment saved (Level 1)');
       if (hodDecision === 'Yes' && positionId) {
         console.log('Branch 2 Step 6: Assigning position ID', positionId);
         await _assignPositionID({ positionId, candidateId, recruitmentID });
         console.log('Branch 2 Step 6: Position assigned');
       }
-
-      // Step 7: If Rejected/OnHold + positionId → revert position status to "Recruitment Initiated"
       if ((hodDecision === 'No' || hodDecision === 'On Hold') && positionId) {
         console.log('Branch 2 Step 7: Reverting position status for ID', positionId);
         await SPServices.SPUpdateItem({

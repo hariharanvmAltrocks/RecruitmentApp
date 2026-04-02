@@ -1033,7 +1033,7 @@ export const evaluationService = {
       const filterConditions = [
         { FilterKey: "JobCode",        Operator: "eq", FilterValue: jobCodeID },
         { FilterKey: "Department",     Operator: "eq", FilterValue: department },
-        { FilterKey: "PositionIDStatus", Operator: "eq", FilterValue: "Recruitment Initiator" },
+        { FilterKey: "PositionIDStatus", Operator: "eq", FilterValue: "" },
       ];
 
       const res: any[] = await SPServices.SPReadItems({
@@ -1056,7 +1056,7 @@ export const evaluationService = {
         Select:   "*",
         Filter:   [
           { FilterKey: "Department",     Operator: "eq", FilterValue: department },
-          { FilterKey: "PositionIDStatus", Operator: "eq", FilterValue: "Recruitment Initiator" },
+          { FilterKey: "PositionIDStatus", Operator: "eq", FilterValue: "Recruitment Initiated" },
         ],
         Topcount: 100,
       });

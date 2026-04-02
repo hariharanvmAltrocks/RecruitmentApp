@@ -22,8 +22,6 @@ import ScoreTable        from "./ScoreTable";
 import HODDecisionPanel  from "./HODDecisionPanel";
 import CommentsModal     from "./Commentsmodal";
 import { canEdit }       from "../Hooks/useReviewScorecard";
-
-// ── Score criteria for Overall Evaluation table ───────────────────────────────
 const SCORE_CRITERIA = [
   { field: "RelevantQualification",            label: "Qualification (Relevant)"             },
   { field: "ReleventExperience",               label: "Experience (Relevant)"                },
@@ -34,11 +32,7 @@ const SCORE_CRITERIA = [
   { field: "Experience",                       label: "Experience"                           },
   { field: "OtherCriteriaScore",               label: "Other Criteria Recognized by Panel"   },
 ];
-
-// Max score per panel member (8 criteria × 5)
 const MAX_OVERALL_PER_PANEL = 40;
-
-// ── Props ─────────────────────────────────────────────────────────────────────
 interface Props {
   candidate:     ScorecardCandidateRow;
   reviewData:    CandidateReviewData | null;
@@ -76,10 +70,7 @@ interface Props {
   currentRoleId:  number;
   isLevel2Status: boolean;
 }
-
 type ScorecardTabKey = "questions" | "qEval" | "overall";
-
-// ── Small field component (left sidebar) ──────────────────────────────────────
 const MField = ({ label, value }: { label: string; value: string }) => (
   <div className={styles.mfField}>
     <span className={styles.mfLabel}>{label}</span>
@@ -87,7 +78,6 @@ const MField = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
-// ── Component ─────────────────────────────────────────────────────────────────
 const CandidateReviewModal: React.FC<Props> = ({
   candidate, reviewData, reviewLoading, job,
   scoreData, scoreLoading,
@@ -103,9 +93,6 @@ const CandidateReviewModal: React.FC<Props> = ({
 }) => {
   const [activePanelTab,     setActivePanelTab]     = React.useState(0);
   const [activeScorecardTab, setActiveScorecardTab] = React.useState<ScorecardTabKey>("questions");
-
-  // ── Panel members list ─────────────────────────────────────────────────────
-  // Prefer reviewData.panelMembers, fallback to scoreData InterviewPersonName
   const panelMembers: string[] = React.useMemo(() => {
     const fromReview = reviewData?.panelMembers || [];
     if (fromReview.length > 0) return fromReview;
@@ -113,11 +100,7 @@ const CandidateReviewModal: React.FC<Props> = ({
       (s: any, i: number) => s.InterviewPersonName || `Interviewer ${i + 1}`
     );
   }, [reviewData, scoreData]);
-
-  // ── Active panel scorecard ─────────────────────────────────────────────────
   const activeScore: any = (scoreData || [])[activePanelTab] || null;
-
-  // ── Parsed QuestionJson for active panel member ────────────────────────────
   const activeQJson: any[] = React.useMemo(() => {
     if (!activeScore?.QuestionJson) return [];
     if (Array.isArray(activeScore.QuestionJson)) return activeScore.QuestionJson;
@@ -127,9 +110,6 @@ const CandidateReviewModal: React.FC<Props> = ({
       return [];
     }
   }, [activeScore]);
-
-  // ── Question Evaluation table rows (qEval tab) ────────────────────────────
-  // Key = question label, columns = per-panel score
   const questionTableRows = React.useMemo(() => {
     const qMap: Record<string, any> = {};
     (scoreData || []).forEach((s: any, i: number) => {
@@ -147,9 +127,6 @@ const CandidateReviewModal: React.FC<Props> = ({
     });
     return Object.values(qMap);
   }, [scoreData]);
-
-  // ── Overall Evaluation table rows (overall tab) ───────────────────────────
-  // 8 criteria rows + Total row, per-panel columns + grand total
   const overallTableRows = React.useMemo(() => {
     const rows = SCORE_CRITERIA.map(({ field, label }) => {
       const row: any = { criteria: label, total: 0 };
@@ -160,8 +137,6 @@ const CandidateReviewModal: React.FC<Props> = ({
       });
       return row;
     });
-
-    // Total row: per-panel sum as "X / 40", grand total
     const totalRow: any = { criteria: "Total", total: 0 };
     (scoreData || []).forEach((_: any, i: number) => {
       const sum = rows.reduce((acc, r) => {
@@ -177,8 +152,6 @@ const CandidateReviewModal: React.FC<Props> = ({
     rows.push(totalRow);
     return rows;
   }, [scoreData]);
-
-  // ── Derived display values ─────────────────────────────────────────────────
   const raw = reviewData?.candidateData || {};
 
   const formattedDate =
@@ -193,20 +166,9 @@ const CandidateReviewModal: React.FC<Props> = ({
   })();
 
   const userInitial = (reviewData?.reviewerName || "").charAt(0).toUpperCase();
-
-  // Scorecard tab definitions
-  const SCORECARD_TABS = [
-    { key: "questions" as const, icon: HelpCircle, label: "Interview Questionnaires"      },
-    { key: "qEval"     as const, icon: BarChart2,  label: "Question Evaluation Scorecard" },
-    { key: "overall"   as const, icon: BarChart2,  label: "Overall Evaluation Scorecard"  },
-  ];
-
-  // Safe arrays for CommentsModal — never undefined
   const safeLevel1 = Array.isArray(level1Comments) ? level1Comments : [];
   const safeLevel2 = Array.isArray(level2Comments) ? level2Comments : [];
-
   return (
-    // FIX: modalOverlay must be position:fixed with high z-index for popup to appear
     <div className={styles.modalOverlay}>
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
@@ -338,24 +300,6 @@ const CandidateReviewModal: React.FC<Props> = ({
                 ))}
               </div>
             )}
-
-            {/* Scorecard Section Tabs */}
-            <div className={styles.scorecardTabBar}>
-              {SCORECARD_TABS.map(({ key, icon: Icon, label }) => (
-                <button
-                  key={key}
-                  className={`${styles.scorecardTab} ${
-                    activeScorecardTab === key ? styles.scorecardTabActive : ""
-                  }`}
-                  onClick={() => setActiveScorecardTab(key)}
-                  type="button"
-                >
-                  <Icon size={14} /> {label}
-                </button>
-              ))}
-            </div>
-
-            {/* ── Tab 1: Interview Questionnaires + Scorecard progress bars ── */}
             {activeScorecardTab === "questions" && (
               <QuestionnaireTab
                 questions={reviewData?.questions || []}
@@ -366,7 +310,6 @@ const CandidateReviewModal: React.FC<Props> = ({
               />
             )}
 
-            {/* ── Tab 2: Question Evaluation Scorecard table ── */}
             {activeScorecardTab === "qEval" && (
               <ScoreTable
                 title="QUESTION EVALUATION SCORECARD"
@@ -378,8 +321,6 @@ const CandidateReviewModal: React.FC<Props> = ({
                 emptyText="No question data available."
               />
             )}
-
-            {/* ── Tab 3: Overall Evaluation Scorecard table ── */}
             {activeScorecardTab === "overall" && (
               <ScoreTable
                 title="OVERALL EVALUATION SCORECARD"
@@ -391,10 +332,6 @@ const CandidateReviewModal: React.FC<Props> = ({
                 emptyText="No scorecard data available."
               />
             )}
-
-            {/* ── HOD Decision Panel ──
-                canEdit(statusId) true → edit mode
-                false → view-only mode (shows decision badge + VIEW COMMENTS) */}
             <HODDecisionPanel
               canEdit={canEdit(candidate.statusId)}
               isLevel2Status={isLevel2Status}
@@ -425,9 +362,6 @@ const CandidateReviewModal: React.FC<Props> = ({
           </main>
         </div>
       </motion.div>
-
-      {/* ── Comments Modal ──
-          Always pass safe arrays — never undefined */}
       <CommentsModal
         open={showComments}
         loading={commentsLoading}

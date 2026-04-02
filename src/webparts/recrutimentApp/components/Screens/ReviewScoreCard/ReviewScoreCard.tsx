@@ -1,10 +1,3 @@
-// ReviewScoreCard.tsx
-// Main entry point. Route passes recruitmentId via props or router state.
-// Renders:
-//   1. CandidateDrawer  — always visible, shows candidates for recruitmentId
-//   2. CandidateReviewModal — opens when a candidate is clicked (pencil/eye)
-//
-// All state lives in ReviewScoreCardProvider (via useReviewScorecard hook).
 
 import React from 'react';
 import { useLocation } from 'react-router-dom';
@@ -19,7 +12,6 @@ interface ReviewScoreCardProps {
   [key: string]:  any;
 }
 
-// ── Inner content (has access to context) ─────────────────────────────────────
 const ReviewScoreCardContent: React.FC = () => {
   const { ADGroupData }  = useRoleContext();
   const currentRoleId    = ADGroupData?.roleIDs?.[0] || 0;
@@ -28,20 +20,18 @@ const ReviewScoreCardContent: React.FC = () => {
 
   return (
     <div>
-      {/* ── Candidate Drawer ── */}
       <AnimatePresence>
         {hook.drawerOpen && (
           <CandidateDrawer
             candidates={hook.paginatedCandidates}
             loading={hook.candidatesLoading}
-            onClose={() => { /* drawer stays open — no close needed for main view */ }}
+            onClose={() => {}}
             onReview={hook.openReview}
             recruitmentId={hook.recruitmentId}
           />
         )}
       </AnimatePresence>
 
-      {/* ── Review Modal ── */}
       <AnimatePresence>
         {hook.reviewingCandidate && (
           <CandidateReviewModal
@@ -89,8 +79,6 @@ const ReviewScoreCardContent: React.FC = () => {
     </div>
   );
 };
-
-// ── Public export with Provider wrapper ───────────────────────────────────────
 const ReviewScoreCard: React.FC<ReviewScoreCardProps> = ({ recruitmentId }) => {
   const location = useLocation();
   const routeState = location.state as {
@@ -104,9 +92,8 @@ const ReviewScoreCard: React.FC<ReviewScoreCardProps> = ({ recruitmentId }) => {
     recruitmentId ?? routeState?.recruitmentId ?? routeState?.ID ?? 0
   );
   const departmentFromRoute = routeState?.department || '';
-
+  console.log('[ReviewScoreCard],departmentFromRoute:', departmentFromRoute);
   console.log('[ReviewScoreCard] recruitmentId:', effectiveRecruitmentId, 'routeState:', routeState);
-
   const { ADGroupData } = useRoleContext();
   const currentUserEmail = ADGroupData?.EmailId?.[0] || '';
   return (

@@ -1,11 +1,4 @@
 "use strict";
-// Hooks/useReviewScorecard.ts
-// FIXES vs previous version:
-//  1. openReview: pre-populate decisionComment from hodDecision.Comments
-//     (which now includes HRMSRecruitmentCandidatePersonalDetails.Comments)
-//  2. validate: Level2 path only needs comment + checkbox (no decision radio)
-//  3. submitDecision: passes all required params including scoreCardId from reviewData
-//  4. isLevel2 exported and used consistently
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isLevel2 = exports.canView = exports.canEdit = exports.VIEW_ONLY_STATUS_IDS = exports.EDITABLE_STATUS_IDS = void 0;
 exports.useReviewScorecard = useReviewScorecard;
@@ -13,18 +6,14 @@ var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var ReviewScoreCardServices_1 = tslib_1.__importDefault(require("../ReviewScoreCardServies/ReviewScoreCardServices"));
 var Config_1 = require("../../../../utilities/Config");
-// ── Status helpers (exported for use in components) ───────────────────────────
 exports.EDITABLE_STATUS_IDS = [121, 123, 127, 130, 165, 166];
 exports.VIEW_ONLY_STATUS_IDS = [122, 15, 167, 168];
 var canEdit = function (statusId) { return exports.EDITABLE_STATUS_IDS.includes(statusId); };
 exports.canEdit = canEdit;
 var canView = function (statusId) { return exports.VIEW_ONLY_STATUS_IDS.includes(statusId); };
 exports.canView = canView;
-// isLevel2 — ONLY 129 (InterviewScheduledforLevel2) triggers Branch 1 (panel scorecard submit)
-// 127 (PendingwithHODtoselectthecandidateLevel2) → HOD selection Branch 2
 var isLevel2 = function (statusId) { return statusId === 129; };
 exports.isLevel2 = isLevel2;
-// ── GPA calculation helper ────────────────────────────────────────────────────
 function _parseQJson(raw) {
     if (!raw)
         return [];
@@ -71,31 +60,24 @@ function calculateGPA(scorecards) {
         return "";
     }
 }
-// ── Main hook ─────────────────────────────────────────────────────────────────
 function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute) {
     var _this = this;
-    // ── Candidate list ──────────────────────────────────────────────────────────
     var _a = React.useState([]), candidates = _a[0], setCandidates = _a[1];
     var _b = React.useState(true), candidatesLoading = _b[0], setCandidatesLoading = _b[1];
     var _c = React.useState(true), drawerOpen = _c[0], setDrawerOpen = _c[1];
-    // ── Pagination / search ─────────────────────────────────────────────────────
     var _d = React.useState(1), currentPage = _d[0], setCurrentPage = _d[1];
     var _e = React.useState(10), pageSize = _e[0], setPageSize = _e[1];
     var _f = React.useState(""), searchTerm = _f[0], setSearchTerm = _f[1];
-    // ── Review modal ────────────────────────────────────────────────────────────
     var _g = React.useState(null), reviewingCandidate = _g[0], setReviewingCandidate = _g[1];
     var _h = React.useState(null), reviewData = _h[0], setReviewData = _h[1];
     var _j = React.useState(false), reviewLoading = _j[0], setReviewLoading = _j[1];
     var _k = React.useState([]), scoreData = _k[0], setScoreData = _k[1];
     var _l = React.useState(false), scoreLoading = _l[0], setScoreLoading = _l[1];
-    // ── Position options ────────────────────────────────────────────────────────
     var _m = React.useState([]), positionOptions = _m[0], setPositionOptions = _m[1];
-    // ── Comments ────────────────────────────────────────────────────────────────
     var _o = React.useState(false), showComments = _o[0], setShowComments = _o[1];
     var _p = React.useState([]), level1Comments = _p[0], setLevel1Comments = _p[1];
     var _q = React.useState([]), level2Comments = _q[0], setLevel2Comments = _q[1];
     var _r = React.useState(false), commentsLoading = _r[0], setCommentsLoading = _r[1];
-    // ── HOD decision state ──────────────────────────────────────────────────────
     var _s = React.useState(""), hodDecision = _s[0], setHodDecision = _s[1];
     var _t = React.useState(""), decisionComment = _t[0], setDecisionComment = _t[1];
     var _u = React.useState(false), confirmed = _u[0], setConfirmed = _u[1];
@@ -107,7 +89,6 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
     var _0 = React.useState({
         decision: false, comment: false, checkbox: false, position: false,
     }), errors = _0[0], setErrors = _0[1];
-    // ── Load candidates ─────────────────────────────────────────────────────────
     var loadCandidates = React.useCallback(function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
         var list, mapped, e_1;
         return tslib_1.__generator(this, function (_a) {
@@ -156,7 +137,6 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
         });
     }); }, [recruitmentId]);
     React.useEffect(function () { void loadCandidates(); }, [loadCandidates]);
-    // ── Filtered + paginated ────────────────────────────────────────────────────
     var filteredCandidates = React.useMemo(function () {
         return candidates.filter(function (c) {
             return searchTerm === "" ||
@@ -182,18 +162,16 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
             }
         });
     }); }, [loadCandidates]);
-    // ── Open review modal ───────────────────────────────────────────────────────
     var openReview = React.useCallback(function (candidate) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
         var department, result, scorecardArr, calculatedGPA_1, hod, posId, sid, _shouldFetchPosition, e_2;
-        var _a, _b, _c, _d;
-        return tslib_1.__generator(this, function (_e) {
-            switch (_e.label) {
+        var _a, _b, _c, _d, _e;
+        return tslib_1.__generator(this, function (_f) {
+            switch (_f.label) {
                 case 0:
-                    department = candidate.department || departmentFromRoute || '';
+                    department = departmentFromRoute || candidate.department || '';
                     setReviewingCandidate(tslib_1.__assign(tslib_1.__assign({}, candidate), { department: department }));
                     setReviewData(null);
                     setScoreData([]);
-                    // Reset HOD state
                     setHodDecision("");
                     setDecisionComment("");
                     setConfirmed(false);
@@ -207,12 +185,12 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
                     setLevel2Comments([]);
                     setReviewLoading(true);
                     setScoreLoading(true);
-                    _e.label = 1;
+                    _f.label = 1;
                 case 1:
-                    _e.trys.push([1, 3, 4, 5]);
+                    _f.trys.push([1, 3, 4, 5]);
                     return [4 /*yield*/, ReviewScoreCardServices_1.default.getReviewScoreCardData(candidate.id, currentUserEmail, tslib_1.__assign(tslib_1.__assign({}, candidate), { department: department }))];
                 case 2:
-                    result = _e.sent();
+                    result = _f.sent();
                     setReviewData({
                         candidateData: {
                             Nationality: result.nationality,
@@ -224,8 +202,8 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
                             ConflictsOfInterest: result.conflictsOfInterest,
                             Disability: result.disability,
                             PositionTitle: result.positionTitle,
-                            // expose level2Scorecard ID for Level2 submit
                             level2ScorecardId: (_b = (_a = result.level2Scorecard) === null || _a === void 0 ? void 0 : _a.ID) !== null && _b !== void 0 ? _b : null,
+                            jobRequestId: (_c = result.jobRequestId) !== null && _c !== void 0 ? _c : null,
                         },
                         panelMembers: (result.panelMembers || []).map(function (m) {
                             return typeof m === "string" ? m : m.name || "";
@@ -239,7 +217,6 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
                         ? result.scorecard
                         : result.scorecard ? [result.scorecard] : [];
                     setScoreData(scorecardArr);
-                    // GPA fallback calculation
                     if (!candidate.gpa && scorecardArr.length > 0) {
                         calculatedGPA_1 = calculateGPA(scorecardArr);
                         if (calculatedGPA_1) {
@@ -247,16 +224,14 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
                             setReviewingCandidate(function (prev) { return prev ? tslib_1.__assign(tslib_1.__assign({}, prev), { gpa: calculatedGPA_1 }) : prev; });
                         }
                     }
-                    // ── Pre-fill HOD decision + comment from stored data ──────────────────
-                    // Comment: from hodDecision.Comments (which includes HRMSRecruitmentCandidatePersonalDetails.Comments)
                     if (result.hodDecision) {
                         hod = result.hodDecision;
                         if (hod.Comments)
                             setDecisionComment(hod.Comments);
-                        posId = ((_c = hod.PositionID) === null || _c === void 0 ? void 0 : _c.ID) || hod.PositionIDId || null;
+                        posId = ((_d = hod.PositionID) === null || _d === void 0 ? void 0 : _d.ID) || hod.PositionIDId || null;
                         if (posId) {
                             setSelectedPositionId(posId);
-                            setSelectedPositionText(((_d = hod.PositionID) === null || _d === void 0 ? void 0 : _d.PositionID) || hod.PositionText || "");
+                            setSelectedPositionText(((_e = hod.PositionID) === null || _e === void 0 ? void 0 : _e.PositionID) || hod.PositionText || "");
                         }
                     }
                     sid = candidate.statusId;
@@ -278,19 +253,21 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
                         setHodDecision("No");
                     }
                     _shouldFetchPosition = function (s, dept) {
-                        if (!dept)
+                        var sid = Number(s);
+                        if (!dept) {
                             return false;
-                        return (s === Config_1.StatusId.PendingwithHODtoAssignPositionID ||
-                            s === Config_1.StatusId.PendingwithHODtoselectthecandidate ||
-                            s === Config_1.StatusId.Selected ||
-                            s === Config_1.StatusId.OnHoldbyHOD ||
-                            s === Config_1.StatusId.CandidateOnHoldbyHODLevel2);
+                        }
+                        var shouldFetch = sid === Number(Config_1.StatusId.PendingwithHODtoAssignPositionID) ||
+                            sid === Number(Config_1.StatusId.PendingwithHODtoselectthecandidate) ||
+                            sid === Number(Config_1.StatusId.Selected) ||
+                            sid === Number(Config_1.StatusId.OnHoldbyHOD) ||
+                            sid === Number(Config_1.StatusId.CandidateOnHoldbyHODLevel2);
+                        return shouldFetch;
                     };
                     if (result.positionOptions && result.positionOptions.length > 0) {
                         setPositionOptions(result.positionOptions);
                     }
                     else if (_shouldFetchPosition(candidate.statusId, department) && candidate.jobCodeID && department) {
-                        console.log("Calling fetchPositionOptions with jobCodeID:", candidate.jobCodeID, "department:", department);
                         ReviewScoreCardServices_1.default
                             .fetchPositionOptions(candidate.jobCodeID, department)
                             .then(function (options) { return setPositionOptions(options); })
@@ -301,7 +278,7 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
                     }
                     return [3 /*break*/, 5];
                 case 3:
-                    e_2 = _e.sent();
+                    e_2 = _f.sent();
                     console.error("[useReviewScorecard] openReview error:", e_2);
                     return [3 /*break*/, 5];
                 case 4:
@@ -320,7 +297,6 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
         setLevel1Comments([]);
         setLevel2Comments([]);
     }, []);
-    // ── Open comments modal ─────────────────────────────────────────────────────
     var openComments = React.useCallback(function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
         var _a, level1, level2, e_3;
         return tslib_1.__generator(this, function (_b) {
@@ -354,13 +330,9 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
             }
         });
     }); }, [reviewingCandidate]);
-    // ── shouldShowPositionId ────────────────────────────────────────────────────
-    // Mirrors old code exactly (two blocks)
     var shouldShowPositionId = React.useCallback(function (statusId, decision) {
-        // Block 2: always show when already Selected (prefill/view mode)
         if (statusId === Config_1.StatusId.Selected)
             return true;
-        // Block 1: show when Yes AND NOT excluded statuses
         if (decision === "Yes" &&
             statusId !== Config_1.StatusId.PendingwithHODtoselectthecandidateLevel2 &&
             statusId !== Config_1.StatusId.CandidateOnHoldbyHODLevel1 &&
@@ -368,13 +340,9 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
             return true;
         return false;
     }, []);
-    // ── Validation ──────────────────────────────────────────────────────────────
-    // Level2 (isLevel2 statusId): only comment + checkbox required (no decision radio)
-    // Level1 (HOD): decision + comment + checkbox + positionId if applicable
     var validate = React.useCallback(function (statusId, decision) {
         var lv2 = (0, exports.isLevel2)(statusId);
         var newErrors = {
-            // Level2 path: no decision radio needed
             decision: lv2 ? false : !decision,
             comment: !decisionComment.trim(),
             checkbox: !confirmed,
@@ -392,13 +360,12 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
         }
         return Object.values(newErrors).every(function (v) { return !v; });
     }, [decisionComment, confirmed, selectedPositionId, shouldShowPositionId]);
-    // ── Submit HOD decision ─────────────────────────────────────────────────────
     var submitDecision = React.useCallback(function (roleId) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-        var result;
+        var jobRequestId, result;
         var _this = this;
-        var _a, _b;
-        return tslib_1.__generator(this, function (_c) {
-            switch (_c.label) {
+        var _a, _b, _c, _d;
+        return tslib_1.__generator(this, function (_e) {
+            switch (_e.label) {
                 case 0:
                     if (!reviewingCandidate)
                         return [2 /*return*/];
@@ -406,9 +373,12 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
                     if (!validate(reviewingCandidate.statusId, hodDecision))
                         return [2 /*return*/];
                     setSubmitting(true);
-                    _c.label = 1;
+                    _e.label = 1;
                 case 1:
-                    _c.trys.push([1, , 3, 4]);
+                    _e.trys.push([1, , 3, 4]);
+                    jobRequestId = (_b = (_a = reviewData === null || reviewData === void 0 ? void 0 : reviewData.candidateData) === null || _a === void 0 ? void 0 : _a.jobRequestId) !== null && _b !== void 0 ? _b : null;
+                    console.log('Submitting decision for candidateId:', reviewData);
+                    console.log('Submitting HOD Decision with jobRequestId:', jobRequestId);
                     return [4 /*yield*/, ReviewScoreCardServices_1.default.submitHODDecision({
                             candidateId: reviewingCandidate.id,
                             hodDecision: hodDecision,
@@ -421,11 +391,11 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
                             jobCodeID: reviewingCandidate.jobCodeID || 0,
                             recruitmentID: reviewingCandidate.recruitmentID,
                             statusId: reviewingCandidate.statusId,
-                            // Level2 scorecard ID (from reviewData.candidateData.level2ScorecardId)
-                            scoreCardId: (_b = (_a = reviewData === null || reviewData === void 0 ? void 0 : reviewData.candidateData) === null || _a === void 0 ? void 0 : _a.level2ScorecardId) !== null && _b !== void 0 ? _b : null,
+                            scoreCardId: (_d = (_c = reviewData === null || reviewData === void 0 ? void 0 : reviewData.candidateData) === null || _c === void 0 ? void 0 : _c.level2ScorecardId) !== null && _d !== void 0 ? _d : null,
+                            jobRequestId: jobRequestId,
                         })];
                 case 2:
-                    result = _c.sent();
+                    result = _e.sent();
                     if (!result.success) {
                         setSubmitError(result.message || "Submission failed.");
                         setSubmitting(false);
@@ -457,7 +427,6 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
         currentUserEmail, selectedPositionId, reviewData,
         validate, closeReview, refreshCandidates,
     ]);
-    // ── Return ──────────────────────────────────────────────────────────────────
     return {
         candidates: candidates,
         candidatesLoading: candidatesLoading,

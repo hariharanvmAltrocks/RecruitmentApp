@@ -1,27 +1,15 @@
 "use strict";
-// Components/HODDecisionPanel.tsx
-// Exact old-code UI (Hoddecisionpanel.tsx):
-//   View-only mode: shows existing decision, position, comment, VIEW COMMENTS, CLOSE
-//   Edit mode: YES/NO/ON HOLD buttons, position dropdown, textarea, checkbox, reviewer card, submit
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var lucide_react_1 = require("lucide-react");
 var ReviewScorecard_module_scss_1 = tslib_1.__importDefault(require("../ReviewScorecard.module.scss"));
-// StatusId constants (inlined to avoid import issues)
-// PendingwithHODtoAssignPositionID = 130, InterviewScheduledforLevel2 = 129
 var _FEEDBACK_LEVEL2_STATUS_IDS = [130, 129];
 var HODDecisionPanel = function (_a) {
     var canEdit = _a.canEdit, isLevel2Status = _a.isLevel2Status, statusId = _a.statusId, hodDecision = _a.hodDecision, decisionComment = _a.decisionComment, confirmed = _a.confirmed, selectedPositionId = _a.selectedPositionId, selectedPositionText = _a.selectedPositionText, positionOptions = _a.positionOptions, submitting = _a.submitting, submitError = _a.submitError, successMessage = _a.successMessage, reviewerName = _a.reviewerName, jobTitleEn = _a.jobTitleEn, jobTitleFr = _a.jobTitleFr, userInitial = _a.userInitial, errors = _a.errors, shouldShowPositionId = _a.shouldShowPositionId, onDecisionChange = _a.onDecisionChange, onCommentChange = _a.onCommentChange, onConfirmChange = _a.onConfirmChange, onPositionChange = _a.onPositionChange, onViewComments = _a.onViewComments, onSubmit = _a.onSubmit, onClose = _a.onClose;
-    // feedbackLabel — mirrors old code HodViewScorecard.tsx lines 1394-1400 EXACTLY:
-    //   StatusId.PendingwithHODtoAssignPositionID (130) → "Feedback — Level 2"
-    //   StatusId.InterviewScheduledforLevel2      (129) → "Feedback — Level 2"
-    //   ALL others (127, 121, 123, 165, 166...)   → "Feedback — Level 1"
-    // 127 (PendingwithHODtoselectthecandidateLevel2) is HOD selection → Level 1 label
     var feedbackLabel = _FEEDBACK_LEVEL2_STATUS_IDS.includes(statusId)
         ? "Feedback — Level 2"
         : "Feedback — Level 1";
-    // ── VIEW-ONLY MODE ──────────────────────────────────────────────────────────
     if (!canEdit) {
         return (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionCard, style: { borderColor: "#e2e8f0", background: "#f8fafc" } },
             React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionHeader },
@@ -53,7 +41,6 @@ var HODDecisionPanel = function (_a) {
             React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFooter },
                 React.createElement("button", { onClick: onClose, className: ReviewScorecard_module_scss_1.default.mCancelBtn }, "CLOSE"))));
     }
-    // ── EDIT MODE ───────────────────────────────────────────────────────────────
     return (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionCard },
         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionHeader },
             React.createElement(lucide_react_1.Zap, { size: 22, color: "#f59e0b", fill: "#f59e0b" }),

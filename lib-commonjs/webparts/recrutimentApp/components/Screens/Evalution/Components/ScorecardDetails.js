@@ -25,11 +25,9 @@ function ScorecardDetails(_a) {
     var jobTitleEn = (candidate === null || candidate === void 0 ? void 0 : candidate.jobTitleEn) || '';
     var jobTitleFr = (candidate === null || candidate === void 0 ? void 0 : candidate.jobTitleFr) || '';
     var userInitial = (reviewerName || 'J').charAt(0).toUpperCase();
-    // Nationality-based label: "N0" = Congolese
     var expatLocalLabel = (candidate === null || candidate === void 0 ? void 0 : candidate.nationalityCode) === ConditionConfig_1.NationalityCode.Nationals
         ? 'CONGOLESE EXPERIENCE'
         : 'EXPAT EXPERIENCE';
-    // Show EvaluationFeedback when any scorecard rating ≤ 2 (old code shouldShowTextArea logic)
     var shouldShowEvalFeedback = Object.values(scorecard).some(function (v) { return v !== null && Number(v) <= 2; });
     return (React.createElement("section", null,
         React.createElement("div", { className: ScorecardDetails_module_scss_1.default.sectionTitle },

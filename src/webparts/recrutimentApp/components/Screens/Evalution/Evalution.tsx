@@ -37,14 +37,14 @@ function EvalutionContent({ candidateId, onBack }: EvalutionProps): JSX.Element 
     onBack ? onBack() : navigate('/RecruitmentTable');
   }, [navigate, onBack]);
 
-  // ── Data ──────────────────────────────────────────────────────────────────
+
   const { candidate, questions, loading: candidateLoading, error: candidateError, reload: reloadCandidate } =
     useCandidateDetails({ candidateId });
 
   const { data: scoreCardData, loading: scoreCardLoading, error: scoreCardError, reload: reloadScoreCard } =
     useScoreCard(candidateId);
 
-  // ── Context ────────────────────────────────────────────────────────────────
+
   const {
     answers, initializeAnswers, updateAnswer,
     scorecard, updateScorecard,
@@ -54,7 +54,7 @@ function EvalutionContent({ candidateId, onBack }: EvalutionProps): JSX.Element 
     acknowledged, setAcknowledged,
   } = useEvaluationState();
 
-  // ── Validation ─────────────────────────────────────────────────────────────
+
   const [ratingErrors,      setRatingErrors]      = React.useState<Record<number, boolean>>({});
   const [scorecardErrors,   setScorecardErrors]   = React.useState<Record<string, boolean>>({});
   const [recError,          setRecError]          = React.useState(false);
@@ -63,12 +63,12 @@ function EvalutionContent({ candidateId, onBack }: EvalutionProps): JSX.Element 
   const [ackError,          setAckError]          = React.useState(false);
   const [submitAttempted,   setSubmitAttempted]   = React.useState(false);
 
-  // ── UI ─────────────────────────────────────────────────────────────────────
+  
   const [alertMsg,   setAlertMsg]   = React.useState('');
   const [alertType,  setAlertType]  = React.useState<'success' | 'error' | ''>('');
   const [submitting, setSubmitting] = React.useState(false);
 
-  // shouldShowTextArea — any scorecard field ≤ 2 (old code logic exact)
+
   const shouldShowTextArea = React.useMemo(
     () => Object.values(scorecard).some((v) => v !== null && Number(v) <= 2),
     [scorecard]
@@ -102,13 +102,13 @@ function EvalutionContent({ candidateId, onBack }: EvalutionProps): JSX.Element 
     [updateScorecard]
   );
 
-  // ── Submit ─────────────────────────────────────────────────────────────────
+
   const handleSubmit = React.useCallback(async () => {
     console.log('[Evalution] handleSubmit START — candidate:', candidate);
     setSubmitAttempted(true);
     let valid = true;
 
-    // 1. Question ratings
+
     const newRatingErrors: Record<number, boolean> = {};
     questions.forEach((q) => {
       if (answers[q.id]?.rating == null) { newRatingErrors[q.id] = true; valid = false; }
@@ -116,7 +116,7 @@ function EvalutionContent({ candidateId, onBack }: EvalutionProps): JSX.Element 
     setRatingErrors(newRatingErrors);
     console.log('[Evalution] ratingErrors:', newRatingErrors, 'valid after rating check:', valid);
 
-    // 2. Scorecard (all 8 required)
+
     const newScorecardErrors: Record<string, boolean> = {};
     (Object.keys(scorecard) as (keyof ScorecardField)[]).forEach((key) => {
       if (scorecard[key] === null) { newScorecardErrors[key] = true; valid = false; }
@@ -124,18 +124,18 @@ function EvalutionContent({ candidateId, onBack }: EvalutionProps): JSX.Element 
     setScorecardErrors(newScorecardErrors);
     console.log('[Evalution] scorecardErrors:', newScorecardErrors);
 
-    // 3. Recommendation
+
     if (!recommendation) { setRecError(true); valid = false; } else setRecError(false);
 
-    // 4. Conditional EvaluationFeedback (when any rating ≤ 2)
+
     if (shouldShowTextArea && !evaluationFeedback.trim()) {
       setEvalFeedbackError(true); valid = false;
     } else { setEvalFeedbackError(false); }
 
-    // 5. Overall feedback
+
     if (!overallFeedback.trim()) { setFeedbackError(true); valid = false; } else setFeedbackError(false);
 
-    // 6. Acknowledgement
+
     if (!acknowledged) { setAckError(true); valid = false; } else setAckError(false);
 
     console.log('[Evalution] Validation result — valid:', valid);
@@ -146,7 +146,7 @@ function EvalutionContent({ candidateId, onBack }: EvalutionProps): JSX.Element 
       return;
     }
 
-    // Check currentUserPanelId — if null, user is not in interview panel
+   
     if (!candidate?.currentUserPanelId) {
       console.error('[Evalution] currentUserPanelId is null — check HRMSInterviewPanelDetails for candidateId:', candidateId);
       setAlertMsg('Could not identify your panel entry. Please contact HR.');

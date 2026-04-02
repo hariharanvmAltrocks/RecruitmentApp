@@ -8,9 +8,6 @@ export interface ScoreCardData {
 export interface IScoreCardService {
   getScoreCard: (candidateId: number) => Promise<ScoreCardData>;
 }
-
-// Default service — scorecard is a fresh submission each time (no pre-fill from API).
-// If you need to pre-populate from a saved draft, replace this implementation.
 const defaultService: IScoreCardService = {
   getScoreCard: async (_candidateId: number): Promise<ScoreCardData> => {
     return { answers: {} };
