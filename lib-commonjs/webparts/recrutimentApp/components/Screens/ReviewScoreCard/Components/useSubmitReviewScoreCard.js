@@ -1,9 +1,7 @@
 "use strict";
-// Hooks/useSubmitReviewScoreCard.ts
-// ─────────────────────────────────────────────────────────────────────────────
-// Standalone submit hook — submit logic மட்டும் இங்கே இருக்கும்.
-// useReviewScorecard-இல் இருந்து தனியாக பிரிக்கப்பட்டது.
-// ─────────────────────────────────────────────────────────────────────────────
+// Components/useSubmitReviewScoreCard.ts
+// Validation → returns ValidationError[] for popup display.
+// submit / reset / validate logic unchanged.
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useSubmitReviewScoreCard = useSubmitReviewScoreCard;
 var tslib_1 = require("tslib");
@@ -16,44 +14,53 @@ function useSubmitReviewScoreCard(deps) {
     var _a = React.useState(false), submitting = _a[0], setSubmitting = _a[1];
     var _b = React.useState(''), submitError = _b[0], setSubmitError = _b[1];
     var _c = React.useState(''), successMessage = _c[0], setSuccessMessage = _c[1];
-    var _d = React.useState({
-        decision: false,
-        comment: false,
-        checkbox: false,
-        position: false,
-    }), errors = _d[0], setErrors = _d[1];
+    var _d = React.useState([]), validationErrors = _d[0], setValidationErrors = _d[1];
+    var _e = React.useState({
+        decision: false, comment: false, checkbox: false, position: false,
+    }), errors = _e[0], setErrors = _e[1];
+    // ── Reset ──────────────────────────────────────────────────────────────────
     var resetSubmit = React.useCallback(function () {
         setSubmitting(false);
         setSubmitError('');
         setSuccessMessage('');
+        setValidationErrors([]);
         setErrors({ decision: false, comment: false, checkbox: false, position: false });
     }, []);
-    var validate = React.useCallback(function (statusId, decision) {
-        var lv2 = (0, useReviewScorecard_1.isLevel2)(statusId);
+    // ── Validate → build ValidationError list ─────────────────────────────────
+    var runValidation = React.useCallback(function () {
+        if (!reviewingCandidate)
+            return false;
+        var lv2 = (0, useReviewScorecard_1.isLevel2)(reviewingCandidate.statusId);
+        var sid = reviewingCandidate.statusId;
+        var decision = hodDecision;
         var newErrors = {
             decision: lv2 ? false : !decision,
             comment: !decisionComment.trim(),
             checkbox: !confirmed,
             position: !lv2 &&
                 decision === 'Yes' &&
-                shouldShowPositionId(statusId, decision) &&
+                shouldShowPositionId(sid, decision) &&
                 !selectedPositionId,
         };
         setErrors(newErrors);
-        if (!lv2 && newErrors.decision) {
-            setSubmitError('Please select a decision.');
-        }
-        else if (Object.values(newErrors).some(Boolean)) {
-            setSubmitError('Please fill in all required fields.');
-        }
-        else {
-            setSubmitError('');
-        }
-        return Object.values(newErrors).every(function (v) { return !v; });
-    }, [decisionComment, confirmed, selectedPositionId, shouldShowPositionId]);
+        var list = [];
+        if (newErrors.decision)
+            list.push({ field: 'decision', message: 'Decision is required — please select Yes, No, or On Hold.' });
+        if (newErrors.comment)
+            list.push({ field: 'comment', message: 'Feedback / comment is required.' });
+        if (newErrors.checkbox)
+            list.push({ field: 'checkbox', message: 'Please confirm the decision by checking the checkbox.' });
+        if (newErrors.position)
+            list.push({ field: 'position', message: 'Please assign a Position ID for the selected candidate.' });
+        setValidationErrors(list);
+        return list.length === 0;
+    }, [
+        reviewingCandidate, hodDecision, decisionComment,
+        confirmed, selectedPositionId, shouldShowPositionId,
+    ]);
+    // ── Submit ─────────────────────────────────────────────────────────────────
     var submitDecision = React.useCallback(function (roleId) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
         var jobRequestId, result, e_1;
-        var _this = this;
         var _a, _b, _c, _d;
         return tslib_1.__generator(this, function (_e) {
             switch (_e.label) {
@@ -61,8 +68,6 @@ function useSubmitReviewScoreCard(deps) {
                     if (!reviewingCandidate)
                         return [2 /*return*/];
                     setSubmitError('');
-                    if (!validate(reviewingCandidate.statusId, hodDecision))
-                        return [2 /*return*/];
                     setSubmitting(true);
                     _e.label = 1;
                 case 1:
@@ -89,19 +94,7 @@ function useSubmitReviewScoreCard(deps) {
                         setSubmitError(result.message || 'Submission failed.');
                         return [2 /*return*/];
                     }
-                    setSuccessMessage(result.message);
-                    setTimeout(function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                        return tslib_1.__generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    setSuccessMessage('');
-                                    return [4 /*yield*/, onSuccess()];
-                                case 1:
-                                    _a.sent();
-                                    return [2 /*return*/];
-                            }
-                        });
-                    }); }, 1200);
+                    setSuccessMessage(result.message || '✓ Decision submitted successfully.');
                     return [3 /*break*/, 5];
                 case 3:
                     e_1 = _e.sent();
@@ -116,8 +109,18 @@ function useSubmitReviewScoreCard(deps) {
         });
     }); }, [
         reviewingCandidate, reviewData, hodDecision, decisionComment,
-        currentUserEmail, selectedPositionId, validate, onSuccess,
+        currentUserEmail, selectedPositionId, onSuccess,
     ]);
-    return { submitting: submitting, submitError: submitError, successMessage: successMessage, errors: errors, setErrors: setErrors, submitDecision: submitDecision, resetSubmit: resetSubmit };
+    return {
+        submitting: submitting,
+        submitError: submitError,
+        successMessage: successMessage,
+        errors: errors,
+        validationErrors: validationErrors,
+        setErrors: setErrors,
+        submitDecision: submitDecision,
+        resetSubmit: resetSubmit,
+        runValidation: runValidation,
+    };
 }
 //# sourceMappingURL=useSubmitReviewScoreCard.js.map

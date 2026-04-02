@@ -25,7 +25,6 @@ interface Props {
   jobTitleFr:           string;
   userInitial:          string;
   errors:               ErrorsType;
-
   shouldShowPositionId: (statusId: number, decision: HODDecision) => boolean;
   onDecisionChange:     (d: HODDecision) => void;
   onCommentChange:      (v: string) => void;
@@ -33,11 +32,8 @@ interface Props {
   onPositionChange:     (id: number | null, text: string) => void;
   onViewComments:       () => void;
   onClose:              () => void;
-
-  // ── Submit is now handled by SubmitReviewScoreCard component ──
-  // Pass the full submitDeps + roleId so the component manages its own hook
-  submitDeps: SubmitHookDeps;
-  roleId:     number;
+  submitDeps:           SubmitHookDeps;
+  roleId:               number;
 }
 
 const HODDecisionPanel: React.FC<Props> = ({
@@ -54,7 +50,7 @@ const HODDecisionPanel: React.FC<Props> = ({
     ? 'Feedback — Level 2'
     : 'Feedback — Level 1';
 
-  // ── VIEW-ONLY mode (already submitted) ───────────────────────────────────
+  // ── VIEW-ONLY mode ────────────────────────────────────────────────────────
   if (!canEdit) {
     return (
       <div className={styles.mDecisionCard} style={{ borderColor: '#e2e8f0', background: '#f8fafc' }}>
@@ -67,7 +63,7 @@ const HODDecisionPanel: React.FC<Props> = ({
         </div>
 
         <div className={styles.mFormGroup}>
-          <button onClick={onViewComments} className={styles.mActionBtn}>
+          <button onClick={onViewComments} className={styles.mActionBtn} type="button">
             <FileText size={16} /> VIEW COMMENTS
           </button>
         </div>
@@ -106,7 +102,7 @@ const HODDecisionPanel: React.FC<Props> = ({
         )}
 
         <div className={styles.mFooter}>
-          <button onClick={onClose} className={styles.mCancelBtn}>CLOSE</button>
+          <button onClick={onClose} className={styles.mCancelBtn} type="button">CLOSE</button>
         </div>
       </div>
     );
@@ -136,6 +132,7 @@ const HODDecisionPanel: React.FC<Props> = ({
             key={val}
             className={`${styles.mDCard} ${hodDecision === val ? cls : ''} ${errors.decision ? styles.mInputErr : ''}`}
             onClick={() => onDecisionChange(val)}
+            type="button"
           >
             <Icon size={28} /><span>{label}</span>
           </button>
@@ -147,19 +144,9 @@ const HODDecisionPanel: React.FC<Props> = ({
         </div>
       )}
 
-      {/* Success message (from submitHook via SubmitReviewScoreCard) */}
-      {successMessage && (
-        <div style={{
-          background: '#dcfce7', border: '1px solid #22c55e', color: '#166534',
-          padding: '0.6rem 0.8rem', borderRadius: '0.45rem', marginBottom: '0.75rem', fontWeight: 600,
-        }}>
-          {successMessage}
-        </div>
-      )}
-
       {/* View Comments */}
       <div className={styles.mFormGroup}>
-        <button onClick={onViewComments} className={styles.mActionBtn}>
+        <button onClick={onViewComments} className={styles.mActionBtn} type="button">
           <FileText size={16} /> VIEW COMMENTS
         </button>
       </div>
@@ -191,7 +178,7 @@ const HODDecisionPanel: React.FC<Props> = ({
         </div>
       )}
 
-      {/* Comment / Feedback textarea */}
+      {/* Comment textarea */}
       <div className={styles.mFormGroup}>
         <label className={`${styles.mFormLabel} ${errors.comment ? styles.mErrLabel : ''}`}>
           {feedbackLabel} <span style={{ color: '#ef4444' }}>*</span>
@@ -241,13 +228,12 @@ const HODDecisionPanel: React.FC<Props> = ({
           </div>
         </div>
       </div>
-      <div className={styles.mFooter}>
-        <button onClick={onClose} className={styles.mCancelBtn} disabled={submitting}>
-          CANCEL
-        </button>
 
+      {/* 🔑 Footer: CANCEL + SUBMIT handled inside SubmitReviewScoreCard */}
+      <div className={styles.mFooter}>
         <SubmitReviewScoreCard
           roleId={roleId}
+          onClose={onClose}
           {...submitDeps}
         />
       </div>

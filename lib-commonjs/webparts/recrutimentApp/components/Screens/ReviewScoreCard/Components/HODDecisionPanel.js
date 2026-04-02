@@ -11,7 +11,7 @@ var HODDecisionPanel = function (_a) {
     var feedbackLabel = _FEEDBACK_LEVEL2_STATUS_IDS.includes(statusId)
         ? 'Feedback — Level 2'
         : 'Feedback — Level 1';
-    // ── VIEW-ONLY mode (already submitted) ───────────────────────────────────
+    // ── VIEW-ONLY mode ────────────────────────────────────────────────────────
     if (!canEdit) {
         return (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionCard, style: { borderColor: '#e2e8f0', background: '#f8fafc' } },
             React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionHeader },
@@ -20,7 +20,7 @@ var HODDecisionPanel = function (_a) {
                     React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionTitle }, "HOD Decision (Submitted)"),
                     React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionSub }, "This candidate has already been reviewed."))),
             React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFormGroup },
-                React.createElement("button", { onClick: onViewComments, className: ReviewScorecard_module_scss_1.default.mActionBtn },
+                React.createElement("button", { onClick: onViewComments, className: ReviewScorecard_module_scss_1.default.mActionBtn, type: "button" },
                     React.createElement(lucide_react_1.FileText, { size: 16 }),
                     " VIEW COMMENTS")),
             hodDecision && (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFormGroup },
@@ -41,7 +41,7 @@ var HODDecisionPanel = function (_a) {
                         padding: '0.75rem', fontSize: '0.875rem', color: '#334155',
                     } }, decisionComment))),
             React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFooter },
-                React.createElement("button", { onClick: onClose, className: ReviewScorecard_module_scss_1.default.mCancelBtn }, "CLOSE"))));
+                React.createElement("button", { onClick: onClose, className: ReviewScorecard_module_scss_1.default.mCancelBtn, type: "button" }, "CLOSE"))));
     }
     // ── EDITABLE mode ─────────────────────────────────────────────────────────
     return (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionCard },
@@ -56,17 +56,13 @@ var HODDecisionPanel = function (_a) {
             { val: 'On Hold', cls: ReviewScorecard_module_scss_1.default.mDCardHold, Icon: lucide_react_1.Activity, label: 'ON HOLD' },
         ]).map(function (_a) {
             var val = _a.val, cls = _a.cls, Icon = _a.Icon, label = _a.label;
-            return (React.createElement("button", { key: val, className: "".concat(ReviewScorecard_module_scss_1.default.mDCard, " ").concat(hodDecision === val ? cls : '', " ").concat(errors.decision ? ReviewScorecard_module_scss_1.default.mInputErr : ''), onClick: function () { return onDecisionChange(val); } },
+            return (React.createElement("button", { key: val, className: "".concat(ReviewScorecard_module_scss_1.default.mDCard, " ").concat(hodDecision === val ? cls : '', " ").concat(errors.decision ? ReviewScorecard_module_scss_1.default.mInputErr : ''), onClick: function () { return onDecisionChange(val); }, type: "button" },
                 React.createElement(Icon, { size: 28 }),
                 React.createElement("span", null, label)));
         })),
         errors.decision && (React.createElement("div", { style: { color: '#ef4444', fontSize: '0.75rem', marginBottom: '0.5rem' } }, "\u26A0 Please select a decision.")),
-        successMessage && (React.createElement("div", { style: {
-                background: '#dcfce7', border: '1px solid #22c55e', color: '#166534',
-                padding: '0.6rem 0.8rem', borderRadius: '0.45rem', marginBottom: '0.75rem', fontWeight: 600,
-            } }, successMessage)),
         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFormGroup },
-            React.createElement("button", { onClick: onViewComments, className: ReviewScorecard_module_scss_1.default.mActionBtn },
+            React.createElement("button", { onClick: onViewComments, className: ReviewScorecard_module_scss_1.default.mActionBtn, type: "button" },
                 React.createElement(lucide_react_1.FileText, { size: 16 }),
                 " VIEW COMMENTS")),
         shouldShowPositionId(statusId, hodDecision) && (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFormGroup },
@@ -107,8 +103,7 @@ var HODDecisionPanel = function (_a) {
                         React.createElement("p", { className: ReviewScorecard_module_scss_1.default.reviewerMeta, style: { marginTop: 12 } }, "JOB TITLE (FR)"),
                         React.createElement("p", { className: ReviewScorecard_module_scss_1.default.reviewerVal }, jobTitleFr || ''))))),
         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFooter },
-            React.createElement("button", { onClick: onClose, className: ReviewScorecard_module_scss_1.default.mCancelBtn, disabled: submitting }, "CANCEL"),
-            React.createElement(Submitreviewscorecard_1.default, tslib_1.__assign({ roleId: roleId }, submitDeps)))));
+            React.createElement(Submitreviewscorecard_1.default, tslib_1.__assign({ roleId: roleId, onClose: onClose }, submitDeps)))));
 };
 exports.default = HODDecisionPanel;
 //# sourceMappingURL=HODDecisionPanel.js.map
