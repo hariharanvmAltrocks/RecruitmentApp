@@ -1,4 +1,11 @@
 "use strict";
+// Evalution.tsx  (updated)
+// ─────────────────────────────────────────────────────────────────────────────
+// CANCEL + SUBMIT are fully managed inside <SubmitEvaluation />.
+// useSubmitEvaluation hook is instantiated here so its error maps can be
+// passed down to InterviewQuestionList and ScorecardDetails for red highlights.
+// Mirrors the HODDecisionPanel → SubmitReviewScoreCard pattern exactly.
+// ─────────────────────────────────────────────────────────────────────────────
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Evalution = void 0;
 var tslib_1 = require("tslib");
@@ -11,7 +18,9 @@ var CandidateInfo_1 = tslib_1.__importDefault(require("./Components/CandidateInf
 var InterviewQuestion_1 = tslib_1.__importDefault(require("./Components/InterviewQuestion"));
 var ScorecardDetails_1 = tslib_1.__importDefault(require("./Components/ScorecardDetails"));
 var Evalution_module_scss_1 = tslib_1.__importDefault(require("./Evalution.module.scss"));
-var Evaluationformservice_1 = require("./Evaluationservice/Evaluationformservice");
+var Usesubmitevaluation_1 = require("./Hooks/Usesubmitevaluation");
+var Submitevaluation_1 = tslib_1.__importDefault(require("./Components/Submitevaluation"));
+// ── Public wrapper (provides context) ────────────────────────────────────────
 var Evalution = function (props) {
     var _a;
     var location = (0, react_router_dom_1.useLocation)();
@@ -22,220 +31,71 @@ var Evalution = function (props) {
         React.createElement(EvalutionContent, { candidateId: candidateId, onBack: props.onBack })));
 };
 exports.Evalution = Evalution;
+// ── Inner content ─────────────────────────────────────────────────────────────
 function EvalutionContent(_a) {
     var _this = this;
     var candidateId = _a.candidateId, onBack = _a.onBack;
     var navigate = (0, react_router_dom_1.useNavigate)();
-    var handleCancel = React.useCallback(function () {
+    // ── Navigation helpers ────────────────────────────────────────────────────
+    var goBack = React.useCallback(function () {
         onBack ? onBack() : navigate('/RecruitmentTable');
     }, [navigate, onBack]);
+    // ── Data fetching ─────────────────────────────────────────────────────────
     var _b = (0, fetchCandidateDetails_1.useCandidateDetails)({ candidateId: candidateId }), candidate = _b.candidate, questions = _b.questions, candidateLoading = _b.loading, candidateError = _b.error, reloadCandidate = _b.reload;
     var _c = (0, fetchScoreCard_1.useScoreCard)(candidateId), scoreCardData = _c.data, scoreCardLoading = _c.loading, scoreCardError = _c.error, reloadScoreCard = _c.reload;
+    // ── Shared evaluation state ───────────────────────────────────────────────
     var _d = (0, CommonStateManagement_1.useEvaluationState)(), answers = _d.answers, initializeAnswers = _d.initializeAnswers, updateAnswer = _d.updateAnswer, scorecard = _d.scorecard, updateScorecard = _d.updateScorecard, recommendation = _d.recommendation, setRecommendation = _d.setRecommendation, overallFeedback = _d.overallFeedback, setOverallFeedback = _d.setOverallFeedback, evaluationFeedback = _d.evaluationFeedback, setEvaluationFeedback = _d.setEvaluationFeedback, acknowledged = _d.acknowledged, setAcknowledged = _d.setAcknowledged;
-    var _e = React.useState({}), ratingErrors = _e[0], setRatingErrors = _e[1];
-    var _f = React.useState({}), scorecardErrors = _f[0], setScorecardErrors = _f[1];
-    var _g = React.useState(false), recError = _g[0], setRecError = _g[1];
-    var _h = React.useState(false), feedbackError = _h[0], setFeedbackError = _h[1];
-    var _j = React.useState(false), evalFeedbackError = _j[0], setEvalFeedbackError = _j[1];
-    var _k = React.useState(false), ackError = _k[0], setAckError = _k[1];
-    var _l = React.useState(false), submitAttempted = _l[0], setSubmitAttempted = _l[1];
-    var _m = React.useState(''), alertMsg = _m[0], setAlertMsg = _m[1];
-    var _o = React.useState(''), alertType = _o[0], setAlertType = _o[1];
-    var _p = React.useState(false), submitting = _p[0], setSubmitting = _p[1];
-    var shouldShowTextArea = React.useMemo(function () { return Object.values(scorecard).some(function (v) { return v !== null && Number(v) <= 2; }); }, [scorecard]);
+    // ── Initialise answers when questions load ────────────────────────────────
     React.useEffect(function () {
         if (questions.length > 0)
             initializeAnswers(questions, scoreCardData === null || scoreCardData === void 0 ? void 0 : scoreCardData.answers);
     }, [questions, scoreCardData === null || scoreCardData === void 0 ? void 0 : scoreCardData.answers, initializeAnswers]);
+    // ── Derived ───────────────────────────────────────────────────────────────
+    var shouldShowTextArea = React.useMemo(function () { return Object.values(scorecard).some(function (v) { return v !== null && Number(v) <= 2; }); }, [scorecard]);
     var isLoading = candidateLoading || scoreCardLoading;
     var hasError = !!(candidateError || scoreCardError);
     var handleRetry = React.useCallback(function () {
         reloadCandidate();
         reloadScoreCard();
     }, [reloadCandidate, reloadScoreCard]);
-    var handleAnswerChange = React.useCallback(function (questionId, patch) {
-        updateAnswer(questionId, patch);
-        if (patch.rating !== undefined)
-            setRatingErrors(function (prev) {
-                var _a;
-                return (tslib_1.__assign(tslib_1.__assign({}, prev), (_a = {}, _a[questionId] = false, _a)));
-            });
-    }, [updateAnswer]);
-    var handleScorecardChange = React.useCallback(function (key, value) {
-        updateScorecard(key, value);
-        setScorecardErrors(function (prev) {
-            var _a;
-            return (tslib_1.__assign(tslib_1.__assign({}, prev), (_a = {}, _a[key] = false, _a)));
+    // ── onSuccess: called after success popup closes ──────────────────────────
+    var handleSuccess = React.useCallback(function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+        return tslib_1.__generator(this, function (_a) {
+            goBack();
+            return [2 /*return*/];
         });
-    }, [updateScorecard]);
-    var handleSubmit = React.useCallback(function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-        var valid, newRatingErrors, newScorecardErrors, currentRoleIDs, roleId, questionScoresFormatted, result, err_1;
-        var _a, _b;
-        return tslib_1.__generator(this, function (_c) {
-            switch (_c.label) {
-                case 0:
-                    console.log('[Evalution] handleSubmit START — candidate:', candidate);
-                    setSubmitAttempted(true);
-                    valid = true;
-                    newRatingErrors = {};
-                    questions.forEach(function (q) {
-                        var _a;
-                        if (((_a = answers[q.id]) === null || _a === void 0 ? void 0 : _a.rating) == null) {
-                            newRatingErrors[q.id] = true;
-                            valid = false;
-                        }
-                    });
-                    setRatingErrors(newRatingErrors);
-                    console.log('[Evalution] ratingErrors:', newRatingErrors, 'valid after rating check:', valid);
-                    newScorecardErrors = {};
-                    Object.keys(scorecard).forEach(function (key) {
-                        if (scorecard[key] === null) {
-                            newScorecardErrors[key] = true;
-                            valid = false;
-                        }
-                    });
-                    setScorecardErrors(newScorecardErrors);
-                    console.log('[Evalution] scorecardErrors:', newScorecardErrors);
-                    if (!recommendation) {
-                        setRecError(true);
-                        valid = false;
-                    }
-                    else
-                        setRecError(false);
-                    if (shouldShowTextArea && !evaluationFeedback.trim()) {
-                        setEvalFeedbackError(true);
-                        valid = false;
-                    }
-                    else {
-                        setEvalFeedbackError(false);
-                    }
-                    if (!overallFeedback.trim()) {
-                        setFeedbackError(true);
-                        valid = false;
-                    }
-                    else
-                        setFeedbackError(false);
-                    if (!acknowledged) {
-                        setAckError(true);
-                        valid = false;
-                    }
-                    else
-                        setAckError(false);
-                    console.log('[Evalution] Validation result — valid:', valid);
-                    if (!valid) {
-                        setAlertMsg('Please complete all required fields before submitting.');
-                        setAlertType('error');
-                        return [2 /*return*/];
-                    }
-                    if (!(candidate === null || candidate === void 0 ? void 0 : candidate.currentUserPanelId)) {
-                        console.error('[Evalution] currentUserPanelId is null — check HRMSInterviewPanelDetails for candidateId:', candidateId);
-                        setAlertMsg('Could not identify your panel entry. Please contact HR.');
-                        setAlertType('error');
-                        return [2 /*return*/];
-                    }
-                    setSubmitting(true);
-                    _c.label = 1;
-                case 1:
-                    _c.trys.push([1, 3, 4, 5]);
-                    currentRoleIDs = candidate.currentRoleIDs || [4];
-                    roleId = currentRoleIDs.includes(4) ? 4 : (currentRoleIDs[0] || 0);
-                    questionScoresFormatted = questions.map(function (q, idx) {
-                        var _a;
-                        var _b, _c;
-                        return (_a = {},
-                            _a["Q".concat(idx + 1)] = (_c = (_b = answers[q.id]) === null || _b === void 0 ? void 0 : _b.rating) !== null && _c !== void 0 ? _c : 0,
-                            _a);
-                    });
-                    console.log('questionScoresFormatted', questionScoresFormatted);
-                    console.log('[Evalution] submitting with:', {
-                        candidateId: candidateId,
-                        panelId: candidate.currentUserPanelId,
-                        recruitmentId: candidate.recruitmentId,
-                        jobRequestId: candidate.jobRequestId,
-                        roleId: roleId,
-                        interviewPersonId: candidate.currentUserGuid,
-                        recommendation: recommendation,
-                        shouldShowTextArea: shouldShowTextArea,
-                        questionScoresFormatted: questionScoresFormatted,
-                        scorecard: scorecard,
-                    });
-                    return [4 /*yield*/, (0, Evaluationformservice_1.submitScorecard)({
-                            recruitmentId: candidate.recruitmentId,
-                            panelId: candidate.currentUserPanelId,
-                            roleId: roleId,
-                            interviewPersonNameId: (_a = candidate.currentUserGuid) !== null && _a !== void 0 ? _a : '',
-                            qualifications: scorecard.Qualifications,
-                            experience: scorecard.Experience,
-                            knowledge: scorecard.Knowledge,
-                            energyLevel: scorecard.EnergyLevel,
-                            jobRequirements: scorecard.JobRequirements,
-                            cultureFit: scorecard.CultureFit,
-                            expatLocal: scorecard.ExpatLocal,
-                            otherCriteria: scorecard.OtherCriteria,
-                            recommendation: recommendation,
-                            evaluationFeedback: shouldShowTextArea ? evaluationFeedback : '',
-                            overallFeedback: overallFeedback,
-                            questionScores: questionScoresFormatted,
-                            candidateId: candidateId,
-                            jobRequestId: (_b = candidate.jobRequestId) !== null && _b !== void 0 ? _b : '',
-                        })];
-                case 2:
-                    result = _c.sent();
-                    console.log('[Evalution] submitScorecard result:', result);
-                    if (result.success) {
-                        setAlertMsg(result.message);
-                        setAlertType('success');
-                        setTimeout(function () { return navigate('/RecruitmentTable'); }, 700);
-                    }
-                    else {
-                        setAlertMsg(result.message);
-                        setAlertType('error');
-                    }
-                    return [3 /*break*/, 5];
-                case 3:
-                    err_1 = _c.sent();
-                    console.error('[Evalution] submit exception:', err_1);
-                    setAlertMsg(err_1 instanceof Error ? err_1.message : 'Submission failed. Please try again.');
-                    setAlertType('error');
-                    return [3 /*break*/, 5];
-                case 4:
-                    setSubmitting(false);
-                    return [7 /*endfinally*/];
-                case 5: return [2 /*return*/];
-            }
-        });
-    }); }, [
-        questions, answers, scorecard, recommendation, overallFeedback,
-        evaluationFeedback, shouldShowTextArea, acknowledged, candidate, candidateId, navigate,
-    ]);
+    }); }, [goBack]);
+    // ── Submit hook (instantiated here so error maps flow down to form fields) -
+    var submitHook = (0, Usesubmitevaluation_1.useSubmitEvaluation)({
+        candidateId: candidateId,
+        candidate: candidate,
+        questions: questions,
+        answers: answers,
+        scorecard: scorecard,
+        recommendation: recommendation,
+        overallFeedback: overallFeedback,
+        evaluationFeedback: evaluationFeedback,
+        shouldShowTextArea: shouldShowTextArea,
+        acknowledged: acknowledged,
+        onSuccess: handleSuccess,
+    });
+    // ── Loading screen ────────────────────────────────────────────────────────
     if (isLoading) {
         return (React.createElement("div", { className: Evalution_module_scss_1.default.loadingPage },
             React.createElement("div", { className: Evalution_module_scss_1.default.spinner }),
             React.createElement("p", { className: Evalution_module_scss_1.default.loadingText }, "Loading evaluation form\u2026")));
     }
-    var alertClass = [
-        Evalution_module_scss_1.default.alert,
-        alertType === 'error' ? Evalution_module_scss_1.default.alertError : '',
-        alertType === 'success' ? Evalution_module_scss_1.default.alertSuccess : '',
-    ].filter(Boolean).join(' ');
+    // ── Render ────────────────────────────────────────────────────────────────
     return (React.createElement("div", { className: Evalution_module_scss_1.default.root },
-        alertMsg && (React.createElement("div", { className: alertClass },
-            React.createElement("span", null, alertMsg),
-            React.createElement("button", { className: Evalution_module_scss_1.default.alertClose, onClick: function () { setAlertMsg(''); setAlertType(''); } }, "\u2715"))),
         hasError && (React.createElement("div", { className: Evalution_module_scss_1.default.errorBanner },
             React.createElement("span", null, "We could not load all evaluation data. Please try again."),
             React.createElement("button", { className: Evalution_module_scss_1.default.retryBtn, onClick: handleRetry }, "Retry"))),
         React.createElement("div", { className: Evalution_module_scss_1.default.layout },
             React.createElement(CandidateInfo_1.default, { candidate: candidate }),
             React.createElement("main", { className: Evalution_module_scss_1.default.rightPanel },
-                React.createElement(InterviewQuestion_1.default, { questions: questions, answers: answers, ratingErrors: submitAttempted ? ratingErrors : {}, onAnswerChange: handleAnswerChange }),
+                React.createElement(InterviewQuestion_1.default, { questions: questions, answers: answers, ratingErrors: submitHook.ratingErrors, onAnswerChange: function (qId, patch) { return updateAnswer(qId, patch); } }),
                 React.createElement("div", { className: questions.length > 0 ? Evalution_module_scss_1.default.scorecardMargin : '' },
-                    React.createElement(ScorecardDetails_1.default, { scorecard: scorecard, scorecardErrors: scorecardErrors, onScorecardChange: handleScorecardChange, recommendation: recommendation, recError: recError, onRecommendationChange: function (r) { setRecommendation(r); setRecError(false); }, overallFeedback: overallFeedback, feedbackError: feedbackError, onFeedbackChange: function (v) { setOverallFeedback(v); if (v.trim())
-                            setFeedbackError(false); }, evaluationFeedback: evaluationFeedback, evalFeedbackError: evalFeedbackError, onEvalFeedbackChange: function (v) { setEvaluationFeedback(v); if (v.trim())
-                            setEvalFeedbackError(false); }, acknowledged: acknowledged, ackError: ackError, onAcknowledgedChange: function (b) { setAcknowledged(b); if (b)
-                            setAckError(false); }, candidate: candidate })),
-                React.createElement("div", { className: Evalution_module_scss_1.default.footer },
-                    React.createElement("button", { className: Evalution_module_scss_1.default.cancelBtn, onClick: handleCancel, disabled: submitting }, "Cancel"),
-                    React.createElement("button", { className: Evalution_module_scss_1.default.submitBtn, onClick: handleSubmit, disabled: submitting || !acknowledged }, submitting ? 'Submitting…' : '+ Submit Evaluation'))))));
+                    React.createElement(ScorecardDetails_1.default, { scorecard: scorecard, scorecardErrors: submitHook.scorecardErrors, onScorecardChange: function (key, val) { return updateScorecard(key, val); }, recommendation: recommendation, recError: submitHook.recError, onRecommendationChange: setRecommendation, overallFeedback: overallFeedback, feedbackError: submitHook.feedbackError, onFeedbackChange: setOverallFeedback, evaluationFeedback: evaluationFeedback, evalFeedbackError: submitHook.evalFeedbackError, onEvalFeedbackChange: setEvaluationFeedback, acknowledged: acknowledged, ackError: submitHook.ackError, onAcknowledgedChange: setAcknowledged, candidate: candidate })),
+                React.createElement(Submitevaluation_1.default, { submitHook: submitHook, acknowledged: acknowledged, onCancel: goBack })))));
 }
 //# sourceMappingURL=Evalution.js.map

@@ -176,3 +176,16 @@
 .scorecardMargin {
   margin-top: 24px;
 }
+// ── Inline API error (shown between Cancel and Submit when API fails) ─────────
+
+.inlineError {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 8px 14px;
+  align-self: center;
+}
