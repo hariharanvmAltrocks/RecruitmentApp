@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TabName = exports.DocumentFolderName = exports.RecuritmentHRMsg = exports.EmailTemplateCodes = exports.ActionID = exports.InterviewLevels = exports.QuestionCreatedBy = exports.InterviewLevel = exports.TabNames = exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
+exports.DotTooltipStatus = exports.StatusBarValue = exports.DotAfricaStatus = exports.ExternalUserType = exports.DisplayFolderName = exports.BGVDocumentName = exports.TabName = exports.DocumentFolderName = exports.RecuritmentHRMsg = exports.EmailTemplateCodes = exports.ActionID = exports.InterviewLevels = exports.QuestionCreatedBy = exports.InterviewLevel = exports.TabNames = exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
 exports.MatricID = {
     AssignHr: 1,
     UploadONEM: 2,
@@ -28,7 +28,7 @@ exports.MatricID = {
     BackgroundCheck: 24,
     LabourHire: 25,
     Kcsa: 26,
-    ReviewScoredHOD: 27
+    ReviewScoredHOD: 27,
 };
 exports.RoleName = {
     LineManager: "Line Manager",
@@ -300,5 +300,66 @@ exports.TabName = {
     CreateAdminPage: "Create Admin Page",
     EnglishAdvertisment: "English", //"Job Advertisement",
     FrenchAdvertisement: "French", //"Offre d'emploi"
+};
+exports.BGVDocumentName = {
+    GQ: "Global University Qualification Verification",
+    CZ: "Citizenship Verification",
+    EXP: "Experian Credit Check",
+    IDV: "ID Verification",
+    PRE: "Matric Pre-92 Umalusi Verification",
+    PST: "Matric Post-92 Umalusi Verification",
+    UMF: "Umalusi Full Verification",
+    SAQ: "SA University Qualification Verification",
+    NL: "TVET and SA Teachers College Verification",
+    TC: "Trade Certificate Verification",
+    SC: "Certificate / Short Course Verification",
+    SETA: "SETA Verification",
+    ITC: "TransUnion Credit Check",
+    IDC: "Criminal Record Check",
+    EHCR: "Employment Character Reference Verification",
+    PSY: "Psychometric Assessment",
+    DMC: "Director Member Confirmation",
+    IDCS: "ID Check Secondary",
+    PS: "Psychometric Assessment",
+    ConsentForm: "Dot's Africa Consent Form",
+};
+exports.DisplayFolderName = {
+    Offerletter: "Offer Letter",
+    LabourHireOffer: "Labour Hire Offer Letter Release",
+    LabourHireEC: "Labour Hire Employment Contract Release",
+    ConsentForm: "Code of Business Content",
+    EmploymentContractForm: "Employment Contract",
+    PersonalDocument: "Personal Document",
+    BackgroundVerification: "Background Verification",
+    WorkPermitDocument: "WorkPermit Document",
+    WorkPermitPayment: "WorkPermit Payment Document",
+    PaymentBill: "Payment Bill Document",
+    PoliceClearanceCertificate: "Police Clearance Certificate",
+    CovidVaccinationCertificate: "Covid Vaccination Certificate",
+    YellowFeverVaccinationCertificate: "Yellow Fever Vaccination Certificate",
+};
+exports.ExternalUserType = {
+    Agent: "Agent",
+    LabourHire: "Labour Hire",
+};
+exports.DotAfricaStatus = {
+    Completed: "completed",
+    Confirmed: "Confirmed",
+    skipped: "skipped",
+    skiped: "skiped",
+    pending: "pending",
+    error: "error",
+    cancelled: "cancelled",
+    new: "new",
+};
+exports.StatusBarValue = {
+    Completed: "Completed",
+    Pending: "Pending",
+    Failed: "Failed",
+};
+exports.DotTooltipStatus = {
+    Passed: "Passed",
+    Failed: "Failed",
+    Pending: "Pending",
 };
 //# sourceMappingURL=ConditionConfig.js.map

@@ -41,7 +41,6 @@ export const useCandidatDetails = (
       );
       if (response.status === ResponeStatus.SUCCESS) {
         const data = response.data;
-        console.log(data, "data");
         setData(data);
         setLoading(false);
         return;

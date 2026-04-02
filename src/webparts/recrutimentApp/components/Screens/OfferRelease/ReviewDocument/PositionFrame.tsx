@@ -13,8 +13,13 @@ import {
 } from "lucide-react";
 import "../OfferTable.scss"
 import moment from "moment";
+import { PPEItem, PPESizingTagStrip } from "./Component/Ppesizinginfo/Ppesizinginfo";
+import { IDocFiles } from "../../../../services/SPService/Ispservice";
 
 export interface IselectedPosition {
+  ID: number;
+  CandidateID: number;
+  RecID: number;
  JobTiltle: string;
  JobCode: string;
   positionID: string;
@@ -33,6 +38,10 @@ export interface IselectedPosition {
   EmploymentCategory: string;
   TypeofContract: string;
   AreaofWork: string;
+  patersonGrade: string;
+  drcGrade: string;
+
+
   JoiningDate: string;
   NoticePeriod: string;
 
@@ -41,6 +50,16 @@ export interface IselectedPosition {
   ReferenceEmail: string;
   ReferencePhone: string;
   ReferenceCompanyName: string;
+  StatusID: number;
+
+  ProfileID: string;
+  JobRequestID: string;
+
+  PPEItems: PPEItem[];
+  DotAfricaCF: IDocFiles;
+
+  NationalityCode: string;
+
 }
 
 export interface PositionFrameworkProps {
@@ -69,6 +88,12 @@ const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({ width = 
   <div className="advert-review-drawer__skeleton" style={{ width, height }} />
 );
 
+  const SAMPLE_ITEMS: PPEItem[] = [
+  { kit: "Cont. Suit Pants", size: "36" },
+  { kit: "Cont. Suit Top",   size: "XL" },
+  { kit: "Safety Shoes",     size: "7"  },
+];
+
 export const PositionFrame: React.FC<PositionFrameworkProps> = ({ positionDetails, isLoading, headerCode }) => (
   <section className="advert-review-drawer__section advert-review-drawer__section--frame">
     <div className="advert-review-drawer__section-header">
@@ -89,7 +114,8 @@ export const PositionFrame: React.FC<PositionFrameworkProps> = ({ positionDetail
         ))}
       </div>
     ) : (
-      <div className="advert-review-drawer__group">
+      <>
+       <div className="advert-review-drawer__group">
         <h4 className="advert-review-drawer__group-title">
           <Users size={12} />
           Organizational Alignment
@@ -119,8 +145,11 @@ export const PositionFrame: React.FC<PositionFrameworkProps> = ({ positionDetail
           <InfoField label="Employment Category" value={positionDetails?.EmploymentCategory} icon={Users} />
            <InfoField label="Type of Contract" value={positionDetails?.TypeofContract} icon={Users} />
             <InfoField label="Area of Work" value={positionDetails?.AreaofWork} icon={Users} />
+            {positionDetails?.JoiningDate && <InfoField label="Joining Date" value={moment(positionDetails?.JoiningDate).format("DD-MM-YYYY")} icon={Users} />}
+            {positionDetails?.NoticePeriod && <InfoField label="Notice Period" value={positionDetails?.NoticePeriod} icon={Users} />}
         </div>
-
+        {positionDetails?.ReferenceName && ( 
+ <>
         <h4 className="advert-review-drawer__group-title">
           <ClipboardList size={12} />
           Reference Employer Details
@@ -133,7 +162,14 @@ export const PositionFrame: React.FC<PositionFrameworkProps> = ({ positionDetail
           <InfoField label="Reference Company Name" value={positionDetails?.ReferenceCompanyName} icon={FileCheck} />
          
         </div>
+        </>
+        )}
+       
       </div>
+{positionDetails?.PPEItems && (
+                <PPESizingTagStrip items={positionDetails?.PPEItems} />
+)}
+      </>
     )}
   </section>
 );

@@ -670,6 +670,213 @@
   }
 }
 
+// ─── COI Card (UPDATED) ───────────────────────────────────────────────────────
+.cm-coi-card {
+  background: var(--cm-surface);
+  border: 1px solid #fecdd3;
+  border-radius: var(--cm-radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  // Meta badge row
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  &__meta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+
+    &--danger {
+      background: var(--cm-danger-s);
+      color: var(--cm-danger);
+      border: 0.5px solid #fecdd3;
+    }
+  }
+
+  // Reason block — prevents overflow on long text
+  &__reason {
+    background: #fff9f9;
+    border: 0.5px solid #fde8e8;
+    border-radius: var(--cm-radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 4px;
+  }
+
+  &__reason-label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--cm-faint);
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+
+  &__reason-text {
+    margin: 0;
+    font-size: 13px;
+    color: var(--cm-text);
+    line-height: 1.6;
+    word-break: break-word; // prevents long words from overflowing
+    overflow-wrap: break-word;
+    white-space: pre-wrap; // preserves intentional line breaks
+  }
+
+  &__divider {
+    height: 0.5px;
+    background: var(--cm-border);
+    margin: 16px 0;
+  }
+
+  // Fields — 2-col on wider screens, stacks on narrow
+  &__fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: start;
+
+    @media (max-width: 680px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// ─── Upload trigger & file card (UPDATED) ────────────────────────────────────
+.cm-upload {
+  &__trigger {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--cm-bg);
+    border: 1.5px dashed var(--cm-border-s);
+    border-radius: var(--cm-radius-sm);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    text-align: left;
+
+    &:hover {
+      border-color: var(--cm-primary);
+      background: var(--cm-primary-s);
+
+      .cm-upload__trigger-icon {
+        background: var(--cm-primary);
+        color: #fff;
+      }
+    }
+  }
+
+  &__trigger-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--cm-border);
+    color: var(--cm-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  &__trigger-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__trigger-primary {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cm-primary);
+  }
+
+  &__trigger-hint {
+    font-size: 11px;
+    color: var(--cm-faint);
+  }
+
+  // File preview card
+  &__file-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: var(--cm-radius-sm);
+    width: 100%;
+  }
+
+  &__file-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #dcfce7;
+    color: var(--cm-success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__file-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__file-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cm-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  &__file-sub {
+    font-size: 11px;
+    color: var(--cm-success);
+    font-weight: 500;
+  }
+
+  &__file-remove {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 0.5px solid #fecdd3;
+    background: var(--cm-danger-s);
+    color: var(--cm-danger);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s;
+
+    &:hover {
+      background: #fecdd3;
+    }
+  }
+}
+
 @keyframes shimmer {
   0% {
     background-position: -200px 0;

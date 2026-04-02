@@ -25,9 +25,9 @@ export const MatricID = {
 
   BackgroundCheck: 24,
   LabourHire: 25,
-  Kcsa: 26, 
+  Kcsa: 26,
 
-  ReviewScoredHOD: 27
+  ReviewScoredHOD: 27,
 };
 
 export const RoleName = {
@@ -386,4 +386,111 @@ export const TabName = {
 
   EnglishAdvertisment: "English", //"Job Advertisement",
   FrenchAdvertisement: "French", //"Offre d'emploi"
+};
+
+export const BGVDocumentName = {
+  GQ: "Global University Qualification Verification",
+  CZ: "Citizenship Verification",
+  EXP: "Experian Credit Check",
+  IDV: "ID Verification",
+  PRE: "Matric Pre-92 Umalusi Verification",
+  PST: "Matric Post-92 Umalusi Verification",
+  UMF: "Umalusi Full Verification",
+  SAQ: "SA University Qualification Verification",
+  NL: "TVET and SA Teachers College Verification",
+  TC: "Trade Certificate Verification",
+  SC: "Certificate / Short Course Verification",
+  SETA: "SETA Verification",
+  ITC: "TransUnion Credit Check",
+  IDC: "Criminal Record Check",
+  EHCR: "Employment Character Reference Verification",
+  PSY: "Psychometric Assessment",
+  DMC: "Director Member Confirmation",
+  IDCS: "ID Check Secondary",
+  PS: "Psychometric Assessment",
+  ConsentForm: "Dot's Africa Consent Form",
+};
+
+export const DisplayFolderName = {
+  Offerletter: "Offer Letter",
+  LabourHireOffer: "Labour Hire Offer Letter Release",
+  LabourHireEC: "Labour Hire Employment Contract Release",
+  ConsentForm: "Code of Business Content",
+  EmploymentContractForm: "Employment Contract",
+  PersonalDocument: "Personal Document",
+  BackgroundVerification: "Background Verification",
+  WorkPermitDocument: "WorkPermit Document",
+  WorkPermitPayment: "WorkPermit Payment Document",
+  PaymentBill: "Payment Bill Document",
+  PoliceClearanceCertificate: "Police Clearance Certificate",
+  CovidVaccinationCertificate: "Covid Vaccination Certificate",
+  YellowFeverVaccinationCertificate: "Yellow Fever Vaccination Certificate",
+};
+
+export const ExternalUserType = {
+  Agent: "Agent",
+  LabourHire: "Labour Hire",
+};
+
+export const DotAfricaStatus = {
+  Completed: "completed",
+  Confirmed: "Confirmed",
+  skipped: "skipped",
+  skiped: "skiped",
+  pending: "pending",
+  error: "error",
+  cancelled: "cancelled",
+  new: "new",
+};
+
+export const StatusBarValue = {
+  Completed: "Completed",
+  Pending: "Pending",
+  Failed: "Failed",
+};
+
+export const DotTooltipStatus = {
+  Passed: "Passed",
+  Failed: "Failed",
+  Pending: "Pending",
+};
+
+export const ButtonAction = {
+  Initiated: 1,
+  Update: 2,
+  Next: 3,
+  Preview: 4,
+  Submit: 5,
+  Approve: 6,
+  Reject: 7,
+  Revert: 8,
+  Cancel: 9,
+  Back: 10,
+  Save: 11,
+  Add: 12,
+  Delete: 13,
+  Edit: 14,
+  View: 15,
+  Download: 16,
+  Upload: 17,
+  Reschedule: 18,
+  Assign: 19,
+  Remove: 20,
+  close: 21,
+  Review: 22,
+  OnHold: 23,
+  ScheduleforInterview: 24,
+  Selected: 25,
+  Rejected: 26,
+  SaveAsDraft: 27,
+  New: 28,
+  ResetPassword: 29,
+  Rework: 30,
+  ProceedToSubmit: 31,
+  ReInitiate: 32,
+};
+
+export const EmployeementCategory = {
+  KCSAEmployee: "KCSA Employee",
+  LaborhireContractor: "Labour hire/Contractor",
 };

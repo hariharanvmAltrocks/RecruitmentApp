@@ -28,7 +28,6 @@ var useCandidatDetails = function (jobId, candidateID, selectedCandidateID, JobR
                         response = _a.sent();
                         if (response.status === ApiConfig_1.ResponeStatus.SUCCESS) {
                             data_1 = response.data;
-                            console.log(data_1, "data");
                             setData(data_1);
                             setLoading(false);
                             return [2 /*return*/];
