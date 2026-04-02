@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DotTooltipStatus = exports.StatusBarValue = exports.DotAfricaStatus = exports.ExternalUserType = exports.DisplayFolderName = exports.BGVDocumentName = exports.TabName = exports.DocumentFolderName = exports.RecuritmentHRMsg = exports.EmailTemplateCodes = exports.ActionID = exports.InterviewLevels = exports.QuestionCreatedBy = exports.InterviewLevel = exports.TabNames = exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
+exports.EmployeementCategory = exports.ButtonAction = exports.DotTooltipStatus = exports.StatusBarValue = exports.DotAfricaStatus = exports.ExternalUserType = exports.DisplayFolderName = exports.BGVDocumentName = exports.TabName = exports.DocumentFolderName = exports.RecuritmentHRMsg = exports.EmailTemplateCodes = exports.ActionID = exports.InterviewLevels = exports.QuestionCreatedBy = exports.InterviewLevel = exports.TabNames = exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
 exports.MatricID = {
     AssignHr: 1,
     UploadONEM: 2,
@@ -361,5 +361,43 @@ exports.DotTooltipStatus = {
     Passed: "Passed",
     Failed: "Failed",
     Pending: "Pending",
+};
+exports.ButtonAction = {
+    Initiated: 1,
+    Update: 2,
+    Next: 3,
+    Preview: 4,
+    Submit: 5,
+    Approve: 6,
+    Reject: 7,
+    Revert: 8,
+    Cancel: 9,
+    Back: 10,
+    Save: 11,
+    Add: 12,
+    Delete: 13,
+    Edit: 14,
+    View: 15,
+    Download: 16,
+    Upload: 17,
+    Reschedule: 18,
+    Assign: 19,
+    Remove: 20,
+    close: 21,
+    Review: 22,
+    OnHold: 23,
+    ScheduleforInterview: 24,
+    Selected: 25,
+    Rejected: 26,
+    SaveAsDraft: 27,
+    New: 28,
+    ResetPassword: 29,
+    Rework: 30,
+    ProceedToSubmit: 31,
+    ReInitiate: 32,
+};
+exports.EmployeementCategory = {
+    KCSAEmployee: "KCSA Employee",
+    LaborhireContractor: "Labour hire/Contractor",
 };
 //# sourceMappingURL=ConditionConfig.js.map

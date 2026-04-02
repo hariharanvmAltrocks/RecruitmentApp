@@ -262,15 +262,50 @@ var OfferService = /** @class */ (function () {
                 }
             });
         }); };
+        this.UpdateStatusSelectedHOD = function (UpdateParams) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+            var response, ListUpdate, error_4;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        ListUpdate = UpdateParams.map(function (item) { return ({
+                            ID: item.ID,
+                            StatusId: item.StatusId,
+                            // ActionId: item.ActionId,
+                            // ItemCreated: "Yes",
+                        }); });
+                        return [4 /*yield*/, spservice_1.default.batchUpdate({
+                                ListName: "".concat(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD),
+                                responseData: ListUpdate,
+                            })];
+                    case 1:
+                        response = _a.sent();
+                        return [2 /*return*/, {
+                                data: response,
+                                status: 200,
+                                message: "Candidate details fetched successfully",
+                            }];
+                    case 2:
+                        error_4 = _a.sent();
+                        console.error("Error during file replacement process:", error_4);
+                        return [2 /*return*/, {
+                                data: response,
+                                status: 500,
+                                message: "Error during file replacement",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        }); };
     }
     OfferService.prototype.GetSelectedCandidate = function (RecID, CandidateID, SelectedCandidateID, JobRequestID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var queries, _a, batchRes, careerRes, recruitment, recruitmentPosition, candidatePersonal, candidateSelected, ref, PPT, getDotAfricaCF, mappedData, error_4;
-            var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10;
-            return tslib_1.__generator(this, function (_11) {
-                switch (_11.label) {
+            var queries, _a, batchRes, careerRes, recruitment, recruitmentPosition, candidatePersonal, candidateSelected, ref, PPT, getDotAfricaCF, mappedData, error_5;
+            var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15;
+            return tslib_1.__generator(this, function (_16) {
+                switch (_16.label) {
                     case 0:
-                        _11.trys.push([0, 3, , 4]);
+                        _16.trys.push([0, 3, , 4]);
                         queries = [
                             {
                                 StateValue: 1,
@@ -359,7 +394,7 @@ var OfferService = /** @class */ (function () {
                                 ServiceExport_1.CandidateTable.fetchCandidateDetails(JobRequestID),
                             ])];
                     case 1:
-                        _a = _11.sent(), batchRes = _a[0], careerRes = _a[1];
+                        _a = _16.sent(), batchRes = _a[0], careerRes = _a[1];
                         recruitment = (_b = batchRes[1]) === null || _b === void 0 ? void 0 : _b[0];
                         recruitmentPosition = (_c = batchRes[2]) === null || _c === void 0 ? void 0 : _c[0];
                         candidatePersonal = (_d = batchRes[3]) === null || _d === void 0 ? void 0 : _d[0];
@@ -375,8 +410,11 @@ var OfferService = /** @class */ (function () {
                                 FilePath: "".concat(Config_1.DocumentLibraray.HRMSCareerPortalCandidateCV, "/").concat((_m = (_l = careerRes === null || careerRes === void 0 ? void 0 : careerRes.data) === null || _l === void 0 ? void 0 : _l[0]) === null || _m === void 0 ? void 0 : _m.profileID, "/").concat(JobRequestID, "/").concat(ConditionConfig_1.DocumentFolderName.BackgroundVerification, "/").concat("ConsentForm"),
                             })];
                     case 2:
-                        getDotAfricaCF = (_11.sent());
+                        getDotAfricaCF = (_16.sent());
                         mappedData = {
+                            ID: SelectedCandidateID,
+                            CandidateID: CandidateID,
+                            RecID: RecID,
                             JobTiltle: (_o = recruitmentPosition === null || recruitmentPosition === void 0 ? void 0 : recruitmentPosition.JobTitleEnglish) === null || _o === void 0 ? void 0 : _o.JobTitleInEnglish,
                             JobCode: (_p = recruitmentPosition === null || recruitmentPosition === void 0 ? void 0 : recruitmentPosition.JobTitleEnglish) === null || _p === void 0 ? void 0 : _p.JobCode,
                             positionID: (_q = candidateSelected === null || candidateSelected === void 0 ? void 0 : candidateSelected.PositionID) === null || _q === void 0 ? void 0 : _q.PositionID,
@@ -407,6 +445,9 @@ var OfferService = /** @class */ (function () {
                             JobRequestID: (_10 = String(JobRequestID)) !== null && _10 !== void 0 ? _10 : "-",
                             PPEItems: PPT !== null && PPT !== void 0 ? PPT : [],
                             DotAfricaCF: getDotAfricaCF[0],
+                            NationalityCode: (_13 = (_12 = (_11 = careerRes === null || careerRes === void 0 ? void 0 : careerRes.data) === null || _11 === void 0 ? void 0 : _11[0]) === null || _12 === void 0 ? void 0 : _12.NatioCode) !== null && _13 !== void 0 ? _13 : "",
+                            patersonGrade: (_14 = recruitmentPosition === null || recruitmentPosition === void 0 ? void 0 : recruitmentPosition.PatersonGrade) === null || _14 === void 0 ? void 0 : _14.PatersonGrade,
+                            drcGrade: (_15 = recruitmentPosition === null || recruitmentPosition === void 0 ? void 0 : recruitmentPosition.DRCGrade) === null || _15 === void 0 ? void 0 : _15.DRCGrade,
                         };
                         return [2 /*return*/, {
                                 data: mappedData,
@@ -414,8 +455,8 @@ var OfferService = /** @class */ (function () {
                                 message: "Selected candidate fetched successfully",
                             }];
                     case 3:
-                        error_4 = _11.sent();
-                        console.error("GetSelectedCandidate error:", error_4);
+                        error_5 = _16.sent();
+                        console.error("GetSelectedCandidate error:", error_5);
                         return [2 /*return*/, {
                                 data: null,
                                 status: 500,
@@ -428,7 +469,7 @@ var OfferService = /** @class */ (function () {
     };
     OfferService.prototype.InitiateLabouHireOfferRelease = function (data, CurrentUserEmail) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var res, todaydate, laborHireData, response, error_5;
+            var res, todaydate, laborHireData, response, error_6;
             var _a, _b, _c, _d, _e;
             return tslib_1.__generator(this, function (_f) {
                 switch (_f.label) {
@@ -483,8 +524,8 @@ var OfferService = /** @class */ (function () {
                                 message: "Error while posting advertisement details",
                             }];
                     case 3:
-                        error_5 = _f.sent();
-                        console.error("Error posting user data:", error_5);
+                        error_6 = _f.sent();
+                        console.error("Error posting user data:", error_6);
                         return [2 /*return*/, {
                                 data: null,
                                 status: 400,
@@ -497,7 +538,7 @@ var OfferService = /** @class */ (function () {
     };
     OfferService.prototype.CheckBGVerification = function (JobRequestId) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, error_6;
+            var response, error_7;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -511,8 +552,40 @@ var OfferService = /** @class */ (function () {
                                 message: response.data.message,
                             }];
                     case 2:
-                        error_6 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_6);
+                        error_7 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_7);
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error inserting data into AdvertisementDetails",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    OfferService.prototype.InsertRecruitmentCandidateDetails = function (data) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var response, error_8;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, spservice_1.default.SPUpdateItem({
+                                Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                                RequestJSON: data,
+                                ID: data.ID,
+                            })];
+                    case 1:
+                        response = _a.sent();
+                        return [2 /*return*/, {
+                                data: response,
+                                status: 200,
+                                message: "Data updated successfully",
+                            }];
+                    case 2:
+                        error_8 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_8);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
