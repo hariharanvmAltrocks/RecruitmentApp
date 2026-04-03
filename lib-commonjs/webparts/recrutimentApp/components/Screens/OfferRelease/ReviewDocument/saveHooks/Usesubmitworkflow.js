@@ -10,9 +10,9 @@ var ConditionConfig_1 = require("../../../../../utilities/ConditionConfig");
 var ServiceExport_1 = require("../../../../../services/ServiceExport");
 var useModalPopup_1 = require("../../../../Comman/ModalPopup/useModalPopup");
 var react_router_dom_1 = require("react-router-dom");
-var useReviewDocumentManage_1 = require("../StateManage/useReviewDocumentManage");
 var RoleContext_1 = require("../../../../../utilities/hooks/RoleContext");
 var dateConfigfn_1 = require("../../../../Hooks/dateConfigfn");
+var WorkflowConfig_1 = require("../../../../Hooks/WorkflowConfig");
 function makeDocData(profileID, requestID, documentName, unsignedDoc) {
     if (unsignedDoc === void 0) { unsignedDoc = ""; }
     return {
@@ -24,7 +24,7 @@ function makeDocData(profileID, requestID, documentName, unsignedDoc) {
 }
 function resolveStatus(data, consentFile, documents, btnAction, email, coiState, rejectflag) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
-        var pid, rid, ok, documentFile, _a, isNational, successMsg, documentResponse, doc, isKCSA, documentResponse, initiateLabour, response, isReview, isReview, documentResponse, documentResponse, workPermitDocs, isReview, documentResponse, documentResponse, isReview, bgvDocData, documentResponse;
+        var pid, rid, ok, documentFile, IsRevert, IsExpat, StatusID, _a, isNational, successMsg, documentResponse, doc, isKCSA, documentResponse, initiateLabour, response, isReview, isReview, documentResponse, documentResponse, workPermitDocs, isReview, documentResponse, documentResponse, isReview, bgvDocData, documentResponse;
         return tslib_1.__generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -38,6 +38,9 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                             type: "New",
                         };
                     });
+                    IsRevert = btnAction === ConditionConfig_1.ButtonAction.Revert;
+                    IsExpat = (data === null || data === void 0 ? void 0 : data.NationalityCode) != ConditionConfig_1.NationalityCode.Nationals;
+                    StatusID = (0, WorkflowConfig_1.WorkflowHODConfig)(data === null || data === void 0 ? void 0 : data.StatusID, IsRevert, IsExpat, data === null || data === void 0 ? void 0 : data.EmploymentCategory);
                     _a = data === null || data === void 0 ? void 0 : data.StatusID;
                     switch (_a) {
                         case EvaluationConfig_1.StatusId.PendingHRBGVInitiation: return [3 /*break*/, 1];
@@ -63,7 +66,8 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                         return [2 /*return*/, {
                                 workflowStatusValue: Config_1.workflowStatusApi.PendingCandidateUploadBGVDocs,
                                 successMsg: ConditionConfig_1.RecuritmentHRMsg.BGverificationMsg,
-                                actionID: EvaluationConfig_1.WorkflowAction.Approved,
+                                StatusId: StatusID,
+                                // actionID: WorkflowAction.Approved,
                                 documentResponse: ok,
                             }];
                     }
@@ -88,7 +92,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                 case 4: return [2 /*return*/, {
                         workflowStatusValue: Config_1.workflowStatusApi.initiatetheBGVProcess,
                         successMsg: successMsg,
-                        actionID: EvaluationConfig_1.WorkflowAction.Approved,
+                        StatusId: StatusID,
                         documentResponse: documentResponse,
                     }];
                 case 5:
@@ -96,7 +100,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                         return [2 /*return*/, {
                                 workflowStatusValue: Config_1.workflowStatusApi.RevetedBacktoBGVDocuments,
                                 successMsg: ConditionConfig_1.RecuritmentHRMsg.RevertWGDocs,
-                                actionID: EvaluationConfig_1.WorkflowAction.Revert,
+                                StatusId: StatusID,
                                 documentResponse: ok,
                             }];
                     }
@@ -110,7 +114,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                     return [2 /*return*/, {
                             workflowStatusValue: Config_1.workflowStatusApi.Pendingwithcandidatetosignofferletter,
                             successMsg: ConditionConfig_1.RecuritmentHRMsg.OfferLetterMsg,
-                            actionID: EvaluationConfig_1.WorkflowAction.Approved,
+                            StatusId: StatusID,
                             documentResponse: documentResponse,
                         }];
                 case 8:
@@ -139,7 +143,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                     return [2 /*return*/, {
                             workflowStatusValue: Config_1.workflowStatusApi.PendingHROfferInitiate,
                             successMsg: ConditionConfig_1.RecuritmentHRMsg.OfferLetterinit,
-                            actionID: EvaluationConfig_1.WorkflowAction.Approved,
+                            StatusId: StatusID,
                             documentResponse: {
                                 status: response.status === 200
                                     ? ApiConfig_1.ResponeStatus.SUCCESS
@@ -156,7 +160,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                                 successMsg: isReview
                                     ? ConditionConfig_1.RecuritmentHRMsg.ReviewLaborHireOffer
                                     : ConditionConfig_1.RecuritmentHRMsg.RevertLabourOffer,
-                                actionID: isReview ? EvaluationConfig_1.WorkflowAction.Approved : EvaluationConfig_1.WorkflowAction.Revert,
+                                StatusId: StatusID,
                                 documentResponse: ok,
                             }];
                     }
@@ -171,7 +175,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                                 successMsg: isReview
                                     ? ConditionConfig_1.RecuritmentHRMsg.ReviewOfferLetterMsg
                                     : ConditionConfig_1.RecuritmentHRMsg.RevertedOfferLetter,
-                                actionID: isReview ? EvaluationConfig_1.WorkflowAction.Approved : EvaluationConfig_1.WorkflowAction.Revert,
+                                StatusId: StatusID,
                                 documentResponse: ok,
                             }];
                     }
@@ -182,14 +186,14 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                             return [2 /*return*/, {
                                     workflowStatusValue: "",
                                     successMsg: ConditionConfig_1.RecuritmentHRMsg.WorkPermitDocs,
-                                    actionID: EvaluationConfig_1.WorkflowAction.Approved,
+                                    StatusId: StatusID,
                                     documentResponse: ok,
                                 }];
                         }
                         return [2 /*return*/, {
                                 workflowStatusValue: Config_1.workflowStatusApi.RevertedBacktoCandidateforreuploadDocs,
                                 successMsg: ConditionConfig_1.RecuritmentHRMsg.RevertWorkPermitDocs,
-                                actionID: EvaluationConfig_1.WorkflowAction.Revert,
+                                StatusId: StatusID,
                                 documentResponse: ok,
                             }];
                     }
@@ -203,7 +207,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                     return [2 /*return*/, {
                             workflowStatusValue: Config_1.workflowStatusApi.PendingFinancePaymentReview,
                             successMsg: ConditionConfig_1.RecuritmentHRMsg.FinancePaymentReviewMsg,
-                            actionID: EvaluationConfig_1.WorkflowAction.Approved,
+                            StatusId: StatusID,
                             documentResponse: documentResponse,
                         }];
                 case 15:
@@ -211,7 +215,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                         return [2 /*return*/, {
                                 workflowStatusValue: Config_1.workflowStatusApi.PendingHREmploymentContractInit,
                                 successMsg: ConditionConfig_1.RecuritmentHRMsg.EmployeementInit,
-                                actionID: EvaluationConfig_1.WorkflowAction.Approved,
+                                StatusId: StatusID,
                                 documentResponse: ok,
                             }];
                     }
@@ -225,7 +229,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                     return [2 /*return*/, {
                             workflowStatusValue: Config_1.workflowStatusApi.PendingwithCandidatetosignEmployementContract,
                             successMsg: ConditionConfig_1.RecuritmentHRMsg.EmploymentContractMsg,
-                            actionID: EvaluationConfig_1.WorkflowAction.Approved,
+                            StatusId: StatusID,
                             documentResponse: documentResponse,
                             workPermitDocs: workPermitDocs,
                         }];
@@ -239,7 +243,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                                 successMsg: isReview
                                     ? ConditionConfig_1.RecuritmentHRMsg.ReviewEmploymentContractMsg
                                     : ConditionConfig_1.RecuritmentHRMsg.RevertECCocs,
-                                actionID: isReview ? EvaluationConfig_1.WorkflowAction.Approved : EvaluationConfig_1.WorkflowAction.Revert,
+                                StatusId: StatusID,
                                 documentResponse: ok,
                             }];
                     }
@@ -256,13 +260,13 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                     return [2 /*return*/, {
                             workflowStatusValue: Config_1.workflowStatusApi.OnboardingInprogress,
                             successMsg: ConditionConfig_1.RecuritmentHRMsg.ReviewECMsg,
-                            actionID: EvaluationConfig_1.WorkflowAction.Approved,
+                            StatusId: StatusID,
                             documentResponse: documentResponse,
                         }];
                 case 22: return [2 /*return*/, {
                         workflowStatusValue: Config_1.workflowStatusApi.RevertedBacktoCandidateforreuploadEmploymentContract,
                         successMsg: ConditionConfig_1.RecuritmentHRMsg.RevertedEmploymentContractMsg,
-                        actionID: EvaluationConfig_1.WorkflowAction.Revert,
+                        StatusId: StatusID,
                         documentResponse: ok,
                     }];
                 case 23:
@@ -273,13 +277,13 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                     return [2 /*return*/, {
                             workflowStatusValue: Config_1.workflowStatusApi.PendingwithCandidatetosignEmployementContract,
                             successMsg: ConditionConfig_1.RecuritmentHRMsg.EmploymentContractMsg,
-                            actionID: EvaluationConfig_1.WorkflowAction.Approved,
+                            StatusId: StatusID,
                             documentResponse: documentResponse,
                         }];
                 case 25: return [2 /*return*/, {
                         workflowStatusValue: Config_1.workflowStatusApi.RevertedBacktoCandidateforreuploadofferLetter,
                         successMsg: ConditionConfig_1.RecuritmentHRMsg.RevertedOfferLetter,
-                        actionID: EvaluationConfig_1.WorkflowAction.Revert,
+                        StatusId: StatusID,
                         documentResponse: ok,
                     }];
                 case 26:
@@ -292,7 +296,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                                 successMsg: isReview
                                     ? ConditionConfig_1.RecuritmentHRMsg.ReviewOfferLetterInitEC
                                     : ConditionConfig_1.RecuritmentHRMsg.RevertedOfferLetter,
-                                actionID: isReview ? EvaluationConfig_1.WorkflowAction.Approved : EvaluationConfig_1.WorkflowAction.Revert,
+                                StatusId: StatusID,
                                 documentResponse: ok,
                             }];
                     }
@@ -308,35 +312,35 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                         return [2 /*return*/, {
                                 workflowStatusValue: Config_1.workflowStatusApi.RevertedBacktoCandidateforreuploadDocs,
                                 successMsg: "",
-                                actionID: EvaluationConfig_1.WorkflowAction.Revert,
+                                StatusId: StatusID,
                                 documentResponse: documentResponse,
                             }];
                     }
                     return [2 /*return*/, {
                             workflowStatusValue: "",
                             successMsg: ConditionConfig_1.RecuritmentHRMsg.ReviewOfferLetterInitEC,
-                            actionID: EvaluationConfig_1.WorkflowAction.Approved,
+                            StatusId: StatusID,
                             documentResponse: documentResponse,
                         }];
                 case 29: return [3 /*break*/, 30];
                 case 30: return [2 /*return*/, {
                         workflowStatusValue: "",
                         successMsg: "",
-                        actionID: EvaluationConfig_1.WorkflowAction.Approved,
+                        StatusId: StatusID,
                         documentResponse: { status: ApiConfig_1.ResponeStatus.FAILED },
                     }];
             }
         });
     });
 }
-function buildCandidateData(data, workflowStatusValue, documentResponse, workPermitDocs, EmailId, bgvStatus) {
+function buildCandidateData(data, workflowStatusValue, documentResponse, workPermitDocs, EmailId, bgvStatus, comments) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
     var isBGVStatus = data.StatusId === EvaluationConfig_1.StatusId.PendingHRBGVInitiation ||
         data.StatusId === EvaluationConfig_1.StatusId.PendingHRReviewBGCheck;
     var base = {
         workflowStatus: workflowStatusValue,
-        jobRequestId: Number(data === null || data === void 0 ? void 0 : data.jobRequestID),
-        comments: data.comments,
+        jobRequestId: Number(data === null || data === void 0 ? void 0 : data.JobRequestID),
+        comments: comments,
         actionBy: ConditionConfig_1.RoleName.RecruitmentHR,
         HrUserId: isBGVStatus ? "" : "",
         HrUserEmail: isBGVStatus ? EmailId : "",
@@ -374,20 +378,19 @@ function buildCandidateData(data, workflowStatusValue, documentResponse, workPer
 }
 function useSubmitWorkflow(data) {
     var _this = this;
-    var _a = (0, useReviewDocumentManage_1.useStateOfferRelease)(), consentFile = _a.consentFile, coiState = _a.coiState, consentVerification = _a.consentVerification;
     var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
-    var _b = (0, react_1.useState)(false), isLoading = _b[0], setIsLoading = _b[1];
+    var _a = (0, react_1.useState)(false), isLoading = _a[0], setIsLoading = _a[1];
     var navigate = (0, react_router_dom_1.useNavigate)();
-    var _c = (0, useModalPopup_1.useModalPopup)(), modalState = _c.modalState, showModal = _c.showModal, closeModal = _c.closeModal;
+    var _b = (0, useModalPopup_1.useModalPopup)(), modalState = _b.modalState, showModal = _b.showModal, closeModal = _b.closeModal;
     var goToList = (0, react_1.useCallback)(function () {
         navigate("/OfferTable");
     }, []);
     var showAlert = (0, react_1.useCallback)(function (message, type, onConfirm) {
         showModal({
             type: type,
-            title: "Alert",
+            title: "Submitted",
             message: message,
-            confirmLabel: "Yes",
+            confirmLabel: "OK",
             onConfirm: function () {
                 closeModal();
                 onConfirm();
@@ -411,15 +414,15 @@ function useSubmitWorkflow(data) {
                     _d.label = 1;
                 case 1:
                     _d.trys.push([1, 9, 10, 11]);
-                    return [4 /*yield*/, resolveStatus(data.data, consentFile, data.uploadDocs, btnAction, ADGroupData.EmailId[0], coiState, data.rejectflag)];
+                    return [4 /*yield*/, resolveStatus(data.data, data.consentFile, data.uploadDocs, btnAction, ADGroupData.EmailId[0], data.coiState, data.rejectflag)];
                 case 2:
                     resolved = _d.sent();
-                    Verified = consentVerification === "verified";
+                    Verified = data.consentVerification;
                     if (((_b = resolved.documentResponse) === null || _b === void 0 ? void 0 : _b.status) !== ApiConfig_1.ResponeStatus.SUCCESS) {
                         showError(false);
                         return [2 /*return*/];
                     }
-                    candidateData = buildCandidateData(data, resolved.workflowStatusValue, resolved.documentResponse, resolved.workPermitDocs, ADGroupData.EmailId[0], data.BGVerifiedStatus);
+                    candidateData = buildCandidateData(data.data, resolved.workflowStatusValue, resolved.documentResponse, resolved.workPermitDocs, ADGroupData.EmailId[0], data.BGVerifiedStatus, data.reviewerComments);
                     skipWorkflow = data.data.StatusID === EvaluationConfig_1.StatusId.PendingHRReviewWorkpermitDocs &&
                         Verified;
                     if (!skipWorkflow) return [3 /*break*/, 3];
@@ -436,7 +439,7 @@ function useSubmitWorkflow(data) {
                         return [2 /*return*/];
                     }
                     return [4 /*yield*/, ServiceExport_1.OfferServices.UpdateStatusSelectedHOD([
-                            { ID: data.data.ID, StatusId: resolved.actionID },
+                            { ID: data.data.ID, StatusId: resolved.StatusId },
                         ])];
                 case 6:
                     spfxUpdate = _d.sent();
@@ -449,8 +452,8 @@ function useSubmitWorkflow(data) {
                     return [4 /*yield*/, ServiceExport_1.OfferServices.InsertRecruitmentCandidateDetails({
                             ID: data.data.CandidateID,
                             BackgroundChecksResults: (_c = JSON.stringify(data.BGVerifiedStatus)) !== null && _c !== void 0 ? _c : [],
-                            BGVConsultedWith: coiState.consultedWith,
-                            BGVComments: coiState.comments,
+                            BGVConsultedWith: data.coiState.consultedWith,
+                            BGVComments: data.coiState.comments,
                         })];
                 case 7:
                     _d.sent();

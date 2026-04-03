@@ -1,4 +1,4 @@
-// ReviewDocument.tsx — fixed, optimized, COI card integrated
+// ReviewDocument.tsx — conditions moved to config
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FileCheck, Loader2, Send, X } from "lucide-react";
@@ -14,7 +14,6 @@ import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
 import { PositionFrame } from "./PositionFrame";
 import { useCandidatDetails } from "./Hooks/getCandidateDetails";
 import { useRequiredDocuments } from "./Hooks/Userequireddocuments";
-import { StatusId } from "../../../../utilities/Config";
 import CandidateDocumentsRepository from "../Component/CandidateDocumentsRepository";
 import { useStateOfferRelease } from "./StateManage/useReviewDocumentManage";
 import { VerificationToggle } from "./Component/ResueComponent";
@@ -23,34 +22,28 @@ import COICard from "./Component/Coicard/Coicard";
 import StatusBadge from "../../../Comman/Statusbadge/Statusbadge";
 import { useBGVStatusDetails } from "./Hooks/useStatusDetails";
 import { SubmitWorkflowDeps, useSubmitWorkflow } from "./saveHooks/Usesubmitworkflow";
-import { IDocFiles } from "../../../../services/SPService/Ispservice";
 import { ButtonAction } from "../../../../utilities/ConditionConfig";
+import { useWorkPermitUpload } from "./Hooks/Useworkpermitupload";
+import { useReviewConditions } from "./Hooks/ConditionalHooks/Usereviewconditions";
+import { WorkPermitUploadBox } from "./Component/Workpermituploadbox/Workpermituploadbox";
+
 
 
 export interface ReviewDocumentProps {
-  drawerOpen: boolean;
-  selectedJobId: number | null;
-  CandidateID: number;
-  selectedcandidateID: number;
-  jobrequestID: string;
-  reviewerComments: string;
-  acknowledgementCheckbox: boolean;
-  loadingState: boolean;
-  onClose: () => void;
-  onCommentsChange: (value: string) => void;
-  onToggleAcknowledgement: () => void;
-  setLoadingState: (value: boolean) => void;
-  refreshKey: () => void;
+  drawerOpen              : boolean;
+  selectedJobId           : number | null;
+  CandidateID             : number;
+  selectedcandidateID     : number;
+  jobrequestID            : string;
+  reviewerComments        : string;
+  acknowledgementCheckbox : boolean;
+  loadingState            : boolean;
+  onClose                 : () => void;
+  onCommentsChange        : (value: string) => void;
+  onToggleAcknowledgement : () => void;
+  setLoadingState         : (value: boolean) => void;
+  refreshKey              : () => void;
 }
-
-
-const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({
-  width = "100%",
-  height = "14px",
-}) => (
-  <div className="review-document__skeleton" style={{ width, height }} />
-);
-
 
 const CONSULT_OPTIONS = [
   { value: "hr-manager",   label: "HR Manager" },
@@ -59,6 +52,31 @@ const CONSULT_OPTIONS = [
   { value: "ceo",          label: "CEO / Executive" },
 ];
 
+const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({
+  width = "100%",
+  height = "14px",
+}) => (
+  <div className="review-document__skeleton" style={{ width, height }} />
+);
+
+const PositionSkeleton = () => (
+  <div className="review-document__skeleton-wrapper">
+    <SkeletonBlock height="24px" width="250px" />
+    <SkeletonBlock height="14px" width="180px" />
+
+    <div style={{ marginTop: 16 }}>
+      <SkeletonBlock height="100px" />
+    </div>
+
+    <div style={{ marginTop: 16 }}>
+      <SkeletonBlock height="60px" />
+    </div>
+
+    <div style={{ marginTop: 16 }}>
+      <SkeletonBlock height="40px" />
+    </div>
+  </div>
+);
 
 export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
   drawerOpen,
@@ -66,21 +84,14 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
   CandidateID,
   selectedcandidateID,
   jobrequestID,
-  reviewerComments,
-  acknowledgementCheckbox,
   loadingState,
   onClose,
-  onCommentsChange,
-  onToggleAcknowledgement,
   setLoadingState,
   refreshKey,
 }) => {
-  const { MatricID: metricId } = useUIState();
-  const { roleIDs }            = userInfo();
   const navigate               = useNavigate();
   const { modalState, showModal, closeModal } = useModalPopup();
 
-  const [uploadDocs, setUploadDocs] = useState<UploadedFile[]>([]);
 
   const {
     consentVerification,
@@ -89,27 +100,57 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     handleConsentVerification,
     handleConsentFile,
     coiState,
-    showCoiErrors,
     handleCoiChange,
+     fileInputRef,
+    selectedFile,
+    isReading,
+    handleUploadClick,
+    handleFileChange,
+    clearFile,
+    uploadDocs,
+    handleDocumnetUpload,
+    reviewerComments,
+    acknowledgementCheckbox,
+    onCommentsChange,
+    onToggleAcknowledgement,
     validateAll,
+    validationError
   } = useStateOfferRelease();
+
 
   const { data: positionDetails, loading: positionLoading } =
     useCandidatDetails(selectedJobId, CandidateID, selectedcandidateID, jobrequestID);
 
-  const { data: bgvStatusDetails, loading: bgvStatusLoading, allCompleted, rejectFlag } = useBGVStatusDetails(jobrequestID);
+  const {
+    data: bgvStatusDetails,
+    loading: bgvStatusLoading,
+    allCompleted,
+    rejectFlag,
+  } = useBGVStatusDetails(jobrequestID);
 
-  let data: SubmitWorkflowDeps = {
-      data: positionDetails!,
-      uploadDocs: uploadDocs,
-      BGVerifiedStatus: bgvStatusDetails!,
-      rejectflag: rejectFlag!,
-  }
+  const isConsentVerified = consentVerification === "verified";
 
-  const {  isLoading:SubmitLoading , modalState:SubmitModalState, closeModal:SubmitCloseModal, submit } = useSubmitWorkflow( data );
+  const submitDeps: SubmitWorkflowDeps = {
+    data             : positionDetails!,
+    uploadDocs,
+    BGVerifiedStatus : bgvStatusDetails!,
+    rejectflag       : rejectFlag!,
+    consentFile,
+    coiState,
+    consentVerification:isConsentVerified,
+    reviewerComments,
+  };
+
+  const {
+    isLoading  : SubmitLoading,
+    modalState : SubmitModalState,
+    closeModal : SubmitCloseModal,
+    submit,
+  } = useSubmitWorkflow(submitDeps);
+
 
   const { data: docData } = useRequiredDocuments(
-    positionDetails?.ProfileID   ?? "",
+    positionDetails?.ProfileID    ?? "",
     positionDetails?.JobRequestID ?? ""
   );
 
@@ -119,35 +160,38 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
   const isLoading       = signatureLoading;
   const isSubmittingRef = useRef(false);
 
+  const isPageLoading = positionLoading || signatureLoading || bgvStatusLoading;
+
+
   useEffect(() => {
     if (loadingState !== isLoading) setLoadingState(isLoading);
   }, [isLoading, loadingState, setLoadingState]);
 
+  const { is, vis } = useReviewConditions({
+    statusID            : positionDetails?.StatusID,
+    empCat              : positionDetails?.EmploymentCategory,
+    consentVerification,
+    hasDetails          : !!positionDetails,
+    rejectFlag          : !!rejectFlag,
+  });
+
   const headerMeta = useMemo(
     () => ({
-      title:      positionDetails?.JobTiltle  ?? "",
-      code:       positionDetails?.JobCode    ?? "",
-      department: positionDetails?.Department ?? "",
+      title      : positionDetails?.JobTiltle  ?? "",
+      code       : positionDetails?.JobCode    ?? "",
+      department : positionDetails?.Department ?? "",
     }),
     [positionDetails]
   );
 
-  const showUploadONEM =
-    (positionDetails?.StatusID === StatusId.PendingHROfferInitiate &&
-      positionDetails?.EmploymentCategory === "KCSA") ||
-    positionDetails?.StatusID === StatusId.WorkPermitAcknowledgedContractUploaded ||
-    positionDetails?.StatusID === StatusId.PendingFinancePaymentReview ||
-    positionDetails?.StatusID === StatusId.PendingHRReviewOfferanduploadEmployementContract;
-
-
   const showSuccessModal = useCallback(
     (msg: string) => {
       showModal({
-        type: "success",
-        title: "Submitted Successfully",
-        message: msg,
-        confirmLabel: "Go to Dashboard",
-        onConfirm: () => {
+        type         : "success",
+        title        : "Submitted Successfully",
+        message      : msg,
+        confirmLabel : "Go to Dashboard",
+        onConfirm    : () => {
           closeModal();
           onClose();
           navigate("/RecruitmentTable");
@@ -158,17 +202,18 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     [showModal, closeModal, onClose, navigate, refreshKey]
   );
 
+
+
   const handleApprove = useCallback(async () => {
-    const isValid = validateAll();
+    const isValid = validateAll(vis);
 
     if (!isValid) {
       showModal({
-        type: "warning",
-        title: "Required Fields Missing",
-        message:
-          "Please complete all highlighted fields before submitting.",
-        confirmLabel: "OK",
-        onConfirm: closeModal,
+        type         : "warning",
+        title        : "Required Fields Missing",
+        message      : "Please complete all highlighted fields before submitting.",
+        confirmLabel : "OK",
+        onConfirm    : closeModal,
       });
       return;
     }
@@ -177,25 +222,22 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     isSubmittingRef.current = true;
 
     try {
-
       submit(ButtonAction.Initiated);
-      
-      showSuccessModal("Your review has been submitted successfully.");
+      // showSuccessModal("Your review has been submitted successfully.");
     } catch (error) {
       console.error(error);
       showModal({
-        type: "error",
-        title: "Something Went Wrong",
-        message: "An unexpected error occurred. Please try again.",
-        confirmLabel: "Close",
-        onConfirm: closeModal,
+        type         : "error",
+        title        : "Something Went Wrong",
+        message      : "An unexpected error occurred. Please try again.",
+        confirmLabel : "Close",
+        onConfirm    : closeModal,
       });
     } finally {
       isSubmittingRef.current = false;
     }
-  }, [validateAll, showModal, closeModal, showSuccessModal]);
+  }, [validateAll, showModal, closeModal, showSuccessModal, submit]);
 
-  
   return (
     <AnimatePresence>
       {drawerOpen && (
@@ -214,7 +256,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200, duration: 0.3  }}
             >
               <div className="review-document__header">
                 <div className="review-document__header-left">
@@ -223,85 +265,100 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                   </div>
                   <div>
                     <h2 className="review-document__title">
-                      {isLoading
-                        ? <SkeletonBlock width="220px" />
-                        : headerMeta.title}
+                      {isLoading ? <SkeletonBlock width="220px" /> : headerMeta.title}
                     </h2>
                     <div className="review-document__meta">
                       {isLoading ? (
                         <SkeletonBlock width="160px" />
                       ) : (
                         <>
-                          <span className="review-document__badge">
-                            {headerMeta.code}
-                          </span>
+                          <span className="review-document__badge">{headerMeta.code}</span>
                           <span className="review-document__dot" />
-                          <span className="review-document__meta-text">
-                            {headerMeta.department}
-                          </span>
+                          <span className="review-document__meta-text">{headerMeta.department}</span>
                         </>
                       )}
                     </div>
                   </div>
                 </div>
-                
-                <div>
-                <StatusBadge steps={bgvStatusDetails ?? []} />
 
-                </div>
+                {vis.showDOTAficaBadge && (
+                  <div className="review-document__header-right">
+                    <StatusBadge steps={bgvStatusDetails ?? []} />
+                  </div>
+                )}
 
-                <button
-                  type="button"
-                  className="review-document__close"
-                  onClick={onClose}
-                >
+                <button type="button" className="review-document__close" onClick={onClose}>
                   <X size={18} />
                 </button>
               </div>
 
               <div className="review-document__content">
+                {isPageLoading ? (
+                  <PositionSkeleton />
+                ) : (
+                  <>
+                   <PositionFrame
+                    positionDetails={positionDetails}
+                    isLoading={positionLoading}
+                    headerCode={headerMeta.code}
+                  />
 
-                <PositionFrame
-                  positionDetails={positionDetails}
-                  isLoading={positionLoading}
-                  headerCode={headerMeta.code}
-                />
-
-                {positionDetails && (
+                   {vis.showCandidateDocs && (
                   <CandidateDocumentsRepository data={docData ?? null} />
                 )}
 
-                <VerificationToggle
-                  value={consentVerification}
-                  onChange={handleConsentVerification}
-                  hasError={showConsentErrors && consentVerification === null}
-                />
+                {vis.showVerificationToggle && (
+                  <VerificationToggle
+                    value={consentVerification}
+                    onChange={handleConsentVerification}
+                    hasError={validationError.verification}
+                  />
+                )}
 
-                <ConsentFormSection
-                  onFileChange={handleConsentFile}
-                  downloadUrl={positionDetails?.DotAfricaCF?.downloadUrl}
-                  disabled={isSubmittingRef.current}
-                  hasFileError={showConsentErrors && consentFile === null}
-                  consentform={positionDetails?.DotAfricaCF}
-                />
+                {vis.showConsentForm && (
+                  <ConsentFormSection
+                    onFileChange={handleConsentFile}
+                    downloadUrl={positionDetails?.DotAfricaCF?.downloadUrl}
+                    disabled={isSubmittingRef.current}
+                    hasFileError={validationError.showConsentErrors}
+                    consentform={positionDetails?.DotAfricaCF}
+                  />
+                )}
 
-                 <COICard
+                {vis.showCOICard && (
+                  <COICard
                     consultOptions={CONSULT_OPTIONS}
                     isReadOnly={isSubmittingRef.current}
-                    hasError={showCoiErrors}
+                    hasError={validationError.showCoiErrors}
                     onChange={handleCoiChange}
                   />
+                )}
 
+                {vis.showWorkPermitUpload && (
+                  <WorkPermitUploadBox
+                    fileInputRef={fileInputRef}
+                    selectedFile={selectedFile}
+                    isReading={isReading}
+                    hasFileError={validationError.workPermit}
+                    disabled={isSubmittingRef.current}
+                    onUploadClick={handleUploadClick}
+                    onFileChange={handleFileChange}
+                    onClearFile={clearFile}
+                  />
+                )}
+
+                {vis.showUploadDocument && (
                   <UploadDocument
                     multiple={false}
                     acceptedFormats=".pdf"
-                    label="Draft ONEM AdvertDoc French (Only PDF)"
+                    label={vis.uploadDocLabel}
                     required
-                    onChange={(files) => {
-                      setUploadDocs(files);
-                    }}
+                    onChange={handleDocumnetUpload}
                     disabled={isSubmittingRef.current}
+                    hasError={validationError.uploadError}
                   />
+                )}
+                
 
                 <ReviewCommentSignature
                   reviewerComments={reviewerComments}
@@ -311,19 +368,16 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                   onCommentsChange={onCommentsChange}
                   onToggleAcknowledgement={onToggleAcknowledgement}
                   disabled={isSubmittingRef.current}
-                  // hasError={showCommentsErrors}
+                  commentError={validationError.comments}
+                  checkboxError={validationError.acknowledgement}
                 />
-
+                  </>
+                )}
                 <div className="review-document__footer">
                   <div className="review-document__footer-actions">
-                    <button
-                      type="button"
-                      className="review-document__button"
-                      onClick={onClose}
-                    >
+                    <button type="button" className="review-document__button" onClick={onClose}>
                       Cancel
                     </button>
-
                     <button
                       type="button"
                       className="review-document__button review-document__button--primary"
@@ -331,25 +385,18 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                       onClick={handleApprove}
                     >
                       {isSubmittingRef.current ? (
-                        <>
-                          <Loader2 size={16} className="modal-popup__spinner" />
-                          Sending...
-                        </>
+                        <><Loader2 size={16} className="modal-popup__spinner" /> Sending...</>
                       ) : (
-                        <>
-                          <Send size={16} style={{ marginRight: 8 }} />
-                          Submit
-                        </>
+                        <><Send size={16} /> Submit</>
                       )}
                     </button>
                   </div>
                 </div>
-
               </div>
             </motion.div>
           </div>
 
-          <ModalPopup {...modalState} onClose={closeModal} />
+          <ModalPopup {...modalState}       onClose={closeModal} />
           <ModalPopup {...SubmitModalState} onClose={SubmitCloseModal} />
         </>
       )}

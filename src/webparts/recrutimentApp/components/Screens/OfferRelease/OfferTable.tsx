@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { RefreshCw, RotateCcw, Eye, Upload } from "lucide-react";
+import { RefreshCw, RotateCcw, Eye, Upload, Pencil, Play } from "lucide-react";
 import { useRecruitmentDetails } from "../RecruitmentTable/Hooks/useRecruitmentDetails";
 import { useTabDetails } from "../RecruitmentTable/Hooks/useTabDetails";
 import { ReviewDocument } from "./ReviewDocument/ReviewDocument";
@@ -24,42 +24,33 @@ import Tabs from "../../Comman/Tabs/Tabs";
 import { userInfo } from "../../../utilities/hooks/RoleContext";
 import { StatusId } from "../SelectionProcess/config/EvaluationConfig";
 import { useStateOfferRelease } from "./StateManage/useStateFromManage";
+import { Initiate_STAUES, REVIEW_STATUSES, EDIT_STATUSES } from "./Config";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-type ActionMode = "Upload" | "Review" | "View" | "Edit";
+type ActionMode = "Initiate" | "Review" | "View" | "Edit";
 
-// ─── Constants (stable sets → O(1) lookup vs sequential OR chain) ─────────────
-const REVIEW_STATUSES = new Set([
-  StatusId.PendingHRReviewBGCheck,
-  StatusId.PendingHROfferReview,
-  StatusId.PendingHRReviewOfferWorkPermitInit,
-  StatusId.PendingHRReviewOfferanduploadEmployementContract,
-  StatusId.PendingHRReviewWorkpermitDocs,
-  StatusId.PendingHREmploymentContractVerification,
-]);
 
-const EDIT_STATUSES = new Set([
-  StatusId.PendingHRBGVInitiation,
-  StatusId.PendingHROfferInitiate,
-]);
-
-// ─── Pure helper (outside component → never re-created) ───────────────────────
 function resolveActionMode(statusID: number): ActionMode {
+  if (Initiate_STAUES.has(statusID)) return "Initiate";
   if (REVIEW_STATUSES.has(statusID)) return "Review";
   if (EDIT_STATUSES.has(statusID)) return "Edit";
-  return "View"; // Upload and all other View cases collapse to "View"
+  return "View"; 
 }
 
-// ─── Action column sub-component (prevents inline anonymous re-renders) ────────
 const ActionCell: React.FC<{
   item: ISelectedCandidate;
-  actionMode: ActionMode;
+  StatusId: number;
   onAction: (item: ISelectedCandidate) => void;
-}> = React.memo(({ item, actionMode, onAction }) => {
-  const isUpload = actionMode === "Upload";
+}> = React.memo(({ item, StatusId, onAction }) => {
+  const actionMode = useMemo(() => resolveActionMode(StatusId), [StatusId]);
+
+  const isInitiate = actionMode === "Initiate";
   const isReview = actionMode === "Review";
-  const ActionIcon = isUpload ? Upload : Eye;
-  const actionLabel = isUpload ? "Upload" : isReview ? "Review" : "View";
+ const ActionIcon = isInitiate
+  ? Play
+  : isReview
+  ? Pencil
+  : Eye;
+  const actionLabel = isInitiate ? "Initiate" : isReview ? "Review" : "View";
 
   return (
     <button
@@ -74,9 +65,7 @@ const ActionCell: React.FC<{
   );
 });
 
-// ─── Column factory (stable reference, only changes when deps change) ──────────
 function buildColumns(
-  actionMode: ActionMode,
   onAction: (item: ISelectedCandidate) => void
 ): DataTableColumn<any>[] {
   return [
@@ -130,20 +119,18 @@ function buildColumns(
       align: "right",
       cellClassName: "data-table__cell--actions",
       render: (item: any) => (
-        <ActionCell item={item} actionMode={actionMode} onAction={onAction} />
+        <ActionCell item={item} StatusId={item.statusId} onAction={onAction} />
       ),
     },
   ];
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
 export const OfferTable: React.FC = () => {
   const { tabs, loading: tabsLoading } = useTabDetails();
   const { activeTab, MatricID: matricID, setMatricID, sideNavflag, setCurrentTabName, currentTabName } = useUIState();
   const navigate = useNavigate();
   const { modalState, closeModal } = useModalPopup();
 
-  // ── Tab state: initialise once from context ────────────────────────────────
   const [activeTabKey, setActiveTabKey] = useState<RecruitmentTabKey>(
     activeTab as RecruitmentTabKey
   );
@@ -156,10 +143,6 @@ export const OfferTable: React.FC = () => {
 
   const {
     drawerOpen,
-    selectedJobId,
-    CandidateID,
-    selectedcandidateID,
-    jobrequestID,
     reviewerComments,
     acknowledgementCheckbox,
     loadingState,
@@ -168,14 +151,8 @@ export const OfferTable: React.FC = () => {
     setComments,
     toggleAcknowledgement,
     setLoadingState,
-    setSelectedJobId,
-    setSelectedcandidateID,
-    setJobrequestID,
-    setCandidateID,
   } = useStateOfferRelease();
 
-  // ── Derived values ─────────────────────────────────────────────────────────
-  const actionMode = useMemo(() => resolveActionMode(matricID), [matricID]);
 
   const activeTabs: TabItem | undefined = useMemo(
     () => tabs.find((t) => t.key === activeTabKey),
@@ -190,28 +167,24 @@ export const OfferTable: React.FC = () => {
     return items.slice(start, start + pageSize);
   }, [currentPage, items, pageSize]);
 
-  // ── Guard: active tab must exist in the list ───────────────────────────────
   useEffect(() => {
     if (!tabs.length) return;
     if (!tabs.some((t) => t.key === activeTabKey)) {
       setActiveTabKey(tabs[0].key);
     }
-  }, [tabs]); // activeTabKey intentionally omitted — only react to tabs changing
+  }, [tabs]);
 
-  // ── Side-nav bootstrap: only runs once after tabs load ─────────────────────
   useEffect(() => {
     if (sideNavflag && tabs.length > 0 && !currentTabName) {
       setMatricID(tabs[0].matricId);
       setCurrentTabName(tabs[1]?.description ?? "");
     }
-  }, [tabs.length, sideNavflag, currentTabName]); // stable primitives only
+  }, [tabs.length, sideNavflag, currentTabName]);
 
-  // ── Page overflow guard ────────────────────────────────────────────────────
   useEffect(() => {
     if (currentPage > totalPages) setCurrentPage(totalPages);
-  }, [totalPages]); // currentPage intentionally omitted — avoids infinite loop
+  }, [totalPages]);
 
-  // ── Handlers ───────────────────────────────────────────────────────────────
   const handleRefresh = useCallback(() => setRefreshKey((k) => k + 1), []);
 
   const handleTabChange = useCallback(
@@ -247,8 +220,8 @@ const handleAction = useCallback(
 
 
   const columns = useMemo(
-    () => buildColumns(actionMode, handleAction),
-    [actionMode, handleAction]
+    () => buildColumns( handleAction),
+    [handleAction]
   );
 
   return (

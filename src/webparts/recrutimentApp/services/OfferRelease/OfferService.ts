@@ -169,7 +169,7 @@ export default class OfferService implements IOfferService {
         ReferenceEmail: ref?.Email ?? "-",
         ReferencePhone: ref?.ContractNumber ?? "-",
         ReferenceCompanyName: ref?.CompanyName ?? "-",
-        StatusID: candidateSelected?.StatusID,
+        StatusID: candidateSelected?.StatusId,
 
         ProfileID: String(careerRes?.data?.[0]?.profileID) ?? "-",
         JobRequestID: String(JobRequestID) ?? "-",

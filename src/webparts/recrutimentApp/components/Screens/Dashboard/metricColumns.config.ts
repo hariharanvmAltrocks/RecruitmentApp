@@ -17,7 +17,7 @@ import {
 import { Choices } from "../../../utilities/ApiConfig";
 import { Metric, MetricConfig } from "../../../models/IDashboard";
 import { PriorityData } from "../../Comman/PriorityWidget/PriorityWidget";
-import { MatricID, menuID, TabName } from "../../../utilities/ConditionConfig";
+import { MatricID, menuID, TabNames } from "../../../utilities/ConditionConfig";
 import { userInfo } from "../../../utilities/hooks/RoleContext";
 
 const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
@@ -33,7 +33,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.SelectionProcess,
     TabValue: "tab1",
-    TabName: TabName.AssignRecuritmentHR,
+    TabName: TabNames.AssignRecuritmentHR,
   },
 
   [MatricID.UploadONEM]: {
@@ -47,7 +47,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.SelectionProcess,
     TabValue: "tab2",
-    TabName: TabName.UploadONEMDoc,
+    TabName: TabNames.UploadONEMDoc,
   },
 
   [MatricID.JobAdvert]: {
@@ -62,7 +62,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.PreSelectionProcess,
     TabValue: "tab1",
-    TabName: TabName.UploadAdvertisement,
+    TabName: TabNames.UploadAdvertisement,
   },
 
   [MatricID.ReviewProfileHR]: {
@@ -76,7 +76,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.PostSelectionProcess,
     TabValue: "tab1",
-    TabName: TabName.ReviewProfile,
+    TabName: TabNames.ReviewProfile,
   },
   [MatricID.ReviewProfileLM]: {
     label: "Review Profile",
@@ -89,7 +89,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.SelectionProcess,
     TabValue: "tab3",
-    TabName: TabName.ReviewProfile,
+    TabName: TabNames.ReviewProfile,
   },
 
   [MatricID.AssignInterviewPanel]: {
@@ -103,7 +103,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.PostSelectionProcess,
     TabValue: "tab2",
-    TabName: TabName.AssignInterviewPanel,
+    TabName: TabNames.AssignInterviewPanel,
   },
 
   [MatricID.InterviewQuestionHR]: {
@@ -117,7 +117,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.PostSelectionProcess,
     TabValue: "tab3",
-    TabName: TabName.InterviewQuestion,
+    TabName: TabNames.InterviewQuestion,
   },
 
   [MatricID.EvalutionHR]: {
@@ -131,7 +131,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.PostSelectionProcess,
     TabValue: "tab4",
-    TabName: TabName.Evaluation,
+    TabName: TabNames.Evaluation,
   },
   [MatricID.BackgroundCheck]: {
     label: "Pending Background Verification",
@@ -144,7 +144,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/OfferTable",
     menuId: menuID.RecruitmentProcess,
     TabValue: "tab1",
-    TabName: TabName.BackgroundVerification,
+    TabName: TabNames.BackgroundVerification,
   },
   [MatricID.LabourHire]: {
     label: "Pending Offer Letter Release - Labour Hire",
@@ -157,7 +157,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/OfferTable",
     menuId: menuID.RecruitmentProcess,
     TabValue: "tab2",
-    TabName: TabName.LabourHire,
+    TabName: TabNames.LabourHire,
   },
   [MatricID.Kcsa]: {
     label: "Pending Offer Letter Release - KCSA",
@@ -170,7 +170,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/OfferTable",
     menuId: menuID.RecruitmentProcess,
     TabValue: "tab3",
-    TabName: TabName.OfferLetterKSCA,
+    TabName: TabNames.OfferLetterKSCA,
   },
 
   [MatricID.AdvertReviewLM]: {
@@ -184,7 +184,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.SelectionProcess,
     TabValue: "tab1",
-    TabName: TabName.Evaluation,
+    TabName: TabNames.Evaluation,
   },
 
   [MatricID.InterviewQuestionLM]: {
@@ -198,7 +198,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.SelectionProcess,
     TabValue: "tab2",
-    TabName: TabName.InterviewQuestion,
+    TabName: TabNames.InterviewQuestion,
   },
   [MatricID.EvalutionLM]: {
     label: "Pending Evaluation",
@@ -211,7 +211,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.SelectionProcess,
     TabValue: "tab4",
-    TabName: TabName.Evaluation,
+    TabName: TabNames.Evaluation,
   },
 
   [MatricID.AdvertReviewHOD]: {
@@ -225,7 +225,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.SelectionProcess,
     TabValue: "tab1",
-    TabName: TabName.ReviewJobAdvertisement,
+    TabName: TabNames.ReviewJobAdvertisement,
   },
 
   [MatricID.ReviewScoreCard]: {
@@ -239,7 +239,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.SelectionProcess,
     TabValue: "tab2",
-    TabName: TabName.ReviewScorecard,
+    TabName: TabNames.ReviewScorecard,
   },
   [MatricID.EvalutionHOD]: {
     label: "Pending Evaluation",
@@ -252,7 +252,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.SelectionProcess,
     TabValue: "tab3",
-    TabName: TabName.Evaluation,
+    TabName: TabNames.Evaluation,
   },
 
   [MatricID.interviewSchedule]: {
@@ -266,7 +266,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.SelectionProcess,
     TabValue: "tab1",
-    TabName: TabName.InterviewQuestion,
+    TabName: TabNames.InterviewQuestion,
   },
 
   [MatricID.EvalutionEXCO]: {
@@ -280,7 +280,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.SelectionProcess,
     TabValue: "tab1",
-    TabName: TabName.Evaluation,
+    TabName: TabNames.Evaluation,
   },
 
   [MatricID.interviewTracker]: {
@@ -294,7 +294,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.SelectionProcess,
     TabValue: "tab1",
-    TabName: TabName.Evaluation,
+    TabName: TabNames.Evaluation,
   },
 
   [MatricID.OfferRelease]: {
@@ -308,7 +308,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.SelectionProcess,
     TabValue: "tab1",
-    TabName: TabName.LabourHire,
+    TabName: TabNames.LabourHire,
   },
 
   [MatricID.OfferAccepted]: {
@@ -322,7 +322,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.SelectionProcess,
     TabValue: "tab1",
-    TabName: TabName.LabourHire,
+    TabName: TabNames.LabourHire,
   },
 
   [MatricID.OfferRejected]: {
@@ -336,7 +336,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.SelectionProcess,
     TabValue: "tab1",
-    TabName: TabName.LabourHire,
+    TabName: TabNames.LabourHire,
   },
 
   [MatricID.Onbording]: {
@@ -350,7 +350,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     path: "/RecruitmentTable",
     menuId: menuID.SelectionProcess,
     TabValue: "tab1",
-    TabName: TabName.LabourHire,
+    TabName: TabNames.LabourHire,
   },
 };
 
@@ -609,7 +609,10 @@ export const MetricQueryConfig = (
   // ✅ Review Score Card (FIXED - only one)
   [MatricID.ReviewScoreCard]: createQuery(
     ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    StatusFilter(StatusId.PendingwithHODtoAssignPositionID),
+    StatusFilter([
+      StatusId.PendingwithpositionIDAssignmentWithHOD,
+      StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
+    ]),
   ),
 
   // ✅ Review Profile HR
@@ -646,15 +649,6 @@ export const MetricQueryConfig = (
     ),
   ),
 
-  // ✅ Interview Schedule
-  [MatricID.interviewSchedule]: createQuery(
-    ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    StatusFilter([
-      StatusId.InterviewScheduled,
-      StatusId.InterviewScheduledforLevel2,
-    ]),
-  ),
-
   // ✅ Interview Tracker
   [MatricID.interviewTracker]: createQuery(
     ListNames.HRMSRecruitmentCandidatePersonalDetails,
@@ -668,30 +662,30 @@ export const MetricQueryConfig = (
   [MatricID.EvalutionHR]: createQuery(
     ListNames.HRMSRecruitmentCandidatePersonalDetails,
     StatusFilter([
-      StatusId.InterviewScheduled,
-      StatusId.InterviewScheduledforLevel2,
+      StatusId.InterviewLevel1InProgress,
+      StatusId.InterviewLevel2InProgress,
     ]),
   ),
 
   // ✅ Evaluation LM
   [MatricID.EvalutionLM]: createQuery(
     ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    StatusFilter(StatusId.InterviewScheduled),
+    StatusFilter(StatusId.InterviewLevel1InProgress),
   ),
 
   // ✅ Evaluation HOD
   [MatricID.EvalutionHOD]: createQuery(
     ListNames.HRMSRecruitmentCandidatePersonalDetails,
     StatusFilter([
-      StatusId.InterviewScheduled,
-      StatusId.InterviewScheduledforLevel2,
+      StatusId.InterviewLevel1InProgress,
+      StatusId.InterviewLevel2InProgress,
     ]),
   ),
 
   // ✅ Evaluation EXCO
   [MatricID.EvalutionEXCO]: createQuery(
     ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    StatusFilter(StatusId.InterviewScheduledforLevel2),
+    StatusFilter(StatusId.InterviewLevel2InProgress),
   ),
 
   // ✅ Offer Release
@@ -740,50 +734,58 @@ export const MetricQueryConfig = (
   //LabourHire
   [MatricID.LabourHire]: createQuery(
     ListNames.HRMSSelectedCandidateDetailsByHOD,
-    StatusFilter([
-      StatusId.PendingLabourHireOfferRelease,
-      StatusId.PendingHROfferReview,
-      StatusId.PendingLabourhireWPPayment,
-      StatusId.PendingFinancePaymentReview,
-      StatusId.PendingLHWorkPermitProcess,
-      StatusId.PendingHRReviewOfferuploadEmploymentInit,
-      StatusId.PendingHREmploymentContractInit,
-      StatusId.PendingLHECRelease,
-      StatusId.PendingHREmploymentContractReview
-    ], "AssignedHR"),
+    StatusFilter(
+      [
+        StatusId.PendingLabourHireOfferRelease,
+        StatusId.PendingHROfferReview,
+        StatusId.PendingLabourhireWPPayment,
+        StatusId.PendingFinancePaymentReview,
+        StatusId.PendingLHWorkPermitProcess,
+        StatusId.PendingHRReviewOfferuploadEmploymentInit,
+        StatusId.PendingHREmploymentContractInit,
+        StatusId.PendingLHECRelease,
+        StatusId.PendingHREmploymentContractReview,
+      ],
+      "AssignedHR",
+    ),
   ),
 
   //KCSA
   [MatricID.Kcsa]: createQuery(
     ListNames.HRMSSelectedCandidateDetailsByHOD,
-    StatusFilter([
-      StatusId.PendingHRReviewOfferWorkPermitInit,
-      StatusId.PendingHRReviewWorkpermitDocs,
-      StatusId.WorkPermitAcknowledgedContractUploaded,
-      StatusId.PendingHREmploymentContractVerification,
-      StatusId.PendingHRReviewOfferanduploadEmployementContract,
-      StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract,
-    ], "AssignedHR"),
+    StatusFilter(
+      [
+        StatusId.PendingHRReviewOfferWorkPermitInit,
+        StatusId.PendingHRReviewWorkpermitDocs,
+        StatusId.WorkPermitAcknowledgedContractUploaded,
+        StatusId.PendingHREmploymentContractVerification,
+        StatusId.PendingHRReviewOfferanduploadEmployementContract,
+        StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract,
+      ],
+      "AssignedHR",
+    ),
   ),
 
   [MatricID.Kcsa]: createQuery(
     ListNames.HRMSSelectedCandidateDetailsByHOD,
-    StatusFilter([
-      StatusId.PendingHRReviewOfferWorkPermitInit,
-      StatusId.PendingHRReviewWorkpermitDocs,
-      StatusId.WorkPermitAcknowledgedContractUploaded,
-      StatusId.PendingHREmploymentContractVerification,
-      StatusId.PendingHRReviewOfferanduploadEmployementContract,
-      StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract,
-    ], "AssignedHR"),
+    StatusFilter(
+      [
+        StatusId.PendingHRReviewOfferWorkPermitInit,
+        StatusId.PendingHRReviewWorkpermitDocs,
+        StatusId.WorkPermitAcknowledgedContractUploaded,
+        StatusId.PendingHREmploymentContractVerification,
+        StatusId.PendingHRReviewOfferanduploadEmployementContract,
+        StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract,
+      ],
+      "AssignedHR",
+    ),
   ),
 
   //Reviewscordcard HOD
-  [MatricID.ReviewScoredHOD]:  createQuery(
+  [MatricID.ReviewScoredHOD]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
     StatusFilter(StatusId.RecruitmentInProgress, "HOD", EmailId),
   ),
-
 });
 
 const RoleMetricFilters: Record<number, number[]> = {

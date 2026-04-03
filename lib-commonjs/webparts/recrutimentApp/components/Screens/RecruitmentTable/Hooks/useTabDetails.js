@@ -56,7 +56,7 @@ var useTabDetails = function () {
                     label: tab.TabName,
                     description: tab.TabName,
                     tableMode: (HRLead && tab.Value === "tab1") ||
-                        (tab.TabName != ConditionConfig_1.TabName.AssignInterviewPanel &&
+                        (tab.TabName != ConditionConfig_1.TabNames.AssignInterviewPanel &&
                             HR &&
                             tab.Value === "tab2")
                         ? "checkbox"

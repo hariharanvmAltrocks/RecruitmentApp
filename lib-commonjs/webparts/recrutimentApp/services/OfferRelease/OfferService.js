@@ -440,7 +440,7 @@ var OfferService = /** @class */ (function () {
                             ReferenceEmail: (_4 = ref === null || ref === void 0 ? void 0 : ref.Email) !== null && _4 !== void 0 ? _4 : "-",
                             ReferencePhone: (_5 = ref === null || ref === void 0 ? void 0 : ref.ContractNumber) !== null && _5 !== void 0 ? _5 : "-",
                             ReferenceCompanyName: (_6 = ref === null || ref === void 0 ? void 0 : ref.CompanyName) !== null && _6 !== void 0 ? _6 : "-",
-                            StatusID: candidateSelected === null || candidateSelected === void 0 ? void 0 : candidateSelected.StatusID,
+                            StatusID: candidateSelected === null || candidateSelected === void 0 ? void 0 : candidateSelected.StatusId,
                             ProfileID: (_9 = String((_8 = (_7 = careerRes === null || careerRes === void 0 ? void 0 : careerRes.data) === null || _7 === void 0 ? void 0 : _7[0]) === null || _8 === void 0 ? void 0 : _8.profileID)) !== null && _9 !== void 0 ? _9 : "-",
                             JobRequestID: (_10 = String(JobRequestID)) !== null && _10 !== void 0 ? _10 : "-",
                             PPEItems: PPT !== null && PPT !== void 0 ? PPT : [],

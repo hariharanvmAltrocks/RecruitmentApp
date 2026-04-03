@@ -6,7 +6,7 @@ import { TabDetails } from "../../../../models/master";
 import { useUIState } from "../../../RecrutimentApp/UIStateContext";
 import { useRoleContext } from "../../../../utilities/hooks/RoleContext";
 import { RoleID, StatusId } from "../../../../utilities/Config";
-import { MatricID, TabName } from "../../../../utilities/ConditionConfig";
+import { MatricID, TabNames } from "../../../../utilities/ConditionConfig";
 import { findMatricID } from "../../../Hooks/reusehooks";
 
 export interface UseTabDetailsResult {
@@ -72,7 +72,7 @@ export const useTabDetails = (): UseTabDetailsResult => {
         description: tab.TabName,
         tableMode:
           (HRLead && tab.Value === "tab1") ||
-          (tab.TabName != TabName.AssignInterviewPanel &&
+          (tab.TabName != TabNames.AssignInterviewPanel &&
             HR &&
             tab.Value === "tab2")
             ? ("checkbox" as TableMode)

@@ -9,7 +9,7 @@ export interface ReviewCommentSignatureProps {
   signatureDetails: SignatureDetails | null;
   isLoading: boolean;
   onCommentsChange: (value: string) => void;
-  onToggleAcknowledgement: () => void;
+  onToggleAcknowledgement: (value: boolean) => void;
   commentError?: boolean;
   checkboxError?: boolean;
   disabled?: boolean;
@@ -83,7 +83,7 @@ export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
           <input
             type="checkbox"
             checked={acknowledgementCheckbox}
-            onChange={onToggleAcknowledgement}
+            onChange={(e) => onToggleAcknowledgement(e.target.checked)}
             disabled={disabled}
           />
           <CheckCircle2 size={12} />

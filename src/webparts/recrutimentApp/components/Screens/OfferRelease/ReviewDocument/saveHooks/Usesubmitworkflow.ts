@@ -41,6 +41,7 @@ import { SpiltDateOnly } from "../../../../Hooks/dateConfigfn";
 import { WorkflowJson } from "../../../../../models/Icareerportal";
 import { DocumentCategory } from "../Hooks/Userequireddocuments";
 import { ConsentFormFile } from "../Component/ResueComponent";
+import { WorkflowHODConfig } from "../../../../Hooks/WorkflowConfig";
 
 export interface AlertProps {
   Message: string;
@@ -51,9 +52,13 @@ export interface AlertProps {
 
 export interface SubmitWorkflowDeps {
   data: IselectedPosition;
-  uploadDocs: UploadedFile[];
   BGVerifiedStatus: DocumentCategory[];
   rejectflag: boolean;
+  consentFile: ConsentFormFile | null;
+  coiState: COIFormState;
+  consentVerification: boolean;
+  reviewerComments: string;
+  uploadDocs: UploadedFile[];
 }
 
 interface SubmitWorkflowResult {
@@ -80,7 +85,7 @@ function makeDocData(
 type ResolveResult = {
   workflowStatusValue: string;
   successMsg: string;
-  actionID: number;
+  StatusId: number;
   documentResponse: any;
   workPermitDocs?: any;
 };
@@ -106,13 +111,24 @@ async function resolveStatus(
     };
   });
 
+  let IsRevert = btnAction === ButtonAction.Revert;
+  let IsExpat = data?.NationalityCode != NationalityCode.Nationals;
+
+  let StatusID = WorkflowHODConfig(
+    data?.StatusID,
+    IsRevert,
+    IsExpat,
+    data?.EmploymentCategory,
+  );
+
   switch (data?.StatusID) {
     case StatusId.PendingHRBGVInitiation: {
       if (btnAction !== ButtonAction.Initiated) break;
       return {
         workflowStatusValue: workflowStatusApi.PendingCandidateUploadBGVDocs,
         successMsg: RecuritmentHRMsg.BGverificationMsg,
-        actionID: WorkflowAction.Approved,
+        StatusId: StatusID,
+        // actionID: WorkflowAction.Approved,
         documentResponse: ok,
       };
     }
@@ -142,7 +158,7 @@ async function resolveStatus(
         return {
           workflowStatusValue: workflowStatusApi.initiatetheBGVProcess,
           successMsg,
-          actionID: WorkflowAction.Approved,
+          StatusId: StatusID,
           documentResponse,
         };
       }
@@ -151,7 +167,7 @@ async function resolveStatus(
         return {
           workflowStatusValue: workflowStatusApi.RevetedBacktoBGVDocuments,
           successMsg: RecuritmentHRMsg.RevertWGDocs,
-          actionID: WorkflowAction.Revert,
+          StatusId: StatusID,
           documentResponse: ok,
         };
       }
@@ -176,7 +192,7 @@ async function resolveStatus(
           workflowStatusValue:
             workflowStatusApi.Pendingwithcandidatetosignofferletter,
           successMsg: RecuritmentHRMsg.OfferLetterMsg,
-          actionID: WorkflowAction.Approved,
+          StatusId: StatusID,
           documentResponse,
         };
       }
@@ -208,7 +224,7 @@ async function resolveStatus(
       return {
         workflowStatusValue: workflowStatusApi.PendingHROfferInitiate,
         successMsg: RecuritmentHRMsg.OfferLetterinit,
-        actionID: WorkflowAction.Approved,
+        StatusId: StatusID,
         documentResponse: {
           status:
             response.status === 200
@@ -227,7 +243,7 @@ async function resolveStatus(
         successMsg: isReview
           ? RecuritmentHRMsg.ReviewLaborHireOffer
           : RecuritmentHRMsg.RevertLabourOffer,
-        actionID: isReview ? WorkflowAction.Approved : WorkflowAction.Revert,
+        StatusId: StatusID,
         documentResponse: ok,
       };
     }
@@ -241,7 +257,7 @@ async function resolveStatus(
         successMsg: isReview
           ? RecuritmentHRMsg.ReviewOfferLetterMsg
           : RecuritmentHRMsg.RevertedOfferLetter,
-        actionID: isReview ? WorkflowAction.Approved : WorkflowAction.Revert,
+        StatusId: StatusID,
         documentResponse: ok,
       };
     }
@@ -251,7 +267,7 @@ async function resolveStatus(
         return {
           workflowStatusValue: "",
           successMsg: RecuritmentHRMsg.WorkPermitDocs,
-          actionID: WorkflowAction.Approved,
+          StatusId: StatusID,
           documentResponse: ok,
         };
       }
@@ -259,7 +275,7 @@ async function resolveStatus(
         workflowStatusValue:
           workflowStatusApi.RevertedBacktoCandidateforreuploadDocs,
         successMsg: RecuritmentHRMsg.RevertWorkPermitDocs,
-        actionID: WorkflowAction.Revert,
+        StatusId: StatusID,
         documentResponse: ok,
       };
     }
@@ -273,7 +289,7 @@ async function resolveStatus(
       return {
         workflowStatusValue: workflowStatusApi.PendingFinancePaymentReview,
         successMsg: RecuritmentHRMsg.FinancePaymentReviewMsg,
-        actionID: WorkflowAction.Approved,
+        StatusId: StatusID,
         documentResponse,
       };
     }
@@ -282,7 +298,7 @@ async function resolveStatus(
       return {
         workflowStatusValue: workflowStatusApi.PendingHREmploymentContractInit,
         successMsg: RecuritmentHRMsg.EmployeementInit,
-        actionID: WorkflowAction.Approved,
+        StatusId: StatusID,
         documentResponse: ok,
       };
     }
@@ -305,7 +321,7 @@ async function resolveStatus(
         workflowStatusValue:
           workflowStatusApi.PendingwithCandidatetosignEmployementContract,
         successMsg: RecuritmentHRMsg.EmploymentContractMsg,
-        actionID: WorkflowAction.Approved,
+        StatusId: StatusID,
         documentResponse,
         workPermitDocs,
       };
@@ -320,7 +336,7 @@ async function resolveStatus(
         successMsg: isReview
           ? RecuritmentHRMsg.ReviewEmploymentContractMsg
           : RecuritmentHRMsg.RevertECCocs,
-        actionID: isReview ? WorkflowAction.Approved : WorkflowAction.Revert,
+        StatusId: StatusID,
         documentResponse: ok,
       };
     }
@@ -336,7 +352,7 @@ async function resolveStatus(
         return {
           workflowStatusValue: workflowStatusApi.OnboardingInprogress,
           successMsg: RecuritmentHRMsg.ReviewECMsg,
-          actionID: WorkflowAction.Approved,
+          StatusId: StatusID,
           documentResponse,
         };
       }
@@ -344,7 +360,7 @@ async function resolveStatus(
         workflowStatusValue:
           workflowStatusApi.RevertedBacktoCandidateforreuploadEmploymentContract,
         successMsg: RecuritmentHRMsg.RevertedEmploymentContractMsg,
-        actionID: WorkflowAction.Revert,
+        StatusId: StatusID,
         documentResponse: ok,
       };
     }
@@ -365,7 +381,7 @@ async function resolveStatus(
           workflowStatusValue:
             workflowStatusApi.PendingwithCandidatetosignEmployementContract,
           successMsg: RecuritmentHRMsg.EmploymentContractMsg,
-          actionID: WorkflowAction.Approved,
+          StatusId: StatusID,
           documentResponse,
         };
       }
@@ -373,7 +389,7 @@ async function resolveStatus(
         workflowStatusValue:
           workflowStatusApi.RevertedBacktoCandidateforreuploadofferLetter,
         successMsg: RecuritmentHRMsg.RevertedOfferLetter,
-        actionID: WorkflowAction.Revert,
+        StatusId: StatusID,
         documentResponse: ok,
       };
     }
@@ -387,7 +403,7 @@ async function resolveStatus(
         successMsg: isReview
           ? RecuritmentHRMsg.ReviewOfferLetterInitEC
           : RecuritmentHRMsg.RevertedOfferLetter,
-        actionID: isReview ? WorkflowAction.Approved : WorkflowAction.Revert,
+        StatusId: StatusID,
         documentResponse: ok,
       };
     }
@@ -408,14 +424,14 @@ async function resolveStatus(
           workflowStatusValue:
             workflowStatusApi.RevertedBacktoCandidateforreuploadDocs,
           successMsg: "",
-          actionID: WorkflowAction.Revert,
+          StatusId: StatusID,
           documentResponse,
         };
       }
       return {
         workflowStatusValue: "",
         successMsg: RecuritmentHRMsg.ReviewOfferLetterInitEC,
-        actionID: WorkflowAction.Approved,
+        StatusId: StatusID,
         documentResponse,
       };
     }
@@ -427,7 +443,7 @@ async function resolveStatus(
   return {
     workflowStatusValue: "",
     successMsg: "",
-    actionID: WorkflowAction.Approved,
+    StatusId: StatusID,
     documentResponse: { status: ResponeStatus.FAILED },
   };
 }
@@ -439,6 +455,7 @@ function buildCandidateData(
   workPermitDocs: any,
   EmailId: string,
   bgvStatus: DocumentCategory[],
+  comments: string,
 ): WorkflowJson {
   const isBGVStatus =
     data.StatusId === StatusId.PendingHRBGVInitiation ||
@@ -446,8 +463,8 @@ function buildCandidateData(
 
   const base: WorkflowJson = {
     workflowStatus: workflowStatusValue,
-    jobRequestId: Number(data?.jobRequestID),
-    comments: data.comments,
+    jobRequestId: Number(data?.JobRequestID),
+    comments: comments,
     actionBy: RoleName.RecruitmentHR,
     HrUserId: isBGVStatus ? "" : "",
     HrUserEmail: isBGVStatus ? EmailId : "",
@@ -507,8 +524,6 @@ function buildCandidateData(
 export function useSubmitWorkflow(
   data: SubmitWorkflowDeps,
 ): SubmitWorkflowResult {
-  const { consentFile, coiState, consentVerification } = useStateOfferRelease();
-
   const { ADGroupData } = userInfo();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -524,9 +539,9 @@ export function useSubmitWorkflow(
     (message: string, type: ModalType, onConfirm: () => void) => {
       showModal({
         type: type,
-        title: "Alert",
+        title: "Submitted",
         message: message,
-        confirmLabel: "Yes",
+        confirmLabel: "OK",
         onConfirm: () => {
           closeModal();
           onConfirm();
@@ -561,29 +576,29 @@ export function useSubmitWorkflow(
       try {
         const resolved = await resolveStatus(
           data.data,
-          consentFile,
+          data.consentFile,
           data.uploadDocs,
           btnAction,
           ADGroupData.EmailId[0],
-          coiState,
+          data.coiState,
           data.rejectflag,
         );
-        let Verified = consentVerification === "verified";
+        let Verified = data.consentVerification;
         if (resolved.documentResponse?.status !== ResponeStatus.SUCCESS) {
           showError(false);
           return;
         }
 
         const candidateData = buildCandidateData(
-          data,
+          data.data,
           resolved.workflowStatusValue,
           resolved.documentResponse,
           resolved.workPermitDocs,
           ADGroupData.EmailId[0],
           data.BGVerifiedStatus,
+          data.reviewerComments,
         );
 
-        // Special case: work permit docs review with "Yes" — skip workflow update
         const skipWorkflow =
           data.data.StatusID === StatusId.PendingHRReviewWorkpermitDocs &&
           Verified;
@@ -598,7 +613,7 @@ export function useSubmitWorkflow(
         }
 
         const spfxUpdate = await OfferServices.UpdateStatusSelectedHOD([
-          { ID: data.data.ID, StatusId: resolved.actionID },
+          { ID: data.data.ID, StatusId: resolved.StatusId },
         ]);
 
         if (spfxUpdate?.status !== ResponeStatus.SUCCESS) {
@@ -614,8 +629,8 @@ export function useSubmitWorkflow(
             ID: data.data.CandidateID,
             BackgroundChecksResults:
               JSON.stringify(data.BGVerifiedStatus) ?? [],
-            BGVConsultedWith: coiState.consultedWith,
-            BGVComments: coiState.comments,
+            BGVConsultedWith: data.coiState.consultedWith,
+            BGVComments: data.coiState.comments,
           });
         }
 

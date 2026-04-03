@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EmployeementCategory = exports.ButtonAction = exports.DotTooltipStatus = exports.StatusBarValue = exports.DotAfricaStatus = exports.ExternalUserType = exports.DisplayFolderName = exports.BGVDocumentName = exports.TabName = exports.DocumentFolderName = exports.RecuritmentHRMsg = exports.EmailTemplateCodes = exports.ActionID = exports.InterviewLevels = exports.QuestionCreatedBy = exports.InterviewLevel = exports.TabNames = exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
+exports.EmployeementCategory = exports.ButtonAction = exports.DotTooltipStatus = exports.StatusBarValue = exports.DotAfricaStatus = exports.ExternalUserType = exports.DisplayFolderName = exports.BGVDocumentName = exports.DocumentFolderName = exports.RecuritmentHRMsg = exports.EmailTemplateCodes = exports.ActionID = exports.InterviewLevels = exports.QuestionCreatedBy = exports.InterviewLevel = exports.TabNames = exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
 exports.MatricID = {
     AssignHr: 1,
     UploadONEM: 2,
@@ -98,11 +98,59 @@ exports.NationalityCode = {
     SouthAfrica: "N154",
 };
 exports.TabNames = {
+    //HR Lead
+    AssignRecuritmentHR: "Assign Recruitment HR",
+    UploadONEMDoc: "Upload ONEM Doc",
+    MySubmission: "My Submission",
+    // Recruitment HR(PreSelection)
+    UploadAdvertisement: "Job Advertisement",
+    AssignAgencies: "Assign Agencies",
+    UploadCV: "Upload CV",
+    // Recruitment HR(PostSelection)
     ReviewProfile: "Review Profile",
     AssignInterviewPanel: "Assign Interview Panel",
+    InterviewpanelL1: "Interview Panel Level-1",
+    InterviewpanelL2: "Interview Panel Level-2",
+    InterviewQuestion: "Interview Questions",
+    // Candidate Articles
+    // UploadDocuments: "Upload Documents",
+    // ViewDocuments: "View Documents",
+    // CandidateDocuments: "Candidate Documents",
+    BackgroundVerification: "Background Verification",
+    OfferLetterLabourHire: "Offer Letter - Labour Hire",
+    OfferLetterKSCA: "Offer Letter - KCSA",
+    // HOD
+    ReviewJobAdvertisement: "Review Job Advertistment",
     ReviewScorecard: "Review Score card",
-    MySubmission: "My Submission",
-    AssignAgencies: "Assign Agencies",
+    Evaluation: "Evaluation",
+    // line Manager
+    // InterviewQuestions: "Interview Questions",
+    CandidateDetails: "Applicants Details",
+    PositionDetails: "Job Details",
+    AdvertisementDetails: "Advertisement Details",
+    AdvertisementViewDetails: "View Advertisement ",
+    ViewCandidateDetails: "Applicants Details",
+    Scorecard: "ScoreCard",
+    ViewCandidateList: "Applicants List",
+    ViewJustification: "View Comments",
+    EvaluationTab: "Candidate Details",
+    AdvertExtension: "Advert Extension",
+    ReviewLevel1: "Review Profile - Level 1",
+    ReviewLevel2: "Review Profile - Level 2",
+    Shortlisted: "Shortlisted",
+    onHold: "On Hold",
+    Rejected: "Rejected",
+    OnHoldRejected: "On Hold & Rejected",
+    CareerPortal: "Career Portal",
+    InterviewPanel: "Interview Panel",
+    ViewScoreDetails: " View ScoreCard Details",
+    ReschedulInterview: "Reschedule Interview",
+    OnboardingChecklist: "Pre Onboarding Checklist",
+    LabourHire: "Labour Hire",
+    Agent: "Agent",
+    CreateAdminPage: "Create Admin Page",
+    EnglishAdvertisment: "English", //"Job Advertisement",
+    FrenchAdvertisement: "French", //"Offre d'emploi"
 };
 exports.InterviewLevel = {
     Level1: "Level 1",
@@ -245,61 +293,6 @@ exports.DocumentFolderName = {
     BGVConsentform: "BGVConsentForm",
     ProofOfDocument: "ProofOfPaymentDocument",
     BGVProofOfDocument: "BGVProofOfDocument",
-};
-exports.TabName = {
-    //HR Lead
-    AssignRecuritmentHR: "Assign Recruitment HR",
-    UploadONEMDoc: "Upload ONEM Doc",
-    MySubmission: "My Submission",
-    // Recruitment HR(PreSelection)
-    UploadAdvertisement: "Job Advertisement",
-    AssignAgencies: "Assign Agencies",
-    UploadCV: "Upload CV",
-    // Recruitment HR(PostSelection)
-    ReviewProfile: "Review Profile",
-    AssignInterviewPanel: "Assign Interview Panel",
-    InterviewpanelL1: "Interview Panel Level-1",
-    InterviewpanelL2: "Interview Panel Level-2",
-    InterviewQuestion: "Interview Questions",
-    // Candidate Articles
-    // UploadDocuments: "Upload Documents",
-    // ViewDocuments: "View Documents",
-    // CandidateDocuments: "Candidate Documents",
-    BackgroundVerification: "Background Verification",
-    OfferLetterLabourHire: "Offer Letter - Labour Hire",
-    OfferLetterKSCA: "Offer Letter - KCSA",
-    // HOD
-    ReviewJobAdvertisement: "Review Job Advertistment",
-    ReviewScorecard: "Review Score card",
-    Evaluation: "Evaluation",
-    // line Manager
-    // InterviewQuestions: "Interview Questions",
-    CandidateDetails: "Applicants Details",
-    PositionDetails: "Job Details",
-    AdvertisementDetails: "Advertisement Details",
-    AdvertisementViewDetails: "View Advertisement ",
-    ViewCandidateDetails: "Applicants Details",
-    Scorecard: "ScoreCard",
-    ViewCandidateList: "Applicants List",
-    ViewJustification: "View Comments",
-    EvaluationTab: "Candidate Details",
-    AdvertExtension: "Advert Extension",
-    ReviewLevel1: "Review Profile - Level 1",
-    ReviewLevel2: "Review Profile - Level 2",
-    Shortlisted: "Shortlisted",
-    onHold: "On Hold",
-    Rejected: "Rejected",
-    OnHoldRejected: "On Hold & Rejected",
-    CareerPortal: "Career Portal",
-    InterviewPanel: "Interview Panel",
-    ViewScoreDetails: " View ScoreCard Details",
-    ReschedulInterview: "Reschedule Interview",
-    OnboardingChecklist: "Pre Onboarding Checklist",
-    LabourHire: "Labour Hire",
-    Agent: "Agent",
-    CreateAdminPage: "Create Admin Page",
-    EnglishAdvertisment: "English", //"Job Advertisement",
-    FrenchAdvertisement: "French", //"Offre d'emploi"
 };
 exports.BGVDocumentName = {
     GQ: "Global University Qualification Verification",

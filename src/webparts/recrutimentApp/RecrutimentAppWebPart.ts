@@ -128,17 +128,17 @@ export default class RecrutimentAppWebPart extends BaseClientSideWebPart<IRecrut
       //   '"Inter", "Segoe UI", sans-serif',
       // );
 
-      const styleId = "kamoa-global-font";
-      if (!document.getElementById(styleId)) {
-        const style = document.createElement("style");
-        style.id = styleId;
-        style.innerHTML = `
-        * {
-          font-family: "Inter", "Segoe UI", sans-serif !important;
-        }
-      `;
-        document.head.appendChild(style);
-      }
+      // const styleId = "kamoa-global-font";
+      // if (!document.getElementById(styleId)) {
+      //   const style = document.createElement("style");
+      //   style.id = styleId;
+      //   style.innerHTML = `
+      //   * {
+      //     font-family: "Inter", "Segoe UI", sans-serif !important;
+      //   }
+      // `;
+      //   document.head.appendChild(style);
+      // }
     }
   }
 
