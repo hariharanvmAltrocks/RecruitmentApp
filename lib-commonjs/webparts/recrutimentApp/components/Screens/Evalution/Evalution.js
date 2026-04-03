@@ -1,11 +1,4 @@
 "use strict";
-// Evalution.tsx  (updated)
-// ─────────────────────────────────────────────────────────────────────────────
-// CANCEL + SUBMIT are fully managed inside <SubmitEvaluation />.
-// useSubmitEvaluation hook is instantiated here so its error maps can be
-// passed down to InterviewQuestionList and ScorecardDetails for red highlights.
-// Mirrors the HODDecisionPanel → SubmitReviewScoreCard pattern exactly.
-// ─────────────────────────────────────────────────────────────────────────────
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Evalution = void 0;
 var tslib_1 = require("tslib");
@@ -20,7 +13,6 @@ var ScorecardDetails_1 = tslib_1.__importDefault(require("./Components/Scorecard
 var Evalution_module_scss_1 = tslib_1.__importDefault(require("./Evalution.module.scss"));
 var Usesubmitevaluation_1 = require("./Hooks/Usesubmitevaluation");
 var Submitevaluation_1 = tslib_1.__importDefault(require("./Components/Submitevaluation"));
-// ── Public wrapper (provides context) ────────────────────────────────────────
 var Evalution = function (props) {
     var _a;
     var location = (0, react_router_dom_1.useLocation)();
@@ -31,26 +23,20 @@ var Evalution = function (props) {
         React.createElement(EvalutionContent, { candidateId: candidateId, onBack: props.onBack })));
 };
 exports.Evalution = Evalution;
-// ── Inner content ─────────────────────────────────────────────────────────────
 function EvalutionContent(_a) {
     var _this = this;
     var candidateId = _a.candidateId, onBack = _a.onBack;
     var navigate = (0, react_router_dom_1.useNavigate)();
-    // ── Navigation helpers ────────────────────────────────────────────────────
     var goBack = React.useCallback(function () {
         onBack ? onBack() : navigate('/RecruitmentTable');
     }, [navigate, onBack]);
-    // ── Data fetching ─────────────────────────────────────────────────────────
     var _b = (0, fetchCandidateDetails_1.useCandidateDetails)({ candidateId: candidateId }), candidate = _b.candidate, questions = _b.questions, candidateLoading = _b.loading, candidateError = _b.error, reloadCandidate = _b.reload;
     var _c = (0, fetchScoreCard_1.useScoreCard)(candidateId), scoreCardData = _c.data, scoreCardLoading = _c.loading, scoreCardError = _c.error, reloadScoreCard = _c.reload;
-    // ── Shared evaluation state ───────────────────────────────────────────────
     var _d = (0, CommonStateManagement_1.useEvaluationState)(), answers = _d.answers, initializeAnswers = _d.initializeAnswers, updateAnswer = _d.updateAnswer, scorecard = _d.scorecard, updateScorecard = _d.updateScorecard, recommendation = _d.recommendation, setRecommendation = _d.setRecommendation, overallFeedback = _d.overallFeedback, setOverallFeedback = _d.setOverallFeedback, evaluationFeedback = _d.evaluationFeedback, setEvaluationFeedback = _d.setEvaluationFeedback, acknowledged = _d.acknowledged, setAcknowledged = _d.setAcknowledged;
-    // ── Initialise answers when questions load ────────────────────────────────
     React.useEffect(function () {
         if (questions.length > 0)
             initializeAnswers(questions, scoreCardData === null || scoreCardData === void 0 ? void 0 : scoreCardData.answers);
     }, [questions, scoreCardData === null || scoreCardData === void 0 ? void 0 : scoreCardData.answers, initializeAnswers]);
-    // ── Derived ───────────────────────────────────────────────────────────────
     var shouldShowTextArea = React.useMemo(function () { return Object.values(scorecard).some(function (v) { return v !== null && Number(v) <= 2; }); }, [scorecard]);
     var isLoading = candidateLoading || scoreCardLoading;
     var hasError = !!(candidateError || scoreCardError);
@@ -58,14 +44,12 @@ function EvalutionContent(_a) {
         reloadCandidate();
         reloadScoreCard();
     }, [reloadCandidate, reloadScoreCard]);
-    // ── onSuccess: called after success popup closes ──────────────────────────
     var handleSuccess = React.useCallback(function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
         return tslib_1.__generator(this, function (_a) {
             goBack();
             return [2 /*return*/];
         });
     }); }, [goBack]);
-    // ── Submit hook (instantiated here so error maps flow down to form fields) -
     var submitHook = (0, Usesubmitevaluation_1.useSubmitEvaluation)({
         candidateId: candidateId,
         candidate: candidate,
@@ -79,13 +63,11 @@ function EvalutionContent(_a) {
         acknowledged: acknowledged,
         onSuccess: handleSuccess,
     });
-    // ── Loading screen ────────────────────────────────────────────────────────
     if (isLoading) {
         return (React.createElement("div", { className: Evalution_module_scss_1.default.loadingPage },
             React.createElement("div", { className: Evalution_module_scss_1.default.spinner }),
             React.createElement("p", { className: Evalution_module_scss_1.default.loadingText }, "Loading evaluation form\u2026")));
     }
-    // ── Render ────────────────────────────────────────────────────────────────
     return (React.createElement("div", { className: Evalution_module_scss_1.default.root },
         hasError && (React.createElement("div", { className: Evalution_module_scss_1.default.errorBanner },
             React.createElement("span", null, "We could not load all evaluation data. Please try again."),

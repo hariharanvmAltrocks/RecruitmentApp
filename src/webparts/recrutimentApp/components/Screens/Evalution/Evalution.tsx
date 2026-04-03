@@ -1,10 +1,3 @@
-// Evalution.tsx  (updated)
-// ─────────────────────────────────────────────────────────────────────────────
-// CANCEL + SUBMIT are fully managed inside <SubmitEvaluation />.
-// useSubmitEvaluation hook is instantiated here so its error maps can be
-// passed down to InterviewQuestionList and ScorecardDetails for red highlights.
-// Mirrors the HODDecisionPanel → SubmitReviewScoreCard pattern exactly.
-// ─────────────────────────────────────────────────────────────────────────────
 
 import * as React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -27,9 +20,6 @@ export interface EvalutionProps {
   candidateId: number;
   onBack?: () => void;
 }
-
-// ── Public wrapper (provides context) ────────────────────────────────────────
-
 export const Evalution = (props: any) => {
   const location         = useLocation();
   const stateCandidateId = location.state?.ID;
@@ -45,17 +35,14 @@ export const Evalution = (props: any) => {
   );
 };
 
-// ── Inner content ─────────────────────────────────────────────────────────────
 
 function EvalutionContent({ candidateId, onBack }: EvalutionProps): JSX.Element {
   const navigate = useNavigate();
 
-  // ── Navigation helpers ────────────────────────────────────────────────────
   const goBack = React.useCallback(() => {
     onBack ? onBack() : navigate('/RecruitmentTable');
   }, [navigate, onBack]);
 
-  // ── Data fetching ─────────────────────────────────────────────────────────
   const {
     candidate, questions,
     loading: candidateLoading, error: candidateError, reload: reloadCandidate,
@@ -66,7 +53,6 @@ function EvalutionContent({ candidateId, onBack }: EvalutionProps): JSX.Element 
     loading: scoreCardLoading, error: scoreCardError, reload: reloadScoreCard,
   } = useScoreCard(candidateId);
 
-  // ── Shared evaluation state ───────────────────────────────────────────────
   const {
     answers, initializeAnswers, updateAnswer,
     scorecard, updateScorecard,
@@ -75,13 +61,10 @@ function EvalutionContent({ candidateId, onBack }: EvalutionProps): JSX.Element 
     evaluationFeedback, setEvaluationFeedback,
     acknowledged, setAcknowledged,
   } = useEvaluationState();
-
-  // ── Initialise answers when questions load ────────────────────────────────
   React.useEffect(() => {
     if (questions.length > 0) initializeAnswers(questions, scoreCardData?.answers);
   }, [questions, scoreCardData?.answers, initializeAnswers]);
 
-  // ── Derived ───────────────────────────────────────────────────────────────
   const shouldShowTextArea = React.useMemo(
     () => Object.values(scorecard).some((v) => v !== null && Number(v) <= 2),
     [scorecard],
@@ -93,13 +76,9 @@ function EvalutionContent({ candidateId, onBack }: EvalutionProps): JSX.Element 
   const handleRetry = React.useCallback(() => {
     reloadCandidate(); reloadScoreCard();
   }, [reloadCandidate, reloadScoreCard]);
-
-  // ── onSuccess: called after success popup closes ──────────────────────────
   const handleSuccess = React.useCallback(async () => {
     goBack();
   }, [goBack]);
-
-  // ── Submit hook (instantiated here so error maps flow down to form fields) -
   const submitHook = useSubmitEvaluation({
     candidateId,
     candidate,
@@ -114,7 +93,6 @@ function EvalutionContent({ candidateId, onBack }: EvalutionProps): JSX.Element 
     onSuccess: handleSuccess,
   });
 
-  // ── Loading screen ────────────────────────────────────────────────────────
   if (isLoading) {
     return (
       <div className={styles.loadingPage}>
@@ -123,12 +101,8 @@ function EvalutionContent({ candidateId, onBack }: EvalutionProps): JSX.Element 
       </div>
     );
   }
-
-  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className={styles.root}>
-
-      {/* Data-load error banner */}
       {hasError && (
         <div className={styles.errorBanner}>
           <span>We could not load all evaluation data. Please try again.</span>
@@ -140,16 +114,12 @@ function EvalutionContent({ candidateId, onBack }: EvalutionProps): JSX.Element 
         <CandidateInfo candidate={candidate} />
 
         <main className={styles.rightPanel}>
-
-          {/* Interview Questions — ratingErrors flow from submitHook */}
           <InterviewQuestionList
             questions={questions}
             answers={answers}
             ratingErrors={submitHook.ratingErrors}
             onAnswerChange={(qId, patch) => updateAnswer(qId, patch)}
           />
-
-          {/* Scorecard — all error maps flow from submitHook */}
           <div className={questions.length > 0 ? styles.scorecardMargin : ''}>
             <ScorecardDetails
               scorecard={scorecard}
@@ -170,14 +140,11 @@ function EvalutionContent({ candidateId, onBack }: EvalutionProps): JSX.Element 
               candidate={candidate}
             />
           </div>
-
-          {/* 🔑 Footer: CANCEL + SUBMIT fully managed inside SubmitEvaluation */}
           <SubmitEvaluation
             submitHook={submitHook}
             acknowledged={acknowledged}
             onCancel={goBack}
           />
-
         </main>
       </div>
     </div>

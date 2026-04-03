@@ -1,21 +1,4 @@
 "use strict";
-// Components/SubmitEvaluation.tsx
-// ─────────────────────────────────────────────────────────────────────────────
-// Mirrors Submitreviewscorecard.tsx exactly.
-// Receives the already-instantiated submitHook from EvalutionContent so that
-// error maps (ratingErrors, scorecardErrors, etc.) can flow up to form fields.
-//
-// Popup flows:
-//  SUBMIT click → validate
-//    ├─ FAIL  → Validation popup   → "Got it" → closes, form stays
-//    └─ PASS  → Submit confirm     → "Yes, Submit" → API
-//                  ├─ FAIL    → inline error below buttons
-//                  └─ SUCCESS → Success popup → "Close" → onSuccess()
-//
-//  CANCEL click → Leave confirm popup
-//    ├─ "Stay Here"  → closes, form stays
-//    └─ "Yes, Leave" → onCancel()
-// ─────────────────────────────────────────────────────────────────────────────
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
@@ -24,26 +7,22 @@ var Confirmationpopup_1 = tslib_1.__importDefault(require("../../ReviewScoreCard
 var SubmitEvaluation = function (_a) {
     var submitHook = _a.submitHook, acknowledged = _a.acknowledged, onCancel = _a.onCancel;
     var submitting = submitHook.submitting, submitError = submitHook.submitError, successMessage = submitHook.successMessage, validationErrors = submitHook.validationErrors, runValidation = submitHook.runValidation, submitEval = submitHook.submitEval, resetSubmit = submitHook.resetSubmit, onSuccess = submitHook.onSuccess;
-    // ── Popup visibility ──────────────────────────────────────────────────────
     var _b = React.useState(false), showSubmitConfirm = _b[0], setShowSubmitConfirm = _b[1];
     var _c = React.useState(false), showCancelConfirm = _c[0], setShowCancelConfirm = _c[1];
     var _d = React.useState(false), showValidation = _d[0], setShowValidation = _d[1];
     var _e = React.useState(false), showSuccess = _e[0], setShowSuccess = _e[1];
-    // Open success popup when hook sets successMessage
     React.useEffect(function () {
         if (successMessage)
             setShowSuccess(true);
     }, [successMessage]);
-    // ── SUBMIT button click: validate first, then show confirm popup ──────────
     var handleSubmitClick = React.useCallback(function () {
         var valid = runValidation();
         if (!valid) {
-            setShowValidation(true); // show validation popup
+            setShowValidation(true);
             return;
         }
-        setShowSubmitConfirm(true); // show submit confirm popup
+        setShowSubmitConfirm(true);
     }, [runValidation]);
-    // ── User confirmed submit ─────────────────────────────────────────────────
     var handleSubmitConfirmed = React.useCallback(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
@@ -56,17 +35,14 @@ var SubmitEvaluation = function (_a) {
             }
         });
     }); }, [submitEval]);
-    // ── Success popup closed → resetSubmit + navigate away ───────────────────
     var handleSuccessClose = React.useCallback(function () {
         setShowSuccess(false);
         resetSubmit();
-        onSuccess(); // goBack() in EvalutionContent
+        onSuccess();
     }, [resetSubmit, onSuccess]);
-    // ── CANCEL button click → show leave confirmation ─────────────────────────
     var handleCancelClick = React.useCallback(function () {
         setShowCancelConfirm(true);
     }, []);
-    // ── User confirmed leave ──────────────────────────────────────────────────
     var handleLeaveConfirmed = React.useCallback(function () {
         setShowCancelConfirm(false);
         onCancel();
