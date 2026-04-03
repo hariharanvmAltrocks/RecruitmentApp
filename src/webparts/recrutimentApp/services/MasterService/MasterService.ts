@@ -647,7 +647,7 @@ export default class MasterService implements IMasterService {
             },
           ],
         }).then((data: any) => {
-          GridResult = data[0].Levels
+          GridResult = data[0]?.Levels ?? ""
         });
       }
       return {

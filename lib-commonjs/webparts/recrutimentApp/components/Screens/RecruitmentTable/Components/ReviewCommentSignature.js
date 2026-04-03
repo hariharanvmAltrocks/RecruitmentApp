@@ -36,7 +36,7 @@ var ReviewCommentSignature = function (_a) {
                     ]
                         .filter(Boolean)
                         .join(" ") },
-                    react_1.default.createElement("input", { type: "checkbox", checked: acknowledgementCheckbox, onChange: onToggleAcknowledgement, disabled: disabled }),
+                    react_1.default.createElement("input", { type: "checkbox", checked: acknowledgementCheckbox, onChange: function (e) { return onToggleAcknowledgement(e.target.checked); }, disabled: disabled }),
                     react_1.default.createElement(lucide_react_1.CheckCircle2, { size: 12 })),
                 react_1.default.createElement("span", null, "I hereby acknowledge that I have reviewed the job advertisement details and attachments, and I confirm that the information is accurate and ready for publication.")),
             checkboxError && (react_1.default.createElement("span", { className: "advert-review-drawer__field-error" }, "Please acknowledge before approving.")),

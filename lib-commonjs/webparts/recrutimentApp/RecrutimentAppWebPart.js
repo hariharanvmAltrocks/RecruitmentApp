@@ -116,13 +116,17 @@ var RecrutimentAppWebPart = /** @class */ (function (_super) {
             //   "--fontFamily",
             //   '"Inter", "Segoe UI", sans-serif',
             // );
-            var styleId = "kamoa-global-font";
-            if (!document.getElementById(styleId)) {
-                var style = document.createElement("style");
-                style.id = styleId;
-                style.innerHTML = "\n        * {\n          font-family: \"Inter\", \"Segoe UI\", sans-serif !important;\n        }\n      ";
-                document.head.appendChild(style);
-            }
+            // const styleId = "kamoa-global-font";
+            // if (!document.getElementById(styleId)) {
+            //   const style = document.createElement("style");
+            //   style.id = styleId;
+            //   style.innerHTML = `
+            //   * {
+            //     font-family: "Inter", "Segoe UI", sans-serif !important;
+            //   }
+            // `;
+            //   document.head.appendChild(style);
+            // }
         }
     };
     RecrutimentAppWebPart.prototype.onDispose = function () {

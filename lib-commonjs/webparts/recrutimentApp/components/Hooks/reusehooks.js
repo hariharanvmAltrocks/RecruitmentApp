@@ -86,46 +86,57 @@ function getcountryCode(Code, refMobile) {
     return "".concat(country.id, "-").concat(mobileNumber);
 }
 var findMatricID = function (roleIDs, statusID, TabName) {
-    switch (statusID) {
-        case Config_1.StatusId.ReadyforRecruitmentProcess:
-            return ConditionConfig_1.MatricID.AssignHr;
-        case Config_1.StatusId.PendingUploadONEM:
-            return ConditionConfig_1.MatricID.UploadONEM;
-        case Config_1.StatusId.PendingUploadAdvert:
-            return ConditionConfig_1.MatricID.JobAdvert;
-        case Config_1.StatusId.PendingReviewAdvertHOD:
-            return ConditionConfig_1.MatricID.AdvertReviewHOD;
-        case Config_1.StatusId.PendingwithLineManagereviewAdv:
-            return ConditionConfig_1.MatricID.AdvertReviewLM;
-        case Config_1.StatusId.PendingInterviewquestion:
-            return ConditionConfig_1.MatricID.InterviewQuestionHR;
-        case Config_1.StatusId.CareerPortalQuestions:
-            return ConditionConfig_1.MatricID.InterviewQuestionLM;
-        case Config_1.StatusId.InterviewScheduled:
-        case Config_1.StatusId.InterviewScheduledforLevel2:
-            return ConditionConfig_1.MatricID.EvalutionHR;
-        case Config_1.StatusId.RecruitmentInProgress:
-            if (TabName === ConditionConfig_1.TabNames.ReviewProfile) {
-                if (roleIDs.includes(Config_1.RoleID.RecruitmentHR)) {
-                    return ConditionConfig_1.MatricID.ReviewProfileHR;
+    if (TabName === ConditionConfig_1.TabNames.BackgroundVerification) {
+        return ConditionConfig_1.MatricID.BackgroundCheck;
+    }
+    else if (TabName === ConditionConfig_1.TabNames.OfferLetterLabourHire) {
+        return ConditionConfig_1.MatricID.LabourHire;
+    }
+    else if (TabName === ConditionConfig_1.TabNames.OfferLetterKSCA) {
+        return ConditionConfig_1.MatricID.Kcsa;
+    }
+    else {
+        switch (statusID) {
+            case Config_1.StatusId.ReadyforRecruitmentProcess:
+                return ConditionConfig_1.MatricID.AssignHr;
+            case Config_1.StatusId.PendingUploadONEM:
+                return ConditionConfig_1.MatricID.UploadONEM;
+            case Config_1.StatusId.PendingUploadAdvert:
+                return ConditionConfig_1.MatricID.JobAdvert;
+            case Config_1.StatusId.PendingReviewAdvertHOD:
+                return ConditionConfig_1.MatricID.AdvertReviewHOD;
+            case Config_1.StatusId.PendingwithLineManagereviewAdv:
+                return ConditionConfig_1.MatricID.AdvertReviewLM;
+            case Config_1.StatusId.PendingInterviewquestion:
+                return ConditionConfig_1.MatricID.InterviewQuestionHR;
+            case Config_1.StatusId.CareerPortalQuestions:
+                return ConditionConfig_1.MatricID.InterviewQuestionLM;
+            case Config_1.StatusId.InterviewScheduled:
+            case Config_1.StatusId.InterviewScheduledforLevel2:
+                return ConditionConfig_1.MatricID.EvalutionHR;
+            case Config_1.StatusId.RecruitmentInProgress:
+                if (TabName === ConditionConfig_1.TabNames.ReviewProfile) {
+                    if (roleIDs.includes(Config_1.RoleID.RecruitmentHR)) {
+                        return ConditionConfig_1.MatricID.ReviewProfileHR;
+                    }
+                    if (roleIDs.includes(Config_1.RoleID.LineManager)) {
+                        return ConditionConfig_1.MatricID.ReviewProfileLM;
+                    }
+                    return 0;
                 }
-                if (roleIDs.includes(Config_1.RoleID.LineManager)) {
-                    return ConditionConfig_1.MatricID.ReviewProfileLM;
+                if (TabName === ConditionConfig_1.TabNames.AssignInterviewPanel) {
+                    return ConditionConfig_1.MatricID.AssignInterviewPanel;
+                }
+                if (TabName === ConditionConfig_1.TabNames.ReviewScorecard) {
+                    return ConditionConfig_1.MatricID.ReviewScoreCard;
+                }
+                if (TabName === ConditionConfig_1.TabNames.AssignAgencies) {
+                    return ConditionConfig_1.MatricID.AssignAgencies;
                 }
                 return 0;
-            }
-            if (TabName === ConditionConfig_1.TabNames.AssignInterviewPanel) {
-                return ConditionConfig_1.MatricID.AssignInterviewPanel;
-            }
-            if (TabName === ConditionConfig_1.TabNames.ReviewScorecard) {
-                return ConditionConfig_1.MatricID.ReviewScoreCard;
-            }
-            if (TabName === ConditionConfig_1.TabNames.AssignAgencies) {
-                return ConditionConfig_1.MatricID.AssignAgencies;
-            }
-            return 0;
-        default:
-            return ConditionConfig_1.MatricID.MySubmission;
+            default:
+                return ConditionConfig_1.MatricID.MySubmission;
+        }
     }
 };
 exports.findMatricID = findMatricID;

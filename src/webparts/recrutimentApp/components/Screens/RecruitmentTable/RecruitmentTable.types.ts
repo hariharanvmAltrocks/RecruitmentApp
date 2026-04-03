@@ -1,4 +1,10 @@
-export type RecruitmentTabKey = "tab1" | "tab2" | "tab3" | "tab4" | "tab5" | "tab6";
+export type RecruitmentTabKey =
+  | "tab1"
+  | "tab2"
+  | "tab3"
+  | "tab4"
+  | "tab5"
+  | "tab6";
 
 export type TableMode = "normal" | "checkbox";
 
@@ -7,7 +13,6 @@ export type TableActionMode = "View" | "Upload";
 export interface TableAction {
   View: "View";
   Upload: "Upload";
-
 }
 
 export interface TabItem {
@@ -31,6 +36,24 @@ export interface RecruitmentItem {
   status: string;
   statusId: number;
   jobCodeID: number;
+}
+
+export interface ISelectedCandidate {
+  id: string;
+  ItemID: number;
+  CandidateID: number;
+  jobrequestID: string;
+  positionId: string;
+  applicantName: string;
+  buCode: string;
+  jobCode: string;
+  title: string;
+  department: string;
+  nationality: string;
+  status: string;
+  statusId: number;
+  jobCodeID: number;
+  RecID: number;
 }
 
 export interface EvalutionItem {
@@ -59,4 +82,3 @@ export interface AssignmentPayload {
   member: HrMember | null;
   comments: string;
 }
-

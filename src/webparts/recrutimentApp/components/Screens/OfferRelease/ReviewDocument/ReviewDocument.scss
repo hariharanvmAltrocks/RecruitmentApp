@@ -1,0 +1,1416 @@
+// ReviewDocument.scss — full optimized styles
+@import "../../../../styles/theme";
+@import "../../../../styles/variables";
+
+// ─── Error tokens ──────────────────────────────────────────────────────────
+$error-color : #e53e3e;
+$error-bg    : rgba(229, 62, 62, 0.05);
+
+
+// ─── Root shell ────────────────────────────────────────────────────────────
+.review-document {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  font-family: $font-family;
+
+  // Backdrop
+  &__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(6px);
+  }
+
+  // Slide-in panel
+  &__panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 900px;
+    background: $white;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
+    display: flex;
+    flex-direction: column;
+  }
+
+
+  // ── Header ───────────────────────────────────────────────────────────────
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $space-xl;
+    border-bottom: 1px solid $border-light;
+    background: $white;
+    gap: $space-md;
+  }
+
+  &__header-left {
+    display: flex;
+    align-items: center;
+    gap: $space-md;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__header-right {
+    flex-shrink: 0;
+  }
+
+  &__header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: $radius-md;
+    background: rgba(37, 99, 235, 0.12);
+    color: $primary-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 20px;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    margin-top: 6px;
+    font-size: 12px;
+  }
+
+  &__badge {
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(37, 99, 235, 0.1);
+    color: $primary-color;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  &__dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: $border-base;
+    flex-shrink: 0;
+  }
+
+  &__meta-text {
+    color: $text-subtle;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__close {
+    border: none;
+    background: transparent;
+    color: $text-subtle;
+    border-radius: 999px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background $transition-base, color $transition-base;
+
+    &:hover {
+      background: $secondary-color;
+      color: $text-primary;
+    }
+  }
+
+
+  // ── Scrollable body ──────────────────────────────────────────────────────
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    padding: $space-xxl;
+    display: flex;
+    flex-direction: column;
+    gap: $space-xxl;
+  }
+
+
+  // ── Section variants ─────────────────────────────────────────────────────
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+  }
+
+  &__section--frame {
+    padding: $space-xl;
+    border-radius: $radius-xl;
+    border: 1px solid $border-light;
+    background: rgba(248, 250, 252, 0.5);
+  }
+
+  &__section--toggle {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: $space-sm $space-md;
+    border-radius: $radius-md;
+    border: 1px solid $border-light;
+    background: $secondary-color;
+  }
+
+  &__section--comments {
+    gap: $space-lg;
+  }
+
+  &__section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: $space-sm;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: $text-primary;
+      margin: 0;
+    }
+
+    &--plain h3 {
+      letter-spacing: 0.12em;
+      color: $text-secondary;
+    }
+  }
+
+  &__section-indicator {
+    width: 6px;
+    height: 24px;
+    border-radius: 999px;
+    background: $primary-color;
+  }
+
+  &__ref {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid $border-light;
+    background: $white;
+    color: $text-subtle;
+    font-weight: 700;
+  }
+
+
+  // ── Info grid ────────────────────────────────────────────────────────────
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: $space-lg;
+  }
+
+  &__group-title {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    font-size: 10px;
+    font-weight: 700;
+    color: $primary-color;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: $space-lg;
+  }
+
+  &__grid--split {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-xxl;
+  }
+
+  &__info-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__info-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: $text-subtle;
+    font-weight: 700;
+  }
+
+  &__info-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-primary;
+    border: 1px solid #c5bfbf;
+    background-color: $white;
+    padding: 6%;
+    border-radius: 9px;
+    transition: transform $transition-base;
+
+    &:hover {
+      transform: translateY(-2px) translateZ(0px);
+    }
+  }
+
+  &__divider {
+    height: 1px;
+    background: $border-light;
+  }
+
+
+  // ── Toggle buttons ────────────────────────────────────────────────────────
+  &__toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $text-subtle;
+  }
+
+  &__toggle {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__toggle-button {
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: $radius-sm;
+    color: $text-muted;
+    cursor: pointer;
+    transition: all $transition-base;
+
+    &.is-active {
+      background: $white;
+      border: 1px solid $border-base;
+      color: $primary-color;
+      box-shadow: $shadow-sm;
+    }
+  }
+
+
+  // ── Description / list ────────────────────────────────────────────────────
+  &__section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: $text-subtle;
+    margin: 0;
+  }
+
+  &__description {
+    background: $secondary-color;
+    border: 1px solid $border-light;
+    border-radius: $radius-md;
+    padding: $space-md;
+    font-size: 14px;
+    line-height: 1.6;
+    color: $text-secondary;
+    margin: 0;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
+  }
+
+  &__list-item {
+    display: flex;
+    gap: 10px;
+    font-size: 13px;
+    color: $text-secondary;
+    line-height: 1.5;
+
+    &--muted { color: $text-muted; }
+  }
+
+  &__list-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: $primary-color;
+    margin-top: 6px;
+    flex-shrink: 0;
+
+    &--muted { background: $border-base; }
+  }
+
+
+  // ── Attachments ──────────────────────────────────────────────────────────
+  &__attachments {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: $space-lg;
+  }
+
+  &__attachment-card {
+    border: 1px solid $border-base;
+    border-radius: $radius-lg;
+    background: $white;
+    overflow: hidden;
+    box-shadow: $shadow-sm;
+    display: flex;
+    flex-direction: column;
+    transition: border $transition-base, box-shadow $transition-base;
+
+    &:hover {
+      border-color: $primary-color;
+      box-shadow: $shadow-md;
+    }
+  }
+
+  &__attachment-header {
+    padding: $space-md;
+    display: flex;
+    gap: $space-sm;
+    align-items: center;
+    background: $secondary-color;
+    border-bottom: 1px solid $border-light;
+  }
+
+  &__attachment-type {
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-sm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    gap: 2px;
+
+    &--pdf {
+      background: #fff1f2;
+      color: #e11d48;
+      border: 1px solid #fecdd3;
+    }
+
+    &--doc {
+      background: #eff6ff;
+      color: #2563eb;
+      border: 1px solid #bfdbfe;
+    }
+
+    &--xls {
+      background: #f0fdf4;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+    }
+  }
+
+  &__attachment-meta {
+    min-width: 0;
+  }
+
+  &__attachment-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: $text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__attachment-tag {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $text-subtle;
+  }
+
+  &__attachment-body {
+    padding: $space-md;
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
+  }
+
+  &__attachment-version {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: $space-sm;
+    align-items: center;
+    padding: 8px;
+    border-radius: $radius-sm;
+    border: 1px solid $border-light;
+    background: rgba(248, 250, 252, 0.7);
+    font-size: 11px;
+    color: $text-secondary;
+    transition: border $transition-base, box-shadow $transition-base, color $transition-base;
+
+    &:hover {
+      border-color: $primary-color;
+      box-shadow: $shadow-md;
+      color: #2563eb;
+    }
+  }
+
+  &__attachment-lang {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    color: $white;
+
+    &--en { background: $primary-color; }
+    &--fr { background: #f97316; }
+    &--bi { background: #0f172a; }
+  }
+
+  &__attachment-info {
+    min-width: 0;
+  }
+
+  &__attachment-label {
+    font-weight: 700;
+    font-size: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &--link {
+      background: none;
+      border: none;
+      font-size: 10px;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 180px;
+      cursor: pointer;
+      transition: color $transition-base;
+
+      &:hover {
+        color: $primary-color;
+      }
+    }
+  }
+
+  &__attachment-size {
+    font-size: 9px;
+    color: $text-subtle;
+    font-weight: 600;
+  }
+
+
+  // ── Textarea ─────────────────────────────────────────────────────────────
+  &__textarea {
+    border-radius: $radius-md;
+    border: 1px solid $border-base;
+    padding: $space-md;
+    font-size: 13px;
+    min-height: 120px;
+    resize: none;
+    font-family: inherit;
+    transition: border $transition-base, box-shadow $transition-base;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    &--error {
+      border: 1.5px solid $error-color !important;
+      background-color: $error-bg;
+      border-radius: 8px;
+
+      &:focus {
+        outline: none;
+        border-color: $error-color !important;
+        box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.15);
+      }
+    }
+  }
+
+
+  // ── Signature block ──────────────────────────────────────────────────────
+  &__signature {
+    padding: $space-xl;
+    border-radius: $radius-xl;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    background: rgba(37, 99, 235, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: $space-lg;
+  }
+
+  &__acknowledge {
+    display: flex;
+    gap: $space-md;
+    font-size: 13px;
+    color: $text-secondary;
+    line-height: 1.6;
+    cursor: pointer;
+
+    &--error {
+      border: 1.5px solid $error-color !important;
+      border-radius: 8px;
+      background-color: $error-bg;
+      padding: 8px 10px;
+    }
+  }
+
+  &__checkbox {
+    width: 29px;
+    height: 23px;
+    border-radius: 6px;
+    border: 1px solid $border-base;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: $white;
+    color: $white;
+    position: relative;
+    flex-shrink: 0;
+
+    input {
+      opacity: 0;
+      position: absolute;
+      inset: 0;
+      cursor: pointer;
+    }
+
+    svg {
+      opacity: 0;
+      transition: opacity $transition-base;
+    }
+
+    &.is-checked {
+      background: $primary-color;
+      border-color: $primary-color;
+
+      svg { opacity: 1; }
+    }
+  }
+
+  &__signature-details {
+    display: flex;
+    align-items: center;
+    gap: $space-lg;
+    border-top: 1px solid rgba(37, 99, 235, 0.12);
+    padding-top: $space-lg;
+  }
+
+  &__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(37, 99, 235, 0.18);
+    color: $primary-color;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid $white;
+    box-shadow: $shadow-sm;
+    flex-shrink: 0;
+  }
+
+  &__signature-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-md $space-xxl;
+    flex: 1;
+  }
+
+  &__signature-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: $text-subtle;
+    font-weight: 700;
+  }
+
+  &__signature-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: $text-primary;
+    margin-top: 4px;
+  }
+
+
+  // ── Footer ───────────────────────────────────────────────────────────────
+  &__footer {
+    padding: $space-lg $space-xl;
+    border-top: 1px solid $border-light;
+    background: rgba(248, 250, 252, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  &__footer-actions {
+    display: flex;
+    gap: $space-md;
+  }
+
+  &__button {
+    border: none;
+    background: rgba(65, 55, 55, 0.19);
+    font-size: 13px;
+    font-weight: 700;
+    color: $text-muted;
+    padding: 10px 18px;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: background $transition-base;
+
+    &:hover { background: rgba(65, 55, 55, 0.28); }
+
+    &--primary {
+      background: $primary-color;
+      color: $white;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 12px 20px rgba(37, 99, 235, 0.25);
+      transition: background $transition-base, box-shadow $transition-base;
+
+      &:hover {
+        background: darken($primary-color, 6%);
+        box-shadow: 0 14px 24px rgba(37, 99, 235, 0.32);
+      }
+
+      &:disabled,
+      &.is-disabled {
+        background: $border-base;
+        color: $text-subtle;
+        box-shadow: none;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+
+  // ── Skeleton ─────────────────────────────────────────────────────────────
+  &__skeleton {
+    display: block;
+    background: linear-gradient(
+      90deg,
+      rgba(226, 232, 240, 0.6) 0%,
+      rgba(226, 232, 240, 0.2) 50%,
+      rgba(226, 232, 240, 0.6) 100%
+    );
+    background-size: 400px 100%;
+    border-radius: 6px;
+    animation: shimmer 1.4s infinite;
+  }
+
+
+  // ── Validation block ─────────────────────────────────────────────────────
+  &__validation {
+    margin: 12px 0 0;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgb(0 0 0 / 70%);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    display: grid;
+    gap: 8px;
+  }
+
+  &__validation-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #f87171;
+    font-size: 13px;
+  }
+
+  &__validation-message {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: rgba(239, 68, 68, 0.08);
+    border-left: 3px solid rgba(239, 68, 68, 0.85);
+    color: #fecaca;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  &__field-error {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: $error-color;
+  }
+}
+
+
+// ─── Work Permit Upload Card ─────────────────────────────────────────────────
+.upload-workpermit-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: $space-xl;
+  border: 1px solid $border-light;
+  border-radius: $radius-xl;
+  background: rgba(248, 250, 252, 0.5);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: $space-md;
+    padding-bottom: $space-md;
+    border-bottom: 1px solid $border-light;
+  }
+
+  &__header-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: $radius-md;
+    background: rgba(37, 99, 235, 0.10);
+    color: $primary-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: 13px;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0;
+  }
+
+  &__subtitle {
+    font-size: 11px;
+    color: $text-subtle;
+    margin: 0;
+  }
+}
+
+
+// ─── Upload drop zone ────────────────────────────────────────────────────────
+.upload-box {
+  position: relative;
+  border: 1.5px dashed $border-base;
+  border-radius: $radius-lg;
+  background: rgba(248, 250, 252, 0.6);
+  cursor: pointer;
+  transition: border-color $transition-base, background $transition-base;
+  overflow: hidden;
+
+  &:hover {
+    border-color: $primary-color;
+    background: rgba(37, 99, 235, 0.03);
+  }
+
+  &--has-file {
+    border-style: solid;
+    border-color: #22c55e;
+    background: rgba(34, 197, 94, 0.03);
+  }
+
+  &--error {
+    border-color: $error-color !important;
+    background-color: $error-bg;
+  }
+
+  &__input {
+    display: none;
+  }
+
+  &__inner {
+    padding: 20px;
+  }
+
+  // Placeholder state
+  &__placeholder {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  &__icon-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(37, 99, 235, 0.08);
+    color: $primary-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background $transition-base;
+
+    .upload-box:hover & {
+      background: rgba(37, 99, 235, 0.14);
+    }
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  &__primary {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-primary;
+  }
+
+  &__secondary {
+    font-size: 11px;
+    color: $text-subtle;
+  }
+
+  // File selected state
+  &__file-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__file-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-md;
+    background: #eff6ff;
+    color: $primary-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__file-details {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__filename {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__filesize {
+    font-size: 11px;
+    color: $text-subtle;
+  }
+
+  &__status {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  &__success-icon {
+    color: #22c55e;
+  }
+
+  &__spinner {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(37, 99, 235, 0.2);
+    border-top-color: $primary-color;
+    animation: spin 0.7s linear infinite;
+  }
+
+  // Clear button
+  &__clear {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 0.5px solid #fecdd3;
+    background: #fff1f2;
+    color: #e11d48;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background $transition-base;
+
+    &:hover { background: #fecdd3; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
+
+  // Error helper text
+  &__error-text {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: $error-color;
+  }
+}
+
+
+// ─── Upload document dropzone error states ────────────────────────────────────
+.upload-document {
+  &__dropzone--error {
+    border: 1.5px dashed $error-color !important;
+    background-color: $error-bg;
+  }
+
+  &__error-text {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: $error-color;
+  }
+}
+
+
+// ─── COI Card ────────────────────────────────────────────────────────────────
+.cm-coi-card {
+  background: var(--cm-surface);
+  border: 1px solid #fecdd3;
+  border-radius: var(--cm-radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  &__meta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+
+    &--danger {
+      background: var(--cm-danger-s);
+      color: var(--cm-danger);
+      border: 0.5px solid #fecdd3;
+    }
+  }
+
+  &__reason {
+    background: #fff9f9;
+    border: 0.5px solid #fde8e8;
+    border-radius: var(--cm-radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 4px;
+  }
+
+  &__reason-label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--cm-faint);
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+
+  &__reason-text {
+    margin: 0;
+    font-size: 13px;
+    color: var(--cm-text);
+    line-height: 1.6;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+  }
+
+  &__divider {
+    height: 0.5px;
+    background: var(--cm-border);
+    margin: 16px 0;
+  }
+
+  &__fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: start;
+
+    @media (max-width: 680px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+
+// ─── CM upload trigger ────────────────────────────────────────────────────────
+.cm-upload {
+  &__trigger {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--cm-bg);
+    border: 1.5px dashed var(--cm-border-s);
+    border-radius: var(--cm-radius-sm);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    text-align: left;
+
+    &:hover {
+      border-color: var(--cm-primary);
+      background: var(--cm-primary-s);
+
+      .cm-upload__trigger-icon {
+        background: var(--cm-primary);
+        color: #fff;
+      }
+    }
+  }
+
+  &__trigger-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--cm-border);
+    color: var(--cm-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  &__trigger-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__trigger-primary {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cm-primary);
+  }
+
+  &__trigger-hint {
+    font-size: 11px;
+    color: var(--cm-faint);
+  }
+
+  &__file-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: var(--cm-radius-sm);
+    width: 100%;
+  }
+
+  &__file-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #dcfce7;
+    color: var(--cm-success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__file-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__file-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cm-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  &__file-sub {
+    font-size: 11px;
+    color: var(--cm-success);
+    font-weight: 500;
+  }
+
+  &__file-remove {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 0.5px solid #fecdd3;
+    background: var(--cm-danger-s);
+    color: var(--cm-danger);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s;
+
+    &:hover { background: #fecdd3; }
+  }
+}
+
+
+// ─── Attachment viewer modal ──────────────────────────────────────────────────
+.attachment-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  &__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(11, 16, 24, 0.65);
+    backdrop-filter: blur(2px);
+    animation: attachmentFadeIn 180ms ease-out;
+  }
+
+  &__panel {
+    position: relative;
+    margin: 4vh auto;
+    width: min(998px, 55vw);
+    height: min(760px, 88vh);
+    background: #0f172a;
+    color: #f8fafc;
+    border-radius: 16px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: attachmentScaleIn 200ms ease-out;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 20px;
+    background: linear-gradient(120deg, rgba(59, 130, 246, 0.15), rgba(14, 165, 233, 0.08));
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  &__subtitle {
+    font-size: 12px;
+    color: #cbd5f5;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0f172a;
+    background: #e2e8f0;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+
+    &--ghost {
+      background: transparent;
+      color: #e2e8f0;
+      border: 1px solid rgba(226, 232, 240, 0.4);
+    }
+  }
+
+  &__body {
+    position: relative;
+    flex: 1;
+    background: #0b1120;
+  }
+
+  &__iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  &__loading {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    gap: 10px;
+    color: #e2e8f0;
+    background: rgba(15, 23, 42, 0.7);
+    z-index: 1;
+  }
+
+  &__spinner {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 3px solid rgba(226, 232, 240, 0.25);
+    border-top-color: #e2e8f0;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+
+// ─── Modal spinner ────────────────────────────────────────────────────────────
+.modal-popup__spinner {
+  animation: spin 0.9s linear infinite;
+}
+
+
+// ─── Keyframes ────────────────────────────────────────────────────────────────
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes attachmentFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes attachmentScaleIn {
+  from { transform: scale(0.96); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 1024px) {
+  .review-document {
+    &__panel   { width: 100%; }
+    &__content { padding: $space-xl; }
+    &__grid    { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+}
+
+@media (max-width: 720px) {
+  .review-document {
+    &__panel   { width: 100%; }
+    &__content { padding: $space-lg; gap: $space-xl; }
+
+    &__grid,
+    &__grid--split { grid-template-columns: 1fr; }
+
+    &__signature-meta { grid-template-columns: 1fr; }
+
+    &__footer {
+      flex-direction: column;
+      gap: $space-md;
+      align-items: flex-start;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .attachment-viewer {
+    &__panel {
+      width: 94vw;
+      height: 90vh;
+      border-radius: 12px;
+    }
+
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    &__actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+}

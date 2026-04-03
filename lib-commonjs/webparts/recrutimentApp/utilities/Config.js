@@ -64,7 +64,7 @@ exports.ListNames = {
     //Resi
     HRMSRESIDRCDetails: "HRMSRESIDRCDetails",
     HRMSRESIExpatDetails: "HRMSRESIExpatDetails",
-    HRMSRecruitmentTabMaster: "HRMSRecruitmentTabMaster"
+    HRMSRecruitmentTabMaster: "HRMSRecruitmentTabMaster",
 };
 exports.DocumentLibraray = {
     InterviewPanelCandidateCV: "HRMSRecruitmentCandidateCV",
@@ -75,7 +75,7 @@ exports.DocumentLibraray = {
     RoleProfileMaster: "RoleProfileMaster",
     HRMSCareerPortalCandidateCV: "HRMSCareerPortalCandidateCV",
     HRMSCandidateDocs: "HRMSCandidateDocs",
-    DOTAfricaConsentForm: "DOTAfricaConsentForm"
+    DOTAfricaConsentForm: "DOTAfricaConsentForm",
 };
 exports.RoleID = {
     RecruitmentHRLead: 1,
@@ -85,7 +85,7 @@ exports.RoleID = {
     InterviewPanel: 5,
     RecruitmentAppExternalAgency: 6,
     RecruitmentLineManager: 7,
-    FinanceDepartment: 8
+    FinanceDepartment: 8,
 };
 exports.StatusId = {
     HRLeadtoAssignRecruitmentHR: 68,
@@ -105,10 +105,9 @@ exports.StatusId = {
     CareerPortalQuestions: 126,
     OnHoldbyHOD: 123,
     RejectedbyHOD: 15,
-    PendingwithHODtoselectthecandidateLevel2: 127,
     PendingwithRecruitmentHRtoassignLevel2InterviewPanel: 128,
     InterviewScheduledforLevel2: 129,
-    PendingwithHODtoAssignPositionID: 130,
+    PendingwithpositionIDAssignmentWithHOD: 130,
     Rescheduled: 159,
     // BackGorund Verification
     PendingHRBGVInitiation: 134,
@@ -141,21 +140,6 @@ exports.StatusId = {
     RESIProcessInitiatedforDRC: 42,
     RESIProcessInitiatedforExpatriate: 75,
     PendingHRReviewOfferanduploadEmployementContract: 169, //183,//169
-    // PendingHRReviewOfferWorkPermit: 136,
-    // WorkPermitHRReview: 137,
-    // WorkPermitAcknowledgedContractUploaded: 138,
-    // HRReviewContractSigned: 161,
-    // PendingHRPreOnboardingChecklist: 162,
-    // PendingWorkPermituploadedbycandidate: 164,
-    // PendingwithRecruitmentHRtoUploadtheOfferLetter: 132,
-    // PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter: 142,
-    // PendingwithCandidatetoSignOfferLetter: 133,
-    // PendingwithRecruitmentHRtoReviewtheSignedOfferLetterandInitiateforOtherDocuments: 134,
-    // PendingwithCandidatetoUploadOtherDocuments: 135,
-    // PendingwithRecruitmentHRtoReviewtheCandidatePersonalDocs: 136,
-    // PendingwithRecruitmentHRtoUploadtheEmploymentContract: 137,
-    // PendingwithCandidatetoSignEmploymentContract: 138,
-    // pendingwithRecruitmentHRtoReviewtheEmploymentContractForm: 139,
     OnboardingProcessinitiatedforDRC: 23,
     OnboardingProcessinitiatedforExpat: 24,
     //Revert Post Recrutiment
@@ -175,7 +159,10 @@ exports.StatusId = {
     onboardingInProcess: 46,
     Onboarded: 157,
     InterviewScheduled: 40,
-    InterviewInProcess: 39
+    InterviewInProcess: 39,
+    InterviewLevel2InProgress: 197,
+    InterviewLevel1InProgress: 196,
+    pendingL2shorlistingwithHOD: 127,
 };
 exports.workflowStatusApi = {
     HRPending: "WS01",
@@ -220,7 +207,7 @@ exports.workflowStatusApi = {
     RevertedBacktoCandidateforreuploadEmploymentContract: "WS24",
     RevertedtheLabourHireOfferRelease: "WS34",
     RevertedtheLabourHireEmployementContract: "WS35",
-    RevetedBacktoBGVDocuments: "WS40"
+    RevetedBacktoBGVDocuments: "WS40",
 };
 exports.ApplicationStatusId = {
     ApplicationSubmitted: "AS01",
@@ -229,12 +216,12 @@ exports.ApplicationStatusId = {
     InterviewCompleted: "AS04",
     Selected: "AS05",
     ApplicationRejected: "AS06",
-    ApplicationSuspended: "AS00"
+    ApplicationSuspended: "AS00",
 };
 exports.DataFrom = {
     NewPosition: "New Position",
     ExistingPosition: "Existing Position",
-    VacancyRecruitmentProcess: "Vacancy Requirement Process"
+    VacancyRecruitmentProcess: "Vacancy Requirement Process",
 };
 exports.WorkflowAction = {
     Approved: 1,
@@ -245,7 +232,7 @@ exports.WorkflowAction = {
     Closed: 6,
     ReSubmitted: 7,
     OnHold: 10,
-    Decline: 12
+    Decline: 12,
 };
 exports.ExternalUserType = {
     Agent: "Agent",

@@ -8,11 +8,10 @@ export const fetchByMetricId = async (
   EmailId: string,
   condition?: any,
 ) => {
-  
   let updatedMetricId = matricID;
 
   if (matricID === MatricID.ReviewScoreCard) {
-    updatedMetricId = MatricID.ReviewScoredHOD; 
+    updatedMetricId = MatricID.ReviewScoredHOD;
   }
   const configMap = MetricQueryConfig(EmailId);
   const config = configMap[updatedMetricId];
@@ -104,58 +103,67 @@ export const findMatricID = (
   statusID: number,
   TabName: string,
 ): number => {
-  switch (statusID) {
-    case StatusId.ReadyforRecruitmentProcess:
-      return MatricID.AssignHr;
+  if (TabName === TabNames.BackgroundVerification) {
+    return MatricID.BackgroundCheck;
+  } else if (TabName === TabNames.OfferLetterLabourHire) {
+    return MatricID.LabourHire;
+  } else if (TabName === TabNames.OfferLetterKSCA) {
+    return MatricID.Kcsa;
+  } else {
+    switch (statusID) {
+      case StatusId.ReadyforRecruitmentProcess:
+        return MatricID.AssignHr;
 
-    case StatusId.PendingUploadONEM:
-      return MatricID.UploadONEM;
+      case StatusId.PendingUploadONEM:
+        return MatricID.UploadONEM;
 
-    case StatusId.PendingUploadAdvert:
-      return MatricID.JobAdvert;
+      case StatusId.PendingUploadAdvert:
+        return MatricID.JobAdvert;
 
-    case StatusId.PendingReviewAdvertHOD:
-      return MatricID.AdvertReviewHOD;
+      case StatusId.PendingReviewAdvertHOD:
+        return MatricID.AdvertReviewHOD;
 
-    case StatusId.PendingwithLineManagereviewAdv:
-      return MatricID.AdvertReviewLM;
+      case StatusId.PendingwithLineManagereviewAdv:
+        return MatricID.AdvertReviewLM;
 
-    case StatusId.PendingInterviewquestion:
-      return MatricID.InterviewQuestionHR;
+      case StatusId.PendingInterviewquestion:
+        return MatricID.InterviewQuestionHR;
 
-    case StatusId.CareerPortalQuestions:
-      return MatricID.InterviewQuestionLM;
+      case StatusId.CareerPortalQuestions:
+        return MatricID.InterviewQuestionLM;
 
-    case StatusId.InterviewScheduled:
-    case StatusId.InterviewScheduledforLevel2:
-      return MatricID.EvalutionHR;
+      case StatusId.InterviewScheduled:
+      case StatusId.InterviewScheduledforLevel2:
+        return MatricID.EvalutionHR;
 
-    case StatusId.RecruitmentInProgress:
-      if (TabName === TabNames.ReviewProfile) {
-        if (roleIDs.includes(RoleID.RecruitmentHR)) {
-          return MatricID.ReviewProfileHR;
+      case StatusId.RecruitmentInProgress:
+        if (TabName === TabNames.ReviewProfile) {
+          if (roleIDs.includes(RoleID.RecruitmentHR)) {
+            return MatricID.ReviewProfileHR;
+          }
+          if (roleIDs.includes(RoleID.LineManager)) {
+            return MatricID.ReviewProfileLM;
+          }
+          return 0;
         }
-        if (roleIDs.includes(RoleID.LineManager)) {
-          return MatricID.ReviewProfileLM;
+
+        if (TabName === TabNames.AssignInterviewPanel) {
+          return MatricID.AssignInterviewPanel;
         }
+
+        if (TabName === TabNames.ReviewScorecard) {
+          return MatricID.ReviewScoreCard;
+        }
+
+        if (TabName === TabNames.AssignAgencies) {
+          return MatricID.AssignAgencies;
+        }
+
         return 0;
-      }
 
-      if (TabName === TabNames.AssignInterviewPanel) {
-        return MatricID.AssignInterviewPanel;
-      }
-
-      if (TabName === TabNames.ReviewScorecard) {
-        return MatricID.ReviewScoreCard;
-      }
-
-      if (TabName === TabNames.AssignAgencies) {
-        return MatricID.AssignAgencies;
-      }
-
-      return 0;
-    default:
-      return MatricID.MySubmission;
+      default:
+        return MatricID.MySubmission;
+    }
   }
 };
 

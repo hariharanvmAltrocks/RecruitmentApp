@@ -3,25 +3,38 @@ import { ApiResponse } from "../../models/apimodels";
 import { count, InOperator } from "../../utilities/ApiConfig";
 import { DataFrom, ListNames, StatusId } from "../../utilities/Config";
 import SPServices from "../SPService/spservice";
-import { DashboardData, DataSyncToRecruitmentResponse, IDashboard, IEvaluValidate, IInterviewPanel } from "./IDashboard";
+import {
+  DashboardData,
+  DataSyncToRecruitmentResponse,
+  IDashboard,
+  IEvaluValidate,
+  IInterviewPanel,
+} from "./IDashboard";
 import { BatchQuery } from "../SPService/Ispservice";
 import { getProfileData } from "../AxiosService/CareerPortalAPI";
-import { ExternalApiCountItem, ExternalApiParams, Metric, MetricConfig } from "../../models/IDashboard";
+import {
+  ExternalApiCountItem,
+  ExternalApiParams,
+  Metric,
+  MetricConfig,
+} from "../../models/IDashboard";
 import { MatricColums } from "../../components/Screens/Dashboard/metricColumns.config";
 import { InterviewLevel, Nationality } from "../../utilities/ConditionConfig";
 import { CommonServices, masterService } from "../ServiceExport";
 
 export default class DashboardService implements IDashboard {
-
   async GetDashboardCount(
     queries: BatchQuery[],
-    currentRoleID: number[]
+    currentRoleID: number[],
   ): Promise<ApiResponse<Metric[]>> {
-
     try {
       const metricConfigs = MatricColums(currentRoleID);
       if (!metricConfigs?.length) {
-        return { data: [], status: 200, message: "No metrics configured for this role" };
+        return {
+          data: [],
+          status: 200,
+          message: "No metrics configured for this role",
+        };
       }
 
       // const [spCounts, portalJobCodeMap] = await Promise.all([
@@ -36,48 +49,57 @@ export default class DashboardService implements IDashboard {
       const externalCountMap = await this._fetchExternalCounts(
         externalMetrics,
         spCounts,
-        new Map()
+        new Map(),
       );
 
-      const metrics: Metric[] = metricConfigs.map((config) => {
-        const hasExternalCount = externalCountMap.has(String(config.id));
-        const spCount = (spCounts[config.id] as any[])?.length ?? 0;
+      const metrics: Metric[] = metricConfigs
+        .map((config) => {
+          const hasExternalCount = externalCountMap.has(String(config.id));
+          const spCount = (spCounts[config.id] as any[])?.length ?? 0;
 
-        const value = hasExternalCount
-          ? (externalCountMap.get(String(config.id)) ?? 0) + spCount
-          : spCount;
+          const value = hasExternalCount
+            ? (externalCountMap.get(String(config.id)) ?? 0) + spCount
+            : spCount;
 
-        return {
-          ...config,
-          value,
-          showArrow: config.showArrow || hasExternalCount,
-        };
-      }).sort((a, b) => Number(b.showArrow) - Number(a.showArrow));
+          return {
+            ...config,
+            value,
+            showArrow: config.showArrow || hasExternalCount,
+          };
+        })
+        .sort((a, b) => Number(b.showArrow) - Number(a.showArrow));
 
-
-      return { data: metrics, status: 200, message: "Dashboard counts fetched successfully" };
-
+      return {
+        data: metrics,
+        status: 200,
+        message: "Dashboard counts fetched successfully",
+      };
     } catch (error) {
       console.error("GetDashboardCount error:", error);
-      return { data: [], status: 500, message: "Error fetching dashboard counts" };
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching dashboard counts",
+      };
     }
   }
 
   private async _fetchExternalCounts(
     externalMetrics: MetricConfig[],
     spCounts: Record<string, any[]>,
-    _portalJobCodeMap: Map<number, string>
+    _portalJobCodeMap: Map<number, string>,
   ): Promise<Map<string, number>> {
-
     const result = new Map<string, number>();
     if (!externalMetrics.length) return result;
 
     const allJobCodeIds = Array.from(
       new Set(
         externalMetrics.flatMap((m) =>
-          (spCounts[m.id] ?? []).map((item: any) => item.JobCodeId).filter(Boolean)
-        )
-      )
+          (spCounts[m.id] ?? [])
+            .map((item: any) => item.JobCodeId)
+            .filter(Boolean),
+        ),
+      ),
     );
 
     if (!allJobCodeIds.length) return result;
@@ -85,7 +107,9 @@ export default class DashboardService implements IDashboard {
     const portalItems = await SPServices.SPReadItems({
       Listname: ListNames.RecruitAppCareerPortalIntegration,
       Select: `*,JobCode/JobCode`,
-      Filter: [{ FilterKey: "JobCodeId", Operator: "in", FilterValue: allJobCodeIds }],
+      Filter: [
+        { FilterKey: "JobCodeId", Operator: "in", FilterValue: allJobCodeIds },
+      ],
       FilterCondition: "and",
       Expand: `JobCode`,
       Topcount: count.Topcount,
@@ -94,7 +118,7 @@ export default class DashboardService implements IDashboard {
     });
 
     const jobCodeIdToUniqueKey = new Map<number, string>(
-      portalItems.map((item: any) => [item.JobCodeId, item.JobUniqueKey])
+      portalItems.map((item: any) => [item.JobCodeId, item.JobUniqueKey]),
     );
 
     await Promise.all(
@@ -120,16 +144,18 @@ export default class DashboardService implements IDashboard {
           const response = await getProfileData.GetJobAppliedCount(params);
           const total: number = Array.isArray(response?.data?.data)
             ? response?.data?.data?.reduce(
-              (sum: number, item: ExternalApiCountItem) => sum + (item.count ?? 0),
-              0
-            )
-            : response?.data?.data?.count ?? 0;
+                (sum: number, item: ExternalApiCountItem) =>
+                  sum + (item.count ?? 0),
+                0,
+              )
+            : (response?.data?.data?.count ?? 0);
 
           result.set(String(metric.id), total);
-        } catch { // eslint-disable-line
+        } catch {
+          // eslint-disable-line
           result.set(String(metric.id), 0);
         }
-      })
+      }),
     );
 
     return result;
@@ -137,7 +163,7 @@ export default class DashboardService implements IDashboard {
 
   async GetRecruitmentDetails(
     filterParam: any,
-    filterConditions: any
+    filterConditions: any,
   ): Promise<ApiResponse<DashboardData[]>> {
     try {
       const res: any[] = await SPServices.SPReadItems({
@@ -155,26 +181,28 @@ export default class DashboardService implements IDashboard {
         return { data: [], status: 200, message: "No records found" };
       }
 
-      const GridResult: DashboardData[] = res.map((item: any, index: number) => ({
-        ID: item.ID,
-        RecordID: index + 1,
-        BusinessUnitCode: item?.BusinessUnitCode?.BusineesUnitCode ?? "",
-        Nationality: item?.Nationality,
-        NumberOfPersonNeeded: item?.NumberOfPersonNeeded,
-        Type: item?.DataFrom ?? "",
-        Status: item?.Status?.StatusDescription ?? "",
-        StatusId: item?.StatusId,
-        JobCodeId: item?.JobCode?.ID ?? 0,
-        JobCode: item?.JobCode?.JobCode ?? "",
-        JobTitleEnglish: item?.JobCode?.JobTitleInEnglish ?? "",
-        ModifiedDate: item?.Modified
-          ? moment(item.Modified).format("YYYY-MM-DD")
-          : undefined,
-        CreatedDate: item?.Created
-          ? moment(item.Created).format("YYYY-MM-DD")
-          : undefined,
-        Department: item?.Department?.DepartmentName ?? "",
-      }));
+      const GridResult: DashboardData[] = res.map(
+        (item: any, index: number) => ({
+          ID: item.ID,
+          RecordID: index + 1,
+          BusinessUnitCode: item?.BusinessUnitCode?.BusineesUnitCode ?? "",
+          Nationality: item?.Nationality,
+          NumberOfPersonNeeded: item?.NumberOfPersonNeeded,
+          Type: item?.DataFrom ?? "",
+          Status: item?.Status?.StatusDescription ?? "",
+          StatusId: item?.StatusId,
+          JobCodeId: item?.JobCode?.ID ?? 0,
+          JobCode: item?.JobCode?.JobCode ?? "",
+          JobTitleEnglish: item?.JobCode?.JobTitleInEnglish ?? "",
+          ModifiedDate: item?.Modified
+            ? moment(item.Modified).format("YYYY-MM-DD")
+            : undefined,
+          CreatedDate: item?.Created
+            ? moment(item.Created).format("YYYY-MM-DD")
+            : undefined,
+          Department: item?.Department?.DepartmentName ?? "",
+        }),
+      );
 
       return {
         data: GridResult,
@@ -253,7 +281,6 @@ export default class DashboardService implements IDashboard {
   //       };
   //     }
   // }
-
 
   // private async fetchRecruitmentByLookup(
   //   listName: string,
@@ -339,7 +366,7 @@ export default class DashboardService implements IDashboard {
 
   async GetCandidateDetails(
     filterParam: any,
-    filterConditions: any
+    filterConditions: any,
   ): Promise<ApiResponse<any[]>> {
     try {
       let GridResult: any[] = [];
@@ -364,7 +391,11 @@ export default class DashboardService implements IDashboard {
         .filter(Boolean);
 
       if (!ids.length) {
-        return { data: [], status: 200, message: "No linked recruitment records found" };
+        return {
+          data: [],
+          status: 200,
+          message: "No linked recruitment records found",
+        };
       }
 
       const recruitmentFilter = [
@@ -373,12 +404,12 @@ export default class DashboardService implements IDashboard {
 
       let DeptDetails = await this.GetRecruitmentDetails(
         recruitmentFilter,
-        filterConditions
+        filterConditions,
       );
       GridResult = await Promise.all(
         res.map(async (item, index) => {
           const deptDetails = DeptDetails.data.filter(
-            (dpt) => dpt.ID === item.RecruitmentID?.Id
+            (dpt) => dpt.ID === item.RecruitmentID?.Id,
           );
 
           let GradeLevel;
@@ -401,6 +432,7 @@ export default class DashboardService implements IDashboard {
             Nationality: item?.Nationality,
 
             interviewLevels: GradeLevel?.data || [],
+            jobrequestID: item?.JobRequestID,
 
             Status: item?.Status?.StatusDescription ?? "",
             StatusId: item?.StatusId,
@@ -419,7 +451,7 @@ export default class DashboardService implements IDashboard {
 
             DeptDetails: deptDetails,
           };
-        })
+        }),
       );
 
       return { data: GridResult, status: 200, message: "Success" };
@@ -431,17 +463,17 @@ export default class DashboardService implements IDashboard {
 
   async GetSelectedCandidate(
     filterParam: any,
-    filterConditions: any
+    filterConditions: any,
   ): Promise<ApiResponse<DashboardData[]>> {
     try {
       let GridResult: any[] = [];
 
       const res: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSSelectedCandidateDetailsByHOD,
-        Select: `*,Status/StatusDescription,RecruitmentID/Id,CandidateID/ID`,
+        Select: `*,Status/StatusDescription,RecruitmentID/Id,CandidateID/ID,PositionID/PositionID`,
         Filter: filterParam,
         FilterCondition: filterConditions,
-        Expand: `RecruitmentID,Status,CandidateID`,
+        Expand: `RecruitmentID,Status,CandidateID,PositionID`,
         Topcount: count.Topcount,
         Orderby: "ID",
         Orderbydecorasc: true,
@@ -477,29 +509,29 @@ export default class DashboardService implements IDashboard {
 
       const DeptDetails = await this.GetRecruitmentDetails(
         recruitmentFilter,
-        filterConditions
+        filterConditions,
       );
 
       const getCandidateDetails = await this.GetCandidateDetails(
         candidateFilter,
-        filterConditions
+        filterConditions,
       );
 
       // ✅ Convert to Map (FAST lookup)
-      const deptMap = new Map(
-        DeptDetails.data.map((d) => [d.ID, d])
-      );
+      const deptMap = new Map(DeptDetails.data.map((d) => [d.ID, d]));
 
       const candidateMap = new Map(
-        getCandidateDetails.data.map((c) => [c.ID, c])
+        getCandidateDetails.data.map((c) => [c.ID, c]),
       );
 
       // ✅ Main mapping
-      GridResult = res.map((item) => {
+      GridResult = res.map((item, index) => {
         const deptDetails = deptMap.get(item.RecruitmentID?.Id);
         const candidate = candidateMap.get(item.CandidateID?.ID);
 
         return {
+          ID: index + 1,
+          ItemID: item?.ID,
           ApplicantName: candidate?.ApplicantName ?? "",
           PositionTitle: candidate?.PositionTitle,
           JobGrade: candidate?.JobGrade,
@@ -507,7 +539,7 @@ export default class DashboardService implements IDashboard {
 
           Status: item?.Status?.StatusDescription ?? "",
           StatusId: item?.StatusId,
-          PositionID: item?.PositionID,
+          PositionID: item?.PositionID?.PositionID,
 
           ModifiedDate: item?.Modified
             ? moment(item.Modified).format("YYYY-MM-DD")
@@ -518,11 +550,11 @@ export default class DashboardService implements IDashboard {
             : undefined,
 
           DeptDetails: deptDetails ?? null,
+          candiDetails: candidate ?? null,
         };
       });
 
       return { data: GridResult, status: 200, message: "Success" };
-
     } catch (error) {
       console.error(`Error fetching from Candidate details:`, error);
       return { data: [], status: 500, message: "Error fetching data" };
@@ -531,7 +563,7 @@ export default class DashboardService implements IDashboard {
 
   async GetNPAEPVRRDetails(
     filterParam: any,
-    filterConditions: any
+    filterConditions: any,
   ): Promise<ApiResponse<DashboardData[]>> {
     try {
       const queries: BatchQuery[] = [
@@ -540,7 +572,12 @@ export default class DashboardService implements IDashboard {
           ListName: ListNames.HRMSAdditionalHeadCountForExisitingPosition,
           Filter: filterParam,
           FilterCondition: filterConditions,
-          select: ["*", "Status/StatusDescription", "BusinessUnitCode/BusineesUnitCode", "Department/DepartmentName"],
+          select: [
+            "*",
+            "Status/StatusDescription",
+            "BusinessUnitCode/BusineesUnitCode",
+            "Department/DepartmentName",
+          ],
           expand: ["Status", "BusinessUnitCode", "Department"],
         },
         {
@@ -548,7 +585,12 @@ export default class DashboardService implements IDashboard {
           ListName: ListNames.HRMSNewPositionRequest,
           Filter: filterParam,
           FilterCondition: filterConditions,
-          select: ["*", "BusinessUnitCode/BusineesUnitCode", "Status/StatusDescription", "Department/DepartmentName"],
+          select: [
+            "*",
+            "BusinessUnitCode/BusineesUnitCode",
+            "Status/StatusDescription",
+            "Department/DepartmentName",
+          ],
           expand: ["Status", "BusinessUnitCode", "Department"],
         },
         {
@@ -563,13 +605,14 @@ export default class DashboardService implements IDashboard {
             "JobCode/JobCode",
             "JobCode/JobTitleInEnglish",
             "JobCode/ID",
-            "Department/DepartmentName"
+            "Department/DepartmentName",
           ],
           expand: ["Status", "JobCode", "BusinessUnitCode", "Department"],
         },
       ];
 
-      const batchRes: Record<number, any[]> = await SPServices.batchGet(queries);
+      const batchRes: Record<number, any[]> =
+        await SPServices.batchGet(queries);
 
       if (!batchRes || !Object.keys(batchRes).length) {
         return { data: [], status: 200, message: "No records found" };
@@ -579,35 +622,54 @@ export default class DashboardService implements IDashboard {
       const newPositionItems: any[] = batchRes[2] || [];
       const vacancyItems: any[] = batchRes[3] || [];
 
-      const additionalIds = additionalExistingItems.map((i: any) => i.ID).filter(Boolean);
-      const newPositionIds = newPositionItems.map((i: any) => i.ID).filter(Boolean);
+      const additionalIds = additionalExistingItems
+        .map((i: any) => i.ID)
+        .filter(Boolean);
+      const newPositionIds = newPositionItems
+        .map((i: any) => i.ID)
+        .filter(Boolean);
 
       const [additionalPositionRes, newPositionRes] = await Promise.all([
         additionalIds.length > 0
           ? this.GetPositionDetails(
-            [{ FilterKey: "LookupIDId", Operator: "in", FilterValue: additionalIds }],
-            undefined,
-            ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails
-          )
+              [
+                {
+                  FilterKey: "LookupIDId",
+                  Operator: "in",
+                  FilterValue: additionalIds,
+                },
+              ],
+              undefined,
+              ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails,
+            )
           : Promise.resolve({ data: [], status: 200, message: "" }),
 
         newPositionIds.length > 0
           ? this.GetPositionDetails(
-            [{ FilterKey: "PositionRequestID", Operator: "in", FilterValue: newPositionIds }],
-            undefined,
-            ListNames.HRMSNewPositionRequestPositionDetails
-          )
+              [
+                {
+                  FilterKey: "PositionRequestID",
+                  Operator: "in",
+                  FilterValue: newPositionIds,
+                },
+              ],
+              undefined,
+              ListNames.HRMSNewPositionRequestPositionDetails,
+            )
           : Promise.resolve({ data: [], status: 200, message: "" }),
       ]);
 
       const additionalPositionMap = new Map<number, any>(
-        (additionalPositionRes.data ?? []).map((d: any) => [d.parentId, d])
+        (additionalPositionRes.data ?? []).map((d: any) => [d.parentId, d]),
       );
       const newPositionMap = new Map<number, any>(
-        (newPositionRes.data ?? []).map((d: any) => [d.parentId, d])
+        (newPositionRes.data ?? []).map((d: any) => [d.parentId, d]),
       );
 
-      const mapCommonFields = (item: any, index: number): Partial<DashboardData> => ({
+      const mapCommonFields = (
+        item: any,
+        index: number,
+      ): Partial<DashboardData> => ({
         ID: item.ID,
         RecordID: index + 1,
         BusinessUnitCode: item?.BusinessUnitCode?.BusineesUnitCode ?? "",
@@ -623,8 +685,8 @@ export default class DashboardService implements IDashboard {
         Department: item?.Department?.DepartmentName ?? "",
       });
 
-      const additionalExistingResult: DashboardData[] = additionalExistingItems.map(
-        (item: any, index: number) => {
+      const additionalExistingResult: DashboardData[] =
+        additionalExistingItems.map((item: any, index: number) => {
           const pos = additionalPositionMap.get(item.ID);
           return {
             ...mapCommonFields(item, index),
@@ -634,10 +696,8 @@ export default class DashboardService implements IDashboard {
             JobTitleFrench: pos?.JobTitleFrench ?? "",
             PatersonGrade: pos?.PatersonGrade ?? "",
             DRCGrade: pos?.DRCGrade ?? "",
-
           } as DashboardData;
-        }
-      );
+        });
 
       const newPositionResult: DashboardData[] = newPositionItems.map(
         (item: any, index: number) => {
@@ -651,17 +711,18 @@ export default class DashboardService implements IDashboard {
             PatersonGrade: pos?.PatersonGrade ?? "",
             DRCGrade: pos?.DRCGrade ?? "",
           } as DashboardData;
-        }
+        },
       );
 
       const vacancyResult: DashboardData[] = vacancyItems.map(
-        (item: any, index: number) => ({
-          ...mapCommonFields(item, index),
-          Type: DataFrom.VacancyRecruitmentProcess,
-          JobCodeId: item?.JobCode?.ID ?? 0,
-          JobCode: item?.JobCode?.JobCode ?? "",
-          JobTitleEnglish: item?.JobCode?.JobTitleInEnglish ?? "",
-        } as DashboardData)
+        (item: any, index: number) =>
+          ({
+            ...mapCommonFields(item, index),
+            Type: DataFrom.VacancyRecruitmentProcess,
+            JobCodeId: item?.JobCode?.ID ?? 0,
+            JobCode: item?.JobCode?.JobCode ?? "",
+            JobTitleEnglish: item?.JobCode?.JobTitleInEnglish ?? "",
+          }) as DashboardData,
       );
 
       const GridResult: DashboardData[] = [
@@ -684,7 +745,7 @@ export default class DashboardService implements IDashboard {
   async GetPositionDetails(
     Filter: any[],
     filterConditions: any,
-    ListName: string
+    ListName: string,
   ): Promise<ApiResponse<any[]>> {
     try {
       const resdata = await SPServices.SPReadItems({
@@ -707,19 +768,27 @@ export default class DashboardService implements IDashboard {
         JobTitleFrench: item?.JobTitleFrench?.JobTitleInFrench ?? "",
       }));
 
-      return { data: result, status: 200, message: "GetPositionDetails fetched successfully" };
+      return {
+        data: result,
+        status: 200,
+        message: "GetPositionDetails fetched successfully",
+      };
     } catch (error) {
       console.error("GetPositionDetails error:", error);
-      return { data: [], status: 500, message: "Error fetching position details" };
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching position details",
+      };
     }
   }
 
   async EvalutionValidation(
-    data: IEvaluValidate
+    data: IEvaluValidate,
   ): Promise<ApiResponse<boolean>> {
     try {
       const getCurrentUserId = await CommonServices.getUserGuidByEmail(
-        data.currentEmailID
+        data.currentEmailID,
       );
 
       const levelFilter =
@@ -727,7 +796,7 @@ export default class DashboardService implements IDashboard {
           ? InterviewLevel.Level1
           : InterviewLevel.Level2;
 
-      const resdata = await SPServices.SPReadItems({
+      const resdata = (await SPServices.SPReadItems({
         Listname: ListNames.HRMSInterviewPanelDetails,
         Select: "IsScoreSheetUploaded",
         Filter: [
@@ -747,13 +816,13 @@ export default class DashboardService implements IDashboard {
             FilterValue: levelFilter,
           },
         ],
-        Topcount: 1
-      }) as IInterviewPanel[];
+        Topcount: 1,
+      })) as IInterviewPanel[];
 
       //  const [firstItem] = resdata;
 
       // const IsSubmitted = firstItem?.IsScoreSheetUploaded === "Yes";
-      const IsSubmitted = true
+      const IsSubmitted = true;
       return {
         data: IsSubmitted,
         status: 200,
@@ -769,5 +838,4 @@ export default class DashboardService implements IDashboard {
       };
     }
   }
-
 }
