@@ -28,6 +28,23 @@ var buildStatusFlags = function (statusID, empCat, consentVerification) { return
 }); };
 exports.buildStatusFlags = buildStatusFlags;
 // ─── Visibility flag builder ──────────────────────────────────────────────────
+var resolveVerificationToggle = function (is) {
+    return is.pendingHRReviewBGCheck ||
+        is.pendingHROfferReview ||
+        is.pendingHRReviewWPInit ||
+        is.pendingHRReviewOfferEC ||
+        is.pendingHRReviewWPDocs ||
+        is.pendingHRECVerification;
+};
+var resolveUploadLabel = function (is) {
+    if (is.pendingHROfferInitiate && is.isKCSAEmployee)
+        return "Upload Offer Letter";
+    if (is.wpAckContractUploaded)
+        return "Upload Employment Contract";
+    if (is.pendingFinancePayment && is.isLabourHire)
+        return "Proof Of Document";
+    return "";
+};
 var buildVisibilityFlags = function (is, hasDetails, rejectFlag) {
     var showUploadDocument = (is.pendingHROfferInitiate && is.isKCSAEmployee) ||
         (is.wpAckContractUploaded && is.isVerified) ||
@@ -46,21 +63,4 @@ var buildVisibilityFlags = function (is, hasDetails, rejectFlag) {
     };
 };
 exports.buildVisibilityFlags = buildVisibilityFlags;
-var resolveVerificationToggle = function (is) {
-    return is.pendingHRReviewBGCheck ||
-        is.pendingHROfferReview ||
-        is.pendingHRReviewWPInit ||
-        is.pendingHRReviewOfferEC ||
-        is.pendingHRReviewWPDocs ||
-        is.pendingHRECVerification;
-};
-var resolveUploadLabel = function (is) {
-    if (is.pendingHROfferInitiate && is.isKCSAEmployee)
-        return "Upload Offer Letter";
-    if (is.wpAckContractUploaded)
-        return "Upload Employment Contract";
-    if (is.pendingFinancePayment && is.isLabourHire)
-        return "Proof Of Document";
-    return "";
-};
 //# sourceMappingURL=Reviewdocumentconditions.js.map

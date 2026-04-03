@@ -148,10 +148,6 @@
   visibility: visible !important
 }
 
-.collapse {
-  visibility: collapse !important
-}
-
 .static {
   position: static !important
 }
@@ -224,10 +220,6 @@
 
 .inline-block {
   display: inline-block !important
-}
-
-.inline {
-  display: inline !important
 }
 
 .flex {

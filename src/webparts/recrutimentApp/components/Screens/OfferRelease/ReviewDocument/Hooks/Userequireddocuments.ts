@@ -319,7 +319,7 @@ export function useRequiredDocuments(
   }, [ProfileID, jobRequestID]);
 
   useEffect(() => {
-    fetchData();
+    void fetchData();
   }, [fetchData]);
 
   return { data, isLoading, error, refetch: fetchData };

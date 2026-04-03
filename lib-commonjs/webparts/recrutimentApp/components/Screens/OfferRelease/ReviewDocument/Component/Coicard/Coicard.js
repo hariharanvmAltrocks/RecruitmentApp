@@ -21,12 +21,13 @@ var COICard = function (_a) {
         onChange === null || onChange === void 0 ? void 0 : onChange(next);
     };
     var handleFileChange = function (e) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var file, toBase64, base64, docs, error_1;
+        var target, file, toBase64, base64, docs, error_1;
         var _a;
         return tslib_1.__generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    file = (_a = e.target.files) === null || _a === void 0 ? void 0 : _a[0];
+                    target = e.target;
+                    file = (_a = target.files) === null || _a === void 0 ? void 0 : _a[0];
                     if (!file)
                         return [2 /*return*/];
                     toBase64 = function (file) {
@@ -59,7 +60,7 @@ var COICard = function (_a) {
                     console.error("File conversion error:", error_1);
                     return [3 /*break*/, 4];
                 case 4:
-                    e.target.value = "";
+                    target.value = "";
                     return [2 /*return*/];
             }
         });

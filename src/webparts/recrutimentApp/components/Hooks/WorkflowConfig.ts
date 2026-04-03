@@ -55,9 +55,9 @@ export const WorkflowCandidateListConfig = (
         if (isLevel1) {
           return StatusId.CandidateOnHoldbyHODLevel2;
         } else {
-          return StatusId.OnHoldbyHOD;
         }
       }
+      break;
 
     case StatusId.pendingL2shorlistingwithHOD:
       if (Action === ButtonAction.Approve) {
@@ -67,6 +67,7 @@ export const WorkflowCandidateListConfig = (
       } else if (Action === ButtonAction.OnHold) {
         return StatusId.CandidateOnHoldbyHODLevel1;
       }
+      break;
 
     case StatusId.CandidateOnHoldbyHODLevel1:
       if (Action === ButtonAction.Approve) {
@@ -74,6 +75,7 @@ export const WorkflowCandidateListConfig = (
       } else if (Action === ButtonAction.Reject) {
         return StatusId.CandidateRejectedbyHODLevel1;
       }
+      break;
 
     case StatusId.CandidateOnHoldbyHODLevel2:
       if (Action === ButtonAction.Approve) {
@@ -81,6 +83,7 @@ export const WorkflowCandidateListConfig = (
       } else if (Action === ButtonAction.Reject) {
         return StatusId.CandidateRejectedbyHODLevel2;
       }
+      break;
 
     case StatusId.OnHoldbyHOD:
       if (Action === ButtonAction.Approve) {
@@ -88,6 +91,7 @@ export const WorkflowCandidateListConfig = (
       } else if (Action === ButtonAction.Reject) {
         return StatusId.RejectedbyHOD;
       }
+      break;
 
     case StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel:
       return StatusId.InterviewScheduledforLevel2;

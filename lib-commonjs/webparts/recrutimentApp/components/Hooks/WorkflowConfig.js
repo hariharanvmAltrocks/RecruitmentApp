@@ -48,9 +48,9 @@ var WorkflowCandidateListConfig = function (StatusID, isLevel1, Action) {
                     return Config_1.StatusId.CandidateOnHoldbyHODLevel2;
                 }
                 else {
-                    return Config_1.StatusId.OnHoldbyHOD;
                 }
             }
+            break;
         case Config_1.StatusId.pendingL2shorlistingwithHOD:
             if (Action === ConditionConfig_1.ButtonAction.Approve) {
                 return Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel;
@@ -61,6 +61,7 @@ var WorkflowCandidateListConfig = function (StatusID, isLevel1, Action) {
             else if (Action === ConditionConfig_1.ButtonAction.OnHold) {
                 return Config_1.StatusId.CandidateOnHoldbyHODLevel1;
             }
+            break;
         case Config_1.StatusId.CandidateOnHoldbyHODLevel1:
             if (Action === ConditionConfig_1.ButtonAction.Approve) {
                 return Config_1.StatusId.Selected;
@@ -68,6 +69,7 @@ var WorkflowCandidateListConfig = function (StatusID, isLevel1, Action) {
             else if (Action === ConditionConfig_1.ButtonAction.Reject) {
                 return Config_1.StatusId.CandidateRejectedbyHODLevel1;
             }
+            break;
         case Config_1.StatusId.CandidateOnHoldbyHODLevel2:
             if (Action === ConditionConfig_1.ButtonAction.Approve) {
                 return Config_1.StatusId.Selected;
@@ -75,6 +77,7 @@ var WorkflowCandidateListConfig = function (StatusID, isLevel1, Action) {
             else if (Action === ConditionConfig_1.ButtonAction.Reject) {
                 return Config_1.StatusId.CandidateRejectedbyHODLevel2;
             }
+            break;
         case Config_1.StatusId.OnHoldbyHOD:
             if (Action === ConditionConfig_1.ButtonAction.Approve) {
                 return Config_1.StatusId.Selected;
@@ -82,6 +85,7 @@ var WorkflowCandidateListConfig = function (StatusID, isLevel1, Action) {
             else if (Action === ConditionConfig_1.ButtonAction.Reject) {
                 return Config_1.StatusId.RejectedbyHOD;
             }
+            break;
         case Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel:
             return Config_1.StatusId.InterviewScheduledforLevel2;
         case Config_1.StatusId.InterviewLevel2InProgress:

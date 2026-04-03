@@ -211,7 +211,7 @@ function useRequiredDocuments(ProfileID, jobRequestID) {
         });
     }); }, [ProfileID, jobRequestID]);
     (0, react_1.useEffect)(function () {
-        fetchData();
+        void fetchData();
     }, [fetchData]);
     return { data: data, isLoading: isLoading, error: error, refetch: fetchData };
 }

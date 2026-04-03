@@ -121,7 +121,7 @@ var OfferTable = function () {
             setActiveTabKey(tabs[0].key);
         }
         if (!tableLoading) {
-            updateListPortal();
+            void updateListPortal();
         }
     }, [tabs, tableLoading]);
     (0, react_1.useEffect)(function () {

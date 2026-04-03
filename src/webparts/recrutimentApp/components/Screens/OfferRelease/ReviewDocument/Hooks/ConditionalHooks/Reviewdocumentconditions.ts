@@ -66,6 +66,22 @@ export const buildStatusFlags = (
 
 // ─── Visibility flag builder ──────────────────────────────────────────────────
 
+const resolveVerificationToggle = (is: ReviewStatusFlags): boolean =>
+  is.pendingHRReviewBGCheck ||
+  is.pendingHROfferReview ||
+  is.pendingHRReviewWPInit ||
+  is.pendingHRReviewOfferEC ||
+  is.pendingHRReviewWPDocs ||
+  is.pendingHRECVerification;
+
+const resolveUploadLabel = (is: ReviewStatusFlags): string => {
+  if (is.pendingHROfferInitiate && is.isKCSAEmployee)
+    return "Upload Offer Letter";
+  if (is.wpAckContractUploaded) return "Upload Employment Contract";
+  if (is.pendingFinancePayment && is.isLabourHire) return "Proof Of Document";
+  return "";
+};
+
 export const buildVisibilityFlags = (
   is: ReviewStatusFlags,
   hasDetails: boolean,
@@ -89,20 +105,4 @@ export const buildVisibilityFlags = (
     uploadDocLabel,
     ViewFlag: is.isVerified,
   };
-};
-
-const resolveVerificationToggle = (is: ReviewStatusFlags): boolean =>
-  is.pendingHRReviewBGCheck ||
-  is.pendingHROfferReview ||
-  is.pendingHRReviewWPInit ||
-  is.pendingHRReviewOfferEC ||
-  is.pendingHRReviewWPDocs ||
-  is.pendingHRECVerification;
-
-const resolveUploadLabel = (is: ReviewStatusFlags): string => {
-  if (is.pendingHROfferInitiate && is.isKCSAEmployee)
-    return "Upload Offer Letter";
-  if (is.wpAckContractUploaded) return "Upload Employment Contract";
-  if (is.pendingFinancePayment && is.isLabourHire) return "Proof Of Document";
-  return "";
 };

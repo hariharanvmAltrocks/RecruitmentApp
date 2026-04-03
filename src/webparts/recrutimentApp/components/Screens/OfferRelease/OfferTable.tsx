@@ -184,7 +184,7 @@ export const OfferTable: React.FC = () => {
       setActiveTabKey(tabs[0].key);
     }
     if(!tableLoading) {
-      updateListPortal();
+      void updateListPortal();
     }
   }, [tabs, tableLoading]);
 
