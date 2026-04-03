@@ -128,4 +128,5 @@ export type IOfferService = {
   UpdateStatusSelectedHOD(
     UpdateParams: IUpdateStatusSelectedHOD[],
   ): Promise<ApiResponse<any>>;
+  GetJobRequestData(data: any[]): Promise<ApiResponse<any | null>>;
 };

@@ -25,6 +25,7 @@ import { userInfo } from "../../../utilities/hooks/RoleContext";
 import { StatusId } from "../SelectionProcess/config/EvaluationConfig";
 import { useStateOfferRelease } from "./StateManage/useStateFromManage";
 import { Initiate_STAUES, REVIEW_STATUSES, EDIT_STATUSES } from "./Config";
+import { PortalItem, useUpdateListPortal } from "./ReviewDocument/Hooks/Useupdatelistportal";
 
 type ActionMode = "Initiate" | "Review" | "View" | "Edit";
 
@@ -141,6 +142,16 @@ export const OfferTable: React.FC = () => {
 
   const { items, loading: tableLoading } = useRecruitmentDetails(activeTabKey, refreshKey);
 
+  const updateList :  PortalItem[] = items.map((item) => ({
+    StatusID: item.statusId,
+    ID: item.ItemID,
+    JobRequestID: item.jobrequestID,
+    EmploymentCategory: item.employmentCategory,
+    IsExpat: item.IsExpat,
+  }));
+    const { updateListPortal, isLoading, isSuccess, error, reset } =
+    useUpdateListPortal({ items: updateList, enableLoading: tableLoading! });
+
   const {
     drawerOpen,
     reviewerComments,
@@ -172,7 +183,10 @@ export const OfferTable: React.FC = () => {
     if (!tabs.some((t) => t.key === activeTabKey)) {
       setActiveTabKey(tabs[0].key);
     }
-  }, [tabs]);
+    if(!tableLoading) {
+      updateListPortal();
+    }
+  }, [tabs, tableLoading]);
 
   useEffect(() => {
     if (sideNavflag && tabs.length > 0 && !currentTabName) {

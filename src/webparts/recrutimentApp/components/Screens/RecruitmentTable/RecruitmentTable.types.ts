@@ -54,6 +54,9 @@ export interface ISelectedCandidate {
   statusId: number;
   jobCodeID: number;
   RecID: number;
+
+  EmploymentCategory: string;
+  IsExpat: boolean;
 }
 
 export interface EvalutionItem {
