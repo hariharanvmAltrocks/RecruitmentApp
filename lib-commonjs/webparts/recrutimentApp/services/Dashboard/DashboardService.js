@@ -186,6 +186,7 @@ var DashboardService = /** @class */ (function () {
                                     ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
                                     : undefined,
                                 Department: (_o = (_m = item === null || item === void 0 ? void 0 : item.Department) === null || _m === void 0 ? void 0 : _m.DepartmentName) !== null && _o !== void 0 ? _o : "",
+                                EmploymentCategory: item === null || item === void 0 ? void 0 : item.EmploymentCategory,
                             });
                         });
                         return [2 /*return*/, {
@@ -407,6 +408,9 @@ var DashboardService = /** @class */ (function () {
                                                 CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
                                                     ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
                                                     : undefined,
+                                                isExpat: (item === null || item === void 0 ? void 0 : item.NationalityCode) === ConditionConfig_1.NationalityCode.Nationals
+                                                    ? false
+                                                    : true,
                                                 DeptDetails: deptDetails,
                                             }];
                                     }

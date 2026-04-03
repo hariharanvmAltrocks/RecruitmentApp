@@ -58,6 +58,8 @@ var mapSelectedCandidate = function (item) {
         CandidateID: candi === null || candi === void 0 ? void 0 : candi.ID,
         jobrequestID: candi === null || candi === void 0 ? void 0 : candi.jobrequestID,
         RecID: dept === null || dept === void 0 ? void 0 : dept.ID,
+        EmploymentCategory: dept === null || dept === void 0 ? void 0 : dept.EmploymentCategory,
+        IsExpat: candi === null || candi === void 0 ? void 0 : candi.isExpat,
     };
 };
 var mapRecruitmentItem = function (item) {
