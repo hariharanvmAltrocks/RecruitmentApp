@@ -45,14 +45,16 @@ export const ListNames = {
   HRMSPositionIDMaster: "HRMSPositionIDMaster",
   HRMSCategoryMaster: "HRMSCategoryMaster",
 
-
   //Additional Exisiting
-  HRMSAdditionalHeadCountForExisitingPosition: "HRMSAdditionalHeadCountForExisitingPosition",
-  HRMSAdditionalHCForExisitingPositionWithHeadCountDetails: "HRMSAdditionalHCForExisitingPositionWithHeadCountDetails",
+  HRMSAdditionalHeadCountForExisitingPosition:
+    "HRMSAdditionalHeadCountForExisitingPosition",
+  HRMSAdditionalHCForExisitingPositionWithHeadCountDetails:
+    "HRMSAdditionalHCForExisitingPositionWithHeadCountDetails",
 
   //New Position
   HRMSNewPositionRequest: "HRMSNewPositionRequest",
-  HRMSNewPositionRequestPositionDetails: "HRMSNewPositionRequestPositionDetails",
+  HRMSNewPositionRequestPositionDetails:
+    "HRMSNewPositionRequestPositionDetails",
   HRMSRecruitmentCandidateComments: "HRMSRecruitmentCandidateComments",
   HRMSCandidateLevel2ScoreCard: "HRMSCandidateLevel2ScoreCard",
 
@@ -74,8 +76,7 @@ export const ListNames = {
   HRMSRESIDRCDetails: "HRMSRESIDRCDetails",
   HRMSRESIExpatDetails: "HRMSRESIExpatDetails",
 
-  HRMSRecruitmentTabMaster: "HRMSRecruitmentTabMaster"
-
+  HRMSRecruitmentTabMaster: "HRMSRecruitmentTabMaster",
 };
 
 export const DocumentLibraray = {
@@ -87,7 +88,7 @@ export const DocumentLibraray = {
   RoleProfileMaster: "RoleProfileMaster",
   HRMSCareerPortalCandidateCV: "HRMSCareerPortalCandidateCV",
   HRMSCandidateDocs: "HRMSCandidateDocs",
-  DOTAfricaConsentForm: "DOTAfricaConsentForm"
+  DOTAfricaConsentForm: "DOTAfricaConsentForm",
 };
 
 export const RoleID = {
@@ -98,7 +99,7 @@ export const RoleID = {
   InterviewPanel: 5,
   RecruitmentAppExternalAgency: 6,
   RecruitmentLineManager: 7,
-  FinanceDepartment: 8
+  FinanceDepartment: 8,
 };
 
 export const StatusId = {
@@ -112,7 +113,7 @@ export const StatusId = {
   PendingwithHODtoselectthecandidate: 121,
   Selected: 122,
   InterviewQustionHRLM: 39,
-  InterviewScheduled: 40,
+
   Completed: 13,
   ReadyforRecruitmentProcess: 155,
   PendingInterviewquestion: 124,
@@ -120,10 +121,9 @@ export const StatusId = {
   CareerPortalQuestions: 126,
   OnHoldbyHOD: 123,
   RejectedbyHOD: 15,
-  PendingwithHODtoselectthecandidateLevel2: 127,
   PendingwithRecruitmentHRtoassignLevel2InterviewPanel: 128,
   InterviewScheduledforLevel2: 129,
-  PendingwithHODtoAssignPositionID: 130,
+  PendingwithpositionIDAssignmentWithHOD: 130,
   Rescheduled: 159,
 
   // BackGorund Verification
@@ -146,7 +146,7 @@ export const StatusId = {
   PendingHRpreonboardingchecklist: 162,
   //Labor Hire
   PendingLabourHireOfferRelease: 170,
-  PendingHROfferReview: 171,//184,//171,
+  PendingHROfferReview: 171, //184,//171,
   PendingLabourhireWPPayment: 173,
   PendingFinancePaymentReview: 174,
   PendingLHWorkPermitProcess: 175,
@@ -158,24 +158,7 @@ export const StatusId = {
   RESIProcessInitiatedforDRC: 42,
   RESIProcessInitiatedforExpatriate: 75,
 
-  PendingHRReviewOfferanduploadEmployementContract: 169,//183,//169
-
-  // PendingHRReviewOfferWorkPermit: 136,
-  // WorkPermitHRReview: 137,
-  // WorkPermitAcknowledgedContractUploaded: 138,
-  // HRReviewContractSigned: 161,
-  // PendingHRPreOnboardingChecklist: 162,
-  // PendingWorkPermituploadedbycandidate: 164,
-
-  // PendingwithRecruitmentHRtoUploadtheOfferLetter: 132,
-  // PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter: 142,
-  // PendingwithCandidatetoSignOfferLetter: 133,
-  // PendingwithRecruitmentHRtoReviewtheSignedOfferLetterandInitiateforOtherDocuments: 134,
-  // PendingwithCandidatetoUploadOtherDocuments: 135,
-  // PendingwithRecruitmentHRtoReviewtheCandidatePersonalDocs: 136,
-  // PendingwithRecruitmentHRtoUploadtheEmploymentContract: 137,
-  // PendingwithCandidatetoSignEmploymentContract: 138,
-  // pendingwithRecruitmentHRtoReviewtheEmploymentContractForm: 139,
+  PendingHRReviewOfferanduploadEmployementContract: 169, //183,//169
   OnboardingProcessinitiatedforDRC: 23,
   OnboardingProcessinitiatedforExpat: 24,
 
@@ -188,7 +171,7 @@ export const StatusId = {
   PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract: 152,
 
   CandidateOnHoldbyHODLevel1: 165,
-  CandidateOnHoldbyHODLevel2: 166,//182,//166,
+  CandidateOnHoldbyHODLevel2: 166, //182,//166,
   CandidateRejectedbyHODLevel1: 167,
   CandidateRejectedbyHODLevel2: 168,
 
@@ -197,7 +180,15 @@ export const StatusId = {
   FailedmedicalscreeningUnfit: 156,
   offerdecline: 27,
   onboardingInProcess: 46,
-  Onboarded: 157
+  Onboarded: 157,
+
+  InterviewScheduled: 40,
+  InterviewInProcess: 39,
+
+  InterviewLevel2InProgress: 197,
+  InterviewLevel1InProgress: 196,
+
+  pendingL2shorlistingwithHOD: 127,
 };
 
 export const workflowStatusApi = {
@@ -241,14 +232,12 @@ export const workflowStatusApi = {
   PendingLHECRelease: "WS33",
   OnboardingInprogress: "WS36",
 
-
   RevertedBacktoCandidateforreuploadofferLetter: "WS22",
   RevertedBacktoCandidateforreuploadDocs: "WS23",
   RevertedBacktoCandidateforreuploadEmploymentContract: "WS24",
   RevertedtheLabourHireOfferRelease: "WS34",
   RevertedtheLabourHireEmployementContract: "WS35",
-  RevetedBacktoBGVDocuments: "WS40"
-
+  RevetedBacktoBGVDocuments: "WS40",
 };
 
 export const ApplicationStatusId = {
@@ -258,14 +247,14 @@ export const ApplicationStatusId = {
   InterviewCompleted: "AS04",
   Selected: "AS05",
   ApplicationRejected: "AS06",
-  ApplicationSuspended: "AS00"
-}
+  ApplicationSuspended: "AS00",
+};
 
 export const DataFrom = {
   NewPosition: "New Position",
   ExistingPosition: "Existing Position",
-  VacancyRecruitmentProcess: "Vacancy Requirement Process"
-}
+  VacancyRecruitmentProcess: "Vacancy Requirement Process",
+};
 
 export const WorkflowAction = {
   Approved: 1,
@@ -276,10 +265,29 @@ export const WorkflowAction = {
   Closed: 6,
   ReSubmitted: 7,
   OnHold: 10,
-  Decline: 12
+  Decline: 12,
 };
 
 export const ExternalUserType = {
-    Agent: "Agent",
-    LabourHire: "Labour Hire",
-}
+  Agent: "Agent",
+  LabourHire: "Labour Hire",
+};
+
+export const PendingCandidateAlertMsg = (pendingcount: number): string => {
+  return `
+          <div style="text-align: center;">
+            <h3>⚠️ Pending Candidate Review.</h3>
+            <p>There is ${pendingcount} pending candidate currently on hold</p>
+            <p>Please review the candidate and take the necessary action to proceed with interview scheduling.</p>
+          </div>`;
+};
+
+export const JobAdvertAlertMsg = (Dateformat: any): string => {
+  return `
+              <div style="text-align: center;">
+                <h3>⚠️ Action cannot be performed.</h3>
+                <p>This job advert is still active and open for recruitment.</p>
+                <p><strong>Expiry Date:</strong> ${Dateformat}</p>
+                <p>Please try again after it expires.</p>
+              </div>`;
+};

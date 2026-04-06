@@ -1,0 +1,544 @@
+$font:            'DM Sans', sans-serif;
+$bg-page:         #F1F4F9;
+$bg-card:         #FFFFFF;
+$bg-doc:          #F7F9FC;
+$bg-doc-hover:    #EDF1F9;
+$border:          #E3E8F0;
+$text-heading:    #0B1120;
+$text-body:       #2D3A52;
+$text-muted:      #7C8BAA;
+$radius-card:     16px;
+$radius-doc:      10px;
+$shadow-card:     0 1px 4px rgba(11,17,32,.06), 0 4px 16px rgba(11,17,32,.04);
+$shadow-open:     0 2px 8px rgba(11,17,32,.07), 0 8px 32px rgba(11,17,32,.08);
+$transition:      0.22s cubic-bezier(.4,0,.2,1);
+
+// ── Repository wrapper ────────────────────────────────────────────────────────
+.repository {
+  background: rgba(248, 250, 252, .5);
+  font-family: $font;
+  padding: 36px 28px;
+  box-sizing: border-box;
+  border-radius: 21px;
+}
+
+// ── Title row ─────────────────────────────────────────────────────────────────
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.titleBar {
+  flex-shrink: 0;
+  width: 4px;
+  height: 20px;
+  border-radius: 3px;
+  background: #3B82F6;
+}
+
+.title {
+  flex: 1;
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .13em;
+  color: $text-heading;
+  text-transform: uppercase;
+}
+
+.totalBadge {
+  font-size: 12px;
+  font-weight: 500;
+  color: $text-muted;
+  background: #E3E8F0;
+  padding: 4px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+// ── Group list ────────────────────────────────────────────────────────────────
+.categoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+// ── Group card ────────────────────────────────────────────────────────────────
+.categoryCard {
+  background: $bg-card;
+  border: 1px solid $border;
+  border-radius: $radius-card;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+  transition: box-shadow $transition;
+
+  &.categoryCardOpen {
+    box-shadow: $shadow-open;
+  }
+}
+
+// ── Group header button ───────────────────────────────────────────────────────
+.categoryHeader {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 14px;
+  padding: 16px 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background $transition;
+
+  &:hover { background: rgba(0,0,0,.018); }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent, #3B82F6);
+    outline-offset: -2px;
+  }
+}
+
+// ── Group icon bubble ─────────────────────────────────────────────────────────
+.categoryIconWrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: color-mix(in srgb, var(--accent, #3B82F6) 12%, white);
+
+  svg { width: 22px; height: 22px; }
+}
+
+// ── Group text ────────────────────────────────────────────────────────────────
+.categoryMeta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.categoryName {
+  font-size: 15px;
+  font-weight: 600;
+  color: $text-body;
+  line-height: 1.2;
+}
+
+.categoryCount {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  color: $text-muted;
+  text-transform: uppercase;
+}
+
+// ── Group chevron bubble ──────────────────────────────────────────────────────
+.chevronBtn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #E8EDF5;
+  color: $text-muted;
+  transition: background $transition, color $transition;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    transition: transform $transition;
+  }
+
+  &.chevronOpen {
+    background: var(--accent, #3B82F6);
+    color: #fff;
+    svg { transform: rotate(180deg); }
+  }
+}
+
+// ── Expanded group body ───────────────────────────────────────────────────────
+.groupBody {
+  border-top: 1px solid $border;
+  animation: fadeDown .2s ease both;
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+// ── Flat doc grid ─────────────────────────────────────────────────────────────
+.docGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 10px;
+  padding: 16px 20px;
+  animation: fadeDown .2s ease both;
+}
+
+// ── Document row ──────────────────────────────────────────────────────────────
+.docRow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  background: $bg-doc;
+  border: 1px solid $border;
+  border-radius: $radius-doc;
+  transition: background $transition, border-color $transition, transform $transition, box-shadow $transition;
+
+  &:hover {
+    background: $bg-doc-hover;
+    border-color: #C5CEDF;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(11,17,32,.08);
+
+    .docRowActions {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  &:active { transform: translateY(0); }
+}
+
+.docRowIcon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #DDE4F0;
+  color: #5A6E94;
+  svg { width: 17px; height: 17px; }
+}
+
+.docRowContent {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.docRowName {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-body;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.docRowMeta {
+  font-size: 11.5px;
+  color: $text-muted;
+  font-weight: 400;
+}
+
+// ── Document row action buttons (eye + download) ───────────────────────────────
+.docRowActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity $transition;
+}
+
+.docActionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  border: 1px solid #D4DCE9;
+  background: #FFFFFF;
+  color: #5A6E94;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background $transition, color $transition, border-color $transition, transform $transition;
+
+  svg { width: 15px; height: 15px; }
+
+  &:hover {
+    background: #3B82F6;
+    border-color: #3B82F6;
+    color: #fff;
+    transform: scale(1.05);
+  }
+
+  &:active { transform: scale(0.97); }
+}
+
+// ── Sub-category list ─────────────────────────────────────────────────────────
+.subCategoryList {
+  display: flex;
+  flex-direction: column;
+}
+
+.subDivider {
+  height: 1px;
+  background: $border;
+  margin: 0 20px;
+}
+
+.subCategory {
+  background: none;
+}
+
+.subCategoryHeader {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  padding: 12px 20px 12px 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background $transition;
+
+  &:hover { background: rgba(0,0,0,.02); }
+}
+
+.subCategoryBar {
+  flex-shrink: 0;
+  width: 3px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--sub-accent, #94A3B8);
+}
+
+.subCategoryIconWrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: color-mix(in srgb, var(--sub-accent, #94A3B8) 12%, white);
+  svg { width: 16px; height: 16px; }
+}
+
+.subCategoryMeta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.subCategoryName {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-body;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subCategoryCount {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: $text-muted;
+}
+
+.subChevron {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: $text-muted;
+  transition: transform $transition;
+  svg { width: 14px; height: 14px; }
+}
+
+.subChevron:not(.subChevronOpen) {
+  transform: rotate(180deg);
+}
+
+.subDocGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 8px;
+  padding: 4px 20px 14px 71px;
+}
+
+// ── Iframe Preview Modal ───────────────────────────────────────────────────────
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 17, 32, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: overlayFadeIn .18s ease both;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modalBox {
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 900px;
+  height: 82vh;
+  max-height: 860px;
+  overflow: hidden;
+  box-shadow:
+    0 4px 16px rgba(11,17,32,.08),
+    0 24px 80px rgba(11,17,32,.28);
+  animation: modalSlideUp .24s cubic-bezier(.34,1.3,.64,1) both;
+}
+
+@keyframes modalSlideUp {
+  from { transform: translateY(28px) scale(0.97); opacity: 0; }
+  to   { transform: translateY(0)    scale(1);    opacity: 1; }
+}
+
+// ── Modal header bar ──────────────────────────────────────────────────────────
+.modalHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid $border;
+  background: #F7F9FC;
+  flex-shrink: 0;
+}
+
+.modalFileIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #DDE4F0;
+  color: #5A6E94;
+  flex-shrink: 0;
+
+  svg { width: 16px; height: 16px; }
+}
+
+.modalFileName {
+  flex: 1;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: $text-body;
+  font-family: $font;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modalHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+// Download button inside modal header
+.modalDownloadBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #D4DCE9;
+  background: #FFFFFF;
+  color: $text-body;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: $font;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background $transition, border-color $transition, color $transition;
+
+  svg { width: 14px; height: 14px; }
+
+  &:hover {
+    background: #3B82F6;
+    border-color: #3B82F6;
+    color: #fff;
+  }
+}
+
+// Close (X) button inside modal header
+.modalCloseBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #D4DCE9;
+  background: #FFFFFF;
+  color: $text-muted;
+  cursor: pointer;
+  transition: background $transition, color $transition, border-color $transition;
+
+  svg { width: 14px; height: 14px; }
+
+  &:hover {
+    background: #FEE2E2;
+    border-color: #FECACA;
+    color: #DC2626;
+  }
+}
+
+// ── iframe wrapper ────────────────────────────────────────────────────────────
+.modalIframeWrap {
+  flex: 1;
+  overflow: hidden;
+  background: #F1F4F9;
+}
+
+.modalIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+@media (max-width: 600px) {
+  .repository { padding: 20px 14px; }
+  .totalBadge { display: none; }
+  .docGrid, .subDocGrid { grid-template-columns: 1fr; padding-left: 14px; }
+  .categoryHeader { padding: 14px; }
+  .subCategoryHeader { padding: 10px 14px 10px 12px; }
+
+  .modalOverlay { padding: 12px; }
+  .modalBox { height: 90vh; border-radius: 14px; }
+  .modalHeader { padding: 12px; }
+  .modalDownloadBtn span { display: none; } // hide text label on tiny screens
+}

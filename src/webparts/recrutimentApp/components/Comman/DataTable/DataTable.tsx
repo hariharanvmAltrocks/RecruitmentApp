@@ -32,6 +32,7 @@ export interface DataTableProps<T> {
   onPageSizeChange?: (size: number) => void;
   loading?: boolean;
   emptyMessage?: string;
+  onRowClick?: (row: T) => void;
 }
 
 const getRowIdFallback = <T,>(row: T, index: number): string => {
@@ -68,6 +69,7 @@ export const DataTable = <T,>({
   onPageSizeChange,
   loading = false,
   emptyMessage = "No records found.",
+  onRowClick,
 }: DataTableProps<T>) => {
   const rowIds = useMemo(() => data.map((row, index) => getRowId(row, index)), [data, getRowId]);
   const allSelected = enableCheckbox && rowIds.length > 0 && rowIds.every((id) => selectedRowIds.includes(id));
@@ -172,6 +174,8 @@ export const DataTable = <T,>({
               return (
                 <tr
                   key={rowId}
+                  onClick={onRowClick ? () => onRowClick(row) : undefined}
+                  style={onRowClick ? { cursor: "pointer" } : undefined}
                   className={`data-table__row ${isSelected ? "data-table__row--selected" : ""}`.trim()}
                 >
                   {enableCheckbox && (

@@ -1,6 +1,3 @@
-// Components/Commentsmodal.tsx
-// FIX: level1 / level2 undefined-ஆக வந்தால் crash ஆகாமல்
-//      default [] கொடுத்து safe-ஆக handle பண்றோம்.
 
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,19 +9,18 @@ import { CommentEntry } from "../State/types";
 interface Props {
   open:    boolean;
   loading: boolean;
-  level1?: CommentEntry[];   // optional — safe against undefined
-  level2?: CommentEntry[];   // optional — safe against undefined
+  level1?: CommentEntry[];   
+  level2?: CommentEntry[];   
   onClose: () => void;
 }
 
 const CommentsModal: React.FC<Props> = ({
   open,
   loading,
-  level1 = [],   // ← default empty array — fixes "Cannot read properties of undefined (reading 'map')"
-  level2 = [],   // ← default empty array
+  level1 = [], 
+  level2 = [],   
   onClose,
 }) => {
-  // Merge Level1 + Level2 sorted by date ascending
   const allComments = React.useMemo(() => {
     const safe1 = Array.isArray(level1) ? level1 : [];
     const safe2 = Array.isArray(level2) ? level2 : [];

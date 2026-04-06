@@ -1,7 +1,4 @@
 "use strict";
-// Components/Commentsmodal.tsx
-// FIX: level1 / level2 undefined-ஆக வந்தால் crash ஆகாமல்
-//      default [] கொடுத்து safe-ஆக handle பண்றோம்.
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
@@ -10,11 +7,7 @@ var lucide_react_1 = require("lucide-react");
 var moment_1 = tslib_1.__importDefault(require("moment"));
 var ReviewScorecard_module_scss_1 = tslib_1.__importDefault(require("../ReviewScorecard.module.scss"));
 var CommentsModal = function (_a) {
-    var open = _a.open, loading = _a.loading, _b = _a.level1, level1 = _b === void 0 ? [] : _b, // ← default empty array — fixes "Cannot read properties of undefined (reading 'map')"
-    _c = _a.level2, // ← default empty array — fixes "Cannot read properties of undefined (reading 'map')"
-    level2 = _c === void 0 ? [] : _c, // ← default empty array
-    onClose = _a.onClose;
-    // Merge Level1 + Level2 sorted by date ascending
+    var open = _a.open, loading = _a.loading, _b = _a.level1, level1 = _b === void 0 ? [] : _b, _c = _a.level2, level2 = _c === void 0 ? [] : _c, onClose = _a.onClose;
     var allComments = React.useMemo(function () {
         var safe1 = Array.isArray(level1) ? level1 : [];
         var safe2 = Array.isArray(level2) ? level2 : [];

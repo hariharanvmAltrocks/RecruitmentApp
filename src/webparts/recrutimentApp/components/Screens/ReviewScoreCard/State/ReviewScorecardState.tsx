@@ -55,10 +55,10 @@ const ReviewScoreCardContent: React.FC = () => {
                             hook.setSelectedPositionText(text);
                             hook.setErrors({ ...hook.errors, position: false });
                         }}
-                        onSubmit={hook.submitDecision}
                         onClose={hook.closeReview}
                         currentRoleId={currentRoleId}
                         isLevel2Status={hook.isLevel2(hook.reviewingCandidate.statusId)}
+                        submitDeps={hook.submitDeps}
                     />
                 )}
             </AnimatePresence>
@@ -68,9 +68,6 @@ const ReviewScoreCardContent: React.FC = () => {
 
 const ReviewScoreCard: React.FC<any> = (props) => {
     const location = useLocation();
-
-    // ID comes from location.state (navigated via navigate('/ReviewScoreCard', { state: { ID: 636 } }))
-    // OR from props directly
     const locState = location.state as any;
     const recruitmentId = Number(
         locState?.ID ||
@@ -81,21 +78,8 @@ const ReviewScoreCard: React.FC<any> = (props) => {
         props?.RecruitmentID ||
         0
     );
-
-    console.log('[ReviewScoreCard] recruitmentId resolved:', recruitmentId, 'from state:', locState, 'props:', props);
-
     const { ADGroupData } = useRoleContext();
     const currentUserEmail = ADGroupData?.EmailId?.[0] || '';
-
-    if (!recruitmentId) {
-        return (
-            <div style={{ padding: 32, textAlign: 'center', color: '#b00020', fontSize: '1rem' }}>
-                <strong>Recruitment ID is missing.</strong><br />
-                Please open this page via the Review Score Card action button on the job row.
-            </div>
-        );
-    }
-
     return (
         <ReviewScoreCardProvider recruitmentId={recruitmentId} currentUserEmail={currentUserEmail}>
             <ReviewScoreCardContent />

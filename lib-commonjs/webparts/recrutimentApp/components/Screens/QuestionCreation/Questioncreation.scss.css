@@ -27,9 +27,9 @@
   --qc-radius: 20px;
   --qc-radius-lg: 28px;
   --qc-radius-xl: 32px;
-  --qc-shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --qc-shadow: 0 4px 16px rgba(37,99,235,0.08), 0 1px 4px rgba(0,0,0,0.05);
-  --qc-shadow-lg: 0 8px 32px rgba(37,99,235,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  --qc-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --qc-shadow: 0 4px 16px rgba(37, 99, 235, 0.08), 0 1px 4px rgba(0, 0, 0, 0.05);
+  --qc-shadow-lg: 0 8px 32px rgba(37, 99, 235, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .qc {
@@ -417,6 +417,9 @@
   color: var(--qc-slate-800);
   line-height: 1.5;
   margin: 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 .qc-bank__question-text--italic {
   color: var(--qc-slate-500);
@@ -432,6 +435,7 @@
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 4px;
+  width: 100%;
 }
 .qc-bank__option {
   display: inline-flex;
@@ -443,6 +447,10 @@
   border-radius: 99px;
   background: var(--qc-slate-100);
   color: var(--qc-slate-500);
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-width: 100%;
 }
 .qc-bank__option--correct {
   background: rgba(37, 99, 235, 0.1);
@@ -858,6 +866,9 @@
   border: 1px solid rgba(255, 255, 255, 0.05);
   margin-bottom: 12px;
   transition: background 0.18s;
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 .qc-prepared__card:last-child {
   margin-bottom: 0;
@@ -903,6 +914,7 @@
   flex-direction: column;
   gap: 8px;
   min-width: 0;
+  overflow: hidden;
 }
 .qc-prepared__lang-header {
   display: flex;
@@ -943,6 +955,9 @@
   color: var(--qc-white);
   line-height: 1.5;
   margin: 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 .qc-prepared__question--italic {
   color: var(--qc-slate-400);
@@ -958,6 +973,7 @@
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 4px;
+  width: 100%;
 }
 .qc-prepared__option {
   display: inline-flex;
@@ -970,6 +986,10 @@
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.05);
   color: var(--qc-slate-500);
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-width: 100%;
 }
 .qc-prepared__option--correct {
   background: rgba(37, 99, 235, 0.18);

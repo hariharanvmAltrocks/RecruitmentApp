@@ -48,7 +48,13 @@ exports.evaluationService = {
                                 Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
                                 Select: EvaluationConfig_1.EvalQueryConfig.InterviewPanel.Select,
                                 Expand: EvaluationConfig_1.EvalQueryConfig.InterviewPanel.Expand,
-                                Filter: [{ FilterKey: "InterviewPanelId", Operator: "eq", FilterValue: userGuid }],
+                                Filter: [
+                                    {
+                                        FilterKey: "InterviewPanelId",
+                                        Operator: "eq",
+                                        FilterValue: userGuid,
+                                    },
+                                ],
                             })];
                     case 1:
                         listItems = _a.sent();
@@ -76,7 +82,14 @@ exports.evaluationService = {
                                 Expand: EvaluationConfig_1.EvalQueryConfig.CandidateDetails.Expand,
                                 FilterCondition: "and",
                                 Filter: [
-                                    { FilterKey: "StatusId", Operator: "in", FilterValue: [Config_1.StatusId.InterviewScheduled, Config_1.StatusId.InterviewScheduledforLevel2] },
+                                    {
+                                        FilterKey: "StatusId",
+                                        Operator: "in",
+                                        FilterValue: [
+                                            Config_1.StatusId.InterviewScheduled,
+                                            Config_1.StatusId.InterviewScheduledforLevel2,
+                                        ],
+                                    },
                                     { FilterKey: "ItemCreated", Operator: "eq", FilterValue: "No" },
                                     { FilterKey: "ID", Operator: "in", FilterValue: candidateIDs },
                                 ],
@@ -110,7 +123,9 @@ exports.evaluationService = {
                                 Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,
                                 Select: "*,JobCodeId,JobCode/ID",
                                 Expand: "JobCode",
-                                Filter: [{ FilterKey: "ID", Operator: "eq", FilterValue: recruitmentID }],
+                                Filter: [
+                                    { FilterKey: "ID", Operator: "eq", FilterValue: recruitmentID },
+                                ],
                             })];
                     case 2:
                         dptRes = _g.sent();
@@ -119,16 +134,27 @@ exports.evaluationService = {
                                 Listname: Config_1.ListNames.HRMSRecruitmentPositionDetails,
                                 Select: "*,PatersonGrade/PatersonGrade",
                                 Expand: "PatersonGrade",
-                                Filter: [{ FilterKey: "RecruitmentID", Operator: "eq", FilterValue: recruitmentID }],
+                                Filter: [
+                                    {
+                                        FilterKey: "RecruitmentID",
+                                        Operator: "eq",
+                                        FilterValue: recruitmentID,
+                                    },
+                                ],
                             })];
                     case 3:
                         posRes = _g.sent();
-                        grade = ((_e = (_d = posRes === null || posRes === void 0 ? void 0 : posRes[0]) === null || _d === void 0 ? void 0 : _d.PatersonGrade) === null || _e === void 0 ? void 0 : _e.PatersonGrade) || ((_f = posRes === null || posRes === void 0 ? void 0 : posRes[0]) === null || _f === void 0 ? void 0 : _f.PatersonGrade) || "";
+                        grade =
+                            ((_e = (_d = posRes === null || posRes === void 0 ? void 0 : posRes[0]) === null || _d === void 0 ? void 0 : _d.PatersonGrade) === null || _e === void 0 ? void 0 : _e.PatersonGrade) ||
+                                ((_f = posRes === null || posRes === void 0 ? void 0 : posRes[0]) === null || _f === void 0 ? void 0 : _f.PatersonGrade) ||
+                                "";
                         if (!grade) return [3 /*break*/, 5];
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSGradeMaster,
                                 Select: "*",
-                                Filter: [{ FilterKey: "PatersonGrade", Operator: "eq", FilterValue: grade }],
+                                Filter: [
+                                    { FilterKey: "PatersonGrade", Operator: "eq", FilterValue: grade },
+                                ],
                             }).then(function (data) {
                                 var _a;
                                 if (data && data.length > 0)
@@ -160,8 +186,16 @@ exports.evaluationService = {
                                 Expand: "InterviewPanel",
                                 FilterCondition: "and",
                                 Filter: [
-                                    { FilterKey: "CandidateID/Id", Operator: "eq", FilterValue: candidateID },
-                                    { FilterKey: "InterviewLevel", Operator: "eq", FilterValue: interviewLevel },
+                                    {
+                                        FilterKey: "CandidateID/Id",
+                                        Operator: "eq",
+                                        FilterValue: candidateID,
+                                    },
+                                    {
+                                        FilterKey: "InterviewLevel",
+                                        Operator: "eq",
+                                        FilterValue: interviewLevel,
+                                    },
                                 ],
                             })];
                     case 1:
@@ -197,7 +231,13 @@ exports.evaluationService = {
                                 Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
                                 Select: "InterviewPanel/Id,InterviewLevel,IsScoreSheetUploaded",
                                 Expand: "InterviewPanel",
-                                Filter: [{ FilterKey: "CandidateID/Id", Operator: "eq", FilterValue: candidateID }],
+                                Filter: [
+                                    {
+                                        FilterKey: "CandidateID/Id",
+                                        Operator: "eq",
+                                        FilterValue: candidateID,
+                                    },
+                                ],
                             })];
                     case 2:
                         candidatePanels = _a.sent();
@@ -208,13 +248,17 @@ exports.evaluationService = {
                             already = userPanels
                                 .filter(function (p) { return p.InterviewLevel === EvaluationConfig_1.InterviewLevels.Level1; })
                                 .some(function (p) { return p.IsScoreSheetUploaded === "Yes"; });
-                            return [2 /*return*/, already ? { canProceed: false, level: EvaluationConfig_1.InterviewLevels.Level1 } : { canProceed: true }];
+                            return [2 /*return*/, already
+                                    ? { canProceed: false, level: EvaluationConfig_1.InterviewLevels.Level1 }
+                                    : { canProceed: true }];
                         }
                         if (statusId === Config_1.StatusId.InterviewScheduledforLevel2) {
                             already = userPanels
                                 .filter(function (p) { return p.InterviewLevel === EvaluationConfig_1.InterviewLevels.Level2; })
                                 .some(function (p) { return p.IsScoreSheetUploaded === "Yes"; });
-                            return [2 /*return*/, already ? { canProceed: false, level: EvaluationConfig_1.InterviewLevels.Level2 } : { canProceed: true }];
+                            return [2 /*return*/, already
+                                    ? { canProceed: false, level: EvaluationConfig_1.InterviewLevels.Level2 }
+                                    : { canProceed: true }];
                         }
                         return [2 /*return*/, { canProceed: true }];
                     case 3:
@@ -246,7 +290,13 @@ exports.evaluationService = {
                                 Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
                                 Select: "ID,InterviewPanel/Id,InterviewPanel/Title,InterviewPanel/EMail,InterviewLevel,IsScoreSheetUploaded",
                                 Expand: "InterviewPanel",
-                                Filter: [{ FilterKey: "CandidateID/Id", Operator: "eq", FilterValue: candidateId }],
+                                Filter: [
+                                    {
+                                        FilterKey: "CandidateID/Id",
+                                        Operator: "eq",
+                                        FilterValue: candidateId,
+                                    },
+                                ],
                             })];
                     case 2:
                         panelRes = _j.sent();
@@ -254,8 +304,12 @@ exports.evaluationService = {
                     case 3:
                         currentUserGuid_1 = _j.sent();
                         currentUserPanel = panelRes.find(function (p) { var _a; return String((_a = p.InterviewPanel) === null || _a === void 0 ? void 0 : _a.Id) === String(currentUserGuid_1); });
-                        panelEmails = panelRes.map(function (p) { var _a; return (_a = p.InterviewPanel) === null || _a === void 0 ? void 0 : _a.EMail; }).filter(Boolean);
-                        uniqueEmails = panelEmails.filter(function (value, index, self) { return self.indexOf(value) === index; });
+                        panelEmails = panelRes
+                            .map(function (p) { var _a; return (_a = p.InterviewPanel) === null || _a === void 0 ? void 0 : _a.EMail; })
+                            .filter(Boolean);
+                        uniqueEmails = panelEmails.filter(function (value, index, self) {
+                            return self.indexOf(value) === index;
+                        });
                         emailToNameMap_1 = {};
                         if (!(uniqueEmails.length > 0)) return [3 /*break*/, 7];
                         _j.label = 4;
@@ -268,14 +322,18 @@ exports.evaluationService = {
                                         case 0: return [4 /*yield*/, spservice_1.default.SPReadItems({
                                                 Listname: Config_1.ListNames.HRMSSageList,
                                                 Select: "EmailId, FirstName, LastName, MiddleName",
-                                                Filter: [{ FilterKey: "EmailId", Operator: "eq", FilterValue: email }],
+                                                Filter: [
+                                                    { FilterKey: "EmailId", Operator: "eq", FilterValue: email },
+                                                ],
                                             })];
                                         case 1:
                                             sageRes = _a.sent();
                                             if (sageRes && sageRes.length > 0) {
                                                 item = sageRes[0];
-                                                fullName = ((item.FirstName || "") + " " +
-                                                    (item.MiddleName || "") + " " +
+                                                fullName = ((item.FirstName || "") +
+                                                    " " +
+                                                    (item.MiddleName || "") +
+                                                    " " +
                                                     (item.LastName || "")).trim();
                                                 if (fullName)
                                                     emailToNameMap_1[email.toLowerCase()] = fullName;
@@ -314,8 +372,10 @@ exports.evaluationService = {
                         sageRes = _j.sent();
                         if (sageRes && sageRes.length > 0) {
                             sageUser = sageRes[0];
-                            reviewerName = ((sageUser.FirstName || "") + " " +
-                                (sageUser.MiddleName || "") + " " +
+                            reviewerName = ((sageUser.FirstName || "") +
+                                " " +
+                                (sageUser.MiddleName || "") +
+                                " " +
                                 (sageUser.LastName || "")).trim();
                             jobTitleEn = ((_a = sageUser.JobTitleInEnglish) === null || _a === void 0 ? void 0 : _a.JobTitleInEnglish) || "";
                             jobTitleFr = ((_b = sageUser.JobTitleInFrench) === null || _b === void 0 ? void 0 : _b.JobTitleInFrench) || "";
@@ -329,7 +389,9 @@ exports.evaluationService = {
                             Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,
                             Select: "*,JobCode/JobCode,JobCode/ID",
                             Expand: "JobCode",
-                            Filter: [{ FilterKey: "ID", Operator: "eq", FilterValue: recruitmentId }],
+                            Filter: [
+                                { FilterKey: "ID", Operator: "eq", FilterValue: recruitmentId },
+                            ],
                         })];
                     case 12:
                         dptRes = _j.sent();
@@ -344,7 +406,11 @@ exports.evaluationService = {
                                 Select: "*",
                                 FilterCondition: "and",
                                 Filter: [
-                                    { FilterKey: "JobCodeId", Operator: "eq", FilterValue: jobCodeId },
+                                    {
+                                        FilterKey: "JobCodeId",
+                                        Operator: "eq",
+                                        FilterValue: jobCodeId,
+                                    },
                                     { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
                                 ],
                             })];
@@ -384,9 +450,15 @@ exports.evaluationService = {
                     case 21:
                         error_1 = _j.sent();
                         return [2 /*return*/, {
-                                success: false, candidateData: null, panelMembers: [],
-                                currentUserPanelId: null, questions: [],
-                                currentUserGuid: null, reviewerName: "", jobTitleEn: "", jobTitleFr: ""
+                                success: false,
+                                candidateData: null,
+                                panelMembers: [],
+                                currentUserPanelId: null,
+                                questions: [],
+                                currentUserGuid: null,
+                                reviewerName: "",
+                                jobTitleEn: "",
+                                jobTitleFr: "",
                             }];
                     case 22: return [2 /*return*/];
                 }
@@ -416,7 +488,9 @@ exports.evaluationService = {
                             InterviewPanelIDId: panelId,
                             QuestionJson: payload.QuestionScores || "[]",
                             RoleId: roleId ? Number(roleId) : null,
-                            InterviewPersonNameId: interviewPersonNameId ? Number(interviewPersonNameId) : null,
+                            InterviewPersonNameId: interviewPersonNameId
+                                ? Number(interviewPersonNameId)
+                                : null,
                         };
                         return [4 /*yield*/, spservice_1.default.SPAddItem({
                                 Listname: Config_1.ListNames.HRMSCandidateScoreCard,
@@ -455,8 +529,14 @@ exports.evaluationService = {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        if (candidateId == null || statusId == null || !(hodDecision === null || hodDecision === void 0 ? void 0 : hodDecision.trim()) || !(comments === null || comments === void 0 ? void 0 : comments.trim())) {
-                            return [2 /*return*/, { success: false, message: "Required fields: candidateId, statusId, hodDecision, comments" }];
+                        if (candidateId == null ||
+                            statusId == null ||
+                            !(hodDecision === null || hodDecision === void 0 ? void 0 : hodDecision.trim()) ||
+                            !(comments === null || comments === void 0 ? void 0 : comments.trim())) {
+                            return [2 /*return*/, {
+                                    success: false,
+                                    message: "Required fields: candidateId, statusId, hodDecision, comments",
+                                }];
                         }
                         actionId = 0;
                         switch (hodDecision.trim().toLowerCase()) {
@@ -469,7 +549,8 @@ exports.evaluationService = {
                             case "on hold":
                                 actionId = 10;
                                 break;
-                            default: throw new Error("Invalid HOD decision: ".concat(hodDecision));
+                            default:
+                                throw new Error("Invalid HOD decision: ".concat(hodDecision));
                         }
                         payload = {
                             StatusId: statusId,
@@ -492,10 +573,17 @@ exports.evaluationService = {
                         updateResponse = _a.sent();
                         if (!updateResponse)
                             throw new Error("SPUpdateItem returned empty response");
-                        return [2 /*return*/, { success: true, message: "Candidate status updated successfully.", data: { candidateId: candidateId, statusId: statusId } }];
+                        return [2 /*return*/, {
+                                success: true,
+                                message: "Candidate status updated successfully.",
+                                data: { candidateId: candidateId, statusId: statusId },
+                            }];
                     case 2:
                         error_3 = _a.sent();
-                        return [2 /*return*/, { success: false, message: "Error updating candidate status: ".concat(error_3 === null || error_3 === void 0 ? void 0 : error_3.message) }];
+                        return [2 /*return*/, {
+                                success: false,
+                                message: "Error updating candidate status: ".concat(error_3 === null || error_3 === void 0 ? void 0 : error_3.message),
+                            }];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -513,7 +601,11 @@ exports.evaluationService = {
                             ? Config_1.ListNames.HRMSCandidateLevel2ScoreCard
                             : Config_1.ListNames.HRMSRecruitmentCandidateComments;
                         filter = [
-                            { FilterKey: "CandidateIDId", Operator: "eq", FilterValue: candidateId },
+                            {
+                                FilterKey: "CandidateIDId",
+                                Operator: "eq",
+                                FilterValue: candidateId,
+                            },
                         ];
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: listName,
@@ -533,14 +625,21 @@ exports.evaluationService = {
                                 Listname: Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD,
                                 Select: "*,PositionID/PositionID,PositionID/ID",
                                 Expand: "PositionID",
-                                Filter: [{ FilterKey: "CandidateIDId", Operator: "eq", FilterValue: candidateId }],
+                                Filter: [
+                                    {
+                                        FilterKey: "CandidateIDId",
+                                        Operator: "eq",
+                                        FilterValue: candidateId,
+                                    },
+                                ],
                             })];
                     case 3:
                         posList = _c.sent();
                         if (posList && posList.length > 0) {
                             posItem = posList[0];
                             positionId = posItem.PositionIDId || ((_a = posItem.PositionID) === null || _a === void 0 ? void 0 : _a.ID) || null;
-                            positionText = ((_b = posItem.PositionID) === null || _b === void 0 ? void 0 : _b.PositionID) || posItem.PositionIDText || "";
+                            positionText =
+                                ((_b = posItem.PositionID) === null || _b === void 0 ? void 0 : _b.PositionID) || posItem.PositionIDText || "";
                         }
                         return [3 /*break*/, 5];
                     case 4:
@@ -590,14 +689,21 @@ exports.evaluationService = {
                                 Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
                                 Select: "ID,InterviewPanel/Id,InterviewLevel,CandidateID/ID",
                                 Expand: "InterviewPanel,CandidateID",
-                                Filter: [{ FilterKey: "CandidateID/Id", Operator: "eq", FilterValue: candidateId }],
+                                Filter: [
+                                    {
+                                        FilterKey: "CandidateID/Id",
+                                        Operator: "eq",
+                                        FilterValue: candidateId,
+                                    },
+                                ],
                             })];
                     case 8:
                         matchingPanels = _a.sent();
                         userPanels = matchingPanels.filter(function (p) {
                             var _a, _b, _c, _d, _e, _f;
                             return ((_b = (_a = p.InterviewPanel) === null || _a === void 0 ? void 0 : _a.Id) === null || _b === void 0 ? void 0 : _b.toString()) === currentUserGuid_2 &&
-                                ((_f = (_d = (_c = p.CandidateID) === null || _c === void 0 ? void 0 : _c.ID) !== null && _d !== void 0 ? _d : (_e = p.CandidateID) === null || _e === void 0 ? void 0 : _e.Id) !== null && _f !== void 0 ? _f : p.CandidateIDId) === candidateId;
+                                ((_f = (_d = (_c = p.CandidateID) === null || _c === void 0 ? void 0 : _c.ID) !== null && _d !== void 0 ? _d : (_e = p.CandidateID) === null || _e === void 0 ? void 0 : _e.Id) !== null && _f !== void 0 ? _f : p.CandidateIDId) ===
+                                    candidateId;
                         });
                         _i = 0, userPanels_1 = userPanels;
                         _a.label = 9;
@@ -619,7 +725,13 @@ exports.evaluationService = {
                             Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
                             Select: "ID,InterviewLevel,IsScoreSheetUploaded,CandidateID/Id",
                             Expand: "CandidateID",
-                            Filter: [{ FilterKey: "CandidateID/Id", Operator: "eq", FilterValue: candidateId }],
+                            Filter: [
+                                {
+                                    FilterKey: "CandidateID/Id",
+                                    Operator: "eq",
+                                    FilterValue: candidateId,
+                                },
+                            ],
                         })];
                     case 13:
                         allPanels = _a.sent();
@@ -638,7 +750,10 @@ exports.evaluationService = {
                     case 14:
                         _a.sent();
                         _a.label = 15;
-                    case 15: return [2 /*return*/, { success: true, message: "Level 2 scorecard comment submitted successfully." }];
+                    case 15: return [2 /*return*/, {
+                            success: true,
+                            message: "Level 2 scorecard comment submitted successfully.",
+                        }];
                     case 16:
                         interviewLevel = "";
                         _a.label = 17;
@@ -701,7 +816,7 @@ exports.evaluationService = {
                                 actionId = EvaluationConfig_1.WorkflowAction.Approved;
                                 if (statusId === Config_1.StatusId.PendingwithHODtoselectthecandidate ||
                                     statusId === Config_1.StatusId.CandidateOnHoldbyHODLevel1) {
-                                    newStatusId = Config_1.StatusId.PendingwithHODtoAssignPositionID;
+                                    newStatusId = Config_1.StatusId.PendingwithpositionIDAssignmentWithHOD;
                                 }
                                 else {
                                     newStatusId = Config_1.StatusId.Selected;
@@ -712,7 +827,7 @@ exports.evaluationService = {
                                 if (statusId === Config_1.StatusId.PendingwithHODtoselectthecandidate) {
                                     newStatusId = Config_1.StatusId.CandidateRejectedbyHODLevel1;
                                 }
-                                else if (statusId === Config_1.StatusId.PendingwithHODtoselectthecandidateLevel2) {
+                                else if (statusId === Config_1.StatusId.PendingwithpositionIDAssignmentWithHOD) {
                                     newStatusId = Config_1.StatusId.CandidateRejectedbyHODLevel2;
                                 }
                                 else {
@@ -724,7 +839,7 @@ exports.evaluationService = {
                                 if (statusId === Config_1.StatusId.PendingwithHODtoselectthecandidate) {
                                     newStatusId = Config_1.StatusId.CandidateOnHoldbyHODLevel1;
                                 }
-                                else if (statusId === Config_1.StatusId.PendingwithHODtoselectthecandidateLevel2) {
+                                else if (statusId === Config_1.StatusId.PendingwithpositionIDAssignmentWithHOD) {
                                     newStatusId = Config_1.StatusId.CandidateOnHoldbyHODLevel2;
                                 }
                                 else {
@@ -744,11 +859,17 @@ exports.evaluationService = {
                             })];
                     case 28:
                         _a.sent();
-                        return [2 /*return*/, { success: true, message: "Candidate status updated successfully." }];
+                        return [2 /*return*/, {
+                                success: true,
+                                message: "Candidate status updated successfully.",
+                            }];
                     case 29:
                         error_4 = _a.sent();
                         console.error("[updateCandidateStatusFull] error:", error_4);
-                        return [2 /*return*/, { success: false, message: (error_4 === null || error_4 === void 0 ? void 0 : error_4.message) || "An error occurred." }];
+                        return [2 /*return*/, {
+                                success: false,
+                                message: (error_4 === null || error_4 === void 0 ? void 0 : error_4.message) || "An error occurred.",
+                            }];
                     case 30: return [2 /*return*/];
                 }
             });
@@ -767,7 +888,11 @@ exports.evaluationService = {
                             { FilterKey: "ItemCreated", Operator: "eq", FilterValue: "No" },
                         ];
                         if (currentUserEmail) {
-                            filterOpts.push({ FilterKey: "HOD", Operator: "eq", FilterValue: currentUserEmail });
+                            filterOpts.push({
+                                FilterKey: "HOD",
+                                Operator: "eq",
+                                FilterValue: currentUserEmail,
+                            });
                         }
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,
@@ -790,14 +915,21 @@ exports.evaluationService = {
                                     recruitmentID: item.ID,
                                     jobCode: ((_a = item.JobCode) === null || _a === void 0 ? void 0 : _a.JobCode) || "",
                                     jobCodeID: ((_b = item.JobCode) === null || _b === void 0 ? void 0 : _b.ID) || item.JobCodeId || 0,
-                                    jobTitle: item.JobTitleEnglish || item.JobTitle || item.PositionTitle || item.Title || "N/A",
+                                    jobTitle: item.JobTitleEnglish ||
+                                        item.JobTitle ||
+                                        item.PositionTitle ||
+                                        item.Title ||
+                                        "N/A",
                                     department: ((_c = item.Department) === null || _c === void 0 ? void 0 : _c.DepartmentName) || "",
                                     nationality: item.Nationality || "",
                                     statusId: item.StatusId || 0,
                                     status: ((_d = item.Status) === null || _d === void 0 ? void 0 : _d.StatusDescription) || "",
                                     grade: "",
                                     noOfPositions: item.NumberOfPersonNeeded || 1,
-                                    businessUnitCode: ((_e = item.BusinessUnitCode) === null || _e === void 0 ? void 0 : _e.BusineesUnitCode) || ((_f = item.BusinessUnitCode) === null || _f === void 0 ? void 0 : _f.Title) || item.BusinessUnitCode || "",
+                                    businessUnitCode: ((_e = item.BusinessUnitCode) === null || _e === void 0 ? void 0 : _e.BusineesUnitCode) ||
+                                        ((_f = item.BusinessUnitCode) === null || _f === void 0 ? void 0 : _f.Title) ||
+                                        item.BusinessUnitCode ||
+                                        "",
                                     positionRequest: item.Type || item.PositionRequest || "New Position Request",
                                 });
                             })];
@@ -823,7 +955,11 @@ exports.evaluationService = {
                         filter = candidateFilter && candidateFilter.length
                             ? tslib_1.__spreadArray([], candidateFilter, true) : [
                             { FilterKey: "ItemCreated", Operator: "eq", FilterValue: "No" },
-                            { FilterKey: "JobCodeId", Operator: "eq", FilterValue: jobCodeID },
+                            {
+                                FilterKey: "JobCodeId",
+                                Operator: "eq",
+                                FilterValue: jobCodeID,
+                            },
                             {
                                 FilterKey: "StatusId",
                                 Operator: "in",
@@ -840,7 +976,11 @@ exports.evaluationService = {
                             })];
                     case 1:
                         res = _a.sent();
-                        filteredRes = res.filter(function (item) { var _a; return ((_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.ID) === recruitmentID || item.RecruitmentIDId === recruitmentID; });
+                        filteredRes = res.filter(function (item) {
+                            var _a;
+                            return ((_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.ID) === recruitmentID ||
+                                item.RecruitmentIDId === recruitmentID;
+                        });
                         return [4 /*yield*/, this.getGradeAndLevel(recruitmentID)];
                     case 2:
                         defaultGrade_1 = (_a.sent()).grade;
@@ -858,7 +998,13 @@ exports.evaluationService = {
                                                     Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
                                                     Select: "ID,InterviewLevel,CandidateID/ID",
                                                     Expand: "CandidateID",
-                                                    Filter: [{ FilterKey: "CandidateID/Id", Operator: "eq", FilterValue: item.ID }],
+                                                    Filter: [
+                                                        {
+                                                            FilterKey: "CandidateID/Id",
+                                                            Operator: "eq",
+                                                            FilterValue: item.ID,
+                                                        },
+                                                    ],
                                                 })];
                                         case 2:
                                             panels = _e.sent();
@@ -875,7 +1021,13 @@ exports.evaluationService = {
                                             return [4 /*yield*/, spservice_1.default.SPReadItems({
                                                     Listname: Config_1.ListNames.HRMSCandidateScoreCard,
                                                     Select: "*",
-                                                    Filter: [{ FilterKey: "InterviewPanelIDId", Operator: "eq", FilterValue: panel.ID }],
+                                                    Filter: [
+                                                        {
+                                                            FilterKey: "InterviewPanelIDId",
+                                                            Operator: "eq",
+                                                            FilterValue: panel.ID,
+                                                        },
+                                                    ],
                                                 })];
                                         case 4:
                                             scorecards = _e.sent();
@@ -891,7 +1043,9 @@ exports.evaluationService = {
                                                         (Number(sc.Experience) || 0) +
                                                         (Number(sc.OtherCriteriaScore) || 0);
                                                 questionData = _parseJson(sc.QuestionJson);
-                                                questionScore = questionData.reduce(function (sum, q) { return sum + (Number(Object.values(q)[0]) || 0); }, 0);
+                                                questionScore = questionData.reduce(function (sum, q) {
+                                                    return sum + (Number(Object.values(q)[0]) || 0);
+                                                }, 0);
                                                 sumQuestion += questionScore;
                                                 maxQuestion += questionData.length * 3;
                                             }
@@ -922,7 +1076,10 @@ exports.evaluationService = {
                                                     recruitmentID: ((_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.ID) || recruitmentID,
                                                     jobCode: ((_b = item.JobCode) === null || _b === void 0 ? void 0 : _b.JobCode) || "",
                                                     jobCodeID: item.JobCodeId || jobCodeID,
-                                                    fullName: [item.FristName, item.MiddleName, item.LastName].filter(Boolean).join(" ").trim(),
+                                                    fullName: [item.FristName, item.MiddleName, item.LastName]
+                                                        .filter(Boolean)
+                                                        .join(" ")
+                                                        .trim(),
                                                     nationality: item.Nationality || "",
                                                     gender: item.Gender || "",
                                                     status: ((_c = item.Status) === null || _c === void 0 ? void 0 : _c.StatusDescription) || item.Status || "",
@@ -963,12 +1120,18 @@ exports.evaluationService = {
                                 Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
                                 Select: "ID,InterviewPanel/Id,InterviewPanel/Title,InterviewLevel",
                                 Expand: "InterviewPanel",
-                                Filter: [{ FilterKey: "CandidateID/Id", Operator: "eq", FilterValue: candidateID }],
+                                Filter: [
+                                    {
+                                        FilterKey: "CandidateID/Id",
+                                        Operator: "eq",
+                                        FilterValue: candidateID,
+                                    },
+                                ],
                             })];
                     case 1:
                         panels = _d.sent();
                         results = [];
-                        _i = 0, _a = (panels || []);
+                        _i = 0, _a = panels || [];
                         _d.label = 2;
                     case 2:
                         if (!(_i < _a.length)) return [3 /*break*/, 5];
@@ -976,7 +1139,13 @@ exports.evaluationService = {
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSCandidateScoreCard,
                                 Select: "*",
-                                Filter: [{ FilterKey: "InterviewPanelIDId", Operator: "eq", FilterValue: p.ID }],
+                                Filter: [
+                                    {
+                                        FilterKey: "InterviewPanelIDId",
+                                        Operator: "eq",
+                                        FilterValue: p.ID,
+                                    },
+                                ],
                             })];
                     case 3:
                         sc = _d.sent();
@@ -1038,11 +1207,19 @@ exports.evaluationService = {
                                 Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
                                 Select: "InterviewLevel,InterviewPanel/Id,InterviewPanel/Title,InterviewPanel/EMail",
                                 Expand: "InterviewPanel",
-                                Filter: [{ FilterKey: "CandidateID/Id", Operator: "eq", FilterValue: candidateID }],
+                                Filter: [
+                                    {
+                                        FilterKey: "CandidateID/Id",
+                                        Operator: "eq",
+                                        FilterValue: candidateID,
+                                    },
+                                ],
                             })];
                     case 1:
                         panels = _e.sent();
-                        uniqueEmails = Array.from(new Set((panels || []).map(function (p) { var _a; return (_a = p.InterviewPanel) === null || _a === void 0 ? void 0 : _a.EMail; }).filter(Boolean)));
+                        uniqueEmails = Array.from(new Set((panels || [])
+                            .map(function (p) { var _a; return (_a = p.InterviewPanel) === null || _a === void 0 ? void 0 : _a.EMail; })
+                            .filter(Boolean)));
                         emailToName_1 = {};
                         return [4 /*yield*/, Promise.all(uniqueEmails.map(function (email) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var sage, u, name_2, _a;
@@ -1053,13 +1230,18 @@ exports.evaluationService = {
                                             return [4 /*yield*/, spservice_1.default.SPReadItems({
                                                     Listname: Config_1.ListNames.HRMSSageList,
                                                     Select: "EmailId,FirstName,LastName,MiddleName",
-                                                    Filter: [{ FilterKey: "EmailId", Operator: "eq", FilterValue: email }],
+                                                    Filter: [
+                                                        { FilterKey: "EmailId", Operator: "eq", FilterValue: email },
+                                                    ],
                                                 })];
                                         case 1:
                                             sage = _b.sent();
                                             if (sage === null || sage === void 0 ? void 0 : sage.length) {
                                                 u = sage[0];
-                                                name_2 = [u.FirstName, u.MiddleName, u.LastName].filter(Boolean).join(" ").trim();
+                                                name_2 = [u.FirstName, u.MiddleName, u.LastName]
+                                                    .filter(Boolean)
+                                                    .join(" ")
+                                                    .trim();
                                                 if (name_2)
                                                     emailToName_1[email.toLowerCase()] = name_2;
                                             }
@@ -1074,10 +1256,12 @@ exports.evaluationService = {
                     case 2:
                         _e.sent();
                         grouped = {};
-                        for (_i = 0, _a = (panels || []); _i < _a.length; _i++) {
+                        for (_i = 0, _a = panels || []; _i < _a.length; _i++) {
                             p = _a[_i];
                             lvl = p.InterviewLevel || "Level 1";
-                            name_1 = emailToName_1[((_c = (_b = p.InterviewPanel) === null || _b === void 0 ? void 0 : _b.EMail) === null || _c === void 0 ? void 0 : _c.toLowerCase()) || ""] || ((_d = p.InterviewPanel) === null || _d === void 0 ? void 0 : _d.Title) || "";
+                            name_1 = emailToName_1[((_c = (_b = p.InterviewPanel) === null || _b === void 0 ? void 0 : _b.EMail) === null || _c === void 0 ? void 0 : _c.toLowerCase()) || ""] ||
+                                ((_d = p.InterviewPanel) === null || _d === void 0 ? void 0 : _d.Title) ||
+                                "";
                             if (!grouped[lvl])
                                 grouped[lvl] = [];
                             if (name_1 && !grouped[lvl].includes(name_1))
@@ -1105,7 +1289,13 @@ exports.evaluationService = {
                                 Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
                                 Select: "ID, CandidateID/ID, InterviewLevel, InterviewPanel/Id, InterviewPanel/Title, InterviewPanel/EMail",
                                 Expand: "InterviewPanel, CandidateID",
-                                Filter: [{ FilterKey: "CandidateID/Id", Operator: "eq", FilterValue: candidateID }],
+                                Filter: [
+                                    {
+                                        FilterKey: "CandidateID/Id",
+                                        Operator: "eq",
+                                        FilterValue: candidateID,
+                                    },
+                                ],
                             }).catch(function () { return []; })];
                     case 1:
                         panelItems = _e.sent();
@@ -1131,9 +1321,7 @@ exports.evaluationService = {
                             if (pid)
                                 scorecardMap_1.set(pid, sc);
                         });
-                        authorEmails = Array.from(new Set((scoreItems || [])
-                            .map(function (sc) { var _a; return (_a = sc.Author) === null || _a === void 0 ? void 0 : _a.EMail; })
-                            .filter(Boolean)));
+                        authorEmails = Array.from(new Set((scoreItems || []).map(function (sc) { var _a; return (_a = sc.Author) === null || _a === void 0 ? void 0 : _a.EMail; }).filter(Boolean)));
                         emailToEmployee_1 = {};
                         if (!(authorEmails.length > 0)) return [3 /*break*/, 6];
                         _e.label = 3;
@@ -1146,7 +1334,9 @@ exports.evaluationService = {
                                         case 0: return [4 /*yield*/, spservice_1.default.SPReadItems({
                                                 Listname: Config_1.ListNames.HRMSSageList,
                                                 Select: "EmailId, FirstName, MiddleName, LastName, JobTitle, JobTitleInEnglish, JobTitleInFrench, Department, DepartmentName",
-                                                Filter: [{ FilterKey: "EmailId", Operator: "eq", FilterValue: email }],
+                                                Filter: [
+                                                    { FilterKey: "EmailId", Operator: "eq", FilterValue: email },
+                                                ],
                                             })];
                                         case 1:
                                             sage = _a.sent();
@@ -1165,7 +1355,7 @@ exports.evaluationService = {
                     case 6:
                         level1 = [];
                         seen = new Set();
-                        for (_i = 0, _a = (panelItems || []); _i < _a.length; _i++) {
+                        for (_i = 0, _a = panelItems || []; _i < _a.length; _i++) {
                             panel = _a[_i];
                             panelID = panel.ID;
                             scoreCard = scorecardMap_1.get(panelID);
@@ -1179,8 +1369,9 @@ exports.evaluationService = {
                             firstName = (employee === null || employee === void 0 ? void 0 : employee.FirstName) || "";
                             middleName = (employee === null || employee === void 0 ? void 0 : employee.MiddleName) || "";
                             lastName = (employee === null || employee === void 0 ? void 0 : employee.LastName) || "";
-                            fullName = [firstName, middleName, lastName].filter(Boolean).join(" ").trim()
-                                || ((_c = scoreCard.Author) === null || _c === void 0 ? void 0 : _c.Title) || "";
+                            fullName = [firstName, middleName, lastName].filter(Boolean).join(" ").trim() ||
+                                ((_c = scoreCard.Author) === null || _c === void 0 ? void 0 : _c.Title) ||
+                                "";
                             jobTitleEn = (employee === null || employee === void 0 ? void 0 : employee.JobTitleInEnglish) || (employee === null || employee === void 0 ? void 0 : employee.JobTitle) || "";
                             jobTitleFr = (employee === null || employee === void 0 ? void 0 : employee.JobTitleInFrench) || "";
                             department = (employee === null || employee === void 0 ? void 0 : employee.DepartmentName) || (employee === null || employee === void 0 ? void 0 : employee.Department) || "";
@@ -1201,7 +1392,13 @@ exports.evaluationService = {
                                 Listname: Config_1.ListNames.HRMSCandidateLevel2ScoreCard,
                                 Select: "ID, CandidateID/ID, CandidateID/Title, Comments, Role/ID, Role/RoleTitle, Level, Author/Title, Author/EMail, Created",
                                 Expand: "CandidateID, Role, Author",
-                                Filter: [{ FilterKey: "CandidateIDId", Operator: "eq", FilterValue: candidateID }],
+                                Filter: [
+                                    {
+                                        FilterKey: "CandidateIDId",
+                                        Operator: "eq",
+                                        FilterValue: candidateID,
+                                    },
+                                ],
                             }).catch(function () { return []; })];
                     case 7:
                         l2Items = _e.sent();
@@ -1220,7 +1417,13 @@ exports.evaluationService = {
                                         case 0: return [4 /*yield*/, spservice_1.default.SPReadItems({
                                                 Listname: Config_1.ListNames.HRMSSageList,
                                                 Select: "EmailId, FirstName, MiddleName, LastName, JobTitle, JobTitleInEnglish, JobTitleInFrench, Department, DepartmentName",
-                                                Filter: [{ FilterKey: "EmailId", Operator: "eq", FilterValue: email }],
+                                                Filter: [
+                                                    {
+                                                        FilterKey: "EmailId",
+                                                        Operator: "eq",
+                                                        FilterValue: email,
+                                                    },
+                                                ],
                                             })];
                                         case 1:
                                             sage = _a.sent();
@@ -1244,8 +1447,9 @@ exports.evaluationService = {
                             var firstName = (employee === null || employee === void 0 ? void 0 : employee.FirstName) || "";
                             var middleName = (employee === null || employee === void 0 ? void 0 : employee.MiddleName) || "";
                             var lastName = (employee === null || employee === void 0 ? void 0 : employee.LastName) || "";
-                            var fullName = [firstName, middleName, lastName].filter(Boolean).join(" ").trim()
-                                || ((_b = item.Author) === null || _b === void 0 ? void 0 : _b.Title) || "";
+                            var fullName = [firstName, middleName, lastName].filter(Boolean).join(" ").trim() ||
+                                ((_b = item.Author) === null || _b === void 0 ? void 0 : _b.Title) ||
+                                "";
                             return {
                                 Id: item.ID,
                                 Name: fullName,
@@ -1272,52 +1476,51 @@ exports.evaluationService = {
     },
     fetchPositionOptions: function (jobCodeID, department) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var filterConditions, res, fallback, e_14;
+            var res, mapped, e_14;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 3, , 4]);
-                        filterConditions = [
-                            { FilterKey: "JobCode", Operator: "eq", FilterValue: jobCodeID },
-                            { FilterKey: "Department", Operator: "eq", FilterValue: department },
-                            { FilterKey: "PositionIDStatus", Operator: "eq", FilterValue: "Recruitment Initiator" },
-                        ];
+                        _a.trys.push([0, 2, , 3]);
+                        console.log("jobCodeID:", jobCodeID);
+                        console.log("department:", department);
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSPositionIDMaster,
-                                Select: "*,JobCode/JobCode",
-                                Expand: "JobCode",
-                                FilterCondition: "and",
-                                Filter: filterConditions,
+                                Select: '*,JobCode/JobCode,Department/DepartmentName',
+                                Expand: 'JobCode,Department',
+                                FilterCondition: 'and',
+                                Filter: [
+                                    {
+                                        FilterKey: 'JobCode',
+                                        Operator: 'eq',
+                                        FilterValue: jobCodeID,
+                                    },
+                                    {
+                                        FilterKey: 'Department/DepartmentName',
+                                        Operator: 'eq',
+                                        FilterValue: department,
+                                    },
+                                    {
+                                        FilterKey: 'PositionIDStatus',
+                                        Operator: 'eq',
+                                        FilterValue: 'Recruitment Initiated',
+                                    },
+                                ],
                                 Topcount: 100,
                             })];
                     case 1:
                         res = _a.sent();
-                        if (res && res.length > 0) {
-                            return [2 /*return*/, res.map(function (item) { return ({
-                                    key: item.ID,
-                                    text: item.PositionID || item.Title || "#".concat(item.ID),
-                                }); })];
-                        }
-                        return [4 /*yield*/, spservice_1.default.SPReadItems({
-                                Listname: Config_1.ListNames.HRMSPositionIDMaster,
-                                Select: "*",
-                                Filter: [
-                                    { FilterKey: "Department", Operator: "eq", FilterValue: department },
-                                    { FilterKey: "PositionIDStatus", Operator: "eq", FilterValue: "Recruitment Initiator" },
-                                ],
-                                Topcount: 100,
-                            })];
+                        console.log("Position raw response:", res);
+                        mapped = (res || []).map(function (item) { return ({
+                            key: item.ID,
+                            text: item.PositionID || item.Title || "#".concat(item.ID),
+                        }); });
+                        console.log("Mapped position options:", mapped);
+                        return [2 /*return*/, mapped];
                     case 2:
-                        fallback = _a.sent();
-                        return [2 /*return*/, (fallback || []).map(function (item) { return ({
-                                key: item.ID,
-                                text: item.PositionID || item.Title || "#".concat(item.ID),
-                            }); })];
-                    case 3:
                         e_14 = _a.sent();
-                        console.error("[fetchPositionOptions] error:", e_14);
+                        console.error('[fetchPositionOptions]', e_14);
                         return [2 /*return*/, []];
-                    case 4: return [2 /*return*/];
+                    case 3: return [2 /*return*/];
                 }
             });
         });
@@ -1346,7 +1549,13 @@ function _insertOrUpdateLevel1Comment(candidateId_1, roleId_1, comments_1) {
                     return [4 /*yield*/, spservice_1.default.SPReadItems({
                             Listname: Config_1.ListNames.HRMSRecruitmentCandidateComments,
                             Select: "*",
-                            Filter: [{ FilterKey: "CandidateIDId", Operator: "eq", FilterValue: candidateId }],
+                            Filter: [
+                                {
+                                    FilterKey: "CandidateIDId",
+                                    Operator: "eq",
+                                    FilterValue: candidateId,
+                                },
+                            ],
                         })];
                 case 1:
                     existing = _a.sent();
@@ -1399,7 +1608,13 @@ function _insertOrUpdateLevel2Comment(candidateId_1, roleId_1, comments_1) {
                     return [4 /*yield*/, spservice_1.default.SPReadItems({
                             Listname: Config_1.ListNames.HRMSCandidateLevel2ScoreCard,
                             Select: "*",
-                            Filter: [{ FilterKey: "CandidateIDId", Operator: "eq", FilterValue: candidateId }],
+                            Filter: [
+                                {
+                                    FilterKey: "CandidateIDId",
+                                    Operator: "eq",
+                                    FilterValue: candidateId,
+                                },
+                            ],
                         })];
                 case 1:
                     existing = _a.sent();
@@ -1488,7 +1703,9 @@ exports.EvaluationServiceHelper = {
         var _a, _b, _c, _d, _e;
         var rawDate = (candidate === null || candidate === void 0 ? void 0 : candidate.InterviewDateLevel2) || (candidate === null || candidate === void 0 ? void 0 : candidate.InterviewDate) || "";
         var formattedLevel = level === EvaluationConfig_1.InterviewLevels.Level2 ? EvaluationConfig_1.InterviewLevels.Levels2 : level;
-        var interviewDateTime = rawDate ? (0, moment_1.default)(rawDate).format("DD/MM/YYYY") : "";
+        var interviewDateTime = rawDate
+            ? (0, moment_1.default)(rawDate).format("DD/MM/YYYY")
+            : "";
         var fName = candidate.FristName || "";
         var lName = candidate.LastName || "";
         return {
@@ -1502,7 +1719,10 @@ exports.EvaluationServiceHelper = {
             gradeLabel: "",
             attachments: ((_a = candidate.CandidateCVDoc) === null || _a === void 0 ? void 0 : _a.length) || 0,
             status: ((_b = candidate.Status) === null || _b === void 0 ? void 0 : _b.StatusDescription) || candidate.Status || "",
-            statusId: candidate.StatusId || ((_c = candidate.Status) === null || _c === void 0 ? void 0 : _c.ID) || ((_d = candidate.Status) === null || _d === void 0 ? void 0 : _d.Id) || "",
+            statusId: candidate.StatusId ||
+                ((_c = candidate.Status) === null || _c === void 0 ? void 0 : _c.ID) ||
+                ((_d = candidate.Status) === null || _d === void 0 ? void 0 : _d.Id) ||
+                "",
             recruitmentID: ((_e = candidate.RecruitmentID) === null || _e === void 0 ? void 0 : _e.ID) || candidate.RecruitmentID || "",
             jobCodeID: jobCodeID,
         };

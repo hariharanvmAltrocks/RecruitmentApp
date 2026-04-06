@@ -22,7 +22,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({
 }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const { menuData } = useMenuData();
-  const { userName } = userInfo();
 
   return (
     <div className="main-layout">
@@ -37,7 +36,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({
 
       <div className="layout-content">
         <Header
-          user={userName}
           menuData={menuData}
           onToggleSidebar={() => setSidebarOpen(!isSidebarOpen)}
           onLogout={() => setSidebarOpen(false)}

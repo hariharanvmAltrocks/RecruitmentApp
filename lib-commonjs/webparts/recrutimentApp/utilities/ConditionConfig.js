@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TabName = exports.DocumentFolderName = exports.RecuritmentHRMsg = exports.EmailTemplateCodes = exports.ActionID = exports.InterviewLevels = exports.QuestionCreatedBy = exports.InterviewLevel = exports.TabNames = exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
+exports.EmployeementCategory = exports.ButtonAction = exports.DotTooltipStatus = exports.StatusBarValue = exports.DotAfricaStatus = exports.ExternalUserType = exports.DisplayFolderName = exports.BGVDocumentName = exports.DocumentFolderName = exports.RecuritmentHRMsg = exports.EmailTemplateCodes = exports.ActionID = exports.InterviewLevels = exports.QuestionCreatedBy = exports.InterviewLevel = exports.TabNames = exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
 exports.MatricID = {
     AssignHr: 1,
     UploadONEM: 2,
@@ -23,13 +23,19 @@ exports.MatricID = {
     AdvertReviewHOD: 16,
     InterviewQuestionLM: 17,
     ReviewProfileLM: 21,
+    MySubmission: 22,
+    AssignAgencies: 23,
+    BackgroundCheck: 24,
+    LabourHire: 25,
+    Kcsa: 26,
+    ReviewScoredHOD: 27,
 };
 exports.RoleName = {
     LineManager: "Line Manager",
     RecruitmentHR: "RecruitmentHR",
     HOD: "HOD",
     EXCO: "EXCO",
-    InterviewPanel: "InterviewPanel"
+    InterviewPanel: "InterviewPanel",
 };
 exports.CategoryID = {
     Department: 1,
@@ -57,7 +63,7 @@ exports.CategoryID = {
     ProofofIdentity: 23,
     TitleforProfile: 24,
     DocumentType: 26,
-    VerificationType: 41
+    VerificationType: 41,
 };
 exports.agentCode = {
     RecruitmentHR: "HRMS001",
@@ -67,13 +73,13 @@ exports.quesContentId = {
 };
 exports.DataType = {
     New: "New",
-    Existing: "Existing"
+    Existing: "Existing",
 };
 exports.ListEmailName = {
     HR: "AssignedHR",
     LM: "LineManager",
     HOD: "HOD",
-    HRLead: "RecruitmentHRLead"
+    HRLead: "RecruitmentHRLead",
 };
 exports.menuID = {
     Dashboard: 1,
@@ -81,7 +87,7 @@ exports.menuID = {
     PreSelectionProcess: 30,
     PostSelectionProcess: 31,
     ReviewProfile: 32,
-    RecrutimentTable: 28,
+    RecruitmentProcess: 28,
 };
 exports.Nationality = {
     Nationals: "Nationals (Congolese)",
@@ -92,31 +98,81 @@ exports.NationalityCode = {
     SouthAfrica: "N154",
 };
 exports.TabNames = {
+    //HR Lead
+    AssignRecuritmentHR: "Assign Recruitment HR",
+    UploadONEMDoc: "Upload ONEM Doc",
+    MySubmission: "My Submission",
+    // Recruitment HR(PreSelection)
+    UploadAdvertisement: "Job Advertisement",
+    AssignAgencies: "Assign Agencies",
+    UploadCV: "Upload CV",
+    // Recruitment HR(PostSelection)
     ReviewProfile: "Review Profile",
     AssignInterviewPanel: "Assign Interview Panel",
-    ReviewScorecard: "Review Score card"
+    InterviewpanelL1: "Interview Panel Level-1",
+    InterviewpanelL2: "Interview Panel Level-2",
+    InterviewQuestion: "Interview Questions",
+    // Candidate Articles
+    // UploadDocuments: "Upload Documents",
+    // ViewDocuments: "View Documents",
+    // CandidateDocuments: "Candidate Documents",
+    BackgroundVerification: "Background Verification",
+    OfferLetterLabourHire: "Offer Letter - Labour Hire",
+    OfferLetterKSCA: "Offer Letter - KCSA",
+    // HOD
+    ReviewJobAdvertisement: "Review Job Advertistment",
+    ReviewScorecard: "Review Score card",
+    Evaluation: "Evaluation",
+    // line Manager
+    // InterviewQuestions: "Interview Questions",
+    CandidateDetails: "Applicants Details",
+    PositionDetails: "Job Details",
+    AdvertisementDetails: "Advertisement Details",
+    AdvertisementViewDetails: "View Advertisement ",
+    ViewCandidateDetails: "Applicants Details",
+    Scorecard: "ScoreCard",
+    ViewCandidateList: "Applicants List",
+    ViewJustification: "View Comments",
+    EvaluationTab: "Candidate Details",
+    AdvertExtension: "Advert Extension",
+    ReviewLevel1: "Review Profile - Level 1",
+    ReviewLevel2: "Review Profile - Level 2",
+    Shortlisted: "Shortlisted",
+    onHold: "On Hold",
+    Rejected: "Rejected",
+    OnHoldRejected: "On Hold & Rejected",
+    CareerPortal: "Career Portal",
+    InterviewPanel: "Interview Panel",
+    ViewScoreDetails: " View ScoreCard Details",
+    ReschedulInterview: "Reschedule Interview",
+    OnboardingChecklist: "Pre Onboarding Checklist",
+    LabourHire: "Labour Hire",
+    Agent: "Agent",
+    CreateAdminPage: "Create Admin Page",
+    EnglishAdvertisment: "English", //"Job Advertisement",
+    FrenchAdvertisement: "French", //"Offre d'emploi"
 };
 exports.InterviewLevel = {
     Level1: "Level 1",
     Level2: "Level 2",
-    Level3: "Level 3"
+    Level3: "Level 3",
 };
 exports.QuestionCreatedBy = {
     LM: "LM",
-    HR: "HR"
+    HR: "HR",
 };
 exports.InterviewLevels = {
     Level1: "Level 1",
     Level2: "Level 2",
     Level3: "Level 3",
-    Levels2: "Level 1 & 2"
+    Levels2: "Level 1 & 2",
 };
 exports.ActionID = {
     Review: 1,
     View: 2,
     Approve: 3,
     onHold: 4,
-    schedule: 5
+    schedule: 5,
 };
 exports.EmailTemplateCodes = {
     LineManagerEmail: "CANDIDATE_PROFILE_SHORTLISTED",
@@ -238,59 +294,103 @@ exports.DocumentFolderName = {
     ProofOfDocument: "ProofOfPaymentDocument",
     BGVProofOfDocument: "BGVProofOfDocument",
 };
-exports.TabName = {
-    //HR Lead
-    AssignRecuritmentHR: "Assign Recruitment HR",
-    UploadONEMDoc: "Upload ONEM Doc",
-    MySubmission: "My Submission",
-    // Recruitment HR(PreSelection)
-    UploadAdvertisement: "Job Advertisement",
-    AssignAgencies: "Assign Agencies",
-    UploadCV: "Upload CV",
-    // Recruitment HR(PostSelection)
-    ReviewProfile: "Review Profile",
-    AssignInterviewPanel: "Assign Interview Panel",
-    InterviewpanelL1: "Interview Panel Level-1",
-    InterviewpanelL2: "Interview Panel Level-2",
-    InterviewQuestion: "Interview Questions",
-    // Candidate Articles
-    // UploadDocuments: "Upload Documents",
-    // ViewDocuments: "View Documents",
-    // CandidateDocuments: "Candidate Documents",
+exports.BGVDocumentName = {
+    GQ: "Global University Qualification Verification",
+    CZ: "Citizenship Verification",
+    EXP: "Experian Credit Check",
+    IDV: "ID Verification",
+    PRE: "Matric Pre-92 Umalusi Verification",
+    PST: "Matric Post-92 Umalusi Verification",
+    UMF: "Umalusi Full Verification",
+    SAQ: "SA University Qualification Verification",
+    NL: "TVET and SA Teachers College Verification",
+    TC: "Trade Certificate Verification",
+    SC: "Certificate / Short Course Verification",
+    SETA: "SETA Verification",
+    ITC: "TransUnion Credit Check",
+    IDC: "Criminal Record Check",
+    EHCR: "Employment Character Reference Verification",
+    PSY: "Psychometric Assessment",
+    DMC: "Director Member Confirmation",
+    IDCS: "ID Check Secondary",
+    PS: "Psychometric Assessment",
+    ConsentForm: "Dot's Africa Consent Form",
+};
+exports.DisplayFolderName = {
+    Offerletter: "Offer Letter",
+    LabourHireOffer: "Labour Hire Offer Letter Release",
+    LabourHireEC: "Labour Hire Employment Contract Release",
+    ConsentForm: "Code of Business Content",
+    EmploymentContractForm: "Employment Contract",
+    PersonalDocument: "Personal Document",
     BackgroundVerification: "Background Verification",
-    OfferLetterLabourHire: "Offer Letter - Labour Hire",
-    OfferLetterKSCA: "Offer Letter - KCSA",
-    // HOD
-    ReviewJobAdvertisement: "Review Job Advertistment",
-    ReviewScorecard: "Review Score card",
-    Evaluation: "Evaluation",
-    // line Manager
-    // InterviewQuestions: "Interview Questions",
-    CandidateDetails: "Applicants Details",
-    PositionDetails: "Job Details",
-    AdvertisementDetails: "Advertisement Details",
-    AdvertisementViewDetails: "View Advertisement ",
-    ViewCandidateDetails: "Applicants Details",
-    Scorecard: "ScoreCard",
-    ViewCandidateList: "Applicants List",
-    ViewJustification: "View Comments",
-    EvaluationTab: "Candidate Details",
-    AdvertExtension: "Advert Extension",
-    ReviewLevel1: "Review Profile - Level 1",
-    ReviewLevel2: "Review Profile - Level 2",
-    Shortlisted: "Shortlisted",
-    onHold: "On Hold",
-    Rejected: "Rejected",
-    OnHoldRejected: "On Hold & Rejected",
-    CareerPortal: "Career Portal",
-    InterviewPanel: "Interview Panel",
-    ViewScoreDetails: " View ScoreCard Details",
-    ReschedulInterview: "Reschedule Interview",
-    OnboardingChecklist: "Pre Onboarding Checklist",
-    LabourHire: "Labour Hire",
+    WorkPermitDocument: "WorkPermit Document",
+    WorkPermitPayment: "WorkPermit Payment Document",
+    PaymentBill: "Payment Bill Document",
+    PoliceClearanceCertificate: "Police Clearance Certificate",
+    CovidVaccinationCertificate: "Covid Vaccination Certificate",
+    YellowFeverVaccinationCertificate: "Yellow Fever Vaccination Certificate",
+};
+exports.ExternalUserType = {
     Agent: "Agent",
-    CreateAdminPage: "Create Admin Page",
-    EnglishAdvertisment: "English", //"Job Advertisement",
-    FrenchAdvertisement: "French" //"Offre d'emploi"
+    LabourHire: "Labour Hire",
+};
+exports.DotAfricaStatus = {
+    Completed: "completed",
+    Confirmed: "Confirmed",
+    skipped: "skipped",
+    skiped: "skiped",
+    pending: "pending",
+    error: "error",
+    cancelled: "cancelled",
+    new: "new",
+};
+exports.StatusBarValue = {
+    Completed: "Completed",
+    Pending: "Pending",
+    Failed: "Failed",
+};
+exports.DotTooltipStatus = {
+    Passed: "Passed",
+    Failed: "Failed",
+    Pending: "Pending",
+};
+exports.ButtonAction = {
+    Initiated: 1,
+    Update: 2,
+    Next: 3,
+    Preview: 4,
+    Submit: 5,
+    Approve: 6,
+    Reject: 7,
+    Revert: 8,
+    Cancel: 9,
+    Back: 10,
+    Save: 11,
+    Add: 12,
+    Delete: 13,
+    Edit: 14,
+    View: 15,
+    Download: 16,
+    Upload: 17,
+    Reschedule: 18,
+    Assign: 19,
+    Remove: 20,
+    close: 21,
+    Review: 22,
+    OnHold: 23,
+    ScheduleforInterview: 24,
+    Selected: 25,
+    Rejected: 26,
+    SaveAsDraft: 27,
+    New: 28,
+    ResetPassword: 29,
+    Rework: 30,
+    ProceedToSubmit: 31,
+    ReInitiate: 32,
+};
+exports.EmployeementCategory = {
+    KCSAEmployee: "KCSA Employee",
+    LaborhireContractor: "Labour hire/Contractor",
 };
 //# sourceMappingURL=ConditionConfig.js.map

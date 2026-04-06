@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FilterItem, GetProfileByFilter } from "../../../../models/Icareerportal";
-import { CandidateTable, masterService } from "../../../../services/ServiceExport";
+import {
+  FilterItem,
+  GetProfileByFilter,
+} from "../../../../models/Icareerportal";
+import {
+  CandidateTable,
+  masterService,
+} from "../../../../services/ServiceExport";
 import { useUIState } from "../../../RecrutimentApp/UIStateContext";
 import { MatricID } from "../../../../utilities/ConditionConfig";
 import { userInfo } from "../../../../utilities/hooks/RoleContext";
@@ -51,10 +57,9 @@ interface UseCandidateDashboardReturn extends CandidateDashboardState {
   refresh: () => void;
 }
 
-
 function resolveWorkflowStatusIds(
   roleIDs: number[],
-  matricId: number
+  matricId: number,
 ): string[] {
   if (roleIDs.includes(RoleID.RecruitmentHR)) {
     if (matricId === MatricID.ReviewProfileHR) {
@@ -83,11 +88,10 @@ function resolveWorkflowStatusIds(
   return [workflowStatusApi.HRPending];
 }
 
-
 export const useFetchCandidateDashboardDetails = ({
   jobId,
   initialPageSize,
-  enable = true
+  enable = true,
 }: UseCandidateDashboardOptions): UseCandidateDashboardReturn => {
   const { MatricID: matricId } = useUIState();
   const { roleIDs } = userInfo();
@@ -106,7 +110,6 @@ export const useFetchCandidateDashboardDetails = ({
   const pageSizeRef = useRef<number>(initialPageSize);
   const abortRef = useRef<AbortController | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
 
   const fetchPage = useCallback(
     async (page: number, pageSize?: number) => {
@@ -148,12 +151,13 @@ export const useFetchCandidateDashboardDetails = ({
             pagination,
           };
 
-          const res = await CandidateTable.getCandidateDetailsInJobCode(
-            filter
-          );
+          const res = await CandidateTable.getCandidateDetailsInJobCode(filter);
 
           const items: CandidateDashboardItem[] = res?.data ?? [];
-          const totalItems: number = res?.data && res?.data.length > 0 ? res?.data[0]?.TotalItems ?? items.length : 0;
+          const totalItems: number =
+            res?.data && res?.data.length > 0
+              ? (res?.data[0]?.TotalItems ?? items.length)
+              : 0;
 
           setState({
             data: items,
@@ -177,25 +181,22 @@ export const useFetchCandidateDashboardDetails = ({
         }
       }, 300);
     },
-    [jobId, matricId, roleIDs, enable]
+    [jobId, matricId, roleIDs, enable],
   );
-
 
   const setPageSize = useCallback(
     (size: number) => {
-      fetchPage(1, size);
+      void fetchPage(1, size);
     },
-    [fetchPage]
+    [fetchPage],
   );
 
-
   const refresh = useCallback(() => {
-    fetchPage(state.pagination.currentPage, pageSizeRef.current);
+    void fetchPage(state.pagination.currentPage, pageSizeRef.current);
   }, [fetchPage, state.pagination.currentPage]);
 
-
   useEffect(() => {
-    fetchPage(1, initialPageSize);
+    void fetchPage(1, initialPageSize);
 
     return () => {
       abortRef.current?.abort();

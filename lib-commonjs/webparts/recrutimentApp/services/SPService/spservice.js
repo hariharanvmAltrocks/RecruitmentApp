@@ -49,7 +49,9 @@ var _buildODataFilter = function (filters, filterCondition) {
         if (!f.FilterKey)
             return "continue";
         var op = f.Operator.toLowerCase();
-        var values = Array.isArray(f.FilterValue) ? f.FilterValue : [f.FilterValue];
+        var values = Array.isArray(f.FilterValue)
+            ? f.FilterValue
+            : [f.FilterValue];
         if (["eq", "ne", "gt", "lt", "ge", "le"].includes(op)) {
             parts.push("".concat(f.FilterKey, " ").concat(f.Operator, " '").concat(f.FilterValue, "'"));
         }
@@ -68,7 +70,9 @@ var _buildODataFilter = function (filters, filterCondition) {
             var chunks = [];
             for (var j = 0; j < values.length; j += MAX_BATCH) {
                 var slice = values.slice(j, j + MAX_BATCH);
-                chunks.push("(" + slice.map(function (v) { return "".concat(f.FilterKey, " ne '").concat(v, "'"); }).join(" and ") + ")");
+                chunks.push("(" +
+                    slice.map(function (v) { return "".concat(f.FilterKey, " ne '").concat(v, "'"); }).join(" and ") +
+                    ")");
             }
             parts.push(chunks.join(" and "));
         }
@@ -77,7 +81,7 @@ var _buildODataFilter = function (filters, filterCondition) {
         var f = filters_1[_i];
         _loop_1(f);
     }
-    var glue = (filterCondition === "and" || filterCondition === "or")
+    var glue = filterCondition === "and" || filterCondition === "or"
         ? " ".concat(filterCondition, " ")
         : " and ";
     return parts.join(glue);
@@ -102,8 +106,8 @@ var getAllUsers = function () { return tslib_1.__awaiter(void 0, void 0, void 0,
  */
 var SPAddItem = function (params) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
     return tslib_1.__generator(this, function (_a) {
-        return [2 /*return*/, (0, exports.getSP)().web.lists
-                .getByTitle(params.Listname)
+        return [2 /*return*/, (0, exports.getSP)()
+                .web.lists.getByTitle(params.Listname)
                 .items.add(params.RequestJSON)];
     });
 }); };
@@ -119,8 +123,8 @@ var SPAddItem = function (params) { return tslib_1.__awaiter(void 0, void 0, voi
  */
 var SPUpdateItem = function (params) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
     return tslib_1.__generator(this, function (_a) {
-        return [2 /*return*/, (0, exports.getSP)().web.lists
-                .getByTitle(params.Listname)
+        return [2 /*return*/, (0, exports.getSP)()
+                .web.lists.getByTitle(params.Listname)
                 .items.getById(params.ID)
                 .update(params.RequestJSON)];
     });
@@ -137,8 +141,8 @@ var SPDeleteItem = function (params) { return tslib_1.__awaiter(void 0, void 0, 
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, (0, exports.getSP)().web.lists
-                        .getByTitle(params.Listname)
+                return [4 /*yield*/, (0, exports.getSP)()
+                        .web.lists.getByTitle(params.Listname)
                         .items.getById(params.ID)
                         .delete()];
             case 1:
@@ -182,17 +186,16 @@ var SPReadItems = function (params) { return tslib_1.__awaiter(void 0, void 0, v
                 _a.label = 1;
             case 1:
                 if (!hasMore) return [3 /*break*/, 3];
-                return [4 /*yield*/, (0, exports.getSP)().web.lists
-                        .getByTitle(p.Listname)
-                        .items
-                        .select(p.Select)
+                return [4 /*yield*/, (0, exports.getSP)()
+                        .web.lists.getByTitle(p.Listname)
+                        .items.select(p.Select)
                         .filter(filterStr)
                         .expand(p.Expand)
                         .orderBy(p.Orderby, p.Orderbydecorasc)
                         .top(pageSize)()];
             case 2:
                 items = _a.sent();
-                // .skip(skip)();   
+                // .skip(skip)();
                 allItems = tslib_1.__spreadArray(tslib_1.__spreadArray([], allItems, true), items, true);
                 if (items.length < pageSize) {
                     hasMore = false;
@@ -221,8 +224,8 @@ var SPReadItemUsingId = function (params) { return tslib_1.__awaiter(void 0, voi
     var _a, _b;
     return tslib_1.__generator(this, function (_c) {
         // In PnPjs v3 a chainable IItem is callable — invoking () executes the request.
-        return [2 /*return*/, (0, exports.getSP)().web.lists
-                .getByTitle(params.Listname)
+        return [2 /*return*/, (0, exports.getSP)()
+                .web.lists.getByTitle(params.Listname)
                 .items.getById(params.SelectedId)
                 .select((_a = params.Select) !== null && _a !== void 0 ? _a : "*")
                 .expand((_b = params.Expand) !== null && _b !== void 0 ? _b : "")()];
@@ -248,8 +251,8 @@ var SPAddAttachments = function (params) { return tslib_1.__awaiter(void 0, void
     return tslib_1.__generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                item = (0, exports.getSP)().web.lists
-                    .getByTitle(params.ListName)
+                item = (0, exports.getSP)()
+                    .web.lists.getByTitle(params.ListName)
                     .items.getById(params.ListID);
                 _i = 0, _a = params.Attachments;
                 _b.label = 1;
@@ -270,8 +273,8 @@ var SPAddAttachments = function (params) { return tslib_1.__awaiter(void 0, void
 /** Returns attachment metadata for a list item. */
 var SPGetAttachments = function (params) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
     return tslib_1.__generator(this, function (_a) {
-        return [2 /*return*/, (0, exports.getSP)().web.lists
-                .getByTitle(params.Listname)
+        return [2 /*return*/, (0, exports.getSP)()
+                .web.lists.getByTitle(params.Listname)
                 .items.getById(params.ID)
                 .attachmentFiles()];
     });
@@ -280,8 +283,8 @@ var SPGetAttachments = function (params) { return tslib_1.__awaiter(void 0, void
 var SPDeleteAttachments = function (params) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
     return tslib_1.__generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, (0, exports.getSP)().web.lists
-                    .getByTitle(params.ListName)
+            case 0: return [4 /*yield*/, (0, exports.getSP)()
+                    .web.lists.getByTitle(params.ListName)
                     .items.getById(params.ListID)
                     .attachmentFiles.getByName(params.AttachmentName)
                     .delete()];
@@ -301,8 +304,8 @@ var SPDeleteAttachments = function (params) { return tslib_1.__awaiter(void 0, v
  */
 var SPGetChoices = function (params) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
     return tslib_1.__generator(this, function (_a) {
-        return [2 /*return*/, (0, exports.getSP)().web.lists
-                .getByTitle(params.Listname)
+        return [2 /*return*/, (0, exports.getSP)()
+                .web.lists.getByTitle(params.Listname)
                 .fields.getByInternalNameOrTitle(params.FieldName)()];
     });
 }); };
@@ -334,13 +337,12 @@ var batchGet = function (queries) { return tslib_1.__awaiter(void 0, void 0, voi
                 promises = queries.map(function (q) {
                     var _a;
                     var _b, _c, _d;
-                    var flatFilters = q.Filter && q.Filter.flat() || [];
+                    var flatFilters = (q.Filter && q.Filter.flat()) || [];
                     var filterStr = _buildODataFilter(flatFilters, (_b = q.FilterCondition) !== null && _b !== void 0 ? _b : "and");
                     var request = (_a = batchedSP_1.web.lists
                         .getByTitle(q.ListName)
-                        .items
-                        .filter(filterStr))
-                        .select.apply(_a, (_c = q.select) !== null && _c !== void 0 ? _c : ["*"]).expand((_d = q.expand) !== null && _d !== void 0 ? _d : []);
+                        .items.filter(filterStr))
+                        .select.apply(_a, ((_c = q.select) !== null && _c !== void 0 ? _c : ["*"])).expand((_d = q.expand) !== null && _d !== void 0 ? _d : []);
                     return request().then(function (r) {
                         console.log(r, "data");
                         if (!results_1[q.StateValue]) {
@@ -520,16 +522,34 @@ var getDocLibFiles = function (params) { return tslib_1.__awaiter(void 0, void 0
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, (0, exports.getSP)().web
-                        .getFolderByServerRelativePath(params.FilePath)
+                return [4 /*yield*/, (0, exports.getSP)()
+                        .web.getFolderByServerRelativePath(params.FilePath)
                         .files()];
             case 1:
                 files = _a.sent();
-                return [2 /*return*/, files.map(function (f) { return ({
-                        name: f.Name,
-                        content: f.ServerRelativeUrl,
-                        type: "Inlist",
-                    }); })];
+                return [2 /*return*/, files.map(function (f, index) {
+                        var _a, _b;
+                        var bytes = Number(f.Length) || 0;
+                        var mb = (bytes / (1024 * 1024)).toFixed(2);
+                        var dateStr = f.TimeCreated
+                            ? new Date(f.TimeCreated).toLocaleDateString()
+                            : "Unknown";
+                        var modified = f.TimeLastModified
+                            ? new Date(f.TimeLastModified).toLocaleString()
+                            : "Unknown";
+                        debugger;
+                        return {
+                            name: f.Name,
+                            content: f.ServerRelativeUrl,
+                            type: "Inlist",
+                            id: (_a = f.UniqueId) !== null && _a !== void 0 ? _a : "file-".concat(index),
+                            fileSizeBytes: bytes,
+                            fileSizeMB: "".concat(mb, " MB"),
+                            uploadedDate: dateStr,
+                            downloadUrl: (_b = f.ServerRelativeUrl) !== null && _b !== void 0 ? _b : "#",
+                            timeModified: modified,
+                        };
+                    })];
             case 2:
                 err_1 = _a.sent();
                 console.error("getDocLibFiles error:", err_1);
@@ -614,7 +634,9 @@ var addDocLibFiles = function (params) { return tslib_1.__awaiter(void 0, void 0
                 _d.trys.push([12, 14, , 15]);
                 return [4 /*yield*/, sp.web
                         .getFolderByServerRelativePath(currentPath)
-                        .files.addUsingPath(file.name, file.content, { Overwrite: true })];
+                        .files.addUsingPath(file.name, file.content, {
+                        Overwrite: true,
+                    })];
             case 13:
                 _d.sent();
                 return [3 /*break*/, 15];
@@ -651,7 +673,9 @@ var _buildCAMLCondition = function (filter) {
     var fieldType = isLookup ? "Integer" : filter.type;
     var lookupAttr = isLookup ? ' LookupId="TRUE"' : "";
     if (values.length > 1) {
-        var valueNodes = values.map(function (v) { return "<Value Type=\"".concat(fieldType, "\">").concat(v, "</Value>"); }).join("");
+        var valueNodes = values
+            .map(function (v) { return "<Value Type=\"".concat(fieldType, "\">").concat(v, "</Value>"); })
+            .join("");
         return "<In><FieldRef Name=\"".concat(filter.field, "\"").concat(lookupAttr, " /><Values>").concat(valueNodes, "</Values></In>");
     }
     return ("<".concat(condOp, "><FieldRef Name=\"").concat(filter.field, "\"").concat(lookupAttr, " />") +

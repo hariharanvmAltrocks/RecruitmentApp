@@ -6,17 +6,21 @@ var react_1 = require("react");
 var Config_1 = require("../../../../../../utilities/Config");
 var spservice_1 = tslib_1.__importDefault(require("../../../../../../services/SPService/spservice"));
 var ServiceExport_1 = require("../../../../../../services/ServiceExport");
+var UIStateContext_1 = require("../../../../../RecrutimentApp/UIStateContext");
+var WorkflowConfig_1 = require("../../../../../Hooks/WorkflowConfig");
 var useUpdateMainRecord = function (form, currentRoleID) {
+    var MatricID = (0, UIStateContext_1.useUIState)().MatricID;
     var updateMainRecord = (0, react_1.useCallback)(function () {
         var args_1 = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args_1[_i] = arguments[_i];
         }
         return tslib_1.__awaiter(void 0, tslib_1.__spreadArray([], args_1, true), void 0, function (extraData) {
-            var payload, tasks;
+            var StatusID, payload, tasks;
             if (extraData === void 0) { extraData = {}; }
             return tslib_1.__generator(this, function (_a) {
-                payload = tslib_1.__assign({ ActionId: Config_1.WorkflowAction.Approved, ItemCreated: "Yes" }, extraData);
+                StatusID = (0, WorkflowConfig_1.WorkflowConfig)(MatricID);
+                payload = tslib_1.__assign({ StatusId: StatusID }, extraData);
                 tasks = [
                     spservice_1.default.SPUpdateItem({
                         Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,

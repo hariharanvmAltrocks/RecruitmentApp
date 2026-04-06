@@ -1,98 +1,117 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useTrackerData = void 0;
+exports.useTrackerData = exports.mapResponseByListName = exports.callServiceByListName = void 0;
 var tslib_1 = require("tslib");
 var react_1 = require("react");
 var ServiceExport_1 = require("../../../../services/ServiceExport");
 var ApiConfig_1 = require("../../../../utilities/ApiConfig");
 var metricColumns_config_1 = require("../metricColumns.config");
 var Config_1 = require("../../../../utilities/Config");
+var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
+var callServiceByListName = function (listName, filter, condition) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+    var _a;
+    return tslib_1.__generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = listName;
+                switch (_a) {
+                    case Config_1.ListNames.HRMSNewPositionRequest: return [3 /*break*/, 1];
+                    case Config_1.ListNames.HRMSRecruitmentDptDetails: return [3 /*break*/, 3];
+                    case Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails: return [3 /*break*/, 5];
+                    case Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD: return [3 /*break*/, 7];
+                }
+                return [3 /*break*/, 9];
+            case 1: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetNPAEPVRRDetails(filter, condition)];
+            case 2: return [2 /*return*/, _b.sent()];
+            case 3: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetRecruitmentDetails(filter, condition)];
+            case 4: return [2 /*return*/, _b.sent()];
+            case 5: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetCandidateDetails(filter, condition)];
+            case 6: return [2 /*return*/, _b.sent()];
+            case 7: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetSelectedCandidate(filter, condition)];
+            case 8: return [2 /*return*/, _b.sent()];
+            case 9: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetRecruitmentDetails(filter, condition)];
+            case 10: return [2 /*return*/, _b.sent()];
+        }
+    });
+}); };
+exports.callServiceByListName = callServiceByListName;
+var mapResponseByListName = function (listName, data) {
+    if (!data)
+        return [];
+    switch (listName) {
+        case Config_1.ListNames.HRMSNewPositionRequest:
+        case Config_1.ListNames.HRMSRecruitmentDptDetails:
+            return data.map(function (item) { return ({
+                JobCode: item.JobCode,
+                JobTitle: item.JobTitleEnglish,
+                BusinessUnitCode: item.BusinessUnitCode,
+                PositionRequest: item.Type,
+                Nationality: item.Nationality,
+                Status: item.Status,
+            }); });
+        case Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails:
+            return data.map(function (item) { return ({
+                ApplicantName: item.ApplicantName,
+                PositionTitle: item.PositionTitle,
+                Nationality: item.Nationality,
+                InterviewDate: item.InterviewDate,
+                JobGrade: item.JobGrade,
+                Status: item.Status,
+            }); });
+        case Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD:
+            return data.map(function (item) { return ({
+                ApplicantName: item.ApplicantName,
+                PositionTitle: item.PositionTitle,
+                Nationality: item.Nationality,
+                PositionID: item.PositionID,
+                JobGrade: item.JobGrade,
+                Status: item.Status,
+            }); });
+        default:
+            return [];
+    }
+};
+exports.mapResponseByListName = mapResponseByListName;
 var useTrackerData = function (MatricID) {
+    var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
     var _a = (0, react_1.useState)([]), trackerData = _a[0], setTrackerData = _a[1];
     var _b = (0, react_1.useState)(false), loading = _b[0], setLoading = _b[1];
     var fetchtrackerData = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var condition, Filter, response, mappedData, filterObj, _a, error_1;
-        var _b, _c, _d, _e;
-        return tslib_1.__generator(this, function (_f) {
-            switch (_f.label) {
+        var configMap, config, configs_1, responses, allData_1, error_1;
+        return tslib_1.__generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
-                    _f.trys.push([0, 10, 11, 12]);
+                    _a.trys.push([0, 2, 3, 4]);
                     setLoading(true);
-                    condition = "and";
-                    Filter = metricColumns_config_1.MetricQueryConfig[MatricID];
-                    console.log(Filter);
-                    response = void 0;
-                    mappedData = [];
-                    filterObj = Array.isArray(Filter) ? Filter[0] : Filter;
-                    _a = filterObj.ListName;
-                    switch (_a) {
-                        case Config_1.ListNames.HRMSNewPositionRequest: return [3 /*break*/, 1];
-                        case Config_1.ListNames.HRMSRecruitmentDptDetails: return [3 /*break*/, 3];
-                        case Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails: return [3 /*break*/, 5];
-                        case Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD: return [3 /*break*/, 7];
+                    configMap = (0, metricColumns_config_1.MetricQueryConfig)(ADGroupData.EmailId[0]);
+                    config = configMap[MatricID];
+                    if (!config) {
+                        console.warn("No config found for MatricID:", MatricID);
+                        return [2 /*return*/];
                     }
-                    return [3 /*break*/, 9];
-                case 1: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetNPAEPVRRDetails(filterObj.Filter, condition)];
+                    configs_1 = Array.isArray(config) ? config : [config];
+                    return [4 /*yield*/, Promise.all(configs_1.map(function (cfg) {
+                            return (0, exports.callServiceByListName)(cfg.ListName, cfg.Filter, "and");
+                        }))];
+                case 1:
+                    responses = _a.sent();
+                    allData_1 = [];
+                    responses.forEach(function (response, index) {
+                        if ((response === null || response === void 0 ? void 0 : response.status) === ApiConfig_1.ResponeStatus.SUCCESS) {
+                            var mapped = (0, exports.mapResponseByListName)(configs_1[index].ListName, response.data);
+                            allData_1.push.apply(allData_1, mapped);
+                        }
+                    });
+                    setTrackerData(allData_1);
+                    return [3 /*break*/, 4];
                 case 2:
-                    response = _f.sent();
-                    mappedData = ((_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.map(function (item) { return ({
-                        JobCode: item.JobCode,
-                        JobTitle: item.JobTitleEnglish,
-                        BusinessUnitCode: item.BusinessUnitCode,
-                        PositionRequest: item.Type,
-                        Nationality: item.Nationality,
-                        Status: item.Status,
-                    }); })) || [];
-                    return [3 /*break*/, 9];
-                case 3: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetRecruitmentDetails(filterObj.Filter[0], condition)];
-                case 4:
-                    response = _f.sent();
-                    mappedData = ((_c = response === null || response === void 0 ? void 0 : response.data) === null || _c === void 0 ? void 0 : _c.map(function (item) { return ({
-                        JobCode: item.JobCode,
-                        JobTitle: item.JobTitleEnglish,
-                        BusinessUnitCode: item.BusinessUnitCode,
-                        PositionRequest: item.Type,
-                        Nationality: item.Nationality,
-                        Status: item.Status,
-                    }); })) || [];
-                    return [3 /*break*/, 9];
-                case 5: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetCandidateDetails(filterObj.Filter[0], condition)];
-                case 6:
-                    response = _f.sent();
-                    mappedData = ((_d = response === null || response === void 0 ? void 0 : response.data) === null || _d === void 0 ? void 0 : _d.map(function (item) { return ({
-                        ApplicantName: item.ApplicantName,
-                        PositionTitle: item.PositionTitle,
-                        Nationality: item.Nationality,
-                        InterviewDate: item.InterviewDate,
-                        JobGrade: item.JobGrade,
-                        Status: item.Status,
-                    }); })) || [];
-                    return [3 /*break*/, 9];
-                case 7: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetSelectedCandidate(filterObj.Filter[0], condition)];
-                case 8:
-                    response = _f.sent();
-                    mappedData = ((_e = response === null || response === void 0 ? void 0 : response.data) === null || _e === void 0 ? void 0 : _e.map(function (item) { return ({
-                        ApplicantName: item.ApplicantName,
-                        PositionTitle: item.PositionTitle,
-                        Nationality: item.Nationality,
-                        PositionID: item.PositionID,
-                        JobGrade: item.JobGrade,
-                        Status: item.Status,
-                    }); })) || [];
-                    return [3 /*break*/, 9];
-                case 9:
-                    if (response && response.status === ApiConfig_1.ResponeStatus.SUCCESS) {
-                        setTrackerData(mappedData);
-                    }
-                    return [3 /*break*/, 12];
-                case 10:
-                    error_1 = _f.sent();
-                    console.error("Dashboard metrics error", error_1);
-                    return [3 /*break*/, 12];
-                case 11:
+                    error_1 = _a.sent();
+                    console.error("Error fetching tracker data:", error_1);
+                    return [3 /*break*/, 4];
+                case 3:
                     setLoading(false);
                     return [7 /*endfinally*/];
-                case 12: return [2 /*return*/];
+                case 4: return [2 /*return*/];
             }
         });
     }); }, [MatricID]);

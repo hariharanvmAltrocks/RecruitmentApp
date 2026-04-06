@@ -9,6 +9,8 @@ var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
 var Config_1 = require("../../../../utilities/Config");
 var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
 var spservice_1 = tslib_1.__importDefault(require("../../../../services/SPService/spservice"));
+var WorkflowConfig_1 = require("../../../Hooks/WorkflowConfig");
+var UIStateContext_1 = require("../../../RecrutimentApp/UIStateContext");
 var decodeBase64 = function (str) {
     var utf8Bytes = new TextEncoder().encode(str);
     var binary = String.fromCharCode.apply(String, utf8Bytes);
@@ -42,7 +44,7 @@ function transformToUpsertPayload(payload, userId) {
                                 scopeId: (_a = payload.DptCode) !== null && _a !== void 0 ? _a : "",
                                 categoryId: categoryID !== null && categoryID !== void 0 ? categoryID : "",
                                 questionTypeId: questionType,
-                                isQualifier: 0,
+                                isQualifier: 1,
                                 isAnswerValidate: 0,
                                 sequence: index + 1,
                                 jobCode: (_b = jobCodeKey.data.JobCode) !== null && _b !== void 0 ? _b : "",
@@ -83,8 +85,9 @@ var useSaveQuestions = function () {
     var _a = (0, react_1.useState)(false), saving = _a[0], setSaving = _a[1];
     var _b = (0, react_1.useState)(null), error = _b[0], setError = _b[1];
     var roleIDs = (0, RoleContext_1.userInfo)().roleIDs;
+    var MatricID = (0, UIStateContext_1.useUIState)().MatricID;
     var save = (0, react_1.useCallback)(function (payload) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var userId, upsertPayload, response, updatePayload, err_1;
+        var userId, upsertPayload, response, updatePayload, StatusID, err_1;
         var _a;
         return tslib_1.__generator(this, function (_b) {
             switch (_b.label) {
@@ -108,8 +111,10 @@ var useSaveQuestions = function () {
                     }
                     updatePayload = {};
                     if (payload.mode === "careerPortal") {
+                        StatusID = (0, WorkflowConfig_1.WorkflowConfig)(MatricID);
                         updatePayload = {
-                            ItemCreated: "Yes",
+                            StatusId: StatusID,
+                            // ItemCreated: "Yes",
                         };
                     }
                     else {

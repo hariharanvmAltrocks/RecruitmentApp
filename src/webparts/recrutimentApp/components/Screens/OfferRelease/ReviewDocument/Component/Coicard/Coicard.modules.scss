@@ -1,0 +1,377 @@
+// components/COICard/COICard.scss
+@import "../../../../../../styles/theme";
+@import "../../../../../../styles/variables";
+
+// ─── Local tokens ─────────────────────────────────────────────────────────────
+$coi-danger:        #dc2626;
+$coi-danger-bg:     #fff1f2;
+$coi-danger-border: #fecdd3;
+$coi-danger-text:   #991b1b;
+
+$coi-success:       #16a34a;
+$coi-success-bg:    #f0fdf4;
+$coi-success-border:#bbf7d0;
+
+$coi-error:         #e53e3e;
+$coi-error-bg:      rgba(229, 62, 62, 0.05);
+
+$coi-transition:    0.16s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ─── Card root ────────────────────────────────────────────────────────────────
+.coi-card {
+  background: $white;
+  border: 1px solid $coi-danger-border;
+  border-radius: $radius-xl;
+  padding: $space-xl;
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+  font-family: $font-family;
+}
+
+// ─── Alert banner ─────────────────────────────────────────────────────────────
+.coi-card__alert {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-md;
+  padding: $space-md $space-lg;
+  background: $coi-danger-bg;
+  border: 1px solid $coi-danger-border;
+  border-radius: $radius-lg;
+}
+
+.coi-card__alert-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-md;
+  background: rgba($coi-danger, 0.1);
+  color: $coi-danger;
+  margin-top: 1px;
+}
+
+.coi-card__alert-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.coi-card__alert-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: $coi-danger-text;
+}
+
+.coi-card__alert-reason {
+  font-size: 13px;
+  color: $coi-danger;
+  line-height: 1.55;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+// ─── Fields grid ──────────────────────────────────────────────────────────────
+.coi-card__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-xl;
+  align-items: start;
+
+  @media (max-width: 680px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.coi-card__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &--error {
+    .coi-card__select,
+    .coi-card__upload-btn {
+      border-color: $coi-error !important;
+      background: $coi-error-bg;
+    }
+  }
+}
+
+// ─── Label ────────────────────────────────────────────────────────────────────
+.coi-card__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $text-subtle;
+}
+
+.coi-card__required {
+  color: $coi-danger;
+  margin-left: 2px;
+}
+
+// ─── Select ───────────────────────────────────────────────────────────────────
+.coi-card__select-wrap {
+  position: relative;
+}
+
+.coi-card__select {
+  width: 100%;
+  height: 40px;
+  padding: 0 36px 0 12px;
+  border: 1px solid $border-base;
+  border-radius: $radius-md;
+  background: $white;
+  font-family: $font-family;
+  font-size: 13px;
+  font-weight: 500;
+  color: $text-primary;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color $coi-transition, box-shadow $coi-transition;
+
+  &:hover:not(:disabled) {
+    border-color: darken($border-base, 10%);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+
+  &:disabled {
+    background: $secondary-color;
+    cursor: not-allowed;
+    color: $text-muted;
+  }
+}
+
+.coi-card__select-chevron {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $text-subtle;
+  pointer-events: none;
+}
+
+// ─── Upload button ────────────────────────────────────────────────────────────
+.coi-card__upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px dashed $border-base;
+  border-radius: $radius-md;
+  background: rgba(248, 250, 252, 0.6);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color $coi-transition, background $coi-transition;
+
+  &:hover {
+    border-color: $primary-color;
+    background: rgba(37, 99, 235, 0.04);
+
+    .coi-card__upload-icon {
+      background: $primary-color;
+      color: $white;
+    }
+  }
+
+  &--error {
+    border-color: $coi-error !important;
+    background: $coi-error-bg !important;
+  }
+}
+
+.coi-card__upload-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-sm;
+  background: $border-light;
+  color: $text-subtle;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background $coi-transition, color $coi-transition;
+}
+
+.coi-card__upload-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.coi-card__upload-primary {
+  font-size: 13px;
+  font-weight: 600;
+  color: $primary-color;
+}
+
+.coi-card__upload-hint {
+  font-size: 11px;
+  color: $text-subtle;
+}
+
+// ─── File preview ─────────────────────────────────────────────────────────────
+.coi-card__file-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: $coi-success-bg;
+  border: 1px solid $coi-success-border;
+  border-radius: $radius-md;
+  animation: coiSlideIn 0.18s ease;
+
+  &--readonly {
+    background: $secondary-color;
+    border-color: $border-light;
+  }
+}
+
+@keyframes coiSlideIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.coi-card__file-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-sm;
+  background: rgba($coi-success, 0.12);
+  color: $coi-success;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.coi-card__file-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.coi-card__file-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-primary;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.coi-card__file-ready {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: $coi-success;
+}
+
+.coi-card__file-remove {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: $radius-sm;
+  border: 1px solid $coi-danger-border;
+  background: $coi-danger-bg;
+  color: $coi-danger;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background $coi-transition;
+
+  &:hover {
+    background: $coi-danger-border;
+  }
+}
+
+.coi-card__empty {
+  font-size: 13px;
+  color: $text-muted;
+  font-style: italic;
+}
+
+// ─── Textarea ─────────────────────────────────────────────────────────────────
+.coi-card__textarea-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.coi-card__textarea-relative {
+  position: relative;
+}
+
+.coi-card__textarea {
+  width: 100%;
+  min-height: 110px;
+  padding: 10px 12px 28px;
+  border: 1px solid $border-base;
+  border-radius: $radius-md;
+  background: $white;
+  font-family: $font-family;
+  font-size: 13px;
+  line-height: 1.6;
+  color: $text-primary;
+  resize: vertical;
+  transition: border-color $coi-transition, box-shadow $coi-transition;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+
+  &[readonly] {
+    background: $secondary-color;
+    cursor: default;
+    color: $text-secondary;
+  }
+
+  &--error {
+    border-color: $coi-error !important;
+    background: $coi-error-bg;
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba($coi-error, 0.12);
+    }
+  }
+}
+
+.coi-card__char-count {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  font-size: 11px;
+  color: $text-subtle;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+// ─── Error message ────────────────────────────────────────────────────────────
+.coi-card__error-msg {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: $coi-error;
+  margin-top: 2px;
+}

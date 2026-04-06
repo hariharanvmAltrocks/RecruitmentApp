@@ -3,8 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useScoreCard = useScoreCard;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
-// Default service — scorecard is a fresh submission each time (no pre-fill from API).
-// If you need to pre-populate from a saved draft, replace this implementation.
 var defaultService = {
     getScoreCard: function (_candidateId) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         return tslib_1.__generator(this, function (_a) {
@@ -44,7 +42,7 @@ function useScoreCard(candidateId, service) {
                     case 3:
                         err_1 = _a.sent();
                         if (isMounted)
-                            setError(err_1 instanceof Error ? err_1.message : 'Unable to load scorecard.');
+                            setError(err_1 instanceof Error ? err_1.message : "Unable to load scorecard.");
                         return [3 /*break*/, 5];
                     case 4:
                         if (isMounted)
@@ -54,8 +52,10 @@ function useScoreCard(candidateId, service) {
                 }
             });
         }); };
-        load();
-        return function () { isMounted = false; };
+        void load();
+        return function () {
+            isMounted = false;
+        };
     }, [candidateId, service, refreshKey]);
     var reload = React.useCallback(function () { return setRefreshKey(function (k) { return k + 1; }); }, []);
     return { data: data, loading: loading, error: error, reload: reload };

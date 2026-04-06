@@ -24,8 +24,8 @@ var RecrutimentAppWebPart = /** @class */ (function (_super) {
     function RecrutimentAppWebPart() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this._isDarkTheme = false;
-        _this._environmentMessage = '';
-        _this._sp = new sp_1.SPFI;
+        _this._environmentMessage = "";
+        _this._sp = new sp_1.SPFI();
         return _this;
     }
     RecrutimentAppWebPart.prototype.render = function () {
@@ -37,7 +37,7 @@ var RecrutimentAppWebPart = /** @class */ (function (_super) {
             isDarkTheme: this._isDarkTheme,
             environmentMessage: this._environmentMessage,
             hasTeamsContext: !!this.context.sdks.microsoftTeams,
-            userDisplayName: this.context.pageContext.user.displayName
+            userDisplayName: this.context.pageContext.user.displayName,
         });
         ReactDom.render(element, this.domElement);
     };
@@ -66,20 +66,28 @@ var RecrutimentAppWebPart = /** @class */ (function (_super) {
     // }
     RecrutimentAppWebPart.prototype._getEnvironmentMessage = function () {
         var _this = this;
-        if (!!this.context.sdks.microsoftTeams) { // running in Teams, office.com or Outlook
-            return this.context.sdks.microsoftTeams.teamsJs.app.getContext()
+        if (!!this.context.sdks.microsoftTeams) {
+            // running in Teams, office.com or Outlook
+            return this.context.sdks.microsoftTeams.teamsJs.app
+                .getContext()
                 .then(function (context) {
-                var environmentMessage = '';
+                var environmentMessage = "";
                 switch (context.app.host.name) {
-                    case 'Office': // running in Office
-                        environmentMessage = _this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentOffice : strings.AppOfficeEnvironment;
+                    case "Office": // running in Office
+                        environmentMessage = _this.context.isServedFromLocalhost
+                            ? strings.AppLocalEnvironmentOffice
+                            : strings.AppOfficeEnvironment;
                         break;
-                    case 'Outlook': // running in Outlook
-                        environmentMessage = _this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentOutlook : strings.AppOutlookEnvironment;
+                    case "Outlook": // running in Outlook
+                        environmentMessage = _this.context.isServedFromLocalhost
+                            ? strings.AppLocalEnvironmentOutlook
+                            : strings.AppOutlookEnvironment;
                         break;
-                    case 'Teams': // running in Teams
-                    case 'TeamsModern':
-                        environmentMessage = _this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentTeams : strings.AppTeamsTabEnvironment;
+                    case "Teams": // running in Teams
+                    case "TeamsModern":
+                        environmentMessage = _this.context.isServedFromLocalhost
+                            ? strings.AppLocalEnvironmentTeams
+                            : strings.AppTeamsTabEnvironment;
                         break;
                     default:
                         environmentMessage = strings.UnknownEnvironment;
@@ -87,7 +95,9 @@ var RecrutimentAppWebPart = /** @class */ (function (_super) {
                 return environmentMessage;
             });
         }
-        return Promise.resolve(this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentSharePoint : strings.AppSharePointEnvironment);
+        return Promise.resolve(this.context.isServedFromLocalhost
+            ? strings.AppLocalEnvironmentSharePoint
+            : strings.AppSharePointEnvironment);
     };
     RecrutimentAppWebPart.prototype.onThemeChanged = function (currentTheme) {
         if (!currentTheme) {
@@ -96,12 +106,27 @@ var RecrutimentAppWebPart = /** @class */ (function (_super) {
         this._isDarkTheme = !!currentTheme.isInverted;
         var semanticColors = currentTheme.semanticColors;
         if (semanticColors) {
-            this.domElement.style.setProperty('--bodyText', semanticColors.bodyText || null);
-            this.domElement.style.setProperty('--link', semanticColors.link || null);
-            this.domElement.style.setProperty('--linkHovered', semanticColors.linkHovered || null);
-            this.domElement.style.setProperty('--primaryColor', '#0078d4');
-            this.domElement.style.setProperty('--secondaryColor', '#ff8c00');
-            this.domElement.style.setProperty('--fontFamily', 'Inter", ui-sans-serif, system-ui, sans-serif');
+            this.domElement.style.setProperty("--bodyText", semanticColors.bodyText || null);
+            this.domElement.style.setProperty("--link", semanticColors.link || null);
+            this.domElement.style.setProperty("--linkHovered", semanticColors.linkHovered || null);
+            this.domElement.style.setProperty("--primaryColor", "#0078d4");
+            this.domElement.style.setProperty("--secondaryColor", "#ff8c00");
+            this.domElement.style.fontFamily = '"Inter", "Segoe UI", sans-serif';
+            // this.domElement.style.setProperty(
+            //   "--fontFamily",
+            //   '"Inter", "Segoe UI", sans-serif',
+            // );
+            // const styleId = "kamoa-global-font";
+            // if (!document.getElementById(styleId)) {
+            //   const style = document.createElement("style");
+            //   style.id = styleId;
+            //   style.innerHTML = `
+            //   * {
+            //     font-family: "Inter", "Segoe UI", sans-serif !important;
+            //   }
+            // `;
+            //   document.head.appendChild(style);
+            // }
         }
     };
     RecrutimentAppWebPart.prototype.onDispose = function () {
@@ -109,7 +134,7 @@ var RecrutimentAppWebPart = /** @class */ (function (_super) {
     };
     Object.defineProperty(RecrutimentAppWebPart.prototype, "dataVersion", {
         get: function () {
-            return sp_core_library_1.Version.parse('1.0');
+            return sp_core_library_1.Version.parse("1.0");
         },
         enumerable: false,
         configurable: true
@@ -119,20 +144,20 @@ var RecrutimentAppWebPart = /** @class */ (function (_super) {
             pages: [
                 {
                     header: {
-                        description: strings.PropertyPaneDescription
+                        description: strings.PropertyPaneDescription,
                     },
                     groups: [
                         {
                             groupName: strings.BasicGroupName,
                             groupFields: [
-                                (0, sp_property_pane_1.PropertyPaneTextField)('description', {
-                                    label: strings.DescriptionFieldLabel
-                                })
-                            ]
-                        }
-                    ]
-                }
-            ]
+                                (0, sp_property_pane_1.PropertyPaneTextField)("description", {
+                                    label: strings.DescriptionFieldLabel,
+                                }),
+                            ],
+                        },
+                    ],
+                },
+            ],
         };
     };
     return RecrutimentAppWebPart;

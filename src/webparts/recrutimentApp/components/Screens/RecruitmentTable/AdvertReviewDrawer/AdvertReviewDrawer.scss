@@ -241,6 +241,7 @@
     background-color: white;
     padding: 6%;
     border-radius: 9px;
+
     &:hover {
       transform: translateY(-2px) translateZ(0px);
     }
@@ -446,9 +447,9 @@
     color: $text-secondary;
 
     &:hover {
- border-color: $primary-color;
+      border-color: $primary-color;
       box-shadow: $shadow-md;
- color: #2563eb;
+      color: #2563eb;
     }
   }
 
@@ -531,8 +532,8 @@
   }
 
   &__checkbox {
-    width: 22px;
-    height: 22px;
+    width: 29px;
+    height: 23px;
     border-radius: 6px;
     border: 1px solid $border-base;
     display: inline-flex;
@@ -614,7 +615,7 @@
     background: rgba(248, 250, 252, 0.6);
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: end;
   }
 
   &__history {
@@ -637,7 +638,7 @@
 
   &__button {
     border: none;
-    background: transparent;
+    background: #41373730;
     font-size: 13px;
     font-weight: 700;
     color: $text-muted;
@@ -673,6 +674,7 @@
   0% {
     background-position: -200px 0;
   }
+
   100% {
     background-position: 200px 0;
   }
@@ -843,7 +845,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: stretch;
+  // width: stretch;
+  max-width: "180px";
 
   &:hover {
     color: $primary-color;
@@ -876,17 +879,31 @@
 }
 
 @keyframes attachmentFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes attachmentScaleIn {
-  from { transform: scale(0.96); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .advert-review-drawer__validation {
@@ -926,4 +943,52 @@
   animation: modal-popup-spin 0.9s linear infinite;
 }
 
+$error-color : #e53e3e;
+$error-bg : rgba(229, 62, 62, 0.05);
 
+// ── UploadDocument (add to UploadDocument.scss) ───────────────────────────────
+
+// Dropzone — red dashed border + faint red fill
+.upload-document__dropzone--error {
+  border: 1.5px dashed $error-color !important;
+  background-color: $error-bg;
+}
+
+// Inline error message below the dropzone
+.upload-document__error-text {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: $error-color;
+}
+
+// ── AdvertReviewDrawer (add to AdvertReviewDrawer.scss) ───────────────────────
+
+// Textarea — red solid border
+.advert-review-drawer__textarea--error {
+  border: 1.5px solid $error-color !important;
+  background-color: $error-bg;
+  border-radius: 8px;
+
+  &:focus {
+    outline: none;
+    border-color: $error-color !important;
+    box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.15);
+  }
+}
+
+// Acknowledgement label row — red border wrapper
+.advert-review-drawer__acknowledge--error {
+  border: 1.5px solid $error-color !important;
+  border-radius: 8px;
+  background-color: $error-bg;
+  padding: 8px 10px;
+}
+
+// Shared inline error text used by both textarea and checkbox
+.advert-review-drawer__field-error {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: $error-color;
+}

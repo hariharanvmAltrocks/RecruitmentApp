@@ -13,7 +13,7 @@ var useDashboardMetrics = function () {
     var _c = (0, react_1.useState)(false), loading = _c[0], setLoading = _c[1];
     console.log(ADGroupData.EmailId, "EmailId");
     var queries = (0, react_1.useMemo)(function () {
-        return (0, metricColumns_config_1.getRoleBasedFilters)(roleIDs);
+        return (0, metricColumns_config_1.getRoleBasedFilters)(roleIDs, ADGroupData.EmailId[0]);
     }, [roleIDs]);
     var fetchMetrics = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var data, error_1;

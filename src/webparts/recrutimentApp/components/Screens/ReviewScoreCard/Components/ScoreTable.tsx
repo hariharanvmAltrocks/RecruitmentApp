@@ -1,7 +1,3 @@
-// Components/ScoreTable.tsx
-// Exact old-code UI (Scoretable.tsx).
-// Reusable table for BOTH Question Evaluation + Overall Evaluation tabs.
-// Receives pre-computed rows — no data logic inside.
 
 import * as React from "react";
 import styles from "../ReviewScorecard.module.scss";

@@ -6,7 +6,7 @@ import { TabDetails } from "../../../../models/master";
 import { useUIState } from "../../../RecrutimentApp/UIStateContext";
 import { useRoleContext } from "../../../../utilities/hooks/RoleContext";
 import { RoleID, StatusId } from "../../../../utilities/Config";
-import { MatricID } from "../../../../utilities/ConditionConfig";
+import { MatricID, TabNames } from "../../../../utilities/ConditionConfig";
 import { findMatricID } from "../../../Hooks/reusehooks";
 
 export interface UseTabDetailsResult {
@@ -15,36 +15,18 @@ export interface UseTabDetailsResult {
   error?: string;
 }
 
-// const mockTabs: TabItem[] = [
-//   {
-//     key: "mySubmission",
-//     label: "My Submission",
-//     description: "Requests submitted by you",
-//     tableMode: "normal",
-//     actionMode: "view",
-//   },
-//   {
-//     key: "assignRecruitmentHR",
-//     label: "Assign Recruitment HR",
-//     description: "Assign an HR partner to vacancies",
-//     tableMode: "checkbox",
-//     actionMode: "view",
-//   },
-//   {
-//     key: "uploadOnemDoc",
-//     label: "Upload ONEM Doc",
-//     description: "Attach ONEM documentation",
-//     tableMode: "normal",
-//     actionMode: "upload",
-//   },
-// ];
-
-
-const getTabDetails = (items: any[] | undefined, roleIDs: number[]): TabDetails[] =>
+const getTabDetails = (
+  items: any[] | undefined,
+  roleIDs: number[],
+): TabDetails[] =>
   items?.map((item: any, index: number) => ({
     ...item,
     Value: `tab${index + 1}`,
-    MatricID: findMatricID(roleIDs, Number(item.StatusDetails?.[0]?.StatusId), item.TabName)
+    MatricID: findMatricID(
+      roleIDs,
+      Number(item.StatusDetails?.[0]?.StatusId),
+      item.TabName,
+    ),
   })) ?? [];
 
 export const useTabDetails = (): UseTabDetailsResult => {
@@ -61,22 +43,21 @@ export const useTabDetails = (): UseTabDetailsResult => {
     const timer = setTimeout(() => {
       if (!isMounted) return;
 
-      const selectedTabDetails = menuData?.reduce(
-        (acc: TabDetails[], menu: any) => {
+      const selectedTabDetails =
+        menuData?.reduce((acc: TabDetails[], menu: any) => {
           const match = menu.SubMenu
             ? menu.Children?.find((child: any) => child?.Id === activeMenuID)
             : menu.TabDetails?.find((tab: any) => tab?.Id === activeMenuID);
 
           if (match) acc.push(...getTabDetails(match.TabDetails, roleIDs));
           return acc;
-        },
-        [],
-      ) ?? [];
+        }, []) ?? [];
 
-      const normalize = (value: string) => value.replace(/\s+/g, "").toLowerCase();
+      const normalize = (value: string) =>
+        value.replace(/\s+/g, "").toLowerCase();
       const orderedTabDetails = [...selectedTabDetails];
       const mySubmissionIndex = orderedTabDetails.findIndex(
-        (tab) => normalize(tab.TabName ?? "") === "mysubmission"
+        (tab) => normalize(tab.TabName ?? "") === "mysubmission",
       );
       if (mySubmissionIndex > 0) {
         const [mySubmission] = orderedTabDetails.splice(mySubmissionIndex, 1);
@@ -89,12 +70,17 @@ export const useTabDetails = (): UseTabDetailsResult => {
         key: tab.Value as RecruitmentTabKey,
         label: tab.TabName,
         description: tab.TabName,
-        tableMode: ((HRLead && tab.Value === "tab1") || (HR && tab.Value === "tab2"))
-          ? ("checkbox" as TableMode)
-          : ("normal" as TableMode),
+        tableMode:
+          (HRLead && tab.Value === "tab1") ||
+          (tab.TabName != TabNames.AssignInterviewPanel &&
+            HR &&
+            tab.Value === "tab2")
+            ? ("checkbox" as TableMode)
+            : ("normal" as TableMode),
         actionMode: (Array.isArray(tab.StatusDetails[0]?.Action)
           ? tab.StatusDetails[0]?.Action[0]
-          : tab.StatusDetails[0]?.Action) as import("../RecruitmentTable.types").TableActionMode,
+          : tab.StatusDetails[0]
+              ?.Action) as import("../RecruitmentTable.types").TableActionMode,
         matricId: tab.MatricID,
       }));
 

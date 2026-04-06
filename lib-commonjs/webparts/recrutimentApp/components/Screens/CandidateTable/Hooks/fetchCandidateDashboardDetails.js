@@ -92,7 +92,9 @@ var useFetchCandidateDashboardDetails = function (_a) {
                         case 2:
                             res = _f.sent();
                             items = (_c = res === null || res === void 0 ? void 0 : res.data) !== null && _c !== void 0 ? _c : [];
-                            totalItems = (res === null || res === void 0 ? void 0 : res.data) && (res === null || res === void 0 ? void 0 : res.data.length) > 0 ? (_e = (_d = res === null || res === void 0 ? void 0 : res.data[0]) === null || _d === void 0 ? void 0 : _d.TotalItems) !== null && _e !== void 0 ? _e : items.length : 0;
+                            totalItems = (res === null || res === void 0 ? void 0 : res.data) && (res === null || res === void 0 ? void 0 : res.data.length) > 0
+                                ? ((_e = (_d = res === null || res === void 0 ? void 0 : res.data[0]) === null || _d === void 0 ? void 0 : _d.TotalItems) !== null && _e !== void 0 ? _e : items.length)
+                                : 0;
                             setState({
                                 data: items,
                                 loading: false,
@@ -119,13 +121,13 @@ var useFetchCandidateDashboardDetails = function (_a) {
         });
     }); }, [jobId, matricId, roleIDs, enable]);
     var setPageSize = (0, react_1.useCallback)(function (size) {
-        fetchPage(1, size);
+        void fetchPage(1, size);
     }, [fetchPage]);
     var refresh = (0, react_1.useCallback)(function () {
-        fetchPage(state.pagination.currentPage, pageSizeRef.current);
+        void fetchPage(state.pagination.currentPage, pageSizeRef.current);
     }, [fetchPage, state.pagination.currentPage]);
     (0, react_1.useEffect)(function () {
-        fetchPage(1, initialPageSize);
+        void fetchPage(1, initialPageSize);
         return function () {
             var _a;
             (_a = abortRef.current) === null || _a === void 0 ? void 0 : _a.abort();

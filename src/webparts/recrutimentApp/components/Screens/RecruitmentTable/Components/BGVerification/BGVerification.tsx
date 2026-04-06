@@ -26,12 +26,16 @@ export type VerificationCardProps = {
   mandatoryChecks: MandatoryCheck[];
   VerificationChecks: CheckboxGroupOption[];
   onToggleOption: (id: string) => void;
+  hasError?: boolean;
+  disabled?: boolean;
 };
 
 const BGVerification = ({
   mandatoryChecks,
   VerificationChecks,
   onToggleOption,
+  hasError = false,
+  disabled = false
 }: VerificationCardProps) => {
   const optionalChecks: VerifiedCheck[] = VerificationChecks.map((check) => ({
     id: String(check.id),
@@ -40,7 +44,14 @@ const BGVerification = ({
   }));
 
   return (
-    <div className="vc-card-container">
+    <div
+      className={[
+        "vc-card-container",
+        hasError ? "vc-card-container--error" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
       <div className="vc-header">
         <h2 className="vc-title">
           Background Verification Requirements
@@ -52,9 +63,10 @@ const BGVerification = ({
       </div>
 
       <div className="vc-body">
-
         <div className="vc-section">
-          <h3 className="vc-section-title">Standard Requirements (Pre-selected)</h3>
+          <h3 className="vc-section-title">
+            Standard Requirements (Pre-selected)
+          </h3>
           <div className="vc-grid">
             {mandatoryChecks.map((item) => (
               <label key={item.id} className="vc-option disabled">
@@ -63,7 +75,7 @@ const BGVerification = ({
                   className="vc-checkbox"
                   checked
                   disabled
-                  onChange={() => {}}
+                  readOnly
                   aria-label={item.label}
                 />
                 <span className="vc-checkbox-wrap">
@@ -77,7 +89,9 @@ const BGVerification = ({
         </div>
 
         <div className="vc-section">
-          <h3 className="vc-section-title">Additional Role-Specific Checks</h3>
+          <h3 className="vc-section-title">
+            Additional Role-Specific Checks
+          </h3>
           <div className="vc-grid">
             {optionalChecks.map((item) => (
               <label
@@ -90,8 +104,8 @@ const BGVerification = ({
                   checked={item.checked}
                   onChange={() => onToggleOption(item.id)}
                   aria-label={item.label}
+                  disabled={disabled}
                 />
-                {/* Custom visual checkbox */}
                 <span className="vc-checkbox-wrap">
                   <span className="vc-custom-checkbox" aria-hidden="true" />
                 </span>
@@ -100,8 +114,13 @@ const BGVerification = ({
             ))}
           </div>
         </div>
-
       </div>
+
+      {hasError && (
+        <p className="vc-error-text">
+          Please choose at least one BGV verification option.
+        </p>
+      )}
     </div>
   );
 };

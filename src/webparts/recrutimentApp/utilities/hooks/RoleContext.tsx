@@ -141,7 +141,8 @@ function buildADGroupData(
     userRole: resolvedRoles.map((r) => r.RoleTitle),
     ADGroupIDs: resolvedRoles.map((r) => r.ADGroupID),
     RoleDetails: resolvedRoles,
-    EmailId: resolvedRoles.map((r) => r.EmailId)
+    EmailId: resolvedRoles.map((r) => r.EmailId),
+    userDetails: resolvedRoles.map((r) => r.userDetails)
   };
 }
 
@@ -261,11 +262,16 @@ export const RoleProvider = ({
 
         const allRoles = await fetchAllRoles();
         const resolved = await checkUserRoles(allRoles);
+        const Filter = [
+          { FilterKey: "EmailId", Operator: "eq", FilterValue: email }
+        ]
+        const userDetails = await masterService.GetUserDetails(Filter, "and");
         const resolvedRoles = resolved?.map(res => ({
           ID: res.ID,
           RoleTitle: res.RoleTitle,
           ADGroupID: res.ADGroupID,
-          EmailId: email
+          EmailId: email,
+          userDetails: userDetails.data
         }));
         dispatch({ type: "SET_RESOLVED_ROLES", roles: resolvedRoles && resolvedRoles.length > 0 ? resolvedRoles : [] });
       })(),

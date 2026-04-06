@@ -6,22 +6,22 @@ import { CommonServices } from "../ServiceExport";
 import { IDocFiles } from "../SPService/Ispservice";
 
 export type GetProfileByFilter = {
-    filterValue: string,
-    sortBy: string,
-    sortOrder: number,
-    pageSize: number,
-    currentPage: number,
-    totalItems: number
+  filterValue: string,
+  sortBy: string,
+  sortOrder: number,
+  pageSize: number,
+  currentPage: number,
+  totalItems: number
 }
 export type FilterItem = {
-    jobCode: string;
-    workflowStausId: string[];
-    pagination: GetProfileByFilter
+  jobCode: string;
+  workflowStausId: string[];
+  pagination: GetProfileByFilter
 }
 
 export type panelMember = {
-    Level1: PanelEntry[];
-    Level2?: PanelEntry[];
+  Level1: PanelEntry[];
+  Level2?: PanelEntry[];
 }
 
 export interface FetchInterviewPanelOptions {
@@ -30,7 +30,7 @@ export interface FetchInterviewPanelOptions {
   candidateID: string | number;
   statusID: string;
 }
- 
+
 export type PanelEntry = {
   value: number;
   label: string;
@@ -40,77 +40,77 @@ export type PanelEntry = {
 };
 
 export type CandidateDetails = {
-    RecruitmentIDId: number,
-    JobCodeId: number
-    FristName: string,
-    MiddleName: string,
-    LastName: string,
-    ResidentialAddress: string,
-    DOB: string,
-    ContactNumber: string
-    Email: string,
-    Gender: string,
-    TotalYearOfExperiance: string,
-    ReleventExperience: string,
-    Qualification: string,
-    JobRequestID: string,
-    ProfileID: string,
-    PositionTitle: string,
-    JobGrade: string,
-    ExternalAgentDetails: string,
-    InterviewDate: string,
-    InterviewTime: string,
-    InterviewLink: string,
-    CandidateResumeLink: string,
-    ActionId: number,
-    Nationality: string,
-    DisabilityDetails: string,
-    Disability: string,
-    ConflictsOfInterest: string,
-    IdentityNumber: string,
-    ProofOfIdentity: string,
+  RecruitmentIDId: number,
+  JobCodeId: number
+  FristName: string,
+  MiddleName: string,
+  LastName: string,
+  ResidentialAddress: string,
+  DOB: string,
+  ContactNumber: string
+  Email: string,
+  Gender: string,
+  TotalYearOfExperiance: string,
+  ReleventExperience: string,
+  Qualification: string,
+  JobRequestID: string,
+  ProfileID: string,
+  PositionTitle: string,
+  JobGrade: string,
+  ExternalAgentDetails: string,
+  InterviewDate: string,
+  InterviewTime: string,
+  InterviewLink: string,
+  CandidateResumeLink: string,
+  ActionId: number,
+  Nationality: string,
+  DisabilityDetails: string,
+  Disability: string,
+  ConflictsOfInterest: string,
+  IdentityNumber: string,
+  ProofOfIdentity: string,
 
-    LastOrCurrentPosition?: string,
-    LastOrCurrentEmployer?: string,
-    PreviouslyWorkedInIvanhoeMines?: string;
-    NumberOfTaxDependents?: number;
-    Age?: number;
-    Citizenship?: string;
-    AnyFamilyorOtherLinks?: string;
-    AnyBusinessLinksToDeclare?: string;
-    WillingToRelocate?: string;
-    CountryofOrgin?: string;
-    OthersInterviewed?: string;
+  LastOrCurrentPosition?: string,
+  LastOrCurrentEmployer?: string,
+  PreviouslyWorkedInIvanhoeMines?: string;
+  NumberOfTaxDependents?: number;
+  Age?: number;
+  Citizenship?: string;
+  AnyFamilyorOtherLinks?: string;
+  AnyBusinessLinksToDeclare?: string;
+  WillingToRelocate?: string;
+  CountryofOrgin?: string;
+  OthersInterviewed?: string;
 
-    FamilyLink?: string;
-    BusinessLink?: string;
-    GPA?: number;
+  FamilyLink?: string;
+  BusinessLink?: string;
+  GPA?: number;
 
-    COIComments?: string;
-    COIEmail?: string;
-    COIReason?: string;
+  COIComments?: string;
+  COIEmail?: string;
+  COIReason?: string;
 
-    countryOfResidency?: string;
-    ResidencyStatus?: string;
-    MaritalStatus?: string;
-    ChildrenDetails?: string;
-    ReferenceEmployeeDetails?: string;
-    // CandidateOnboardingDate: string;
-    // EngagementDate: string;
-    hasIvanhoeZijinExperience?: string;
-    OperationRoleRegion?: string;
-    NationalityCode?: string;
-    LanguageKnown?: string;
+  countryOfResidency?: string;
+  ResidencyStatus?: string;
+  MaritalStatus?: string;
+  ChildrenDetails?: string;
+  ReferenceEmployeeDetails?: string;
+  // CandidateOnboardingDate: string;
+  // EngagementDate: string;
+  hasIvanhoeZijinExperience?: string;
+  OperationRoleRegion?: string;
+  NationalityCode?: string;
+  LanguageKnown?: string;
 }
 
 export type RescheduledCandidate = {
-    ID: number
-    InterviewDate: Date | undefined,
-    InterviewTime: string,
-    InterviewLink: string
+  ID: number
+  InterviewDate: Date | undefined,
+  InterviewTime: string,
+  InterviewLink: string
 }
- 
- 
+
+
 export function dedupe<T extends { value: any }>(arr: T[]): T[] {
   const seen = new Set<any>();
   return arr.filter((item) => {
@@ -119,7 +119,7 @@ export function dedupe<T extends { value: any }>(arr: T[]): T[] {
     return true;
   });
 }
- 
+
 export async function resolveName(email: string): Promise<string> {
   try {
     const res = await CommonServices.GetUserName(email);
@@ -128,7 +128,7 @@ export async function resolveName(email: string): Promise<string> {
     return email;
   }
 }
- 
+
 export async function toPanelEntry(
   item: any,
   levelFilter?: string
@@ -146,15 +146,16 @@ export async function toPanelEntry(
 
 
 export type ICandidateService = {
-    getCandidateDetailsInJobCode(FilterValue: FilterItem): Promise<ApiResponse<GetProfileByJobCode[] | null>>;
-    fetchCandidateDetails(CandidateID: string): Promise<ApiResponse<CandidateProfile[] | null>>;
-    fetchInterviewPanelDetails({BUCodeID,assignHREmail,candidateID,statusID}: FetchInterviewPanelOptions): Promise<ApiResponse<panelMember | null>>;
-    UpdateCandidateStatus(data: WorkflowJson): Promise<ApiResponse<any | null>>;
-    SendEmailNotification(data: sendEmail): Promise<ApiResponse<any | null>>;
-    UploadCOIAttachment ( DocumentName: COIAttach, AttachFile: IDocFiles[]): Promise<ApiResponse<any>>;
-    GetUpsertCOI(data: COIType): Promise<ApiResponse<any | null>>;
-    InsertCandidateDetailsInList(CandidateDetails: CandidateDetails,InterviewPanel: any): Promise<ApiResponse<any | null>>;
-    InsertInterviewPanel(InterviewPanel: any[],CandidateId: number): Promise<ApiResponse<any | null>>;
-    RescheduledInterview(obj: RescheduledCandidate,ListName: string): Promise<ApiResponse<null>>;
-    
+  getCandidateDetailsInJobCode(FilterValue: FilterItem): Promise<ApiResponse<GetProfileByJobCode[] | null>>;
+  fetchCandidateDetails(CandidateID: string): Promise<ApiResponse<CandidateProfile[] | null>>;
+  fetchInterviewPanelDetails({ BUCodeID, assignHREmail, candidateID, statusID }: FetchInterviewPanelOptions): Promise<ApiResponse<panelMember | null>>;
+  UpdateCandidateStatus(data: WorkflowJson): Promise<ApiResponse<any | null>>;
+  SendEmailNotification(data: sendEmail): Promise<ApiResponse<any | null>>;
+  UploadCOIAttachment(DocumentName: COIAttach, AttachFile: IDocFiles[]): Promise<ApiResponse<any>>;
+  GetUpsertCOI(data: COIType): Promise<ApiResponse<any | null>>;
+  InsertCandidateDetailsInList(CandidateDetails: CandidateDetails, InterviewPanel: any): Promise<ApiResponse<any | null>>;
+  InsertInterviewPanel(InterviewPanel: any[], CandidateId: number): Promise<ApiResponse<any | null>>;
+  RescheduledInterview(obj: RescheduledCandidate, ListName: string): Promise<ApiResponse<null>>;
+  fetchCOIAttachment(DocumentName: COIAttach,): Promise<ApiResponse<any>>
+
 }

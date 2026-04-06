@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
+var CareerPortalAPI_1 = require("../../../../../services/AxiosService/CareerPortalAPI");
 var QuestionnaireService_1 = require("./QuestionnaireService");
 var QuestionnaireApi = /** @class */ (function () {
     function QuestionnaireApi() {
@@ -38,6 +39,34 @@ var QuestionnaireApi = /** @class */ (function () {
                                 data: [],
                                 status: 500,
                                 message: "Error Get Candidate details",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    QuestionnaireApi.prototype.UpdateCandidateStatus = function (data) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var Response_1, error_2;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, CareerPortalAPI_1.getProfileData.UpdateCandidateStatus(data)];
+                    case 1:
+                        Response_1 = _a.sent();
+                        return [2 /*return*/, {
+                                data: Response_1.data,
+                                status: Response_1.status,
+                                message: Response_1.data.message,
+                            }];
+                    case 2:
+                        error_2 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_2);
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error inserting data into AdvertisementDetails",
                             }];
                     case 3: return [2 /*return*/];
                 }

@@ -415,9 +415,92 @@ var RecruitmentService = /** @class */ (function () {
             });
         });
     };
+    RecruitmentService.prototype.InsertExternalAgencyDetails = function (payloads) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var uniqueJobCodeIds, _a, agentMasterRes, jobCodeResults_1, agentMasterMap_1, jobCodeMap_1, postResults, succeeded, withComments, _b, batchedSP, execute, commentList, _i, withComments_1, item, error_6;
+            var _this = this;
+            return tslib_1.__generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        if (!payloads.length) {
+                            return [2 /*return*/, { data: [], status: 200, message: "No records to process" }];
+                        }
+                        _c.label = 1;
+                    case 1:
+                        _c.trys.push([1, 6, , 7]);
+                        uniqueJobCodeIds = Array.from(new Set(payloads.map(function (p) { return p.Data.JobCodeId; })));
+                        return [4 /*yield*/, Promise.all(tslib_1.__spreadArray([
+                                ServiceExport_1.CommonServices.GetMasterData(Config_1.ListNames.HRMSExternalAgents)
+                            ], uniqueJobCodeIds.map(function (id) { return ServiceExport_1.masterService.GetJobUniqueDataValue(id !== null && id !== void 0 ? id : 0); }), true))];
+                    case 2:
+                        _a = _c.sent(), agentMasterRes = _a[0], jobCodeResults_1 = _a.slice(1);
+                        agentMasterMap_1 = new Map(agentMasterRes.data.map(function (agent) { return [agent.ID, agent.AgentCode]; }));
+                        jobCodeMap_1 = new Map(uniqueJobCodeIds.map(function (id, i) { var _a, _b, _c; return [id, (_c = (_b = (_a = jobCodeResults_1[i]) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.JobCode) !== null && _c !== void 0 ? _c : ""]; }));
+                        return [4 /*yield*/, Promise.all(payloads.map(function (item) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                var agentCode, jobCode, AgentDetails, error_7;
+                                return tslib_1.__generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            agentCode = agentMasterMap_1.get(item.Data.AgentId);
+                                            jobCode = jobCodeMap_1.get(item.Data.JobCodeId);
+                                            if (!agentCode || !jobCode) {
+                                                console.warn("Missing master data \u2014 AgentId: ".concat(item.Data.AgentId, ", JobCodeId: ").concat(item.Data.JobCodeId));
+                                                return [2 /*return*/, { item: item, success: false }];
+                                            }
+                                            AgentDetails = {
+                                                jobCode: jobCode,
+                                                jobsXAgents: [{ agentId: agentCode }],
+                                            };
+                                            _a.label = 1;
+                                        case 1:
+                                            _a.trys.push([1, 3, , 4]);
+                                            return [4 /*yield*/, CareerPortalAPI_1.postAdveDetails.postAgenciesJobs(AgentDetails)];
+                                        case 2:
+                                            _a.sent();
+                                            return [2 /*return*/, { item: item, success: true }];
+                                        case 3:
+                                            error_7 = _a.sent();
+                                            console.error("Failed for AgentId ".concat(item.Data.AgentId, ":"), error_7);
+                                            return [2 /*return*/, { item: item, success: false, error: error_7 }];
+                                        case 4: return [2 /*return*/];
+                                    }
+                                });
+                            }); }))];
+                    case 3:
+                        postResults = _c.sent();
+                        succeeded = postResults.filter(function (r) { return r.success; });
+                        withComments = succeeded.filter(function (_a) {
+                            var item = _a.item;
+                            return item.CommentsList && item.Data.RecrutimentId;
+                        });
+                        if (!withComments.length) return [3 /*break*/, 5];
+                        _b = (0, spservice_1.getSP)().batched(), batchedSP = _b[0], execute = _b[1];
+                        commentList = batchedSP.web.lists.getByTitle(Config_1.ListNames.HRMSRecruitmentComments);
+                        for (_i = 0, withComments_1 = withComments; _i < withComments_1.length; _i++) {
+                            item = withComments_1[_i].item;
+                            void commentList.items.add(tslib_1.__assign(tslib_1.__assign({}, item.CommentsList), { RecruitmentIDId: item.Data.RecrutimentId }));
+                        }
+                        return [4 /*yield*/, execute()];
+                    case 4:
+                        _c.sent();
+                        _c.label = 5;
+                    case 5: return [2 /*return*/, {
+                            data: succeeded.map(function (r) { return r.item; }),
+                            status: succeeded.length > 0 ? 200 : 500,
+                            message: "Processed ".concat(succeeded.length, "/").concat(payloads.length, " record(s) successfully"),
+                        }];
+                    case 6:
+                        error_6 = _c.sent();
+                        console.error("InsertExternalAgencyDetails error:", error_6);
+                        return [2 /*return*/, { data: [], status: 500, message: "Batch insert failed" }];
+                    case 7: return [2 /*return*/];
+                }
+            });
+        });
+    };
     RecruitmentService.prototype.GetHRMSRecruitmentRoleProfileDetails = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var BATCH_IDX, masterQueries, _a, batchRes, listItems, roleKnowledgeMaster, levelProficiencyMaster, technicalSkillsMaster, experienceMaster, qualificationMaster, functionTypeMaster, roleKnowledgeMap_1, levelProficiencyMap_1, technicalSkillsMap_1, qualificationMap_1, experienceMap, functionTypeMap_1, formattedItems, error_6;
+            var BATCH_IDX, masterQueries, _a, batchRes, listItems, roleKnowledgeMaster, levelProficiencyMaster, technicalSkillsMaster, experienceMaster, qualificationMaster, functionTypeMaster, roleKnowledgeMap_1, levelProficiencyMap_1, technicalSkillsMap_1, qualificationMap_1, experienceMap, functionTypeMap_1, formattedItems, error_8;
             var _b, _c, _d, _e, _f, _g;
             return tslib_1.__generator(this, function (_h) {
                 switch (_h.label) {
@@ -603,8 +686,8 @@ var RecruitmentService = /** @class */ (function () {
                                 message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
                             }];
                     case 2:
-                        error_6 = _h.sent();
-                        console.error("Error fetching data GetHRMSRecruitmentRoleProfileDetails:", error_6);
+                        error_8 = _h.sent();
+                        console.error("Error fetching data GetHRMSRecruitmentRoleProfileDetails:", error_8);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -617,7 +700,7 @@ var RecruitmentService = /** @class */ (function () {
     };
     RecruitmentService.prototype.GetBGVerificationType = function () {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, error_7;
+            var response, error_9;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -631,8 +714,8 @@ var RecruitmentService = /** @class */ (function () {
                                 message: response.data.message,
                             }];
                     case 2:
-                        error_7 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_7);
+                        error_9 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_9);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -645,7 +728,7 @@ var RecruitmentService = /** @class */ (function () {
     };
     RecruitmentService.prototype.PostCommentsData = function (obj) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var error_8;
+            var error_10;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -662,8 +745,8 @@ var RecruitmentService = /** @class */ (function () {
                                 message: "Data Submitted successfully",
                             }];
                     case 2:
-                        error_8 = _a.sent();
-                        console.error("Error posting user data:", error_8);
+                        error_10 = _a.sent();
+                        console.error("Error posting user data:", error_10);
                         return [2 /*return*/, {
                                 data: null,
                                 status: 400,
@@ -674,14 +757,14 @@ var RecruitmentService = /** @class */ (function () {
             });
         });
     };
-    RecruitmentService.prototype.UploadAdvertisementInPortal = function (Filter, Condition, RecuritmentDetails, IsActive, IsExtened, JobBasedBGVVerification) {
+    RecruitmentService.prototype.UploadAdvertisementInPortal = function (Filter, Condition, RecuritmentDetails, IsActive, IsExtened, JobBasedBGVVerification, onemDocs) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var ROLE_PROFILE, JOB_PORTAL, queries, batchRes, roleProfileList, jobPortalList, data, jobUniqueKey, roleSpecificKnowledge, technicalSkill, roleSpecificSkills, technicalSkills, Roleandtechnical, minQualifications, preferredQualifications, MinAndPreferedQualification, decodeBase64, Description, DescriptionFr, onamdocpathfile, onemdocPath, FilterDept, DepartmentData, NationalityValue, todaydate, vaildFrom, VaildTo, advertisementDetails, response, error_9;
+            var ROLE_PROFILE, JOB_PORTAL, queries, batchRes, roleProfileList, jobPortalList, data, jobUniqueKey, roleSpecificKnowledge, technicalSkill, roleSpecificSkills, technicalSkills, Roleandtechnical, minQualifications, preferredQualifications, MinAndPreferedQualification, decodeBase64, Description, DescriptionFr, onemdocPath, onamdocpathfile, FilterDept, DepartmentData, NationalityValue, todaydate, vaildFrom, VaildTo, advertisementDetails, response, error_11;
             var _a, _b, _c, _d, _e;
             return tslib_1.__generator(this, function (_f) {
                 switch (_f.label) {
                     case 0:
-                        _f.trys.push([0, 7, , 8]);
+                        _f.trys.push([0, 8, , 9]);
                         ROLE_PROFILE = 0;
                         JOB_PORTAL = 1;
                         queries = [
@@ -724,13 +807,13 @@ var RecruitmentService = /** @class */ (function () {
                         batchRes = _f.sent();
                         roleProfileList = (_a = batchRes[ROLE_PROFILE]) !== null && _a !== void 0 ? _a : [];
                         jobPortalList = (_b = batchRes[JOB_PORTAL]) !== null && _b !== void 0 ? _b : [];
-                        if (!JobBasedBGVVerification) return [3 /*break*/, 3];
+                        if (!(JobBasedBGVVerification && roleProfileList[0].ID)) return [3 /*break*/, 3];
                         return [4 /*yield*/, spservice_1.default.SPUpdateItem({
                                 Listname: Config_1.ListNames.HRMSRecruitmentRoleProfileDetails,
                                 RequestJSON: {
                                     JobBasedBGVVerification: JobBasedBGVVerification,
                                 },
-                                ID: jobPortalList[0].ID
+                                ID: roleProfileList[0].ID
                             })];
                     case 2:
                         _f.sent();
@@ -787,13 +870,17 @@ var RecruitmentService = /** @class */ (function () {
                             jobShortSummary: decodeBase64(data.RoleProfileFrench || ""),
                             jobSummary: decodeBase64(data.JobDescriptionFrench || ""),
                         };
-                        return [4 /*yield*/, ServiceExport_1.CommonServices.GetAttachmentLink(RecuritmentDetails.JobCode, Config_1.DocumentLibraray.ONAMSignedStampDocuments)];
+                        onemdocPath = "";
+                        if (!(onemDocs && (onemDocs === null || onemDocs === void 0 ? void 0 : onemDocs.length) > 0)) return [3 /*break*/, 5];
+                        return [4 /*yield*/, ServiceExport_1.CommonServices.uploadAttachmentToLibrary(RecuritmentDetails.JobCode, onemDocs || [], Config_1.DocumentLibraray.ONAMSignedStampDocuments)];
                     case 4:
                         onamdocpathfile = _f.sent();
-                        onemdocPath = String(onamdocpathfile.data);
+                        onemdocPath = String(onamdocpathfile.data[0].content);
+                        _f.label = 5;
+                    case 5:
                         FilterDept = [{ FilterKey: "DepartmentId", Operator: "eq", FilterValue: RecuritmentDetails.DepartmentID },];
                         return [4 /*yield*/, ServiceExport_1.CommonServices.GetMasterData(Config_1.ListNames.HRMSDepartment, FilterDept)];
-                    case 5:
+                    case 6:
                         DepartmentData = _f.sent();
                         console.log(DepartmentData, "DepartmentData");
                         NationalityValue = RecuritmentDetails.Nationality === ConditionConfig_1.Nationality.Nationals
@@ -812,7 +899,7 @@ var RecruitmentService = /** @class */ (function () {
                             departmentId: ((_c = DepartmentData.data[0]) === null || _c === void 0 ? void 0 : _c.Code) || "",
                             role: null,
                             functionId: String(((_d = data.FunctionType) === null || _d === void 0 ? void 0 : _d.Code) || ""),
-                            onemdocPath: onemdocPath !== null && onemdocPath !== void 0 ? onemdocPath : "",
+                            onemdocPath: onemdocPath,
                             experience: String(((_e = data.TotalPreferredExperience) === null || _e === void 0 ? void 0 : _e.ExperienceInYearRange) || ""),
                             nationality: NationalityValue,
                             Descriptions_en: Description,
@@ -822,24 +909,24 @@ var RecruitmentService = /** @class */ (function () {
                             IsExtened: IsExtened,
                         };
                         return [4 /*yield*/, ServiceExport_1.CareerPotalServices.UpsertJobs(advertisementDetails)];
-                    case 6:
+                    case 7:
                         response = _f.sent();
                         if (response.status === ApiConfig_1.ResponeStatus.SUCCESS) {
                             return [2 /*return*/, { data: null, status: 200, message: "Advertisement posted successfully" }];
                         }
                         return [2 /*return*/, { data: null, status: 500, message: "Error while posting advertisement details" }];
-                    case 7:
-                        error_9 = _f.sent();
-                        console.error("Error posting advertisement data:", error_9);
+                    case 8:
+                        error_11 = _f.sent();
+                        console.error("Error posting advertisement data:", error_11);
                         return [2 /*return*/, { data: null, status: 400, message: "Error On Posting Data" }];
-                    case 8: return [2 /*return*/];
+                    case 9: return [2 /*return*/];
                 }
             });
         });
     };
     RecruitmentService.prototype.UpsertBGVJobMaster = function (UpsertData) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, error_10;
+            var response, error_12;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -853,8 +940,8 @@ var RecruitmentService = /** @class */ (function () {
                                 message: response.data.message,
                             }];
                     case 2:
-                        error_10 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_10);
+                        error_12 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_12);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,

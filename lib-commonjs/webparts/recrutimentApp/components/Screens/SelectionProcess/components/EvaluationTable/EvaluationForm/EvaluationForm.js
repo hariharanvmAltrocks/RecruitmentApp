@@ -20,6 +20,14 @@ var SCORECARD_FIELDS = [
     { key: "ExpatLocal", label: "EXPAT/LOCAL", icon: "🌐" },
     { key: "OtherCriteria", label: "OTHER CRITERIA", icon: "📄" },
 ];
+var LeftField = function (_a) {
+    var icon = _a.icon, label = _a.label, value = _a.value;
+    return (React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftFieldWrapper },
+        React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftFieldLabelRow },
+            icon && React.createElement("span", { className: EvaluationForm_module_scss_1.default.leftFieldIcon }, icon),
+            React.createElement("span", { className: EvaluationForm_module_scss_1.default.leftFieldLabel }, label)),
+        React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftFieldValueBox }, value || "")));
+};
 var EvaluationForm = function (_a) {
     var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
     var candidateId = _a.candidateId, recruitmentId = _a.recruitmentId, interviewLevel = _a.interviewLevel, grade = _a.grade, onBack = _a.onBack, currentRoleIDs = _a.currentRoleIDs;
@@ -47,7 +55,7 @@ var EvaluationForm = function (_a) {
     var _9 = React.useState(false), acknowledged = _9[0], setAcknowledged = _9[1];
     var _10 = React.useState(false), ackError = _10[0], setAckError = _10[1];
     React.useEffect(function () {
-        (function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+        void (function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
             var result;
             var _a, _b, _c;
             return tslib_1.__generator(this, function (_d) {
@@ -376,14 +384,6 @@ var EvaluationForm = function (_a) {
                 React.createElement("div", { className: EvaluationForm_module_scss_1.default.footer },
                     React.createElement("button", { className: EvaluationForm_module_scss_1.default.cancelBtn, onClick: onBack, disabled: submitting }, "Cancel"),
                     React.createElement("button", { className: EvaluationForm_module_scss_1.default.submitBtn, onClick: handleSubmit, disabled: submitting || !acknowledged }, submitting ? "Submitting…" : "+ Submit Evaluation"))))));
-};
-var LeftField = function (_a) {
-    var icon = _a.icon, label = _a.label, value = _a.value;
-    return (React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftFieldWrapper },
-        React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftFieldLabelRow },
-            icon && React.createElement("span", { className: EvaluationForm_module_scss_1.default.leftFieldIcon }, icon),
-            React.createElement("span", { className: EvaluationForm_module_scss_1.default.leftFieldLabel }, label)),
-        React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftFieldValueBox }, value || "")));
 };
 exports.default = EvaluationForm;
 //# sourceMappingURL=EvaluationForm.js.map

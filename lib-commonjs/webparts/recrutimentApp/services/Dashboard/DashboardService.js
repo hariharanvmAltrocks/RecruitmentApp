@@ -21,7 +21,11 @@ var DashboardService = /** @class */ (function () {
                         _a.trys.push([0, 3, , 4]);
                         metricConfigs = (0, metricColumns_config_1.MatricColums)(currentRoleID);
                         if (!(metricConfigs === null || metricConfigs === void 0 ? void 0 : metricConfigs.length)) {
-                            return [2 /*return*/, { data: [], status: 200, message: "No metrics configured for this role" }];
+                            return [2 /*return*/, {
+                                    data: [],
+                                    status: 200,
+                                    message: "No metrics configured for this role",
+                                }];
                         }
                         return [4 /*yield*/, spservice_1.default.batchGet(queries)];
                     case 1:
@@ -30,7 +34,8 @@ var DashboardService = /** @class */ (function () {
                         return [4 /*yield*/, this._fetchExternalCounts(externalMetrics, spCounts_1, new Map())];
                     case 2:
                         externalCountMap_1 = _a.sent();
-                        metrics = metricConfigs.map(function (config) {
+                        metrics = metricConfigs
+                            .map(function (config) {
                             var _a, _b, _c;
                             var hasExternalCount = externalCountMap_1.has(String(config.id));
                             var spCount = (_b = (_a = spCounts_1[config.id]) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0;
@@ -38,12 +43,21 @@ var DashboardService = /** @class */ (function () {
                                 ? ((_c = externalCountMap_1.get(String(config.id))) !== null && _c !== void 0 ? _c : 0) + spCount
                                 : spCount;
                             return tslib_1.__assign(tslib_1.__assign({}, config), { value: value, showArrow: config.showArrow || hasExternalCount });
-                        }).sort(function (a, b) { return Number(b.showArrow) - Number(a.showArrow); });
-                        return [2 /*return*/, { data: metrics, status: 200, message: "Dashboard counts fetched successfully" }];
+                        })
+                            .sort(function (a, b) { return Number(b.showArrow) - Number(a.showArrow); });
+                        return [2 /*return*/, {
+                                data: metrics,
+                                status: 200,
+                                message: "Dashboard counts fetched successfully",
+                            }];
                     case 3:
                         error_1 = _a.sent();
                         console.error("GetDashboardCount error:", error_1);
-                        return [2 /*return*/, { data: [], status: 500, message: "Error fetching dashboard counts" }];
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error fetching dashboard counts",
+                            }];
                     case 4: return [2 /*return*/];
                 }
             });
@@ -59,13 +73,20 @@ var DashboardService = /** @class */ (function () {
                         result = new Map();
                         if (!externalMetrics.length)
                             return [2 /*return*/, result];
-                        allJobCodeIds = Array.from(new Set(externalMetrics.flatMap(function (m) { var _a; return ((_a = spCounts[m.id]) !== null && _a !== void 0 ? _a : []).map(function (item) { return item.JobCodeId; }).filter(Boolean); })));
+                        allJobCodeIds = Array.from(new Set(externalMetrics.flatMap(function (m) {
+                            var _a;
+                            return ((_a = spCounts[m.id]) !== null && _a !== void 0 ? _a : [])
+                                .map(function (item) { return item.JobCodeId; })
+                                .filter(Boolean);
+                        })));
                         if (!allJobCodeIds.length)
                             return [2 /*return*/, result];
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.RecruitAppCareerPortalIntegration,
                                 Select: "*,JobCode/JobCode",
-                                Filter: [{ FilterKey: "JobCodeId", Operator: "in", FilterValue: allJobCodeIds }],
+                                Filter: [
+                                    { FilterKey: "JobCodeId", Operator: "in", FilterValue: allJobCodeIds },
+                                ],
                                 FilterCondition: "and",
                                 Expand: "JobCode",
                                 Topcount: ApiConfig_1.count.Topcount,
@@ -77,9 +98,9 @@ var DashboardService = /** @class */ (function () {
                         jobCodeIdToUniqueKey = new Map(portalItems.map(function (item) { return [item.JobCodeId, item.JobUniqueKey]; }));
                         return [4 /*yield*/, Promise.all(externalMetrics.map(function (metric) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var jobCodeIds, jobUniqueKeys, params, response, total, _a;
-                                var _b, _c;
-                                return tslib_1.__generator(this, function (_d) {
-                                    switch (_d.label) {
+                                var _b, _c, _d, _e, _f, _g, _h;
+                                return tslib_1.__generator(this, function (_j) {
+                                    switch (_j.label) {
                                         case 0:
                                             jobCodeIds = ((_b = spCounts[metric.id]) !== null && _b !== void 0 ? _b : [])
                                                 .map(function (item) { return item.JobCodeId; })
@@ -92,20 +113,23 @@ var DashboardService = /** @class */ (function () {
                                                 return [2 /*return*/];
                                             }
                                             params = {
-                                                jobCode: jobUniqueKeys,
-                                                workflowStausId: metric.externalApi.workflowStatuses,
+                                                jobCodes: jobUniqueKeys,
+                                                workflowStatus: metric.externalApi.workflowStatuses,
                                             };
-                                            _d.label = 1;
+                                            _j.label = 1;
                                         case 1:
-                                            _d.trys.push([1, 3, , 4]);
+                                            _j.trys.push([1, 3, , 4]);
                                             return [4 /*yield*/, CareerPortalAPI_1.getProfileData.GetJobAppliedCount(params)];
                                         case 2:
-                                            response = _d.sent();
-                                            total = ((_c = response === null || response === void 0 ? void 0 : response.data) !== null && _c !== void 0 ? _c : []).reduce(function (sum, item) { var _a; return sum + ((_a = item.count) !== null && _a !== void 0 ? _a : 0); }, 0);
+                                            response = _j.sent();
+                                            total = Array.isArray((_c = response === null || response === void 0 ? void 0 : response.data) === null || _c === void 0 ? void 0 : _c.data)
+                                                ? (_e = (_d = response === null || response === void 0 ? void 0 : response.data) === null || _d === void 0 ? void 0 : _d.data) === null || _e === void 0 ? void 0 : _e.reduce(function (sum, item) { var _a; return sum + ((_a = item.count) !== null && _a !== void 0 ? _a : 0); }, 0)
+                                                : ((_h = (_g = (_f = response === null || response === void 0 ? void 0 : response.data) === null || _f === void 0 ? void 0 : _f.data) === null || _g === void 0 ? void 0 : _g.count) !== null && _h !== void 0 ? _h : 0);
                                             result.set(String(metric.id), total);
                                             return [3 /*break*/, 4];
                                         case 3:
-                                            _a = _d.sent();
+                                            _a = _j.sent();
+                                            // eslint-disable-line
                                             result.set(String(metric.id), 0);
                                             return [3 /*break*/, 4];
                                         case 4: return [2 /*return*/];
@@ -162,6 +186,7 @@ var DashboardService = /** @class */ (function () {
                                     ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
                                     : undefined,
                                 Department: (_o = (_m = item === null || item === void 0 ? void 0 : item.Department) === null || _m === void 0 ? void 0 : _m.DepartmentName) !== null && _o !== void 0 ? _o : "",
+                                EmploymentCategory: item === null || item === void 0 ? void 0 : item.EmploymentCategory,
                             });
                         });
                         return [2 /*return*/, {
@@ -332,7 +357,11 @@ var DashboardService = /** @class */ (function () {
                             .map(function (item) { var _a; return (_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.Id; })
                             .filter(Boolean);
                         if (!ids.length) {
-                            return [2 /*return*/, { data: [], status: 200, message: "No linked recruitment records found" }];
+                            return [2 /*return*/, {
+                                    data: [],
+                                    status: 200,
+                                    message: "No linked recruitment records found",
+                                }];
                         }
                         recruitmentFilter = [
                             { FilterKey: "ID", Operator: "in", FilterValue: ids },
@@ -362,11 +391,12 @@ var DashboardService = /** @class */ (function () {
                                         case 4: return [2 /*return*/, {
                                                 ID: item.ID,
                                                 RecordID: index + 1,
-                                                ApplicantName: "".concat(item.FirstName || "", " ").concat(item.MiddleName || "", " ").concat(item.LastName || "").trim(),
+                                                ApplicantName: "".concat(item.FristName || "", " ").concat(item.MiddleName || "", " ").concat(item.LastName || "").trim(),
                                                 PositionTitle: item === null || item === void 0 ? void 0 : item.PositionTitle,
                                                 JobGrade: item === null || item === void 0 ? void 0 : item.JobGrade,
                                                 Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
                                                 interviewLevels: (GradeLevel === null || GradeLevel === void 0 ? void 0 : GradeLevel.data) || [],
+                                                jobrequestID: item === null || item === void 0 ? void 0 : item.JobRequestID,
                                                 Status: (_b = (_a = item === null || item === void 0 ? void 0 : item.Status) === null || _a === void 0 ? void 0 : _a.StatusDescription) !== null && _b !== void 0 ? _b : "",
                                                 StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
                                                 InterviewDate: (item === null || item === void 0 ? void 0 : item.InterviewDate)
@@ -378,6 +408,9 @@ var DashboardService = /** @class */ (function () {
                                                 CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
                                                     ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
                                                     : undefined,
+                                                isExpat: (item === null || item === void 0 ? void 0 : item.NationalityCode) === ConditionConfig_1.NationalityCode.Nationals
+                                                    ? false
+                                                    : true,
                                                 DeptDetails: deptDetails,
                                             }];
                                     }
@@ -405,10 +438,10 @@ var DashboardService = /** @class */ (function () {
                         GridResult = [];
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD,
-                                Select: "*,Status/StatusDescription,RecruitmentID/Id,CandidateID/ID",
+                                Select: "*,Status/StatusDescription,RecruitmentID/Id,CandidateID/ID,PositionID/PositionID",
                                 Filter: filterParam,
                                 FilterCondition: filterConditions,
-                                Expand: "RecruitmentID,Status,CandidateID",
+                                Expand: "RecruitmentID,Status,CandidateID,PositionID",
                                 Topcount: ApiConfig_1.count.Topcount,
                                 Orderby: "ID",
                                 Orderbydecorasc: true,
@@ -446,18 +479,20 @@ var DashboardService = /** @class */ (function () {
                         deptMap_1 = new Map(DeptDetails.data.map(function (d) { return [d.ID, d]; }));
                         candidateMap_1 = new Map(getCandidateDetails.data.map(function (c) { return [c.ID, c]; }));
                         // ✅ Main mapping
-                        GridResult = res.map(function (item) {
-                            var _a, _b, _c, _d, _e;
+                        GridResult = res.map(function (item, index) {
+                            var _a, _b, _c, _d, _e, _f;
                             var deptDetails = deptMap_1.get((_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.Id);
                             var candidate = candidateMap_1.get((_b = item.CandidateID) === null || _b === void 0 ? void 0 : _b.ID);
                             return {
+                                ID: index + 1,
+                                ItemID: item === null || item === void 0 ? void 0 : item.ID,
                                 ApplicantName: (_c = candidate === null || candidate === void 0 ? void 0 : candidate.ApplicantName) !== null && _c !== void 0 ? _c : "",
                                 PositionTitle: candidate === null || candidate === void 0 ? void 0 : candidate.PositionTitle,
                                 JobGrade: candidate === null || candidate === void 0 ? void 0 : candidate.JobGrade,
                                 Nationality: candidate === null || candidate === void 0 ? void 0 : candidate.Nationality,
                                 Status: (_e = (_d = item === null || item === void 0 ? void 0 : item.Status) === null || _d === void 0 ? void 0 : _d.StatusDescription) !== null && _e !== void 0 ? _e : "",
                                 StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
-                                PositionID: item === null || item === void 0 ? void 0 : item.PositionID,
+                                PositionID: (_f = item === null || item === void 0 ? void 0 : item.PositionID) === null || _f === void 0 ? void 0 : _f.PositionID,
                                 ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
                                     ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
                                     : undefined,
@@ -465,6 +500,7 @@ var DashboardService = /** @class */ (function () {
                                     ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
                                     : undefined,
                                 DeptDetails: deptDetails !== null && deptDetails !== void 0 ? deptDetails : null,
+                                candiDetails: candidate !== null && candidate !== void 0 ? candidate : null,
                             };
                         });
                         return [2 /*return*/, { data: GridResult, status: 200, message: "Success" }];
@@ -491,7 +527,12 @@ var DashboardService = /** @class */ (function () {
                                 ListName: Config_1.ListNames.HRMSAdditionalHeadCountForExisitingPosition,
                                 Filter: filterParam,
                                 FilterCondition: filterConditions,
-                                select: ["*", "Status/StatusDescription", "BusinessUnitCode/BusineesUnitCode", "Department/DepartmentName"],
+                                select: [
+                                    "*",
+                                    "Status/StatusDescription",
+                                    "BusinessUnitCode/BusineesUnitCode",
+                                    "Department/DepartmentName",
+                                ],
                                 expand: ["Status", "BusinessUnitCode", "Department"],
                             },
                             {
@@ -499,7 +540,12 @@ var DashboardService = /** @class */ (function () {
                                 ListName: Config_1.ListNames.HRMSNewPositionRequest,
                                 Filter: filterParam,
                                 FilterCondition: filterConditions,
-                                select: ["*", "BusinessUnitCode/BusineesUnitCode", "Status/StatusDescription", "Department/DepartmentName"],
+                                select: [
+                                    "*",
+                                    "BusinessUnitCode/BusineesUnitCode",
+                                    "Status/StatusDescription",
+                                    "Department/DepartmentName",
+                                ],
                                 expand: ["Status", "BusinessUnitCode", "Department"],
                             },
                             {
@@ -514,7 +560,7 @@ var DashboardService = /** @class */ (function () {
                                     "JobCode/JobCode",
                                     "JobCode/JobTitleInEnglish",
                                     "JobCode/ID",
-                                    "Department/DepartmentName"
+                                    "Department/DepartmentName",
                                 ],
                                 expand: ["Status", "JobCode", "BusinessUnitCode", "Department"],
                             },
@@ -528,14 +574,30 @@ var DashboardService = /** @class */ (function () {
                         additionalExistingItems = batchRes[1] || [];
                         newPositionItems = batchRes[2] || [];
                         vacancyItems = batchRes[3] || [];
-                        additionalIds = additionalExistingItems.map(function (i) { return i.ID; }).filter(Boolean);
-                        newPositionIds = newPositionItems.map(function (i) { return i.ID; }).filter(Boolean);
+                        additionalIds = additionalExistingItems
+                            .map(function (i) { return i.ID; })
+                            .filter(Boolean);
+                        newPositionIds = newPositionItems
+                            .map(function (i) { return i.ID; })
+                            .filter(Boolean);
                         return [4 /*yield*/, Promise.all([
                                 additionalIds.length > 0
-                                    ? this.GetPositionDetails([{ FilterKey: "LookupIDId", Operator: "in", FilterValue: additionalIds }], undefined, Config_1.ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails)
+                                    ? this.GetPositionDetails([
+                                        {
+                                            FilterKey: "LookupIDId",
+                                            Operator: "in",
+                                            FilterValue: additionalIds,
+                                        },
+                                    ], undefined, Config_1.ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails)
                                     : Promise.resolve({ data: [], status: 200, message: "" }),
                                 newPositionIds.length > 0
-                                    ? this.GetPositionDetails([{ FilterKey: "PositionRequestID", Operator: "in", FilterValue: newPositionIds }], undefined, Config_1.ListNames.HRMSNewPositionRequestPositionDetails)
+                                    ? this.GetPositionDetails([
+                                        {
+                                            FilterKey: "PositionRequestID",
+                                            Operator: "in",
+                                            FilterValue: newPositionIds,
+                                        },
+                                    ], undefined, Config_1.ListNames.HRMSNewPositionRequestPositionDetails)
                                     : Promise.resolve({ data: [], status: 200, message: "" }),
                             ])];
                     case 2:
@@ -618,11 +680,19 @@ var DashboardService = /** @class */ (function () {
                                 JobTitleFrench: (_m = (_l = item === null || item === void 0 ? void 0 : item.JobTitleFrench) === null || _l === void 0 ? void 0 : _l.JobTitleInFrench) !== null && _m !== void 0 ? _m : "",
                             });
                         });
-                        return [2 /*return*/, { data: result, status: 200, message: "GetPositionDetails fetched successfully" }];
+                        return [2 /*return*/, {
+                                data: result,
+                                status: 200,
+                                message: "GetPositionDetails fetched successfully",
+                            }];
                     case 2:
                         error_6 = _a.sent();
                         console.error("GetPositionDetails error:", error_6);
-                        return [2 /*return*/, { data: [], status: 500, message: "Error fetching position details" }];
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error fetching position details",
+                            }];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -662,10 +732,10 @@ var DashboardService = /** @class */ (function () {
                                         FilterValue: levelFilter,
                                     },
                                 ],
-                                Topcount: 1
+                                Topcount: 1,
                             })];
                     case 2:
-                        resdata = _b.sent();
+                        resdata = (_b.sent());
                         IsSubmitted = true;
                         return [2 /*return*/, {
                                 data: IsSubmitted,

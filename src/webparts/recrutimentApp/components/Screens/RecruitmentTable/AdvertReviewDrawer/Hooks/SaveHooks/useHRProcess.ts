@@ -5,11 +5,12 @@ import { DocumentLibraray, ListNames } from "../../../../../../utilities/Config"
 import { ResponeStatus } from "../../../../../../utilities/ApiConfig";
 import { IDptData } from "../../../../../../services/RecruitmentTable/IRecruitmentService";
 import { IDocFiles } from "../../../../../../services/SPService/Ispservice";
+import { RecuritmentHRMsg } from "../../../../../../utilities/ConditionConfig";
 
 const serialize = (arr: any[], mapFn: (item: any) => object) =>
   arr && arr.length > 0 ? JSON.stringify(arr.map(mapFn)) : "[]";
 
-export const useHRProcess = (form: IDptData, currentRoleID: number, docs:IDocFiles[]) => {
+export const useHRProcess = (form: IDptData, currentRoleID: number, docs: IDocFiles[]) => {
   const { updateMainRecord } = useUpdateMainRecord(form, currentRoleID);
 
   const handleHRProcess = useCallback(
@@ -57,7 +58,7 @@ export const useHRProcess = (form: IDptData, currentRoleID: number, docs:IDocFil
 
       const filterConditions = [
         {
-          FilterKey: "JobCode",
+          FilterKey: "JobCodeId",
           Operator: "eq",
           FilterValue: form.JobCodeId,
         },
@@ -84,12 +85,12 @@ export const useHRProcess = (form: IDptData, currentRoleID: number, docs:IDocFil
         ),
       ]);
 
-    //   finalize(
-    //     formState?.AdvertisementDocument?.length === 0
-    //       ? RecuritmentHRMsg.AdvertisementSubmitMsg
-    //       : RecuritmentHRMsg.AdvertisementReveiwMsg
-    //   );
-       finalize("Advertisment Successfully Added")
+      //   finalize(
+      //     formState?.AdvertisementDocument?.length === 0
+      //       ? RecuritmentHRMsg.AdvertisementSubmitMsg
+      //       : RecuritmentHRMsg.AdvertisementReveiwMsg
+      //   );
+      finalize(RecuritmentHRMsg.AdvertisementSubmitMsg)
     },
     [form, updateMainRecord]
   );

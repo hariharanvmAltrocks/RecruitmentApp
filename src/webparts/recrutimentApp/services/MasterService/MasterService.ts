@@ -1,6 +1,6 @@
 import { ApiResponse } from "../../models/apimodels";
 import { GetAllMaster, GetMasterByCountry } from "../../models/Icareerportal";
-import { UserRoleResponseDetails, CareerPortalLink, ITabdetails, IUserDetails, IJobGrade, IUniqueJobCode } from "../../models/master";
+import { UserRoleResponseDetails, CareerPortalLink, ITabdetails, IUserDetails, IJobGrade, IUniqueJobCode, IBUCodeEmailIDs } from "../../models/master";
 import { count, ResponeStatus } from "../../utilities/ApiConfig";
 import { ListNames } from "../../utilities/Config";
 import { GetStateByCountryApi, postAdveDetails } from "../AxiosService/CareerPortalAPI";
@@ -8,7 +8,7 @@ import SPServices from "../SPService/spservice";
 import { IMasterService } from "./IMasterService";
 
 export default class MasterService implements IMasterService {
-    [x: string]: any;
+  [x: string]: any;
 
   async userRole(): Promise<UserRoleResponseDetails> {
     try {
@@ -556,7 +556,7 @@ export default class MasterService implements IMasterService {
     }
   }
 
-    async GetUserDetails(
+  async GetUserDetails(
     filterParam: any,
     filterConditions: any
   ): Promise<ApiResponse<IUserDetails>> {
@@ -589,7 +589,7 @@ export default class MasterService implements IMasterService {
         FilterCondition: filterConditions,
         Topcount: count.Topcount,
       });
-      
+
       if (res.length > 0) {
         res.map((item: any) => {
           GridResult = {
@@ -630,11 +630,11 @@ export default class MasterService implements IMasterService {
     }
   }
 
-    async GetGradeLevel(gradeId: string): Promise<ApiResponse<IJobGrade>> {
+  async GetGradeLevel(gradeId: string): Promise<ApiResponse<IJobGrade>> {
     try {
-       let GridResult: IJobGrade = {
-        GradeLevel : ""
-       };
+      let GridResult: IJobGrade = {
+        GradeLevel: ""
+      };
       if (gradeId) {
         await SPServices.SPReadItems({
           Listname: ListNames.HRMSGradeMaster,
@@ -647,7 +647,7 @@ export default class MasterService implements IMasterService {
             },
           ],
         }).then((data: any) => {
-          GridResult = data[0].Levels 
+          GridResult = data[0]?.Levels ?? ""
         });
       }
       return {
@@ -665,27 +665,27 @@ export default class MasterService implements IMasterService {
     }
   }
 
-   async GetJobUniqueDataValue(JobCodeId: number): Promise<ApiResponse<IUniqueJobCode>> {
+  async GetJobUniqueDataValue(JobCodeId: number): Promise<ApiResponse<IUniqueJobCode>> {
     try {
-       let GridResult: IUniqueJobCode = {
-        JobCode : ""
-       };
+      let GridResult: IUniqueJobCode = {
+        JobCode: ""
+      };
       if (JobCodeId) {
         const portalItems = await SPServices.SPReadItems({
-                   Listname: ListNames.RecruitAppCareerPortalIntegration,
-                   Select: `*,JobCode/JobCode`,
-                   Filter: [{ FilterKey: "JobCodeId", Operator: "in", FilterValue: JobCodeId }],
-                   FilterCondition: "and",
-                   Expand: `JobCode`,
-                   Topcount: count.Topcount,
-                   Orderby: "ID",
-                   Orderbydecorasc: true,
+          Listname: ListNames.RecruitAppCareerPortalIntegration,
+          Select: `*,JobCode/JobCode`,
+          Filter: [{ FilterKey: "JobCodeId", Operator: "in", FilterValue: JobCodeId }],
+          FilterCondition: "and",
+          Expand: `JobCode`,
+          Topcount: count.Topcount,
+          Orderby: "ID",
+          Orderbydecorasc: true,
         }).then((data: any) => {
           GridResult = data && data.length > 0 ? {
-            JobCode : data[0].JobUniqueKey 
+            JobCode: data[0].JobUniqueKey
           } : { JobCode: "" };
         });
-      
+
       }
       return {
         data: GridResult,
@@ -702,64 +702,107 @@ export default class MasterService implements IMasterService {
     }
   }
 
-      async GetAllMaster(id: number): Promise<ApiResponse<GetAllMaster[] | null>> {
-          try {
-              const response = await postAdveDetails.getMastersByCategory(id);
-              const GetAllMasterData: GetAllMaster[] = response.data.data.map((item: any) => ({
-                  id: item.id,
-                  value: item.value,
-                  displayText: item.displayText,
-                  displayTextFr: item.displayText_fr,
-              }));
-  
-              // console.log(GetAllMasterData, "GetAllMasterData");
-  
-              return {
-                  data: GetAllMasterData,
-                  status: response.status,
-                  message: "Get Candidate details",
-              };
-  
-          } catch (error) {
-              console.error(
-                  "Error Get Candidate details:",
-                  error
-              );
-              return {
-                  data: [],
-                  status: 500,
-                  message: "Error Get Candidate details",
-              };
-          }
-      }
+  async GetAllMaster(id: number): Promise<ApiResponse<GetAllMaster[] | null>> {
+    try {
+      const response = await postAdveDetails.getMastersByCategory(id);
+      const GetAllMasterData: GetAllMaster[] = response.data.data.map((item: any) => ({
+        id: item.id,
+        value: item.value,
+        displayText: item.displayText,
+        displayTextFr: item.displayText_fr,
+      }));
 
-          async GetCountryMaster(): Promise<ApiResponse<GetMasterByCountry[] | null>> {
-              try {
-                  const response = await GetStateByCountryApi.GetCountryApi();
-                  const GetAllMasterData: GetMasterByCountry[] = response.data?.data?.map((item: any) => ({
-                      id: item.isdcode,
-                      code: item.countryCode,
-                      text: item.countryName,
-                  }));
-      
-                  // console.log(GetAllMasterData, "GetCountryMaster");
-      
-                  return {
-                      data: GetAllMasterData,
-                      status: response.status,
-                      message: "Get Candidate details",
-                  };
-      
-              } catch (error) {
-                  console.error(
-                      "Error Get Candidate details:",
-                      error
-                  );
-                  return {
-                      data: [],
-                      status: 500,
-                      message: "Error Get Candidate details",
-                  };
-              }
+      // console.log(GetAllMasterData, "GetAllMasterData");
+
+      return {
+        data: GetAllMasterData,
+        status: response.status,
+        message: "Get Candidate details",
+      };
+
+    } catch (error) {
+      console.error(
+        "Error Get Candidate details:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error Get Candidate details",
+      };
+    }
+  }
+
+  async GetCountryMaster(): Promise<ApiResponse<GetMasterByCountry[] | null>> {
+    try {
+      const response = await GetStateByCountryApi.GetCountryApi();
+      const GetAllMasterData: GetMasterByCountry[] = response.data?.data?.map((item: any) => ({
+        id: item.isdcode,
+        code: item.countryCode,
+        text: item.countryName,
+      }));
+
+      // console.log(GetAllMasterData, "GetCountryMaster");
+
+      return {
+        data: GetAllMasterData,
+        status: response.status,
+        message: "Get Candidate details",
+      };
+
+    } catch (error) {
+      console.error(
+        "Error Get Candidate details:",
+        error
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error Get Candidate details",
+      };
+    }
+  }
+
+  async fetchJDEEmailIDs(BUCodeID: number): Promise<ApiResponse<IBUCodeEmailIDs>> {
+    try {
+      let GridResult: IBUCodeEmailIDs = {
+        LineManagerEmail: "",
+        HODEmail: "",
+        HREmail: "",
+        EXCOEmail: ""
+      };
+      if (BUCodeID) {
+        await SPServices.SPReadItems({
+          Listname: ListNames.JDEDataMapping,
+          Select: `*,BUC/BusineesUnitCode, LineManager/EMail, HOD/EMail, HR/EMail, EXCO/EMail`,
+          Filter: [{ FilterKey: "BUCId", Operator: "eq", FilterValue: BUCodeID }],
+          FilterCondition: "and",
+          Expand: `BUC, LineManager, HOD, HR, EXCO`,
+          Topcount: count.Topcount,
+          Orderby: "ID",
+          Orderbydecorasc: true,
+        }).then((data: any) => {
+          GridResult = {
+            LineManagerEmail: data[0].LineManager?.EMail,
+            HODEmail: data[0].HOD?.EMail,
+            HREmail: data[0].HR?.EMail,
+            EXCOEmail: data[0].EXCO?.EMail
           }
+        });
+
+      }
+      return {
+        data: GridResult,
+        status: 200,
+        message: "GetRecruitmentDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching data in GetRecruitmentDetails:", error);
+      return {
+        data: {} as IBUCodeEmailIDs,
+        status: 500,
+        message: "Error fetching data from GetRecruitmentDetails",
+      };
+    }
+  }
 }

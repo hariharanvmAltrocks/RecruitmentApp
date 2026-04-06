@@ -553,6 +553,8 @@ var CareerPortalService = /** @class */ (function () {
                         return [4 /*yield*/, CareerPortalAPI_1.getProfileData.UpdateCandidateStatus(data)];
                     case 1:
                         Response_1 = _a.sent();
+                        console.log(Response_1, "Response from UpdateCandidateStatus API");
+                        console.log("Data sent to UpdateCandidateStatus API:", data);
                         return [2 /*return*/, {
                                 data: Response_1.data,
                                 status: Response_1.status,
@@ -561,6 +563,7 @@ var CareerPortalService = /** @class */ (function () {
                     case 2:
                         error_7 = _a.sent();
                         console.error("Error inserting data into AdvertisementDetails:", error_7);
+                        console.error("Data sent:", data);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,

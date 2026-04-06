@@ -169,12 +169,12 @@ const CandidateReviewModal: React.FC<Props> = ({
             <div className={styles.mBreadcrumb}>
               <span>CANDIDATE SELECTION</span>
               <ChevronRight size={11} />
-              <span className={styles.mBreadcrumbActive}>EVALUATION PREVIEW</span>
+              <span className={styles.mBreadcrumbActive}>Review Score card  PREVIEW</span>
             </div>
             <div className={styles.mTitleRow}>
               <div className={styles.mIconBox}><Users size={20} /></div>
               <div>
-                <h2 className={styles.mTitle}>Candidate Evaluation Review</h2>
+                <h2 className={styles.mTitle}>Candidate Review Score card </h2>
                 <p className={styles.mSubtitle}>
                   <span className={styles.mJobCode}>{job?.jobCode || ""}</span>
                   <span className={styles.mDot}>›</span>

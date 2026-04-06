@@ -69,17 +69,30 @@
   max-width: 100% !important;
 } */
 
-/* #workbenchCommandBar {
+ /* #workbenchCommandBar {
   display: none !important;
-} */
+}  */
+
+#CommentsWrapper {
+  display: none !important;
+}
+#SimpleFooter {
+  display: none !important;
+}
+
+:global(#workbenchPageContent),
+:global(body),
+:global(*) {
+  font-family: var(--fontFamily, "Inter", "Segoe UI", sans-serif) !important;
+}
 
 /* @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap'); */
-/* 
-:root {
-  --app-font-family: "Inter", "Segoe UI", sans-serif;
-} */
 
-:global {
+/* :root {
+  --app-font-family: "Inter", "Segoe UI", sans-serif;
+}  */
+
+/* :global {
   .ms-Fabric, 
    [class*="RecrutimentAppWrapper"] { 
      font-family: var(--app-font-family) !important;
@@ -94,7 +107,7 @@
   .ControlZone {
     max-width: 100% !important;
   }
-   /* #workbenchCommandBar {
+   #workbenchCommandBar {
    display: none !important;
-   } */
-}
+   } 
+} */
