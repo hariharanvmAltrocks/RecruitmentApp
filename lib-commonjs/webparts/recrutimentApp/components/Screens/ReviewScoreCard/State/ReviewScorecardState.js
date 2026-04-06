@@ -19,13 +19,11 @@ var ReviewScoreCardContent = function () {
                 hook.setSelectedPositionId(id);
                 hook.setSelectedPositionText(text);
                 hook.setErrors(tslib_1.__assign(tslib_1.__assign({}, hook.errors), { position: false }));
-            }, onSubmit: hook.submitDecision, onClose: hook.closeReview, currentRoleId: currentRoleId, isLevel2Status: hook.isLevel2(hook.reviewingCandidate.statusId) })))));
+            }, onClose: hook.closeReview, currentRoleId: currentRoleId, isLevel2Status: hook.isLevel2(hook.reviewingCandidate.statusId), submitDeps: hook.submitDeps })))));
 };
 var ReviewScoreCard = function (props) {
     var _a;
     var location = (0, react_router_dom_1.useLocation)();
-    // ID comes from location.state (navigated via navigate('/ReviewScoreCard', { state: { ID: 636 } }))
-    // OR from props directly
     var locState = location.state;
     var recruitmentId = Number((locState === null || locState === void 0 ? void 0 : locState.ID) ||
         (locState === null || locState === void 0 ? void 0 : locState.recruitmentId) ||
@@ -34,15 +32,8 @@ var ReviewScoreCard = function (props) {
         (props === null || props === void 0 ? void 0 : props.recruitmentId) ||
         (props === null || props === void 0 ? void 0 : props.RecruitmentID) ||
         0);
-    console.log('[ReviewScoreCard] recruitmentId resolved:', recruitmentId, 'from state:', locState, 'props:', props);
     var ADGroupData = (0, RoleContext_1.useRoleContext)().ADGroupData;
     var currentUserEmail = ((_a = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _a === void 0 ? void 0 : _a[0]) || '';
-    if (!recruitmentId) {
-        return (React.createElement("div", { style: { padding: 32, textAlign: 'center', color: '#b00020', fontSize: '1rem' } },
-            React.createElement("strong", null, "Recruitment ID is missing."),
-            React.createElement("br", null),
-            "Please open this page via the Review Score Card action button on the job row."));
-    }
     return (React.createElement(ReviewScoreCardProvider_1.ReviewScoreCardProvider, { recruitmentId: recruitmentId, currentUserEmail: currentUserEmail },
         React.createElement(ReviewScoreCardContent, null)));
 };

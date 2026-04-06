@@ -3,8 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useScoreCard = useScoreCard;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
-// Default service — scorecard is a fresh submission each time (no pre-fill from API).
-// If you need to pre-populate from a saved draft, replace this implementation.
 var defaultService = {
     getScoreCard: function (_candidateId) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         return tslib_1.__generator(this, function (_a) {

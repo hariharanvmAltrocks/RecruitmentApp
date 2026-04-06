@@ -1,8 +1,4 @@
 "use strict";
-// Components/ScoreTable.tsx
-// Exact old-code UI (Scoretable.tsx).
-// Reusable table for BOTH Question Evaluation + Overall Evaluation tabs.
-// Receives pre-computed rows — no data logic inside.
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));

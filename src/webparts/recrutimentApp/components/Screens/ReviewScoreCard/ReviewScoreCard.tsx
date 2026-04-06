@@ -1,10 +1,3 @@
-// ReviewScoreCard.tsx
-// Main entry point. Route passes recruitmentId via props or router state.
-// Renders:
-//   1. CandidateDrawer  — always visible, shows candidates for recruitmentId
-//   2. CandidateReviewModal — opens when a candidate is clicked (pencil/eye)
-//
-// All state lives in ReviewScoreCardProvider (via useReviewScorecard hook).
 
 import React from 'react';
 import { useLocation } from 'react-router-dom';
@@ -19,29 +12,25 @@ interface ReviewScoreCardProps {
   [key: string]:  any;
 }
 
-// ── Inner content (has access to context) ─────────────────────────────────────
 const ReviewScoreCardContent: React.FC = () => {
   const { ADGroupData }  = useRoleContext();
   const currentRoleId    = ADGroupData?.roleIDs?.[0] || 0;
-
-  const hook = useReviewScoreCardContext();
+  const hook             = useReviewScoreCardContext();
 
   return (
     <div>
-      {/* ── Candidate Drawer ── */}
       <AnimatePresence>
         {hook.drawerOpen && (
           <CandidateDrawer
             candidates={hook.paginatedCandidates}
             loading={hook.candidatesLoading}
-            onClose={() => { /* drawer stays open — no close needed for main view */ }}
+            onClose={() => {}}
             onReview={hook.openReview}
             recruitmentId={hook.recruitmentId}
           />
         )}
       </AnimatePresence>
 
-      {/* ── Review Modal ── */}
       <AnimatePresence>
         {hook.reviewingCandidate && (
           <CandidateReviewModal
@@ -78,11 +67,11 @@ const ReviewScoreCardContent: React.FC = () => {
               hook.setSelectedPositionText(text);
               hook.setErrors({ ...hook.errors, position: false });
             }}
-            onSubmit={hook.submitDecision}
             onClose={hook.closeReview}
 
             currentRoleId={currentRoleId}
             isLevel2Status={hook.isLevel2(hook.reviewingCandidate.statusId)}
+            submitDeps={hook.submitDeps}
           />
         )}
       </AnimatePresence>
@@ -90,37 +79,28 @@ const ReviewScoreCardContent: React.FC = () => {
   );
 };
 
-// ── Public export with Provider wrapper ───────────────────────────────────────
 const ReviewScoreCard: React.FC<ReviewScoreCardProps> = ({ recruitmentId }) => {
-  const location = useLocation();
-  const routeState = location.state as {
+  const location    = useLocation();
+  const routeState  = location.state as {
     recruitmentId?: number;
     ID?:            number;
     candidateId?:   number;
+    department?:    string;
   } | undefined;
 
   const effectiveRecruitmentId = Number(
-    recruitmentId ?? routeState?.recruitmentId ?? routeState?.ID ?? 0
+    recruitmentId ?? routeState?.recruitmentId ?? routeState?.ID ?? 0,
   );
+  const departmentFromRoute = routeState?.department || '';
 
-  console.log('[ReviewScoreCard] recruitmentId:', effectiveRecruitmentId, 'routeState:', routeState);
-
-  const { ADGroupData } = useRoleContext();
+  const { ADGroupData }  = useRoleContext();
   const currentUserEmail = ADGroupData?.EmailId?.[0] || '';
-
-  if (!effectiveRecruitmentId) {
-    return (
-      <div style={{ padding: 24, textAlign: 'center', color: '#dc2626', fontSize: '0.9rem' }}>
-        Recruitment ID is missing. Please open Review Score Card via the recruitment row action
-        or provide a valid ID in route state.
-      </div>
-    );
-  }
 
   return (
     <ReviewScoreCardProvider
       recruitmentId={effectiveRecruitmentId}
       currentUserEmail={currentUserEmail}
+      department={departmentFromRoute}
     >
       <ReviewScoreCardContent />
     </ReviewScoreCardProvider>

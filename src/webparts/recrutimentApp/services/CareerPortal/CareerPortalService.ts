@@ -486,6 +486,8 @@ export default class CareerPortalService implements Icareerportal {
         try {
 
             const Response = await getProfileData.UpdateCandidateStatus(data);
+            console.log(Response, "Response from UpdateCandidateStatus API");
+            console.log("Data sent to UpdateCandidateStatus API:", data);
             return {
                 data: Response.data,
                 status: Response.status,
@@ -497,6 +499,7 @@ export default class CareerPortalService implements Icareerportal {
                 "Error inserting data into AdvertisementDetails:",
                 error
             );
+            console.error("Data sent:", data);
             return {
                 data: [],
                 status: 500,

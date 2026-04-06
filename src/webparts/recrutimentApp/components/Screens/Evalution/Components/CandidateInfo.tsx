@@ -14,7 +14,6 @@ export default function CandidateInfo({ candidate, onRefresh }: CandidateInfoPro
       <div className={styles.leftHeader}>
         <div className={styles.leftAccent} />
         <span className={styles.leftTitle}>CANDIDATE INFO</span>
-        {/* Refresh button removed */}
       </div>
 
       <div style={{ paddingTop: 8 }}>
@@ -34,8 +33,6 @@ export default function CandidateInfo({ candidate, onRefresh }: CandidateInfoPro
             <InfoField icon="🔲" label="LEVEL" value={candidate?.interviewLevel} />
           )}
         </div>
-
-        {/* Only show grade if it has a value */}
         {candidate?.grade && (
           <div className={styles.twoCol}>
             <InfoField icon="📈" label="GRADE" value={candidate?.grade} />

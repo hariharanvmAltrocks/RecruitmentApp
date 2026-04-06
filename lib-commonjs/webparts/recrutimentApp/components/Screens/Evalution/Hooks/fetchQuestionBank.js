@@ -5,7 +5,6 @@ var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var QuestionnaireApi_1 = tslib_1.__importDefault(require("../../SelectionProcess/services/QuestionnaireApi/QuestionnaireApi"));
 var questionnaireApi = new QuestionnaireApi_1.default();
-// Default service — fetches real questions by jobCode from the portal API
 var defaultService = {
     getQuestions: function (jobCode) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var response;

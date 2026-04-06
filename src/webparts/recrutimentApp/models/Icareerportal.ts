@@ -216,7 +216,9 @@ export type WorkflowJson = {
     HrUserId?: string,
     HrUserEmail?: string,
     proofOfPaymentPath?: string,
-    signedWorkPermitPath?: string
+    signedWorkPermitPath?: string,
+    recruitmentId?: number,
+    candidateId?: number
 }
 
 export type profileJobsComments = {
