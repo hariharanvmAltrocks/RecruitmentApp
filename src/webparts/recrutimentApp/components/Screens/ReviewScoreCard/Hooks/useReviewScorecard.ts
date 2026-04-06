@@ -96,7 +96,7 @@ export function useReviewScorecard(
       if (statusId === StatusId.Selected) return true;
       if (
         decision === 'Yes' &&
-        statusId !== StatusId.PendingwithHODtoselectthecandidateLevel2 &&
+        statusId !== StatusId.pendingL2shorlistingwithHOD &&
         statusId !== StatusId.CandidateOnHoldbyHODLevel1 &&
         statusId !== StatusId.Selected
       ) return true;
@@ -285,9 +285,9 @@ export function useReviewScorecard(
         if (!dept) return false;
         const n = Number(s);
         return (
-          n === Number(StatusId.PendingwithHODtoAssignPositionID)        ||
+          n === Number(StatusId.PendingwithpositionIDAssignmentWithHOD)  ||
           n === Number(StatusId.PendingwithHODtoselectthecandidate)      ||
-          n === Number(StatusId.Selected)                                 ||
+          n === Number(StatusId.Selected)                                ||
           n === Number(StatusId.OnHoldbyHOD)                             ||
           n === Number(StatusId.CandidateOnHoldbyHODLevel2)
         );
@@ -330,8 +330,6 @@ export function useReviewScorecard(
       setCommentsLoading(false);
     }
   }, [reviewingCandidate]);
-
-  // ── Return ────────────────────────────────────────────────────────────────
   return {
     // list
     candidates, candidatesLoading, filteredCandidates, paginatedCandidates,
@@ -354,16 +352,12 @@ export function useReviewScorecard(
     selectedPositionId,   setSelectedPositionId,
     selectedPositionText, setSelectedPositionText,
     positionOptions,
-
-    // submit state + action (all from useSubmitReviewScoreCard)
     submitting:     submitHook.submitting,
     submitError:    submitHook.submitError,
     successMessage: submitHook.successMessage,
     errors:         submitHook.errors,
     setErrors:      submitHook.setErrors,
     submitDecision: submitHook.submitDecision,
-
-    // helpers
     shouldShowPositionId,
     isLevel2,
   };

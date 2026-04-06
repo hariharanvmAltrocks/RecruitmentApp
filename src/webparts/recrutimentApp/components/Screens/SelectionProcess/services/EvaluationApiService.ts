@@ -1359,51 +1359,54 @@ export const evaluationService = {
     }
   },
 
-  async fetchPositionOptions(
-    jobCodeID: number | string,
-    department: string,
-  ): Promise<PositionOption[]> {
-    try {
-      const filterConditions = [
-        { FilterKey: "JobCode",        Operator: "eq", FilterValue: jobCodeID },
-        { FilterKey: "Department",     Operator: "eq", FilterValue: department },
-        { FilterKey: "PositionIDStatus", Operator: "eq", FilterValue: "Recruitment Initiated" },
-      ];
+async fetchPositionOptions(
+  jobCodeID: number | string,
+  department: string
+): Promise<PositionOption[]> {
+  try {
+    console.log("jobCodeID:", jobCodeID);
+    console.log("department:", department);
 
-      const res: any[] = await SPServices.SPReadItems({
-        Listname: ListNames.HRMSPositionIDMaster,
-        Select: "*,JobCode/JobCode",
-        Expand: "JobCode",
-        FilterCondition: "and",
-        Filter: filterConditions,
-        Topcount: 100,
-      });
+    const res: any[] = await SPServices.SPReadItems({
+      Listname: ListNames.HRMSPositionIDMaster,
+      Select: '*,JobCode/JobCode,Department/DepartmentName',
+      Expand: 'JobCode,Department',
+      FilterCondition: 'and',
+      Filter: [
+        {
+          FilterKey: 'JobCode',
+          Operator: 'eq',
+          FilterValue: jobCodeID,
+        },
+        {
+          FilterKey: 'Department/DepartmentName',
+          Operator: 'eq',
+          FilterValue: department,
+        },
+        {
+          FilterKey: 'PositionIDStatus',
+          Operator: 'eq',
+          FilterValue: 'Recruitment Initiated',
+        },
+      ],
+      Topcount: 100,
+    });
 
-      if (res && res.length > 0) {
-        return res.map((item: any) => ({
-          key: item.ID,
-          text: item.PositionID || item.Title || `#${item.ID}`,
-        }));
-      }
-      const fallback: any[] = await SPServices.SPReadItems({
-        Listname: ListNames.HRMSPositionIDMaster,
-        Select:   "*",
-        Filter:   [
-          { FilterKey: "Department",     Operator: "eq", FilterValue: department },
-          { FilterKey: "PositionIDStatus", Operator: "eq", FilterValue: "Recruitment Initiated" },
-        ],
-        Topcount: 100,
-      });
+    console.log("Position raw response:", res);
 
-      return (fallback || []).map((item: any) => ({
-        key: item.ID,
-        text: item.PositionID || item.Title || `#${item.ID}`,
-      }));
-    } catch (e) {
-      console.error("[fetchPositionOptions] error:", e);
-      return [];
-    }
-  },
+    const mapped = (res || []).map((item: any) => ({
+      key: item.ID,
+      text: item.PositionID || item.Title || `#${item.ID}`,
+    }));
+
+    console.log("Mapped position options:", mapped);
+
+    return mapped;
+  } catch (e) {
+    console.error('[fetchPositionOptions]', e);
+    return [];
+  }
+},
 };
 
 function _parseJson(raw: any): Record<string, number>[] {

@@ -1476,52 +1476,51 @@ exports.evaluationService = {
     },
     fetchPositionOptions: function (jobCodeID, department) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var filterConditions, res, fallback, e_14;
+            var res, mapped, e_14;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 3, , 4]);
-                        filterConditions = [
-                            { FilterKey: "JobCode", Operator: "eq", FilterValue: jobCodeID },
-                            { FilterKey: "Department", Operator: "eq", FilterValue: department },
-                            { FilterKey: "PositionIDStatus", Operator: "eq", FilterValue: "Recruitment Initiated" },
-                        ];
+                        _a.trys.push([0, 2, , 3]);
+                        console.log("jobCodeID:", jobCodeID);
+                        console.log("department:", department);
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSPositionIDMaster,
-                                Select: "*,JobCode/JobCode",
-                                Expand: "JobCode",
-                                FilterCondition: "and",
-                                Filter: filterConditions,
+                                Select: '*,JobCode/JobCode,Department/DepartmentName',
+                                Expand: 'JobCode,Department',
+                                FilterCondition: 'and',
+                                Filter: [
+                                    {
+                                        FilterKey: 'JobCode',
+                                        Operator: 'eq',
+                                        FilterValue: jobCodeID,
+                                    },
+                                    {
+                                        FilterKey: 'Department/DepartmentName',
+                                        Operator: 'eq',
+                                        FilterValue: department,
+                                    },
+                                    {
+                                        FilterKey: 'PositionIDStatus',
+                                        Operator: 'eq',
+                                        FilterValue: 'Recruitment Initiated',
+                                    },
+                                ],
                                 Topcount: 100,
                             })];
                     case 1:
                         res = _a.sent();
-                        if (res && res.length > 0) {
-                            return [2 /*return*/, res.map(function (item) { return ({
-                                    key: item.ID,
-                                    text: item.PositionID || item.Title || "#".concat(item.ID),
-                                }); })];
-                        }
-                        return [4 /*yield*/, spservice_1.default.SPReadItems({
-                                Listname: Config_1.ListNames.HRMSPositionIDMaster,
-                                Select: "*",
-                                Filter: [
-                                    { FilterKey: "Department", Operator: "eq", FilterValue: department },
-                                    { FilterKey: "PositionIDStatus", Operator: "eq", FilterValue: "Recruitment Initiated" },
-                                ],
-                                Topcount: 100,
-                            })];
+                        console.log("Position raw response:", res);
+                        mapped = (res || []).map(function (item) { return ({
+                            key: item.ID,
+                            text: item.PositionID || item.Title || "#".concat(item.ID),
+                        }); });
+                        console.log("Mapped position options:", mapped);
+                        return [2 /*return*/, mapped];
                     case 2:
-                        fallback = _a.sent();
-                        return [2 /*return*/, (fallback || []).map(function (item) { return ({
-                                key: item.ID,
-                                text: item.PositionID || item.Title || "#".concat(item.ID),
-                            }); })];
-                    case 3:
                         e_14 = _a.sent();
-                        console.error("[fetchPositionOptions] error:", e_14);
+                        console.error('[fetchPositionOptions]', e_14);
                         return [2 /*return*/, []];
-                    case 4: return [2 /*return*/];
+                    case 3: return [2 /*return*/];
                 }
             });
         });

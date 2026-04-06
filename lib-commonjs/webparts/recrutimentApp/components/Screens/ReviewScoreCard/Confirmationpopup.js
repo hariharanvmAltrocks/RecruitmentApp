@@ -36,7 +36,7 @@ var CONFIG = {
         icon: React.createElement(lucide_react_1.ShieldAlert, { size: 26, color: "#fff" }),
         iconBg: 'linear-gradient(135deg,#ef4444,#dc2626)',
         title: 'Please Fill All Mandatory Fields',
-        subtitle: 'The following fields are required before submitting:',
+        subtitle: 'Complete the following fields before submitting:',
         confirmStyle: 'confirm-none',
         cancelLabel: 'Got it',
     },

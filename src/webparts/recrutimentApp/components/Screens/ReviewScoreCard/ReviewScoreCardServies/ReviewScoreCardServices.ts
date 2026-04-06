@@ -10,7 +10,7 @@ import {
   StatusId,
   workflowStatusApi,
 } from '../../../../utilities/Config';
-import { RoleName } from '../../../../utilities/ConditionConfig';
+import { RecuritmentHRMsg, RoleName } from '../../../../utilities/ConditionConfig';
 const _common       = new CommonService();
 const _master       = new MasterService();
 const _questApi     = new QuestionnaireApi();
@@ -626,7 +626,7 @@ class ReviewScoreCardServices {
       const othersInterviewed = await _getOthersInterviewed(jobCodeID);
       console.log('Branch 2 Step 1: OthersInterviewed =', othersInterviewed)
       const isLevel2StatusId =
-        statusId === StatusId.PendingwithHODtoselectthecandidateLevel2 ||
+        statusId === StatusId.pendingL2shorlistingwithHOD ||
         statusId === StatusId.CandidateOnHoldbyHODLevel1;
 
       let actionId: number, workflowStatus: string, successMsg: string;
@@ -634,17 +634,20 @@ class ReviewScoreCardServices {
         case 'Yes':
           actionId       = WorkflowAction.Approved;
           workflowStatus = workflowStatusApi.CandidateSelectedIPanel;
-          successMsg     = isLevel2StatusId ? '✓ Candidate SELECTED (Level 2) successfully.' : '✓ Candidate SELECTED successfully.';
+          successMsg     = isLevel2StatusId ? RecuritmentHRMsg.CandidateSelectedLevel2
+                    : RecuritmentHRMsg.CandidateSelected;
           break;
         case 'No':
           actionId       = WorkflowAction.Reject;
           workflowStatus = workflowStatusApi.CandidateRejectedIPanel;
-          successMsg     = isLevel2StatusId ? '✓ Candidate REJECTED (Level 2) successfully.' : '✓ Candidate REJECTED successfully.';
+          successMsg     = isLevel2StatusId ? RecuritmentHRMsg.CandidateRejectedLevel2
+                  : RecuritmentHRMsg.CandidateRejected;
           break;
         case 'On Hold':
           actionId       = WorkflowAction.OnHold;
           workflowStatus = workflowStatusApi.CandidateOnHoldIPanel;
-          successMsg     = isLevel2StatusId ? '✓ Candidate put ON HOLD (Level 2) successfully.' : '✓ Candidate put ON HOLD successfully.';
+          successMsg     = isLevel2StatusId  ? RecuritmentHRMsg.CandidateonholdLevel2
+                  : RecuritmentHRMsg.CandidateOnHold;
           break;
         default:
           return { success: false, message: 'Invalid decision.' };
@@ -685,7 +688,7 @@ class ReviewScoreCardServices {
       return { success: true, message: successMsg };
     } catch (e) {
       console.error('[submitHODDecision]', e);
-      return { success: false, message: 'Submission failed. Please try again.' };
+       return { success: false, message: RecuritmentHRMsg.APIErrorMsg};
     }
   }
 }

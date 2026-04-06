@@ -95,7 +95,7 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
         if (statusId === Config_1.StatusId.Selected)
             return true;
         if (decision === 'Yes' &&
-            statusId !== Config_1.StatusId.PendingwithHODtoselectthecandidateLevel2 &&
+            statusId !== Config_1.StatusId.pendingL2shorlistingwithHOD &&
             statusId !== Config_1.StatusId.CandidateOnHoldbyHODLevel1 &&
             statusId !== Config_1.StatusId.Selected)
             return true;
@@ -303,7 +303,7 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
                         if (!dept)
                             return false;
                         var n = Number(s);
-                        return (n === Number(Config_1.StatusId.PendingwithHODtoAssignPositionID) ||
+                        return (n === Number(Config_1.StatusId.PendingwithpositionIDAssignmentWithHOD) ||
                             n === Number(Config_1.StatusId.PendingwithHODtoselectthecandidate) ||
                             n === Number(Config_1.StatusId.Selected) ||
                             n === Number(Config_1.StatusId.OnHoldbyHOD) ||
@@ -366,7 +366,6 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
             }
         });
     }); }, [reviewingCandidate]);
-    // ── Return ────────────────────────────────────────────────────────────────
     return {
         // list
         candidates: candidates,
@@ -410,14 +409,12 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
         selectedPositionText: selectedPositionText,
         setSelectedPositionText: setSelectedPositionText,
         positionOptions: positionOptions,
-        // submit state + action (all from useSubmitReviewScoreCard)
         submitting: submitHook.submitting,
         submitError: submitHook.submitError,
         successMessage: submitHook.successMessage,
         errors: submitHook.errors,
         setErrors: submitHook.setErrors,
         submitDecision: submitHook.submitDecision,
-        // helpers
         shouldShowPositionId: shouldShowPositionId,
         isLevel2: exports.isLevel2,
     };

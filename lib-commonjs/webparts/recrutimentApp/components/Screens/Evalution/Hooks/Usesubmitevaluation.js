@@ -10,6 +10,7 @@ exports.useSubmitEvaluation = useSubmitEvaluation;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var Evaluationformservice_1 = require("../Evaluationservice/Evaluationformservice");
+var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
 // ── Hook ──────────────────────────────────────────────────────────────────────
 function useSubmitEvaluation(deps) {
     var _this = this;
@@ -151,12 +152,12 @@ function useSubmitEvaluation(deps) {
                         setSubmitError(result.message || 'Submission failed. Please try again.');
                         return [2 /*return*/];
                     }
-                    setSuccessMessage(result.message || 'Evaluation submitted successfully!');
+                    setSuccessMessage(result.message || ConditionConfig_1.RecuritmentHRMsg.RecuritmentHRMsgCancel);
                     return [3 /*break*/, 5];
                 case 3:
                     err_1 = _c.sent();
                     console.error('[useSubmitEvaluation] submitEval error:', err_1);
-                    setSubmitError(err_1 instanceof Error ? err_1.message : 'Submission failed. Please try again.');
+                    setSubmitError(err_1 instanceof Error ? err_1.message : ConditionConfig_1.RecuritmentHRMsg.APIErrorMsg);
                     return [3 /*break*/, 5];
                 case 4:
                     setSubmitting(false);

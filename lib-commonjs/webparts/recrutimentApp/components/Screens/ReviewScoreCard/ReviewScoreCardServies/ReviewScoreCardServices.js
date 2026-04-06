@@ -917,24 +917,27 @@ var ReviewScoreCardServices = /** @class */ (function () {
                     case 13:
                         othersInterviewed = _a.sent();
                         console.log('Branch 2 Step 1: OthersInterviewed =', othersInterviewed);
-                        isLevel2StatusId = statusId === Config_1.StatusId.PendingwithHODtoselectthecandidateLevel2 ||
+                        isLevel2StatusId = statusId === Config_1.StatusId.pendingL2shorlistingwithHOD ||
                             statusId === Config_1.StatusId.CandidateOnHoldbyHODLevel1;
                         actionId = void 0, workflowStatus = void 0, successMsg = void 0;
                         switch (hodDecision) {
                             case 'Yes':
                                 actionId = Config_1.WorkflowAction.Approved;
                                 workflowStatus = Config_1.workflowStatusApi.CandidateSelectedIPanel;
-                                successMsg = isLevel2StatusId ? '✓ Candidate SELECTED (Level 2) successfully.' : '✓ Candidate SELECTED successfully.';
+                                successMsg = isLevel2StatusId ? ConditionConfig_1.RecuritmentHRMsg.CandidateSelectedLevel2
+                                    : ConditionConfig_1.RecuritmentHRMsg.CandidateSelected;
                                 break;
                             case 'No':
                                 actionId = Config_1.WorkflowAction.Reject;
                                 workflowStatus = Config_1.workflowStatusApi.CandidateRejectedIPanel;
-                                successMsg = isLevel2StatusId ? '✓ Candidate REJECTED (Level 2) successfully.' : '✓ Candidate REJECTED successfully.';
+                                successMsg = isLevel2StatusId ? ConditionConfig_1.RecuritmentHRMsg.CandidateRejectedLevel2
+                                    : ConditionConfig_1.RecuritmentHRMsg.CandidateRejected;
                                 break;
                             case 'On Hold':
                                 actionId = Config_1.WorkflowAction.OnHold;
                                 workflowStatus = Config_1.workflowStatusApi.CandidateOnHoldIPanel;
-                                successMsg = isLevel2StatusId ? '✓ Candidate put ON HOLD (Level 2) successfully.' : '✓ Candidate put ON HOLD successfully.';
+                                successMsg = isLevel2StatusId ? ConditionConfig_1.RecuritmentHRMsg.CandidateonholdLevel2
+                                    : ConditionConfig_1.RecuritmentHRMsg.CandidateOnHold;
                                 break;
                             default:
                                 return [2 /*return*/, { success: false, message: 'Invalid decision.' }];
@@ -985,7 +988,7 @@ var ReviewScoreCardServices = /** @class */ (function () {
                     case 21:
                         e_10 = _a.sent();
                         console.error('[submitHODDecision]', e_10);
-                        return [2 /*return*/, { success: false, message: 'Submission failed. Please try again.' }];
+                        return [2 /*return*/, { success: false, message: ConditionConfig_1.RecuritmentHRMsg.APIErrorMsg }];
                     case 22: return [2 /*return*/];
                 }
             });

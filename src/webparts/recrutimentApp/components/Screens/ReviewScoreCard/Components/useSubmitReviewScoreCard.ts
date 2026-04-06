@@ -1,13 +1,9 @@
-// Components/useSubmitReviewScoreCard.ts
-// Validation → returns ValidationError[] for popup display.
-// submit / reset / validate logic unchanged.
-
 import * as React from 'react';
 import ReviewScoreCardServicesInstance from '../ReviewScoreCardServies/ReviewScoreCardServices';
 import { HODDecision, ScorecardCandidateRow, CandidateReviewData, ErrorsType } from '../State/types';
-import { isLevel2 } from '../Hooks/useReviewScorecard';
 import { ValidationError } from '../Confirmationpopup';
-
+import { isLevel2 } from '../Hooks/useReviewScorecard';
+import { RecuritmentHRMsg } from '../../../../utilities/ConditionConfig';
 export interface SubmitHookDeps {
   reviewingCandidate:   ScorecardCandidateRow | null;
   reviewData:           CandidateReviewData | null;
@@ -47,8 +43,6 @@ export function useSubmitReviewScoreCard(deps: SubmitHookDeps): UseSubmitReviewS
   const [errors, setErrors] = React.useState<ErrorsType>({
     decision: false, comment: false, checkbox: false, position: false,
   });
-
-  // ── Reset ──────────────────────────────────────────────────────────────────
   const resetSubmit = React.useCallback(() => {
     setSubmitting(false);
     setSubmitError('');
@@ -56,8 +50,6 @@ export function useSubmitReviewScoreCard(deps: SubmitHookDeps): UseSubmitReviewS
     setValidationErrors([]);
     setErrors({ decision: false, comment: false, checkbox: false, position: false });
   }, []);
-
-  // ── Validate → build ValidationError list ─────────────────────────────────
   const runValidation = React.useCallback((): boolean => {
     if (!reviewingCandidate) return false;
     const lv2      = isLevel2(reviewingCandidate.statusId);
@@ -77,10 +69,10 @@ export function useSubmitReviewScoreCard(deps: SubmitHookDeps): UseSubmitReviewS
     setErrors(newErrors);
 
     const list: ValidationError[] = [];
-    if (newErrors.decision) list.push({ field: 'decision', message: 'Decision is required — please select Yes, No, or On Hold.' });
-    if (newErrors.comment)  list.push({ field: 'comment',  message: 'Feedback / comment is required.' });
-    if (newErrors.checkbox) list.push({ field: 'checkbox', message: 'Please confirm the decision by checking the checkbox.' });
-    if (newErrors.position) list.push({ field: 'position', message: 'Please assign a Position ID for the selected candidate.' });
+    if (newErrors.decision) list.push({ field: 'decision', message: 'HOD Decision (Yes / No / On Hold) is required.' });
+    if (newErrors.comment)  list.push({ field: 'comment',  message: 'Feedback Comment is required.' });
+    if (newErrors.position) list.push({ field: 'position', message: 'Position ID assignment is required.' });
+    if (newErrors.checkbox) list.push({ field: 'checkbox', message: 'Confirmation checkbox must be checked.' });
 
     setValidationErrors(list);
     return list.length === 0;
@@ -89,7 +81,6 @@ export function useSubmitReviewScoreCard(deps: SubmitHookDeps): UseSubmitReviewS
     confirmed, selectedPositionId, shouldShowPositionId,
   ]);
 
-  // ── Submit ─────────────────────────────────────────────────────────────────
   const submitDecision = React.useCallback(async (roleId: number) => {
     if (!reviewingCandidate) return;
     setSubmitError('');
@@ -119,11 +110,11 @@ export function useSubmitReviewScoreCard(deps: SubmitHookDeps): UseSubmitReviewS
         return;
       }
 
-      setSuccessMessage(result.message || '✓ Decision submitted successfully.');
+      setSuccessMessage(result.message || '');
       // onSuccess called by the component after user closes the success popup
     } catch (e) {
       console.error('[useSubmitReviewScoreCard] submitDecision error:', e);
-      setSubmitError(e instanceof Error ? e.message : 'Submission failed. Please try again.');
+      setSubmitError(e instanceof Error ? e.message : RecuritmentHRMsg.APIErrorMsg);
     } finally {
       setSubmitting(false);
     }

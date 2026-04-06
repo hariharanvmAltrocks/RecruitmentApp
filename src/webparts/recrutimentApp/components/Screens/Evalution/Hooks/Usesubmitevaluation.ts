@@ -15,6 +15,7 @@ import type {
   InterviewQuestion,
 } from '../State/CommonStateManagement';
 import { ValidationError } from '../../ReviewScoreCard/Confirmationpopup';
+import { RecuritmentHRMsg } from '../../../../utilities/ConditionConfig';
 // ── Deps shape ────────────────────────────────────────────────────────────────
 
 export interface SubmitEvalDeps {
@@ -201,11 +202,11 @@ export function useSubmitEvaluation(deps: SubmitEvalDeps): UseSubmitEvaluationRe
         return;
       }
 
-      setSuccessMessage(result.message || 'Evaluation submitted successfully!');
+      setSuccessMessage(result.message || RecuritmentHRMsg.RecuritmentHRMsgCancel);
       // onSuccess called by SubmitEvaluation component after user closes success popup
     } catch (err) {
       console.error('[useSubmitEvaluation] submitEval error:', err);
-      setSubmitError(err instanceof Error ? err.message : 'Submission failed. Please try again.');
+      setSubmitError(err instanceof Error ? err.message : RecuritmentHRMsg.APIErrorMsg);
     } finally {
       setSubmitting(false);
     }
