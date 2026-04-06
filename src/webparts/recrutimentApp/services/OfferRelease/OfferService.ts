@@ -7,7 +7,11 @@ import {
   RoleName,
 } from "../../utilities/ConditionConfig";
 import { DocumentLibraray, ListNames } from "../../utilities/Config";
-import { BGverification, LaborHire } from "../AxiosService/CareerPortalAPI";
+import {
+  BGverification,
+  GetJobRequestData,
+  LaborHire,
+} from "../AxiosService/CareerPortalAPI";
 import { CandidateTable } from "../ServiceExport";
 import { BatchQuery, IDocFiles } from "../SPService/Ispservice";
 import SPServices from "../SPService/spservice";
@@ -600,4 +604,22 @@ export default class OfferService implements IOfferService {
       };
     }
   };
+
+  async GetJobRequestData(data: any[]): Promise<ApiResponse<any | null>> {
+    try {
+      const Response = await GetJobRequestData.GetJobRequestStatus(data);
+      return {
+        data: Response.data,
+        status: Response.status,
+        message: Response.data.message,
+      };
+    } catch (error) {
+      console.error("Error inserting data into AdvertisementDetails:", error);
+      return {
+        data: [],
+        status: 500,
+        message: "Error inserting data into AdvertisementDetails",
+      };
+    }
+  }
 }

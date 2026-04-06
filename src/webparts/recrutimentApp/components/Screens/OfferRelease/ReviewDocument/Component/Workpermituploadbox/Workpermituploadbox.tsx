@@ -13,6 +13,72 @@ export interface WorkPermitUploadBoxProps {
   onClearFile: () => void;
 }
 
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+interface FilePreviewProps {
+  file: File;
+  isReading: boolean;
+  disabled: boolean;
+  onClear: () => void;
+}
+
+const FilePreview: React.FC<FilePreviewProps> = ({
+  file,
+  isReading,
+  disabled,
+  onClear,
+}) => (
+  <div className="upload-box__file-info">
+    <div className="upload-box__file-icon">
+      <FileText size={24} />
+    </div>
+
+    <div className="upload-box__file-details">
+      <span className="upload-box__filename">{file.name}</span>
+      <span className="upload-box__filesize">
+        {(file.size / 1024).toFixed(1)} KB
+      </span>
+    </div>
+
+    <div className="upload-box__status">
+      {isReading ? (
+        <div className="upload-box__spinner" />
+      ) : (
+        <CheckCircle2 size={20} className="upload-box__success-icon" />
+      )}
+    </div>
+
+    <button
+      type="button"
+      className="upload-box__clear"
+      disabled={disabled}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClear();
+      }}
+    >
+      <X size={14} />
+    </button>
+  </div>
+);
+
+
+const UploadPlaceholder: React.FC = () => (
+  <div className="upload-box__placeholder">
+    <div className="upload-box__icon-circle">
+      <Upload size={20} />
+    </div>
+    <div className="upload-box__text">
+      <span className="upload-box__primary">
+        Click to upload Work Permit Acknowledgement
+      </span>
+      <span className="upload-box__secondary">
+        PDF or Word document · max 5 MB
+      </span>
+    </div>
+  </div>
+);
+
 export const WorkPermitUploadBox: React.FC<WorkPermitUploadBoxProps> = ({
   fileInputRef,
   selectedFile,
@@ -83,69 +149,4 @@ export const WorkPermitUploadBox: React.FC<WorkPermitUploadBoxProps> = ({
   );
 };
 
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
-interface FilePreviewProps {
-  file: File;
-  isReading: boolean;
-  disabled: boolean;
-  onClear: () => void;
-}
-
-const FilePreview: React.FC<FilePreviewProps> = ({
-  file,
-  isReading,
-  disabled,
-  onClear,
-}) => (
-  <div className="upload-box__file-info">
-    <div className="upload-box__file-icon">
-      <FileText size={24} />
-    </div>
-
-    <div className="upload-box__file-details">
-      <span className="upload-box__filename">{file.name}</span>
-      <span className="upload-box__filesize">
-        {(file.size / 1024).toFixed(1)} KB
-      </span>
-    </div>
-
-    <div className="upload-box__status">
-      {isReading ? (
-        <div className="upload-box__spinner" />
-      ) : (
-        <CheckCircle2 size={20} className="upload-box__success-icon" />
-      )}
-    </div>
-
-    <button
-      type="button"
-      className="upload-box__clear"
-      disabled={disabled}
-      onClick={(e) => {
-        e.stopPropagation();
-        onClear();
-      }}
-    >
-      <X size={14} />
-    </button>
-  </div>
-);
-
-
-const UploadPlaceholder: React.FC = () => (
-  <div className="upload-box__placeholder">
-    <div className="upload-box__icon-circle">
-      <Upload size={20} />
-    </div>
-    <div className="upload-box__text">
-      <span className="upload-box__primary">
-        Click to upload Work Permit Acknowledgement
-      </span>
-      <span className="upload-box__secondary">
-        PDF or Word document · max 5 MB
-      </span>
-    </div>
-  </div>
-);
+

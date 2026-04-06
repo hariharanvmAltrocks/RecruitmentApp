@@ -19,7 +19,11 @@ import {
   MetricConfig,
 } from "../../models/IDashboard";
 import { MatricColums } from "../../components/Screens/Dashboard/metricColumns.config";
-import { InterviewLevel, Nationality } from "../../utilities/ConditionConfig";
+import {
+  InterviewLevel,
+  Nationality,
+  NationalityCode,
+} from "../../utilities/ConditionConfig";
 import { CommonServices, masterService } from "../ServiceExport";
 
 export default class DashboardService implements IDashboard {
@@ -201,6 +205,7 @@ export default class DashboardService implements IDashboard {
             ? moment(item.Created).format("YYYY-MM-DD")
             : undefined,
           Department: item?.Department?.DepartmentName ?? "",
+          EmploymentCategory: item?.EmploymentCategory,
         }),
       );
 
@@ -448,6 +453,11 @@ export default class DashboardService implements IDashboard {
             CreatedDate: item?.Created
               ? moment(item.Created).format("YYYY-MM-DD")
               : undefined,
+
+            isExpat:
+              item?.NationalityCode === NationalityCode.Nationals
+                ? false
+                : true,
 
             DeptDetails: deptDetails,
           };

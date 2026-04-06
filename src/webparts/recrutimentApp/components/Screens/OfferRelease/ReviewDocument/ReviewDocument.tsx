@@ -222,7 +222,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     isSubmittingRef.current = true;
 
     try {
-      submit(ButtonAction.Initiated);
+      void submit(ButtonAction.Initiated);
       // showSuccessModal("Your review has been submitted successfully.");
     } catch (error) {
       console.error(error);

@@ -109,7 +109,7 @@ var useBGVStatusDetails = function (jobRequestID) {
                 }
             });
         }); };
-        fetchData();
+        void fetchData();
     }, [jobRequestID, MatricID]);
     return {
         data: data,

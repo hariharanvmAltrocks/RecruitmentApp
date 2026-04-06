@@ -53,7 +53,8 @@ export const COICard: React.FC<COICardProps> = ({
   };
 
 const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
+  const target = e.target;
+  const file = target.files?.[0];
 
   if (!file) return;
 
@@ -87,7 +88,7 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     console.error("File conversion error:", error);
   }
 
-  e.target.value = "";
+  target.value = "";
 };
 
   const handleClearFile = () => update({ attachment: [] });

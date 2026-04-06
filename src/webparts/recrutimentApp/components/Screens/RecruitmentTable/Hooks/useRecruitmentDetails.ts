@@ -73,6 +73,8 @@ const mapSelectedCandidate = (item: any): ISelectedCandidate => {
     jobrequestID: candi?.jobrequestID,
 
     RecID: dept?.ID,
+    EmploymentCategory: dept?.EmploymentCategory,
+    IsExpat: candi?.isExpat,
   };
 };
 

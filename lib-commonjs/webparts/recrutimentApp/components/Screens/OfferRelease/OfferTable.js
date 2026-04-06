@@ -16,6 +16,7 @@ var useModalPopup_1 = require("../../Comman/ModalPopup/useModalPopup");
 var Tabs_1 = tslib_1.__importDefault(require("../../Comman/Tabs/Tabs"));
 var useStateFromManage_1 = require("./StateManage/useStateFromManage");
 var Config_1 = require("./Config");
+var Useupdatelistportal_1 = require("./ReviewDocument/Hooks/Useupdatelistportal");
 function resolveActionMode(statusID) {
     if (Config_1.Initiate_STAUES.has(statusID))
         return "Initiate";
@@ -97,7 +98,15 @@ var OfferTable = function () {
     var _q = (0, react_1.useState)(5), pageSize = _q[0], setPageSize = _q[1];
     var _r = (0, react_1.useState)(1), currentPage = _r[0], setCurrentPage = _r[1];
     var _s = (0, useRecruitmentDetails_1.useRecruitmentDetails)(activeTabKey, refreshKey), items = _s.items, tableLoading = _s.loading;
-    var _t = (0, useStateFromManage_1.useStateOfferRelease)(), drawerOpen = _t.drawerOpen, reviewerComments = _t.reviewerComments, acknowledgementCheckbox = _t.acknowledgementCheckbox, loadingState = _t.loadingState, openDrawer = _t.openDrawer, closeDrawer = _t.closeDrawer, setComments = _t.setComments, toggleAcknowledgement = _t.toggleAcknowledgement, setLoadingState = _t.setLoadingState;
+    var updateList = items.map(function (item) { return ({
+        StatusID: item.statusId,
+        ID: item.ItemID,
+        JobRequestID: item.jobrequestID,
+        EmploymentCategory: item.employmentCategory,
+        IsExpat: item.IsExpat,
+    }); });
+    var _t = (0, Useupdatelistportal_1.useUpdateListPortal)({ items: updateList, enableLoading: tableLoading }), updateListPortal = _t.updateListPortal, isLoading = _t.isLoading, isSuccess = _t.isSuccess, error = _t.error, reset = _t.reset;
+    var _u = (0, useStateFromManage_1.useStateOfferRelease)(), drawerOpen = _u.drawerOpen, reviewerComments = _u.reviewerComments, acknowledgementCheckbox = _u.acknowledgementCheckbox, loadingState = _u.loadingState, openDrawer = _u.openDrawer, closeDrawer = _u.closeDrawer, setComments = _u.setComments, toggleAcknowledgement = _u.toggleAcknowledgement, setLoadingState = _u.setLoadingState;
     var activeTabs = (0, react_1.useMemo)(function () { return tabs.find(function (t) { return t.key === activeTabKey; }); }, [activeTabKey, tabs]);
     var totalCount = items.length;
     var totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
@@ -111,7 +120,10 @@ var OfferTable = function () {
         if (!tabs.some(function (t) { return t.key === activeTabKey; })) {
             setActiveTabKey(tabs[0].key);
         }
-    }, [tabs]);
+        if (!tableLoading) {
+            void updateListPortal();
+        }
+    }, [tabs, tableLoading]);
     (0, react_1.useEffect)(function () {
         var _a, _b;
         if (sideNavflag && tabs.length > 0 && !currentTabName) {

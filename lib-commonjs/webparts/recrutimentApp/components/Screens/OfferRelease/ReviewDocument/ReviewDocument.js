@@ -122,7 +122,7 @@ var ReviewDocument = function (_a) {
                 return [2 /*return*/];
             isSubmittingRef.current = true;
             try {
-                submit(ConditionConfig_1.ButtonAction.Initiated);
+                void submit(ConditionConfig_1.ButtonAction.Initiated);
                 // showSuccessModal("Your review has been submitted successfully.");
             }
             catch (error) {

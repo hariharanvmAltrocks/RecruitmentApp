@@ -596,6 +596,34 @@ var OfferService = /** @class */ (function () {
             });
         });
     };
+    OfferService.prototype.GetJobRequestData = function (data) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var Response_1, error_9;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, CareerPortalAPI_1.GetJobRequestData.GetJobRequestStatus(data)];
+                    case 1:
+                        Response_1 = _a.sent();
+                        return [2 /*return*/, {
+                                data: Response_1.data,
+                                status: Response_1.status,
+                                message: Response_1.data.message,
+                            }];
+                    case 2:
+                        error_9 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_9);
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error inserting data into AdvertisementDetails",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
     return OfferService;
 }());
 exports.default = OfferService;

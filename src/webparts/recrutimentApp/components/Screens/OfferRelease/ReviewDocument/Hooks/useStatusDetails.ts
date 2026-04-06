@@ -124,7 +124,7 @@ export const useBGVStatusDetails = (jobRequestID: string) => {
       }
     };
 
-    fetchData();
+    void fetchData();
   }, [jobRequestID, MatricID]);
 
   return {
