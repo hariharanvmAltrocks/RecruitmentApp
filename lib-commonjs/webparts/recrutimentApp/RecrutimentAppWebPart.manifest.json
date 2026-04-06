@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
   "id": "d7a2f9b1-6c24-4a91-8bcb-3b28f7eab456",
-  "alias": "RecruitmentAppWebPart",
+  "alias": "RecrutimentAppWebPart",
   "componentType": "WebPart",
 
   "version": "*",
@@ -14,11 +14,11 @@
   "preconfiguredEntries": [{
     "groupId": "5c03119e-3074-46fd-976b-c60198311f70",
     "group": { "default": "Advanced" },
-    "title": { "default": "RecruitmentApp" },
-    "description": { "default": "RecruitmentApp description" },
+    "title": { "default": "RecrutimentApp" },
+    "description": { "default": "RecrutimentApp description" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "RecruitmentApp"
+      "description": "RecrutimentApp"
     }
   }]
 }

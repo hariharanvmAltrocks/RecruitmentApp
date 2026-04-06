@@ -66,9 +66,10 @@
 .ControlZone {
   max-width: 100% !important;
 } */
-/* #workbenchCommandBar {
+#workbenchCommandBar {
   display: none !important;
-}  */
+}
+
 #CommentsWrapper {
   display: none !important;
 }

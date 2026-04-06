@@ -123,22 +123,22 @@ export default class RecrutimentAppWebPart extends BaseClientSideWebPart<IRecrut
       this.domElement.style.setProperty("--primaryColor", "#0078d4");
       this.domElement.style.setProperty("--secondaryColor", "#ff8c00");
       this.domElement.style.fontFamily = '"Inter", "Segoe UI", sans-serif';
-      // this.domElement.style.setProperty(
-      //   "--fontFamily",
-      //   '"Inter", "Segoe UI", sans-serif',
-      // );
+      this.domElement.style.setProperty(
+        "--fontFamily",
+        '"Inter", "Segoe UI", sans-serif',
+      );
 
-      // const styleId = "kamoa-global-font";
-      // if (!document.getElementById(styleId)) {
-      //   const style = document.createElement("style");
-      //   style.id = styleId;
-      //   style.innerHTML = `
-      //   * {
-      //     font-family: "Inter", "Segoe UI", sans-serif !important;
-      //   }
-      // `;
-      //   document.head.appendChild(style);
-      // }
+      const styleId = "kamoa-global-font";
+      if (!document.getElementById(styleId)) {
+        const style = document.createElement("style");
+        style.id = styleId;
+        style.innerHTML = `
+        * {
+          font-family: "Inter", "Segoe UI", sans-serif !important;
+        }
+      `;
+        document.head.appendChild(style);
+      }
     }
   }
 
