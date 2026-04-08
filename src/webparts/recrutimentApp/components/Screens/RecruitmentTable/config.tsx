@@ -3,6 +3,7 @@ import { Eye, Upload } from "lucide-react";
 import { DataTableColumn } from "../../Comman/DataTable/DataTable";
 import { EvalutionItem, RecruitmentItem } from "./RecruitmentTable.types";
 import React from "react";
+import { StatusId } from "../../../utilities/Config";
 
 
 export type ColumnRole = "default" | "evaluation";
@@ -29,7 +30,7 @@ export const useRecruitmentColumns = ({
     () => ({
       id: "actions",
       header: "Actions",
-      align: "right",
+      align: "left",
       cellClassName: "data-table__cell--actions",
       render: (item) => (
         <button
@@ -38,8 +39,8 @@ export const useRecruitmentColumns = ({
           type="button"
           aria-label={actionMode === "Upload" ? "Upload document" : "View vacancy"}
         >
-          {actionMode === "Upload" ? <Upload size={16} /> : <Eye size={16} />}
-          {actionMode === "Upload" ? "Upload" : "View"}
+          {/* {actionMode === "Upload" ? <Upload size={16} /> : <Eye size={16} />} */}
+          {actionMode === "Upload" ? "UPLOAD" : item.statusId === StatusId.CareerPortalQuestions ? "CREATE" : "REVIEW"}
         </button>
       ),
     }),
@@ -52,7 +53,7 @@ export const useRecruitmentColumns = ({
         id: "jobCode",
         header: "Job Code",
         accessor: "jobCode",
-        cellClassName: "data-table__cell--muted",
+        cellClassName: "data-table__job-code",
       },
       {
         id: "title",

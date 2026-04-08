@@ -6,10 +6,11 @@ var lucide_react_1 = require("lucide-react");
 var framer_motion_1 = require("framer-motion");
 require("./consentform.scss");
 var ConsentFormSection = function (_a) {
-    var consentform = _a.consentform, onFileChange = _a.onFileChange, _b = _a.downloadUrl, downloadUrl = _b === void 0 ? "#" : _b, _c = _a.disabled, disabled = _c === void 0 ? false : _c, _d = _a.hasFileError, hasFileError = _d === void 0 ? false : _d;
+    var _b;
+    var consentform = _a.consentform, onFileChange = _a.onFileChange, _c = _a.downloadUrl, downloadUrl = _c === void 0 ? "#" : _c, _d = _a.disabled, disabled = _d === void 0 ? false : _d, _e = _a.hasFileError, hasFileError = _e === void 0 ? false : _e;
     var fileInputRef = (0, react_1.useRef)(null);
-    var _e = (0, react_1.useState)(null), selectedFile = _e[0], setSelectedFile = _e[1];
-    var _f = (0, react_1.useState)(false), isReading = _f[0], setIsReading = _f[1];
+    var _f = (0, react_1.useState)(null), selectedFile = _f[0], setSelectedFile = _f[1];
+    var _g = (0, react_1.useState)(false), isReading = _g[0], setIsReading = _g[1];
     var handleUploadClick = function () {
         var _a;
         if (!disabled) {
@@ -72,7 +73,7 @@ var ConsentFormSection = function (_a) {
                         "Consent Form ", consentform === null || consentform === void 0 ? void 0 :
                         consentform.name),
                     react_1.default.createElement("span", { className: "consent-card__name" }, "Download the form, add your signature, then upload the signed copy below.")),
-                react_1.default.createElement("a", { href: consentform === null || consentform === void 0 ? void 0 : consentform.downloadUrl, className: "consent-card__download-btn", target: "_blank", rel: "noopener noreferrer" },
+                react_1.default.createElement("a", { href: consentform === null || consentform === void 0 ? void 0 : consentform.downloadUrl, className: "consent-card__download-btn", download: (_b = consentform === null || consentform === void 0 ? void 0 : consentform.name) !== null && _b !== void 0 ? _b : true },
                     react_1.default.createElement(lucide_react_1.Download, { size: 16 }),
                     react_1.default.createElement("span", null, "Download Template"))),
             react_1.default.createElement("div", { className: "upload-box ".concat(selectedFile ? "upload-box--has-file" : "", " ").concat(hasFileError ? "upload-box--error" : ""), onClick: handleUploadClick },

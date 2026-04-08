@@ -28,7 +28,7 @@ var ICON_MAP = {
 var BADGE_LABEL = {
     done: "Verified",
     pending: "Pending",
-    warning: "Review needed",
+    warning: "Rejected",
 };
 var INFO_ICON = (react_1.default.createElement("svg", { width: "13", height: "13", viewBox: "0 0 16 16", fill: "none", stroke: "#7C8BAA", strokeWidth: "1.5", strokeLinecap: "round" },
     react_1.default.createElement("circle", { cx: "8", cy: "8", r: "6.5" }),
@@ -63,7 +63,9 @@ var StatusBadge = function (_a) {
             react_1.default.createElement("div", { className: StatusBadge_module_scss_1.default.ringWrap },
                 react_1.default.createElement("svg", { className: StatusBadge_module_scss_1.default.ringSvg, viewBox: "0 0 44 44" },
                     react_1.default.createElement("circle", { className: StatusBadge_module_scss_1.default.ringBg, cx: "22", cy: "22", r: "18" }),
-                    react_1.default.createElement("circle", { className: "".concat(StatusBadge_module_scss_1.default.ringFill, " ").concat(animated ? StatusBadge_module_scss_1.default.ringAnimated : ""), cx: "22", cy: "22", r: "18", style: { strokeDashoffset: animated ? ringOffset : CIRCUMFERENCE } })),
+                    react_1.default.createElement("circle", { className: "".concat(StatusBadge_module_scss_1.default.ringFill, " ").concat(animated ? StatusBadge_module_scss_1.default.ringAnimated : ""), cx: "22", cy: "22", r: "18", style: {
+                            strokeDashoffset: animated ? ringOffset : CIRCUMFERENCE,
+                        } })),
                 react_1.default.createElement("span", { className: StatusBadge_module_scss_1.default.ringCount },
                     doneCount,
                     "/",

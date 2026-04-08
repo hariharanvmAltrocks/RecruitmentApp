@@ -181,7 +181,7 @@
 .review-document__group {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 30px;
 }
 .review-document__group-title {
   display: flex;
@@ -197,7 +197,7 @@
 .review-document__grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 20px;
+  gap: 36px;
 }
 .review-document__grid--split {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -222,14 +222,22 @@
   font-size: 13px;
   font-weight: 600;
   color: #0f172a;
-  border: 1px solid #c5bfbf;
+  border: 1px solid #efecec;
   background-color: #ffffff;
   padding: 6%;
   border-radius: 9px;
   transition: transform 0.2s ease;
+  width: 100%;
+  word-break: break-all;
 }
 .review-document__info-value:hover {
   transform: translateY(-2px) translateZ(0px);
+}
+.review-document__BGVCommentBtn {
+  display: flex;
+  justify-content: flex-start;
+  text-align: center;
+  gap: 10px;
 }
 .review-document__divider {
   height: 1px;

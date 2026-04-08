@@ -33,7 +33,7 @@ interface UpdatedStatusItem extends WorkflowStatusItem {
 
 interface UseUpdateListPortalProps {
   items: PortalItem[];
-  enableLoading: boolean;
+  refreshKey: number;
 }
 
 interface UseUpdateListPortalReturn {
@@ -153,7 +153,7 @@ const resolveStatusUpdate = (
 
 export const useUpdateListPortal = ({
   items,
-  enableLoading = false,
+  refreshKey = 0,
 }: UseUpdateListPortalProps): UseUpdateListPortalReturn => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -173,7 +173,7 @@ export const useUpdateListPortal = ({
     setError(null);
 
     try {
-      if (!enableLoading) {
+      if (!items) {
         setIsLoading(false);
         return;
       }
@@ -207,7 +207,7 @@ export const useUpdateListPortal = ({
     } finally {
       setIsLoading(false);
     }
-  }, [roleIDs, ADGroupData, enableLoading]);
+  }, [roleIDs, ADGroupData, refreshKey]);
 
   return { updateListPortal, isLoading, isSuccess, error, reset };
 };

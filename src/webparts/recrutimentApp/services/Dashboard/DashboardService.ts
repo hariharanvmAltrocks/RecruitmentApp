@@ -1,7 +1,7 @@
 import moment from "moment";
 import { ApiResponse } from "../../models/apimodels";
 import { count, InOperator } from "../../utilities/ApiConfig";
-import { DataFrom, ListNames, StatusId } from "../../utilities/Config";
+import { DataFrom, ListNames, RoleID, StatusId } from "../../utilities/Config";
 import SPServices from "../SPService/spservice";
 import {
   DashboardData,
@@ -21,6 +21,7 @@ import {
 import { MatricColums } from "../../components/Screens/Dashboard/metricColumns.config";
 import {
   InterviewLevel,
+  MatricID,
   Nationality,
   NationalityCode,
 } from "../../utilities/ConditionConfig";
@@ -45,6 +46,20 @@ export default class DashboardService implements IDashboard {
       //     SPServices.batchGet(queries),
       //     this._fetchPortalJobCodeMap(queries),
       // ]);
+
+      if (currentRoleID.includes(RoleID.FinanceDepartment)) {
+        queries = queries.map((item: any) => {
+          if (item.StateValue === MatricID.LabourHire) {
+            return {
+              ...item,
+              Filter: item.Filter.filter(
+                (f: any) => f.FilterKey !== "RecruitmentHR",
+              ),
+            };
+          }
+          return item;
+        });
+      }
 
       const spCounts = await SPServices.batchGet(queries);
 
@@ -425,6 +440,10 @@ export default class DashboardService implements IDashboard {
             GradeLevel = { data: [] }; // fallback
           }
 
+          const InterviewDate = item?.InterviewDateLevel2
+            ? item?.InterviewDateLevel2
+            : item?.InterviewDate;
+
           return {
             ID: item.ID,
             RecordID: index + 1,
@@ -442,8 +461,8 @@ export default class DashboardService implements IDashboard {
             Status: item?.Status?.StatusDescription ?? "",
             StatusId: item?.StatusId,
 
-            InterviewDate: item?.InterviewDate
-              ? moment(item.InterviewDate).format("YYYY-MM-DD")
+            InterviewDate: InterviewDate
+              ? moment(InterviewDate).format("YYYY-MM-DD")
               : undefined,
 
             ModifiedDate: item?.Modified

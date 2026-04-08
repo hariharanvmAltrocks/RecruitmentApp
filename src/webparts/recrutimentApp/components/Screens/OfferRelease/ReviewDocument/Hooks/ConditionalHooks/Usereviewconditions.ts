@@ -14,6 +14,7 @@ interface UseReviewConditionsParams {
   consentVerification: string | null;
   hasDetails: boolean;
   rejectFlag: boolean;
+  revertFlag: boolean;
 }
 
 interface UseReviewConditionsReturn {
@@ -27,6 +28,7 @@ export const useReviewConditions = ({
   consentVerification,
   hasDetails,
   rejectFlag,
+  revertFlag,
 }: UseReviewConditionsParams): UseReviewConditionsReturn => {
   const is = useMemo(
     () => buildStatusFlags(statusID, empCat, consentVerification),
@@ -34,8 +36,8 @@ export const useReviewConditions = ({
   );
 
   const vis = useMemo(
-    () => buildVisibilityFlags(is, hasDetails, rejectFlag),
-    [is, hasDetails, rejectFlag],
+    () => buildVisibilityFlags(is, hasDetails, rejectFlag, revertFlag),
+    [is, hasDetails, rejectFlag, revertFlag],
   );
 
   return { is, vis };

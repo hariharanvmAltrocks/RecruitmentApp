@@ -69,9 +69,30 @@ var QuestionCard = function (_a) {
                     react_1.default.createElement("span", { className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.answerBadge, " ").concat(badgeClass) }, answer !== null && answer !== void 0 ? answer : "--"))))));
 };
 exports.QuestionCard = QuestionCard;
+var toDateTimeLocal = function (date) {
+    var pad = function (n) { return String(n).padStart(2, "0"); };
+    return "".concat(date.getFullYear(), "-").concat(pad(date.getMonth() + 1), "-").concat(pad(date.getDate()), "T").concat(pad(date.getHours()), ":").concat(pad(date.getMinutes()));
+};
 var InterviewScheduleInput = function (_a) {
-    var form = _a.form, onChange = _a.onChange, panelOptions = _a.panelOptions, onToggleMember = _a.onToggleMember, _b = _a.minPanelCount, minPanelCount = _b === void 0 ? 3 : _b;
+    var form = _a.form, onChange = _a.onChange, panelOptions = _a.panelOptions, onToggleMember = _a.onToggleMember, _b = _a.minPanelCount, minPanelCount = _b === void 0 ? 3 : _b, Disable = _a.Disable;
     var needsMore = form.panelMembers.length < minPanelCount;
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    var maxDay = new Date(today);
+    maxDay.setDate(today.getDate() + 5);
+    maxDay.setHours(23, 59, 0, 0);
+    var minDateTime = toDateTimeLocal(today);
+    var maxDateTime = toDateTimeLocal(maxDay);
+    var handleStartDateChange = function (e) {
+        var _a, _b;
+        var newStart = e.target.value;
+        var datePart = newStart.split("T")[0];
+        var currentEndTime = (_b = (_a = form.endDate) === null || _a === void 0 ? void 0 : _a.split("T")[1]) !== null && _b !== void 0 ? _b : "00:00";
+        var newEnd = "".concat(datePart, "T").concat(currentEndTime);
+        onChange(function (p) { return (tslib_1.__assign(tslib_1.__assign({}, p), { startDate: newStart, endDate: newEnd })); });
+    };
+    var endDateMin = form.startDate ? "".concat(form.startDate.split("T")[0], "T00:00") : minDateTime;
+    var endDateMax = form.startDate ? "".concat(form.startDate.split("T")[0], "T23:59") : maxDateTime;
     return (react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.scheduleCard },
         react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.panelMembersWrap },
             react_1.default.createElement("label", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldLabel },
@@ -79,7 +100,7 @@ var InterviewScheduleInput = function (_a) {
                 react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldRequired }, "*")),
             react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.panelTagsWrap }, panelOptions.map(function (opt) {
                 var selected = form.panelMembers.includes(opt.value);
-                return (react_1.default.createElement("button", { key: opt.value, type: "button", className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.panelTag, " ").concat(selected ? ShowCandidateDetailsPopup_module_scss_1.default.panelTagSelected : ShowCandidateDetailsPopup_module_scss_1.default.panelTagUnselected), onClick: function () { return onToggleMember(opt.value); } },
+                return (react_1.default.createElement("button", { key: opt.value, type: "button", className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.panelTag, " ").concat(selected ? ShowCandidateDetailsPopup_module_scss_1.default.panelTagSelected : ShowCandidateDetailsPopup_module_scss_1.default.panelTagUnselected), onClick: function () { return onToggleMember(opt.value); }, disabled: Disable },
                     selected && react_1.default.createElement(lucide_react_1.CheckCircle, { size: 16, className: ShowCandidateDetailsPopup_module_scss_1.default.panelTagIcon }),
                     opt.label));
             })),
@@ -94,12 +115,12 @@ var InterviewScheduleInput = function (_a) {
                 react_1.default.createElement("label", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldLabel },
                     "Start date & time ",
                     react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldRequired }, "*")),
-                react_1.default.createElement("input", { type: "datetime-local", className: ShowCandidateDetailsPopup_module_scss_1.default.dateInput, value: form.startDate, onChange: function (e) { return onChange(function (p) { return (tslib_1.__assign(tslib_1.__assign({}, p), { startDate: e.target.value })); }); } })),
+                react_1.default.createElement("input", { type: "datetime-local", className: ShowCandidateDetailsPopup_module_scss_1.default.dateInput, value: form.startDate, min: maxDateTime, onChange: handleStartDateChange, disabled: Disable })),
             react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.dateField },
                 react_1.default.createElement("label", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldLabel },
                     "End date & time ",
                     react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldRequired }, "*")),
-                react_1.default.createElement("input", { type: "datetime-local", className: ShowCandidateDetailsPopup_module_scss_1.default.dateInput, value: form.endDate, min: form.startDate, onChange: function (e) { return onChange(function (p) { return (tslib_1.__assign(tslib_1.__assign({}, p), { endDate: e.target.value })); }); } })))));
+                react_1.default.createElement("input", { type: "datetime-local", className: ShowCandidateDetailsPopup_module_scss_1.default.dateInput, value: form.endDate, min: endDateMin, max: endDateMax, disabled: !form.startDate || Disable, onChange: function (e) { return onChange(function (p) { return (tslib_1.__assign(tslib_1.__assign({}, p), { endDate: e.target.value })); }); } })))));
 };
 exports.InterviewScheduleInput = InterviewScheduleInput;
 //# sourceMappingURL=reuseUI.js.map

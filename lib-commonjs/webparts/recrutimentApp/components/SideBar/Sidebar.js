@@ -79,7 +79,7 @@ var SideNavigation = function (_a) {
         react_1.default.createElement("nav", { className: SideNavigation_module_scss_1.default.nav }, sortedMenu.map(function (parent) { return (react_1.default.createElement(SidebarItem, { key: parent.Id, item: parent, activeMenuID: activeMenuID, onSelectCallback: handleSelect, isExpanded: expandedMenus.includes(parent.Id), onToggleExpand: function () { return toggleExpand(parent.Id); } })); })),
         react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.sidebarFooter },
             react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerContent },
-                react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerVersion }, "v1.1"),
+                react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerVersion }, "v1.01"),
                 react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerLabel }, "Kamoa Copper SA")))));
 };
 exports.default = SideNavigation;

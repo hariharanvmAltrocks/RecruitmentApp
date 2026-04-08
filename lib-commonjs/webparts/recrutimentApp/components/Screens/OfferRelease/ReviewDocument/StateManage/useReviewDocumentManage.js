@@ -14,7 +14,7 @@ var DEFAULT_VALIDATION = {
     showConsentErrors: false,
     showCoiErrors: false,
     uploadError: false,
-    verification: false
+    verification: false,
 };
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 var useStateOfferRelease = function () {
@@ -30,6 +30,7 @@ var useStateOfferRelease = function () {
         consultedWith: "",
         comments: "",
         attachment: [],
+        wishesToProceed: "",
     }), coiState = _f[0], setCoiState = _f[1];
     var _g = (0, react_1.useState)(false), showCoiErrors = _g[0], setShowCoiErrors = _g[1];
     // ── Work permit file ──
@@ -78,7 +79,10 @@ var useStateOfferRelease = function () {
             fileInputRef.current.value = "";
     }, []);
     // ─── Upload docs handler ──────────────────────────────────────────────────
-    var handleDocumnetUpload = (0, react_1.useCallback)(function (value) { return setUploadDocs(value); }, []);
+    var handleDocumnetUpload = (0, react_1.useCallback)(function (value) {
+        setUploadDocs(value);
+        setValidationError(function (prev) { return (tslib_1.__assign(tslib_1.__assign({}, prev), { uploadDocs: false })); });
+    }, []);
     // ─── validateAll ─────────────────────────────────────────────────────────
     //
     // Accepts `vis` (ReviewVisibilityFlags) so it only validates what is
@@ -96,7 +100,9 @@ var useStateOfferRelease = function () {
             isValid = false;
         }
         if (vis.showCOICard) {
-            var coiInvalid = !coiState.consultedWith.trim() || !coiState.comments.trim();
+            var coiInvalid = !coiState.consultedWith.trim() ||
+                !coiState.comments.trim() ||
+                !coiState.wishesToProceed;
             if (coiInvalid) {
                 errors.showCoiErrors = true;
                 isValid = false;
@@ -112,11 +118,11 @@ var useStateOfferRelease = function () {
             errors.uploadError = true;
             isValid = false;
         }
-        if (!vis.showUploadDocument && !reviewerComments.trim()) {
+        if (!vis.ViewFlag && !reviewerComments.trim()) {
             errors.comments = true;
             isValid = false;
         }
-        if (!vis.showUploadDocument && !acknowledgementCheckbox) {
+        if (!vis.ViewFlag && !acknowledgementCheckbox) {
             errors.acknowledgement = true;
             isValid = false;
         }

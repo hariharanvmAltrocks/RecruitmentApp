@@ -50,7 +50,7 @@ export const PositionFramework: React.FC<PositionFrameworkProps> = ({ positionDe
         <span className="advert-review-drawer__section-indicator" />
         Position Framework
       </h3>
-      <span className="advert-review-drawer__ref">REF: {headerCode || "-"}</span>
+      {/* <span className="advert-review-drawer__ref">REF: {headerCode || "-"}</span> */}
     </div>
 
     {isLoading ? (

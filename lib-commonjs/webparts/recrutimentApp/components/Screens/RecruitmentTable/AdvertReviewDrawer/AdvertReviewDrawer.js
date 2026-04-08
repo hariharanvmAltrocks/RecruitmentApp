@@ -85,7 +85,7 @@ var AdvertReviewDrawer = function (_a) {
             : roleIDs[0];
     }, [roleIDs]);
     var formData = (0, react_1.useMemo)(function () {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         return ({
             ID: (_a = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.ID) !== null && _a !== void 0 ? _a : 0,
             JobCodeId: (_b = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCodeId) !== null && _b !== void 0 ? _b : 0,
@@ -97,6 +97,7 @@ var AdvertReviewDrawer = function (_a) {
             NumberOfPersonNeeded: (_h = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.NumberOfPersonNeeded) !== null && _h !== void 0 ? _h : "",
             Dptcode: (_j = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.DeptCode) !== null && _j !== void 0 ? _j : "",
             reviewerComments: reviewerComments,
+            StatusId: (_k = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusId) !== null && _k !== void 0 ? _k : 0
         });
     }, [positionDetails, reviewerComments]);
     var docFiles = (0, react_1.useMemo)(function () { return toDocFiles(uploadDocument); }, [uploadDocument]);

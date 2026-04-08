@@ -129,4 +129,5 @@ export type IOfferService = {
     UpdateParams: IUpdateStatusSelectedHOD[],
   ): Promise<ApiResponse<any>>;
   GetJobRequestData(data: any[]): Promise<ApiResponse<any | null>>;
+  PerformCriminalRecordCheck(id: number): Promise<ApiResponse<any | null>>;
 };

@@ -83,7 +83,7 @@ var resolveStatusUpdate = function (item, portalItems) {
     return null;
 };
 var useUpdateListPortal = function (_a) {
-    var items = _a.items, _b = _a.enableLoading, enableLoading = _b === void 0 ? false : _b;
+    var items = _a.items, _b = _a.refreshKey, refreshKey = _b === void 0 ? 0 : _b;
     var _c = (0, react_1.useState)(false), isLoading = _c[0], setIsLoading = _c[1];
     var _d = (0, react_1.useState)(false), isSuccess = _d[0], setIsSuccess = _d[1];
     var _e = (0, react_1.useState)(null), error = _e[0], setError = _e[1];
@@ -105,7 +105,7 @@ var useUpdateListPortal = function (_a) {
                     _d.label = 1;
                 case 1:
                     _d.trys.push([1, 5, 6, 7]);
-                    if (!enableLoading) {
+                    if (!items) {
                         setIsLoading(false);
                         return [2 /*return*/];
                     }
@@ -142,7 +142,7 @@ var useUpdateListPortal = function (_a) {
                 case 7: return [2 /*return*/];
             }
         });
-    }); }, [roleIDs, ADGroupData, enableLoading]);
+    }); }, [roleIDs, ADGroupData, refreshKey]);
     return { updateListPortal: updateListPortal, isLoading: isLoading, isSuccess: isSuccess, error: error, reset: reset };
 };
 exports.useUpdateListPortal = useUpdateListPortal;

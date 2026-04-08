@@ -60,7 +60,7 @@ var IframeModal = function (_a) {
             return (0, reusehooks_1.buildWopiUrl)(url);
         }
         if ((0, reusehooks_1.isPdfUrl)(url)) {
-            return url;
+            return "https://docs.google.com/viewer?url=".concat(encodeURIComponent(url), "&embedded=true");
         }
         return (0, reusehooks_1.buildOfficeViewerUrl)(url);
     };
@@ -84,7 +84,9 @@ var IframeModal = function (_a) {
                             react_1.default.createElement("line", { x1: "18", y1: "6", x2: "6", y2: "18" }),
                             react_1.default.createElement("line", { x1: "6", y1: "6", x2: "18", y2: "18" }))))),
             react_1.default.createElement("div", { className: CandidateDocumentsRepository_module_scss_1.default.modalIframeWrap },
-                react_1.default.createElement("iframe", { src: getViewerUrl(url), title: "Preview of ".concat(fileName), className: CandidateDocumentsRepository_module_scss_1.default.modalIframe, sandbox: "allow-scripts allow-same-origin allow-forms" })))));
+                react_1.default.createElement("iframe", { src: url, title: "Preview of ".concat(fileName), className: CandidateDocumentsRepository_module_scss_1.default.modalIframe, 
+                    // sandbox="allow-scripts allow-same-origin allow-forms"
+                    allow: "fullscreen" })))));
 };
 var DocumentRow = function (_a) {
     var doc = _a.doc, onView = _a.onView;
@@ -141,7 +143,6 @@ var CandidateDocumentsRepository = function (_a) {
         setPreviewFileName("");
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(IframeModal, { url: previewUrl, fileName: previewFileName, onClose: handleClose }),
         react_1.default.createElement("section", { className: CandidateDocumentsRepository_module_scss_1.default.repository },
             react_1.default.createElement("div", { className: CandidateDocumentsRepository_module_scss_1.default.titleRow },
                 react_1.default.createElement("span", { className: CandidateDocumentsRepository_module_scss_1.default.titleBar }),
@@ -149,7 +150,8 @@ var CandidateDocumentsRepository = function (_a) {
                 react_1.default.createElement("span", { className: CandidateDocumentsRepository_module_scss_1.default.totalBadge }, data === null || data === void 0 ? void 0 :
                     data.totalFiles,
                     " Total Files")),
-            react_1.default.createElement("div", { className: CandidateDocumentsRepository_module_scss_1.default.categoryList }, data === null || data === void 0 ? void 0 : data.categories.map(function (cat, idx) { return (react_1.default.createElement(CategoryCard, { key: cat.categoryId, category: cat, defaultOpen: idx === 0, onView: handleView })); })))));
+            react_1.default.createElement("div", { className: CandidateDocumentsRepository_module_scss_1.default.categoryList }, data === null || data === void 0 ? void 0 : data.categories.map(function (cat, idx) { return (react_1.default.createElement(CategoryCard, { key: cat.categoryId, category: cat, defaultOpen: idx === 0, onView: handleView })); })),
+            react_1.default.createElement(IframeModal, { url: previewUrl, fileName: previewFileName, onClose: handleClose }))));
 };
 exports.default = CandidateDocumentsRepository;
 //# sourceMappingURL=CandidateDocumentsRepository.js.map

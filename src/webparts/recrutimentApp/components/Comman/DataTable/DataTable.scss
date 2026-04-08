@@ -69,6 +69,7 @@
 
   &__cell--muted {
     color: $text-muted;
+    font-weight: 600;
   }
 
   &__cell--count {
@@ -77,7 +78,7 @@
   }
 
   &__cell--actions {
-    text-align: right;
+    text-align: left;
     width: 80px;
   }
 
@@ -87,11 +88,16 @@
     }
   }
 
+  &__job-code{
+    font-weight: 700;
+    color: $primary-color;
+  }
+
   &__job-title {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    font-weight: 600;
+    font-weight: bold;
     color: $text-primary;
   }
 
@@ -120,8 +126,8 @@
 
   &__action-btn {
     border: 1px solid $border-base;
-    background: $white;
-    color: $primary-color;
+    background: $primary-color ;
+    color: $white;
     border-radius: 10px;
     padding: 6px 10px;
     display: inline-flex;

@@ -8,6 +8,7 @@ import { OfferServices } from "../../../../../services/ServiceExport";
 import { VerificationStep } from "../../../../Comman/Statusbadge/Statusbadge";
 
 interface BGVRemark {
+  id: number;
   BGVCode: string;
   BGVType: string;
   Remarks: string;
@@ -19,6 +20,7 @@ export const useBGVStatusDetails = (jobRequestID: string) => {
   const [bgvComments, setBGVComments] = useState<BGVRemark[]>([]);
   const [rejectFlag, setRejectFlag] = useState(false);
   const [allCompleted, setAllCompleted] = useState(false);
+  const [revertFLag, setRevertflag] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const { MatricID } = useUIState();
@@ -30,7 +32,6 @@ export const useBGVStatusDetails = (jobRequestID: string) => {
       setLoading(true);
 
       try {
-        // 👉 Call your API here
         const res = await OfferServices.CheckBGVerification(
           Number(jobRequestID),
         );
@@ -43,7 +44,7 @@ export const useBGVStatusDetails = (jobRequestID: string) => {
         }
 
         // ✅ Map BGV Status
-        const mappedStatus: VerificationStep[] = bgData.reduce(
+        const mappedStatus: VerificationStep[] = bgData.map(
           (item: any, index: number) => {
             const status = item.status?.trim().toLowerCase();
             const result = item.result?.trim().toLowerCase();
@@ -88,13 +89,29 @@ export const useBGVStatusDetails = (jobRequestID: string) => {
               DotAfricaStatus.cancelled,
             ].includes(item.status?.trim().toLowerCase()),
           )
-          .map((item: any) => ({
+          .map((item: any, index: number) => ({
+            id: index + 1,
             BGVCode: item.bgTypeCode,
             BGVType: item.bgType,
             Remarks: item.remarks,
           }));
 
         setBGVComments(remarks);
+
+        const revertflag = bgData
+          ?.filter((item: any) => item.bgTypeCode === "IDCS")
+          ?.every(
+            (item: any) =>
+              item.status?.trim().toLowerCase() ===
+                DotAfricaStatus.skipped.trim().toLowerCase() ||
+              item.status?.trim().toLowerCase() ===
+                DotAfricaStatus.skiped.trim().toLowerCase() ||
+              item.status?.trim().toLowerCase() ===
+                DotAfricaStatus.error.trim().toLowerCase() ||
+              item.status?.trim().toLowerCase() ===
+                DotAfricaStatus.cancelled.trim().toLowerCase(),
+          );
+        setRevertflag(revertflag);
 
         // ✅ Reject flag
         const isRejected = bgData.some((item: any) =>
@@ -131,6 +148,7 @@ export const useBGVStatusDetails = (jobRequestID: string) => {
     data,
     bgvStatus,
     bgvComments,
+    revertFLag,
     rejectFlag,
     allCompleted,
     loading,

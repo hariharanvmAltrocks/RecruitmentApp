@@ -5,6 +5,7 @@ import {
   MeetingSchedules,
 } from "../../../../services/ServiceExport";
 import {
+  ListNames,
   RoleID,
   StatusId,
   WorkflowAction,
@@ -26,6 +27,8 @@ import { IDocFiles } from "../../../../services/SPService/Ispservice";
 import { DataSyncToRecruitmentResponse } from "../../../../services/RecruitmentTable/IRecruitmentService";
 import { useToast } from "../../../Hooks/useToast";
 import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
+import SPServices from "../../../../services/SPService/spservice";
+import { InterviewscheduleL2 } from "../../../../services/CandidateTable/ICandidateService";
 
 export type DecisionType = "YES" | "NO" | "HOLD";
 
@@ -37,8 +40,8 @@ export interface ConflictOfInterestForm {
 
 export interface InterviewScheduleForm {
   panelMembers: string[];
-  startDate: string;
-  endDate: string;
+  startDate: string | undefined;
+  endDate: string | undefined;
 }
 
 interface panelmembers {
@@ -199,17 +202,32 @@ export const useSubmitCandidateReview = (
         (i: any) => i.Email,
       ) as string[];
 
-      // const startdate = StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview ?  ConvertUtc(interviewLevel1.startDate ?? new Date()) : ConvertUtc(interviewLevel2.startDate ?? new Date());
-      // const enddate = StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview ?  ConvertUtc(interviewLevel1.endDate ?? new Date()) :  ConvertUtc(interviewLevel2.endDate ?? new Date());
+      const startdate =
+        StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview
+          ? interviewLevel1.startDate
+          : interviewLevel2.startDate;
+      const enddate =
+        StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview
+          ? interviewLevel1.endDate
+          : interviewLevel2.endDate;
+      const optionalAttendeeL1 = payload.interviewPanelL1.map(
+        (i: any) => i.text,
+      );
+      const optionalAttendeeL2 = payload.interviewPanelL2.map(
+        (i: any) => i.text,
+      );
 
       const meetingObj = {
         organizerEmail: organizer?.text ?? "",
         subject: `Interview for ${cp.FristName} ${cp.MiddleName} - ${recrutimentData?.JobTitleEnglish}`,
-        startUtc: "", // startdate,
-        endUtc: "", //enddate,
+        startUtc: startdate ?? "",
+        endUtc: enddate ?? "",
         location: "",
         requiredAttendees,
-        optionalAttendees: [],
+        optionalAttendees:
+          StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview
+            ? optionalAttendeeL1
+            : optionalAttendeeL2,
         rooms: [],
         categories: ["Internal", "Planning"],
         isOnlineMeeting: true,
@@ -491,24 +509,57 @@ export const useSubmitCandidateReview = (
 
       setSubmitting(true);
       try {
-        const scheduleResponse =
+        if (
           payload.StatusId ===
           workflowStatusApi.PendingRecruitmentHRscheduleInterview
-            ? { status: 201 }
-            : { status: 201 };
-        await scheduleMeeting(payload);
-        if (scheduleResponse?.status !== 201) return;
+        ) {
+          await scheduleMeeting(payload); // status: 201
+        }
+        // if (scheduleResponse?.status !== 201) return;
+        if (
+          Number(payload.StatusId) ===
+          StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+        ) {
+          let scheduleResponse = await scheduleMeeting(payload);
 
-        // const isReschedulePath =
-        //   (payload.stateValue.tab === "tab2" || payload.stateValue.tab === "tab3") &&
-        //   payload.stateValue?.initialTab === TabName.AssignInterviewPanel;
+          // if (scheduleResponse?.status !== 201) return;
 
-        // if (isReschedulePath) {
-        //   await handleInterviewReschedule(payload);
-        //   return;
-        // }
+          const panelL2 = payload.interviewPanelL2.map((item: any) => ({
+            RecruitmentIDId: payload.recrutimentData?.ID ?? 0,
+            InterviewLevel: InterviewLevels.Level2,
+            InterviewPanelId: item.key ?? 0,
+            CandidateIDId: Number(payload.candidateId) ?? 0,
+          }));
 
-        await handleWorkflowProcess(payload, COIButtonAction);
+          let InterviewscheduleL2: InterviewscheduleL2 = {
+            candidateUpdate: {
+              ID: Number(payload.candidateId),
+              StatusId: StatusId.InterviewScheduledforLevel2,
+              InterviewDateLevel2: payload.interviewLevel2.startDate ?? "",
+              InterviewTimeLevel2: payload.interviewLevel2.endDate ?? "",
+            },
+            interviewPanelL2: panelL2,
+          };
+
+          const response =
+            await CandidateTable.InterviewScheduleLevel2(InterviewscheduleL2);
+
+          if (response.status === 200) {
+            showModal({
+              type: "success",
+              title: "Submitted Successfully",
+              message: RecuritmentHRMsg.InterviewPanalLevel2,
+              confirmLabel: "Go to Candidate Table",
+              onConfirm: () => {
+                closeModal();
+                onClose();
+                handleRefresh();
+              },
+            });
+          }
+        } else {
+          await handleWorkflowProcess(payload, COIButtonAction);
+        }
       } catch (err: any) {
         if (err?.name === "AbortError") return;
         console.error("Submit failed:", err);
@@ -523,7 +574,13 @@ export const useSubmitCandidateReview = (
 
   const submit = useCallback(
     async (payload: SubmitPayload, COIButtonAction: string = "") => {
-      if (payload.COIFlag) {
+      const isRestrictedStatus =
+        Number(payload.StatusId) ===
+          StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel ||
+        payload.StatusId ===
+          workflowStatusApi.PendingRecruitmentHRscheduleInterview;
+
+      if (!isRestrictedStatus && payload.COIFlag) {
         showModal({
           type: "confirmation",
           title: "Conflict Of Interest",

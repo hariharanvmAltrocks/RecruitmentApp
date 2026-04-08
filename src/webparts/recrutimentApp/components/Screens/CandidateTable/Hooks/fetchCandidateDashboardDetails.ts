@@ -13,6 +13,7 @@ import { userInfo } from "../../../../utilities/hooks/RoleContext";
 import {
   ApplicationStatusId,
   RoleID,
+  StatusId,
   workflowStatusApi,
 } from "../../../../utilities/Config";
 
@@ -24,7 +25,7 @@ export type CandidateDashboardItem = {
   JobCode: string;
   Status: string;
   workflowStatusId: string;
-  createdOn: Date | undefined;
+  createdOn: string | undefined;
   applicationStatusId: string;
   applicationStatus: string;
   TotalItems?: number;
@@ -47,6 +48,7 @@ interface CandidateDashboardState {
 
 interface UseCandidateDashboardOptions {
   jobId: number;
+  recruitmentId: number;
   initialPageSize: number;
   enable: boolean;
 }
@@ -90,6 +92,7 @@ function resolveWorkflowStatusIds(
 
 export const useFetchCandidateDashboardDetails = ({
   jobId,
+  recruitmentId,
   initialPageSize,
   enable = true,
 }: UseCandidateDashboardOptions): UseCandidateDashboardReturn => {
@@ -151,24 +154,89 @@ export const useFetchCandidateDashboardDetails = ({
             pagination,
           };
 
-          const res = await CandidateTable.getCandidateDetailsInJobCode(filter);
+          if (matricId === MatricID.AssignInterviewPanel) {
+            let Filter = [
+              {
+                FilterKey: "JobCodeId",
+                Operator: "eq",
+                FilterValue: jobId,
+              },
+              {
+                FilterKey: "RecruitmentID",
+                Operator: "eq",
+                FilterValue: recruitmentId,
+              },
+              {
+                FilterKey: "Status/Id",
+                Operator: "eq",
+                FilterValue:
+                  StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
+              },
+            ];
+            const [res1, res2] = await Promise.all([
+              CandidateTable.getCandidateDetailsInJobCode(filter),
+              CandidateTable.GetDashboardDetailsL2(Filter, "and"),
+            ]);
 
-          const items: CandidateDashboardItem[] = res?.data ?? [];
-          const totalItems: number =
-            res?.data && res?.data.length > 0
-              ? (res?.data[0]?.TotalItems ?? items.length)
-              : 0;
+            const items1: CandidateDashboardItem[] = res1?.data ?? [];
+            const items2: CandidateDashboardItem[] = res2?.data ?? [];
 
-          setState({
-            data: items,
-            loading: false,
-            error: null,
-            pagination: {
-              currentPage: page,
-              pageSize: resolvedPageSize,
-              totalItems,
-            },
-          });
+            const items: CandidateDashboardItem[] = [...items1, ...items2];
+
+            const getTotalItems = (res: any): number => {
+              return res?.data &&
+                res.data.length > 0 &&
+                res.data[0]?.TotalItems &&
+                res.data[0].TotalItems > 0
+                ? res.data[0].TotalItems
+                : 0;
+            };
+
+            const totalItems =
+              getTotalItems(res1) || getTotalItems(res2) || items.length;
+
+            setState({
+              data: items,
+              loading: false,
+              error: null,
+              pagination: {
+                currentPage: page,
+                pageSize: resolvedPageSize,
+                totalItems,
+              },
+            });
+          } else {
+            const res =
+              await CandidateTable.getCandidateDetailsInJobCode(filter);
+
+            const items: CandidateDashboardItem[] = res?.data ?? [];
+            const totalItems: number =
+              res?.data && res?.data.length > 0
+                ? (res?.data[0]?.TotalItems ?? items.length)
+                : 0;
+
+            setState({
+              data: items,
+              loading: false,
+              error: null,
+              pagination: {
+                currentPage: page,
+                pageSize: resolvedPageSize,
+                totalItems,
+              },
+            });
+          }
+
+          // setState({
+          //   data: items,
+          //   loading: false,
+          //   error: null,
+          //   pagination: {
+          //     currentPage: page,
+          //     pageSize: resolvedPageSize,
+          //     totalItems,
+          //   },
+          // });
         } catch (err: any) {
           if (err?.name === "AbortError") return;
 

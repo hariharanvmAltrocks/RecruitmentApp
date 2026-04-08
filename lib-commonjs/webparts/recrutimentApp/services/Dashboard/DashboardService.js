@@ -27,6 +27,18 @@ var DashboardService = /** @class */ (function () {
                                     message: "No metrics configured for this role",
                                 }];
                         }
+                        // const [spCounts, portalJobCodeMap] = await Promise.all([
+                        //     SPServices.batchGet(queries),
+                        //     this._fetchPortalJobCodeMap(queries),
+                        // ]);
+                        if (currentRoleID.includes(Config_1.RoleID.FinanceDepartment)) {
+                            queries = queries.map(function (item) {
+                                if (item.StateValue === ConditionConfig_1.MatricID.LabourHire) {
+                                    return tslib_1.__assign(tslib_1.__assign({}, item), { Filter: item.Filter.filter(function (f) { return f.FilterKey !== "RecruitmentHR"; }) });
+                                }
+                                return item;
+                            });
+                        }
                         return [4 /*yield*/, spservice_1.default.batchGet(queries)];
                     case 1:
                         spCounts_1 = _a.sent();
@@ -370,7 +382,7 @@ var DashboardService = /** @class */ (function () {
                     case 2:
                         DeptDetails_1 = _a.sent();
                         return [4 /*yield*/, Promise.all(res.map(function (item, index) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                var deptDetails, GradeLevel, err_1;
+                                var deptDetails, GradeLevel, err_1, InterviewDate;
                                 var _a, _b;
                                 return tslib_1.__generator(this, function (_c) {
                                     switch (_c.label) {
@@ -388,31 +400,35 @@ var DashboardService = /** @class */ (function () {
                                             console.error("GradeLevel API failed:", err_1);
                                             GradeLevel = { data: [] }; // fallback
                                             return [3 /*break*/, 4];
-                                        case 4: return [2 /*return*/, {
-                                                ID: item.ID,
-                                                RecordID: index + 1,
-                                                ApplicantName: "".concat(item.FristName || "", " ").concat(item.MiddleName || "", " ").concat(item.LastName || "").trim(),
-                                                PositionTitle: item === null || item === void 0 ? void 0 : item.PositionTitle,
-                                                JobGrade: item === null || item === void 0 ? void 0 : item.JobGrade,
-                                                Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
-                                                interviewLevels: (GradeLevel === null || GradeLevel === void 0 ? void 0 : GradeLevel.data) || [],
-                                                jobrequestID: item === null || item === void 0 ? void 0 : item.JobRequestID,
-                                                Status: (_b = (_a = item === null || item === void 0 ? void 0 : item.Status) === null || _a === void 0 ? void 0 : _a.StatusDescription) !== null && _b !== void 0 ? _b : "",
-                                                StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
-                                                InterviewDate: (item === null || item === void 0 ? void 0 : item.InterviewDate)
-                                                    ? (0, moment_1.default)(item.InterviewDate).format("YYYY-MM-DD")
-                                                    : undefined,
-                                                ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
-                                                    ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
-                                                    : undefined,
-                                                CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
-                                                    ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
-                                                    : undefined,
-                                                isExpat: (item === null || item === void 0 ? void 0 : item.NationalityCode) === ConditionConfig_1.NationalityCode.Nationals
-                                                    ? false
-                                                    : true,
-                                                DeptDetails: deptDetails,
-                                            }];
+                                        case 4:
+                                            InterviewDate = (item === null || item === void 0 ? void 0 : item.InterviewDateLevel2)
+                                                ? item === null || item === void 0 ? void 0 : item.InterviewDateLevel2
+                                                : item === null || item === void 0 ? void 0 : item.InterviewDate;
+                                            return [2 /*return*/, {
+                                                    ID: item.ID,
+                                                    RecordID: index + 1,
+                                                    ApplicantName: "".concat(item.FristName || "", " ").concat(item.MiddleName || "", " ").concat(item.LastName || "").trim(),
+                                                    PositionTitle: item === null || item === void 0 ? void 0 : item.PositionTitle,
+                                                    JobGrade: item === null || item === void 0 ? void 0 : item.JobGrade,
+                                                    Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
+                                                    interviewLevels: (GradeLevel === null || GradeLevel === void 0 ? void 0 : GradeLevel.data) || [],
+                                                    jobrequestID: item === null || item === void 0 ? void 0 : item.JobRequestID,
+                                                    Status: (_b = (_a = item === null || item === void 0 ? void 0 : item.Status) === null || _a === void 0 ? void 0 : _a.StatusDescription) !== null && _b !== void 0 ? _b : "",
+                                                    StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
+                                                    InterviewDate: InterviewDate
+                                                        ? (0, moment_1.default)(InterviewDate).format("YYYY-MM-DD")
+                                                        : undefined,
+                                                    ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
+                                                        ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
+                                                        : undefined,
+                                                    CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
+                                                        ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
+                                                        : undefined,
+                                                    isExpat: (item === null || item === void 0 ? void 0 : item.NationalityCode) === ConditionConfig_1.NationalityCode.Nationals
+                                                        ? false
+                                                        : true,
+                                                    DeptDetails: deptDetails,
+                                                }];
                                     }
                                 });
                             }); }))];

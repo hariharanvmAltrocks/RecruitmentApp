@@ -36,7 +36,7 @@ var CandidateTable = function (props) {
     }, [positionDetails]);
     var _e = (0, react_1.useState)(false), isRefreshing = _e[0], setIsRefreshing = _e[1];
     var jobId = (_a = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCodeId) !== null && _a !== void 0 ? _a : 0;
-    var _f = (0, fetchCandidateDashboardDetails_1.useFetchCandidateDashboardDetails)({ jobId: jobId, initialPageSize: 10, enable: !positionLoading }), data = _f.data, loading = _f.loading, error = _f.error, pagination = _f.pagination, fetchPage = _f.fetchPage, setPageSize = _f.setPageSize, refresh = _f.refresh;
+    var _f = (0, fetchCandidateDashboardDetails_1.useFetchCandidateDashboardDetails)({ jobId: jobId, recruitmentId: props.ID, initialPageSize: 10, enable: !positionLoading }), data = _f.data, loading = _f.loading, error = _f.error, pagination = _f.pagination, fetchPage = _f.fetchPage, setPageSize = _f.setPageSize, refresh = _f.refresh;
     var handleRefresh = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         return tslib_1.__generator(this, function (_a) {
             setIsRefreshing(true);
@@ -136,6 +136,7 @@ var CandidateTable = function (props) {
             assignHR: AssignHR !== null && AssignHR !== void 0 ? AssignHR : "",
             statusId: (_c = item.workflowStatusId) !== null && _c !== void 0 ? _c : item.statusID,
             actionID: actionID,
+            RecruitmentID: item.CandidateID,
         });
     }, [data]);
     var getActionConfig = function (item) {

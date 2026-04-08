@@ -37,7 +37,13 @@ function transformToUpsertPayload(payload, userId) {
                     categoryID = payload.mode === "careerPortal" ? "C1" : "C2";
                     return [2 /*return*/, payload.questions.map(function (q, index) {
                             var _a, _b, _c, _d, _e, _f;
-                            var questionType = q.type === "single" ? "QT1" : q.type === "multiple" ? "QT2" : q.type === "interview" ? "QT3" : "";
+                            var questionType = q.type === "single"
+                                ? "QT1"
+                                : q.type === "multiple"
+                                    ? "QT2"
+                                    : q.type === "interview"
+                                        ? "QT3"
+                                        : "";
                             return {
                                 questionEn: decodeBase64(q.questionEn),
                                 questionFr: decodeBase64(q.questionFr),
@@ -111,7 +117,7 @@ var useSaveQuestions = function () {
                     }
                     updatePayload = {};
                     if (payload.mode === "careerPortal") {
-                        StatusID = (0, WorkflowConfig_1.WorkflowConfig)(MatricID);
+                        StatusID = (0, WorkflowConfig_1.WorkflowConfig)(Config_1.StatusId.CareerPortalQuestions);
                         updatePayload = {
                             StatusId: StatusID,
                             // ItemCreated: "Yes",

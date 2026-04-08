@@ -31,9 +31,9 @@ const PriorityWidget: React.FC<PriorityWidgetProps> = ({ data, total }) => {
           Priority Tasks
         </h3>
 
-        <button className="text-blue-600 text-[10px] font-bold uppercase tracking-wider hover:underline">
+        {/* <button className="text-blue-600 text-[10px] font-bold uppercase tracking-wider hover:underline">
           Manage
-        </button>
+        </button> */}
       </div>
 
       <div className="flex items-center gap-6">

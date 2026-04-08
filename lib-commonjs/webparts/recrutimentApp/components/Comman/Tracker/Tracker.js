@@ -96,8 +96,7 @@ var Tracker = function (_a) {
                     react_1.default.createElement("b", null, (_b = selectedMetric === null || selectedMetric === void 0 ? void 0 : selectedMetric.value) !== null && _b !== void 0 ? _b : 0),
                     " results for",
                     " ",
-                    react_1.default.createElement("span", { className: "highlight" }, (_c = selectedMetric === null || selectedMetric === void 0 ? void 0 : selectedMetric.label) !== null && _c !== void 0 ? _c : "-"))),
-            react_1.default.createElement("button", { className: "view-btn" }, "View All Tasks")),
+                    react_1.default.createElement("span", { className: "highlight" }, (_c = selectedMetric === null || selectedMetric === void 0 ? void 0 : selectedMetric.label) !== null && _c !== void 0 ? _c : "-")))),
         react_1.default.createElement("div", { className: "tracker__table-wrapper" },
             react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: rows, loading: false, pageSize: pageSize, currentPage: currentPage, totalCount: rows.length, emptyMessage: "No data available", onPageChange: setCurrentPage, onPageSizeChange: setPageSize, onRowClick: onRowClick }))));
 };

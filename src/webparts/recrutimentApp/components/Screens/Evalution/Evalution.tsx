@@ -40,7 +40,11 @@ function EvalutionContent({ candidateId, onBack }: EvalutionProps): JSX.Element 
   const navigate = useNavigate();
 
   const goBack = React.useCallback(() => {
-    onBack ? onBack() : navigate('/RecruitmentTable');
+    if (onBack) {
+      onBack();
+    } else {
+      navigate('/RecruitmentTable');
+    }
   }, [navigate, onBack]);
 
   const {

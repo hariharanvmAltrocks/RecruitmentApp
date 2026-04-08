@@ -537,7 +537,6 @@ var getDocLibFiles = function (params) { return tslib_1.__awaiter(void 0, void 0
                         var modified = f.TimeLastModified
                             ? new Date(f.TimeLastModified).toLocaleString()
                             : "Unknown";
-                        debugger;
                         return {
                             name: f.Name,
                             content: f.ServerRelativeUrl,

@@ -6,13 +6,24 @@ import {
   DocumentIcon,
   CandidateDocumentsData,
 } from "../ReviewDocument/Hooks/Userequireddocuments";
-import { buildOfficeViewerUrl, buildWopiUrl, isPdfUrl, isSharePointUrl } from "../../../Hooks/reusehooks";
+import {
+  buildOfficeViewerUrl,
+  buildWopiUrl,
+  isPdfUrl,
+  isSharePointUrl,
+} from "../../../Hooks/reusehooks";
 
 // ─── Icon Registry ────────────────────────────────────────────────────────────
 
 const ICONS: Record<DocumentIcon, (color: string) => React.ReactNode> = {
   fingerprint: (c) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.7" strokeLinecap="round">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={c}
+      strokeWidth="1.7"
+      strokeLinecap="round"
+    >
       <path d="M12 2C6.48 2 2 6.48 2 12c0 2.76 1.12 5.26 2.93 7.07" />
       <path d="M12 6c-3.31 0-6 2.69-6 6 0 1.54.58 2.94 1.53 4" />
       <path d="M12 10c-1.1 0-2 .9-2 2 0 .55.22 1.05.58 1.42" />
@@ -23,7 +34,14 @@ const ICONS: Record<DocumentIcon, (color: string) => React.ReactNode> = {
   ),
 
   "offer-letter": (c) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={c}
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
       <polyline points="14 2 14 8 20 8" />
       <line x1="8" y1="13" x2="14" y2="13" />
@@ -33,16 +51,32 @@ const ICONS: Record<DocumentIcon, (color: string) => React.ReactNode> = {
   ),
 
   "work-permit": (c) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.7" strokeLinecap="round">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={c}
+      strokeWidth="1.7"
+      strokeLinecap="round"
+    >
       <circle cx="12" cy="12" r="10" />
       <line x1="2" y1="12" x2="22" y2="12" />
       <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-      <path d="M5.5 6.5a17 17 0 0 0 13 0M5.5 17.5a17 17 0 0 0 13 0" strokeOpacity="0.45" />
+      <path
+        d="M5.5 6.5a17 17 0 0 0 13 0M5.5 17.5a17 17 0 0 0 13 0"
+        strokeOpacity="0.45"
+      />
     </svg>
   ),
 
   contract: (c) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={c}
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
       <polyline points="14 2 14 8 20 8" />
       <line x1="8" y1="12" x2="16" y2="12" />
@@ -53,7 +87,14 @@ const ICONS: Record<DocumentIcon, (color: string) => React.ReactNode> = {
   ),
 
   vaccination: (c) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={c}
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <line x1="19" y1="2" x2="22" y2="5" />
       <path d="M17 4l3 3" />
       <path d="m15 6 1 1-7.5 7.5a2 2 0 0 0-.5 1L8 18l2.5-.5a2 2 0 0 0 1-.5L19 9.5l-1-1" />
@@ -63,14 +104,28 @@ const ICONS: Record<DocumentIcon, (color: string) => React.ReactNode> = {
   ),
 
   police: (c) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={c}
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M12 2l7 3v5c0 5-3.5 9.74-7 11-3.5-1.26-7-6-7-11V5l7-3z" />
       <polyline points="9 12 11 14 15 10" />
     </svg>
   ),
 
   payment: (c) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={c}
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <rect x="2" y="5" width="20" height="14" rx="2" />
       <line x1="2" y1="10" x2="22" y2="10" />
       <line x1="6" y1="15" x2="8" y2="15" />
@@ -79,7 +134,14 @@ const ICONS: Record<DocumentIcon, (color: string) => React.ReactNode> = {
   ),
 
   generic: (c) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={c}
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
       <polyline points="13 2 13 9 20 9" />
       <line x1="8" y1="13" x2="14" y2="13" />
@@ -88,25 +150,29 @@ const ICONS: Record<DocumentIcon, (color: string) => React.ReactNode> = {
   ),
 };
 
-// ─── Iframe Preview Modal ─────────────────────────────────────────────────────
-
 interface IframeModalProps {
   url: string | null;
   fileName: string;
   onClose: () => void;
 }
 
-const IframeModal: React.FC<IframeModalProps> = ({ url, fileName, onClose }) => {
+const IframeModal: React.FC<IframeModalProps> = ({
+  url,
+  fileName,
+  onClose,
+}) => {
   if (!url) return null;
- const getViewerUrl = (url: string) => {
+
+  const getViewerUrl = (url: string): string => {
     if (isSharePointUrl(url)) {
       return buildWopiUrl(url);
     }
     if (isPdfUrl(url)) {
-      return url;
+      return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
     }
     return buildOfficeViewerUrl(url);
   };
+
   return (
     <div
       className={styles.modalOverlay}
@@ -116,10 +182,16 @@ const IframeModal: React.FC<IframeModalProps> = ({ url, fileName, onClose }) => 
       aria-label={`Preview: ${fileName}`}
     >
       <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
-        {/* Modal Header */}
         <div className={styles.modalHeader}>
           <span className={styles.modalFileIcon}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
               <polyline points="14 2 14 8 20 8" />
             </svg>
@@ -133,7 +205,14 @@ const IframeModal: React.FC<IframeModalProps> = ({ url, fileName, onClose }) => 
               title="Download file"
               onClick={(e) => e.stopPropagation()}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                 <polyline points="7 10 12 15 17 10" />
                 <line x1="12" y1="15" x2="12" y2="3" />
@@ -145,7 +224,13 @@ const IframeModal: React.FC<IframeModalProps> = ({ url, fileName, onClose }) => 
               onClick={onClose}
               aria-label="Close preview"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              >
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
@@ -153,21 +238,19 @@ const IframeModal: React.FC<IframeModalProps> = ({ url, fileName, onClose }) => 
           </div>
         </div>
 
-        {/* iframe */}
         <div className={styles.modalIframeWrap}>
           <iframe
-            src={getViewerUrl(url)}
+            src={url}
             title={`Preview of ${fileName}`}
             className={styles.modalIframe}
-            sandbox="allow-scripts allow-same-origin allow-forms"
+            // sandbox="allow-scripts allow-same-origin allow-forms"
+            allow="fullscreen"
           />
         </div>
       </div>
     </div>
   );
 };
-
-// ─── Document Row ─────────────────────────────────────────────────────────────
 
 interface DocumentRowProps {
   doc: CandidateDocument;
@@ -178,7 +261,14 @@ const DocumentRow: React.FC<DocumentRowProps> = ({ doc, onView }) => (
   <div className={styles.docRow}>
     {/* File type icon */}
     <span className={styles.docRowIcon}>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
         <polyline points="14 2 14 8 20 8" />
       </svg>
@@ -201,7 +291,14 @@ const DocumentRow: React.FC<DocumentRowProps> = ({ doc, onView }) => (
         aria-label={`Preview ${doc.fileName}`}
         onClick={() => onView(doc.downloadUrl, doc.fileName)}
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M1 12S5 5 12 5s11 7 11 7-4 7-11 7S1 12 1 12z" />
           <circle cx="12" cy="12" r="3" />
         </svg>
@@ -215,7 +312,14 @@ const DocumentRow: React.FC<DocumentRowProps> = ({ doc, onView }) => (
         title="Download document"
         aria-label={`Download ${doc.fileName}`}
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
           <polyline points="7 10 12 15 17 10" />
           <line x1="12" y1="15" x2="12" y2="3" />
@@ -264,19 +368,23 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
           </span>
         </span>
 
-        <span className={`${styles.chevronBtn} ${open ? styles.chevronOpen : ""}`}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+        <span
+          className={`${styles.chevronBtn} ${open ? styles.chevronOpen : ""}`}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          >
             <polyline points="18 15 12 9 6 15" />
           </svg>
         </span>
       </button>
 
-      {/* Expanded Document Grid */}
       {open && (
-        <div
-          id={`docs-${category.categoryId}`}
-          className={styles.docGrid}
-        >
+        <div id={`docs-${category.categoryId}`} className={styles.docGrid}>
           {category.documents.map((doc) => (
             <DocumentRow key={doc.id} doc={doc} onView={onView} />
           ))}
@@ -286,15 +394,13 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
   );
 };
 
-// ─── Main Component ───────────────────────────────────────────────────────────
-
 interface CandidateDocumentsRepositoryProps {
   data: CandidateDocumentsData | null;
 }
 
-const CandidateDocumentsRepository: React.FC<CandidateDocumentsRepositoryProps> = ({
-  data,
-}) => {
+const CandidateDocumentsRepository: React.FC<
+  CandidateDocumentsRepositoryProps
+> = ({ data }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewFileName, setPreviewFileName] = useState<string>("");
 
@@ -308,25 +414,17 @@ const CandidateDocumentsRepository: React.FC<CandidateDocumentsRepositoryProps> 
     setPreviewFileName("");
   };
 
- 
-
   return (
     <>
-      <IframeModal
-        url={previewUrl}
-        fileName={previewFileName}
-        onClose={handleClose}
-      />
-
       <section className={styles.repository}>
-        {/* Title Row */}
         <div className={styles.titleRow}>
           <span className={styles.titleBar} />
           <h2 className={styles.title}>CANDIDATE DOCUMENTS REPOSITORY</h2>
-          <span className={styles.totalBadge}>{data?.totalFiles} Total Files</span>
+          <span className={styles.totalBadge}>
+            {data?.totalFiles} Total Files
+          </span>
         </div>
 
-        {/* Category List */}
         <div className={styles.categoryList}>
           {data?.categories.map((cat, idx) => (
             <CategoryCard
@@ -337,6 +435,12 @@ const CandidateDocumentsRepository: React.FC<CandidateDocumentsRepositoryProps> 
             />
           ))}
         </div>
+
+        <IframeModal
+          url={previewUrl}
+          fileName={previewFileName}
+          onClose={handleClose}
+        />
       </section>
     </>
   );

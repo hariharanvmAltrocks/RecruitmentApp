@@ -69,14 +69,14 @@
   max-width: 100% !important;
 } */
 
- #workbenchCommandBar {
+ /* #workbenchCommandBar {
   display: none !important;
-} 
+}  */
 
 #CommentsWrapper {
   display: none !important;
 }
-#SimpleFooter {
+[data-automationid="SimpleFooter"] {
   display: none !important;
 }
 

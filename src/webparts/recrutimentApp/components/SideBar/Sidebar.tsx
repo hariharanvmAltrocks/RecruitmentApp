@@ -172,7 +172,7 @@ console.log(sortedMenu,"sortedMenu");
 
       <div className={styles.sidebarFooter}>
   <div className={styles.footerContent}>
-    <div className={styles.footerVersion}>v1.1</div>
+    <div className={styles.footerVersion}>v1.01</div>
     <div className={styles.footerLabel}>Kamoa Copper SA</div>
   </div>
 </div>

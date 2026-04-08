@@ -53,13 +53,14 @@
 }
 .data-table__cell--muted {
   color: #64748b;
+  font-weight: 600;
 }
 .data-table__cell--count {
   font-weight: 700;
   color: #0f172a;
 }
 .data-table__cell--actions {
-  text-align: right;
+  text-align: left;
   width: 80px;
 }
 @media (max-width: 900px) {
@@ -67,11 +68,15 @@
     display: none;
   }
 }
+.data-table__job-code {
+  font-weight: 700;
+  color: #2563eb;
+}
 .data-table__job-title {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-weight: 600;
+  font-weight: bold;
   color: #0f172a;
 }
 .data-table__job-dept {
@@ -93,8 +98,8 @@
 }
 .data-table__action-btn {
   border: 1px solid #e2e8f0;
-  background: #ffffff;
-  color: #2563eb;
+  background: #2563eb;
+  color: #ffffff;
   border-radius: 10px;
   padding: 6px 10px;
   display: inline-flex;

@@ -44,15 +44,17 @@ var Dashboard = function (props) {
         setCurrentTabName(data.TabName);
         setMatricID(data.id);
     };
-    var onTrackerChange = function (row) {
-        setActiveMenuID(ref.current);
-        navigate(navigationPath);
-    };
     var selectedMetric = (_a = martics.metrics.find(function (m) { return m.id === activeMetric; })) !== null && _a !== void 0 ? _a : martics.metrics[0];
     var priorityData = (0, metricColumns_config_1.priorityValues)(martics.metrics);
     var total = (0, metricColumns_config_1.totalPriority)(martics.metrics);
     var loading = martics.loading || trackerLoading || urgentLoading;
     var hasMetrics = martics.metrics && martics.metrics.length > 0;
+    var onTrackerChange = function (row) {
+        if (selectedMetric === null || selectedMetric === void 0 ? void 0 : selectedMetric.showArrow) {
+            setActiveMenuID(ref.current);
+            navigate(navigationPath);
+        }
+    };
     var metricsContainer = {
         hidden: {},
         visible: { transition: { staggerChildren: 0.1 } }

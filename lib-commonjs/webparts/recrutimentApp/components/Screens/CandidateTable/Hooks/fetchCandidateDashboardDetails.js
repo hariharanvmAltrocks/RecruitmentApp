@@ -34,7 +34,7 @@ function resolveWorkflowStatusIds(roleIDs, matricId) {
     return [Config_1.workflowStatusApi.HRPending];
 }
 var useFetchCandidateDashboardDetails = function (_a) {
-    var jobId = _a.jobId, initialPageSize = _a.initialPageSize, _b = _a.enable, enable = _b === void 0 ? true : _b;
+    var jobId = _a.jobId, recruitmentId = _a.recruitmentId, initialPageSize = _a.initialPageSize, _b = _a.enable, enable = _b === void 0 ? true : _b;
     var matricId = (0, UIStateContext_1.useUIState)().MatricID;
     var roleIDs = (0, RoleContext_1.userInfo)().roleIDs;
     var _c = (0, react_1.useState)({
@@ -64,16 +64,16 @@ var useFetchCandidateDashboardDetails = function (_a) {
                 clearTimeout(timerRef.current);
             setState(function (prev) { return (tslib_1.__assign(tslib_1.__assign({}, prev), { loading: true, error: null })); });
             timerRef.current = setTimeout(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-                var jobCodeRes, jobCode, workflowStausId, pagination, filter, res, items, totalItems, err_1;
-                var _a, _b, _c, _d, _e;
-                return tslib_1.__generator(this, function (_f) {
-                    switch (_f.label) {
+                var jobCodeRes, jobCode, workflowStausId, pagination, filter, Filter, _a, res1, res2, items1, items2, items, getTotalItems, totalItems, res, items, totalItems, err_1;
+                var _b, _c, _d, _e, _f, _g, _h;
+                return tslib_1.__generator(this, function (_j) {
+                    switch (_j.label) {
                         case 0:
-                            _f.trys.push([0, 3, , 4]);
+                            _j.trys.push([0, 6, , 7]);
                             return [4 /*yield*/, ServiceExport_1.masterService.GetJobUniqueDataValue(jobId)];
                         case 1:
-                            jobCodeRes = _f.sent();
-                            jobCode = (_b = (_a = jobCodeRes === null || jobCodeRes === void 0 ? void 0 : jobCodeRes.data) === null || _a === void 0 ? void 0 : _a.JobCode) !== null && _b !== void 0 ? _b : "";
+                            jobCodeRes = _j.sent();
+                            jobCode = (_c = (_b = jobCodeRes === null || jobCodeRes === void 0 ? void 0 : jobCodeRes.data) === null || _b === void 0 ? void 0 : _b.JobCode) !== null && _c !== void 0 ? _c : "";
                             workflowStausId = resolveWorkflowStatusIds(roleIDs, matricId);
                             pagination = {
                                 filterValue: "",
@@ -88,12 +88,60 @@ var useFetchCandidateDashboardDetails = function (_a) {
                                 workflowStausId: workflowStausId,
                                 pagination: pagination,
                             };
-                            return [4 /*yield*/, ServiceExport_1.CandidateTable.getCandidateDetailsInJobCode(filter)];
+                            if (!(matricId === ConditionConfig_1.MatricID.AssignInterviewPanel)) return [3 /*break*/, 3];
+                            Filter = [
+                                {
+                                    FilterKey: "JobCodeId",
+                                    Operator: "eq",
+                                    FilterValue: jobId,
+                                },
+                                {
+                                    FilterKey: "RecruitmentID",
+                                    Operator: "eq",
+                                    FilterValue: recruitmentId,
+                                },
+                                {
+                                    FilterKey: "Status/Id",
+                                    Operator: "eq",
+                                    FilterValue: Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
+                                },
+                            ];
+                            return [4 /*yield*/, Promise.all([
+                                    ServiceExport_1.CandidateTable.getCandidateDetailsInJobCode(filter),
+                                    ServiceExport_1.CandidateTable.GetDashboardDetailsL2(Filter, "and"),
+                                ])];
                         case 2:
-                            res = _f.sent();
-                            items = (_c = res === null || res === void 0 ? void 0 : res.data) !== null && _c !== void 0 ? _c : [];
+                            _a = _j.sent(), res1 = _a[0], res2 = _a[1];
+                            items1 = (_d = res1 === null || res1 === void 0 ? void 0 : res1.data) !== null && _d !== void 0 ? _d : [];
+                            items2 = (_e = res2 === null || res2 === void 0 ? void 0 : res2.data) !== null && _e !== void 0 ? _e : [];
+                            items = tslib_1.__spreadArray(tslib_1.__spreadArray([], items1, true), items2, true);
+                            getTotalItems = function (res) {
+                                var _a;
+                                return (res === null || res === void 0 ? void 0 : res.data) &&
+                                    res.data.length > 0 &&
+                                    ((_a = res.data[0]) === null || _a === void 0 ? void 0 : _a.TotalItems) &&
+                                    res.data[0].TotalItems > 0
+                                    ? res.data[0].TotalItems
+                                    : 0;
+                            };
+                            totalItems = getTotalItems(res1) || getTotalItems(res2) || items.length;
+                            setState({
+                                data: items,
+                                loading: false,
+                                error: null,
+                                pagination: {
+                                    currentPage: page,
+                                    pageSize: resolvedPageSize,
+                                    totalItems: totalItems,
+                                },
+                            });
+                            return [3 /*break*/, 5];
+                        case 3: return [4 /*yield*/, ServiceExport_1.CandidateTable.getCandidateDetailsInJobCode(filter)];
+                        case 4:
+                            res = _j.sent();
+                            items = (_f = res === null || res === void 0 ? void 0 : res.data) !== null && _f !== void 0 ? _f : [];
                             totalItems = (res === null || res === void 0 ? void 0 : res.data) && (res === null || res === void 0 ? void 0 : res.data.length) > 0
-                                ? ((_e = (_d = res === null || res === void 0 ? void 0 : res.data[0]) === null || _d === void 0 ? void 0 : _d.TotalItems) !== null && _e !== void 0 ? _e : items.length)
+                                ? ((_h = (_g = res === null || res === void 0 ? void 0 : res.data[0]) === null || _g === void 0 ? void 0 : _g.TotalItems) !== null && _h !== void 0 ? _h : items.length)
                                 : 0;
                             setState({
                                 data: items,
@@ -105,15 +153,16 @@ var useFetchCandidateDashboardDetails = function (_a) {
                                     totalItems: totalItems,
                                 },
                             });
-                            return [3 /*break*/, 4];
-                        case 3:
-                            err_1 = _f.sent();
+                            _j.label = 5;
+                        case 5: return [3 /*break*/, 7];
+                        case 6:
+                            err_1 = _j.sent();
                             if ((err_1 === null || err_1 === void 0 ? void 0 : err_1.name) === "AbortError")
                                 return [2 /*return*/];
                             console.error("CandidateDashboard: fetch failed", err_1);
                             setState(function (prev) { return (tslib_1.__assign(tslib_1.__assign({}, prev), { loading: false, error: "Failed to load candidates. Please try again." })); });
-                            return [3 /*break*/, 4];
-                        case 4: return [2 /*return*/];
+                            return [3 /*break*/, 7];
+                        case 7: return [2 /*return*/];
                     }
                 });
             }); }, 300);

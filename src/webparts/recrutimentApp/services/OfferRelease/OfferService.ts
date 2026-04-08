@@ -151,20 +151,28 @@ export default class OfferService implements IOfferService {
         JobTiltle: recruitmentPosition?.JobTitleEnglish?.JobTitleInEnglish,
         JobCode: recruitmentPosition?.JobTitleEnglish?.JobCode,
         positionID: candidateSelected?.PositionID?.PositionID,
-        ApplicantName: `${candidatePersonal?.firstName || ""} ${candidatePersonal?.middleName || ""} ${candidatePersonal?.lastName || ""}`,
+        ApplicantName: [
+          candidatePersonal.FristName,
+          candidatePersonal.MiddleName,
+          candidatePersonal.LastName,
+        ]
+          .filter(Boolean)
+          .join(" "),
+        // .trim(),`${?.firstName || ""} ${candidatePersonal?.middleName || ""} ${candidatePersonal?.lastName || ""}`,
         Nationality: candidatePersonal?.Nationality,
         Gender: candidatePersonal?.Gender,
         ProofOfIdentity: candidatePersonal?.ProofOfIdentity,
         IdentityNumber: candidatePersonal?.IdentityNumber,
         Email: candidatePersonal?.Email,
-        Location: candidatePersonal?.Location,
+        Location: "DRC", // candidatePersonal?.Location,
         BusinessUnitCode: recruitment?.BusinessUnitCode?.BusineesUnitCode,
+        BusinessUnitCodeId: recruitment?.BusinessUnitCode?.Id,
         Department: recruitment?.Department?.DepartmentName,
         SubDepartment: recruitment?.SubDepartment?.SubDepTitle,
         Section: recruitment?.Section?.SectionName,
         DepartmentCode: recruitment?.DepartmentCode?.DptCode,
         EmploymentCategory: recruitment?.EmploymentCategory,
-        TypeofContract: recruitment?.TypeofContract,
+        TypeofContract: recruitment?.TypeOfContract,
         AreaofWork: recruitment?.AreaofWork,
         JoiningDate: careerRes?.data?.[0]?.joiningDate ?? "-",
         NoticePeriod: careerRes?.data?.[0]?.noticePeriod ?? "-",
@@ -612,6 +620,26 @@ export default class OfferService implements IOfferService {
         data: Response.data,
         status: Response.status,
         message: Response.data.message,
+      };
+    } catch (error) {
+      console.error("Error inserting data into AdvertisementDetails:", error);
+      return {
+        data: [],
+        status: 500,
+        message: "Error inserting data into AdvertisementDetails",
+      };
+    }
+  }
+
+  async PerformCriminalRecordCheck(
+    id: number,
+  ): Promise<ApiResponse<any | null>> {
+    try {
+      const response = await BGverification.PerformCriminalRecordCheck(id);
+      return {
+        data: response.data,
+        status: response.status,
+        message: response.data.message,
       };
     } catch (error) {
       console.error("Error inserting data into AdvertisementDetails:", error);

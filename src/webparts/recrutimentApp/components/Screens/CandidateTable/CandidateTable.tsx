@@ -51,7 +51,7 @@ export const CandidateTable: React.FC = (props: any) => {
     fetchPage,
     setPageSize,
     refresh
-  } = useFetchCandidateDashboardDetails({ jobId, initialPageSize: 10, enable: !positionLoading });
+  } = useFetchCandidateDashboardDetails({ jobId, recruitmentId: props.ID, initialPageSize: 10, enable: !positionLoading });
 
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
@@ -186,6 +186,7 @@ export const CandidateTable: React.FC = (props: any) => {
       assignHR: AssignHR ?? "",
       statusId: item.workflowStatusId ?? item.statusID,
       actionID,
+      RecruitmentID: item.CandidateID,
     });
 
   }, [data]);

@@ -19,7 +19,7 @@ var useUpdateMainRecord = function (form, currentRoleID) {
             var StatusID, payload, tasks;
             if (extraData === void 0) { extraData = {}; }
             return tslib_1.__generator(this, function (_a) {
-                StatusID = (0, WorkflowConfig_1.WorkflowConfig)(MatricID);
+                StatusID = (0, WorkflowConfig_1.WorkflowConfig)(form.StatusId);
                 payload = tslib_1.__assign({ StatusId: StatusID }, extraData);
                 tasks = [
                     spservice_1.default.SPUpdateItem({

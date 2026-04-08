@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.makeDocData = makeDocData;
 exports.useSubmitWorkflow = useSubmitWorkflow;
 var tslib_1 = require("tslib");
 var react_1 = require("react");
@@ -11,7 +12,6 @@ var ServiceExport_1 = require("../../../../../services/ServiceExport");
 var useModalPopup_1 = require("../../../../Comman/ModalPopup/useModalPopup");
 var react_router_dom_1 = require("react-router-dom");
 var RoleContext_1 = require("../../../../../utilities/hooks/RoleContext");
-var dateConfigfn_1 = require("../../../../Hooks/dateConfigfn");
 var WorkflowConfig_1 = require("../../../../Hooks/WorkflowConfig");
 function makeDocData(profileID, requestID, documentName, unsignedDoc) {
     if (unsignedDoc === void 0) { unsignedDoc = ""; }
@@ -251,9 +251,11 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                 case 20:
                     if (!(btnAction === ConditionConfig_1.ButtonAction.Review)) return [3 /*break*/, 22];
                     return [4 /*yield*/, ServiceExport_1.OfferServices.InsertRecruitmentCandidateDetails({
-                            JoiningDate: (0, dateConfigfn_1.SpiltDateOnly)(new Date(data.JoiningDate)),
+                            // JoiningDate: data.JoiningDate
+                            //   ? SpiltDateOnly(new Date(data.JoiningDate))
+                            //   : "",
                             NoticePeriod: String(data.NoticePeriod),
-                            ID: data.ID,
+                            ID: data.CandidateID,
                         })];
                 case 21:
                     documentResponse = _b.sent();
@@ -390,10 +392,11 @@ function useSubmitWorkflow(data) {
             type: type,
             title: "Submitted",
             message: message,
-            confirmLabel: "OK",
+            confirmLabel: "Go to Dashboard",
             onConfirm: function () {
                 closeModal();
                 onConfirm();
+                navigate("/Dashboard");
             },
         });
     }, []);

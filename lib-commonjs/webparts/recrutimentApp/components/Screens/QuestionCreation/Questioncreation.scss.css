@@ -314,7 +314,10 @@
 }
 .qc-bank__list {
   flex: 1;
+  min-height: 0;
+  height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px 20px;
   display: flex;
   flex-direction: column;

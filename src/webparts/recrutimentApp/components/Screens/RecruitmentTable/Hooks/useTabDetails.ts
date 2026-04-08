@@ -18,6 +18,7 @@ export interface UseTabDetailsResult {
 const getTabDetails = (
   items: any[] | undefined,
   roleIDs: number[],
+  menuId: number,
 ): TabDetails[] =>
   items?.map((item: any, index: number) => ({
     ...item,
@@ -26,6 +27,7 @@ const getTabDetails = (
       roleIDs,
       Number(item.StatusDetails?.[0]?.StatusId),
       item.TabName,
+      menuId,
     ),
   })) ?? [];
 
@@ -49,7 +51,8 @@ export const useTabDetails = (): UseTabDetailsResult => {
             ? menu.Children?.find((child: any) => child?.Id === activeMenuID)
             : menu.TabDetails?.find((tab: any) => tab?.Id === activeMenuID);
 
-          if (match) acc.push(...getTabDetails(match.TabDetails, roleIDs));
+          if (match)
+            acc.push(...getTabDetails(match.TabDetails, roleIDs, activeMenuID));
           return acc;
         }, []) ?? [];
 

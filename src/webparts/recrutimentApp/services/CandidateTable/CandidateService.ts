@@ -4,8 +4,11 @@ import {
   CandidateProfile,
   COIType,
   CommentsData,
+  CompanyDetails,
+  employeeReferenceDetail,
   GetProfileByJobCode,
   PPEDetail,
+  PreviousEmployer,
   sendEmail,
   WorkflowJson,
 } from "../../models/Icareerportal";
@@ -21,6 +24,7 @@ import {
   FetchInterviewPanelOptions,
   FilterItem,
   ICandidateService,
+  InterviewscheduleL2,
   PanelEntry,
   panelMember,
   RescheduledCandidate,
@@ -31,6 +35,7 @@ import {
   agentCode,
   CategoryID,
   InterviewLevels,
+  NationalityCode,
   quesContentId,
   RoleName,
 } from "../../utilities/ConditionConfig";
@@ -45,9 +50,12 @@ import {
 } from "../../components/Hooks/reusehooks";
 import { AttachmentDetails } from "../../components/Screens/RecruitmentTable/AdvertReviewDrawer/Hooks/getAttachmentDetails";
 import { BatchQuery, IDocFiles } from "../SPService/Ispservice";
-import { toAttachment } from "../../components/Hooks/dateConfigfn";
+import {
+  formatToDateTimeLocal,
+  toAttachment,
+} from "../../components/Hooks/dateConfigfn";
 import { PanelMember } from "../../components/Screens/CandidateTable/Hooks/fetchPanelMembers";
-import SPServices from "../SPService/spservice";
+import SPServices, { getSP } from "../SPService/spservice";
 import {
   DocumentLibraray,
   ListNames,
@@ -56,6 +64,7 @@ import {
   workflowStatusApi,
 } from "../../utilities/Config";
 import { COIAttach } from "../CareerPortal/ICareerPortal";
+import { count } from "../../utilities/ApiConfig";
 
 export default class CandidateService implements ICandidateService {
   async getCandidateDetailsInJobCode(
@@ -117,6 +126,89 @@ export default class CandidateService implements ICandidateService {
         status: 500,
         message: "Error Get Candidate details",
       };
+    }
+  }
+
+  async GetDashboardDetailsL2(
+    filterParam: any,
+    filterConditions: any,
+  ): Promise<ApiResponse<GetProfileByJobCode[]>> {
+    try {
+      let GridResult: GetProfileByJobCode[] = [];
+
+      const res: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Select: `*,JobCode/JobCode,Status/StatusDescription,RecruitmentID/Id`,
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Expand: `RecruitmentID,Status,JobCode`,
+        Topcount: count.Topcount,
+        Orderby: "ID",
+        Orderbydecorasc: true,
+      });
+
+      if (!res.length) {
+        return { data: [], status: 200, message: "No records found" };
+      }
+
+      const ids: number[] = res
+        .map((item: any) => item.RecruitmentID?.Id)
+        .filter(Boolean);
+
+      if (!ids.length) {
+        return {
+          data: [],
+          status: 200,
+          message: "No linked recruitment records found",
+        };
+      }
+
+      const recruitmentFilter = [
+        { FilterKey: "ID", Operator: "in", FilterValue: ids },
+      ];
+
+      GridResult = await Promise.all(
+        res.map(async (item, index) => {
+          let GradeLevel;
+          try {
+            GradeLevel = await masterService.GetGradeLevel(item?.JobGrade);
+          } catch (err) {
+            console.error("GradeLevel API failed:", err);
+            GradeLevel = { data: [] }; // fallback
+          }
+
+          return {
+            SNO: index + 1,
+            CandidateID: item.ID,
+            ApplicantName: [item.FristName, item.MiddleName, item.LastName]
+              .filter(Boolean)
+              .join(" ")
+              .trim(),
+            PositionTitle: item?.PositionTitle,
+            JobCode: item?.JobCode?.JobCode,
+            JobGrade: item?.JobGrade,
+            Nationality: item?.Nationality,
+
+            interviewLevels: GradeLevel?.data || [],
+            jobrequestID: item?.JobRequestID,
+
+            Status: item?.Status?.StatusDescription ?? "",
+            workflowStatusId: item?.StatusId,
+
+            createdOn: moment(item?.Created).format("DD/MM/YYYY"),
+            TotalItems: 0,
+            applicationStatusId: "",
+            applicationStatus: "",
+            createdBy: item.ExternalAgentDetails,
+            tblProfilesKcsas: [],
+          };
+        }),
+      );
+
+      return { data: GridResult, status: 200, message: "Success" };
+    } catch (error) {
+      console.error(`Error fetching from Candidate details:`, error);
+      return { data: [], status: 500, message: "Error fetching data" };
     }
   }
 
@@ -442,6 +534,185 @@ export default class CandidateService implements ICandidateService {
     }
   }
 
+  async getCandidateDetailsL2(
+    CandidateID: number,
+  ): Promise<ApiResponse<CandidateProfile[]>> {
+    try {
+      const res: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Select:
+          "*,JobCode/JobCode,RecruitmentID/ID,Status/ID,Status/StatusDescription,ID",
+        Expand: "JobCode,RecruitmentID,Status",
+        FilterCondition: "and",
+        Filter: [
+          {
+            FilterKey: "ID",
+            Operator: "eq",
+            FilterValue: CandidateID,
+          },
+        ],
+        Topcount: 1000,
+      });
+      let defaultGrade = "",
+        defaultLevel = "";
+      try {
+        const posRes: any[] = await SPServices.SPReadItems({
+          Listname: ListNames.HRMSRecruitmentPositionDetails,
+          Select: "*,PatersonGrade/PatersonGrade",
+          Expand: "PatersonGrade",
+          Filter: [
+            {
+              FilterKey: "RecruitmentID",
+              Operator: "eq",
+              FilterValue: res[0]?.RecruitmentID?.ID,
+            },
+          ],
+        });
+        defaultGrade =
+          posRes?.[0]?.PatersonGrade?.PatersonGrade ||
+          posRes?.[0]?.PatersonGrade ||
+          "";
+        if (defaultGrade) {
+          const gr: any[] = await SPServices.SPReadItems({
+            Listname: ListNames.HRMSGradeMaster,
+            Select: "*",
+            Filter: [
+              {
+                FilterKey: "PatersonGrade",
+                Operator: "eq",
+                FilterValue: defaultGrade,
+              },
+            ],
+          });
+          defaultLevel = gr?.[0]?.Levels || "";
+        }
+      } catch (_) {}
+      const enriched: CandidateProfile[] = await Promise.all(
+        (res || []).map(async (item: any) => {
+          const CandidateCV = await CommonServices.GetDocumentinUrl(
+            item?.CandidateResumeLink,
+          );
+          const BusinessDocument = await CommonServices.GetDocumentinUrl(
+            item?.BusinessLink,
+          );
+          const FamilyDocument = await CommonServices.GetDocumentinUrl(
+            item?.FamilyLink,
+          );
+          const OverallAttachment: AttachmentDetails[] = [
+            ...(CandidateCV.data.length > 0
+              ? [toAttachment("Candidate Resume", CandidateCV.data)]
+              : []),
+
+            ...(FamilyDocument.data?.length > 0
+              ? [toAttachment("Family Link Document", FamilyDocument.data)]
+              : []),
+
+            ...(BusinessDocument.data?.length > 0
+              ? [toAttachment("Business Link Document", BusinessDocument.data)]
+              : []),
+          ];
+          // const gpa = await _calculateGPA(candidateId);
+          return {
+            CandidateID: item.ID,
+            profileID: item.ProfileID,
+            JobCode: item.JobCode?.JobCode,
+            JobTitle: item.JobTitle,
+            ApplicantName: [item.FristName, item.MiddleName, item.LastName]
+              .filter(Boolean)
+              .join(" ")
+              .trim(),
+            FristName: item.FristName,
+            MiddleName: item.MiddleName,
+            ResidentialAddress: item.ResidentialAddress,
+            DOB: item.DOB,
+            ContactNumber: item.ContactNumber,
+            Email: item.Email,
+            ApplicantSurName: item.LastName,
+            Nationality: item.Nationality,
+            Gender: item.Gender,
+            HighestQualification: item.Qualification,
+            ExperienceMining: item.TotalYearOfExperiance,
+            ExperRelatedfield: item.ReleventExperience,
+            Status: item?.Status?.StatusDescription,
+            StatusId: item.Status?.ID,
+            Agencies: item.Agencies,
+            CandidateResume: CandidateCV.data,
+            RoleProfile: [],
+            OverallAtttachment: OverallAttachment,
+            Comments: [],
+            workflowStatusId: "",
+            hrComments: "",
+            JobVaildFromDate: "",
+            JobVaildToDate: "",
+            CandidateResumeLink: "",
+            ConflictsOfInterest:
+              item?.ConflictsOfInterest === "Yes" ? "Yes" : "No",
+            disability: item?.Disability === "Yes" ? "Yes" : "No",
+            disabilityReason: item?.DisabilityDetails,
+            identityValue: "",
+            identityType: "",
+            NatioCode: "",
+
+            Age: "",
+            NumberOftax: item.NumberOfTaxDependents,
+            CurrentEmployer: item?.LastOrCurrentEmployer,
+            CurrentPosition: item?.LastOrCurrentPosition,
+            WillingToRelocate: "",
+            previouslyworkedMine: "",
+            familylinks: "",
+            businesslinks: "",
+            familyDocuments: FamilyDocument.data,
+            businessDocuments: BusinessDocument.data,
+            CountryofOrgin: "",
+            Citizenship: "",
+
+            FamilyLink: "",
+            BusinessLink: "",
+            GPA: 0,
+
+            COIAppreve: item?.COIEmail,
+            COIComments: item?.COIComments,
+            COIReason: item?.COIReason,
+
+            countryOfResidency: "",
+            residentStatus: "",
+            maritalStatus: "",
+            childrenDetails: [],
+            employeeReferenceDetails: {} as employeeReferenceDetail,
+            maritalStatusId: "",
+
+            joiningDate: "",
+            noticePeriod: "",
+
+            hasIvanhoeZijinExperience: "",
+            companyDetails: {} as CompanyDetails,
+
+            businesslinkscompany: "",
+            PreviousEmployerDetails: {} as PreviousEmployer,
+            LanguageKnown: [],
+
+            PPEDetails: [],
+
+            InterviewStartDate: formatToDateTimeLocal(item?.InterviewDate),
+            InterviewEndDate: formatToDateTimeLocal(item?.InterviewTime),
+          } as CandidateProfile;
+        }),
+      );
+      return {
+        data: enriched,
+        status: 200,
+        message: "Interview panel details fetched successfully",
+      };
+    } catch (error) {
+      console.error("fetchInterviewPanelDetails failed:", error);
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching interview panel details",
+      };
+    }
+  }
+
   async fetchInterviewPanelDetails({
     BUCodeID,
     assignHREmail,
@@ -634,34 +905,41 @@ export default class CandidateService implements ICandidateService {
         Number(statusID) ===
         StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
       ) {
-        if (jdeItem.LineManagerId && nameMap[String(jdeItem.LineManagerId)]) {
-          basePanelLevel1.push({
-            value: jdeItem.LineManagerId,
-            label: nameMap[String(jdeItem.LineManagerId)],
-            Email: jdeItem.LineManager.EMail,
-            Role: RoleName.LineManager,
-          });
-        }
-        if (jdeItem.HODId && nameMap[String(jdeItem.HODId)]) {
-          basePanelLevel1.push({
-            value: jdeItem.HODId,
-            label: nameMap[String(jdeItem.HODId)],
-            Email: jdeItem.HOD.EMail,
-            Role: RoleName.HOD,
-          });
-        }
+        // if (jdeItem.LineManagerId && nameMap[String(jdeItem.LineManagerId)]) {
+        //   basePanelLevel1.push({
+        //     value: jdeItem.LineManagerId,
+        //     label: nameMap[String(jdeItem.LineManagerId)],
+        //     Email: jdeItem.LineManager.EMail,
+        //     Role: RoleName.LineManager,
+        //   });
+        // }
+        // if (jdeItem.HODId && nameMap[String(jdeItem.HODId)]) {
+        //   basePanelLevel1.push({
+        //     value: jdeItem.HODId,
+        //     label: nameMap[String(jdeItem.HODId)],
+        //     Email: jdeItem.HOD.EMail,
+        //     Role: RoleName.HOD,
+        //   });
+        // }
+        //  if (assignHRId?.data?.key && nameMap[String(assignHRId.data.key)]) {
+        //   basePanelLevel1.push({
+        //     value: assignHRId.data.key,
+        //     label: nameMap[String(assignHRId.data.key)],
+        //     Email: assignHREmail,
+        //     Role: RoleName.RecruitmentHR,
+        //   });
+        // }
+        basePanelLevel1.push(...existingLevel1);
         if (jdeItem.EXCOId && nameMap[String(jdeItem.EXCOId)]) {
-          basePanelLevel1.push({
+          basePanelLevel2.push({
             value: jdeItem.EXCOId,
             label: nameMap[String(jdeItem.EXCOId)],
             Email: jdeItem.EXCO.EMail,
             Role: RoleName.EXCO,
           });
         }
-        basePanelLevel1.push(...existingLevel1);
-      } else {
         if (jdeItem.LineManagerId && nameMap[String(jdeItem.LineManagerId)]) {
-          basePanelLevel1.push({
+          basePanelLevel2.push({
             value: jdeItem.LineManagerId,
             label: nameMap[String(jdeItem.LineManagerId)],
             Email: jdeItem.LineManager.EMail,
@@ -669,21 +947,41 @@ export default class CandidateService implements ICandidateService {
           });
         }
         if (jdeItem.HODId && nameMap[String(jdeItem.HODId)]) {
-          basePanelLevel1.push({
+          basePanelLevel2.push({
             value: jdeItem.HODId,
             label: nameMap[String(jdeItem.HODId)],
             Email: jdeItem.HOD.EMail,
             Role: RoleName.HOD,
           });
         }
-        if (assignHRId?.data?.key && nameMap[String(assignHRId.data.key)]) {
-          basePanelLevel1.push({
-            value: assignHRId.data.key,
-            label: nameMap[String(assignHRId.data.key)],
-            Email: assignHREmail,
-            Role: RoleName.RecruitmentHR,
-          });
-        }
+        basePanelLevel2.push(...existingLevel2);
+      } else {
+        basePanelLevel1.push(...existingLevel1);
+        basePanelLevel2.push(...existingLevel2);
+        // if (jdeItem.LineManagerId && nameMap[String(jdeItem.LineManagerId)]) {
+        //   basePanelLevel1.push({
+        //     value: jdeItem.LineManagerId,
+        //     label: nameMap[String(jdeItem.LineManagerId)],
+        //     Email: jdeItem.LineManager.EMail,
+        //     Role: RoleName.LineManager,
+        //   });
+        // }
+        // if (jdeItem.HODId && nameMap[String(jdeItem.HODId)]) {
+        //   basePanelLevel1.push({
+        //     value: jdeItem.HODId,
+        //     label: nameMap[String(jdeItem.HODId)],
+        //     Email: jdeItem.HOD.EMail,
+        //     Role: RoleName.HOD,
+        //   });
+        // }
+        // if (assignHRId?.data?.key && nameMap[String(assignHRId.data.key)]) {
+        //   basePanelLevel1.push({
+        //     value: assignHRId.data.key,
+        //     label: nameMap[String(assignHRId.data.key)],
+        //     Email: assignHREmail,
+        //     Role: RoleName.RecruitmentHR,
+        //   });
+        // }
       }
 
       const adOptions: PanelEntry[] = Array.isArray(adGroupOptions)
@@ -972,6 +1270,52 @@ export default class CandidateService implements ICandidateService {
         status: 500,
         message: `Error during file replacement`,
       };
+    }
+  }
+
+  async InterviewScheduleLevel2(
+    payloads: InterviewscheduleL2,
+  ): Promise<ApiResponse<any[]>> {
+    try {
+      if (!payloads || !payloads.interviewPanelL2?.length) {
+        return { data: [], status: 200, message: "No payloads to insert" };
+      }
+
+      const [batchedSP, execute] = getSP().batched();
+
+      const results: any[] = [];
+
+      payloads.interviewPanelL2.forEach((item) => {
+        batchedSP.web.lists
+          .getByTitle(ListNames.HRMSInterviewPanelDetails)
+          .items.add({
+            RecruitmentIDId: item.RecruitmentIDId,
+            InterviewLevel: item.InterviewLevel,
+            InterviewPanelId: item.InterviewPanelId,
+            CandidateIDId: item.CandidateIDId,
+          })
+          .then((res) => results.push(res));
+      });
+
+      batchedSP.web.lists
+        .getByTitle(ListNames.HRMSRecruitmentCandidatePersonalDetails)
+        .items.getById(payloads.candidateUpdate.ID)
+        .update({
+          StatusId: payloads.candidateUpdate.StatusId,
+          InterviewDateLevel2: payloads.candidateUpdate.InterviewDateLevel2,
+          InterviewTimeLevel2: payloads.candidateUpdate.InterviewTimeLevel2,
+        });
+
+      await execute();
+
+      return {
+        data: results,
+        status: 200,
+        message: `Batch insert successful for ${payloads.interviewPanelL2.length} record(s)`,
+      };
+    } catch (error) {
+      console.error("InterviewScheduleLevel2 error:", error);
+      return { data: [], status: 500, message: "Batch insert failed" };
     }
   }
 }

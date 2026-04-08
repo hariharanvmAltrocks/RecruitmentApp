@@ -21,6 +21,9 @@ var useModalPopup_1 = require("../../Comman/ModalPopup/useModalPopup");
 var Tabs_1 = tslib_1.__importDefault(require("../../Comman/Tabs/Tabs"));
 var RoleContext_1 = require("../../../utilities/hooks/RoleContext");
 var Evaluationformservice_1 = require("../Evalution/Evaluationservice/Evaluationformservice");
+var moment_1 = tslib_1.__importDefault(require("moment"));
+var Config_1 = require("../../../utilities/Config");
+var framer_motion_1 = require("framer-motion");
 var AssignHRPopup = react_1.default.lazy(function () {
     return Promise.resolve().then(function () { return tslib_1.__importStar(require("./Components/AssignHRPopup/AssignHRPopup")); }).then(function (module) { return ({
         default: module.AssignHRPopup,
@@ -31,29 +34,30 @@ var RecruitmentTable = function () {
     var _b = (0, useTabDetails_1.useTabDetails)(), tabs = _b.tabs, tabsLoading = _b.loading;
     var activeTab = (0, UIStateContext_1.useUIState)().activeTab;
     var navigate = (0, react_router_dom_1.useNavigate)();
-    var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
-    var _c = (0, react_1.useState)(activeTab), activeTabKey = _c[0], setActiveTabKey = _c[1];
-    var _d = (0, react_1.useState)(0), refreshKey = _d[0], setRefreshKey = _d[1];
+    var _c = (0, RoleContext_1.userInfo)(), ADGroupData = _c.ADGroupData, roleIDs = _c.roleIDs;
+    var _d = (0, react_1.useState)(activeTab), activeTabKey = _d[0], setActiveTabKey = _d[1];
+    var _e = (0, react_1.useState)(0), refreshKey = _e[0], setRefreshKey = _e[1];
     var handleRefresh = (0, react_1.useCallback)(function () { return setRefreshKey(function (k) { return k + 1; }); }, []);
-    var _e = (0, useRecruitmentDetails_1.useRecruitmentDetails)(activeTabKey, refreshKey), items = _e.items, tableLoading = _e.loading;
-    var _f = (0, UIStateContext_1.useUIState)(), matricID = _f.MatricID, setMatricID = _f.setMatricID, sideNavflag = _f.sideNavflag, setCurrentTabName = _f.setCurrentTabName, currentTabName = _f.currentTabName;
-    var _g = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _g.drawerOpen, selectedJobId = _g.selectedJobId, advertLanguage = _g.advertLanguage, reviewerComments = _g.reviewerComments, acknowledgementCheckbox = _g.acknowledgementCheckbox, loadingState = _g.loadingState, openDrawer = _g.openDrawer, closeDrawer = _g.closeDrawer, setAdvertLanguage = _g.setAdvertLanguage, setComments = _g.setComments, toggleAcknowledgement = _g.toggleAcknowledgement, setLoadingState = _g.setLoadingState;
+    var _f = (0, useRecruitmentDetails_1.useRecruitmentDetails)(activeTabKey, refreshKey), items = _f.items, tableLoading = _f.loading;
+    var _g = (0, UIStateContext_1.useUIState)(), matricID = _g.MatricID, setMatricID = _g.setMatricID, sideNavflag = _g.sideNavflag, setCurrentTabName = _g.setCurrentTabName, currentTabName = _g.currentTabName;
+    var _h = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _h.drawerOpen, selectedJobId = _h.selectedJobId, advertLanguage = _h.advertLanguage, reviewerComments = _h.reviewerComments, acknowledgementCheckbox = _h.acknowledgementCheckbox, loadingState = _h.loadingState, openDrawer = _h.openDrawer, closeDrawer = _h.closeDrawer, setAdvertLanguage = _h.setAdvertLanguage, setComments = _h.setComments, toggleAcknowledgement = _h.toggleAcknowledgement, setLoadingState = _h.setLoadingState;
     var drawerMeta = (0, react_1.useRef)({
         isOpen: false,
         selectedType: "",
     });
-    var _h = (0, react_1.useState)(false), isPopupOpen = _h[0], setIsPopupOpen = _h[1];
+    var _j = (0, react_1.useState)(false), isPopupOpen = _j[0], setIsPopupOpen = _j[1];
     var handleClosePopup = (0, react_1.useCallback)(function () { return setIsPopupOpen(false); }, []);
-    var _j = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh), handleConfirmAssignment = _j.handleConfirmAssignment, assignmentModalState = _j.modalState, assignmentCloseModal = _j.closeModal;
-    var _k = (0, useModalPopup_1.useModalPopup)(), modalState = _k.modalState, showModal = _k.showModal, closeModal = _k.closeModal;
-    var _l = (0, react_1.useState)([]), selectedIds = _l[0], setSelectedIds = _l[1];
-    var _m = (0, react_1.useState)(0), selectedMemberId = _m[0], setSelectedMemberId = _m[1];
-    var _o = (0, react_1.useState)(5), pageSize = _o[0], setPageSize = _o[1];
-    var _p = (0, react_1.useState)(1), currentPage = _p[0], setCurrentPage = _p[1];
+    var _k = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh), handleConfirmAssignment = _k.handleConfirmAssignment, assignmentModalState = _k.modalState, assignmentCloseModal = _k.closeModal;
+    //  const hook             = useReviewScoreCardContext();
+    var _l = (0, useModalPopup_1.useModalPopup)(), modalState = _l.modalState, showModal = _l.showModal, closeModal = _l.closeModal;
+    var _m = (0, react_1.useState)([]), selectedIds = _m[0], setSelectedIds = _m[1];
+    var _o = (0, react_1.useState)(0), selectedMemberId = _o[0], setSelectedMemberId = _o[1];
+    var _p = (0, react_1.useState)(5), pageSize = _p[0], setPageSize = _p[1];
+    var _q = (0, react_1.useState)(1), currentPage = _q[0], setCurrentPage = _q[1];
     var selectedItems = (0, react_1.useMemo)(function () { return items.filter(function (item) { return selectedIds.includes(item.id); }); }, [items, selectedIds]);
     var selectedJobCode = (0, react_1.useMemo)(function () { var _a; return (selectedItems.length === 1 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.jobCode : ""); }, [selectedItems]);
     var selectedNationality = (0, react_1.useMemo)(function () { var _a; return (selectedItems.length === 1 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.nationality : ""); }, [selectedItems]);
-    var _q = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _q.members, membersLoading = _q.loading;
+    var _r = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _r.members, membersLoading = _r.loading;
     var selectedMember = (0, react_1.useMemo)(function () { var _a; return (_a = members.find(function (m) { return m.id === selectedMemberId; })) !== null && _a !== void 0 ? _a : null; }, [members, selectedMemberId]);
     var activeTabs = (0, react_1.useMemo)(function () { return tabs.find(function (tab) { return tab.key === activeTabKey; }); }, [activeTabKey, tabs]);
     (0, react_1.useEffect)(function () {
@@ -121,27 +125,43 @@ var RecruitmentTable = function () {
     //   return matricID === MatricID.EvalutionHR || matricID === MatricID.EvalutionLM || matricID === MatricID.EvalutionHOD || matricID === MatricID.EvalutionEXCO;
     // };
     var processingRef = (0, react_1.useRef)(false);
+    var EvalutionFlagL2 = (0, react_1.useRef)(false);
     var handleAction = (0, react_1.useCallback)(function (item) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var ItemID, statusId, isEvaluationFlow, alreadySubmitted, evalutionIDs, routeMap, route;
+        var ItemID, isEvaluationFlow, today, interviewDate, Validation, alreadySubmitted, evalutionIDs, routeMap, route;
         var _a;
         return tslib_1.__generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    if (processingRef.current)
+                    if (processingRef.current === true)
                         return [2 /*return*/];
                     processingRef.current = true;
                     _b.label = 1;
                 case 1:
                     _b.trys.push([1, , 4, 5]);
-                    ItemID = item.ItemID, statusId = item.statusId;
+                    ItemID = item.ItemID;
                     isEvaluationFlow = matricID === ConditionConfig_1.MatricID.EvalutionHR ||
                         matricID === ConditionConfig_1.MatricID.EvalutionLM ||
                         matricID === ConditionConfig_1.MatricID.EvalutionHOD ||
                         matricID === ConditionConfig_1.MatricID.EvalutionEXCO;
                     if (!isEvaluationFlow) return [3 /*break*/, 3];
+                    today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    interviewDate = new Date(item.interviewDate);
+                    interviewDate.setHours(0, 0, 0, 0);
+                    Validation = interviewDate <= today;
                     return [4 /*yield*/, (0, Evaluationformservice_1.checkIsAlreadySubmitted)(ItemID, ADGroupData.EmailId[0])];
                 case 2:
                     alreadySubmitted = _b.sent();
+                    if (!Validation) {
+                        showModal({
+                            type: "warning",
+                            title: "Interview Date Not Reached",
+                            message: "You can only fill the scorecard after the interview date. ".concat((0, moment_1.default)(item.interviewDate).format("YYYY-MM-DD")),
+                            confirmLabel: "OK",
+                            onConfirm: closeModal,
+                        });
+                        return [2 /*return*/];
+                    }
                     if (alreadySubmitted) {
                         showModal({
                             type: "warning",
@@ -160,25 +180,32 @@ var RecruitmentTable = function () {
                         ConditionConfig_1.MatricID.EvalutionHOD,
                         ConditionConfig_1.MatricID.EvalutionEXCO,
                     ];
-                    routeMap = tslib_1.__assign((_a = {}, _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.ReviewProfileHR] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewProfileLM] = "/CandidateTable", _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/ReviewScoreCard", _a), Object.fromEntries(evalutionIDs.map(function (id) { return [id, "/Evalution"]; })));
+                    routeMap = tslib_1.__assign((_a = {}, _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.ReviewProfileHR] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewProfileLM] = "/CandidateTable", _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/ReviewScoreCard", _a), Object.fromEntries(evalutionIDs.map(function (id) { return [id,
+                        item.statusId === Config_1.StatusId.InterviewLevel2InProgress ?
+                            //  hook.openReview : 
+                            "/ReviewScoreCard"
+                            : "/Evalution"
+                    ]; })));
                     route = routeMap[matricID];
                     if (route) {
-                        navigate(route, { state: { ID: ItemID, department: item.department } });
+                        navigate(route, {
+                            state: { ID: ItemID, department: item.department },
+                        });
                         return [2 /*return*/];
                     }
-                    drawerMeta.current = { isOpen: true, selectedType: item.requestType };
+                    drawerMeta.current = {
+                        isOpen: true,
+                        selectedType: item.requestType,
+                    };
                     openDrawer(ItemID);
                     return [3 /*break*/, 5];
                 case 4:
-                    // ✅ ALWAYS resets, no matter which return path was taken
                     processingRef.current = false;
                     return [7 /*endfinally*/];
                 case 5: return [2 /*return*/];
             }
         });
-    }); }, 
-    // ✅ Complete dependency array
-    [matricID, navigate, openDrawer, showModal, closeModal, ADGroupData.EmailId]);
+    }); }, [matricID, navigate, openDrawer, showModal, closeModal, ADGroupData.EmailId]);
     var showAssignmentBar = (activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.tableMode) === "checkbox" && selectedIds.length > 0;
     var columns = (0, config_1.useRecruitmentColumns)({
         role: matricID === ConditionConfig_1.MatricID.EvalutionHR ? "evaluation" : "default",
@@ -223,6 +250,7 @@ var RecruitmentTable = function () {
         isPopupOpen && (react_1.default.createElement(react_1.Suspense, { fallback: null },
             react_1.default.createElement(AssignHRPopup, { isOpen: isPopupOpen, selectedItems: selectedItems, assignedMember: selectedMember, onClose: handleClosePopup, onConfirm: handleConfirmAssignment }))),
         drawerMeta.current.isOpen && (react_1.default.createElement(AdvertReviewDrawer_1.AdvertReviewDrawer, { drawerOpen: drawerOpen, selectedJobId: selectedJobId, selectedJobCode: selectedJobCode, selectedType: drawerMeta.current.selectedType, advertLanguage: advertLanguage, reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, loadingState: loadingState, onClose: closeDrawer, onLanguageChange: setAdvertLanguage, onCommentsChange: setComments, onToggleAcknowledgement: toggleAcknowledgement, setLoadingState: setLoadingState, refreshKey: handleRefresh })),
+        react_1.default.createElement(framer_motion_1.AnimatePresence, null),
         react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, assignmentModalState, { onClose: assignmentCloseModal })),
         react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal }))));
 };

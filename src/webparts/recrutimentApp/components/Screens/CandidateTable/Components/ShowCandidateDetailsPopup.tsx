@@ -20,6 +20,7 @@ export interface panelvalues {
   bucodeId: number;
   candidateId: number;
   assignHR: string;
+  RecruitmentID: number;
   statusId: string;
   actionID: number;
 }
@@ -68,7 +69,7 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
     panelParams?.statusId ?? "",
     isEnabled
   );
-  const { data, loading } = useFetchCandidateDetails(candidateId);
+  const { data, loading } = useFetchCandidateDetails(candidateId, panelParams?.RecruitmentID ?? 0);
 
   // const { submitting, submit, modalState, closeModal } = useSubmitCandidateReview(onClose, handleRefresh);
   const {
@@ -112,16 +113,26 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
   const handlePreview = useCallback((file: IDocFiles) => {
     const rawUrl = file.content as string;
 
-    const resolveUrl = (url: string): string => {
-      if (isSharePointUrl(url)) return buildWopiUrl(url);
-      if (isPdfUrl(url)) return url;
-      return buildOfficeViewerUrl(url);
-    };
+    // const resolveUrl = (url: string): string => {
+    //   if (isSharePointUrl(url)) return buildWopiUrl(url);
+    //   if (isPdfUrl(url)) return url;
+    //   return buildOfficeViewerUrl(url);
+    // };
 
-    const previewUrl = resolveUrl(rawUrl);
+    // const previewUrl = resolveUrl(rawUrl);
 
-    setPreviewFile({ url: previewUrl, name: file.name });
+    setPreviewFile({ url: rawUrl, name: file.name });
   }, []);
+
+  const getViewerUrl = (url: string) => {
+  if (isSharePointUrl(url)) {
+    return buildWopiUrl(url);
+  }
+  if (isPdfUrl(url)) {
+    return url;
+  }
+  return buildOfficeViewerUrl(url);
+};
 
   const panelValue = useMemo(() => {
     if (!paneloptions) return null;
@@ -159,7 +170,7 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
 
     if (panelValue && (PanelMember || ReviewHRFlag)) {
       setConsultOptions(panelValue.consultOption);
-      setLevel1({ panelMembers: panelValue.level1Members, startDate: "", endDate: "" });
+      setLevel1({ panelMembers: panelValue.level1Members, startDate: data?.InterviewStartDate, endDate: data?.InterviewEndDate });
       setLevel2({ panelMembers: panelValue.level2Members, startDate: "", endDate: "" });
     }
 
@@ -173,12 +184,20 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
       const COIAttachRes = await CandidateTable.fetchCOIAttachment(COIAttchObj);
       let COIOptions = [{ value: String(data.COIAppreve), label: data.COIAppreve }];
       setConsultOptions(COIOptions);
-      setCoi({
-        consultedWith: data.COIAppreve ?? "",
-        attachment: COIAttachRes.data,
-        comments: data.COIComments ?? "",
-      });
+      if(panelParams?.statusId != workflowStatusApi.HRPending){
+        setCoi({
+          consultedWith: data.COIAppreve ?? "",
+          attachment: COIAttachRes.data,
+          comments: data.COIComments ?? "",
+        });
+      }
       setHRReview(data.hrComments ?? "");
+
+      // setCoi({
+      //   consultedWith: data.COIAppreve ?? "",
+      //   attachment: COIAttachRes.data,
+      //   comments: data.COIComments ?? "",
+      // });
     };
 
     void loadCOI();
@@ -188,27 +207,44 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
   const showDisability = data?.disability === "Yes";
 
   const canSubmit = useMemo(() => {
+    // decisionComments is always required for any status across the forms
+    if (!decisionComments?.trim()) return false;
+
     if (ReviewHRFlag) {
-      if (!HRReview.trim() && !decisionComments.trim()) return false;
+      if (!HRReview?.trim()) return false;
       if (showCOI) {
-        if (!coi.consultedWith.trim() || !coi.comments.trim() || coi.attachment.length === 0) return false;
+        if (!coi.consultedWith?.trim() || !coi.comments?.trim() || coi.attachment.length === 0) return false;
       }
     }
-    if (ReviewLML1) {
-      if (!decision || !decisionComments.trim()) return false;
+
+    if (ReviewLML1 || ReviewLML2) {
+      if (!decision) return false;
     }
-    if (ReviewLML2) {
-      if (!decision || !decisionComments.trim()) return false;
-    }
+
     if (PanelMember) {
-      if (!decisionComments.trim()) return false;
-      if (level1.panelMembers.length < 3 || !level1.startDate || !level1.endDate) return false;
+      if (panelParams?.statusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview) {
+        if (level1.panelMembers.length < 3 || !level1.startDate || !level1.endDate) return false;
+      }
       if (Number(panelParams?.statusId) === StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel) {
         if (level2.panelMembers.length < 3 || !level2.startDate || !level2.endDate) return false;
       }
     }
+
     return true;
-  }, [decision, decisionComments, coi, level1, data]);
+  }, [
+    ReviewHRFlag,
+    ReviewLML1,
+    ReviewLML2,
+    PanelMember,
+    decision,
+    decisionComments,
+    HRReview,
+    showCOI,
+    coi,
+    level1,
+    level2,
+    panelParams?.statusId
+  ]);
 
   const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -260,8 +296,8 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
     }
 
 
-    const L1Panel = paneloptions?.Level1?.map((item) => ({ key: Number(item.value), text: item.Email })) ?? [];
-    const L2Panel = paneloptions?.Level2?.map((item) => ({ key: Number(item.value), text: item.Email })) ?? [];
+    const L1Panel = level1?.panelMembers?.map((item) => ({ key: Number(item), text: item })) ?? [];
+    const L2Panel = level2?.panelMembers?.map((item) => ({ key: Number(item), text: item })) ?? [];
 
     await submit({
       candidateId: candidateId,
@@ -377,7 +413,7 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                       </div>
                     </div>
 
-                    <InfoItem label="Group / partner companies" value={data?.hasIvanhoeZijinExperience} />
+                   {data?.hasIvanhoeZijinExperience && <InfoItem label="Group / partner companies" value={data?.hasIvanhoeZijinExperience} />} 
                   </div>
 
                   <div className={styles.attachmentsSection}>
@@ -657,7 +693,7 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                     </div>
                   </motion.section>
 
-                  {panelParams?.statusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview && (
+                  {PanelMember && (
                     <>
                       <motion.section
                         className={styles.section}
@@ -676,6 +712,8 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                           }))}
                           onToggleMember={(val) => handlePanelToggle(setLevel1, val)}
                           minPanelCount={3}
+                          Disable = {Number(panelParams?.statusId) === StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel}
+                          
                         />
                       </motion.section>
                     </>
@@ -699,6 +737,7 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                           }))}
                           onToggleMember={(val) => handlePanelToggle(setLevel2, val)}
                           minPanelCount={3}
+                          Disable = {false}
                         />
                       </motion.section>
                     </>
@@ -793,6 +832,7 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                           placeholder="Provide your final decision rationale..."
                           value={decisionComments}
                           onChange={(e) => setDecisionComments(e.target.value)}
+                          disabled = {submitting}
                         />
                       </div>
                     </div>
@@ -874,7 +914,7 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
               {/* iframe */}
               <div className={styles.previewBody}>
                 <iframe
-                  src={previewFile.url}
+                  src={getViewerUrl(previewFile.url)}
                   title={previewFile.name}
                   className={styles.previewIframe}
                 />

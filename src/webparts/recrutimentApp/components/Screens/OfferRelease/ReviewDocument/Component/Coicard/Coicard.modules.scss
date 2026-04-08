@@ -72,7 +72,59 @@ $coi-transition:    0.16s cubic-bezier(0.4, 0, 0.2, 1);
   word-break: break-word;
   overflow-wrap: break-word;
 }
+.coi-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-md $space-lg;
+  background: $coi-success-bg;
+  border: 1px solid $coi-success-border;
+  border-radius: $radius-lg;
+}
 
+.coi-card__title{
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  font-size: 13px;
+  font-weight: 700;
+  color: $coi-danger-text;
+}
+.coi-card__badge{
+  font-size: 13px;
+  font-weight: 700;
+  color: $coi-danger-text;
+}
+.coi-card__titleRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.coi-card__titleBar {
+  width: 4px;
+  height: 24px;
+  background: $primary-color;
+  border-radius: 2px;
+}
+
+.coi-card__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: $text-primary;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.coi-card__totalBadge {
+  padding: 4px 10px;
+  background: $secondary-color;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-muted;
+}
 // ─── Fields grid ──────────────────────────────────────────────────────────────
 .coi-card__fields {
   display: grid;
@@ -364,6 +416,86 @@ $coi-transition:    0.16s cubic-bezier(0.4, 0, 0.2, 1);
   color: $text-subtle;
   font-weight: 500;
   pointer-events: none;
+}
+
+// ─── Radio Group ──────────────────────────────────────────────────────────────
+.coi-card__radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.coi-card__radio-options {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+
+.coi-card__radio-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: $text-primary;
+  cursor: pointer;
+  position: relative;
+  
+  input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+}
+
+.coi-card__radio-custom {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #a0aec0;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: $white;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #3c3b3b;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+}
+
+.coi-card__radio-label input:checked ~ .coi-card__radio-custom {
+  border-color: #3e3939;
+
+  &::after {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.coi-card__radio-label:hover input:not(:disabled) ~ .coi-card__radio-custom {
+  border-color: #3e3939;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.coi-card__radio-label input:disabled ~ .coi-card__radio-custom {
+  background-color: $secondary-color;
+  border-color: $border-light;
+  cursor: not-allowed;
+}
+
+.coi-card__radio-label input:disabled ~ span {
+  color: $text-muted;
+  cursor: not-allowed;
 }
 
 // ─── Error message ────────────────────────────────────────────────────────────

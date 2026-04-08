@@ -1,5 +1,5 @@
 import { DashboardServices } from "../../services/ServiceExport";
-import { MatricID, TabNames } from "../../utilities/ConditionConfig";
+import { MatricID, menuID, TabNames } from "../../utilities/ConditionConfig";
 import { ListNames, RoleID, StatusId } from "../../utilities/Config";
 import { MetricQueryConfig } from "../Screens/Dashboard/metricColumns.config";
 
@@ -7,6 +7,7 @@ export const fetchByMetricId = async (
   matricID: number,
   EmailId: string,
   condition?: any,
+  roleIDs?: number[],
 ) => {
   let updatedMetricId = matricID;
 
@@ -21,6 +22,10 @@ export const fetchByMetricId = async (
   const configs = Array.isArray(config) ? config : [config];
 
   const serviceCall = async (listName: string, filter: any[]) => {
+    if (roleIDs?.includes(RoleID.FinanceDepartment)) {
+      filter = filter.filter((f: any) => f.FilterKey !== "RecruitmentHR");
+    }
+
     switch (listName) {
       case ListNames.HRMSNewPositionRequest:
         return DashboardServices.GetNPAEPVRRDetails(filter, condition);
@@ -102,6 +107,7 @@ export const findMatricID = (
   roleIDs: number[],
   statusID: number,
   TabName: string,
+  MenuId: number,
 ): number => {
   if (TabName === TabNames.BackgroundVerification) {
     return MatricID.BackgroundCheck;
@@ -109,6 +115,21 @@ export const findMatricID = (
     return MatricID.LabourHire;
   } else if (TabName === TabNames.OfferLetterKSCA) {
     return MatricID.Kcsa;
+  } else if (TabName === TabNames.MySubmission) {
+    if (roleIDs.includes(RoleID.RecruitmentHR)) {
+      if (MenuId === menuID.RecruitmentProcess) {
+        return MatricID.MySubmissionBGV;
+      } else {
+        return MatricID.MySubmissionHR;
+      }
+    }
+    if (roleIDs.includes(RoleID.LineManager)) {
+      return MatricID.MySubmissionLM;
+    }
+    if (roleIDs.includes(RoleID.HOD)) {
+      return MatricID.MySubmissionHOD;
+    }
+    return MatricID.MySubmission;
   } else {
     switch (statusID) {
       case StatusId.ReadyforRecruitmentProcess:

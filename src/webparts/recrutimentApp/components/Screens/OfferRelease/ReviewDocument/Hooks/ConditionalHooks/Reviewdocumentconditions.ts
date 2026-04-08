@@ -13,6 +13,7 @@ export interface ReviewStatusFlags {
   pendingHROfferInitiate: boolean;
   wpAckContractUploaded: boolean;
   pendingFinancePayment: boolean;
+  PendingHREmploymentContractReview: boolean;
   isKCSAEmployee: boolean;
   isLabourHire: boolean;
   isVerified: boolean;
@@ -56,12 +57,15 @@ export const buildStatusFlags = (
   isVerified: consentVerification === "verified",
   ViewFlag:
     statusID === StatusId.PendingBGdocuploadedbycandidate ||
+    statusID === StatusId.PendingDOTAficaVerification ||
     statusID === StatusId.PendingCandidateOfferLetterUpload ||
     statusID === StatusId.PendingCandidateWorkPermitreleatedDoc ||
     statusID === StatusId.PendingCandidateEmploymentContractUpload ||
     statusID === StatusId.PendingLabourHireOfferRelease ||
     statusID === StatusId.PendingLabourhireWPPayment ||
     statusID === StatusId.PendingLHECRelease,
+  PendingHREmploymentContractReview:
+    statusID === StatusId.PendingHREmploymentContractReview,
 });
 
 // ─── Visibility flag builder ──────────────────────────────────────────────────
@@ -72,6 +76,8 @@ const resolveVerificationToggle = (is: ReviewStatusFlags): boolean =>
   is.pendingHRReviewWPInit ||
   is.pendingHRReviewOfferEC ||
   is.pendingHRReviewWPDocs ||
+  is.pendingFinancePayment ||
+  is.PendingHREmploymentContractReview ||
   is.pendingHRECVerification;
 
 const resolveUploadLabel = (is: ReviewStatusFlags): string => {
@@ -86,6 +92,7 @@ export const buildVisibilityFlags = (
   is: ReviewStatusFlags,
   hasDetails: boolean,
   rejectFlag: boolean,
+  revertFlag: boolean,
 ): ReviewVisibilityFlags => {
   const showUploadDocument =
     (is.pendingHROfferInitiate && is.isKCSAEmployee) ||
@@ -98,11 +105,11 @@ export const buildVisibilityFlags = (
     showCandidateDocs: hasDetails && !is.pendingHRBGVInit,
     showVerificationToggle: resolveVerificationToggle(is),
     showConsentForm: is.pendingHRReviewBGCheck && is.isVerified,
-    showCOICard: is.pendingDOTAficaVerify && rejectFlag,
+    showCOICard: is.pendingDOTAficaVerify && rejectFlag && !revertFlag,
     showWorkPermitUpload: is.wpAckContractUploaded,
     showUploadDocument,
     showDOTAficaBadge: is.pendingDOTAficaVerify,
     uploadDocLabel,
-    ViewFlag: is.isVerified,
+    ViewFlag: is.ViewFlag,
   };
 };

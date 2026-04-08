@@ -8,8 +8,9 @@ var ConditionConfig_1 = require("../../utilities/ConditionConfig");
 var ServiceExport_1 = require("../ServiceExport");
 var reusehooks_1 = require("../../components/Hooks/reusehooks");
 var dateConfigfn_1 = require("../../components/Hooks/dateConfigfn");
-var spservice_1 = tslib_1.__importDefault(require("../SPService/spservice"));
+var spservice_1 = tslib_1.__importStar(require("../SPService/spservice"));
 var Config_1 = require("../../utilities/Config");
+var ApiConfig_1 = require("../../utilities/ApiConfig");
 var CandidateService = /** @class */ (function () {
     function CandidateService() {
     }
@@ -76,9 +77,99 @@ var CandidateService = /** @class */ (function () {
             });
         });
     };
+    CandidateService.prototype.GetDashboardDetailsL2 = function (filterParam, filterConditions) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var GridResult, res, ids, recruitmentFilter, error_2;
+            var _this = this;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        GridResult = [];
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                                Select: "*,JobCode/JobCode,Status/StatusDescription,RecruitmentID/Id",
+                                Filter: filterParam,
+                                FilterCondition: filterConditions,
+                                Expand: "RecruitmentID,Status,JobCode",
+                                Topcount: ApiConfig_1.count.Topcount,
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            })];
+                    case 1:
+                        res = _a.sent();
+                        if (!res.length) {
+                            return [2 /*return*/, { data: [], status: 200, message: "No records found" }];
+                        }
+                        ids = res
+                            .map(function (item) { var _a; return (_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.Id; })
+                            .filter(Boolean);
+                        if (!ids.length) {
+                            return [2 /*return*/, {
+                                    data: [],
+                                    status: 200,
+                                    message: "No linked recruitment records found",
+                                }];
+                        }
+                        recruitmentFilter = [
+                            { FilterKey: "ID", Operator: "in", FilterValue: ids },
+                        ];
+                        return [4 /*yield*/, Promise.all(res.map(function (item, index) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                var GradeLevel, err_1;
+                                var _a, _b, _c;
+                                return tslib_1.__generator(this, function (_d) {
+                                    switch (_d.label) {
+                                        case 0:
+                                            _d.trys.push([0, 2, , 3]);
+                                            return [4 /*yield*/, ServiceExport_1.masterService.GetGradeLevel(item === null || item === void 0 ? void 0 : item.JobGrade)];
+                                        case 1:
+                                            GradeLevel = _d.sent();
+                                            return [3 /*break*/, 3];
+                                        case 2:
+                                            err_1 = _d.sent();
+                                            console.error("GradeLevel API failed:", err_1);
+                                            GradeLevel = { data: [] }; // fallback
+                                            return [3 /*break*/, 3];
+                                        case 3: return [2 /*return*/, {
+                                                SNO: index + 1,
+                                                CandidateID: item.ID,
+                                                ApplicantName: [item.FristName, item.MiddleName, item.LastName]
+                                                    .filter(Boolean)
+                                                    .join(" ")
+                                                    .trim(),
+                                                PositionTitle: item === null || item === void 0 ? void 0 : item.PositionTitle,
+                                                JobCode: (_a = item === null || item === void 0 ? void 0 : item.JobCode) === null || _a === void 0 ? void 0 : _a.JobCode,
+                                                JobGrade: item === null || item === void 0 ? void 0 : item.JobGrade,
+                                                Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
+                                                interviewLevels: (GradeLevel === null || GradeLevel === void 0 ? void 0 : GradeLevel.data) || [],
+                                                jobrequestID: item === null || item === void 0 ? void 0 : item.JobRequestID,
+                                                Status: (_c = (_b = item === null || item === void 0 ? void 0 : item.Status) === null || _b === void 0 ? void 0 : _b.StatusDescription) !== null && _c !== void 0 ? _c : "",
+                                                workflowStatusId: item === null || item === void 0 ? void 0 : item.StatusId,
+                                                createdOn: (0, moment_1.default)(item === null || item === void 0 ? void 0 : item.Created).format("DD/MM/YYYY"),
+                                                TotalItems: 0,
+                                                applicationStatusId: "",
+                                                applicationStatus: "",
+                                                createdBy: item.ExternalAgentDetails,
+                                                tblProfilesKcsas: [],
+                                            }];
+                                    }
+                                });
+                            }); }))];
+                    case 2:
+                        GridResult = _a.sent();
+                        return [2 /*return*/, { data: GridResult, status: 200, message: "Success" }];
+                    case 3:
+                        error_2 = _a.sent();
+                        console.error("Error fetching from Candidate details:", error_2);
+                        return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
     CandidateService.prototype.fetchCandidateDetails = function (CandidateID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var GetProfileByJobCodeData_1, error_2;
+            var GetProfileByJobCodeData_1, error_3;
             var _this = this;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
@@ -318,8 +409,8 @@ var CandidateService = /** @class */ (function () {
                                 message: "Success",
                             }];
                     case 2:
-                        error_2 = _a.sent();
-                        console.error("Error inserting data into HRMSRecruitmentDptDetails:", error_2);
+                        error_3 = _a.sent();
+                        console.error("Error inserting data into HRMSRecruitmentDptDetails:", error_3);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -330,22 +421,208 @@ var CandidateService = /** @class */ (function () {
             });
         });
     };
+    CandidateService.prototype.getCandidateDetailsL2 = function (CandidateID) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var res, defaultGrade, defaultLevel, posRes, gr, _1, enriched, error_4;
+            var _this = this;
+            var _a, _b, _c, _d, _e, _f;
+            return tslib_1.__generator(this, function (_g) {
+                switch (_g.label) {
+                    case 0:
+                        _g.trys.push([0, 9, , 10]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                                Select: "*,JobCode/JobCode,RecruitmentID/ID,Status/ID,Status/StatusDescription,ID",
+                                Expand: "JobCode,RecruitmentID,Status",
+                                FilterCondition: "and",
+                                Filter: [
+                                    {
+                                        FilterKey: "ID",
+                                        Operator: "eq",
+                                        FilterValue: CandidateID,
+                                    },
+                                ],
+                                Topcount: 1000,
+                            })];
+                    case 1:
+                        res = _g.sent();
+                        defaultGrade = "", defaultLevel = "";
+                        _g.label = 2;
+                    case 2:
+                        _g.trys.push([2, 6, , 7]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSRecruitmentPositionDetails,
+                                Select: "*,PatersonGrade/PatersonGrade",
+                                Expand: "PatersonGrade",
+                                Filter: [
+                                    {
+                                        FilterKey: "RecruitmentID",
+                                        Operator: "eq",
+                                        FilterValue: (_b = (_a = res[0]) === null || _a === void 0 ? void 0 : _a.RecruitmentID) === null || _b === void 0 ? void 0 : _b.ID,
+                                    },
+                                ],
+                            })];
+                    case 3:
+                        posRes = _g.sent();
+                        defaultGrade =
+                            ((_d = (_c = posRes === null || posRes === void 0 ? void 0 : posRes[0]) === null || _c === void 0 ? void 0 : _c.PatersonGrade) === null || _d === void 0 ? void 0 : _d.PatersonGrade) ||
+                                ((_e = posRes === null || posRes === void 0 ? void 0 : posRes[0]) === null || _e === void 0 ? void 0 : _e.PatersonGrade) ||
+                                "";
+                        if (!defaultGrade) return [3 /*break*/, 5];
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSGradeMaster,
+                                Select: "*",
+                                Filter: [
+                                    {
+                                        FilterKey: "PatersonGrade",
+                                        Operator: "eq",
+                                        FilterValue: defaultGrade,
+                                    },
+                                ],
+                            })];
+                    case 4:
+                        gr = _g.sent();
+                        defaultLevel = ((_f = gr === null || gr === void 0 ? void 0 : gr[0]) === null || _f === void 0 ? void 0 : _f.Levels) || "";
+                        _g.label = 5;
+                    case 5: return [3 /*break*/, 7];
+                    case 6:
+                        _1 = _g.sent();
+                        return [3 /*break*/, 7];
+                    case 7: return [4 /*yield*/, Promise.all((res || []).map(function (item) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                            var CandidateCV, BusinessDocument, FamilyDocument, OverallAttachment;
+                            var _a, _b, _c, _d, _e;
+                            return tslib_1.__generator(this, function (_f) {
+                                switch (_f.label) {
+                                    case 0: return [4 /*yield*/, ServiceExport_1.CommonServices.GetDocumentinUrl(item === null || item === void 0 ? void 0 : item.CandidateResumeLink)];
+                                    case 1:
+                                        CandidateCV = _f.sent();
+                                        return [4 /*yield*/, ServiceExport_1.CommonServices.GetDocumentinUrl(item === null || item === void 0 ? void 0 : item.BusinessLink)];
+                                    case 2:
+                                        BusinessDocument = _f.sent();
+                                        return [4 /*yield*/, ServiceExport_1.CommonServices.GetDocumentinUrl(item === null || item === void 0 ? void 0 : item.FamilyLink)];
+                                    case 3:
+                                        FamilyDocument = _f.sent();
+                                        OverallAttachment = tslib_1.__spreadArray(tslib_1.__spreadArray(tslib_1.__spreadArray([], (CandidateCV.data.length > 0
+                                            ? [(0, dateConfigfn_1.toAttachment)("Candidate Resume", CandidateCV.data)]
+                                            : []), true), (((_a = FamilyDocument.data) === null || _a === void 0 ? void 0 : _a.length) > 0
+                                            ? [(0, dateConfigfn_1.toAttachment)("Family Link Document", FamilyDocument.data)]
+                                            : []), true), (((_b = BusinessDocument.data) === null || _b === void 0 ? void 0 : _b.length) > 0
+                                            ? [(0, dateConfigfn_1.toAttachment)("Business Link Document", BusinessDocument.data)]
+                                            : []), true);
+                                        // const gpa = await _calculateGPA(candidateId);
+                                        return [2 /*return*/, {
+                                                CandidateID: item.ID,
+                                                profileID: item.ProfileID,
+                                                JobCode: (_c = item.JobCode) === null || _c === void 0 ? void 0 : _c.JobCode,
+                                                JobTitle: item.JobTitle,
+                                                ApplicantName: [item.FristName, item.MiddleName, item.LastName]
+                                                    .filter(Boolean)
+                                                    .join(" ")
+                                                    .trim(),
+                                                FristName: item.FristName,
+                                                MiddleName: item.MiddleName,
+                                                ResidentialAddress: item.ResidentialAddress,
+                                                DOB: item.DOB,
+                                                ContactNumber: item.ContactNumber,
+                                                Email: item.Email,
+                                                ApplicantSurName: item.LastName,
+                                                Nationality: item.Nationality,
+                                                Gender: item.Gender,
+                                                HighestQualification: item.Qualification,
+                                                ExperienceMining: item.TotalYearOfExperiance,
+                                                ExperRelatedfield: item.ReleventExperience,
+                                                Status: (_d = item === null || item === void 0 ? void 0 : item.Status) === null || _d === void 0 ? void 0 : _d.StatusDescription,
+                                                StatusId: (_e = item.Status) === null || _e === void 0 ? void 0 : _e.ID,
+                                                Agencies: item.Agencies,
+                                                CandidateResume: CandidateCV.data,
+                                                RoleProfile: [],
+                                                OverallAtttachment: OverallAttachment,
+                                                Comments: [],
+                                                workflowStatusId: "",
+                                                hrComments: "",
+                                                JobVaildFromDate: "",
+                                                JobVaildToDate: "",
+                                                CandidateResumeLink: "",
+                                                ConflictsOfInterest: (item === null || item === void 0 ? void 0 : item.ConflictsOfInterest) === "Yes" ? "Yes" : "No",
+                                                disability: (item === null || item === void 0 ? void 0 : item.Disability) === "Yes" ? "Yes" : "No",
+                                                disabilityReason: item === null || item === void 0 ? void 0 : item.DisabilityDetails,
+                                                identityValue: "",
+                                                identityType: "",
+                                                NatioCode: "",
+                                                Age: "",
+                                                NumberOftax: item.NumberOfTaxDependents,
+                                                CurrentEmployer: item === null || item === void 0 ? void 0 : item.LastOrCurrentEmployer,
+                                                CurrentPosition: item === null || item === void 0 ? void 0 : item.LastOrCurrentPosition,
+                                                WillingToRelocate: "",
+                                                previouslyworkedMine: "",
+                                                familylinks: "",
+                                                businesslinks: "",
+                                                familyDocuments: FamilyDocument.data,
+                                                businessDocuments: BusinessDocument.data,
+                                                CountryofOrgin: "",
+                                                Citizenship: "",
+                                                FamilyLink: "",
+                                                BusinessLink: "",
+                                                GPA: 0,
+                                                COIAppreve: item === null || item === void 0 ? void 0 : item.COIEmail,
+                                                COIComments: item === null || item === void 0 ? void 0 : item.COIComments,
+                                                COIReason: item === null || item === void 0 ? void 0 : item.COIReason,
+                                                countryOfResidency: "",
+                                                residentStatus: "",
+                                                maritalStatus: "",
+                                                childrenDetails: [],
+                                                employeeReferenceDetails: {},
+                                                maritalStatusId: "",
+                                                joiningDate: "",
+                                                noticePeriod: "",
+                                                hasIvanhoeZijinExperience: "",
+                                                companyDetails: {},
+                                                businesslinkscompany: "",
+                                                PreviousEmployerDetails: {},
+                                                LanguageKnown: [],
+                                                PPEDetails: [],
+                                                InterviewStartDate: (0, dateConfigfn_1.formatToDateTimeLocal)(item === null || item === void 0 ? void 0 : item.InterviewDate),
+                                                InterviewEndDate: (0, dateConfigfn_1.formatToDateTimeLocal)(item === null || item === void 0 ? void 0 : item.InterviewTime),
+                                            }];
+                                }
+                            });
+                        }); }))];
+                    case 8:
+                        enriched = _g.sent();
+                        return [2 /*return*/, {
+                                data: enriched,
+                                status: 200,
+                                message: "Interview panel details fetched successfully",
+                            }];
+                    case 9:
+                        error_4 = _g.sent();
+                        console.error("fetchInterviewPanelDetails failed:", error_4);
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error fetching interview panel details",
+                            }];
+                    case 10: return [2 /*return*/];
+                }
+            });
+        });
+    };
     CandidateService.prototype.fetchInterviewPanelDetails = function (_a) {
         return tslib_1.__awaiter(this, arguments, void 0, function (_b) {
-            var empty, jdeQuery, userRoleQuery, batchRes, jdeItems, userRoles, jdeItem, panelRoleEntry, adGroupOptions, _c, existingLevel1, existingLevel2, levels, existingPanelFilter, existingPanelQuery, panelBatch, existingPanelItems, resolvedExistingPanel, nameTasks, assignHRId, nameResults, nameMap, basePanelLevel1, basePanelLevel2, adOptions, level1Panel, level2Panel, panelMember, panelMember2, result, error_3;
+            var empty, jdeQuery, userRoleQuery, batchRes, jdeItems, userRoles, jdeItem, panelRoleEntry, adGroupOptions, _c, existingLevel1, existingLevel2, levels, existingPanelFilter, existingPanelQuery, panelBatch, existingPanelItems, resolvedExistingPanel, nameTasks, assignHRId, nameResults, nameMap, basePanelLevel1, basePanelLevel2, adOptions, level1Panel, level2Panel, panelMember, panelMember2, result, error_5;
             var _this = this;
-            var _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+            var _d, _e, _f, _g, _h, _j, _k, _l, _m;
             var BUCodeID = _b.BUCodeID, assignHREmail = _b.assignHREmail, candidateID = _b.candidateID, statusID = _b.statusID;
-            return tslib_1.__generator(this, function (_p) {
-                switch (_p.label) {
+            return tslib_1.__generator(this, function (_o) {
+                switch (_o.label) {
                     case 0:
                         empty = {
                             Level1: [],
                             Level2: [],
                         };
-                        _p.label = 1;
+                        _o.label = 1;
                     case 1:
-                        _p.trys.push([1, 11, , 12]);
+                        _o.trys.push([1, 11, , 12]);
                         jdeQuery = {
                             StateValue: 1,
                             ListName: Config_1.ListNames.JDEDataMapping,
@@ -380,7 +657,7 @@ var CandidateService = /** @class */ (function () {
                                 userRoleQuery,
                             ])];
                     case 2:
-                        batchRes = _p.sent();
+                        batchRes = _o.sent();
                         jdeItems = (_d = batchRes[1]) !== null && _d !== void 0 ? _d : [];
                         userRoles = (_e = batchRes[2]) !== null && _e !== void 0 ? _e : [];
                         jdeItem = jdeItems[0];
@@ -391,12 +668,12 @@ var CandidateService = /** @class */ (function () {
                         if (!(panelRoleEntry === null || panelRoleEntry === void 0 ? void 0 : panelRoleEntry.ADGroupID)) return [3 /*break*/, 4];
                         return [4 /*yield*/, ServiceExport_1.CommonServices.GetADgruopsEmailIDs(panelRoleEntry.ADGroupID)];
                     case 3:
-                        _c = ((_f = (_p.sent())
+                        _c = ((_f = (_o.sent())
                             .data) !== null && _f !== void 0 ? _f : []);
                         return [3 /*break*/, 5];
                     case 4:
                         _c = [];
-                        _p.label = 5;
+                        _o.label = 5;
                     case 5:
                         adGroupOptions = _c;
                         existingLevel1 = [];
@@ -436,19 +713,19 @@ var CandidateService = /** @class */ (function () {
                                 existingPanelQuery,
                             ])];
                     case 6:
-                        panelBatch = _p.sent();
+                        panelBatch = _o.sent();
                         existingPanelItems = (_g = panelBatch[3]) !== null && _g !== void 0 ? _g : [];
                         return [4 /*yield*/, Promise.all(existingPanelItems.map(function (item) { return (0, ICandidateService_1.toPanelEntry)(item); }))];
                     case 7:
-                        resolvedExistingPanel = (_p.sent()).filter(function (e) { return e !== null; });
+                        resolvedExistingPanel = (_o.sent()).filter(function (e) { return e !== null; });
                         existingLevel1 = resolvedExistingPanel.filter(function (p) { return p.Levels === ConditionConfig_1.InterviewLevels.Level1; });
                         existingLevel2 = resolvedExistingPanel.filter(function (p) { return p.Levels === ConditionConfig_1.InterviewLevels.Level2; });
-                        _p.label = 8;
+                        _o.label = 8;
                     case 8:
                         nameTasks = [];
                         return [4 /*yield*/, ServiceExport_1.CommonServices.getUserGuidByEmail(assignHREmail)];
                     case 9:
-                        assignHRId = _p.sent();
+                        assignHRId = _o.sent();
                         if ((_h = jdeItem.LineManager) === null || _h === void 0 ? void 0 : _h.EMail)
                             nameTasks.push({
                                 key: String(jdeItem === null || jdeItem === void 0 ? void 0 : jdeItem.LineManagerId),
@@ -484,7 +761,7 @@ var CandidateService = /** @class */ (function () {
                                 });
                             }); }))];
                     case 10:
-                        nameResults = _p.sent();
+                        nameResults = _o.sent();
                         nameMap = Object.fromEntries(nameResults.map(function (r) { return [r.key, r.label]; }));
                         basePanelLevel1 = [];
                         basePanelLevel2 = [];
@@ -517,35 +794,41 @@ var CandidateService = /** @class */ (function () {
                         }
                         else if (Number(statusID) ===
                             Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel) {
-                            if (jdeItem.LineManagerId && nameMap[String(jdeItem.LineManagerId)]) {
-                                basePanelLevel1.push({
-                                    value: jdeItem.LineManagerId,
-                                    label: nameMap[String(jdeItem.LineManagerId)],
-                                    Email: jdeItem.LineManager.EMail,
-                                    Role: ConditionConfig_1.RoleName.LineManager,
-                                });
-                            }
-                            if (jdeItem.HODId && nameMap[String(jdeItem.HODId)]) {
-                                basePanelLevel1.push({
-                                    value: jdeItem.HODId,
-                                    label: nameMap[String(jdeItem.HODId)],
-                                    Email: jdeItem.HOD.EMail,
-                                    Role: ConditionConfig_1.RoleName.HOD,
-                                });
-                            }
+                            // if (jdeItem.LineManagerId && nameMap[String(jdeItem.LineManagerId)]) {
+                            //   basePanelLevel1.push({
+                            //     value: jdeItem.LineManagerId,
+                            //     label: nameMap[String(jdeItem.LineManagerId)],
+                            //     Email: jdeItem.LineManager.EMail,
+                            //     Role: RoleName.LineManager,
+                            //   });
+                            // }
+                            // if (jdeItem.HODId && nameMap[String(jdeItem.HODId)]) {
+                            //   basePanelLevel1.push({
+                            //     value: jdeItem.HODId,
+                            //     label: nameMap[String(jdeItem.HODId)],
+                            //     Email: jdeItem.HOD.EMail,
+                            //     Role: RoleName.HOD,
+                            //   });
+                            // }
+                            //  if (assignHRId?.data?.key && nameMap[String(assignHRId.data.key)]) {
+                            //   basePanelLevel1.push({
+                            //     value: assignHRId.data.key,
+                            //     label: nameMap[String(assignHRId.data.key)],
+                            //     Email: assignHREmail,
+                            //     Role: RoleName.RecruitmentHR,
+                            //   });
+                            // }
+                            basePanelLevel1.push.apply(basePanelLevel1, existingLevel1);
                             if (jdeItem.EXCOId && nameMap[String(jdeItem.EXCOId)]) {
-                                basePanelLevel1.push({
+                                basePanelLevel2.push({
                                     value: jdeItem.EXCOId,
                                     label: nameMap[String(jdeItem.EXCOId)],
                                     Email: jdeItem.EXCO.EMail,
                                     Role: ConditionConfig_1.RoleName.EXCO,
                                 });
                             }
-                            basePanelLevel1.push.apply(basePanelLevel1, existingLevel1);
-                        }
-                        else {
                             if (jdeItem.LineManagerId && nameMap[String(jdeItem.LineManagerId)]) {
-                                basePanelLevel1.push({
+                                basePanelLevel2.push({
                                     value: jdeItem.LineManagerId,
                                     label: nameMap[String(jdeItem.LineManagerId)],
                                     Email: jdeItem.LineManager.EMail,
@@ -553,21 +836,42 @@ var CandidateService = /** @class */ (function () {
                                 });
                             }
                             if (jdeItem.HODId && nameMap[String(jdeItem.HODId)]) {
-                                basePanelLevel1.push({
+                                basePanelLevel2.push({
                                     value: jdeItem.HODId,
                                     label: nameMap[String(jdeItem.HODId)],
                                     Email: jdeItem.HOD.EMail,
                                     Role: ConditionConfig_1.RoleName.HOD,
                                 });
                             }
-                            if (((_o = assignHRId === null || assignHRId === void 0 ? void 0 : assignHRId.data) === null || _o === void 0 ? void 0 : _o.key) && nameMap[String(assignHRId.data.key)]) {
-                                basePanelLevel1.push({
-                                    value: assignHRId.data.key,
-                                    label: nameMap[String(assignHRId.data.key)],
-                                    Email: assignHREmail,
-                                    Role: ConditionConfig_1.RoleName.RecruitmentHR,
-                                });
-                            }
+                            basePanelLevel2.push.apply(basePanelLevel2, existingLevel2);
+                        }
+                        else {
+                            basePanelLevel1.push.apply(basePanelLevel1, existingLevel1);
+                            basePanelLevel2.push.apply(basePanelLevel2, existingLevel2);
+                            // if (jdeItem.LineManagerId && nameMap[String(jdeItem.LineManagerId)]) {
+                            //   basePanelLevel1.push({
+                            //     value: jdeItem.LineManagerId,
+                            //     label: nameMap[String(jdeItem.LineManagerId)],
+                            //     Email: jdeItem.LineManager.EMail,
+                            //     Role: RoleName.LineManager,
+                            //   });
+                            // }
+                            // if (jdeItem.HODId && nameMap[String(jdeItem.HODId)]) {
+                            //   basePanelLevel1.push({
+                            //     value: jdeItem.HODId,
+                            //     label: nameMap[String(jdeItem.HODId)],
+                            //     Email: jdeItem.HOD.EMail,
+                            //     Role: RoleName.HOD,
+                            //   });
+                            // }
+                            // if (assignHRId?.data?.key && nameMap[String(assignHRId.data.key)]) {
+                            //   basePanelLevel1.push({
+                            //     value: assignHRId.data.key,
+                            //     label: nameMap[String(assignHRId.data.key)],
+                            //     Email: assignHREmail,
+                            //     Role: RoleName.RecruitmentHR,
+                            //   });
+                            // }
                         }
                         adOptions = Array.isArray(adGroupOptions)
                             ? adGroupOptions.map(function (o) {
@@ -608,8 +912,8 @@ var CandidateService = /** @class */ (function () {
                                 message: "Interview panel details fetched successfully",
                             }];
                     case 11:
-                        error_3 = _p.sent();
-                        console.error("fetchInterviewPanelDetails failed:", error_3);
+                        error_5 = _o.sent();
+                        console.error("fetchInterviewPanelDetails failed:", error_5);
                         return [2 /*return*/, {
                                 data: empty,
                                 status: 500,
@@ -622,7 +926,7 @@ var CandidateService = /** @class */ (function () {
     };
     CandidateService.prototype.UpdateCandidateStatus = function (data) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var Response_1, error_4;
+            var Response_1, error_6;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -636,8 +940,8 @@ var CandidateService = /** @class */ (function () {
                                 message: Response_1.data.message,
                             }];
                     case 2:
-                        error_4 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_4);
+                        error_6 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_6);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -650,7 +954,7 @@ var CandidateService = /** @class */ (function () {
     };
     CandidateService.prototype.SendEmailNotification = function (data) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var Response_2, error_5;
+            var Response_2, error_7;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -664,8 +968,8 @@ var CandidateService = /** @class */ (function () {
                                 message: Response_2.data.message,
                             }];
                     case 2:
-                        error_5 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_5);
+                        error_7 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_7);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -678,7 +982,7 @@ var CandidateService = /** @class */ (function () {
     };
     CandidateService.prototype.UploadCOIAttachment = function (DocumentName, AttachFile) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, error_6;
+            var response, error_8;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -706,8 +1010,8 @@ var CandidateService = /** @class */ (function () {
                             message: "No attachments provided",
                         }];
                     case 3:
-                        error_6 = _a.sent();
-                        console.error("Error during file replacement process:", error_6);
+                        error_8 = _a.sent();
+                        console.error("Error during file replacement process:", error_8);
                         return [2 /*return*/, {
                                 data: null,
                                 status: 500,
@@ -720,7 +1024,7 @@ var CandidateService = /** @class */ (function () {
     };
     CandidateService.prototype.GetUpsertCOI = function (data) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var Response_3, error_7;
+            var Response_3, error_9;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -734,8 +1038,8 @@ var CandidateService = /** @class */ (function () {
                                 message: Response_3.data.message,
                             }];
                     case 2:
-                        error_7 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_7);
+                        error_9 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_9);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -748,7 +1052,7 @@ var CandidateService = /** @class */ (function () {
     };
     CandidateService.prototype.InsertCandidateDetailsInList = function (CandidateDetails, InterviewPanel) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, jobDetailsResponse, error_8;
+            var response, jobDetailsResponse, error_10;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -774,8 +1078,8 @@ var CandidateService = /** @class */ (function () {
                             message: "Failed to insert RecruitmentDptDetails",
                         }];
                     case 4:
-                        error_8 = _a.sent();
-                        console.error("Error inserting data into HRMSRecruitmentDptDetails:", error_8);
+                        error_10 = _a.sent();
+                        console.error("Error inserting data into HRMSRecruitmentDptDetails:", error_10);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -788,7 +1092,7 @@ var CandidateService = /** @class */ (function () {
     };
     CandidateService.prototype.InsertInterviewPanel = function (InterviewPanel, CandidateId) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var insertedRecords, _i, InterviewPanel_1, item, JobDetailsInsert, response, error_9;
+            var insertedRecords, _i, InterviewPanel_1, item, JobDetailsInsert, response, error_11;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -822,8 +1126,8 @@ var CandidateService = /** @class */ (function () {
                             message: "Job details inserted successfully",
                         }];
                     case 5:
-                        error_9 = _a.sent();
-                        console.error("Error inserting job details:", error_9);
+                        error_11 = _a.sent();
+                        console.error("Error inserting job details:", error_11);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -836,7 +1140,7 @@ var CandidateService = /** @class */ (function () {
     };
     CandidateService.prototype.RescheduledInterview = function (obj, ListName) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var error_10;
+            var error_12;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -854,8 +1158,8 @@ var CandidateService = /** @class */ (function () {
                                 message: "Data Submitted successfully",
                             }];
                     case 2:
-                        error_10 = _a.sent();
-                        console.error(error_10);
+                        error_12 = _a.sent();
+                        console.error(error_12);
                         return [2 /*return*/, {
                                 data: null,
                                 status: 400,
@@ -868,7 +1172,7 @@ var CandidateService = /** @class */ (function () {
     };
     CandidateService.prototype.fetchCOIAttachment = function (DocumentName) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, getLatestFile, files, getFile, error_11;
+            var response, getLatestFile, files, getFile, error_13;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -898,13 +1202,62 @@ var CandidateService = /** @class */ (function () {
                                 message: "Attachment replaced successfully",
                             }];
                     case 2:
-                        error_11 = _a.sent();
-                        console.error("Error during file replacement process:", error_11);
+                        error_13 = _a.sent();
+                        console.error("Error during file replacement process:", error_13);
                         return [2 /*return*/, {
                                 data: null,
                                 status: 500,
                                 message: "Error during file replacement",
                             }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    CandidateService.prototype.InterviewScheduleLevel2 = function (payloads) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var _a, batchedSP_1, execute, results_1, error_14;
+            var _b;
+            return tslib_1.__generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _c.trys.push([0, 2, , 3]);
+                        if (!payloads || !((_b = payloads.interviewPanelL2) === null || _b === void 0 ? void 0 : _b.length)) {
+                            return [2 /*return*/, { data: [], status: 200, message: "No payloads to insert" }];
+                        }
+                        _a = (0, spservice_1.getSP)().batched(), batchedSP_1 = _a[0], execute = _a[1];
+                        results_1 = [];
+                        payloads.interviewPanelL2.forEach(function (item) {
+                            batchedSP_1.web.lists
+                                .getByTitle(Config_1.ListNames.HRMSInterviewPanelDetails)
+                                .items.add({
+                                RecruitmentIDId: item.RecruitmentIDId,
+                                InterviewLevel: item.InterviewLevel,
+                                InterviewPanelId: item.InterviewPanelId,
+                                CandidateIDId: item.CandidateIDId,
+                            })
+                                .then(function (res) { return results_1.push(res); });
+                        });
+                        batchedSP_1.web.lists
+                            .getByTitle(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails)
+                            .items.getById(payloads.candidateUpdate.ID)
+                            .update({
+                            StatusId: payloads.candidateUpdate.StatusId,
+                            InterviewDateLevel2: payloads.candidateUpdate.InterviewDateLevel2,
+                            InterviewTimeLevel2: payloads.candidateUpdate.InterviewTimeLevel2,
+                        });
+                        return [4 /*yield*/, execute()];
+                    case 1:
+                        _c.sent();
+                        return [2 /*return*/, {
+                                data: results_1,
+                                status: 200,
+                                message: "Batch insert successful for ".concat(payloads.interviewPanelL2.length, " record(s)"),
+                            }];
+                    case 2:
+                        error_14 = _c.sent();
+                        console.error("InterviewScheduleLevel2 error:", error_14);
+                        return [2 /*return*/, { data: [], status: 500, message: "Batch insert failed" }];
                     case 3: return [2 /*return*/];
                 }
             });

@@ -28,7 +28,12 @@ function EvalutionContent(_a) {
     var candidateId = _a.candidateId, onBack = _a.onBack;
     var navigate = (0, react_router_dom_1.useNavigate)();
     var goBack = React.useCallback(function () {
-        onBack ? onBack() : navigate('/RecruitmentTable');
+        if (onBack) {
+            onBack();
+        }
+        else {
+            navigate('/RecruitmentTable');
+        }
     }, [navigate, onBack]);
     var _b = (0, fetchCandidateDetails_1.useCandidateDetails)({ candidateId: candidateId }), candidate = _b.candidate, questions = _b.questions, candidateLoading = _b.loading, candidateError = _b.error, reloadCandidate = _b.reload;
     var _c = (0, fetchScoreCard_1.useScoreCard)(candidateId), scoreCardData = _c.data, scoreCardLoading = _c.loading, scoreCardError = _c.error, reloadScoreCard = _c.reload;

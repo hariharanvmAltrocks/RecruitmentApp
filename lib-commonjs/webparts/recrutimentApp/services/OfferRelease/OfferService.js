@@ -301,11 +301,11 @@ var OfferService = /** @class */ (function () {
     OfferService.prototype.GetSelectedCandidate = function (RecID, CandidateID, SelectedCandidateID, JobRequestID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var queries, _a, batchRes, careerRes, recruitment, recruitmentPosition, candidatePersonal, candidateSelected, ref, PPT, getDotAfricaCF, mappedData, error_5;
-            var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15;
-            return tslib_1.__generator(this, function (_16) {
-                switch (_16.label) {
+            var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16;
+            return tslib_1.__generator(this, function (_17) {
+                switch (_17.label) {
                     case 0:
-                        _16.trys.push([0, 3, , 4]);
+                        _17.trys.push([0, 3, , 4]);
                         queries = [
                             {
                                 StateValue: 1,
@@ -394,7 +394,7 @@ var OfferService = /** @class */ (function () {
                                 ServiceExport_1.CandidateTable.fetchCandidateDetails(JobRequestID),
                             ])];
                     case 1:
-                        _a = _16.sent(), batchRes = _a[0], careerRes = _a[1];
+                        _a = _17.sent(), batchRes = _a[0], careerRes = _a[1];
                         recruitment = (_b = batchRes[1]) === null || _b === void 0 ? void 0 : _b[0];
                         recruitmentPosition = (_c = batchRes[2]) === null || _c === void 0 ? void 0 : _c[0];
                         candidatePersonal = (_d = batchRes[3]) === null || _d === void 0 ? void 0 : _d[0];
@@ -410,7 +410,7 @@ var OfferService = /** @class */ (function () {
                                 FilePath: "".concat(Config_1.DocumentLibraray.HRMSCareerPortalCandidateCV, "/").concat((_m = (_l = careerRes === null || careerRes === void 0 ? void 0 : careerRes.data) === null || _l === void 0 ? void 0 : _l[0]) === null || _m === void 0 ? void 0 : _m.profileID, "/").concat(JobRequestID, "/").concat(ConditionConfig_1.DocumentFolderName.BackgroundVerification, "/").concat("ConsentForm"),
                             })];
                     case 2:
-                        getDotAfricaCF = (_16.sent());
+                        getDotAfricaCF = (_17.sent());
                         mappedData = {
                             ID: SelectedCandidateID,
                             CandidateID: CandidateID,
@@ -418,36 +418,44 @@ var OfferService = /** @class */ (function () {
                             JobTiltle: (_o = recruitmentPosition === null || recruitmentPosition === void 0 ? void 0 : recruitmentPosition.JobTitleEnglish) === null || _o === void 0 ? void 0 : _o.JobTitleInEnglish,
                             JobCode: (_p = recruitmentPosition === null || recruitmentPosition === void 0 ? void 0 : recruitmentPosition.JobTitleEnglish) === null || _p === void 0 ? void 0 : _p.JobCode,
                             positionID: (_q = candidateSelected === null || candidateSelected === void 0 ? void 0 : candidateSelected.PositionID) === null || _q === void 0 ? void 0 : _q.PositionID,
-                            ApplicantName: "".concat((candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.firstName) || "", " ").concat((candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.middleName) || "", " ").concat((candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.lastName) || ""),
+                            ApplicantName: [
+                                candidatePersonal.FristName,
+                                candidatePersonal.MiddleName,
+                                candidatePersonal.LastName,
+                            ]
+                                .filter(Boolean)
+                                .join(" "),
+                            // .trim(),`${?.firstName || ""} ${candidatePersonal?.middleName || ""} ${candidatePersonal?.lastName || ""}`,
                             Nationality: candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.Nationality,
                             Gender: candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.Gender,
                             ProofOfIdentity: candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.ProofOfIdentity,
                             IdentityNumber: candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.IdentityNumber,
                             Email: candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.Email,
-                            Location: candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.Location,
+                            Location: "DRC", // candidatePersonal?.Location,
                             BusinessUnitCode: (_r = recruitment === null || recruitment === void 0 ? void 0 : recruitment.BusinessUnitCode) === null || _r === void 0 ? void 0 : _r.BusineesUnitCode,
-                            Department: (_s = recruitment === null || recruitment === void 0 ? void 0 : recruitment.Department) === null || _s === void 0 ? void 0 : _s.DepartmentName,
-                            SubDepartment: (_t = recruitment === null || recruitment === void 0 ? void 0 : recruitment.SubDepartment) === null || _t === void 0 ? void 0 : _t.SubDepTitle,
-                            Section: (_u = recruitment === null || recruitment === void 0 ? void 0 : recruitment.Section) === null || _u === void 0 ? void 0 : _u.SectionName,
-                            DepartmentCode: (_v = recruitment === null || recruitment === void 0 ? void 0 : recruitment.DepartmentCode) === null || _v === void 0 ? void 0 : _v.DptCode,
+                            BusinessUnitCodeId: (_s = recruitment === null || recruitment === void 0 ? void 0 : recruitment.BusinessUnitCode) === null || _s === void 0 ? void 0 : _s.Id,
+                            Department: (_t = recruitment === null || recruitment === void 0 ? void 0 : recruitment.Department) === null || _t === void 0 ? void 0 : _t.DepartmentName,
+                            SubDepartment: (_u = recruitment === null || recruitment === void 0 ? void 0 : recruitment.SubDepartment) === null || _u === void 0 ? void 0 : _u.SubDepTitle,
+                            Section: (_v = recruitment === null || recruitment === void 0 ? void 0 : recruitment.Section) === null || _v === void 0 ? void 0 : _v.SectionName,
+                            DepartmentCode: (_w = recruitment === null || recruitment === void 0 ? void 0 : recruitment.DepartmentCode) === null || _w === void 0 ? void 0 : _w.DptCode,
                             EmploymentCategory: recruitment === null || recruitment === void 0 ? void 0 : recruitment.EmploymentCategory,
-                            TypeofContract: recruitment === null || recruitment === void 0 ? void 0 : recruitment.TypeofContract,
+                            TypeofContract: recruitment === null || recruitment === void 0 ? void 0 : recruitment.TypeOfContract,
                             AreaofWork: recruitment === null || recruitment === void 0 ? void 0 : recruitment.AreaofWork,
-                            JoiningDate: (_y = (_x = (_w = careerRes === null || careerRes === void 0 ? void 0 : careerRes.data) === null || _w === void 0 ? void 0 : _w[0]) === null || _x === void 0 ? void 0 : _x.joiningDate) !== null && _y !== void 0 ? _y : "-",
-                            NoticePeriod: (_1 = (_0 = (_z = careerRes === null || careerRes === void 0 ? void 0 : careerRes.data) === null || _z === void 0 ? void 0 : _z[0]) === null || _0 === void 0 ? void 0 : _0.noticePeriod) !== null && _1 !== void 0 ? _1 : "-",
-                            ReferenceName: (_2 = ref === null || ref === void 0 ? void 0 : ref.name) !== null && _2 !== void 0 ? _2 : "-",
-                            ReferenceDesignation: (_3 = ref === null || ref === void 0 ? void 0 : ref.Designation) !== null && _3 !== void 0 ? _3 : "-",
-                            ReferenceEmail: (_4 = ref === null || ref === void 0 ? void 0 : ref.Email) !== null && _4 !== void 0 ? _4 : "-",
-                            ReferencePhone: (_5 = ref === null || ref === void 0 ? void 0 : ref.ContractNumber) !== null && _5 !== void 0 ? _5 : "-",
-                            ReferenceCompanyName: (_6 = ref === null || ref === void 0 ? void 0 : ref.CompanyName) !== null && _6 !== void 0 ? _6 : "-",
+                            JoiningDate: (_z = (_y = (_x = careerRes === null || careerRes === void 0 ? void 0 : careerRes.data) === null || _x === void 0 ? void 0 : _x[0]) === null || _y === void 0 ? void 0 : _y.joiningDate) !== null && _z !== void 0 ? _z : "-",
+                            NoticePeriod: (_2 = (_1 = (_0 = careerRes === null || careerRes === void 0 ? void 0 : careerRes.data) === null || _0 === void 0 ? void 0 : _0[0]) === null || _1 === void 0 ? void 0 : _1.noticePeriod) !== null && _2 !== void 0 ? _2 : "-",
+                            ReferenceName: (_3 = ref === null || ref === void 0 ? void 0 : ref.name) !== null && _3 !== void 0 ? _3 : "-",
+                            ReferenceDesignation: (_4 = ref === null || ref === void 0 ? void 0 : ref.Designation) !== null && _4 !== void 0 ? _4 : "-",
+                            ReferenceEmail: (_5 = ref === null || ref === void 0 ? void 0 : ref.Email) !== null && _5 !== void 0 ? _5 : "-",
+                            ReferencePhone: (_6 = ref === null || ref === void 0 ? void 0 : ref.ContractNumber) !== null && _6 !== void 0 ? _6 : "-",
+                            ReferenceCompanyName: (_7 = ref === null || ref === void 0 ? void 0 : ref.CompanyName) !== null && _7 !== void 0 ? _7 : "-",
                             StatusID: candidateSelected === null || candidateSelected === void 0 ? void 0 : candidateSelected.StatusId,
-                            ProfileID: (_9 = String((_8 = (_7 = careerRes === null || careerRes === void 0 ? void 0 : careerRes.data) === null || _7 === void 0 ? void 0 : _7[0]) === null || _8 === void 0 ? void 0 : _8.profileID)) !== null && _9 !== void 0 ? _9 : "-",
-                            JobRequestID: (_10 = String(JobRequestID)) !== null && _10 !== void 0 ? _10 : "-",
+                            ProfileID: (_10 = String((_9 = (_8 = careerRes === null || careerRes === void 0 ? void 0 : careerRes.data) === null || _8 === void 0 ? void 0 : _8[0]) === null || _9 === void 0 ? void 0 : _9.profileID)) !== null && _10 !== void 0 ? _10 : "-",
+                            JobRequestID: (_11 = String(JobRequestID)) !== null && _11 !== void 0 ? _11 : "-",
                             PPEItems: PPT !== null && PPT !== void 0 ? PPT : [],
                             DotAfricaCF: getDotAfricaCF[0],
-                            NationalityCode: (_13 = (_12 = (_11 = careerRes === null || careerRes === void 0 ? void 0 : careerRes.data) === null || _11 === void 0 ? void 0 : _11[0]) === null || _12 === void 0 ? void 0 : _12.NatioCode) !== null && _13 !== void 0 ? _13 : "",
-                            patersonGrade: (_14 = recruitmentPosition === null || recruitmentPosition === void 0 ? void 0 : recruitmentPosition.PatersonGrade) === null || _14 === void 0 ? void 0 : _14.PatersonGrade,
-                            drcGrade: (_15 = recruitmentPosition === null || recruitmentPosition === void 0 ? void 0 : recruitmentPosition.DRCGrade) === null || _15 === void 0 ? void 0 : _15.DRCGrade,
+                            NationalityCode: (_14 = (_13 = (_12 = careerRes === null || careerRes === void 0 ? void 0 : careerRes.data) === null || _12 === void 0 ? void 0 : _12[0]) === null || _13 === void 0 ? void 0 : _13.NatioCode) !== null && _14 !== void 0 ? _14 : "",
+                            patersonGrade: (_15 = recruitmentPosition === null || recruitmentPosition === void 0 ? void 0 : recruitmentPosition.PatersonGrade) === null || _15 === void 0 ? void 0 : _15.PatersonGrade,
+                            drcGrade: (_16 = recruitmentPosition === null || recruitmentPosition === void 0 ? void 0 : recruitmentPosition.DRCGrade) === null || _16 === void 0 ? void 0 : _16.DRCGrade,
                         };
                         return [2 /*return*/, {
                                 data: mappedData,
@@ -455,7 +463,7 @@ var OfferService = /** @class */ (function () {
                                 message: "Selected candidate fetched successfully",
                             }];
                     case 3:
-                        error_5 = _16.sent();
+                        error_5 = _17.sent();
                         console.error("GetSelectedCandidate error:", error_5);
                         return [2 /*return*/, {
                                 data: null,
@@ -614,6 +622,34 @@ var OfferService = /** @class */ (function () {
                     case 2:
                         error_9 = _a.sent();
                         console.error("Error inserting data into AdvertisementDetails:", error_9);
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error inserting data into AdvertisementDetails",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    OfferService.prototype.PerformCriminalRecordCheck = function (id) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var response, error_10;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, CareerPortalAPI_1.BGverification.PerformCriminalRecordCheck(id)];
+                    case 1:
+                        response = _a.sent();
+                        return [2 /*return*/, {
+                                data: response.data,
+                                status: response.status,
+                                message: response.data.message,
+                            }];
+                    case 2:
+                        error_10 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_10);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,

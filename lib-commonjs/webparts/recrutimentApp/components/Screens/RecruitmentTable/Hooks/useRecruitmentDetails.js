@@ -82,7 +82,7 @@ var useRecruitmentDetails = function (activeTabKey, refreshKey) {
     if (refreshKey === void 0) { refreshKey = 0; }
     var _a = (0, react_1.useState)([]), items = _a[0], setItems = _a[1];
     var _b = (0, react_1.useState)(true), loading = _b[0], setLoading = _b[1];
-    var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
+    var _c = (0, RoleContext_1.userInfo)(), ADGroupData = _c.ADGroupData, roleIDs = _c.roleIDs;
     var matricID = (0, UIStateContext_1.useUIState)().MatricID;
     (0, react_1.useEffect)(function () {
         var cancelled = false;
@@ -93,7 +93,7 @@ var useRecruitmentDetails = function (activeTabKey, refreshKey) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, 3, 4]);
-                        return [4 /*yield*/, (0, reusehooks_1.fetchByMetricId)(matricID, ADGroupData.EmailId[0])];
+                        return [4 /*yield*/, (0, reusehooks_1.fetchByMetricId)(matricID, ADGroupData.EmailId[0], "", roleIDs)];
                     case 1:
                         data = _a.sent();
                         if (cancelled)

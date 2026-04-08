@@ -34,6 +34,10 @@ import React, {
   import { DashboardServices } from "../../../services/ServiceExport";
   import { checkIsAlreadySubmitted } from "../Evalution/Evaluationservice/Evaluationformservice";
   import moment from "moment";
+import { StatusId } from "../../../utilities/Config";
+import { AnimatePresence } from "framer-motion";
+import CandidateReviewModal from "../ReviewScoreCard/Components/CandidateReviewModal";
+import { useReviewScoreCardContext } from "../ReviewScoreCard/State/ReviewScoreCardProvider";
 
   const AssignHRPopup = React.lazy(() =>
     import("./Components/AssignHRPopup/AssignHRPopup").then((module) => ({
@@ -46,7 +50,7 @@ import React, {
     const { activeTab } = useUIState();
     const navigate = useNavigate();
 
-    const { ADGroupData } = userInfo();
+    const { ADGroupData, roleIDs } = userInfo();
 
     const [activeTabKey, setActiveTabKey] = useState<RecruitmentTabKey>(
       activeTab as RecruitmentTabKey
@@ -96,6 +100,8 @@ import React, {
       modalState: assignmentModalState,
       closeModal: assignmentCloseModal,
     } = useConfirmAssignment(handleClosePopup, handleRefresh);
+
+    //  const hook             = useReviewScoreCardContext();
 
     const { modalState, showModal, closeModal } = useModalPopup();
 
@@ -211,71 +217,101 @@ import React, {
     // };
     const processingRef = useRef(false);
 
-    const handleAction = useCallback(
-      async (item: RecruitmentItem) => {
-        if (processingRef.current) return;
-        processingRef.current = true;
+    const EvalutionFlagL2 = useRef(false);
 
-        try {
-          const { ItemID, statusId } = item;
+  const handleAction = useCallback(
+  async (item: any) => {
+    if (processingRef.current === true) return;
 
-          const isEvaluationFlow =
-            matricID === MatricID.EvalutionHR ||
-            matricID === MatricID.EvalutionLM ||
-            matricID === MatricID.EvalutionHOD ||
-            matricID === MatricID.EvalutionEXCO;
+    processingRef.current = true;
 
-          if (isEvaluationFlow) {
-            const alreadySubmitted = await checkIsAlreadySubmitted(
-              ItemID,
-              ADGroupData.EmailId[0]
-            );
-            if (alreadySubmitted) {
-              showModal({
-                type: "warning",
-                title: "Already Submitted",
-                message: "The scorecard for this candidate has already been submitted.",
-                confirmLabel: "OK",
-                onConfirm: closeModal,
-              });
-              return;
-            }
-          }
+    try {
+      const { ItemID } = item;
 
-          const evalutionIDs = [
-            MatricID.EvalutionHR,
-            MatricID.EvalutionLM,
-            MatricID.EvalutionHOD,
-            MatricID.EvalutionEXCO,
-          ];
+      const isEvaluationFlow =
+        matricID === MatricID.EvalutionHR ||
+        matricID === MatricID.EvalutionLM ||
+        matricID === MatricID.EvalutionHOD ||
+        matricID === MatricID.EvalutionEXCO;
 
-          const routeMap: Record<number, string> = {
-            [MatricID.InterviewQuestionHR]: "/QuestionCreation",
-            [MatricID.InterviewQuestionLM]: "/QuestionCreation",
-            [MatricID.ReviewProfileHR]: "/CandidateTable",
-            [MatricID.ReviewProfileLM]: "/CandidateTable",
-            [MatricID.AssignInterviewPanel]: "/CandidateTable",
-            [MatricID.ReviewScoreCard]: "/ReviewScoreCard",
-            ...Object.fromEntries(evalutionIDs.map((id) => [id, "/Evalution"])),
-          };
+      if (isEvaluationFlow) {
+const today = new Date();
+today.setHours(0, 0, 0, 0); 
+const interviewDate = new Date(item.interviewDate);
+interviewDate.setHours(0, 0, 0, 0); 
 
-          const route = routeMap[matricID];
-          if (route) {
-            navigate(route, { state: { ID: ItemID , department: item.department } });
-            return;
-          }
-
-          drawerMeta.current = { isOpen: true, selectedType: item.requestType };
-          openDrawer(ItemID);
-
-        } finally {
-          // ✅ ALWAYS resets, no matter which return path was taken
-          processingRef.current = false;
+const Validation = interviewDate <= today;
+        const alreadySubmitted = await checkIsAlreadySubmitted(
+          ItemID,
+          ADGroupData.EmailId[0]
+        );
+        if (!Validation) {
+          showModal({
+            type: "warning",
+            title: "Interview Date Not Reached",
+            message: `You can only fill the scorecard after the interview date. ${moment(item.interviewDate).format("YYYY-MM-DD")}`,
+            confirmLabel: "OK",
+            onConfirm: closeModal,
+          });
+          return;
         }
-      },
-      // ✅ Complete dependency array
-      [matricID, navigate, openDrawer, showModal, closeModal, ADGroupData.EmailId]
-    );
+
+        if (alreadySubmitted) {
+          showModal({
+            type: "warning",
+            title: "Already Submitted",
+            message:
+              "The scorecard for this candidate has already been submitted.",
+            confirmLabel: "OK",
+            onConfirm: closeModal,
+          });
+          return;
+        }
+      }
+
+      const evalutionIDs = [
+        MatricID.EvalutionHR,
+        MatricID.EvalutionLM,
+        MatricID.EvalutionHOD,
+        MatricID.EvalutionEXCO,
+      ];
+
+      const routeMap: Record<number, string> = {
+        [MatricID.InterviewQuestionHR]: "/QuestionCreation",
+        [MatricID.InterviewQuestionLM]: "/QuestionCreation",
+        [MatricID.ReviewProfileHR]: "/CandidateTable",
+        [MatricID.ReviewProfileLM]: "/CandidateTable",
+        [MatricID.AssignInterviewPanel]: "/CandidateTable",
+        [MatricID.ReviewScoreCard]: "/ReviewScoreCard",
+        ...Object.fromEntries(evalutionIDs.map((id) => [id, 
+          item.statusId === StatusId.InterviewLevel2InProgress  ? 
+          //  hook.openReview : 
+          "/ReviewScoreCard"
+          : "/Evalution"
+          ])),
+      };
+
+      const route = routeMap[matricID];
+
+      if (route) {
+        navigate(route, {
+          state: { ID: ItemID, department: item.department },
+        });
+        return;
+      }
+
+      drawerMeta.current = {
+        isOpen: true,
+        selectedType: item.requestType,
+      };
+
+      openDrawer(ItemID);
+    } finally {
+      processingRef.current = false;
+    }
+  },
+  [matricID, navigate, openDrawer, showModal, closeModal, ADGroupData.EmailId]
+);
 
     const showAssignmentBar =
       activeTabs?.tableMode === "checkbox" && selectedIds.length > 0;
@@ -419,6 +455,51 @@ import React, {
             refreshKey={handleRefresh}
           />
         )}
+
+          <AnimatePresence>
+        {/* {hook.reviewingCandidate && (
+          <CandidateReviewModal
+            candidate={hook.reviewingCandidate}
+            reviewData={hook.reviewData}
+            reviewLoading={hook.reviewLoading}
+            scoreData={hook.scoreData}
+            scoreLoading={hook.scoreLoading}
+
+            showComments={hook.showComments}
+            level1Comments={hook.level1Comments}
+            level2Comments={hook.level2Comments}
+            commentsLoading={hook.commentsLoading}
+            onViewComments={hook.openComments}
+            onCloseComments={() => hook.setShowComments(false)}
+
+            hodDecision={hook.hodDecision}
+            decisionComment={hook.decisionComment}
+            confirmed={hook.confirmed}
+            selectedPositionId={hook.selectedPositionId}
+            selectedPositionText={hook.selectedPositionText}
+            positionOptions={hook.positionOptions}
+            submitting={hook.submitting}
+            submitError={hook.submitError}
+            successMessage={hook.successMessage}
+            errors={hook.errors}
+            shouldShowPositionId={hook.shouldShowPositionId}
+
+            onDecisionChange={hook.setHodDecision}
+            onCommentChange={hook.setDecisionComment}
+            onConfirmChange={hook.setConfirmed}
+            onPositionChange={(id, text) => {
+              hook.setSelectedPositionId(id);
+              hook.setSelectedPositionText(text);
+              hook.setErrors({ ...hook.errors, position: false });
+            }}
+            onClose={hook.closeReview}
+
+            currentRoleId={roleIDs[0]}
+            isLevel2Status={hook.isLevel2(hook.reviewingCandidate.statusId)}
+            submitDeps={hook.submitDeps}
+          />
+        )} */}
+      </AnimatePresence>
 
         <ModalPopup {...assignmentModalState} onClose={assignmentCloseModal} />
         <ModalPopup {...modalState} onClose={closeModal} />

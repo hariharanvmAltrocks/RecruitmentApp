@@ -4,47 +4,47 @@ import { profileXagent, UpsertBGV } from "../../models/Icareerportal";
 import { IDocFiles } from "../SPService/Ispservice";
 
 export type DataSyncToRecruitmentResponse = {
-  ID: number,
-  RecordID: number,
-  BusinessUnitCode: string,
-  BusinessUnitCodeId: number,
+  ID: number;
+  RecordID: number;
+  BusinessUnitCode: string;
+  BusinessUnitCodeId: number;
   BusinessUnitName: string;
   BusinessUnitDescription: string;
-  Nationality: string,
+  Nationality: string;
   DepartmentId: number;
-  Department: string,
-  SubDepartment: string,
-  SubDepartmentId: number,
-  Section: string,
-  SectionId: number,
-  DepartmentCodeId: number,
-  DepartmentCode: string,
-  DeptCode: string,
-  EmploymentCategory: string,
-  TypeOfContract: string,
-  NumberOfPersonNeeded: string,
-  EnterNumberOfMonths: string,
-  AreaofWork: string,
-  DateRequried: Date | undefined,
-  Type: string,
-  Status: string,
-  StatusId: number,
-  Action: string,
-  ActionTypeId: number,
-  Location: string,
+  Department: string;
+  SubDepartment: string;
+  SubDepartmentId: number;
+  Section: string;
+  SectionId: number;
+  DepartmentCodeId: number;
+  DepartmentCode: string;
+  DeptCode: string;
+  EmploymentCategory: string;
+  TypeOfContract: string;
+  NumberOfPersonNeeded: string;
+  EnterNumberOfMonths: string;
+  AreaofWork: string;
+  DateRequried: Date | undefined;
+  Type: string;
+  Status: string;
+  StatusId: number;
+  Action: string;
+  ActionTypeId: number;
+  Location: string;
 
-  JobCodeId: number,
-  JobCode: string,
-  JobTitleEnglish: string,
-  JobTitleFrench: string,
-  PatersonGrade: string,
-  DRCGrade: string,
-  JobTitleEnglishId: number,
-  JobTitleFrenchId: number,
-  PatersonGradeId: number,
-  DRCGradeId: number,
+  JobCodeId: number;
+  JobCode: string;
+  JobTitleEnglish: string;
+  JobTitleFrench: string;
+  PatersonGrade: string;
+  DRCGrade: string;
+  JobTitleEnglishId: number;
+  JobTitleFrenchId: number;
+  PatersonGradeId: number;
+  DRCGradeId: number;
 
-  Checked: boolean,
+  Checked: boolean;
 
   VacancyConfirmed: string;
   RecruitmentAuthorised: string;
@@ -56,18 +56,18 @@ export type DataSyncToRecruitmentResponse = {
   AssignHOD: string;
   ReasonForVacancy: string;
 
-  JobPostingStartDate: string | undefined,
-  JobPostingEndDate: string | undefined,
-  JobPostingFirstExtensionEndDate: string | undefined,
-  JobPostingSecondExtensionEndDate: string | undefined,
+  JobPostingStartDate: string | undefined;
+  JobPostingEndDate: string | undefined;
+  JobPostingFirstExtensionEndDate: string | undefined;
+  JobPostingSecondExtensionEndDate: string | undefined;
 
-  AssignEMail: string,
+  AssignEMail: string;
   AssignHRLead?: string;
   QuestionByHR: string;
   QuestionByLM: string;
   ModifiedDate: string | undefined;
-  CreatedDate: string | undefined
-}
+  CreatedDate: string | undefined;
+};
 
 export type InsertComments = {
   RoleId: number | null;
@@ -77,52 +77,52 @@ export type InsertComments = {
 
 export type PostRecuritmentData = {
   Data: {
-    BusinessUnitCodeId: number,
-    Nationality: string,
+    BusinessUnitCodeId: number;
+    Nationality: string;
     DepartmentId: number;
-    SubDepartmentId: number,
-    SectionId: number,
-    DepartmentCodeId: number,
-    EmploymentCategory: string,
-    TypeOfContract: string,
-    NumberOfPersonNeeded: number,
-    EnterNumberOfMonths: string,
-    AreaofWork: string,
-    DateRequried: Date | null,
-    DataFrom: string,
-    StatusId: number,
+    SubDepartmentId: number;
+    SectionId: number;
+    DepartmentCodeId: number;
+    EmploymentCategory: string;
+    TypeOfContract: string;
+    NumberOfPersonNeeded: number;
+    EnterNumberOfMonths: string;
+    AreaofWork: string;
+    DateRequried: Date | null;
+    DataFrom: string;
+    StatusId: number;
     // ActionId: number,
-    JobCodeId: number,
-    AssignedHR: string,
-    RecruitmentHRLead: string
+    JobCodeId: number;
+    AssignedHR: string;
+    RecruitmentHRLead: string;
     Location: string;
     LineManager?: string;
     HOD?: string;
-  },
+  };
   PositionData: {
-    JobTitleEnglishId: number,
-    JobTitleFrenchId: number,
-    PatersonGradeId: number,
-    DRCGradeId: number,
-  },
-  CommentsList: InsertComments,
+    JobTitleEnglishId: number;
+    JobTitleFrenchId: number;
+    PatersonGradeId: number;
+    DRCGradeId: number;
+  };
+  CommentsList: InsertComments;
   updatePreList: {
-    ID: number
-    ActionId: number,
-    ItemCreated: string,
-    IsDataSyncToRecruitment: string,
-  }
-}
+    ID: number;
+    ActionId: number;
+    ItemCreated: string;
+    IsDataSyncToRecruitment: string;
+  };
+};
 
 export type PostAgentData = {
   Data: {
-    AgentId: number,
-    JobCodeId: number,
-    RecrutimentId: number,
-  },
-  AgentProfileData: profileXagent,
-  CommentsList: InsertComments,
-}
+    AgentId: number;
+    JobCodeId: number;
+    RecrutimentId: number;
+  };
+  AgentProfileData: profileXagent;
+  CommentsList: InsertComments;
+};
 
 export type QualificationValue = {
   MinQualification: AutoCompleteItem[];
@@ -156,7 +156,8 @@ export type IDptData = {
   NumberOfPersonNeeded: string;
   Dptcode?: string;
   reviewerComments?: string;
-}
+  StatusId: number;
+};
 
 export type IRecruitmentService = {
   GetRecruitmentDetails(
@@ -166,27 +167,27 @@ export type IRecruitmentService = {
   GetNPAEPVRRDetails(
     filterParam: any,
     filterConditions: any,
-    Type: string
+    Type: string,
   ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>>;
   GetCandidateDetails(
     filterParam: any,
-    filterConditions: any
+    filterConditions: any,
   ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>>;
   GetSelectedCandidate(
     filterParam: any,
-    filterConditions: any
+    filterConditions: any,
   ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>>;
 
   InsertRecruitmentDptBatch(
-    payload: PostRecuritmentData[]
+    payload: PostRecuritmentData[],
   ): Promise<ApiResponse<any>>;
   GetHRMSRecruitmentRoleProfileDetails(
     filterParam: any[],
-    filterConditions: any
+    filterConditions: any,
   ): Promise<ApiResponse<any | null>>;
   GetBGVerificationType(): Promise<ApiResponse<any | null>>;
   PostCommentsData(
-    obj: InsertComments
+    obj: InsertComments,
   ): Promise<ApiResponse<InsertComments | null>>;
   UploadAdvertisementInPortal(
     Filter: any[],
@@ -195,12 +196,13 @@ export type IRecruitmentService = {
     IsActive: number,
     IsExtened: number,
     JobBasedBGVVerification?: string,
-    onemDocs?: IDocFiles[]
+    onemDocs?: IDocFiles[],
   ): Promise<ApiResponse<null>>;
   UpsertBGVJobMaster(UpsertData: UpsertBGV[]): Promise<ApiResponse<any | null>>;
-  InsertExternalAgencyDetails(payloads: PostAgentData[]): Promise<ApiResponse<any[]>>;
+  InsertExternalAgencyDetails(
+    payloads: PostAgentData[],
+  ): Promise<ApiResponse<any[]>>;
 };
-
 
 export const stripHtml = (html: string | null | undefined): string => {
   if (!html) return "";

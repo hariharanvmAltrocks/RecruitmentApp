@@ -31,12 +31,8 @@ var ActionCell = react_1.default.memo(function (_a) {
     var actionMode = (0, react_1.useMemo)(function () { return resolveActionMode(StatusId); }, [StatusId]);
     var isInitiate = actionMode === "Initiate";
     var isReview = actionMode === "Review";
-    var ActionIcon = isInitiate
-        ? lucide_react_1.Play
-        : isReview
-            ? lucide_react_1.Pencil
-            : lucide_react_1.Eye;
-    var actionLabel = isInitiate ? "Initiate" : isReview ? "Review" : "View";
+    var ActionIcon = isInitiate ? lucide_react_1.Play : isReview ? lucide_react_1.Pencil : lucide_react_1.Eye;
+    var actionLabel = isInitiate ? "INITIATE" : isReview ? "REVIEW" : "VIEW";
     return (react_1.default.createElement("button", { className: "data-table__action-btn", onClick: function () { return onAction(item); }, type: "button", "aria-label": "".concat(actionLabel, " action") },
         react_1.default.createElement(ActionIcon, { size: 16, style: { marginRight: 8 } }),
         actionLabel));
@@ -98,15 +94,25 @@ var OfferTable = function () {
     var _q = (0, react_1.useState)(5), pageSize = _q[0], setPageSize = _q[1];
     var _r = (0, react_1.useState)(1), currentPage = _r[0], setCurrentPage = _r[1];
     var _s = (0, useRecruitmentDetails_1.useRecruitmentDetails)(activeTabKey, refreshKey), items = _s.items, tableLoading = _s.loading;
-    var updateList = items.map(function (item) { return ({
-        StatusID: item.statusId,
-        ID: item.ItemID,
-        JobRequestID: item.jobrequestID,
-        EmploymentCategory: item.employmentCategory,
-        IsExpat: item.IsExpat,
-    }); });
-    var _t = (0, Useupdatelistportal_1.useUpdateListPortal)({ items: updateList, enableLoading: tableLoading }), updateListPortal = _t.updateListPortal, isLoading = _t.isLoading, isSuccess = _t.isSuccess, error = _t.error, reset = _t.reset;
-    var _u = (0, useStateFromManage_1.useStateOfferRelease)(), drawerOpen = _u.drawerOpen, reviewerComments = _u.reviewerComments, acknowledgementCheckbox = _u.acknowledgementCheckbox, loadingState = _u.loadingState, openDrawer = _u.openDrawer, closeDrawer = _u.closeDrawer, setComments = _u.setComments, toggleAcknowledgement = _u.toggleAcknowledgement, setLoadingState = _u.setLoadingState;
+    var updateList = (0, react_1.useMemo)(function () {
+        return items.map(function (item) { return ({
+            StatusID: item.statusId,
+            ID: item.ItemID,
+            JobRequestID: item.jobrequestID,
+            EmploymentCategory: item.EmploymentCategory,
+            IsExpat: item.IsExpat,
+        }); });
+    }, [items]);
+    var updateListPortal = (0, Useupdatelistportal_1.useUpdateListPortal)({
+        items: updateList,
+        refreshKey: refreshKey,
+    }).updateListPortal;
+    (0, react_1.useEffect)(function () {
+        if (!tableLoading && updateList.length > 0) {
+            updateListPortal();
+        }
+    }, [updateList, tableLoading, refreshKey]);
+    var _t = (0, useStateFromManage_1.useStateOfferRelease)(), drawerOpen = _t.drawerOpen, reviewerComments = _t.reviewerComments, acknowledgementCheckbox = _t.acknowledgementCheckbox, loadingState = _t.loadingState, openDrawer = _t.openDrawer, closeDrawer = _t.closeDrawer, setComments = _t.setComments, toggleAcknowledgement = _t.toggleAcknowledgement, setLoadingState = _t.setLoadingState;
     var activeTabs = (0, react_1.useMemo)(function () { return tabs.find(function (t) { return t.key === activeTabKey; }); }, [activeTabKey, tabs]);
     var totalCount = items.length;
     var totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
@@ -167,7 +173,7 @@ var OfferTable = function () {
                     react_1.default.createElement("button", { onClick: function () { return navigate("/Dashboard"); }, className: "submission-header__button" },
                         react_1.default.createElement(lucide_react_1.RotateCcw, { size: 14 }),
                         "Back to Dashboard"))),
-            react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: paginatedItems, enableCheckbox: (activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.tableMode) === "checkbox", pageSize: pageSize, currentPage: currentPage, totalCount: totalCount, onPageChange: setCurrentPage, onPageSizeChange: function (size) {
+            react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: paginatedItems, enableCheckbox: false, pageSize: pageSize, currentPage: currentPage, totalCount: totalCount, onPageChange: setCurrentPage, onPageSizeChange: function (size) {
                     setPageSize(size);
                     setCurrentPage(1);
                 }, loading: tableLoading })),

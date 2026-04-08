@@ -153,6 +153,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
       NumberOfPersonNeeded: positionDetails?.NumberOfPersonNeeded ?? "",
       Dptcode: positionDetails?.DeptCode ?? "",
       reviewerComments,
+      StatusId: positionDetails?.StatusId ?? 0
     }),
     [positionDetails, reviewerComments]
   );

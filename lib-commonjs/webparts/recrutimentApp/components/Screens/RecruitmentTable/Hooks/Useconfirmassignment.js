@@ -11,7 +11,6 @@ var Config_1 = require("../../../../utilities/Config");
 var useToast_1 = require("../../../Hooks/useToast");
 var useModalPopup_1 = require("../../../Comman/ModalPopup/useModalPopup");
 var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
-var WorkflowConfig_1 = require("../../../Hooks/WorkflowConfig");
 var UIStateContext_1 = require("../../../RecrutimentApp/UIStateContext");
 var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
     var navigate = (0, react_router_dom_1.useNavigate)();
@@ -67,7 +66,7 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                         return [2 /*return*/];
                     }
                     return [4 /*yield*/, Promise.all(vacancyDetailResults.map(function (_a) { return tslib_1.__awaiter(void 0, [_a], void 0, function (_b) {
-                            var JDEData, StatusID;
+                            var JDEData;
                             var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t;
                             var vacancy = _b.vacancy, jobDetail = _b.jobDetail;
                             return tslib_1.__generator(this, function (_u) {
@@ -75,7 +74,7 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                                     case 0: return [4 /*yield*/, ServiceExport_1.masterService.fetchJDEEmailIDs(jobDetail.BusinessUnitCodeId)];
                                     case 1:
                                         JDEData = _u.sent();
-                                        StatusID = (0, WorkflowConfig_1.WorkflowConfig)(MatricID);
+                                        // let StatusID = WorkflowConfig(MatricID)
                                         return [2 /*return*/, {
                                                 Data: {
                                                     BusinessUnitCodeId: jobDetail.BusinessUnitCodeId,
@@ -89,13 +88,13 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                                                     EnterNumberOfMonths: (_c = jobDetail.EnterNumberOfMonths) !== null && _c !== void 0 ? _c : "0",
                                                     TypeOfContract: jobDetail.TypeOfContract,
                                                     DateRequried: (_d = jobDetail.DateRequried) !== null && _d !== void 0 ? _d : null,
-                                                    StatusId: StatusID,
+                                                    StatusId: Config_1.StatusId.PendingUploadAdvert,
                                                     JobCodeId: jobDetail.JobCodeId,
                                                     AreaofWork: jobDetail.AreaofWork,
                                                     AssignedHR: userIDResult_1.data,
                                                     RecruitmentHRLead: Array.isArray(ADGroupData.EmailId)
-                                                        ? (_e = ADGroupData.EmailId[0]) !== null && _e !== void 0 ? _e : ""
-                                                        : (_f = ADGroupData.EmailId) !== null && _f !== void 0 ? _f : "",
+                                                        ? ((_e = ADGroupData.EmailId[0]) !== null && _e !== void 0 ? _e : "")
+                                                        : ((_f = ADGroupData.EmailId) !== null && _f !== void 0 ? _f : ""),
                                                     DataFrom: (_g = jobDetail.Type) !== null && _g !== void 0 ? _g : "",
                                                     Location: (_h = jobDetail.Location) !== null && _h !== void 0 ? _h : "",
                                                     LineManager: (_k = (_j = JDEData === null || JDEData === void 0 ? void 0 : JDEData.data) === null || _j === void 0 ? void 0 : _j.LineManagerEmail) !== null && _k !== void 0 ? _k : "",
@@ -131,7 +130,9 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                         showModal({
                             type: "success",
                             title: "Assignment Successfully",
-                            message: payload.vacancies.length > 1 ? ConditionConfig_1.RecuritmentHRMsg.HRSuccess : ConditionConfig_1.RecuritmentHRMsg.SingleHRSuccessMsg,
+                            message: payload.vacancies.length > 1
+                                ? ConditionConfig_1.RecuritmentHRMsg.HRSuccess
+                                : ConditionConfig_1.RecuritmentHRMsg.SingleHRSuccessMsg,
                             confirmLabel: "Go to Dashboard",
                             onConfirm: function () {
                                 closeModal();
@@ -169,9 +170,11 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                             },
                             AgentProfileData: {
                                 jobCode: String(vacancy.jobCodeID),
-                                jobsXAgents: [{
+                                jobsXAgents: [
+                                    {
                                         agentId: String((_b = payload.member) === null || _b === void 0 ? void 0 : _b.id),
-                                    }]
+                                    },
+                                ],
                             },
                             CommentsList: {
                                 RoleId: roleIDs[0],
@@ -187,7 +190,9 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                         showModal({
                             type: "success",
                             title: "Agent Assignment Successfully",
-                            message: payload.vacancies.length > 1 ? ConditionConfig_1.RecuritmentHRMsg.AgencySucess : ConditionConfig_1.RecuritmentHRMsg.SingleAgencyMsg,
+                            message: payload.vacancies.length > 1
+                                ? ConditionConfig_1.RecuritmentHRMsg.AgencySucess
+                                : ConditionConfig_1.RecuritmentHRMsg.SingleAgencyMsg,
                             confirmLabel: "Go to Dashboard",
                             onConfirm: function () {
                                 closeModal();

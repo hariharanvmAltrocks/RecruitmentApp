@@ -8,11 +8,14 @@ var ApiConfig_1 = require("../../../../utilities/ApiConfig");
 var metricColumns_config_1 = require("../metricColumns.config");
 var Config_1 = require("../../../../utilities/Config");
 var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
-var callServiceByListName = function (listName, filter, condition) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+var callServiceByListName = function (listName, filter, condition, roleIDs) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
     var _a;
     return tslib_1.__generator(this, function (_b) {
         switch (_b.label) {
             case 0:
+                if (roleIDs === null || roleIDs === void 0 ? void 0 : roleIDs.includes(Config_1.RoleID.FinanceDepartment)) {
+                    filter = filter.filter(function (f) { return f.FilterKey !== "RecruitmentHR"; });
+                }
                 _a = listName;
                 switch (_a) {
                     case Config_1.ListNames.HRMSNewPositionRequest: return [3 /*break*/, 1];
@@ -73,9 +76,9 @@ var mapResponseByListName = function (listName, data) {
 };
 exports.mapResponseByListName = mapResponseByListName;
 var useTrackerData = function (MatricID) {
-    var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
-    var _a = (0, react_1.useState)([]), trackerData = _a[0], setTrackerData = _a[1];
-    var _b = (0, react_1.useState)(false), loading = _b[0], setLoading = _b[1];
+    var _a = (0, RoleContext_1.userInfo)(), ADGroupData = _a.ADGroupData, roleIDs = _a.roleIDs;
+    var _b = (0, react_1.useState)([]), trackerData = _b[0], setTrackerData = _b[1];
+    var _c = (0, react_1.useState)(false), loading = _c[0], setLoading = _c[1];
     var fetchtrackerData = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var configMap, config, configs_1, responses, allData_1, error_1;
         return tslib_1.__generator(this, function (_a) {
@@ -91,7 +94,7 @@ var useTrackerData = function (MatricID) {
                     }
                     configs_1 = Array.isArray(config) ? config : [config];
                     return [4 /*yield*/, Promise.all(configs_1.map(function (cfg) {
-                            return (0, exports.callServiceByListName)(cfg.ListName, cfg.Filter, "and");
+                            return (0, exports.callServiceByListName)(cfg.ListName, cfg.Filter, "and", roleIDs);
                         }))];
                 case 1:
                     responses = _a.sent();
@@ -123,7 +126,7 @@ var useTrackerData = function (MatricID) {
     return {
         trackerData: trackerData,
         loading: loading,
-        refresh: fetchtrackerData
+        refresh: fetchtrackerData,
     };
 };
 exports.useTrackerData = useTrackerData;

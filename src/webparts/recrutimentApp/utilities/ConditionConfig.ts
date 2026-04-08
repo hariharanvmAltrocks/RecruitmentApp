@@ -28,6 +28,11 @@ export const MatricID = {
   Kcsa: 26,
 
   ReviewScoredHOD: 27,
+
+  MySubmissionHR: 28,
+  MySubmissionLM: 29,
+  MySubmissionHOD: 30,
+  MySubmissionBGV: 31,
 };
 
 export const RoleName = {
@@ -356,6 +361,10 @@ export const RecuritmentHRMsg = {
   ReinitiateBGVProcess: "The BGV process has been re-initiated successfully.",
   ReinitiateBGVWarningMsg:
     "Are you sure you want to re-initiate the Criminal Check (Fingerprint Search) as part of the BGV process for this candidate?",
+  RejectBGVCheckMsg:
+    "Are you sure you want to reject the BGV process for this candidate?",
+  ApprvedBGVCheckMsg:
+    "Are you sure you want to approve the BGV process for this candidate?",
 };
 
 export const DocumentFolderName = {

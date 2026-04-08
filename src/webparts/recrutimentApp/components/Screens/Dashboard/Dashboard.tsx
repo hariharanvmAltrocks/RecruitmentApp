@@ -54,16 +54,20 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     setMatricID(data.id);
   };
 
-  const onTrackerChange = (row: DashboardData) => {
-    setActiveMenuID(ref.current)
-    navigate(navigationPath);
-  };
+
 
   const selectedMetric = martics.metrics.find(m => m.id === activeMetric) ?? martics.metrics[0];
   const priorityData = priorityValues(martics.metrics);
   const total = totalPriority(martics.metrics);
   const loading = martics.loading || trackerLoading || urgentLoading;
   const hasMetrics = martics.metrics && martics.metrics.length > 0;
+
+  const onTrackerChange = (row: DashboardData) => {
+    if (selectedMetric?.showArrow) {
+      setActiveMenuID(ref.current)
+      navigate(navigationPath);
+    }
+  };
 
   const metricsContainer = {
     hidden: {},

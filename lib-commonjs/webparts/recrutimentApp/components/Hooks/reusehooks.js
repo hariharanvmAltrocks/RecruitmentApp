@@ -8,7 +8,7 @@ var ServiceExport_1 = require("../../services/ServiceExport");
 var ConditionConfig_1 = require("../../utilities/ConditionConfig");
 var Config_1 = require("../../utilities/Config");
 var metricColumns_config_1 = require("../Screens/Dashboard/metricColumns.config");
-var fetchByMetricId = function (matricID, EmailId, condition) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+var fetchByMetricId = function (matricID, EmailId, condition, roleIDs) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
     var updatedMetricId, configMap, config, configs, serviceCall, responses, result;
     return tslib_1.__generator(this, function (_a) {
         switch (_a.label) {
@@ -24,6 +24,9 @@ var fetchByMetricId = function (matricID, EmailId, condition) { return tslib_1._
                 configs = Array.isArray(config) ? config : [config];
                 serviceCall = function (listName, filter) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
                     return tslib_1.__generator(this, function (_a) {
+                        if (roleIDs === null || roleIDs === void 0 ? void 0 : roleIDs.includes(Config_1.RoleID.FinanceDepartment)) {
+                            filter = filter.filter(function (f) { return f.FilterKey !== "RecruitmentHR"; });
+                        }
                         switch (listName) {
                             case Config_1.ListNames.HRMSNewPositionRequest:
                                 return [2 /*return*/, ServiceExport_1.DashboardServices.GetNPAEPVRRDetails(filter, condition)];
@@ -85,7 +88,7 @@ function getcountryCode(Code, refMobile) {
         return null;
     return "".concat(country.id, "-").concat(mobileNumber);
 }
-var findMatricID = function (roleIDs, statusID, TabName) {
+var findMatricID = function (roleIDs, statusID, TabName, MenuId) {
     if (TabName === ConditionConfig_1.TabNames.BackgroundVerification) {
         return ConditionConfig_1.MatricID.BackgroundCheck;
     }
@@ -94,6 +97,23 @@ var findMatricID = function (roleIDs, statusID, TabName) {
     }
     else if (TabName === ConditionConfig_1.TabNames.OfferLetterKSCA) {
         return ConditionConfig_1.MatricID.Kcsa;
+    }
+    else if (TabName === ConditionConfig_1.TabNames.MySubmission) {
+        if (roleIDs.includes(Config_1.RoleID.RecruitmentHR)) {
+            if (MenuId === ConditionConfig_1.menuID.RecruitmentProcess) {
+                return ConditionConfig_1.MatricID.MySubmissionBGV;
+            }
+            else {
+                return ConditionConfig_1.MatricID.MySubmissionHR;
+            }
+        }
+        if (roleIDs.includes(Config_1.RoleID.LineManager)) {
+            return ConditionConfig_1.MatricID.MySubmissionLM;
+        }
+        if (roleIDs.includes(Config_1.RoleID.HOD)) {
+            return ConditionConfig_1.MatricID.MySubmissionHOD;
+        }
+        return ConditionConfig_1.MatricID.MySubmission;
     }
     else {
         switch (statusID) {

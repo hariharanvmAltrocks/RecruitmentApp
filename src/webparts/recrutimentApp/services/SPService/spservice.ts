@@ -527,7 +527,6 @@ const getDocLibFiles = async (
       const modified = f.TimeLastModified
         ? new Date(f.TimeLastModified).toLocaleString()
         : "Unknown";
-      debugger;
       return {
         name: f.Name,
         content: f.ServerRelativeUrl,

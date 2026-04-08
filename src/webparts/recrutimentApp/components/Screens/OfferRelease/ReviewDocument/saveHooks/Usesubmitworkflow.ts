@@ -68,7 +68,7 @@ interface SubmitWorkflowResult {
   submit: (btnAction: number) => Promise<void>;
 }
 
-function makeDocData(
+export function makeDocData(
   profileID: string,
   requestID: string,
   documentName: string,
@@ -345,9 +345,11 @@ async function resolveStatus(
       if (btnAction === ButtonAction.Review) {
         const documentResponse =
           await OfferServices.InsertRecruitmentCandidateDetails({
-            JoiningDate: SpiltDateOnly(new Date(data.JoiningDate)),
+            // JoiningDate: data.JoiningDate
+            //   ? SpiltDateOnly(new Date(data.JoiningDate))
+            //   : "",
             NoticePeriod: String(data.NoticePeriod),
-            ID: data.ID,
+            ID: data.CandidateID,
           });
         return {
           workflowStatusValue: workflowStatusApi.OnboardingInprogress,
@@ -541,10 +543,11 @@ export function useSubmitWorkflow(
         type: type,
         title: "Submitted",
         message: message,
-        confirmLabel: "OK",
+        confirmLabel: "Go to Dashboard",
         onConfirm: () => {
           closeModal();
           onConfirm();
+          navigate("/Dashboard");
         },
       });
     },

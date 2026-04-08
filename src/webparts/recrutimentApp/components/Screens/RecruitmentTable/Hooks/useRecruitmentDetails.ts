@@ -99,7 +99,7 @@ export const useRecruitmentDetails = (
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const { ADGroupData } = userInfo();
+  const { ADGroupData, roleIDs } = userInfo();
   const { MatricID: matricID } = useUIState();
 
   useEffect(() => {
@@ -108,7 +108,12 @@ export const useRecruitmentDetails = (
 
     const timer = setTimeout(async () => {
       try {
-        const data = await fetchByMetricId(matricID, ADGroupData.EmailId[0]);
+        const data = await fetchByMetricId(
+          matricID,
+          ADGroupData.EmailId[0],
+          "",
+          roleIDs,
+        );
 
         if (cancelled) return;
 

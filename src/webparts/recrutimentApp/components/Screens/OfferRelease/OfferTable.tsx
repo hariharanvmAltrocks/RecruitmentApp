@@ -25,16 +25,18 @@ import { userInfo } from "../../../utilities/hooks/RoleContext";
 import { StatusId } from "../SelectionProcess/config/EvaluationConfig";
 import { useStateOfferRelease } from "./StateManage/useStateFromManage";
 import { Initiate_STAUES, REVIEW_STATUSES, EDIT_STATUSES } from "./Config";
-import { PortalItem, useUpdateListPortal } from "./ReviewDocument/Hooks/Useupdatelistportal";
+import {
+  PortalItem,
+  useUpdateListPortal,
+} from "./ReviewDocument/Hooks/Useupdatelistportal";
 
 type ActionMode = "Initiate" | "Review" | "View" | "Edit";
-
 
 function resolveActionMode(statusID: number): ActionMode {
   if (Initiate_STAUES.has(statusID)) return "Initiate";
   if (REVIEW_STATUSES.has(statusID)) return "Review";
   if (EDIT_STATUSES.has(statusID)) return "Edit";
-  return "View"; 
+  return "View";
 }
 
 const ActionCell: React.FC<{
@@ -46,12 +48,8 @@ const ActionCell: React.FC<{
 
   const isInitiate = actionMode === "Initiate";
   const isReview = actionMode === "Review";
- const ActionIcon = isInitiate
-  ? Play
-  : isReview
-  ? Pencil
-  : Eye;
-  const actionLabel = isInitiate ? "Initiate" : isReview ? "Review" : "View";
+  const ActionIcon = isInitiate ? Play : isReview ? Pencil : Eye;
+  const actionLabel = isInitiate ? "INITIATE" : isReview ? "REVIEW" : "VIEW";
 
   return (
     <button
@@ -67,7 +65,7 @@ const ActionCell: React.FC<{
 });
 
 function buildColumns(
-  onAction: (item: ISelectedCandidate) => void
+  onAction: (item: ISelectedCandidate) => void,
 ): DataTableColumn<any>[] {
   return [
     {
@@ -128,29 +126,50 @@ function buildColumns(
 
 export const OfferTable: React.FC = () => {
   const { tabs, loading: tabsLoading } = useTabDetails();
-  const { activeTab, MatricID: matricID, setMatricID, sideNavflag, setCurrentTabName, currentTabName } = useUIState();
+  const {
+    activeTab,
+    MatricID: matricID,
+    setMatricID,
+    sideNavflag,
+    setCurrentTabName,
+    currentTabName,
+  } = useUIState();
   const navigate = useNavigate();
   const { modalState, closeModal } = useModalPopup();
 
   const [activeTabKey, setActiveTabKey] = useState<RecruitmentTabKey>(
-    activeTab as RecruitmentTabKey
+    activeTab as RecruitmentTabKey,
   );
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [pageSize, setPageSize] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { items, loading: tableLoading } = useRecruitmentDetails(activeTabKey, refreshKey);
+  const { items, loading: tableLoading } = useRecruitmentDetails(
+    activeTabKey,
+    refreshKey,
+  );
 
-  const updateList :  PortalItem[] = items.map((item) => ({
-    StatusID: item.statusId,
-    ID: item.ItemID,
-    JobRequestID: item.jobrequestID,
-    EmploymentCategory: item.employmentCategory,
-    IsExpat: item.IsExpat,
-  }));
-    const { updateListPortal, isLoading, isSuccess, error, reset } =
-    useUpdateListPortal({ items: updateList, enableLoading: tableLoading! });
+  const updateList: PortalItem[] = useMemo(() => {
+    return items.map((item) => ({
+      StatusID: item.statusId,
+      ID: item.ItemID,
+      JobRequestID: item.jobrequestID,
+      EmploymentCategory: item.EmploymentCategory,
+      IsExpat: item.IsExpat,
+    }));
+  }, [items]);
+
+  const { updateListPortal } = useUpdateListPortal({
+    items: updateList,
+    refreshKey,
+  });
+
+  useEffect(() => {
+    if (!tableLoading && updateList.length > 0) {
+      updateListPortal();
+    }
+  }, [updateList, tableLoading, refreshKey]);
 
   const {
     drawerOpen,
@@ -164,14 +183,13 @@ export const OfferTable: React.FC = () => {
     setLoadingState,
   } = useStateOfferRelease();
 
-
   const activeTabs: TabItem | undefined = useMemo(
     () => tabs.find((t) => t.key === activeTabKey),
-    [activeTabKey, tabs]
+    [activeTabKey, tabs],
   );
 
-  const totalCount  = items.length;
-  const totalPages  = Math.max(1, Math.ceil(totalCount / pageSize));
+  const totalCount = items.length;
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 
   const paginatedItems = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
@@ -183,7 +201,7 @@ export const OfferTable: React.FC = () => {
     if (!tabs.some((t) => t.key === activeTabKey)) {
       setActiveTabKey(tabs[0].key);
     }
-    if(!tableLoading) {
+    if (!tableLoading) {
       void updateListPortal();
     }
   }, [tabs, tableLoading]);
@@ -209,34 +227,30 @@ export const OfferTable: React.FC = () => {
       setMatricID(tab.matricId);
       setCurrentTabName(tab.description);
     },
-    [setMatricID, setCurrentTabName]
+    [setMatricID, setCurrentTabName],
   );
 
   const selectedItemRef = useRef<{
-  jobId: number;
-  candidateID: number;
-  selectedcandidateID: number;
-  jobrequestID: string;
-} | null>(null);
+    jobId: number;
+    candidateID: number;
+    selectedcandidateID: number;
+    jobrequestID: string;
+  } | null>(null);
 
-const handleAction = useCallback(
-  (item: ISelectedCandidate) => {
-    selectedItemRef.current = {
-      jobId:              item.RecID,
-      candidateID:        item.CandidateID,
-      selectedcandidateID: item.ItemID,
-      jobrequestID:       item.jobrequestID,
-    };
-    openDrawer(item.ItemID);
-  },
-  [openDrawer]
-);
-
-
-  const columns = useMemo(
-    () => buildColumns( handleAction),
-    [handleAction]
+  const handleAction = useCallback(
+    (item: ISelectedCandidate) => {
+      selectedItemRef.current = {
+        jobId: item.RecID,
+        candidateID: item.CandidateID,
+        selectedcandidateID: item.ItemID,
+        jobrequestID: item.jobrequestID,
+      };
+      openDrawer(item.ItemID);
+    },
+    [openDrawer],
   );
+
+  const columns = useMemo(() => buildColumns(handleAction), [handleAction]);
 
   return (
     <section className="offer-table">
@@ -262,7 +276,10 @@ const handleAction = useCallback(
               title="Refresh table"
               aria-label="Refresh table"
             >
-              <RefreshCw size={14} className={tableLoading ? "spin" : undefined} />
+              <RefreshCw
+                size={14}
+                className={tableLoading ? "spin" : undefined}
+              />
               Refresh
             </button>
 
@@ -279,7 +296,7 @@ const handleAction = useCallback(
         <DataTable
           columns={columns}
           data={paginatedItems}
-          enableCheckbox={activeTabs?.tableMode === "checkbox"}
+          enableCheckbox={false}
           pageSize={pageSize}
           currentPage={currentPage}
           totalCount={totalCount}
@@ -297,9 +314,11 @@ const handleAction = useCallback(
         <ReviewDocument
           drawerOpen={drawerOpen}
           selectedJobId={selectedItemRef?.current?.jobId ?? 0}
-    CandidateID={selectedItemRef?.current?.candidateID ?? 0}
-    selectedcandidateID={selectedItemRef?.current?.selectedcandidateID ?? 0}
-    jobrequestID={selectedItemRef?.current?.jobrequestID ?? ""}
+          CandidateID={selectedItemRef?.current?.candidateID ?? 0}
+          selectedcandidateID={
+            selectedItemRef?.current?.selectedcandidateID ?? 0
+          }
+          jobrequestID={selectedItemRef?.current?.jobrequestID ?? ""}
           reviewerComments={reviewerComments}
           acknowledgementCheckbox={acknowledgementCheckbox}
           loadingState={loadingState}

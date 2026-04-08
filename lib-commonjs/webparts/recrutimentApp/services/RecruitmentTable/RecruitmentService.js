@@ -30,9 +30,13 @@ var RecruitmentService = /** @class */ (function () {
                                         ListName: Config_1.ListNames.HRMSNewPositionRequest,
                                         Filter: filterParam,
                                         FilterCondition: filterConditions,
-                                        select: ["*,Action/Action,BusinessUnitCode/BusineesUnitCode,Status/StatusDescription,Author/EMail,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Role/RoleTitle"],
-                                        expand: ["Action,BusinessUnitCode,Status,Author,Department,SubDepartment,Section,DepartmentCode,Role"],
-                                    }
+                                        select: [
+                                            "*,Action/Action,BusinessUnitCode/BusineesUnitCode,Status/StatusDescription,Author/EMail,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Role/RoleTitle",
+                                        ],
+                                        expand: [
+                                            "Action,BusinessUnitCode,Status,Author,Department,SubDepartment,Section,DepartmentCode,Role",
+                                        ],
+                                    },
                                 ];
                                 break;
                             case Config_1.DataFrom.ExistingPosition:
@@ -42,9 +46,13 @@ var RecruitmentService = /** @class */ (function () {
                                         ListName: Config_1.ListNames.HRMSAdditionalHeadCountForExisitingPosition,
                                         Filter: filterParam,
                                         FilterCondition: filterConditions,
-                                        select: ["*,Action/Action,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,BusinessUnitCode/BusineesUnitCode,Status/StatusDescription,Author/EMail"],
-                                        expand: ["Action,Department,SubDepartment,Section,DepartmentCode,BusinessUnitCode,Status,Author"],
-                                    }
+                                        select: [
+                                            "*,Action/Action,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,BusinessUnitCode/BusineesUnitCode,Status/StatusDescription,Author/EMail",
+                                        ],
+                                        expand: [
+                                            "Action,Department,SubDepartment,Section,DepartmentCode,BusinessUnitCode,Status,Author",
+                                        ],
+                                    },
                                 ];
                                 break;
                             case Config_1.DataFrom.VacancyRecruitmentProcess:
@@ -55,9 +63,11 @@ var RecruitmentService = /** @class */ (function () {
                                         Filter: filterParam,
                                         FilterCondition: filterConditions,
                                         select: [
-                                            "*,Department/DepartmentName,BusinessUnitCode/BusineesUnitCode,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode, Status/StatusDescription,Author/EMail,JobCode/JobCode,JobCode/JobTitleInEnglish,JobTitleFrench/JobTitleInFrench,PatersonGrade/PatersonGrade,PatersonGrade/DRCGrade"
+                                            "*,Department/DepartmentName,BusinessUnitCode/BusineesUnitCode,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode, Status/StatusDescription,Author/EMail,JobCode/JobCode,JobCode/JobTitleInEnglish,JobTitleFrench/JobTitleInFrench,PatersonGrade/PatersonGrade,PatersonGrade/DRCGrade",
                                         ],
-                                        expand: ["Department,BusinessUnitCode,SubDepartment,Section,DepartmentCode,Status,Author,JobCode,JobTitleFrench,PatersonGrade"],
+                                        expand: [
+                                            "Department,BusinessUnitCode,SubDepartment,Section,DepartmentCode,Status,Author,JobCode,JobTitleFrench,PatersonGrade",
+                                        ],
                                     },
                                 ];
                                 break;
@@ -73,14 +83,30 @@ var RecruitmentService = /** @class */ (function () {
                         additionalExistingItems = batchRes[1] || [];
                         newPositionItems = batchRes[2] || [];
                         vacancyItems = batchRes[3] || [];
-                        additionalIds = additionalExistingItems.map(function (i) { return i.ID; }).filter(Boolean);
-                        newPositionIds = newPositionItems.map(function (i) { return i.ID; }).filter(Boolean);
+                        additionalIds = additionalExistingItems
+                            .map(function (i) { return i.ID; })
+                            .filter(Boolean);
+                        newPositionIds = newPositionItems
+                            .map(function (i) { return i.ID; })
+                            .filter(Boolean);
                         return [4 /*yield*/, Promise.all([
                                 additionalIds.length > 0
-                                    ? this.GetPositionDetails([{ FilterKey: "LookupIDId", Operator: "in", FilterValue: additionalIds }], undefined, Config_1.ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails)
+                                    ? this.GetPositionDetails([
+                                        {
+                                            FilterKey: "LookupIDId",
+                                            Operator: "in",
+                                            FilterValue: additionalIds,
+                                        },
+                                    ], undefined, Config_1.ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails)
                                     : Promise.resolve({ data: [], status: 200, message: "" }),
                                 newPositionIds.length > 0
-                                    ? this.GetPositionDetails([{ FilterKey: "PositionRequestID", Operator: "in", FilterValue: newPositionIds }], undefined, Config_1.ListNames.HRMSNewPositionRequestPositionDetails)
+                                    ? this.GetPositionDetails([
+                                        {
+                                            FilterKey: "PositionRequestID",
+                                            Operator: "in",
+                                            FilterValue: newPositionIds,
+                                        },
+                                    ], undefined, Config_1.ListNames.HRMSNewPositionRequestPositionDetails)
                                     : Promise.resolve({ data: [], status: 200, message: "" }),
                             ])];
                     case 2:
@@ -92,8 +118,12 @@ var RecruitmentService = /** @class */ (function () {
                             return ({
                                 ID: item.ID,
                                 RecordID: index + 1,
-                                BusinessUnitCode: item.BusinessUnitCode ? item.BusinessUnitCode.BusineesUnitCode : "",
-                                BusinessUnitCodeId: item.BusinessUnitCodeId ? item.BusinessUnitCodeId : "",
+                                BusinessUnitCode: item.BusinessUnitCode
+                                    ? item.BusinessUnitCode.BusineesUnitCode
+                                    : "",
+                                BusinessUnitCodeId: item.BusinessUnitCodeId
+                                    ? item.BusinessUnitCodeId
+                                    : "",
                                 BusinessUnitName: "",
                                 BusinessUnitDescription: "",
                                 Nationality: item.Nationality,
@@ -252,7 +282,11 @@ var RecruitmentService = /** @class */ (function () {
                             .map(function (item) { var _a; return (_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.Id; })
                             .filter(Boolean);
                         if (!ids.length) {
-                            return [2 /*return*/, { data: [], status: 200, message: "No linked recruitment records found" }];
+                            return [2 /*return*/, {
+                                    data: [],
+                                    status: 200,
+                                    message: "No linked recruitment records found",
+                                }];
                         }
                         recruitmentFilter = [
                             { FilterKey: "ID", Operator: "in", FilterValue: ids },
@@ -300,16 +334,25 @@ var RecruitmentService = /** @class */ (function () {
                                 PatersonGradeId: (_q = item === null || item === void 0 ? void 0 : item.PatersonGradeId) !== null && _q !== void 0 ? _q : 0,
                                 JobTitleFrench: (_s = (_r = item === null || item === void 0 ? void 0 : item.JobTitleFrench) === null || _r === void 0 ? void 0 : _r.JobTitleInFrench) !== null && _s !== void 0 ? _s : "",
                                 JobTitleFrenchId: (_t = item === null || item === void 0 ? void 0 : item.JobTitleFrenchId) !== null && _t !== void 0 ? _t : 0,
-                                ActualVacantPosition: ListName === Config_1.ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails
-                                    ? (_u = item === null || item === void 0 ? void 0 : item.ActualVacantPosition) !== null && _u !== void 0 ? _u : 0
+                                ActualVacantPosition: ListName ===
+                                    Config_1.ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails
+                                    ? ((_u = item === null || item === void 0 ? void 0 : item.ActualVacantPosition) !== null && _u !== void 0 ? _u : 0)
                                     : "",
                             });
                         });
-                        return [2 /*return*/, { data: result, status: 200, message: "GetPositionDetails fetched successfully" }];
+                        return [2 /*return*/, {
+                                data: result,
+                                status: 200,
+                                message: "GetPositionDetails fetched successfully",
+                            }];
                     case 2:
                         error_4 = _a.sent();
                         console.error("GetPositionDetails error:", error_4);
-                        return [2 /*return*/, { data: [], status: 500, message: "Error fetching position details" }];
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error fetching position details",
+                            }];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -317,7 +360,7 @@ var RecruitmentService = /** @class */ (function () {
     };
     RecruitmentService.prototype.InsertRecruitmentDptBatch = function (payloads) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var _a, batchedSP1_1, execute1, mainPromises, updatePromises, mainResults, failedIndex, enriched, _b, batchedSP2_1, execute2, positionPromises, commentPromises, error_5;
+            var _a, batchedSP1_1, execute1, mainPromises, updatePromises, mainResults, failedIndex, enriched, _b, batchedSP2_1, execute2, positionPromises, commentPromises, RecruitAppCareerPortalIntegration, error_5;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -392,12 +435,27 @@ var RecruitmentService = /** @class */ (function () {
                                 .getByTitle(Config_1.ListNames.HRMSRecruitmentComments)
                                 .items.add(tslib_1.__assign(tslib_1.__assign({}, payload.CommentsList), { RecruitmentIDId: insertedID }));
                         });
+                        RecruitAppCareerPortalIntegration = enriched
+                            .filter(function (_a) {
+                            var payload = _a.payload;
+                            return payload.Data;
+                        })
+                            .map(function (_a) {
+                            var insertedID = _a.insertedID, payload = _a.payload;
+                            return batchedSP2_1.web.lists
+                                .getByTitle(Config_1.ListNames.RecruitAppCareerPortalIntegration)
+                                .items.add({
+                                JobCodeId: payload.Data.JobCodeId,
+                                RecruitmentIDId: insertedID,
+                            });
+                        });
                         return [4 /*yield*/, execute2()];
                     case 3:
                         _c.sent();
                         return [4 /*yield*/, Promise.all([
                                 Promise.all(positionPromises),
                                 Promise.all(commentPromises),
+                                Promise.all(RecruitAppCareerPortalIntegration),
                             ])];
                     case 4:
                         _c.sent();
@@ -431,11 +489,19 @@ var RecruitmentService = /** @class */ (function () {
                         uniqueJobCodeIds = Array.from(new Set(payloads.map(function (p) { return p.Data.JobCodeId; })));
                         return [4 /*yield*/, Promise.all(tslib_1.__spreadArray([
                                 ServiceExport_1.CommonServices.GetMasterData(Config_1.ListNames.HRMSExternalAgents)
-                            ], uniqueJobCodeIds.map(function (id) { return ServiceExport_1.masterService.GetJobUniqueDataValue(id !== null && id !== void 0 ? id : 0); }), true))];
+                            ], uniqueJobCodeIds.map(function (id) {
+                                return ServiceExport_1.masterService.GetJobUniqueDataValue(id !== null && id !== void 0 ? id : 0);
+                            }), true))];
                     case 2:
                         _a = _c.sent(), agentMasterRes = _a[0], jobCodeResults_1 = _a.slice(1);
                         agentMasterMap_1 = new Map(agentMasterRes.data.map(function (agent) { return [agent.ID, agent.AgentCode]; }));
-                        jobCodeMap_1 = new Map(uniqueJobCodeIds.map(function (id, i) { var _a, _b, _c; return [id, (_c = (_b = (_a = jobCodeResults_1[i]) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.JobCode) !== null && _c !== void 0 ? _c : ""]; }));
+                        jobCodeMap_1 = new Map(uniqueJobCodeIds.map(function (id, i) {
+                            var _a, _b, _c;
+                            return [
+                                id,
+                                (_c = (_b = (_a = jobCodeResults_1[i]) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.JobCode) !== null && _c !== void 0 ? _c : "",
+                            ];
+                        }));
                         return [4 /*yield*/, Promise.all(payloads.map(function (item) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var agentCode, jobCode, AgentDetails, error_7;
                                 return tslib_1.__generator(this, function (_a) {
@@ -518,32 +584,32 @@ var RecruitmentService = /** @class */ (function () {
                             {
                                 ListName: Config_1.ListNames.HRMSRoleSpecificKnowlegeMaster,
                                 select: ["*"],
-                                StateValue: BATCH_IDX.ROLE_KNOWLEDGE
+                                StateValue: BATCH_IDX.ROLE_KNOWLEDGE,
                             },
                             {
                                 ListName: Config_1.ListNames.HRMSLevelOfProficiency,
                                 select: ["*"],
-                                StateValue: BATCH_IDX.LEVEL_PROFICIENCY
+                                StateValue: BATCH_IDX.LEVEL_PROFICIENCY,
                             },
                             {
                                 ListName: Config_1.ListNames.HRMSTechnicalSkills,
                                 select: ["*"],
-                                StateValue: BATCH_IDX.TECHNICAL_SKILLS
+                                StateValue: BATCH_IDX.TECHNICAL_SKILLS,
                             },
                             {
                                 ListName: Config_1.ListNames.HRMSExperienceMaster,
                                 select: ["*"],
-                                StateValue: BATCH_IDX.EXPERIENCE
+                                StateValue: BATCH_IDX.EXPERIENCE,
                             },
                             {
                                 ListName: Config_1.ListNames.HRMSQualification,
                                 select: ["*"],
-                                StateValue: BATCH_IDX.QUALIFICATION
+                                StateValue: BATCH_IDX.QUALIFICATION,
                             },
                             {
                                 ListName: Config_1.ListNames.HRMSJobTitleFunctionType,
                                 select: ["*"],
-                                StateValue: BATCH_IDX.FUNCTION_TYPE
+                                StateValue: BATCH_IDX.FUNCTION_TYPE,
                             },
                         ];
                         return [4 /*yield*/, Promise.all([
@@ -614,8 +680,14 @@ var RecruitmentService = /** @class */ (function () {
                                 var knowledge = roleKnowledgeMap_1[rk.RoleSpeKnowledge];
                                 var Level = levelProficiencyMap_1[rk.RequiredLevel];
                                 return {
-                                    RoleSpeKnowledge: { key: rk.RoleSpeKnowledge, text: (_a = knowledge === null || knowledge === void 0 ? void 0 : knowledge.en) !== null && _a !== void 0 ? _a : "" },
-                                    RoleSpeKnowledge_fr: { key: rk.RoleSpeKnowledge, text: (_b = knowledge === null || knowledge === void 0 ? void 0 : knowledge.fr) !== null && _b !== void 0 ? _b : "" },
+                                    RoleSpeKnowledge: {
+                                        key: rk.RoleSpeKnowledge,
+                                        text: (_a = knowledge === null || knowledge === void 0 ? void 0 : knowledge.en) !== null && _a !== void 0 ? _a : "",
+                                    },
+                                    RoleSpeKnowledge_fr: {
+                                        key: rk.RoleSpeKnowledge,
+                                        text: (_b = knowledge === null || knowledge === void 0 ? void 0 : knowledge.fr) !== null && _b !== void 0 ? _b : "",
+                                    },
                                     RequiredLevel: { key: rk.RequiredLevel, text: (_c = Level === null || Level === void 0 ? void 0 : Level.en) !== null && _c !== void 0 ? _c : "" },
                                     RequiredLevel_fr: { key: rk.RequiredLevel, text: (_d = Level === null || Level === void 0 ? void 0 : Level.fr) !== null && _d !== void 0 ? _d : "" },
                                 };
@@ -625,10 +697,22 @@ var RecruitmentService = /** @class */ (function () {
                                 var technical = technicalSkillsMap_1[ts.TechnicalSkills];
                                 var Level = levelProficiencyMap_1[ts.LevelProficiency];
                                 return {
-                                    TechnicalSkills: { key: ts.TechnicalSkills, text: (_a = technical === null || technical === void 0 ? void 0 : technical.en) !== null && _a !== void 0 ? _a : "" },
-                                    TechnicalSkills_fr: { key: ts.TechnicalSkills, text: (_b = technical === null || technical === void 0 ? void 0 : technical.fr) !== null && _b !== void 0 ? _b : "" },
-                                    LevelProficiency: { key: ts.LevelProficiency, text: (_c = Level === null || Level === void 0 ? void 0 : Level.en) !== null && _c !== void 0 ? _c : "" },
-                                    LevelProficiency_fr: { key: ts.LevelProficiency, text: (_d = Level === null || Level === void 0 ? void 0 : Level.fr) !== null && _d !== void 0 ? _d : "" },
+                                    TechnicalSkills: {
+                                        key: ts.TechnicalSkills,
+                                        text: (_a = technical === null || technical === void 0 ? void 0 : technical.en) !== null && _a !== void 0 ? _a : "",
+                                    },
+                                    TechnicalSkills_fr: {
+                                        key: ts.TechnicalSkills,
+                                        text: (_b = technical === null || technical === void 0 ? void 0 : technical.fr) !== null && _b !== void 0 ? _b : "",
+                                    },
+                                    LevelProficiency: {
+                                        key: ts.LevelProficiency,
+                                        text: (_c = Level === null || Level === void 0 ? void 0 : Level.en) !== null && _c !== void 0 ? _c : "",
+                                    },
+                                    LevelProficiency_fr: {
+                                        key: ts.LevelProficiency,
+                                        text: (_d = Level === null || Level === void 0 ? void 0 : Level.fr) !== null && _d !== void 0 ? _d : "",
+                                    },
                                 };
                             });
                             var Qualification = mergedQualifications.map(function (qu) {
@@ -637,13 +721,25 @@ var RecruitmentService = /** @class */ (function () {
                                 var qualiValue = qualificationMap_1[qualificationKey !== null && qualificationKey !== void 0 ? qualificationKey : ""];
                                 if (qu.PrefeQualification) {
                                     return {
-                                        PrefeQualification: { key: qualificationKey, text: (_b = qualiValue === null || qualiValue === void 0 ? void 0 : qualiValue.en) !== null && _b !== void 0 ? _b : "" },
-                                        PrefeQualification_fr: { key: qualificationKey, text: (_c = qualiValue === null || qualiValue === void 0 ? void 0 : qualiValue.fr) !== null && _c !== void 0 ? _c : "" },
+                                        PrefeQualification: {
+                                            key: qualificationKey,
+                                            text: (_b = qualiValue === null || qualiValue === void 0 ? void 0 : qualiValue.en) !== null && _b !== void 0 ? _b : "",
+                                        },
+                                        PrefeQualification_fr: {
+                                            key: qualificationKey,
+                                            text: (_c = qualiValue === null || qualiValue === void 0 ? void 0 : qualiValue.fr) !== null && _c !== void 0 ? _c : "",
+                                        },
                                     };
                                 }
                                 return {
-                                    MinQualification: { key: qualificationKey, text: (_d = qualiValue === null || qualiValue === void 0 ? void 0 : qualiValue.en) !== null && _d !== void 0 ? _d : "" },
-                                    MinQualification_fr: { key: qualificationKey, text: (_e = qualiValue === null || qualiValue === void 0 ? void 0 : qualiValue.fr) !== null && _e !== void 0 ? _e : "" },
+                                    MinQualification: {
+                                        key: qualificationKey,
+                                        text: (_d = qualiValue === null || qualiValue === void 0 ? void 0 : qualiValue.en) !== null && _d !== void 0 ? _d : "",
+                                    },
+                                    MinQualification_fr: {
+                                        key: qualificationKey,
+                                        text: (_e = qualiValue === null || qualiValue === void 0 ? void 0 : qualiValue.fr) !== null && _e !== void 0 ? _e : "",
+                                    },
                                 };
                             });
                             var qualificationValue = Qualification.reduce(function (acc, item) {
@@ -670,13 +766,25 @@ var RecruitmentService = /** @class */ (function () {
                                 JobDescription: (0, IRecruitmentService_1.stripHtml)(item.JobDescription) || "",
                                 RolePurpose_fr: (0, IRecruitmentService_1.stripHtml)(item.RoleProfileFrench) || "",
                                 JobDescription_fr: (0, IRecruitmentService_1.stripHtml)(item.JobDescriptionFrench) || "",
-                                TotalExperience: { key: (_d = item.TotalPreferredExperience) === null || _d === void 0 ? void 0 : _d.ID, text: ((_e = item.TotalPreferredExperience) === null || _e === void 0 ? void 0 : _e.ExperienceInYearRange) || "" },
-                                ExperienceinMiningIndustry: { key: (_f = item.PreferredExperience) === null || _f === void 0 ? void 0 : _f.ID, text: ((_g = item.PreferredExperience) === null || _g === void 0 ? void 0 : _g.ExperienceInYearRange) || "" },
+                                TotalExperience: {
+                                    key: (_d = item.TotalPreferredExperience) === null || _d === void 0 ? void 0 : _d.ID,
+                                    text: ((_e = item.TotalPreferredExperience) === null || _e === void 0 ? void 0 : _e.ExperienceInYearRange) || "",
+                                },
+                                ExperienceinMiningIndustry: {
+                                    key: (_f = item.PreferredExperience) === null || _f === void 0 ? void 0 : _f.ID,
+                                    text: ((_g = item.PreferredExperience) === null || _g === void 0 ? void 0 : _g.ExperienceInYearRange) || "",
+                                },
                                 RoleSpeKnowledgeValue: RoleSpeKnowledge,
                                 TechnicalSkillValue: TechnicalSkills,
                                 qualificationValue: qualificationValue,
-                                JobFunctionalType: { key: (_h = item.FunctionType) === null || _h === void 0 ? void 0 : _h.ID, text: functionType === null || functionType === void 0 ? void 0 : functionType.en },
-                                JobFunctionalType_fr: { key: (_j = item.FunctionType) === null || _j === void 0 ? void 0 : _j.ID, text: functionType === null || functionType === void 0 ? void 0 : functionType.fr },
+                                JobFunctionalType: {
+                                    key: (_h = item.FunctionType) === null || _h === void 0 ? void 0 : _h.ID,
+                                    text: functionType === null || functionType === void 0 ? void 0 : functionType.en,
+                                },
+                                JobFunctionalType_fr: {
+                                    key: (_j = item.FunctionType) === null || _j === void 0 ? void 0 : _j.ID,
+                                    text: functionType === null || functionType === void 0 ? void 0 : functionType.fr,
+                                },
                                 JobBasedBGVVerification: JSON.parse(item.JobBasedBGVVerification),
                             };
                         });
@@ -793,7 +901,11 @@ var RecruitmentService = /** @class */ (function () {
                                 StateValue: JOB_PORTAL,
                                 ListName: Config_1.ListNames.RecruitAppCareerPortalIntegration,
                                 Filter: [
-                                    { FilterKey: "JobCodeId", Operator: "eq", FilterValue: RecuritmentDetails.JobCodeId },
+                                    {
+                                        FilterKey: "JobCodeId",
+                                        Operator: "eq",
+                                        FilterValue: RecuritmentDetails.JobCodeId,
+                                    },
                                     { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
                                 ],
                                 FilterCondition: "and",
@@ -813,14 +925,18 @@ var RecruitmentService = /** @class */ (function () {
                                 RequestJSON: {
                                     JobBasedBGVVerification: JobBasedBGVVerification,
                                 },
-                                ID: roleProfileList[0].ID
+                                ID: roleProfileList[0].ID,
                             })];
                     case 2:
                         _f.sent();
                         _f.label = 3;
                     case 3:
                         if (roleProfileList.length === 0) {
-                            return [2 /*return*/, { data: null, status: 400, message: "No role profile data found" }];
+                            return [2 /*return*/, {
+                                    data: null,
+                                    status: 400,
+                                    message: "No role profile data found",
+                                }];
                         }
                         if (jobPortalList.length === 0) {
                             return [2 /*return*/, { data: null, status: 400, message: "No portal job data found" }];
@@ -878,7 +994,13 @@ var RecruitmentService = /** @class */ (function () {
                         onemdocPath = String(onamdocpathfile.data[0].content);
                         _f.label = 5;
                     case 5:
-                        FilterDept = [{ FilterKey: "DepartmentId", Operator: "eq", FilterValue: RecuritmentDetails.DepartmentID },];
+                        FilterDept = [
+                            {
+                                FilterKey: "DepartmentId",
+                                Operator: "eq",
+                                FilterValue: RecuritmentDetails.DepartmentID,
+                            },
+                        ];
                         return [4 /*yield*/, ServiceExport_1.CommonServices.GetMasterData(Config_1.ListNames.HRMSDepartment, FilterDept)];
                     case 6:
                         DepartmentData = _f.sent();
@@ -912,9 +1034,17 @@ var RecruitmentService = /** @class */ (function () {
                     case 7:
                         response = _f.sent();
                         if (response.status === ApiConfig_1.ResponeStatus.SUCCESS) {
-                            return [2 /*return*/, { data: null, status: 200, message: "Advertisement posted successfully" }];
+                            return [2 /*return*/, {
+                                    data: null,
+                                    status: 200,
+                                    message: "Advertisement posted successfully",
+                                }];
                         }
-                        return [2 /*return*/, { data: null, status: 500, message: "Error while posting advertisement details" }];
+                        return [2 /*return*/, {
+                                data: null,
+                                status: 500,
+                                message: "Error while posting advertisement details",
+                            }];
                     case 8:
                         error_11 = _f.sent();
                         console.error("Error posting advertisement data:", error_11);

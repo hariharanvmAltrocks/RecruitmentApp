@@ -1,11 +1,20 @@
 // ReviewDocument.tsx — conditions moved to config
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FileCheck, Loader2, Send, X } from "lucide-react";
 import { useSignatureDetails } from "../../RecruitmentTable/AdvertReviewDrawer/Hooks/getSignatureDetails";
 import "./ReviewDocument.scss";
 import { ReviewCommentSignature } from "../../RecruitmentTable/Components/ReviewCommentSignature";
-import { UploadDocument, UploadedFile } from "../../RecruitmentTable/Components/UploadDocument";
+import {
+  UploadDocument,
+  UploadedFile,
+} from "../../RecruitmentTable/Components/UploadDocument";
 import { useUIState } from "../../../RecrutimentApp/UIStateContext";
 import { userInfo } from "../../../../utilities/hooks/RoleContext";
 import { useNavigate } from "react-router-dom";
@@ -21,43 +30,49 @@ import ConsentFormSection from "./Component/ConsentForm/consentform";
 import COICard from "./Component/Coicard/Coicard";
 import StatusBadge from "../../../Comman/Statusbadge/Statusbadge";
 import { useBGVStatusDetails } from "./Hooks/useStatusDetails";
-import { SubmitWorkflowDeps, useSubmitWorkflow } from "./saveHooks/Usesubmitworkflow";
-import { ButtonAction } from "../../../../utilities/ConditionConfig";
+import {
+  makeDocData,
+  SubmitWorkflowDeps,
+  useSubmitWorkflow,
+} from "./saveHooks/Usesubmitworkflow";
+import {
+  ButtonAction,
+  DocumentFolderName,
+  NationalityCode,
+  RecuritmentHRMsg,
+} from "../../../../utilities/ConditionConfig";
 import { useWorkPermitUpload } from "./Hooks/Useworkpermitupload";
 import { useReviewConditions } from "./Hooks/ConditionalHooks/Usereviewconditions";
 import { WorkPermitUploadBox } from "./Component/Workpermituploadbox/Workpermituploadbox";
-
-
+import {
+  masterService,
+  OfferServices,
+} from "../../../../services/ServiceExport";
+import { ResponeStatus } from "../../../../utilities/ApiConfig";
+import { ViewCommentsModal } from "../../../Comman/CommentsPopup/commentsPopup";
+import { StatusId } from "../../../../utilities/Config";
+import { WorkflowHODConfig } from "../../../Hooks/WorkflowConfig";
 
 export interface ReviewDocumentProps {
-  drawerOpen              : boolean;
-  selectedJobId           : number | null;
-  CandidateID             : number;
-  selectedcandidateID     : number;
-  jobrequestID            : string;
-  reviewerComments        : string;
-  acknowledgementCheckbox : boolean;
-  loadingState            : boolean;
-  onClose                 : () => void;
-  onCommentsChange        : (value: string) => void;
-  onToggleAcknowledgement : () => void;
-  setLoadingState         : (value: boolean) => void;
-  refreshKey              : () => void;
+  drawerOpen: boolean;
+  selectedJobId: number | null;
+  CandidateID: number;
+  selectedcandidateID: number;
+  jobrequestID: string;
+  reviewerComments: string;
+  acknowledgementCheckbox: boolean;
+  loadingState: boolean;
+  onClose: () => void;
+  onCommentsChange: (value: string) => void;
+  onToggleAcknowledgement: () => void;
+  setLoadingState: (value: boolean) => void;
+  refreshKey: () => void;
 }
-
-const CONSULT_OPTIONS = [
-  { value: "hr-manager",   label: "HR Manager" },
-  { value: "legal",        label: "Legal Department" },
-  { value: "line-manager", label: "Line Manager" },
-  { value: "ceo",          label: "CEO / Executive" },
-];
 
 const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({
   width = "100%",
   height = "14px",
-}) => (
-  <div className="review-document__skeleton" style={{ width, height }} />
-);
+}) => <div className="review-document__skeleton" style={{ width, height }} />;
 
 const PositionSkeleton = () => (
   <div className="review-document__skeleton-wrapper">
@@ -78,6 +93,11 @@ const PositionSkeleton = () => (
   </div>
 );
 
+const CONSULT_OPTIONS = [
+  { value: "hr-manager", label: "Louis Barend Van Wyk" },
+  { value: "legal", label: "Evodie Mushiya Kadima" },
+];
+
 export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
   drawerOpen,
   selectedJobId,
@@ -89,9 +109,8 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
   setLoadingState,
   refreshKey,
 }) => {
-  const navigate               = useNavigate();
+  const navigate = useNavigate();
   const { modalState, showModal, closeModal } = useModalPopup();
-
 
   const {
     consentVerification,
@@ -101,7 +120,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     handleConsentFile,
     coiState,
     handleCoiChange,
-     fileInputRef,
+    fileInputRef,
     selectedFile,
     isReading,
     handleUploadClick,
@@ -114,84 +133,111 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     onCommentsChange,
     onToggleAcknowledgement,
     validateAll,
-    validationError
+    validationError,
   } = useStateOfferRelease();
 
-
+  const [showComments, setshowComments] = useState(false);
   const { data: positionDetails, loading: positionLoading } =
-    useCandidatDetails(selectedJobId, CandidateID, selectedcandidateID, jobrequestID);
+    useCandidatDetails(
+      selectedJobId,
+      CandidateID,
+      selectedcandidateID,
+      jobrequestID,
+    );
 
   const {
     data: bgvStatusDetails,
+    bgvStatus,
     loading: bgvStatusLoading,
+    bgvComments,
     allCompleted,
     rejectFlag,
+    revertFLag,
   } = useBGVStatusDetails(jobrequestID);
 
   const isConsentVerified = consentVerification === "verified";
 
   const submitDeps: SubmitWorkflowDeps = {
-    data             : positionDetails!,
+    data: positionDetails!,
     uploadDocs,
-    BGVerifiedStatus : bgvStatusDetails!,
-    rejectflag       : rejectFlag!,
+    BGVerifiedStatus: bgvStatusDetails!,
+    rejectflag: rejectFlag!,
     consentFile,
     coiState,
-    consentVerification:isConsentVerified,
+    consentVerification: isConsentVerified,
     reviewerComments,
   };
 
   const {
-    isLoading  : SubmitLoading,
-    modalState : SubmitModalState,
-    closeModal : SubmitCloseModal,
+    isLoading: SubmitLoading,
+    modalState: SubmitModalState,
+    closeModal: SubmitCloseModal,
     submit,
   } = useSubmitWorkflow(submitDeps);
 
-
   const { data: docData } = useRequiredDocuments(
-    positionDetails?.ProfileID    ?? "",
-    positionDetails?.JobRequestID ?? ""
+    positionDetails?.ProfileID ?? "",
+    positionDetails?.JobRequestID ?? "",
   );
 
   const { data: signatureDetails, loading: signatureLoading } =
     useSignatureDetails();
 
-  const isLoading       = signatureLoading;
+  const isLoading = signatureLoading;
   const isSubmittingRef = useRef(false);
 
   const isPageLoading = positionLoading || signatureLoading || bgvStatusLoading;
 
+  let ConsultOptions = [];
 
   useEffect(() => {
-    if (loadingState !== isLoading) setLoadingState(isLoading);
-  }, [isLoading, loadingState, setLoadingState]);
+    let isMounted = true;
+
+    const fetchEmails = async () => {
+      if (loadingState !== isLoading) setLoadingState(isLoading);
+
+      // const response = await masterService.fetchJDEEmailIDs(
+      //   positionDetails?.BusinessUnitCodeId ?? 0
+      // );
+
+      // if (isMounted) {
+      //   ConsultOptions = response.data;
+      // }
+    };
+
+    fetchEmails();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isLoading, positionDetails?.BusinessUnitCodeId]);
 
   const { is, vis } = useReviewConditions({
-    statusID            : positionDetails?.StatusID,
-    empCat              : positionDetails?.EmploymentCategory,
+    statusID: positionDetails?.StatusID,
+    empCat: positionDetails?.EmploymentCategory,
     consentVerification,
-    hasDetails          : !!positionDetails,
-    rejectFlag          : !!rejectFlag,
+    hasDetails: !!positionDetails,
+    rejectFlag: !!rejectFlag,
+    revertFlag: !!revertFLag,
   });
 
   const headerMeta = useMemo(
     () => ({
-      title      : positionDetails?.JobTiltle  ?? "",
-      code       : positionDetails?.JobCode    ?? "",
-      department : positionDetails?.Department ?? "",
+      title: positionDetails?.JobTiltle ?? "",
+      code: positionDetails?.JobCode ?? "",
+      department: positionDetails?.Department ?? "",
     }),
-    [positionDetails]
+    [positionDetails],
   );
 
   const showSuccessModal = useCallback(
     (msg: string) => {
       showModal({
-        type         : "success",
-        title        : "Submitted Successfully",
-        message      : msg,
-        confirmLabel : "Go to Dashboard",
-        onConfirm    : () => {
+        type: "success",
+        title: "Submitted Successfully",
+        message: msg,
+        confirmLabel: "Go to Dashboard",
+        onConfirm: () => {
           closeModal();
           onClose();
           navigate("/RecruitmentTable");
@@ -199,21 +245,49 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
         },
       });
     },
-    [showModal, closeModal, onClose, navigate, refreshKey]
+    [showModal, closeModal, onClose, navigate, refreshKey],
   );
 
-
+  const handleReinitiate = useCallback(() => {
+    showModal({
+      type: "confirmation",
+      title: "Reinitiate BGV",
+      message: RecuritmentHRMsg.ReinitiateBGVWarningMsg,
+      confirmLabel: "Yes",
+      cancelLabel: "No",
+      onConfirm: async () => {
+        let UpdateBGV = await OfferServices.PerformCriminalRecordCheck(
+          Number(jobrequestID),
+        );
+        if (UpdateBGV.status === ResponeStatus.SUCCESS) {
+          showSuccessModal(RecuritmentHRMsg.ReinitiateBGVProcess);
+          closeModal();
+          onClose();
+          navigate("/RecruitmentTable");
+          refreshKey();
+        } else {
+          showModal({
+            type: "error",
+            title: "Something Went Wrong",
+            message: "An unexpected error occurred. Please try again.",
+            confirmLabel: "Close",
+            onConfirm: closeModal,
+          });
+        }
+      },
+    });
+  }, []);
 
   const handleApprove = useCallback(async () => {
     const isValid = validateAll(vis);
 
     if (!isValid) {
       showModal({
-        type         : "warning",
-        title        : "Required Fields Missing",
-        message      : "Please complete all highlighted fields before submitting.",
-        confirmLabel : "OK",
-        onConfirm    : closeModal,
+        type: "warning",
+        title: "Required Fields Missing",
+        message: "Please complete all highlighted fields before submitting.",
+        confirmLabel: "OK",
+        onConfirm: closeModal,
       });
       return;
     }
@@ -222,21 +296,130 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     isSubmittingRef.current = true;
 
     try {
-      void submit(ButtonAction.Initiated);
+      let action =
+        consentVerification === "verified"
+          ? ButtonAction.Review
+          : consentVerification === "rejected"
+            ? ButtonAction.Revert
+            : ButtonAction.Initiated;
+      void submit(action);
       // showSuccessModal("Your review has been submitted successfully.");
     } catch (error) {
       console.error(error);
       showModal({
-        type         : "error",
-        title        : "Something Went Wrong",
-        message      : "An unexpected error occurred. Please try again.",
-        confirmLabel : "Close",
-        onConfirm    : closeModal,
+        type: "error",
+        title: "Something Went Wrong",
+        message: "An unexpected error occurred. Please try again.",
+        confirmLabel: "Close",
+        onConfirm: closeModal,
       });
     } finally {
       isSubmittingRef.current = false;
     }
   }, [validateAll, showModal, closeModal, showSuccessModal, submit]);
+
+  const handleRejectCheck = useCallback(
+    async (btn: "Reject" | "Approve") => {
+      const isValid = validateAll(vis);
+
+      if (!isValid) {
+        showModal({
+          type: "warning",
+          title: "Required Fields Missing",
+          message: "Please complete all highlighted fields before submitting.",
+          confirmLabel: "OK",
+          onConfirm: closeModal,
+        });
+        return;
+      }
+
+      const isExpat =
+        positionDetails?.NationalityCode !== NationalityCode.Nationals;
+      const workflowStatus = WorkflowHODConfig(
+        positionDetails?.StatusID ?? 0,
+        false,
+        isExpat,
+        positionDetails?.EmploymentCategory,
+      );
+
+      const isReject = btn === "Reject";
+      const config = {
+        title: isReject ? "Reject BGV" : "Approve BGV",
+        message: isReject
+          ? RecuritmentHRMsg.RejectBGVCheckMsg
+          : RecuritmentHRMsg.ApprvedBGVCheckMsg,
+        statusId: isReject
+          ? StatusId.BackgroundCheckVerificationFailed
+          : workflowStatus,
+      };
+
+      showModal({
+        type: "confirmation",
+        title: config.title,
+        message: config.message,
+        confirmLabel: "Yes",
+        cancelLabel: "No",
+        onCancel: closeModal,
+        onConfirm: async () => {
+          try {
+            const bgvDocData = makeDocData(
+              positionDetails?.ProfileID ?? "",
+              positionDetails?.JobRequestID ?? "",
+              DocumentFolderName.BGVProofOfDocument,
+            );
+
+            await Promise.all([
+              OfferServices.UploadCandidateDocument(
+                bgvDocData,
+                coiState.attachment,
+              ),
+              OfferServices.InsertRecruitmentCandidateDetails({
+                ID: CandidateID,
+                BackgroundChecksResults: JSON.stringify(bgvStatusDetails) ?? [],
+                BGVConsultedWith: coiState.consultedWith,
+                BGVComments: coiState.comments,
+              }),
+            ]);
+
+            const response = await OfferServices.UpdateStatusSelectedHOD([
+              { ID: selectedcandidateID, StatusId: config.statusId },
+            ]);
+
+            if (response.status === ResponeStatus.SUCCESS) {
+              closeModal();
+              showSuccessModal(RecuritmentHRMsg.ReinitiateBGVProcess);
+              onClose();
+              // navigate("/RecruitmentTable");
+              refreshKey();
+            } else {
+              throw new Error("Unexpected status");
+            }
+          } catch {
+            showModal({
+              type: "error",
+              title: "Something Went Wrong",
+              message: "An unexpected error occurred. Please try again.",
+              confirmLabel: "Close",
+              onConfirm: closeModal,
+            });
+          }
+        },
+      });
+    },
+    [
+      positionDetails,
+      coiState,
+      bgvStatusDetails,
+      CandidateID,
+      selectedcandidateID,
+      showModal,
+      closeModal,
+      onClose,
+      navigate,
+      refreshKey,
+      showSuccessModal,
+    ],
+  );
 
   return (
     <AnimatePresence>
@@ -256,7 +439,12 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200, duration: 0.3  }}
+              transition={{
+                type: "spring",
+                damping: 25,
+                stiffness: 200,
+                duration: 0.3,
+              }}
             >
               <div className="review-document__header">
                 <div className="review-document__header-left">
@@ -265,16 +453,24 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                   </div>
                   <div>
                     <h2 className="review-document__title">
-                      {isLoading ? <SkeletonBlock width="220px" /> : headerMeta.title}
+                      {isLoading ? (
+                        <SkeletonBlock width="220px" />
+                      ) : (
+                        headerMeta.title
+                      )}
                     </h2>
                     <div className="review-document__meta">
                       {isLoading ? (
                         <SkeletonBlock width="160px" />
                       ) : (
                         <>
-                          <span className="review-document__badge">{headerMeta.code}</span>
+                          <span className="review-document__badge">
+                            {headerMeta.code}
+                          </span>
                           <span className="review-document__dot" />
-                          <span className="review-document__meta-text">{headerMeta.department}</span>
+                          <span className="review-document__meta-text">
+                            {headerMeta.department}
+                          </span>
                         </>
                       )}
                     </div>
@@ -283,11 +479,15 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
 
                 {vis.showDOTAficaBadge && (
                   <div className="review-document__header-right">
-                    <StatusBadge steps={bgvStatusDetails ?? []} />
+                    <StatusBadge steps={bgvStatus ?? []} />
                   </div>
                 )}
 
-                <button type="button" className="review-document__close" onClick={onClose}>
+                <button
+                  type="button"
+                  className="review-document__close"
+                  onClick={onClose}
+                >
                   <X size={18} />
                 </button>
               </div>
@@ -297,107 +497,187 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                   <PositionSkeleton />
                 ) : (
                   <>
-                   <PositionFrame
-                    positionDetails={positionDetails}
-                    isLoading={positionLoading}
-                    headerCode={headerMeta.code}
-                  />
+                    <PositionFrame
+                      positionDetails={positionDetails}
+                      isLoading={positionLoading}
+                      headerCode={headerMeta.code}
+                    />
 
-                   {vis.showCandidateDocs && (
-                  <CandidateDocumentsRepository data={docData ?? null} />
-                )}
+                    {vis.showCandidateDocs && (
+                      <CandidateDocumentsRepository data={docData ?? null} />
+                    )}
 
-                {vis.showVerificationToggle && (
-                  <VerificationToggle
-                    value={consentVerification}
-                    onChange={handleConsentVerification}
-                    hasError={validationError.verification}
-                  />
-                )}
+                    {vis.showVerificationToggle && (
+                      <VerificationToggle
+                        value={consentVerification}
+                        onChange={handleConsentVerification}
+                        hasError={validationError.verification}
+                      />
+                    )}
 
-                {vis.showConsentForm && (
-                  <ConsentFormSection
-                    onFileChange={handleConsentFile}
-                    downloadUrl={positionDetails?.DotAfricaCF?.downloadUrl}
-                    disabled={isSubmittingRef.current}
-                    hasFileError={validationError.showConsentErrors}
-                    consentform={positionDetails?.DotAfricaCF}
-                  />
-                )}
+                    {vis.showConsentForm && (
+                      <ConsentFormSection
+                        onFileChange={handleConsentFile}
+                        downloadUrl={positionDetails?.DotAfricaCF?.downloadUrl}
+                        disabled={isSubmittingRef.current}
+                        hasFileError={validationError.showConsentErrors}
+                        consentform={positionDetails?.DotAfricaCF}
+                      />
+                    )}
 
-                {vis.showCOICard && (
-                  <COICard
-                    consultOptions={CONSULT_OPTIONS}
-                    isReadOnly={isSubmittingRef.current}
-                    hasError={validationError.showCoiErrors}
-                    onChange={handleCoiChange}
-                  />
-                )}
+                    {vis.showCOICard && (
+                      <COICard
+                        consultOptions={CONSULT_OPTIONS}
+                        isReadOnly={isSubmittingRef.current}
+                        hasError={validationError.showCoiErrors}
+                        onChange={handleCoiChange}
+                      />
+                    )}
 
-                {vis.showWorkPermitUpload && (
-                  <WorkPermitUploadBox
-                    fileInputRef={fileInputRef}
-                    selectedFile={selectedFile}
-                    isReading={isReading}
-                    hasFileError={validationError.workPermit}
-                    disabled={isSubmittingRef.current}
-                    onUploadClick={handleUploadClick}
-                    onFileChange={handleFileChange}
-                    onClearFile={clearFile}
-                  />
-                )}
+                    {vis.showWorkPermitUpload && (
+                      <WorkPermitUploadBox
+                        fileInputRef={fileInputRef}
+                        selectedFile={selectedFile}
+                        isReading={isReading}
+                        hasFileError={validationError.workPermit}
+                        disabled={isSubmittingRef.current}
+                        onUploadClick={handleUploadClick}
+                        onFileChange={handleFileChange}
+                        onClearFile={clearFile}
+                      />
+                    )}
 
-                {vis.showUploadDocument && (
-                  <UploadDocument
-                    multiple={false}
-                    acceptedFormats=".pdf"
-                    label={vis.uploadDocLabel}
-                    required
-                    onChange={handleDocumnetUpload}
-                    disabled={isSubmittingRef.current}
-                    hasError={validationError.uploadError}
-                  />
-                )}
-                
+                    {vis.showUploadDocument && (
+                      <UploadDocument
+                        multiple={false}
+                        acceptedFormats=".pdf"
+                        label={vis.uploadDocLabel}
+                        required
+                        onChange={handleDocumnetUpload}
+                        disabled={isSubmittingRef.current}
+                        hasError={validationError.uploadError}
+                      />
+                    )}
 
-                <ReviewCommentSignature
-                  reviewerComments={reviewerComments}
-                  acknowledgementCheckbox={acknowledgementCheckbox}
-                  signatureDetails={signatureDetails}
-                  isLoading={isLoading}
-                  onCommentsChange={onCommentsChange}
-                  onToggleAcknowledgement={onToggleAcknowledgement}
-                  disabled={isSubmittingRef.current}
-                  commentError={validationError.comments}
-                  checkboxError={validationError.acknowledgement}
-                />
+                    {!vis.ViewFlag && (
+                      <ReviewCommentSignature
+                        reviewerComments={reviewerComments}
+                        acknowledgementCheckbox={acknowledgementCheckbox}
+                        signatureDetails={signatureDetails}
+                        isLoading={isLoading}
+                        onCommentsChange={onCommentsChange}
+                        onToggleAcknowledgement={onToggleAcknowledgement}
+                        disabled={isSubmittingRef.current}
+                        commentError={validationError.comments}
+                        checkboxError={validationError.acknowledgement}
+                      />
+                    )}
+
+                    {bgvComments.length > 0 &&
+                      positionDetails?.StatusID ===
+                        StatusId.PendingDOTAficaVerification && (
+                        <div className="review-documnet__BGVCommentBtn">
+                          <button
+                            type="button"
+                            className="review-document__button review-document__button--primary"
+                            onClick={() => setshowComments(true)}
+                          >
+                            View BGV Comments
+                          </button>
+                        </div>
+                      )}
+
+                    <div className="review-document__footer">
+                      <div className="review-document__footer-actions">
+                        {/* Back button — always shown */}
+                        <button
+                          type="button"
+                          className="review-document__button"
+                          onClick={onClose}
+                        >
+                          {vis.ViewFlag
+                            ? "Back"
+                            : revertFLag || rejectFlag
+                              ? "Back"
+                              : "Cancel"}
+                        </button>
+
+                        {revertFLag && (
+                          <button
+                            type="button"
+                            className="review-document__button review-document__button--primary"
+                            disabled={isSubmittingRef.current}
+                            onClick={handleReinitiate}
+                          >
+                            Re Initiate
+                          </button>
+                        )}
+
+                        {rejectFlag &&
+                          coiState.wishesToProceed &&
+                          positionDetails?.StatusID ===
+                            StatusId.PendingDOTAficaVerification && (
+                            <button
+                              type="button"
+                              className="review-document__button review-document__button--primary"
+                              disabled={isSubmittingRef.current}
+                              onClick={() =>
+                                handleRejectCheck(
+                                  coiState.wishesToProceed === "Yes"
+                                    ? "Approve"
+                                    : "Reject",
+                                )
+                              }
+                            >
+                              {coiState.wishesToProceed === "Yes"
+                                ? "Approve"
+                                : "Reject"}
+                            </button>
+                          )}
+
+                        {!vis.ViewFlag && (
+                          <button
+                            type="button"
+                            className="review-document__button review-document__button--primary"
+                            disabled={isSubmittingRef.current}
+                            onClick={handleApprove}
+                          >
+                            {isSubmittingRef.current ? (
+                              <>
+                                <Loader2
+                                  size={16}
+                                  className="modal-popup__spinner"
+                                />
+                                Sending...
+                              </>
+                            ) : (
+                              <>
+                                <Send size={16} />
+                                {consentVerification === "verified"
+                                  ? "Reviewed"
+                                  : consentVerification === "rejected"
+                                    ? "Revert"
+                                    : "Submit"}
+                              </>
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </>
                 )}
-                <div className="review-document__footer">
-                  <div className="review-document__footer-actions">
-                    <button type="button" className="review-document__button" onClick={onClose}>
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      className="review-document__button review-document__button--primary"
-                      disabled={isSubmittingRef.current}
-                      onClick={handleApprove}
-                    >
-                      {isSubmittingRef.current ? (
-                        <><Loader2 size={16} className="modal-popup__spinner" /> Sending...</>
-                      ) : (
-                        <><Send size={16} /> Submit</>
-                      )}
-                    </button>
-                  </div>
-                </div>
               </div>
             </motion.div>
           </div>
-
-          <ModalPopup {...modalState}       onClose={closeModal} />
+          <ModalPopup {...modalState} onClose={closeModal} />
           <ModalPopup {...SubmitModalState} onClose={SubmitCloseModal} />
+          <ViewCommentsModal
+            isOpen={showComments}
+            onClose={() => setshowComments(false)}
+            comments={bgvComments}
+            title="View BGV Comments"
+            isLoading={false}
+          />
         </>
       )}
     </AnimatePresence>

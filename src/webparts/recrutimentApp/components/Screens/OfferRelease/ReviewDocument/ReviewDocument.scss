@@ -224,7 +224,7 @@ $error-bg    : rgba(229, 62, 62, 0.05);
   &__group {
     display: flex;
     flex-direction: column;
-    gap: $space-lg;
+    gap: 30px; //$space-lg;
   }
 
   &__group-title {
@@ -242,7 +242,7 @@ $error-bg    : rgba(229, 62, 62, 0.05);
   &__grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: $space-lg;
+    gap: 36px;//$space-lg;
   }
 
   &__grid--split {
@@ -271,15 +271,24 @@ $error-bg    : rgba(229, 62, 62, 0.05);
     font-size: 13px;
     font-weight: 600;
     color: $text-primary;
-    border: 1px solid #c5bfbf;
+    border: 1px solid #efecec;
     background-color: $white;
     padding: 6%;
     border-radius: 9px;
     transition: transform $transition-base;
+    width: 100%;
+    word-break: break-all;
 
     &:hover {
       transform: translateY(-2px) translateZ(0px);
     }
+  }
+
+  &__BGVCommentBtn{
+    display: flex;
+    justify-content: flex-start;
+    text-align: center;
+    gap: 10px;
   }
 
   &__divider {

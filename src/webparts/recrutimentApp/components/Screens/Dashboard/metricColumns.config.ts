@@ -375,9 +375,9 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
         roleColumns = [
           buildCol(MatricID.AssignHr, { showArrow: true }),
           buildCol(MatricID.UploadONEM, { showArrow: true }),
-          buildCol(MatricID.ReviewScoreCard, { showArrow: false }),
+          // buildCol(MatricID.ReviewScoreCard, { showArrow: false }),
           buildCol(MatricID.interviewSchedule, { showArrow: false }),
-          buildCol(MatricID.interviewTracker, { showArrow: false }),
+          // buildCol(MatricID.interviewTracker, { showArrow: false }),
           buildCol(MatricID.OfferRelease, { showArrow: false }),
           buildCol(MatricID.OfferAccepted, { showArrow: false }),
           buildCol(MatricID.OfferRejected, { showArrow: false }),
@@ -407,7 +407,7 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
           buildCol(MatricID.Kcsa, { showArrow: true }),
 
           buildCol(MatricID.interviewSchedule, { showArrow: false }),
-          buildCol(MatricID.interviewTracker, { showArrow: false }),
+          // buildCol(MatricID.interviewTracker, { showArrow: false }),
           buildCol(MatricID.OfferRelease, { showArrow: false }),
           buildCol(MatricID.OfferAccepted, { showArrow: false }),
           buildCol(MatricID.OfferRejected, { showArrow: false }),
@@ -431,9 +431,9 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
           }),
           buildCol(MatricID.InterviewQuestionLM, { showArrow: true }),
           buildCol(MatricID.EvalutionLM, { showArrow: true }),
-          buildCol(MatricID.ReviewScoreCard, { showArrow: false }),
+          // buildCol(MatricID.ReviewScoreCard, { showArrow: false }),
           buildCol(MatricID.interviewSchedule, { showArrow: false }),
-          buildCol(MatricID.interviewTracker, { showArrow: false }),
+          // buildCol(MatricID.interviewTracker, { showArrow: false }),
           buildCol(MatricID.OfferRelease, { showArrow: false }),
           buildCol(MatricID.OfferAccepted, { showArrow: false }),
           buildCol(MatricID.OfferRejected, { showArrow: false }),
@@ -447,7 +447,7 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
           buildCol(MatricID.EvalutionHOD, { showArrow: true }),
           buildCol(MatricID.ReviewScoreCard, { showArrow: true }),
           buildCol(MatricID.interviewSchedule, { showArrow: false }),
-          buildCol(MatricID.interviewTracker, { showArrow: false }),
+          // buildCol(MatricID.interviewTracker, { showArrow: false }),
           buildCol(MatricID.OfferRelease, { showArrow: false }),
           buildCol(MatricID.OfferAccepted, { showArrow: false }),
           buildCol(MatricID.OfferRejected, { showArrow: false }),
@@ -459,7 +459,19 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
         roleColumns = [
           buildCol(MatricID.EvalutionEXCO, { showArrow: true }),
           buildCol(MatricID.interviewSchedule, { showArrow: false }),
-          buildCol(MatricID.interviewTracker, { showArrow: false }),
+          // buildCol(MatricID.interviewTracker, { showArrow: false }),
+          buildCol(MatricID.OfferRelease, { showArrow: false }),
+          buildCol(MatricID.OfferAccepted, { showArrow: false }),
+          buildCol(MatricID.OfferRejected, { showArrow: false }),
+          buildCol(MatricID.Onbording, { showArrow: false }),
+        ];
+        break;
+
+      case RoleID.FinanceDepartment:
+        roleColumns = [
+          buildCol(MatricID.LabourHire, { showArrow: true }),
+          buildCol(MatricID.interviewSchedule, { showArrow: false }),
+          // buildCol(MatricID.interviewTracker, { showArrow: false }),
           buildCol(MatricID.OfferRelease, { showArrow: false }),
           buildCol(MatricID.OfferAccepted, { showArrow: false }),
           buildCol(MatricID.OfferRejected, { showArrow: false }),
@@ -611,7 +623,9 @@ export const MetricQueryConfig = (
     ListNames.HRMSRecruitmentCandidatePersonalDetails,
     StatusFilter([
       StatusId.PendingwithpositionIDAssignmentWithHOD,
-      StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
+      StatusId.pendingL2shorlistingwithHOD,
+      StatusId.CandidateOnHoldbyHODLevel1,
+      StatusId.CandidateOnHoldbyHODLevel2,
     ]),
   ),
 
@@ -650,7 +664,7 @@ export const MetricQueryConfig = (
   ),
 
   // ✅ Interview Tracker
-  [MatricID.interviewTracker]: createQuery(
+  [MatricID.interviewSchedule]: createQuery(
     ListNames.HRMSRecruitmentCandidatePersonalDetails,
     StatusFilter([
       StatusId.InterviewScheduled,
@@ -712,9 +726,6 @@ export const MetricQueryConfig = (
     StatusFilter(StatusId.Onboarded),
   ),
 
-  //MySubmission
-  [MatricID.MySubmission]: createQuery(ListNames.HRMSRecruitmentDptDetails),
-
   //Assign Agencies
   [MatricID.AssignAgencies]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
@@ -724,11 +735,15 @@ export const MetricQueryConfig = (
   //Background Check
   [MatricID.BackgroundCheck]: createQuery(
     ListNames.HRMSSelectedCandidateDetailsByHOD,
-    StatusFilter([
-      StatusId.PendingHRBGVInitiation,
-      StatusId.PendingHRReviewBGCheck,
-      StatusId.PendingDOTAficaVerification,
-    ]),
+    StatusFilter(
+      [
+        StatusId.PendingHRBGVInitiation,
+        StatusId.PendingHRReviewBGCheck,
+        StatusId.PendingDOTAficaVerification,
+      ],
+      "RecruitmentHR",
+      EmailId,
+    ),
   ),
 
   //LabourHire
@@ -736,17 +751,18 @@ export const MetricQueryConfig = (
     ListNames.HRMSSelectedCandidateDetailsByHOD,
     StatusFilter(
       [
-        StatusId.PendingLabourHireOfferRelease,
+        StatusId.PendingHROfferInitiate,
         StatusId.PendingHROfferReview,
-        StatusId.PendingLabourhireWPPayment,
+        StatusId.PendingHRReviewOfferWorkPermitInit,
         StatusId.PendingFinancePaymentReview,
-        StatusId.PendingLHWorkPermitProcess,
         StatusId.PendingHRReviewOfferuploadEmploymentInit,
         StatusId.PendingHREmploymentContractInit,
-        StatusId.PendingLHECRelease,
         StatusId.PendingHREmploymentContractReview,
+        StatusId.PendingHREmploymentContractVerification,
+        StatusId.PendingHRpreonboardingchecklist,
       ],
-      "AssignedHR",
+      "RecruitmentHR",
+      EmailId,
     ),
   ),
 
@@ -755,29 +771,17 @@ export const MetricQueryConfig = (
     ListNames.HRMSSelectedCandidateDetailsByHOD,
     StatusFilter(
       [
+        StatusId.PendingHROfferInitiate,
         StatusId.PendingHRReviewOfferWorkPermitInit,
         StatusId.PendingHRReviewWorkpermitDocs,
         StatusId.WorkPermitAcknowledgedContractUploaded,
         StatusId.PendingHREmploymentContractVerification,
         StatusId.PendingHRReviewOfferanduploadEmployementContract,
         StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract,
+        StatusId.PendingHRpreonboardingchecklist,
       ],
-      "AssignedHR",
-    ),
-  ),
-
-  [MatricID.Kcsa]: createQuery(
-    ListNames.HRMSSelectedCandidateDetailsByHOD,
-    StatusFilter(
-      [
-        StatusId.PendingHRReviewOfferWorkPermitInit,
-        StatusId.PendingHRReviewWorkpermitDocs,
-        StatusId.WorkPermitAcknowledgedContractUploaded,
-        StatusId.PendingHREmploymentContractVerification,
-        StatusId.PendingHRReviewOfferanduploadEmployementContract,
-        StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract,
-      ],
-      "AssignedHR",
+      "RecruitmentHR",
+      EmailId,
     ),
   ),
 
@@ -785,6 +789,84 @@ export const MetricQueryConfig = (
   [MatricID.ReviewScoredHOD]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
     StatusFilter(StatusId.RecruitmentInProgress, "HOD", EmailId),
+  ),
+
+  //MySubmission
+  [MatricID.MySubmission]: createQuery(
+    ListNames.HRMSRecruitmentDptDetails,
+    StatusFilter([], "", ""),
+  ),
+
+  // MySubmissionHR: 28,
+
+  [MatricID.MySubmissionHR]: createQuery(
+    ListNames.HRMSRecruitmentDptDetails,
+    StatusFilter(
+      [
+        StatusId.PendingwithLineManagereviewAdv,
+        StatusId.PendingReviewAdvertHOD,
+        StatusId.CareerPortalQuestions,
+        StatusId.PendingUploadONEM,
+        StatusId.RecruitmentInProgress,
+      ],
+      "AssignedHR",
+      EmailId,
+    ),
+  ),
+
+  // MySubmissionLM: 29,
+
+  [MatricID.MySubmissionLM]: createQuery(
+    ListNames.HRMSRecruitmentDptDetails,
+    StatusFilter(
+      [
+        StatusId.PendingReviewAdvertHOD,
+        StatusId.CareerPortalQuestions,
+        StatusId.PendingUploadONEM,
+        StatusId.RecruitmentInProgress,
+      ],
+      "LineManager",
+      EmailId,
+    ),
+  ),
+
+  //MySubmissionHOD: 30,
+
+  [MatricID.MySubmissionHOD]: createQuery(
+    ListNames.HRMSRecruitmentDptDetails,
+    StatusFilter(
+      [StatusId.PendingUploadONEM, StatusId.RecruitmentInProgress],
+      "HOD",
+      EmailId,
+    ),
+  ),
+
+  //MySubmissionBGV: 31,
+
+  [MatricID.MySubmissionBGV]: createQuery(
+    ListNames.HRMSSelectedCandidateDetailsByHOD,
+    StatusFilter(
+      [
+        StatusId.PendingBGdocuploadedbycandidate,
+        StatusId.PendingwithTAforMedicalScreening,
+        StatusId.PendingwithTAforMedicalScreening,
+        StatusId.PendingCandidateOfferLetterUpload,
+        StatusId.PendingCandidateWorkPermitreleatedDoc,
+        StatusId.PendingCandidateEmploymentContractUpload,
+        StatusId.PendingLabourHireOfferRelease,
+        StatusId.PendingLabourhireWPPayment,
+        StatusId.PendingFinancePaymentReview,
+        StatusId.PendingLHWorkPermitProcess,
+        StatusId.PendingLHECRelease,
+        StatusId.BackgroundCheckVerificationFailed,
+        StatusId.FailedmedicalscreeningUnfit,
+        StatusId.RESIProcessInitiatedforDRC,
+        StatusId.RESIProcessInitiatedforExpatriate,
+        StatusId.RESProcessInitiated,
+      ],
+      "RecruitmentHR",
+      EmailId,
+    ),
   ),
 });
 
@@ -794,7 +876,7 @@ const RoleMetricFilters: Record<number, number[]> = {
     MatricID.UploadONEM,
     MatricID.ReviewScoreCard,
     MatricID.interviewSchedule,
-    MatricID.interviewTracker,
+    // MatricID.interviewTracker,
     MatricID.OfferRelease,
     MatricID.OfferAccepted,
     MatricID.OfferRejected,
@@ -807,6 +889,7 @@ const RoleMetricFilters: Record<number, number[]> = {
     MatricID.AssignInterviewPanel,
     MatricID.InterviewQuestionHR,
     MatricID.EvalutionHR,
+    MatricID.interviewSchedule,
     MatricID.BackgroundCheck,
     MatricID.LabourHire,
     MatricID.Kcsa,
@@ -821,6 +904,7 @@ const RoleMetricFilters: Record<number, number[]> = {
     MatricID.EvalutionLM,
     MatricID.ReviewProfileLM,
     MatricID.InterviewQuestionLM,
+    MatricID.interviewSchedule,
     MatricID.OfferRelease,
     MatricID.OfferAccepted,
     MatricID.OfferRejected,
@@ -831,6 +915,7 @@ const RoleMetricFilters: Record<number, number[]> = {
     MatricID.AdvertReviewHOD,
     MatricID.ReviewScoreCard,
     MatricID.EvalutionHOD,
+    MatricID.interviewSchedule,
     MatricID.OfferRelease,
     MatricID.OfferAccepted,
     MatricID.OfferRejected,
@@ -839,6 +924,16 @@ const RoleMetricFilters: Record<number, number[]> = {
 
   [RoleID.RecruitmentAppExternalAgency]: [
     MatricID.EvalutionEXCO,
+    MatricID.interviewSchedule,
+    MatricID.OfferRelease,
+    MatricID.OfferAccepted,
+    MatricID.OfferRejected,
+    MatricID.Onbording,
+  ],
+
+  [RoleID.FinanceDepartment]: [
+    MatricID.LabourHire,
+    MatricID.interviewSchedule,
     MatricID.OfferRelease,
     MatricID.OfferAccepted,
     MatricID.OfferRejected,

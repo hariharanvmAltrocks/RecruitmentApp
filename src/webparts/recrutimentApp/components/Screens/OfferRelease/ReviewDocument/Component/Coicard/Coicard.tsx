@@ -8,7 +8,7 @@ import {
   Trash2,
   Upload,
 } from "lucide-react";
-import "./Coicard.modules.scss"
+import "./Coicard.modules.scss";
 import { IDocFiles } from "../../../../../../services/SPService/Ispservice";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -19,6 +19,7 @@ export interface COIState {
   consultedWith: string;
   comments: string;
   attachment: IDocFiles[];
+  wishesToProceed: string;
 }
 
 export interface COICardProps {
@@ -30,7 +31,6 @@ export interface COICardProps {
 }
 
 const MAX_COMMENT_LENGTH = 256;
-
 
 export const COICard: React.FC<COICardProps> = ({
   consultOptions,
@@ -44,6 +44,7 @@ export const COICard: React.FC<COICardProps> = ({
     consultedWith: "",
     comments: "",
     attachment: [],
+    wishesToProceed: "",
   });
 
   const update = (patch: Partial<COIState>) => {
@@ -52,55 +53,61 @@ export const COICard: React.FC<COICardProps> = ({
     onChange?.(next);
   };
 
-const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const target = e.target;
-  const file = target.files?.[0];
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const target = e.target;
+    const file = target.files?.[0];
 
-  if (!file) return;
+    if (!file) return;
 
-  const toBase64 = (file: File): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
+    const toBase64 = (file: File): Promise<string> =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
 
-      reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
 
-      reader.onload = () => {
-        resolve(reader.result as string);
-      };
+        reader.onload = () => {
+          resolve(reader.result as string);
+        };
 
-      reader.onerror = (error) => reject(error);
-    });
+        reader.onerror = (error) => reject(error);
+      });
 
-  try {
-    const base64 = await toBase64(file);
+    try {
+      const base64 = await toBase64(file);
 
-    const docs: IDocFiles[] = [
-      {
-        name: file.name,
-        content: base64,   // ✅ FIXED
-        type: "New",       // ✅ FIXED
-      }
-    ];
+      const docs: IDocFiles[] = [
+        {
+          name: file.name,
+          content: base64, // ✅ FIXED
+          type: "New", // ✅ FIXED
+        },
+      ];
 
-    update({ attachment: docs });
+      update({ attachment: docs });
+    } catch (error) {
+      console.error("File conversion error:", error);
+    }
 
-  } catch (error) {
-    console.error("File conversion error:", error);
-  }
-
-  target.value = "";
-};
+    target.value = "";
+  };
 
   const handleClearFile = () => update({ attachment: [] });
 
+  const proceedError = hasError && !state.wishesToProceed;
   const consultedWithError = hasError && !state.consultedWith;
-  const commentsError      = hasError && !state.comments.trim();
-  const attachmentError    = hasError && state.attachment.length === 0;
+  const commentsError = hasError && !state.comments.trim();
+  const attachmentError = hasError && state.attachment.length === 0;
 
   return (
     <div className="coi-card">
+      <div className="coi-card__titleRow">
+        <span className="coi-card__titleBar" />
+        <h2 className="coi-card__title">Background Verification</h2>
+      </div>
       <div className="coi-card__fields">
-        <div className={`coi-card__field ${consultedWithError ? "coi-card__field--error" : ""}`}>
+        <div
+          className={`coi-card__field ${consultedWithError ? "coi-card__field--error" : ""}`}
+        >
           <label className="coi-card__label">
             Consulted with <span className="coi-card__required">*</span>
           </label>
@@ -125,7 +132,9 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
           )}
         </div>
 
-        <div className={`coi-card__field ${attachmentError ? "coi-card__field--error" : ""}`}>
+        <div
+          className={`coi-card__field ${attachmentError ? "coi-card__field--error" : ""}`}
+        >
           <label className="coi-card__label">
             Proof of discussion <span className="coi-card__required">*</span>
           </label>
@@ -141,8 +150,12 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
                   <Upload size={16} />
                 </span>
                 <span className="coi-card__upload-text">
-                  <span className="coi-card__upload-primary">Click to upload</span>
-                  <span className="coi-card__upload-hint">PDF, DOC, DOCX, PNG, JPG</span>
+                  <span className="coi-card__upload-primary">
+                    Click to upload
+                  </span>
+                  <span className="coi-card__upload-hint">
+                    PDF, DOC, DOCX, PNG, JPG
+                  </span>
                 </span>
               </button>
             ) : (
@@ -151,7 +164,9 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
                   <FileText size={16} />
                 </span>
                 <div className="coi-card__file-info">
-                  <span className="coi-card__file-name">{state.attachment[0].name}</span>
+                  <span className="coi-card__file-name">
+                    {state.attachment[0].name}
+                  </span>
                   <span className="coi-card__file-ready">
                     <CheckCircle size={11} /> Ready to submit
                   </span>
@@ -166,18 +181,18 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
                 </button>
               </div>
             )
+          ) : /* Read-only file display */
+          state.attachment.length > 0 ? (
+            <div className="coi-card__file-preview coi-card__file-preview--readonly">
+              <span className="coi-card__file-icon">
+                <FileText size={16} />
+              </span>
+              <span className="coi-card__file-name">
+                {state.attachment[0].name}
+              </span>
+            </div>
           ) : (
-            /* Read-only file display */
-            state.attachment.length > 0 ? (
-              <div className="coi-card__file-preview coi-card__file-preview--readonly">
-                <span className="coi-card__file-icon">
-                  <FileText size={16} />
-                </span>
-                <span className="coi-card__file-name">{state.attachment[0].name}</span>
-              </div>
-            ) : (
-              <span className="coi-card__empty">No file uploaded</span>
-            )
+            <span className="coi-card__empty">No file uploaded</span>
           )}
 
           <input
@@ -189,13 +204,16 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
           />
 
           {attachmentError && (
-            <span className="coi-card__error-msg">Please upload proof of discussion.</span>
+            <span className="coi-card__error-msg">
+              Please upload proof of discussion.
+            </span>
           )}
         </div>
       </div>
 
-      {/* ── Comments textarea ── */}
-      <div className={`coi-card__textarea-wrap ${commentsError ? "coi-card__field--error" : ""}`}>
+      <div
+        className={`coi-card__textarea-wrap ${commentsError ? "coi-card__field--error" : ""}`}
+      >
         <label className="coi-card__label">
           Reason / Comments <span className="coi-card__required">*</span>
         </label>
@@ -214,6 +232,44 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         </div>
         {commentsError && (
           <span className="coi-card__error-msg">Comments are required.</span>
+        )}
+      </div>
+
+      <div
+        className={`coi-card__radio-group ${proceedError ? "coi-card__field--error" : ""}`}
+      >
+        <label className="coi-card__label">
+          Do you wish to proceed with this action ?{" "}
+          <span className="coi-card__required">*</span>
+        </label>
+        <div className="coi-card__radio-options">
+          <label className="coi-card__radio-label">
+            <input
+              type="radio"
+              name="proceedAction"
+              value="Yes"
+              checked={state.wishesToProceed === "Yes"}
+              onChange={() => update({ wishesToProceed: "Yes" })}
+              disabled={isReadOnly}
+            />
+            <span className="coi-card__radio-custom"></span>
+            <span className="coi-card__radio-text">Yes</span>
+          </label>
+          <label className="coi-card__radio-label">
+            <input
+              type="radio"
+              name="proceedAction"
+              value="No"
+              checked={state.wishesToProceed === "No"}
+              onChange={() => update({ wishesToProceed: "No" })}
+              disabled={isReadOnly}
+            />
+            <span className="coi-card__radio-custom"></span>
+            <span className="coi-card__radio-text">No</span>
+          </label>
+        </div>
+        {proceedError && (
+          <span className="coi-card__error-msg">This field is required.</span>
         )}
       </div>
     </div>

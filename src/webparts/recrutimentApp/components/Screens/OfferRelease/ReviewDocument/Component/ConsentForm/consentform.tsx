@@ -38,7 +38,6 @@ const ConsentFormSection: React.FC<ConsentFormSectionProps> = ({
     setIsReading(true);
 
     try {
-      // FIX: Read file as ArrayBuffer then convert to Uint8Array to match ConsentFormFile interface
       const buffer = await file.arrayBuffer();
       const content = new Uint8Array(buffer);
 
@@ -81,14 +80,13 @@ const ConsentFormSection: React.FC<ConsentFormSectionProps> = ({
             <span className="consent-card__name">Download the form, add your signature, then upload the signed copy below.</span>
           </div>
           <a 
-            href={consentform?.downloadUrl} 
-            className="consent-card__download-btn"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Download size={16} />
-            <span>Download Template</span>
-          </a>
+  href={consentform?.downloadUrl} 
+  className="consent-card__download-btn"
+  download={consentform?.name ?? true}
+>
+  <Download size={16} />
+  <span>Download Template</span>
+</a>
         </div>
 
         {/* Upload Area */}

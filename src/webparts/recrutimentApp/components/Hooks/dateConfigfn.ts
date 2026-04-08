@@ -39,19 +39,18 @@ export const AddCalculateDate = (startDate: Date, daysToAdd: number): Date => {
 export function toAttachment(
   title: string,
   docs: IDocFiles[],
-  lang: AttachmentVersion["lang"] = "EN"  
+  lang: AttachmentVersion["lang"] = "EN",
 ): AttachmentDetails {
   return {
     title,
     type: "PDF",
     versions: docs.map((d) => ({
-      lang: "EN",        
+      lang: "EN",
       label: d.name,
       content: d.content,
     })),
   };
 }
-
 
 export const ConvertUtc = (date: Date) => {
   const startUtc = moment(date)
@@ -61,4 +60,14 @@ export const ConvertUtc = (date: Date) => {
     .utc()
     .toISOString();
   return startUtc;
+};
+
+export const formatToDateTimeLocal = (dateString: string) => {
+  const date = new Date(dateString);
+
+  const pad = (n: number) => n.toString().padStart(2, "0");
+
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+    date.getDate(),
+  )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 };

@@ -153,7 +153,7 @@ const Tracker: React.FC<Props> = ({
           </p>
         </div>
 
-        <button className="view-btn">View All Tasks</button>
+        {/* <button className="view-btn">View All Tasks</button> */}
       </div>
 
       {/* 🔹 Table */}

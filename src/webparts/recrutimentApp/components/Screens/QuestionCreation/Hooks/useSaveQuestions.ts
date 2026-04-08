@@ -1,10 +1,17 @@
 import { useState, useCallback } from "react";
-import { Question, QuestionMode, SaveQuestionsPayload } from "../QuestionCreation.types";
-import { masterService, QuestionService } from "../../../../services/ServiceExport";
+import {
+  Question,
+  QuestionMode,
+  SaveQuestionsPayload,
+} from "../QuestionCreation.types";
+import {
+  masterService,
+  QuestionService,
+} from "../../../../services/ServiceExport";
 import { UpsertQuestions } from "../../../../models/Icareerportal";
 import { ResponeStatus } from "../../../../utilities/ApiConfig";
 import { userInfo } from "../../../../utilities/hooks/RoleContext";
-import { ListNames, RoleID } from "../../../../utilities/Config";
+import { ListNames, RoleID, StatusId } from "../../../../utilities/Config";
 import { QuestionCreatedBy } from "../../../../utilities/ConditionConfig";
 import SPServices from "../../../../services/SPService/spservice";
 import { WorkflowConfig } from "../../../Hooks/WorkflowConfig";
@@ -20,7 +27,7 @@ const decodeBase64 = (str: string): string => {
   const utf8Bytes: any = new TextEncoder().encode(str);
   const binary = String.fromCharCode(...utf8Bytes);
   return btoa(binary);
-}
+};
 
 // const decodeBase64 = (str: string): string => {
 //     try {
@@ -33,11 +40,10 @@ const decodeBase64 = (str: string): string => {
 
 async function transformToUpsertPayload(
   payload: SaveQuestionsPayload,
-  userId: string
+  userId: string,
 ): Promise<UpsertQuestions[]> {
-
   const jobCodeKey = await masterService.GetJobUniqueDataValue(
-    payload.JobCodeId ?? 0
+    payload.JobCodeId ?? 0,
   );
 
   const isCareerPortal = payload.mode === "careerPortal" ? true : false;
@@ -45,7 +51,14 @@ async function transformToUpsertPayload(
   const categoryID = payload.mode === "careerPortal" ? "C1" : "C2";
 
   return payload.questions.map((q, index) => {
-    const questionType = q.type === "single" ? "QT1" : q.type === "multiple" ? "QT2" : q.type === "interview" ? "QT3" : "";
+    const questionType =
+      q.type === "single"
+        ? "QT1"
+        : q.type === "multiple"
+          ? "QT2"
+          : q.type === "interview"
+            ? "QT3"
+            : "";
 
     return {
       questionEn: decodeBase64(q.questionEn),
@@ -64,37 +77,36 @@ async function transformToUpsertPayload(
 
       options: isCareerPortal
         ? q.options.map((o, i) => ({
-          optionEn: decodeBase64(o.textEn),
-          optionFr: decodeBase64(o.textFr),
-          sequence: i + 1,
-        }))
+            optionEn: decodeBase64(o.textEn),
+            optionFr: decodeBase64(o.textFr),
+            sequence: i + 1,
+          }))
         : [
-          {
-            optionEn: decodeBase64(q.answerEn ?? ""),
-            optionFr: decodeBase64(q.answerFr ?? ""),
-            sequence: 1,
-          },
-        ],
+            {
+              optionEn: decodeBase64(q.answerEn ?? ""),
+              optionFr: decodeBase64(q.answerFr ?? ""),
+              sequence: 1,
+            },
+          ],
 
       answers: isCareerPortal
         ? q.options
-          .filter((o) => o.isCorrect)
-          .map((o) => ({
-            optionEn: decodeBase64(o.textEn),
-            optionFr: decodeBase64(o.textFr),
-          }))
+            .filter((o) => o.isCorrect)
+            .map((o) => ({
+              optionEn: decodeBase64(o.textEn),
+              optionFr: decodeBase64(o.textFr),
+            }))
         : [
-          {
-            optionEn: decodeBase64(q.answerEn ?? ""),
-            optionFr: decodeBase64(q.answerFr ?? ""),
-          },
-        ],
+            {
+              optionEn: decodeBase64(q.answerEn ?? ""),
+              optionFr: decodeBase64(q.answerFr ?? ""),
+            },
+          ],
 
       createdBy: userId,
     };
   });
 }
-
 
 export const useSaveQuestions = (): UseSaveQuestionsResult => {
   const [saving, setSaving] = useState(false);
@@ -123,7 +135,7 @@ export const useSaveQuestions = (): UseSaveQuestionsResult => {
         let updatePayload: any = {};
 
         if (payload.mode === "careerPortal") {
-          let StatusID = WorkflowConfig(MatricID);
+          let StatusID = WorkflowConfig(StatusId.CareerPortalQuestions);
 
           updatePayload = {
             StatusId: StatusID,
@@ -151,12 +163,11 @@ export const useSaveQuestions = (): UseSaveQuestionsResult => {
         setSaving(false);
       }
     },
-    [roleIDs]
+    [roleIDs],
   );
 
   return { saving, error, save };
 };
-
 
 function buildCareerPortalPayload(payload: SaveQuestionsPayload) {
   return {

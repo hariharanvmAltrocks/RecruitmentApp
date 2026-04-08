@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useRecruitmentColumns = void 0;
 var tslib_1 = require("tslib");
 var react_1 = require("react");
-var lucide_react_1 = require("lucide-react");
 var react_2 = tslib_1.__importDefault(require("react"));
+var Config_1 = require("../../../utilities/Config");
 var useRecruitmentColumns = function (_a) {
     var _b;
     var role = _a.role, actionMode = _a.actionMode, onAction = _a.onAction;
@@ -15,18 +15,16 @@ var useRecruitmentColumns = function (_a) {
     var actionColumn = (0, react_1.useMemo)(function () { return ({
         id: "actions",
         header: "Actions",
-        align: "right",
+        align: "left",
         cellClassName: "data-table__cell--actions",
-        render: function (item) { return (react_2.default.createElement("button", { className: "data-table__action-btn", onClick: function () { return onActionRef.current(item); }, type: "button", "aria-label": actionMode === "Upload" ? "Upload document" : "View vacancy" },
-            actionMode === "Upload" ? react_2.default.createElement(lucide_react_1.Upload, { size: 16 }) : react_2.default.createElement(lucide_react_1.Eye, { size: 16 }),
-            actionMode === "Upload" ? "Upload" : "View")); },
+        render: function (item) { return (react_2.default.createElement("button", { className: "data-table__action-btn", onClick: function () { return onActionRef.current(item); }, type: "button", "aria-label": actionMode === "Upload" ? "Upload document" : "View vacancy" }, actionMode === "Upload" ? "UPLOAD" : item.statusId === Config_1.StatusId.CareerPortalQuestions ? "CREATE" : "REVIEW")); },
     }); }, [actionMode]);
     var defaultColumns = (0, react_1.useMemo)(function () { return [
         {
             id: "jobCode",
             header: "Job Code",
             accessor: "jobCode",
-            cellClassName: "data-table__cell--muted",
+            cellClassName: "data-table__job-code",
         },
         {
             id: "title",

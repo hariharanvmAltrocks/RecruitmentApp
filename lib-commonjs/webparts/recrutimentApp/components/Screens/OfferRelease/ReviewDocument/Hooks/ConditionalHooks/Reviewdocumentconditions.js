@@ -19,12 +19,14 @@ var buildStatusFlags = function (statusID, empCat, consentVerification) { return
     isLabourHire: empCat === ConditionConfig_1.EmployeementCategory.LaborhireContractor,
     isVerified: consentVerification === "verified",
     ViewFlag: statusID === EvaluationConfig_1.StatusId.PendingBGdocuploadedbycandidate ||
+        statusID === EvaluationConfig_1.StatusId.PendingDOTAficaVerification ||
         statusID === EvaluationConfig_1.StatusId.PendingCandidateOfferLetterUpload ||
         statusID === EvaluationConfig_1.StatusId.PendingCandidateWorkPermitreleatedDoc ||
         statusID === EvaluationConfig_1.StatusId.PendingCandidateEmploymentContractUpload ||
         statusID === EvaluationConfig_1.StatusId.PendingLabourHireOfferRelease ||
         statusID === EvaluationConfig_1.StatusId.PendingLabourhireWPPayment ||
         statusID === EvaluationConfig_1.StatusId.PendingLHECRelease,
+    PendingHREmploymentContractReview: statusID === EvaluationConfig_1.StatusId.PendingHREmploymentContractReview,
 }); };
 exports.buildStatusFlags = buildStatusFlags;
 // ─── Visibility flag builder ──────────────────────────────────────────────────
@@ -34,6 +36,8 @@ var resolveVerificationToggle = function (is) {
         is.pendingHRReviewWPInit ||
         is.pendingHRReviewOfferEC ||
         is.pendingHRReviewWPDocs ||
+        is.pendingFinancePayment ||
+        is.PendingHREmploymentContractReview ||
         is.pendingHRECVerification;
 };
 var resolveUploadLabel = function (is) {
@@ -45,7 +49,7 @@ var resolveUploadLabel = function (is) {
         return "Proof Of Document";
     return "";
 };
-var buildVisibilityFlags = function (is, hasDetails, rejectFlag) {
+var buildVisibilityFlags = function (is, hasDetails, rejectFlag, revertFlag) {
     var showUploadDocument = (is.pendingHROfferInitiate && is.isKCSAEmployee) ||
         (is.wpAckContractUploaded && is.isVerified) ||
         (is.pendingFinancePayment && is.isVerified && is.isLabourHire);
@@ -54,12 +58,12 @@ var buildVisibilityFlags = function (is, hasDetails, rejectFlag) {
         showCandidateDocs: hasDetails && !is.pendingHRBGVInit,
         showVerificationToggle: resolveVerificationToggle(is),
         showConsentForm: is.pendingHRReviewBGCheck && is.isVerified,
-        showCOICard: is.pendingDOTAficaVerify && rejectFlag,
+        showCOICard: is.pendingDOTAficaVerify && rejectFlag && !revertFlag,
         showWorkPermitUpload: is.wpAckContractUploaded,
         showUploadDocument: showUploadDocument,
         showDOTAficaBadge: is.pendingDOTAficaVerify,
         uploadDocLabel: uploadDocLabel,
-        ViewFlag: is.isVerified,
+        ViewFlag: is.ViewFlag,
     };
 };
 exports.buildVisibilityFlags = buildVisibilityFlags;

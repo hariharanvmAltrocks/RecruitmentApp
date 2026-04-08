@@ -70,10 +70,18 @@ export const WorkflowCandidateListConfig = (
       break;
 
     case StatusId.CandidateOnHoldbyHODLevel1:
-      if (Action === ButtonAction.Approve) {
-        return StatusId.Selected;
-      } else if (Action === ButtonAction.Reject) {
-        return StatusId.CandidateRejectedbyHODLevel1;
+      if (isLevel1) {
+        if (Action === ButtonAction.Approve) {
+          return StatusId.Selected;
+        } else if (Action === ButtonAction.Reject) {
+          return StatusId.CandidateRejectedbyHODLevel1;
+        }
+      } else {
+        if (Action === ButtonAction.Approve) {
+          return StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel;
+        } else if (Action === ButtonAction.Reject) {
+          return StatusId.CandidateRejectedbyHODLevel1;
+        }
       }
       break;
 

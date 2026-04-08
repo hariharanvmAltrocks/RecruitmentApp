@@ -5,36 +5,61 @@ import { DataFrom, DocumentLibraray, ListNames } from "../../utilities/Config";
 import SPServices, { getSP } from "../SPService/spservice";
 import { BatchQuery, IDocFiles } from "../SPService/Ispservice";
 import { _mapRecruitmentItems } from "./mapItems";
-import { DataSyncToRecruitmentResponse, IDptData, InsertComments, IRecruitmentService, PostAgentData, PostRecuritmentData, QualificationValue, RoleSpecKnowledge, stripHtml } from "./IRecruitmentService";
-import { BGverification, postAdveDetails } from "../AxiosService/CareerPortalAPI";
-import { AdvertisementDetails, Descriptions, jobsXAgents, MinAndPreferedQualifications, profileXagent, RoleAndTechSkills, UpsertBGV } from "../../models/Icareerportal";
-import { CareerPotalServices, CommonServices, masterService } from "../ServiceExport";
+import {
+  DataSyncToRecruitmentResponse,
+  IDptData,
+  InsertComments,
+  IRecruitmentService,
+  PostAgentData,
+  PostRecuritmentData,
+  QualificationValue,
+  RoleSpecKnowledge,
+  stripHtml,
+} from "./IRecruitmentService";
+import {
+  BGverification,
+  postAdveDetails,
+} from "../AxiosService/CareerPortalAPI";
+import {
+  AdvertisementDetails,
+  Descriptions,
+  jobsXAgents,
+  MinAndPreferedQualifications,
+  profileXagent,
+  RoleAndTechSkills,
+  UpsertBGV,
+} from "../../models/Icareerportal";
+import {
+  CareerPotalServices,
+  CommonServices,
+  masterService,
+} from "../ServiceExport";
 import { Nationality } from "../../utilities/ConditionConfig";
 import { AddCalculateDate } from "../../components/Hooks/dateConfigfn";
 
 export default class RecruitmentService implements IRecruitmentService {
-
-
   async GetNPAEPVRRDetails(
     filterParam: any,
     filterConditions: any,
-    Type: string
+    Type: string,
   ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>> {
     try {
       let queries: BatchQuery[] = [];
       switch (Type) {
         case DataFrom.NewPosition:
           queries = [
-
             {
               StateValue: 2,
               ListName: ListNames.HRMSNewPositionRequest,
               Filter: filterParam,
               FilterCondition: filterConditions,
-              select: ["*,Action/Action,BusinessUnitCode/BusineesUnitCode,Status/StatusDescription,Author/EMail,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Role/RoleTitle"],
-              expand: ["Action,BusinessUnitCode,Status,Author,Department,SubDepartment,Section,DepartmentCode,Role"],
-            }
-
+              select: [
+                "*,Action/Action,BusinessUnitCode/BusineesUnitCode,Status/StatusDescription,Author/EMail,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,Role/RoleTitle",
+              ],
+              expand: [
+                "Action,BusinessUnitCode,Status,Author,Department,SubDepartment,Section,DepartmentCode,Role",
+              ],
+            },
           ];
           break;
         case DataFrom.ExistingPosition:
@@ -44,32 +69,37 @@ export default class RecruitmentService implements IRecruitmentService {
               ListName: ListNames.HRMSAdditionalHeadCountForExisitingPosition,
               Filter: filterParam,
               FilterCondition: filterConditions,
-              select: ["*,Action/Action,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,BusinessUnitCode/BusineesUnitCode,Status/StatusDescription,Author/EMail"],
-              expand: ["Action,Department,SubDepartment,Section,DepartmentCode,BusinessUnitCode,Status,Author"],
-            }
+              select: [
+                "*,Action/Action,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,BusinessUnitCode/BusineesUnitCode,Status/StatusDescription,Author/EMail",
+              ],
+              expand: [
+                "Action,Department,SubDepartment,Section,DepartmentCode,BusinessUnitCode,Status,Author",
+              ],
+            },
           ];
           break;
         case DataFrom.VacancyRecruitmentProcess:
           queries = [
-
             {
               StateValue: 3,
               ListName: ListNames.HRMSVacancyReplacementRequest,
               Filter: filterParam,
               FilterCondition: filterConditions,
               select: [
-                "*,Department/DepartmentName,BusinessUnitCode/BusineesUnitCode,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode, Status/StatusDescription,Author/EMail,JobCode/JobCode,JobCode/JobTitleInEnglish,JobTitleFrench/JobTitleInFrench,PatersonGrade/PatersonGrade,PatersonGrade/DRCGrade"
+                "*,Department/DepartmentName,BusinessUnitCode/BusineesUnitCode,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode, Status/StatusDescription,Author/EMail,JobCode/JobCode,JobCode/JobTitleInEnglish,JobTitleFrench/JobTitleInFrench,PatersonGrade/PatersonGrade,PatersonGrade/DRCGrade",
               ],
-              expand: ["Department,BusinessUnitCode,SubDepartment,Section,DepartmentCode,Status,Author,JobCode,JobTitleFrench,PatersonGrade"],
+              expand: [
+                "Department,BusinessUnitCode,SubDepartment,Section,DepartmentCode,Status,Author,JobCode,JobTitleFrench,PatersonGrade",
+              ],
             },
           ];
-          break
+          break;
         default:
           throw new Error(`Unhandled Type: ${Type}`);
       }
 
-
-      const batchRes: Record<number, any[]> = await SPServices.batchGet(queries);
+      const batchRes: Record<number, any[]> =
+        await SPServices.batchGet(queries);
 
       if (!batchRes || !Object.keys(batchRes).length) {
         return { data: [], status: 200, message: "No records found" };
@@ -79,39 +109,62 @@ export default class RecruitmentService implements IRecruitmentService {
       const newPositionItems: any[] = batchRes[2] || [];
       const vacancyItems: any[] = batchRes[3] || [];
 
-      const additionalIds = additionalExistingItems.map((i: any) => i.ID).filter(Boolean);
-      const newPositionIds = newPositionItems.map((i: any) => i.ID).filter(Boolean);
+      const additionalIds = additionalExistingItems
+        .map((i: any) => i.ID)
+        .filter(Boolean);
+      const newPositionIds = newPositionItems
+        .map((i: any) => i.ID)
+        .filter(Boolean);
 
       const [additionalPositionRes, newPositionRes] = await Promise.all([
         additionalIds.length > 0
           ? this.GetPositionDetails(
-            [{ FilterKey: "LookupIDId", Operator: "in", FilterValue: additionalIds }],
-            undefined,
-            ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails
-          )
+              [
+                {
+                  FilterKey: "LookupIDId",
+                  Operator: "in",
+                  FilterValue: additionalIds,
+                },
+              ],
+              undefined,
+              ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails,
+            )
           : Promise.resolve({ data: [], status: 200, message: "" }),
 
         newPositionIds.length > 0
           ? this.GetPositionDetails(
-            [{ FilterKey: "PositionRequestID", Operator: "in", FilterValue: newPositionIds }],
-            undefined,
-            ListNames.HRMSNewPositionRequestPositionDetails
-          )
+              [
+                {
+                  FilterKey: "PositionRequestID",
+                  Operator: "in",
+                  FilterValue: newPositionIds,
+                },
+              ],
+              undefined,
+              ListNames.HRMSNewPositionRequestPositionDetails,
+            )
           : Promise.resolve({ data: [], status: 200, message: "" }),
       ]);
 
       const additionalPositionMap = new Map<number, any>(
-        (additionalPositionRes.data ?? []).map((d: any) => [d.ID, d])
+        (additionalPositionRes.data ?? []).map((d: any) => [d.ID, d]),
       );
       const newPositionMap = new Map<number, any>(
-        (newPositionRes.data ?? []).map((d: any) => [d.ID, d])
+        (newPositionRes.data ?? []).map((d: any) => [d.ID, d]),
       );
 
-      const mapCommonFields = (item: any, index: number): Partial<DataSyncToRecruitmentResponse> => ({
+      const mapCommonFields = (
+        item: any,
+        index: number,
+      ): Partial<DataSyncToRecruitmentResponse> => ({
         ID: item.ID,
         RecordID: index + 1,
-        BusinessUnitCode: item.BusinessUnitCode ? item.BusinessUnitCode.BusineesUnitCode : "",
-        BusinessUnitCodeId: item.BusinessUnitCodeId ? item.BusinessUnitCodeId : "",
+        BusinessUnitCode: item.BusinessUnitCode
+          ? item.BusinessUnitCode.BusineesUnitCode
+          : "",
+        BusinessUnitCodeId: item.BusinessUnitCodeId
+          ? item.BusinessUnitCodeId
+          : "",
         BusinessUnitName: "",
         BusinessUnitDescription: "",
         Nationality: item.Nationality,
@@ -137,8 +190,8 @@ export default class RecruitmentService implements IRecruitmentService {
         Location: item?.Location || "",
       });
 
-      const additionalExistingResult: DataSyncToRecruitmentResponse[] = additionalExistingItems.map(
-        (item: any, index: number) => {
+      const additionalExistingResult: DataSyncToRecruitmentResponse[] =
+        additionalExistingItems.map((item: any, index: number) => {
           const pos = additionalPositionMap.get(item.ID);
           return {
             ...mapCommonFields(item, index),
@@ -154,11 +207,10 @@ export default class RecruitmentService implements IRecruitmentService {
             DRCGrade: pos?.DRCGrade ?? "",
             DRCGradeId: pos?.DRCGradeId ?? 0,
           } as DataSyncToRecruitmentResponse;
-        }
-      );
+        });
 
-      const newPositionResult: DataSyncToRecruitmentResponse[] = newPositionItems.map(
-        (item: any, index: number) => {
+      const newPositionResult: DataSyncToRecruitmentResponse[] =
+        newPositionItems.map((item: any, index: number) => {
           const pos = newPositionMap.get(item.ID);
           return {
             ...mapCommonFields(item, index),
@@ -174,24 +226,24 @@ export default class RecruitmentService implements IRecruitmentService {
             DRCGrade: pos?.DRCGrade ?? "",
             DRCGradeId: pos?.DRCGradeId ?? 0,
           } as DataSyncToRecruitmentResponse;
-        }
-      );
+        });
 
       const vacancyResult: DataSyncToRecruitmentResponse[] = vacancyItems.map(
-        (item: any, index: number) => ({
-          ...mapCommonFields(item, index),
-          Type: DataFrom.VacancyRecruitmentProcess,
-          JobCodeId: item?.JobCode?.ID ?? 0,
-          JobCode: item?.JobCode?.JobCode ?? "",
-          JobTitleEnglish: item?.JobCode?.JobTitleInEnglish ?? "",
-          JobTitleEnglishId: item?.JobCode?.ID ?? 0,
-          JobTitleFrench: item?.JobTitleFrench?.JobTitleInFrench ?? "",
-          JobTitleFrenchId: item?.JobTitleFrenchId ?? 0,
-          PatersonGrade: item?.PatersonGrade?.PatersonGrade ?? "",
-          PatersonGradeId: item?.PatersonGradeId ?? 0,
-          DRCGrade: item?.PatersonGrade?.DRCGrade ?? "",
-          DRCGradeId: item?.PatersonGradeId ?? 0,
-        } as DataSyncToRecruitmentResponse)
+        (item: any, index: number) =>
+          ({
+            ...mapCommonFields(item, index),
+            Type: DataFrom.VacancyRecruitmentProcess,
+            JobCodeId: item?.JobCode?.ID ?? 0,
+            JobCode: item?.JobCode?.JobCode ?? "",
+            JobTitleEnglish: item?.JobCode?.JobTitleInEnglish ?? "",
+            JobTitleEnglishId: item?.JobCode?.ID ?? 0,
+            JobTitleFrench: item?.JobTitleFrench?.JobTitleInFrench ?? "",
+            JobTitleFrenchId: item?.JobTitleFrenchId ?? 0,
+            PatersonGrade: item?.PatersonGrade?.PatersonGrade ?? "",
+            PatersonGradeId: item?.PatersonGradeId ?? 0,
+            DRCGrade: item?.PatersonGrade?.DRCGrade ?? "",
+            DRCGradeId: item?.PatersonGradeId ?? 0,
+          }) as DataSyncToRecruitmentResponse,
       );
 
       const GridResult: DataSyncToRecruitmentResponse[] = [
@@ -213,7 +265,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
   async GetRecruitmentDetails(
     filterParam: any,
-    filterConditions: any
+    filterConditions: any,
   ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>> {
     try {
       const res: any[] = await SPServices.SPReadItems({
@@ -242,12 +294,12 @@ export default class RecruitmentService implements IRecruitmentService {
         this.GetPositionDetails(
           positionFilter,
           "and",
-          ListNames.HRMSRecruitmentPositionDetails
+          ListNames.HRMSRecruitmentPositionDetails,
         ),
       ]);
 
       const positionMap = new Map<number, any>(
-        (positionRes.data ?? []).map((pos) => [pos.ID, pos])
+        (positionRes.data ?? []).map((pos) => [pos.ID, pos]),
       );
 
       for (const item of GridResult) {
@@ -279,30 +331,30 @@ export default class RecruitmentService implements IRecruitmentService {
 
   async GetCandidateDetails(
     filterParam: any,
-    filterConditions: any
+    filterConditions: any,
   ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>> {
     return this.fetchRecruitmentByLookup(
       ListNames.HRMSRecruitmentCandidatePersonalDetails,
       filterParam,
-      filterConditions
+      filterConditions,
     );
   }
 
   async GetSelectedCandidate(
     filterParam: any,
-    filterConditions: any
+    filterConditions: any,
   ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>> {
     return this.fetchRecruitmentByLookup(
       ListNames.HRMSSelectedCandidateDetailsByHOD,
       filterParam,
-      filterConditions
+      filterConditions,
     );
   }
 
   private async fetchRecruitmentByLookup(
     listName: string,
     filterParam: any,
-    filterConditions: any
+    filterConditions: any,
   ): Promise<ApiResponse<DataSyncToRecruitmentResponse[]>> {
     try {
       const res: any[] = await SPServices.SPReadItems({
@@ -325,15 +377,21 @@ export default class RecruitmentService implements IRecruitmentService {
         .filter(Boolean);
 
       if (!ids.length) {
-        return { data: [], status: 200, message: "No linked recruitment records found" };
+        return {
+          data: [],
+          status: 200,
+          message: "No linked recruitment records found",
+        };
       }
 
       const recruitmentFilter = [
         { FilterKey: "ID", Operator: "in", FilterValue: ids },
       ];
 
-      return await this.GetRecruitmentDetails(recruitmentFilter, filterConditions);
-
+      return await this.GetRecruitmentDetails(
+        recruitmentFilter,
+        filterConditions,
+      );
     } catch (error) {
       console.error(`Error fetching from ${listName}:`, error);
       return { data: [], status: 500, message: "Error fetching data" };
@@ -343,7 +401,7 @@ export default class RecruitmentService implements IRecruitmentService {
   async GetPositionDetails(
     Filter: any[],
     filterConditions: any,
-    ListName: string
+    ListName: string,
   ): Promise<ApiResponse<any[]>> {
     try {
       const resdata = await SPServices.SPReadItems({
@@ -357,7 +415,11 @@ export default class RecruitmentService implements IRecruitmentService {
       });
 
       const result = resdata.map((item: any, index: number) => ({
-        ID: item?.LookupIDId ?? item?.PositionRequestIDId ?? item?.RecruitmentIDId ?? 0,
+        ID:
+          item?.LookupIDId ??
+          item?.PositionRequestIDId ??
+          item?.RecruitmentIDId ??
+          0,
         id: index + 1,
         title: item?.JobTitleEnglish?.JobTitleInEnglish ?? "",
         titleID: item?.JobTitleEnglishId ?? 0,
@@ -369,20 +431,30 @@ export default class RecruitmentService implements IRecruitmentService {
         PatersonGradeId: item?.PatersonGradeId ?? 0,
         JobTitleFrench: item?.JobTitleFrench?.JobTitleInFrench ?? "",
         JobTitleFrenchId: item?.JobTitleFrenchId ?? 0,
-        ActualVacantPosition: ListName === ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails
-          ? item?.ActualVacantPosition ?? 0
-          : "",
+        ActualVacantPosition:
+          ListName ===
+          ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails
+            ? (item?.ActualVacantPosition ?? 0)
+            : "",
       }));
 
-      return { data: result, status: 200, message: "GetPositionDetails fetched successfully" };
+      return {
+        data: result,
+        status: 200,
+        message: "GetPositionDetails fetched successfully",
+      };
     } catch (error) {
       console.error("GetPositionDetails error:", error);
-      return { data: [], status: 500, message: "Error fetching position details" };
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching position details",
+      };
     }
   }
 
   async InsertRecruitmentDptBatch(
-    payloads: PostRecuritmentData[]
+    payloads: PostRecuritmentData[],
   ): Promise<ApiResponse<any[]>> {
     try {
       if (!payloads.length) {
@@ -394,7 +466,7 @@ export default class RecruitmentService implements IRecruitmentService {
       const mainPromises = payloads.map((payload) =>
         batchedSP1.web.lists
           .getByTitle(ListNames.HRMSRecruitmentDptDetails)
-          .items.add(payload.Data)
+          .items.add(payload.Data),
       );
 
       const updatePromises = payloads
@@ -413,7 +485,8 @@ export default class RecruitmentService implements IRecruitmentService {
             .update({
               ActionId: payload.updatePreList!.ActionId,
               ItemCreated: payload.updatePreList!.ItemCreated,
-              IsDataSyncToRecruitment: payload.updatePreList!.IsDataSyncToRecruitment,
+              IsDataSyncToRecruitment:
+                payload.updatePreList!.IsDataSyncToRecruitment,
             });
         });
 
@@ -438,7 +511,6 @@ export default class RecruitmentService implements IRecruitmentService {
         payload: payloads[index],
       }));
 
-
       const [batchedSP2, execute2] = getSP().batched();
 
       const positionPromises = enriched
@@ -449,7 +521,7 @@ export default class RecruitmentService implements IRecruitmentService {
             .items.add({
               ...payload.PositionData,
               RecruitmentIDId: insertedID,
-            })
+            }),
         );
 
       const commentPromises = enriched
@@ -460,7 +532,18 @@ export default class RecruitmentService implements IRecruitmentService {
             .items.add({
               ...payload.CommentsList,
               RecruitmentIDId: insertedID,
-            })
+            }),
+        );
+
+      const RecruitAppCareerPortalIntegration = enriched
+        .filter(({ payload }) => payload.Data)
+        .map(({ insertedID, payload }) =>
+          batchedSP2.web.lists
+            .getByTitle(ListNames.RecruitAppCareerPortalIntegration)
+            .items.add({
+              JobCodeId: payload.Data.JobCodeId,
+              RecruitmentIDId: insertedID,
+            }),
         );
 
       await execute2();
@@ -468,6 +551,7 @@ export default class RecruitmentService implements IRecruitmentService {
       await Promise.all([
         Promise.all(positionPromises),
         Promise.all(commentPromises),
+        Promise.all(RecruitAppCareerPortalIntegration),
       ]);
 
       return {
@@ -482,25 +566,32 @@ export default class RecruitmentService implements IRecruitmentService {
   }
 
   async InsertExternalAgencyDetails(
-    payloads: PostAgentData[]
+    payloads: PostAgentData[],
   ): Promise<ApiResponse<any[]>> {
     if (!payloads.length) {
       return { data: [], status: 200, message: "No records to process" };
     }
 
     try {
-      const uniqueJobCodeIds = Array.from(new Set(payloads.map((p) => p.Data.JobCodeId)));
+      const uniqueJobCodeIds = Array.from(
+        new Set(payloads.map((p) => p.Data.JobCodeId)),
+      );
 
       const [agentMasterRes, ...jobCodeResults] = await Promise.all([
         CommonServices.GetMasterData(ListNames.HRMSExternalAgents),
-        ...uniqueJobCodeIds.map((id) => masterService.GetJobUniqueDataValue(id ?? 0)),
+        ...uniqueJobCodeIds.map((id) =>
+          masterService.GetJobUniqueDataValue(id ?? 0),
+        ),
       ]);
 
       const agentMasterMap = new Map<number, string>(
-        agentMasterRes.data.map((agent: any) => [agent.ID, agent.AgentCode])
+        agentMasterRes.data.map((agent: any) => [agent.ID, agent.AgentCode]),
       );
       const jobCodeMap = new Map<number, string>(
-        uniqueJobCodeIds.map((id, i) => [id, jobCodeResults[i]?.data?.JobCode ?? ""])
+        uniqueJobCodeIds.map((id, i) => [
+          id,
+          jobCodeResults[i]?.data?.JobCode ?? "",
+        ]),
       );
 
       const postResults = await Promise.all(
@@ -509,7 +600,9 @@ export default class RecruitmentService implements IRecruitmentService {
           const jobCode = jobCodeMap.get(item.Data.JobCodeId);
 
           if (!agentCode || !jobCode) {
-            console.warn(`Missing master data — AgentId: ${item.Data.AgentId}, JobCodeId: ${item.Data.JobCodeId}`);
+            console.warn(
+              `Missing master data — AgentId: ${item.Data.AgentId}, JobCodeId: ${item.Data.JobCodeId}`,
+            );
             return { item, success: false };
           }
 
@@ -525,18 +618,20 @@ export default class RecruitmentService implements IRecruitmentService {
             console.error(`Failed for AgentId ${item.Data.AgentId}:`, error);
             return { item, success: false, error };
           }
-        })
+        }),
       );
 
       const succeeded = postResults.filter((r) => r.success);
 
       const withComments = succeeded.filter(
-        ({ item }) => item.CommentsList && item.Data.RecrutimentId
+        ({ item }) => item.CommentsList && item.Data.RecrutimentId,
       );
 
       if (withComments.length) {
         const [batchedSP, execute] = getSP().batched();
-        const commentList = batchedSP.web.lists.getByTitle(ListNames.HRMSRecruitmentComments);
+        const commentList = batchedSP.web.lists.getByTitle(
+          ListNames.HRMSRecruitmentComments,
+        );
 
         for (const { item } of withComments) {
           void commentList.items.add({
@@ -561,7 +656,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
   async GetHRMSRecruitmentRoleProfileDetails(
     filterParam: any[],
-    filterConditions: any
+    filterConditions: any,
   ): Promise<ApiResponse<any | null>> {
     try {
       const BATCH_IDX = {
@@ -577,32 +672,32 @@ export default class RecruitmentService implements IRecruitmentService {
         {
           ListName: ListNames.HRMSRoleSpecificKnowlegeMaster,
           select: ["*"],
-          StateValue: BATCH_IDX.ROLE_KNOWLEDGE
+          StateValue: BATCH_IDX.ROLE_KNOWLEDGE,
         },
         {
           ListName: ListNames.HRMSLevelOfProficiency,
           select: ["*"],
-          StateValue: BATCH_IDX.LEVEL_PROFICIENCY
+          StateValue: BATCH_IDX.LEVEL_PROFICIENCY,
         },
         {
           ListName: ListNames.HRMSTechnicalSkills,
           select: ["*"],
-          StateValue: BATCH_IDX.TECHNICAL_SKILLS
+          StateValue: BATCH_IDX.TECHNICAL_SKILLS,
         },
         {
           ListName: ListNames.HRMSExperienceMaster,
           select: ["*"],
-          StateValue: BATCH_IDX.EXPERIENCE
+          StateValue: BATCH_IDX.EXPERIENCE,
         },
         {
           ListName: ListNames.HRMSQualification,
           select: ["*"],
-          StateValue: BATCH_IDX.QUALIFICATION
+          StateValue: BATCH_IDX.QUALIFICATION,
         },
         {
           ListName: ListNames.HRMSJobTitleFunctionType,
           select: ["*"],
-          StateValue: BATCH_IDX.FUNCTION_TYPE
+          StateValue: BATCH_IDX.FUNCTION_TYPE,
         },
       ];
 
@@ -615,81 +710,112 @@ export default class RecruitmentService implements IRecruitmentService {
               "*,JobDescription,RoleProfile,RoleSpecificKnowledgeJson,TechnicalSkillsKnowledgeJson,YearofExperience,PreferredExperience/ID,PreferredExperience/ExperienceInYearRange,Qualification,PreferredQualification,TotalPreferredExperience/ID,TotalPreferredExperience/ExperienceInYearRange,FunctionType/FunctionType,FunctionType/ID,FunctionType/FunctionTypeFrench,JobCode/JobCode,JobCode/ID",
             Filter: filterParam,
             FilterCondition: filterConditions,
-            Expand: "PreferredExperience,TotalPreferredExperience,FunctionType,JobCode",
+            Expand:
+              "PreferredExperience,TotalPreferredExperience,FunctionType,JobCode",
             Orderby: "ID",
             Orderbydecorasc: false,
           }),
         ]);
 
-      const roleKnowledgeMaster: any[] = batchRes[BATCH_IDX.ROLE_KNOWLEDGE] ?? [];
-      const levelProficiencyMaster: any[] = batchRes[BATCH_IDX.LEVEL_PROFICIENCY] ?? [];
-      const technicalSkillsMaster: any[] = batchRes[BATCH_IDX.TECHNICAL_SKILLS] ?? [];
+      const roleKnowledgeMaster: any[] =
+        batchRes[BATCH_IDX.ROLE_KNOWLEDGE] ?? [];
+      const levelProficiencyMaster: any[] =
+        batchRes[BATCH_IDX.LEVEL_PROFICIENCY] ?? [];
+      const technicalSkillsMaster: any[] =
+        batchRes[BATCH_IDX.TECHNICAL_SKILLS] ?? [];
       const experienceMaster: any[] = batchRes[BATCH_IDX.EXPERIENCE] ?? [];
-      const qualificationMaster: any[] = batchRes[BATCH_IDX.QUALIFICATION] ?? [];
+      const qualificationMaster: any[] =
+        batchRes[BATCH_IDX.QUALIFICATION] ?? [];
       const functionTypeMaster: any[] = batchRes[BATCH_IDX.FUNCTION_TYPE] ?? [];
 
-      const roleKnowledgeMap = roleKnowledgeMaster.reduce((acc, item) => {
-        acc[item.Code] = {
-          en: item.RoleSpecificKnowledge,
-          fr: item.RoleSpecificKnowledgeFrench,
-        };
-        return acc;
-      }, {} as Record<string, { en: string; fr: string }>);
-
-      const levelProficiencyMap = levelProficiencyMaster.reduce((acc, item) => {
-        acc[item.Code] = {
-          en: item.Levels,
-          fr: item.LevelsFrench,
-        };
-        return acc;
-      }, {} as Record<string, { en: string; fr: string }>);
-
-      const technicalSkillsMap = technicalSkillsMaster.reduce((acc, item) => {
-        acc[item.Code] = {
-          en: item.TechnicalSkills,
-          fr: item.TechnicalSkillsfrench,
-        };
-        return acc;
-      }, {} as Record<string, { en: string; fr: string }>);
-
-      const qualificationMap = qualificationMaster.reduce((acc, item) => {
-        acc[item.QualificationCode] = {
-          en: item.Qualification,
-          fr: item.QualificationFrench,
-        };
-        return acc;
-      }, {} as Record<string, { en: string; fr: string }>);
-
-      const experienceMap = new Map<number, string>(
-        experienceMaster.map((exp) => [exp.ID, exp.ExperienceInYearRange])
+      const roleKnowledgeMap = roleKnowledgeMaster.reduce(
+        (acc, item) => {
+          acc[item.Code] = {
+            en: item.RoleSpecificKnowledge,
+            fr: item.RoleSpecificKnowledgeFrench,
+          };
+          return acc;
+        },
+        {} as Record<string, { en: string; fr: string }>,
       );
 
-      const functionTypeMap = functionTypeMaster.reduce((acc, item) => {
-        acc[item.ID] = {
-          en: item.FunctionType,
-          fr: item.FunctionTypeFrench,
-        };
-        return acc;
-      }, {} as Record<string, { en: string; fr: string }>);
+      const levelProficiencyMap = levelProficiencyMaster.reduce(
+        (acc, item) => {
+          acc[item.Code] = {
+            en: item.Levels,
+            fr: item.LevelsFrench,
+          };
+          return acc;
+        },
+        {} as Record<string, { en: string; fr: string }>,
+      );
+
+      const technicalSkillsMap = technicalSkillsMaster.reduce(
+        (acc, item) => {
+          acc[item.Code] = {
+            en: item.TechnicalSkills,
+            fr: item.TechnicalSkillsfrench,
+          };
+          return acc;
+        },
+        {} as Record<string, { en: string; fr: string }>,
+      );
+
+      const qualificationMap = qualificationMaster.reduce(
+        (acc, item) => {
+          acc[item.QualificationCode] = {
+            en: item.Qualification,
+            fr: item.QualificationFrench,
+          };
+          return acc;
+        },
+        {} as Record<string, { en: string; fr: string }>,
+      );
+
+      const experienceMap = new Map<number, string>(
+        experienceMaster.map((exp) => [exp.ID, exp.ExperienceInYearRange]),
+      );
+
+      const functionTypeMap = functionTypeMaster.reduce(
+        (acc, item) => {
+          acc[item.ID] = {
+            en: item.FunctionType,
+            fr: item.FunctionTypeFrench,
+          };
+          return acc;
+        },
+        {} as Record<string, { en: string; fr: string }>,
+      );
 
       const formattedItems = listItems.map((item) => {
         const roleKnowledgeArray: RoleSpecKnowledge[] = JSON.parse(
-          item.RoleSpecificKnowledgeJson || "[]"
+          item.RoleSpecificKnowledgeJson || "[]",
         );
         const techSkillsArray = JSON.parse(
-          item.TechnicalSkillsKnowledgeJson || "[]"
+          item.TechnicalSkillsKnowledgeJson || "[]",
         );
         const qualificationArray = JSON.parse(item.Qualification || "[]");
-        const PrefeQualification = JSON.parse(item.PreferredQualification || "[]");
+        const PrefeQualification = JSON.parse(
+          item.PreferredQualification || "[]",
+        );
 
-        const mergedQualifications = [...qualificationArray, ...PrefeQualification];
+        const mergedQualifications = [
+          ...qualificationArray,
+          ...PrefeQualification,
+        ];
 
         const RoleSpeKnowledge = roleKnowledgeArray.map((rk: any) => {
           const knowledge = roleKnowledgeMap[rk.RoleSpeKnowledge];
           const Level = levelProficiencyMap[rk.RequiredLevel];
           return {
-            RoleSpeKnowledge: { key: rk.RoleSpeKnowledge, text: knowledge?.en ?? "" },
-            RoleSpeKnowledge_fr: { key: rk.RoleSpeKnowledge, text: knowledge?.fr ?? "" },
+            RoleSpeKnowledge: {
+              key: rk.RoleSpeKnowledge,
+              text: knowledge?.en ?? "",
+            },
+            RoleSpeKnowledge_fr: {
+              key: rk.RoleSpeKnowledge,
+              text: knowledge?.fr ?? "",
+            },
             RequiredLevel: { key: rk.RequiredLevel, text: Level?.en ?? "" },
             RequiredLevel_fr: { key: rk.RequiredLevel, text: Level?.fr ?? "" },
           };
@@ -699,10 +825,22 @@ export default class RecruitmentService implements IRecruitmentService {
           const technical = technicalSkillsMap[ts.TechnicalSkills];
           const Level = levelProficiencyMap[ts.LevelProficiency];
           return {
-            TechnicalSkills: { key: ts.TechnicalSkills, text: technical?.en ?? "" },
-            TechnicalSkills_fr: { key: ts.TechnicalSkills, text: technical?.fr ?? "" },
-            LevelProficiency: { key: ts.LevelProficiency, text: Level?.en ?? "" },
-            LevelProficiency_fr: { key: ts.LevelProficiency, text: Level?.fr ?? "" },
+            TechnicalSkills: {
+              key: ts.TechnicalSkills,
+              text: technical?.en ?? "",
+            },
+            TechnicalSkills_fr: {
+              key: ts.TechnicalSkills,
+              text: technical?.fr ?? "",
+            },
+            LevelProficiency: {
+              key: ts.LevelProficiency,
+              text: Level?.en ?? "",
+            },
+            LevelProficiency_fr: {
+              key: ts.LevelProficiency,
+              text: Level?.fr ?? "",
+            },
           };
         });
 
@@ -712,22 +850,38 @@ export default class RecruitmentService implements IRecruitmentService {
 
           if (qu.PrefeQualification) {
             return {
-              PrefeQualification: { key: qualificationKey, text: qualiValue?.en ?? "" },
-              PrefeQualification_fr: { key: qualificationKey, text: qualiValue?.fr ?? "" },
+              PrefeQualification: {
+                key: qualificationKey,
+                text: qualiValue?.en ?? "",
+              },
+              PrefeQualification_fr: {
+                key: qualificationKey,
+                text: qualiValue?.fr ?? "",
+              },
             };
           }
           return {
-            MinQualification: { key: qualificationKey, text: qualiValue?.en ?? "" },
-            MinQualification_fr: { key: qualificationKey, text: qualiValue?.fr ?? "" },
+            MinQualification: {
+              key: qualificationKey,
+              text: qualiValue?.en ?? "",
+            },
+            MinQualification_fr: {
+              key: qualificationKey,
+              text: qualiValue?.fr ?? "",
+            },
           };
         });
 
         const qualificationValue: QualificationValue = Qualification.reduce(
           (acc, item) => {
-            if (item.MinQualification) acc.MinQualification.push(item.MinQualification);
-            if (item.PrefeQualification) acc.PrefeQualification.push(item.PrefeQualification);
-            if (item.MinQualification_fr) acc.MinQualification_fr.push(item.MinQualification_fr);
-            if (item.PrefeQualification_fr) acc.PrefeQualification_fr.push(item.PrefeQualification_fr);
+            if (item.MinQualification)
+              acc.MinQualification.push(item.MinQualification);
+            if (item.PrefeQualification)
+              acc.PrefeQualification.push(item.PrefeQualification);
+            if (item.MinQualification_fr)
+              acc.MinQualification_fr.push(item.MinQualification_fr);
+            if (item.PrefeQualification_fr)
+              acc.PrefeQualification_fr.push(item.PrefeQualification_fr);
             return acc;
           },
           {
@@ -735,7 +889,7 @@ export default class RecruitmentService implements IRecruitmentService {
             PrefeQualification: [],
             MinQualification_fr: [],
             PrefeQualification_fr: [],
-          } as QualificationValue
+          } as QualificationValue,
         );
 
         const functionType = functionTypeMap[item.FunctionType?.ID ?? ""];
@@ -747,13 +901,25 @@ export default class RecruitmentService implements IRecruitmentService {
           JobDescription: stripHtml(item.JobDescription) || "",
           RolePurpose_fr: stripHtml(item.RoleProfileFrench) || "",
           JobDescription_fr: stripHtml(item.JobDescriptionFrench) || "",
-          TotalExperience: { key: item.TotalPreferredExperience?.ID, text: item.TotalPreferredExperience?.ExperienceInYearRange || "" },
-          ExperienceinMiningIndustry: { key: item.PreferredExperience?.ID, text: item.PreferredExperience?.ExperienceInYearRange || "" },
+          TotalExperience: {
+            key: item.TotalPreferredExperience?.ID,
+            text: item.TotalPreferredExperience?.ExperienceInYearRange || "",
+          },
+          ExperienceinMiningIndustry: {
+            key: item.PreferredExperience?.ID,
+            text: item.PreferredExperience?.ExperienceInYearRange || "",
+          },
           RoleSpeKnowledgeValue: RoleSpeKnowledge,
           TechnicalSkillValue: TechnicalSkills,
           qualificationValue: qualificationValue,
-          JobFunctionalType: { key: item.FunctionType?.ID, text: functionType?.en },
-          JobFunctionalType_fr: { key: item.FunctionType?.ID, text: functionType?.fr },
+          JobFunctionalType: {
+            key: item.FunctionType?.ID,
+            text: functionType?.en,
+          },
+          JobFunctionalType_fr: {
+            key: item.FunctionType?.ID,
+            text: functionType?.fr,
+          },
           JobBasedBGVVerification: JSON.parse(item.JobBasedBGVVerification),
         };
       });
@@ -766,12 +932,13 @@ export default class RecruitmentService implements IRecruitmentService {
     } catch (error) {
       console.error(
         "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
-        error
+        error,
       );
       return {
         data: [],
         status: 500,
-        message: "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
+        message:
+          "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
       };
     }
   }
@@ -785,10 +952,7 @@ export default class RecruitmentService implements IRecruitmentService {
         message: response.data.message,
       };
     } catch (error) {
-      console.error(
-        "Error inserting data into AdvertisementDetails:",
-        error
-      );
+      console.error("Error inserting data into AdvertisementDetails:", error);
       return {
         data: [],
         status: 500,
@@ -798,7 +962,7 @@ export default class RecruitmentService implements IRecruitmentService {
   }
 
   async PostCommentsData(
-    obj: InsertComments
+    obj: InsertComments,
   ): Promise<ApiResponse<InsertComments | null>> {
     try {
       await SPServices.SPAddItem({
@@ -828,10 +992,9 @@ export default class RecruitmentService implements IRecruitmentService {
     IsActive: number,
     IsExtened: number,
     JobBasedBGVVerification?: string,
-    onemDocs?: IDocFiles[]
+    onemDocs?: IDocFiles[],
   ): Promise<ApiResponse<null>> {
     try {
-
       const ROLE_PROFILE = 0;
       const JOB_PORTAL = 1;
 
@@ -861,7 +1024,11 @@ export default class RecruitmentService implements IRecruitmentService {
           StateValue: JOB_PORTAL,
           ListName: ListNames.RecruitAppCareerPortalIntegration,
           Filter: [
-            { FilterKey: "JobCodeId", Operator: "eq", FilterValue: RecuritmentDetails.JobCodeId },
+            {
+              FilterKey: "JobCodeId",
+              Operator: "eq",
+              FilterValue: RecuritmentDetails.JobCodeId,
+            },
             { FilterKey: "IsActive", Operator: "eq", FilterValue: 1 },
           ],
           FilterCondition: "and",
@@ -871,7 +1038,8 @@ export default class RecruitmentService implements IRecruitmentService {
         },
       ];
 
-      const batchRes: Record<number, any[]> = await SPServices.batchGet(queries);
+      const batchRes: Record<number, any[]> =
+        await SPServices.batchGet(queries);
 
       const roleProfileList = batchRes[ROLE_PROFILE] ?? [];
       const jobPortalList = batchRes[JOB_PORTAL] ?? [];
@@ -881,13 +1049,16 @@ export default class RecruitmentService implements IRecruitmentService {
           RequestJSON: {
             JobBasedBGVVerification: JobBasedBGVVerification,
           },
-          ID: roleProfileList[0].ID
-        })
+          ID: roleProfileList[0].ID,
+        });
       }
 
-
       if (roleProfileList.length === 0) {
-        return { data: null, status: 400, message: "No role profile data found" };
+        return {
+          data: null,
+          status: 400,
+          message: "No role profile data found",
+        };
       }
 
       if (jobPortalList.length === 0) {
@@ -909,14 +1080,14 @@ export default class RecruitmentService implements IRecruitmentService {
         (item: any) => ({
           skillId: String(item.RoleSpeKnowledge || ""),
           levelId: String(item.RequiredLevel || ""),
-        })
+        }),
       );
 
       const technicalSkills: RoleAndTechSkills[] = technicalSkill.map(
         (item: any) => ({
           skillId: String(item.TechnicalSkills || ""),
           levelId: String(item.LevelProficiency || ""),
-        })
+        }),
       );
 
       const Roleandtechnical: RoleAndTechSkills[] = [
@@ -924,19 +1095,20 @@ export default class RecruitmentService implements IRecruitmentService {
         ...technicalSkills,
       ];
 
-      const minQualifications: MinAndPreferedQualifications[] = data.Qualification
-        ? JSON.parse(data.Qualification).map((item: any) => ({
-          qualification: item.MinQualification,
-          type: 0,
-        }))
-        : [];
+      const minQualifications: MinAndPreferedQualifications[] =
+        data.Qualification
+          ? JSON.parse(data.Qualification).map((item: any) => ({
+              qualification: item.MinQualification,
+              type: 0,
+            }))
+          : [];
 
       const preferredQualifications: MinAndPreferedQualifications[] =
         data.PreferredQualification
           ? JSON.parse(data.PreferredQualification).map((item: any) => ({
-            qualification: item.PrefeQualification,
-            type: 1,
-          }))
+              qualification: item.PrefeQualification,
+              type: 1,
+            }))
           : [];
 
       const MinAndPreferedQualification: MinAndPreferedQualifications[] = [
@@ -967,23 +1139,31 @@ export default class RecruitmentService implements IRecruitmentService {
       //   DocumentLibraray.ONAMSignedStampDocuments
       // );
 
-      let onemdocPath: string = ""
+      let onemdocPath: string = "";
       if (onemDocs && onemDocs?.length > 0) {
         const onamdocpathfile = await CommonServices.uploadAttachmentToLibrary(
           RecuritmentDetails.JobCode,
           onemDocs || [],
-          DocumentLibraray.ONAMSignedStampDocuments
-        )
+          DocumentLibraray.ONAMSignedStampDocuments,
+        );
         onemdocPath = String(onamdocpathfile.data[0].content);
       }
-
 
       // const DepartmentCode = MasterData.Department.find(
       //   (item: { text: string }) => item.text === RecuritmentDetails.Department
       // );
 
-      const FilterDept = [{ FilterKey: "DepartmentId", Operator: "eq", FilterValue: RecuritmentDetails.DepartmentID },]
-      const DepartmentData = await CommonServices.GetMasterData(ListNames.HRMSDepartment, FilterDept)
+      const FilterDept = [
+        {
+          FilterKey: "DepartmentId",
+          Operator: "eq",
+          FilterValue: RecuritmentDetails.DepartmentID,
+        },
+      ];
+      const DepartmentData = await CommonServices.GetMasterData(
+        ListNames.HRMSDepartment,
+        FilterDept,
+      );
       console.log(DepartmentData, "DepartmentData");
 
       const NationalityValue =
@@ -991,8 +1171,8 @@ export default class RecruitmentService implements IRecruitmentService {
           ? "Congolese"
           : RecuritmentDetails.Nationality;
       const todaydate = new Date();
-      const vaildFrom = todaydate
-      const VaildTo = AddCalculateDate(todaydate, 13)
+      const vaildFrom = todaydate;
+      const VaildTo = AddCalculateDate(todaydate, 13);
 
       const advertisementDetails: AdvertisementDetails = {
         jobCode: jobUniqueKey,
@@ -1005,7 +1185,9 @@ export default class RecruitmentService implements IRecruitmentService {
         role: null,
         functionId: String(data.FunctionType?.Code || ""),
         onemdocPath: onemdocPath,
-        experience: String(data.TotalPreferredExperience?.ExperienceInYearRange || ""),
+        experience: String(
+          data.TotalPreferredExperience?.ExperienceInYearRange || "",
+        ),
         nationality: NationalityValue,
         Descriptions_en: Description,
         Descriptions_fr: DescriptionFr,
@@ -1014,21 +1196,31 @@ export default class RecruitmentService implements IRecruitmentService {
         IsExtened: IsExtened,
       };
 
-      const response = await CareerPotalServices.UpsertJobs(advertisementDetails);
+      const response =
+        await CareerPotalServices.UpsertJobs(advertisementDetails);
 
       if (response.status === ResponeStatus.SUCCESS) {
-        return { data: null, status: 200, message: "Advertisement posted successfully" };
+        return {
+          data: null,
+          status: 200,
+          message: "Advertisement posted successfully",
+        };
       }
 
-      return { data: null, status: 500, message: "Error while posting advertisement details" };
-
+      return {
+        data: null,
+        status: 500,
+        message: "Error while posting advertisement details",
+      };
     } catch (error) {
       console.error("Error posting advertisement data:", error);
       return { data: null, status: 400, message: "Error On Posting Data" };
     }
   }
 
-  async UpsertBGVJobMaster(UpsertData: UpsertBGV[]): Promise<ApiResponse<any | null>> {
+  async UpsertBGVJobMaster(
+    UpsertData: UpsertBGV[],
+  ): Promise<ApiResponse<any | null>> {
     try {
       const response = await BGverification.UpsertBGVJobMaster(UpsertData);
       return {
@@ -1037,10 +1229,7 @@ export default class RecruitmentService implements IRecruitmentService {
         message: response.data.message,
       };
     } catch (error) {
-      console.error(
-        "Error inserting data into AdvertisementDetails:",
-        error
-      );
+      console.error("Error inserting data into AdvertisementDetails:", error);
       return {
         data: [],
         status: 500,
@@ -1048,5 +1237,4 @@ export default class RecruitmentService implements IRecruitmentService {
       };
     }
   }
-
 }
