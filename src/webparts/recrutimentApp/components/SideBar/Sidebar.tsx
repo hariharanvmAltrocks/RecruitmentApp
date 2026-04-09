@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ChevronDown } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
 import styles from "./SideNavigation.module.scss";
-import { useUIState } from '../RecrutimentApp/UIStateContext';
+import { useUIState } from "../RecrutimentApp/UIStateContext";
 
 type MenuItem = {
   Id: number;
@@ -21,20 +21,23 @@ type SidebarItemProps = {
   onToggleExpand?: () => void;
 };
 
-const SidebarItem: React.FC<SidebarItemProps> = ({ 
-  item, 
-  activeMenuID, 
+const SidebarItem: React.FC<SidebarItemProps> = ({
+  item,
+  activeMenuID,
   onSelectCallback,
   isExpanded,
-  onToggleExpand
+  onToggleExpand,
 }) => {
   const hasChildren = item.Children && item.Children.length > 0;
   const isActive = activeMenuID === item.Id;
-  const isParentOfActive = item.Children?.some(child => child.Id === activeMenuID);
-  
+  const isParentOfActive = item.Children?.some(
+    (child) => child.Id === activeMenuID,
+  );
+
   const shouldHighlight = isActive || isParentOfActive;
-  
-  const currentIcon = shouldHighlight && item.ActiveIcon ? item.ActiveIcon : item.Icon;
+
+  const currentIcon =
+    shouldHighlight && item.ActiveIcon ? item.ActiveIcon : item.Icon;
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -52,7 +55,11 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
         className={`${styles.sidebarItem} ${shouldHighlight ? styles.active : ""}`}
       >
         {currentIcon && (
-          <img src={currentIcon} alt={item.DisplayName} className={styles.icon} />
+          <img
+            src={currentIcon}
+            alt={item.DisplayName}
+            className={styles.icon}
+          />
         )}
 
         <span className={styles.labelWrap}>
@@ -65,15 +72,15 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
         </span>
 
         {hasChildren && (
-          <ChevronDown 
-            className={`${styles.chevron} ${isExpanded ? styles.open : ""}`} 
+          <ChevronDown
+            className={`${styles.chevron} ${isExpanded ? styles.open : ""}`}
           />
         )}
       </div>
 
       {hasChildren && isExpanded && (
         <div className={styles.submenu}>
-          {item.Children!.map(child => (
+          {item.Children!.map((child) => (
             <SidebarItem
               key={child.Id}
               item={child}
@@ -94,14 +101,14 @@ interface SideNavigationProps {
   isCollapsed?: boolean; // Prop from MainLayout toggle
 }
 
-const SideNavigation: React.FC<SideNavigationProps> = ({ 
-  menuData, 
-  activeMenuID, 
+const SideNavigation: React.FC<SideNavigationProps> = ({
+  menuData,
+  activeMenuID,
   setactiveMenuID,
-  isCollapsed = false
+  isCollapsed = false,
 }) => {
   const navigate = useNavigate();
-  const {setSideNavflag} = useUIState();
+  const { setSideNavflag } = useUIState();
   const [expandedMenus, setExpandedMenus] = useState<number[]>([]);
 
   // Sort and format the raw menu data
@@ -118,20 +125,20 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
 
   // Expand parent initially if child is active
   useEffect(() => {
-    sortedMenu.forEach(parent => {
-      if (parent.Children?.some(child => child.Id === activeMenuID)) {
+    sortedMenu.forEach((parent) => {
+      if (parent.Children?.some((child) => child.Id === activeMenuID)) {
         if (!expandedMenus.includes(parent.Id)) {
-          setExpandedMenus(prev => [...prev, parent.Id]);
+          setExpandedMenus((prev) => [...prev, parent.Id]);
         }
       }
     });
   }, [activeMenuID]);
 
   const toggleExpand = (id: number) => {
-    setExpandedMenus(prev => 
-      prev.includes(id) 
-        ? prev.filter(menuId => menuId !== id)
-        : [...prev, id]
+    setExpandedMenus((prev) =>
+      prev.includes(id)
+        ? prev.filter((menuId) => menuId !== id)
+        : [...prev, id],
     );
   };
 
@@ -140,10 +147,12 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
     setSideNavflag(true);
     navigate(path);
   };
-console.log(sortedMenu,"sortedMenu");
+  console.log(sortedMenu, "sortedMenu");
 
   return (
-    <aside className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : ""}`}>
+    <aside
+      className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : ""}`}
+    >
       <div className={styles.logoSection}>
         <div className={styles.logoIcon}>
           <img
@@ -152,9 +161,7 @@ console.log(sortedMenu,"sortedMenu");
             className={styles.logoImg}
           />
         </div>
-        <div className={styles.logoTitle}>
-          Kamoa Copper SA
-        </div>
+        <div className={styles.logoTitle}>Kamoa Copper SA</div>
       </div>
 
       <nav className={styles.nav}>
@@ -171,12 +178,11 @@ console.log(sortedMenu,"sortedMenu");
       </nav>
 
       <div className={styles.sidebarFooter}>
-  <div className={styles.footerContent}>
-    <div className={styles.footerVersion}>v1.01</div>
-    <div className={styles.footerLabel}>Kamoa Copper SA</div>
-  </div>
-</div>
-
+        <div className={styles.footerContent}>
+          <div className={styles.footerVersion}>v-1.1</div>
+          <div className={styles.footerLabel}>Kamoa Copper SA</div>
+        </div>
+      </div>
     </aside>
   );
 };

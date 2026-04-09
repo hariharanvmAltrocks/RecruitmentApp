@@ -376,6 +376,7 @@ var MatricColums = function (roles) {
             case Config_1.RoleID.LineManager:
                 roleColumns = [
                     buildCol(ConditionConfig_1.MatricID.AdvertReviewLM, { showArrow: true }),
+                    buildCol(ConditionConfig_1.MatricID.InterviewQuestionLM, { showArrow: true }),
                     buildCol(ConditionConfig_1.MatricID.ReviewProfileLM, {
                         showArrow: true,
                         externalApi: {
@@ -387,7 +388,6 @@ var MatricColums = function (roles) {
                             ],
                         },
                     }),
-                    buildCol(ConditionConfig_1.MatricID.InterviewQuestionLM, { showArrow: true }),
                     buildCol(ConditionConfig_1.MatricID.EvalutionLM, { showArrow: true }),
                     // buildCol(MatricID.ReviewScoreCard, { showArrow: false }),
                     buildCol(ConditionConfig_1.MatricID.interviewSchedule, { showArrow: false }),
@@ -401,8 +401,8 @@ var MatricColums = function (roles) {
             case Config_1.RoleID.HOD:
                 roleColumns = [
                     buildCol(ConditionConfig_1.MatricID.AdvertReviewHOD, { showArrow: true }),
-                    buildCol(ConditionConfig_1.MatricID.EvalutionHOD, { showArrow: true }),
                     buildCol(ConditionConfig_1.MatricID.ReviewScoreCard, { showArrow: true }),
+                    buildCol(ConditionConfig_1.MatricID.EvalutionHOD, { showArrow: true }),
                     buildCol(ConditionConfig_1.MatricID.interviewSchedule, { showArrow: false }),
                     // buildCol(MatricID.interviewTracker, { showArrow: false }),
                     buildCol(ConditionConfig_1.MatricID.OfferRelease, { showArrow: false }),
@@ -437,7 +437,10 @@ var MatricColums = function (roles) {
                 roleColumns = [];
         }
         if (roles.includes(Config_1.RoleID.LineManager) && roles.includes(Config_1.RoleID.HOD)) {
-            roleColumns = roleColumns.filter(function (col) { return col.id !== ConditionConfig_1.MatricID.AdvertReviewHOD; });
+            roleColumns = roleColumns.filter(function (col) {
+                return col.id !== ConditionConfig_1.MatricID.AdvertReviewHOD &&
+                    col.id !== ConditionConfig_1.MatricID.EvalutionHOD;
+            });
         }
         columns.push.apply(columns, roleColumns);
     });
@@ -469,7 +472,7 @@ var DataSyncFilter = [
     //     FilterValue: StatusId.ReadyforRecruitmentProcess
     // }
 ];
-var StatusFilter = function (status, columnName, emailId) {
+var StatusFilter = function (status, columnName, emailId, labourHire) {
     var filters = [
         {
             FilterKey: "ItemCreated",
@@ -489,6 +492,13 @@ var StatusFilter = function (status, columnName, emailId) {
             FilterKey: columnName,
             Operator: "eq",
             FilterValue: emailId,
+        });
+    }
+    if (labourHire) {
+        filters.push({
+            FilterKey: "IsLabourHire",
+            Operator: "eq",
+            FilterValue: labourHire === ApiConfig_1.Choices.Yes ? ApiConfig_1.Choices.Yes : ApiConfig_1.Choices.No,
         });
     }
     return filters;
@@ -577,7 +587,7 @@ var MetricQueryConfig = function (EmailId) {
             Config_1.StatusId.PendingHREmploymentContractReview,
             Config_1.StatusId.PendingHREmploymentContractVerification,
             Config_1.StatusId.PendingHRpreonboardingchecklist,
-        ], "RecruitmentHR", EmailId)),
+        ], "RecruitmentHR", EmailId, ApiConfig_1.Choices.Yes)),
         //KCSA
         _a[ConditionConfig_1.MatricID.Kcsa] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter([
             Config_1.StatusId.PendingHROfferInitiate,
@@ -588,7 +598,7 @@ var MetricQueryConfig = function (EmailId) {
             Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract,
             Config_1.StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract,
             Config_1.StatusId.PendingHRpreonboardingchecklist,
-        ], "RecruitmentHR", EmailId)),
+        ], "RecruitmentHR", EmailId, ApiConfig_1.Choices.No)),
         //Reviewscordcard HOD
         _a[ConditionConfig_1.MatricID.ReviewScoredHOD] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.RecruitmentInProgress, "HOD", EmailId)),
         //MySubmission
@@ -719,7 +729,8 @@ var getRoleBasedFilters = function (roles, EmailId) {
         }
     });
     if (roles.includes(Config_1.RoleID.LineManager) && roles.includes(Config_1.RoleID.HOD)) {
-        result = result.filter(function (item) { return item.StateValue !== ConditionConfig_1.MatricID.AdvertReviewHOD; });
+        var removeStates_1 = [ConditionConfig_1.MatricID.AdvertReviewHOD, ConditionConfig_1.MatricID.EvalutionHOD];
+        result = result.filter(function (item) { return !removeStates_1.includes(item.StateValue); });
     }
     return result;
 };
@@ -734,6 +745,13 @@ var priorityValues = function (matrixs) {
     var total = (0, exports.totalPriority)(matrixs);
     return matrixs
         .filter(function (m) { return m.showArrow; })
+        .sort(function (a, b) {
+        if (a.value === 0 && b.value > 0)
+            return 1;
+        if (a.value > 0 && b.value === 0)
+            return -1;
+        return b.value - a.value;
+    })
         .map(function (m) { return ({
         name: m.label,
         value: m.value,

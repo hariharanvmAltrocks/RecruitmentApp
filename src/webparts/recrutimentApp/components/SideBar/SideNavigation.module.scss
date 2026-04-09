@@ -34,12 +34,12 @@
 }
 
 .logoSection {
-    padding: 24px;
+    padding: 10px 10px 17px 10px;
     display: flex;
     align-items: center;
     gap: 12px;
     border-bottom: 1px solid $border-light;
-    min-height: 80px; // ensure header remains same height if collapsed
+    min-height: 80px; 
 }
 
 .logoIcon {

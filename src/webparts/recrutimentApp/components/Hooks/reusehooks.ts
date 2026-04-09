@@ -34,7 +34,12 @@ export const fetchByMetricId = async (
         return DashboardServices.GetRecruitmentDetails(filter, condition);
 
       case ListNames.HRMSRecruitmentCandidatePersonalDetails:
-        return DashboardServices.GetCandidateDetails(filter, condition);
+        return DashboardServices.GetCandidateDetails(
+          filter,
+          condition,
+          matricID,
+          EmailId,
+        );
 
       case ListNames.HRMSSelectedCandidateDetailsByHOD:
         return DashboardServices.GetSelectedCandidate(filter, condition);

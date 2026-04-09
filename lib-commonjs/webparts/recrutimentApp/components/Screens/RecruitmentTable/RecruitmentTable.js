@@ -107,7 +107,9 @@ var RecruitmentTable = function () {
             }
         }
         setSelectedIds(function (prev) {
-            return prev.includes(id) ? prev.filter(function (itemId) { return itemId !== id; }) : tslib_1.__spreadArray(tslib_1.__spreadArray([], prev, true), [id], false);
+            return prev.includes(id)
+                ? prev.filter(function (itemId) { return itemId !== id; })
+                : tslib_1.__spreadArray(tslib_1.__spreadArray([], prev, true), [id], false);
         });
     }, [selectedNationality, items, showModal, closeModal]);
     var handleToggleAll = (0, react_1.useCallback)(function () {
@@ -180,16 +182,21 @@ var RecruitmentTable = function () {
                         ConditionConfig_1.MatricID.EvalutionHOD,
                         ConditionConfig_1.MatricID.EvalutionEXCO,
                     ];
-                    routeMap = tslib_1.__assign((_a = {}, _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.ReviewProfileHR] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewProfileLM] = "/CandidateTable", _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/ReviewScoreCard", _a), Object.fromEntries(evalutionIDs.map(function (id) { return [id,
-                        item.statusId === Config_1.StatusId.InterviewLevel2InProgress ?
-                            //  hook.openReview : 
-                            "/ReviewScoreCard"
-                            : "/Evalution"
+                    routeMap = tslib_1.__assign((_a = {}, _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.ReviewProfileHR] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewProfileLM] = "/CandidateTable", _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/ReviewScoreCard", _a), Object.fromEntries(evalutionIDs.map(function (id) { return [
+                        id,
+                        item.statusId === Config_1.StatusId.InterviewLevel2InProgress
+                            ? //  hook.openReview :
+                                "/ReviewScoreCard"
+                            : "/Evalution",
                     ]; })));
                     route = routeMap[matricID];
                     if (route) {
                         navigate(route, {
-                            state: { ID: ItemID, department: item.department },
+                            state: {
+                                ID: ItemID,
+                                department: item.department,
+                                StatusID: item.statusId,
+                            },
                         });
                         return [2 /*return*/];
                     }
@@ -200,12 +207,20 @@ var RecruitmentTable = function () {
                     openDrawer(ItemID);
                     return [3 /*break*/, 5];
                 case 4:
+                    // eslint-disable-next-line require-atomic-updates
                     processingRef.current = false;
                     return [7 /*endfinally*/];
                 case 5: return [2 /*return*/];
             }
         });
-    }); }, [matricID, navigate, openDrawer, showModal, closeModal, ADGroupData.EmailId]);
+    }); }, [
+        matricID,
+        navigate,
+        openDrawer,
+        showModal,
+        closeModal,
+        ADGroupData.EmailId,
+    ]);
     var showAssignmentBar = (activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.tableMode) === "checkbox" && selectedIds.length > 0;
     var columns = (0, config_1.useRecruitmentColumns)({
         role: matricID === ConditionConfig_1.MatricID.EvalutionHR ? "evaluation" : "default",

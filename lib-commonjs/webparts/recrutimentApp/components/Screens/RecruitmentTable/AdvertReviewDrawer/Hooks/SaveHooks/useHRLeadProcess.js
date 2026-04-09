@@ -28,15 +28,16 @@ var useHRLeadProcess = function (form, currentRoleID, onemDocs, BgvData) {
                     Conditions = "";
                     IsActive = 1;
                     IsExtened = 0;
-                    JobBasedBGVVerification = serialize(BgvData, function (i) { return ({ verificationType: i.key, isActive: i.checked }); });
+                    JobBasedBGVVerification = serialize(BgvData, function (i) { return ({
+                        verificationType: i.key,
+                        isActive: i.checked,
+                    }); });
                     return [4 /*yield*/, ServiceExport_1.RecruitmentServices.UploadAdvertisementInPortal(filterConditions, Conditions, form, IsActive, IsExtened, JobBasedBGVVerification, onemDocs)];
                 case 1:
                     portalRes = _a.sent();
                     if ((portalRes === null || portalRes === void 0 ? void 0 : portalRes.status) !== 200)
                         throw new Error("Portal Error");
-                    bgvData = BgvData
-                        .filter(function (i) { return i.checked; })
-                        .map(function (i) { return ({
+                    bgvData = BgvData.filter(function (i) { return i.checked; }).map(function (i) { return ({
                         jobCode: form.JobCode,
                         verificationType: i.key,
                         department: (form === null || form === void 0 ? void 0 : form.Dptcode) || "",

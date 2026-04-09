@@ -573,9 +573,9 @@ export default class RecruitmentService implements IRecruitmentService {
     }
 
     try {
-      const uniqueJobCodeIds = Array.from(
-        new Set(payloads.map((p) => p.Data.JobCodeId)),
-      );
+      const uniqueJobCodeIds = payloads
+        .map((p) => p.Data.JobCodeId)
+        .filter((value, index, self) => self.indexOf(value) === index);
 
       const [agentMasterRes, ...jobCodeResults] = await Promise.all([
         CommonServices.GetMasterData(ListNames.HRMSExternalAgents),

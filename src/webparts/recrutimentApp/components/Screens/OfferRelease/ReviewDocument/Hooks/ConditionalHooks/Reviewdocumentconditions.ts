@@ -18,6 +18,7 @@ export interface ReviewStatusFlags {
   isLabourHire: boolean;
   isVerified: boolean;
   ViewFlag: boolean;
+  PreOnboardingChecklist: boolean;
 }
 
 export interface ReviewVisibilityFlags {
@@ -30,6 +31,7 @@ export interface ReviewVisibilityFlags {
   showDOTAficaBadge: boolean;
   uploadDocLabel: string;
   ViewFlag: boolean;
+  PreOnboardingChecklist: boolean;
 }
 
 export const buildStatusFlags = (
@@ -66,9 +68,8 @@ export const buildStatusFlags = (
     statusID === StatusId.PendingLHECRelease,
   PendingHREmploymentContractReview:
     statusID === StatusId.PendingHREmploymentContractReview,
+  PreOnboardingChecklist: statusID === StatusId.PendingHRpreonboardingchecklist,
 });
-
-// ─── Visibility flag builder ──────────────────────────────────────────────────
 
 const resolveVerificationToggle = (is: ReviewStatusFlags): boolean =>
   is.pendingHRReviewBGCheck ||
@@ -111,5 +112,6 @@ export const buildVisibilityFlags = (
     showDOTAficaBadge: is.pendingDOTAficaVerify,
     uploadDocLabel,
     ViewFlag: is.ViewFlag,
+    PreOnboardingChecklist: is.PreOnboardingChecklist,
   };
 };

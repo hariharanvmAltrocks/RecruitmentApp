@@ -297,10 +297,70 @@ var OfferService = /** @class */ (function () {
                 }
             });
         }); };
+        this.UpdateStatusCandidatelist = function (UpdateParams) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+            var response, error_5;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, spservice_1.default.SPUpdateItem({
+                                Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                                RequestJSON: UpdateParams,
+                                ID: UpdateParams.ID,
+                            })];
+                    case 1:
+                        response = _a.sent();
+                        return [2 /*return*/, {
+                                data: response,
+                                status: 200,
+                                message: "Candidate details fetched successfully",
+                            }];
+                    case 2:
+                        error_5 = _a.sent();
+                        console.error("Error during file replacement process:", error_5);
+                        return [2 /*return*/, {
+                                data: response,
+                                status: 500,
+                                message: "Error during file replacement",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        }); };
+        this.fetchPreChecklist = function (UpdateParams) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+            var response, error_6;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, spservice_1.default.SPUpdateItem({
+                                Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                                RequestJSON: UpdateParams,
+                                ID: UpdateParams.ID,
+                            })];
+                    case 1:
+                        response = _a.sent();
+                        return [2 /*return*/, {
+                                data: response,
+                                status: 200,
+                                message: "Candidate details fetched successfully",
+                            }];
+                    case 2:
+                        error_6 = _a.sent();
+                        console.error("Error during file replacement process:", error_6);
+                        return [2 /*return*/, {
+                                data: response,
+                                status: 500,
+                                message: "Error during file replacement",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        }); };
     }
     OfferService.prototype.GetSelectedCandidate = function (RecID, CandidateID, SelectedCandidateID, JobRequestID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var queries, _a, batchRes, careerRes, recruitment, recruitmentPosition, candidatePersonal, candidateSelected, ref, PPT, getDotAfricaCF, mappedData, error_5;
+            var queries, _a, batchRes, careerRes, recruitment, recruitmentPosition, candidatePersonal, candidateSelected, ref, PPT, getDotAfricaCF, PreOnboarding, mappedData, error_7;
             var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16;
             return tslib_1.__generator(this, function (_17) {
                 switch (_17.label) {
@@ -411,6 +471,35 @@ var OfferService = /** @class */ (function () {
                             })];
                     case 2:
                         getDotAfricaCF = (_17.sent());
+                        PreOnboarding = {
+                            BackgroundChecks: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.BackgroundChecks) === ConditionConfig_1.ActionName.Completed
+                                ? true
+                                : false,
+                            SignedOfferLetterVerified: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.SignedOfferLetterVerified) === ConditionConfig_1.ActionName.Completed
+                                ? true
+                                : false,
+                            VisaProcess: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.VisaProcess) === ConditionConfig_1.ActionName.Completed
+                                ? true
+                                : false,
+                            AccommodationBooked: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.AccommodationBooked) === ConditionConfig_1.ActionName.Completed
+                                ? true
+                                : false,
+                            SignedEmploymentContract: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.SignedEmploymentContract) === ConditionConfig_1.ActionName.Completed
+                                ? true
+                                : false,
+                            WorkPermitApproved: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.WorkPermitApproved) === ConditionConfig_1.ActionName.Completed
+                                ? true
+                                : false,
+                            TravelProcess: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.TravelProcess) === ConditionConfig_1.ActionName.Completed
+                                ? true
+                                : false,
+                            MedicalCheckStatus: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.MedicalCheckStatus) === ConditionConfig_1.ActionName.Completed
+                                ? true
+                                : false,
+                            ReadyForOnboarding: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.ReadyforOnboarding) === ConditionConfig_1.ActionName.Completed
+                                ? true
+                                : false,
+                        };
                         mappedData = {
                             ID: SelectedCandidateID,
                             CandidateID: CandidateID,
@@ -456,6 +545,7 @@ var OfferService = /** @class */ (function () {
                             NationalityCode: (_14 = (_13 = (_12 = careerRes === null || careerRes === void 0 ? void 0 : careerRes.data) === null || _12 === void 0 ? void 0 : _12[0]) === null || _13 === void 0 ? void 0 : _13.NatioCode) !== null && _14 !== void 0 ? _14 : "",
                             patersonGrade: (_15 = recruitmentPosition === null || recruitmentPosition === void 0 ? void 0 : recruitmentPosition.PatersonGrade) === null || _15 === void 0 ? void 0 : _15.PatersonGrade,
                             drcGrade: (_16 = recruitmentPosition === null || recruitmentPosition === void 0 ? void 0 : recruitmentPosition.DRCGrade) === null || _16 === void 0 ? void 0 : _16.DRCGrade,
+                            PreChecklist: PreOnboarding,
                         };
                         return [2 /*return*/, {
                                 data: mappedData,
@@ -463,8 +553,8 @@ var OfferService = /** @class */ (function () {
                                 message: "Selected candidate fetched successfully",
                             }];
                     case 3:
-                        error_5 = _17.sent();
-                        console.error("GetSelectedCandidate error:", error_5);
+                        error_7 = _17.sent();
+                        console.error("GetSelectedCandidate error:", error_7);
                         return [2 /*return*/, {
                                 data: null,
                                 status: 500,
@@ -477,7 +567,7 @@ var OfferService = /** @class */ (function () {
     };
     OfferService.prototype.InitiateLabouHireOfferRelease = function (data, CurrentUserEmail) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var res, todaydate, laborHireData, response, error_6;
+            var res, todaydate, laborHireData, response, error_8;
             var _a, _b, _c, _d, _e;
             return tslib_1.__generator(this, function (_f) {
                 switch (_f.label) {
@@ -532,8 +622,8 @@ var OfferService = /** @class */ (function () {
                                 message: "Error while posting advertisement details",
                             }];
                     case 3:
-                        error_6 = _f.sent();
-                        console.error("Error posting user data:", error_6);
+                        error_8 = _f.sent();
+                        console.error("Error posting user data:", error_8);
                         return [2 /*return*/, {
                                 data: null,
                                 status: 400,
@@ -546,7 +636,7 @@ var OfferService = /** @class */ (function () {
     };
     OfferService.prototype.CheckBGVerification = function (JobRequestId) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, error_7;
+            var response, error_9;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -560,8 +650,8 @@ var OfferService = /** @class */ (function () {
                                 message: response.data.message,
                             }];
                     case 2:
-                        error_7 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_7);
+                        error_9 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_9);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -574,7 +664,7 @@ var OfferService = /** @class */ (function () {
     };
     OfferService.prototype.InsertRecruitmentCandidateDetails = function (data) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, error_8;
+            var response, error_10;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -592,8 +682,8 @@ var OfferService = /** @class */ (function () {
                                 message: "Data updated successfully",
                             }];
                     case 2:
-                        error_8 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_8);
+                        error_10 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_10);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -606,7 +696,7 @@ var OfferService = /** @class */ (function () {
     };
     OfferService.prototype.GetJobRequestData = function (data) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var Response_1, error_9;
+            var Response_1, error_11;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -620,8 +710,8 @@ var OfferService = /** @class */ (function () {
                                 message: Response_1.data.message,
                             }];
                     case 2:
-                        error_9 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_9);
+                        error_11 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_11);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -634,7 +724,7 @@ var OfferService = /** @class */ (function () {
     };
     OfferService.prototype.PerformCriminalRecordCheck = function (id) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, error_10;
+            var response, error_12;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -648,8 +738,8 @@ var OfferService = /** @class */ (function () {
                                 message: response.data.message,
                             }];
                     case 2:
-                        error_10 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_10);
+                        error_12 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_12);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,

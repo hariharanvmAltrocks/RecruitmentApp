@@ -137,7 +137,7 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                             onConfirm: function () {
                                 closeModal();
                                 handleClosePopup();
-                                navigate("/RecruitmentTable");
+                                navigate("/Dashboard");
                                 handleRefresh();
                             },
                         });

@@ -55,7 +55,9 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
                     }); });
                     RoleProfileRes = (_a = response.data) !== null && _a !== void 0 ? _a : [];
                     rawVerification = RoleProfileRes === null || RoleProfileRes === void 0 ? void 0 : RoleProfileRes.JobBasedBGVVerification;
-                    verificationList = Array.isArray(rawVerification) ? rawVerification : [];
+                    verificationList = Array.isArray(rawVerification)
+                        ? rawVerification
+                        : [];
                     resData_1 = (_b = res === null || res === void 0 ? void 0 : res.data) !== null && _b !== void 0 ? _b : [];
                     RoleBGV_1 = verificationList.flatMap(function (item, index) {
                         return resData_1
@@ -98,12 +100,21 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
                 switch (_s.label) {
                     case 0:
                         _s.trys.push([0, 2, , 3]);
-                        filterConditions = [{ FilterKey: "JobCode/ID", Operator: "eq", FilterValue: selectedJobCode }];
+                        filterConditions = [
+                            {
+                                FilterKey: "JobCode/ID",
+                                Operator: "eq",
+                                FilterValue: selectedJobCode,
+                            },
+                        ];
                         return [4 /*yield*/, ServiceExport_1.RecruitmentServices.GetHRMSRecruitmentRoleProfileDetails(filterConditions, "")];
                     case 1:
                         response = _s.sent();
-                        if (response.status === 200 && response.data && response.data.length > 0) {
+                        if (response.status === 200 &&
+                            response.data &&
+                            response.data.length > 0) {
                             items = response.data[0];
+                            debugger;
                             mappedData = {
                                 jobId: selectedJobCode.toString(),
                                 english: {
@@ -112,8 +123,12 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
                                     qualifications: ((_a = items === null || items === void 0 ? void 0 : items.qualificationValue) === null || _a === void 0 ? void 0 : _a.MinQualification.map(function (q) { return q.text; })) || [],
                                     PrefeQualification: ((_b = items === null || items === void 0 ? void 0 : items.qualificationValue) === null || _b === void 0 ? void 0 : _b.PrefeQualification.map(function (q) { return q.text; })) || [],
                                     experience: [
-                                        (items === null || items === void 0 ? void 0 : items.TotalExperience) ? "".concat(items.TotalExperience.text, " of experience") : "",
-                                        (items === null || items === void 0 ? void 0 : items.ExperienceinMiningIndustry) ? "Preferred: ".concat(items.ExperienceinMiningIndustry.text, " ") : "",
+                                        (items === null || items === void 0 ? void 0 : items.TotalExperience)
+                                            ? "".concat(items.TotalExperience.text, " of experience")
+                                            : "",
+                                        (items === null || items === void 0 ? void 0 : items.ExperienceinMiningIndustry)
+                                            ? "Preferred: ".concat(items.ExperienceinMiningIndustry.text, " ")
+                                            : "",
                                     ].filter(Boolean),
                                     RoleSpecificKnowledge: ((_c = items === null || items === void 0 ? void 0 : items.RoleSpeKnowledgeValue) === null || _c === void 0 ? void 0 : _c.map(function (k) { return k.RoleSpeKnowledge.text; })) || [],
                                     RequiredLevel: ((_d = items === null || items === void 0 ? void 0 : items.RoleSpeKnowledgeValue) === null || _d === void 0 ? void 0 : _d.map(function (k) { return k.RequiredLevel.text; })) || [],
@@ -130,8 +145,12 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
                                     qualifications: ((_j = items === null || items === void 0 ? void 0 : items.qualificationValue) === null || _j === void 0 ? void 0 : _j.MinQualification_fr.map(function (q) { return q.text; })) || [],
                                     PrefeQualification: ((_k = items === null || items === void 0 ? void 0 : items.qualificationValue) === null || _k === void 0 ? void 0 : _k.PrefeQualification_fr.map(function (q) { return q.text; })) || [],
                                     experience: [
-                                        (items === null || items === void 0 ? void 0 : items.YearofExperience) ? "".concat(items.YearofExperience.text, " ans d'exp\u00E9rience") : "",
-                                        (items === null || items === void 0 ? void 0 : items.PreferredExperience) ? "Pr\u00E9f\u00E9r\u00E9: ".concat(items.PreferredExperience.ExperienceInYearRange.text, " ans") : "",
+                                        (items === null || items === void 0 ? void 0 : items.YearofExperience)
+                                            ? "".concat(items.YearofExperience.text, " ans d'exp\u00E9rience")
+                                            : "",
+                                        (items === null || items === void 0 ? void 0 : items.PreferredExperience)
+                                            ? "Pr\u00E9f\u00E9r\u00E9: ".concat(items.PreferredExperience.ExperienceInYearRange.text, " ans")
+                                            : "",
                                     ].filter(Boolean),
                                     RoleSpecificKnowledge: ((_l = items === null || items === void 0 ? void 0 : items.RoleSpeKnowledgeValue) === null || _l === void 0 ? void 0 : _l.map(function (k) { return k.RoleSpeKnowledge_fr.text; })) || [],
                                     RequiredLevel: ((_m = items === null || items === void 0 ? void 0 : items.RoleSpeKnowledgeValue) === null || _m === void 0 ? void 0 : _m.map(function (k) { return k.RequiredLevel_fr.text; })) || [],
@@ -162,7 +181,8 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
     }, [selectedJobCode, enabled]);
     var handleBvgToggle = (0, react_1.useCallback)(function (id) {
         setBGVValue(function (prev) { return (tslib_1.__assign(tslib_1.__assign({}, prev), { checkboxBGVOption: prev.checkboxBGVOption.map(function (check) {
-                return String(check.id) === String(id) ? tslib_1.__assign(tslib_1.__assign({}, check), { checked: !check.checked }) : check;
+                return String(check.id) === String(id)
+                    ? tslib_1.__assign(tslib_1.__assign({}, check), { checked: !check.checked }) : check;
             }) })); });
     }, [BGVValue]);
     return { data: data, BGVValue: BGVValue, loading: loading, handleBvgToggle: handleBvgToggle };

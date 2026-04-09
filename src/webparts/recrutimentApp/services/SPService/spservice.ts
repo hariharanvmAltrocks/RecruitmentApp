@@ -340,7 +340,8 @@ const batchGet = async (
         .getByTitle(q.ListName)
         .items.filter(filterStr)
         .select(...(q.select ?? ["*"]))
-        .expand(q.expand ?? []);
+        .expand(q.expand ?? [])
+        .top(5000);
 
       return request().then((r) => {
         console.log(r, "data");

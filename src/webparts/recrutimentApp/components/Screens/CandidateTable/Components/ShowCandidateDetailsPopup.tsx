@@ -1,20 +1,66 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, Users, Calendar, AlertTriangle, Accessibility, CheckCircle, XCircle, Clock, Upload, ChevronDown, FileText, Trash2, Zap, Globe, User, Activity, Check, ChevronRight } from "lucide-react";
+import {
+  X,
+  Users,
+  Calendar,
+  AlertTriangle,
+  Accessibility,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Upload,
+  ChevronDown,
+  FileText,
+  Trash2,
+  Zap,
+  Globe,
+  User,
+  Activity,
+  Check,
+  ChevronRight,
+} from "lucide-react";
 import { useFetchCandidateDetails } from "../Hooks/fetchCandidateDetails";
 import { RequiredAttachments } from "../../RecruitmentTable/Components/RequiredAttachments";
-import { ConflictOfInterestForm, DecisionType, InterviewScheduleForm, useSubmitCandidateReview } from "../Hooks/Usesubmitcandidatereview";
+import {
+  ConflictOfInterestForm,
+  DecisionType,
+  InterviewScheduleForm,
+  useSubmitCandidateReview,
+} from "../Hooks/Usesubmitcandidatereview";
 import { useFetchPanelMembers } from "../Hooks/fetchPanelMembers";
 import { StatusId, workflowStatusApi } from "../../../../utilities/Config";
-import { DocumentFolderName, RoleName } from "../../../../utilities/ConditionConfig";
+import {
+  DocumentFolderName,
+  RoleName,
+} from "../../../../utilities/ConditionConfig";
 import { IDocFiles } from "../../../../services/SPService/Ispservice";
 import { DataSyncToRecruitmentResponse } from "../../../../services/RecruitmentTable/IRecruitmentService";
 import styles from "./ShowCandidateDetailsPopup.module.scss";
 import { ModalPopup } from "../../../Comman/ModalPopup/ModalPopup";
-import { backdropVariants, cardVariants, InfoItem, InterviewScheduleInput, QuestionCard, SectionHeader, sectionVariants } from "./reuseUI";
+import {
+  backdropVariants,
+  cardVariants,
+  InfoItem,
+  InterviewScheduleInput,
+  QuestionCard,
+  SectionHeader,
+  sectionVariants,
+} from "./reuseUI";
 import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
 import { CandidateTable } from "../../../../services/ServiceExport";
-import { isSharePointUrl, buildWopiUrl, isPdfUrl, buildOfficeViewerUrl } from "../../../Hooks/reusehooks";
+import {
+  isSharePointUrl,
+  buildWopiUrl,
+  isPdfUrl,
+  buildOfficeViewerUrl,
+} from "../../../Hooks/reusehooks";
 
 export interface panelvalues {
   bucodeId: number;
@@ -34,14 +80,15 @@ interface ShowCandidateDetailsPopupProps {
   handleRefresh: () => void;
 }
 
-
-export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps> = ({
+export const ShowCandidateDetailsPopup: React.FC<
+  ShowCandidateDetailsPopupProps
+> = ({
   isOpen,
   onClose,
   candidateId,
   panelParams,
   positionDetails,
-  handleRefresh
+  handleRefresh,
 }) => {
   const ReviewHRFlag = panelParams?.statusId === workflowStatusApi.HRPending;
   const ReviewLML1 =
@@ -51,32 +98,43 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
     panelParams?.statusId === workflowStatusApi.LineManagerL2Pending ||
     panelParams?.statusId === workflowStatusApi.LineManagerLevel2OnHold;
   const PanelMember =
-    panelParams?.statusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview ||
-    Number(panelParams?.statusId) === StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel;
+    panelParams?.statusId ===
+      workflowStatusApi.PendingRecruitmentHRscheduleInterview ||
+    Number(panelParams?.statusId) ===
+      StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel;
 
   const panelOptionFlag =
-    panelParams?.statusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview ||
-    Number(panelParams?.statusId) === StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel ||
+    panelParams?.statusId ===
+      workflowStatusApi.PendingRecruitmentHRscheduleInterview ||
+    Number(panelParams?.statusId) ===
+      StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel ||
     panelParams?.statusId === workflowStatusApi.HRPending;
 
-  const isEnabled = !!(panelOptionFlag);
+  const isEnabled = !!panelOptionFlag;
   const isReadOnly = !ReviewHRFlag;
 
-  const { data: paneloptions, loading: panelloading, error } = useFetchPanelMembers(
+  const {
+    data: paneloptions,
+    loading: panelloading,
+    error,
+  } = useFetchPanelMembers(
     positionDetails?.BusinessUnitCodeId ?? 0,
     positionDetails?.AssignEMail ?? "",
     panelParams?.candidateId ?? 0,
     panelParams?.statusId ?? "",
-    isEnabled
+    isEnabled,
   );
-  const { data, loading } = useFetchCandidateDetails(candidateId, panelParams?.RecruitmentID ?? 0);
+  const { data, loading } = useFetchCandidateDetails(
+    candidateId,
+    panelParams?.RecruitmentID ?? 0,
+  );
 
   // const { submitting, submit, modalState, closeModal } = useSubmitCandidateReview(onClose, handleRefresh);
   const {
     submitting,
     submit,
     modalState: submitModalState,
-    closeModal: submitCloseModal
+    closeModal: submitCloseModal,
   } = useSubmitCandidateReview(onClose, handleRefresh);
   const { modalState, showModal, closeModal } = useModalPopup();
 
@@ -84,10 +142,21 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
 
   const [decision, setDecision] = useState<DecisionType | null>(null);
   const [decisionComments, setDecisionComments] = useState("");
-  const [consultoptions, setConsultOptions] = useState<{ value: string; label: string }[]>([]);
-  const [previewFile, setPreviewFile] = useState<{ url: string; name: string } | null>(null);
+  const [consultoptions, setConsultOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
+  const [previewFile, setPreviewFile] = useState<{
+    url: string;
+    name: string;
+  } | null>(null);
 
-  const feedbackOptions = ["Excellent", "Good", "Average", "Below Average", "Poor"];
+  const feedbackOptions = [
+    "Excellent",
+    "Good",
+    "Average",
+    "Below Average",
+    "Poor",
+  ];
 
   const [HRReview, setHRReview] = useState<string>("");
   const [open, setOpen] = useState(false);
@@ -125,14 +194,14 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
   }, []);
 
   const getViewerUrl = (url: string) => {
-  if (isSharePointUrl(url)) {
-    return buildWopiUrl(url);
-  }
-  if (isPdfUrl(url)) {
-    return url;
-  }
-  return buildOfficeViewerUrl(url);
-};
+    if (isSharePointUrl(url)) {
+      return buildWopiUrl(url);
+    }
+    if (isPdfUrl(url)) {
+      return url;
+    }
+    return buildOfficeViewerUrl(url);
+  };
 
   const panelValue = useMemo(() => {
     if (!paneloptions) return null;
@@ -157,21 +226,29 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
 
     const level2Members =
       Level2?.length > 0
-        ? Level2.filter((item) => item.Role !== RoleName.InterviewPanel)
-          .map((item) => String(item.value))
+        ? Level2.filter((item) => item.Role !== RoleName.InterviewPanel).map(
+            (item) => String(item.value),
+          )
         : [];
 
     return { level1Members, level2Members, consultOption };
   }, [paneloptions]);
-
 
   useEffect(() => {
     if (!isOpen) return;
 
     if (panelValue && (PanelMember || ReviewHRFlag)) {
       setConsultOptions(panelValue.consultOption);
-      setLevel1({ panelMembers: panelValue.level1Members, startDate: data?.InterviewStartDate, endDate: data?.InterviewEndDate });
-      setLevel2({ panelMembers: panelValue.level2Members, startDate: "", endDate: "" });
+      setLevel1({
+        panelMembers: panelValue.level1Members,
+        startDate: data?.InterviewStartDate,
+        endDate: data?.InterviewEndDate,
+      });
+      setLevel2({
+        panelMembers: panelValue.level2Members,
+        startDate: "",
+        endDate: "",
+      });
     }
 
     if (!data) return;
@@ -182,9 +259,11 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
         DocumentName: DocumentFolderName.COIAttach,
       };
       const COIAttachRes = await CandidateTable.fetchCOIAttachment(COIAttchObj);
-      let COIOptions = [{ value: String(data.COIAppreve), label: data.COIAppreve }];
+      let COIOptions = [
+        { value: String(data.COIAppreve), label: data.COIAppreve },
+      ];
       setConsultOptions(COIOptions);
-      if(panelParams?.statusId != workflowStatusApi.HRPending){
+      if (panelParams?.statusId != workflowStatusApi.HRPending) {
         setCoi({
           consultedWith: data.COIAppreve ?? "",
           attachment: COIAttachRes.data,
@@ -203,7 +282,7 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
     void loadCOI();
   }, [isOpen, panelValue, data]);
 
-    const showCOI = data?.ConflictsOfInterest === "Yes";
+  const showCOI = data?.ConflictsOfInterest === "Yes";
   const showDisability = data?.disability === "Yes";
 
   const canSubmit = useMemo(() => {
@@ -213,7 +292,12 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
     if (ReviewHRFlag) {
       if (!HRReview?.trim()) return false;
       if (showCOI) {
-        if (!coi.consultedWith?.trim() || !coi.comments?.trim() || coi.attachment.length === 0) return false;
+        if (
+          !coi.consultedWith?.trim() ||
+          !coi.comments?.trim() ||
+          coi.attachment.length === 0
+        )
+          return false;
       }
     }
 
@@ -222,11 +306,27 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
     }
 
     if (PanelMember) {
-      if (panelParams?.statusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview) {
-        if (level1.panelMembers.length < 3 || !level1.startDate || !level1.endDate) return false;
+      if (
+        panelParams?.statusId ===
+        workflowStatusApi.PendingRecruitmentHRscheduleInterview
+      ) {
+        if (
+          level1.panelMembers.length < 3 ||
+          !level1.startDate ||
+          !level1.endDate
+        )
+          return false;
       }
-      if (Number(panelParams?.statusId) === StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel) {
-        if (level2.panelMembers.length < 3 || !level2.startDate || !level2.endDate) return false;
+      if (
+        Number(panelParams?.statusId) ===
+        StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+      ) {
+        if (
+          level2.panelMembers.length < 3 ||
+          !level2.startDate ||
+          !level2.endDate
+        )
+          return false;
       }
     }
 
@@ -243,23 +343,26 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
     coi,
     level1,
     level2,
-    panelParams?.statusId
+    panelParams?.statusId,
   ]);
 
-  const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const newFile: IDocFiles = {
-        name: file.name,
-        content: reader.result!,
-        type: "New",
+  const handleFileChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const newFile: IDocFiles = {
+          name: file.name,
+          content: reader.result!,
+          type: "New",
+        };
+        setCoi((prev) => ({ ...prev, attachment: [newFile] }));
       };
-      setCoi((prev) => ({ ...prev, attachment: [newFile] }));
-    };
-    reader.readAsDataURL(file);
-  }, []);
+      reader.readAsDataURL(file);
+    },
+    [],
+  );
 
   const handleClearFile = () => {
     setCoi((prev) => ({ ...prev, attachment: [] }));
@@ -267,7 +370,10 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
   };
 
   const handlePanelToggle = useCallback(
-    (setter: React.Dispatch<React.SetStateAction<InterviewScheduleForm>>, val: string) => {
+    (
+      setter: React.Dispatch<React.SetStateAction<InterviewScheduleForm>>,
+      val: string,
+    ) => {
       setter((prev) => ({
         ...prev,
         panelMembers: prev.panelMembers.includes(val)
@@ -275,12 +381,9 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
           : [...prev.panelMembers, val],
       }));
       console.log(val, "valll");
-
     },
-    []
+    [],
   );
-
-
 
   const handleSubmit = useCallback(async () => {
     if (!canSubmit) {
@@ -295,9 +398,16 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
       return;
     }
 
-
-    const L1Panel = level1?.panelMembers?.map((item) => ({ key: Number(item), text: item })) ?? [];
-    const L2Panel = level2?.panelMembers?.map((item) => ({ key: Number(item), text: item })) ?? [];
+    const L1Panel =
+      level1?.panelMembers?.map((item) => ({
+        key: Number(item),
+        text: item,
+      })) ?? [];
+    const L2Panel =
+      level2?.panelMembers?.map((item) => ({
+        key: Number(item),
+        text: item,
+      })) ?? [];
 
     await submit({
       candidateId: candidateId,
@@ -314,7 +424,17 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
       COIDetails: coi,
       StatusId: panelParams?.statusId ?? "",
     });
-  }, [data, candidateId, decision, decisionComments, coi, level1, level2, submit, canSubmit]);
+  }, [
+    data,
+    candidateId,
+    decision,
+    decisionComments,
+    coi,
+    level1,
+    level2,
+    submit,
+    canSubmit,
+  ]);
 
   if (!isOpen) return null;
 
@@ -346,14 +466,25 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                   <div className={styles.headerMeta}>
                     <div className={styles.breadcrumb}>
                       <span>Candidate selection</span>
-                      <ChevronRight size={12} className={styles.breadcrumbChevron} />
-                      <span className={styles.breadcrumbActive}>Review Profile</span>
+                      <ChevronRight
+                        size={12}
+                        className={styles.breadcrumbChevron}
+                      />
+                      <span className={styles.breadcrumbActive}>
+                        Review Profile
+                      </span>
                     </div>
-                    <h2 className={styles.headerTitle}>Candidate Profile Review</h2>
+                    <h2 className={styles.headerTitle}>
+                      Candidate Profile Review
+                    </h2>
                     <div className={styles.headerSubtitle}>
-                      <span className={styles.jobCodeBadge}>{data?.JobCode || "---"}</span>
+                      <span className={styles.jobCodeBadge}>
+                        {data?.JobCode || "---"}
+                      </span>
                       <span className={styles.headerDot} />
-                      <span className={styles.headerJobTitle}>{data?.JobTitle || "---"}</span>
+                      <span className={styles.headerJobTitle}>
+                        {data?.JobTitle || "---"}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -377,58 +508,106 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                     <div className={styles.avatar}>
                       {(data?.ApplicantName ?? "A").charAt(0)}
                     </div>
-                    <h3 className={styles.avatarName}>{data?.ApplicantName ?? "--"}</h3>
-                    <span className={styles.avatarNationality}>{data?.Nationality ?? "--"}</span>
+                    <h3 className={styles.avatarName}>
+                      {data?.ApplicantName ?? "--"}
+                    </h3>
+                    <span className={styles.avatarNationality}>
+                      {data?.Nationality ?? "--"}
+                    </span>
                   </div>
 
                   <div className={styles.infoGrid}>
-                    <InfoItem icon={<Globe size={14} />} label="Nationality" value={data?.Nationality} />
-                    <InfoItem icon={<Users size={14} />} label="Gender" value={data?.Gender} />
-                    <InfoItem icon={<FileText size={14} />} label="Qualification" value={data?.HighestQualification} />
+                    <InfoItem
+                      icon={<Globe size={14} />}
+                      label="Nationality"
+                      value={data?.Nationality}
+                    />
+                    <InfoItem
+                      icon={<Users size={14} />}
+                      label="Gender"
+                      value={data?.Gender}
+                    />
+                    <InfoItem
+                      icon={<FileText size={14} />}
+                      label="Qualification"
+                      value={data?.HighestQualification}
+                    />
 
                     <div className={styles.infoRow}>
                       <div className={styles.infoRowItem}>
-                        <InfoItem icon={<Zap size={14} />} label="Mining exp." value={data?.ExperienceMining} />
+                        <InfoItem
+                          icon={<Zap size={14} />}
+                          label="Mining exp."
+                          value={data?.ExperienceMining}
+                        />
                       </div>
                       <div className={styles.infoRowItem}>
-                        <InfoItem icon={<Zap size={14} />} label="Related exp." value={String(data?.ExperRelatedfield)} />
+                        <InfoItem
+                          icon={<Zap size={14} />}
+                          label="Related exp."
+                          value={String(data?.ExperRelatedfield)}
+                        />
                       </div>
                     </div>
 
                     <div className={styles.infoRow}>
                       <div className={styles.infoRowItem}>
-                        <InfoItem icon={<AlertTriangle size={14} />} label="Conflicts" value={data?.ConflictsOfInterest ?? "No"} />
+                        <InfoItem
+                          icon={<AlertTriangle size={14} />}
+                          label="Conflicts"
+                          value={data?.ConflictsOfInterest ?? "No"}
+                        />
                       </div>
                       <div className={styles.infoRowItem}>
-                        <InfoItem icon={<Accessibility size={14} />} label="Disability" value={data?.disability ?? "No"} />
+                        <InfoItem
+                          icon={<Accessibility size={14} />}
+                          label="Disability"
+                          value={data?.disability ?? "No"}
+                        />
                       </div>
                     </div>
 
                     <div className={styles.infoRow}>
                       <div className={styles.infoRowItem}>
-                        <InfoItem label="Tax dependents" value={String(data?.NumberOftax)} />
+                        <InfoItem
+                          label="Tax dependents"
+                          value={String(data?.NumberOftax)}
+                        />
                       </div>
                       <div className={styles.infoRowItem}>
-                        <InfoItem label="Current position" value={data?.CurrentPosition} />
+                        <InfoItem
+                          label="Current position"
+                          value={data?.CurrentPosition}
+                        />
                       </div>
                     </div>
 
-                   {data?.hasIvanhoeZijinExperience && <InfoItem label="Group / partner companies" value={data?.hasIvanhoeZijinExperience} />} 
+                    {data?.hasIvanhoeZijinExperience && (
+                      <InfoItem
+                        label="Group / partner companies"
+                        value={data?.hasIvanhoeZijinExperience}
+                      />
+                    )}
                   </div>
 
                   <div className={styles.attachmentsSection}>
                     <div className={styles.attachmentsLabel}>
-                      <FileText size={14} className={styles.attachmentsLabelIcon} /> Attachments
+                      <FileText
+                        size={14}
+                        className={styles.attachmentsLabelIcon}
+                      />{" "}
+                      Attachments
                     </div>
                     <div className={styles.attachmentsBox}>
-                      <RequiredAttachments attachments={data?.OverallAtttachment ?? []} isLoading={loading} />
+                      <RequiredAttachments
+                        attachments={data?.OverallAtttachment ?? []}
+                        isLoading={loading}
+                      />
                     </div>
                   </div>
                 </aside>
 
-
                 <div className={styles.mainContent}>
-
                   {!PanelMember && (
                     <>
                       <motion.section
@@ -438,7 +617,11 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                         initial="hidden"
                         animate="visible"
                       >
-                        <SectionHeader title="Screening Questions" subtitle="Candidate responses" accent="orange" />
+                        <SectionHeader
+                          title="Screening Questions"
+                          subtitle="Candidate responses"
+                          accent="orange"
+                        />
                         <div className={styles.questionsCard}>
                           <QuestionCard
                             index={1}
@@ -467,7 +650,6 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                     </>
                   )}
 
-
                   {showCOI && (
                     <motion.section
                       className={styles.section}
@@ -476,14 +658,24 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                       initial="hidden"
                       animate="visible"
                     >
-                      <SectionHeader title="Conflict of interest" accent="red" />
+                      <SectionHeader
+                        title="Conflict of interest"
+                        accent="red"
+                      />
                       <div className={styles.coiCard}>
                         <div className={styles.coiAlert}>
-                          <AlertTriangle className={styles.coiAlertIcon} size={20} />
+                          <AlertTriangle
+                            className={styles.coiAlertIcon}
+                            size={20}
+                          />
                           <div className={styles.coiAlertContent}>
-                            <span className={styles.coiAlertTitle}>Conflict of Interest Declared</span>
+                            <span className={styles.coiAlertTitle}>
+                              Conflict of Interest Declared
+                            </span>
                             {data?.COIReason && (
-                              <span className={styles.coiAlertReason}>{data.COIReason}</span>
+                              <span className={styles.coiAlertReason}>
+                                {data.COIReason}
+                              </span>
                             )}
                           </div>
                         </div>
@@ -491,27 +683,39 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                         <div className={styles.coiFields}>
                           <div className={styles.coiField}>
                             <label className={styles.fieldLabel}>
-                              Consulted with <span className={styles.fieldRequired}>*</span>
+                              Consulted with{" "}
+                              <span className={styles.fieldRequired}>*</span>
                             </label>
                             <div className={styles.selectWrapper}>
                               <select
                                 className={styles.selectInput}
                                 value={coi.consultedWith}
-                                onChange={(e) => setCoi((p) => ({ ...p, consultedWith: e.target.value }))}
+                                onChange={(e) =>
+                                  setCoi((p) => ({
+                                    ...p,
+                                    consultedWith: e.target.value,
+                                  }))
+                                }
                                 disabled={isReadOnly}
                               >
                                 <option value="">Select...</option>
                                 {consultoptions.map((opt) => (
-                                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                  <option key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                  </option>
                                 ))}
                               </select>
-                              <ChevronDown size={18} className={styles.selectChevron} />
+                              <ChevronDown
+                                size={18}
+                                className={styles.selectChevron}
+                              />
                             </div>
                           </div>
 
                           <div className={styles.coiField}>
                             <label className={styles.fieldLabel}>
-                              Proof of discussion <span className={styles.fieldRequired}>*</span>
+                              Proof of discussion{" "}
+                              <span className={styles.fieldRequired}>*</span>
                             </label>
                             {!isReadOnly ? (
                               coi.attachment.length === 0 ? (
@@ -524,8 +728,12 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                                     <Upload size={18} />
                                   </div>
                                   <div className={styles.uploadText}>
-                                    <span className={styles.uploadTitle}>Click to upload</span>
-                                    <span className={styles.uploadSub}>PDF, DOC, DOCX, PNG, JPG</span>
+                                    <span className={styles.uploadTitle}>
+                                      Click to upload
+                                    </span>
+                                    <span className={styles.uploadSub}>
+                                      PDF, DOC, DOCX, PNG, JPG
+                                    </span>
                                   </div>
                                 </button>
                               ) : (
@@ -535,9 +743,12 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                                       <FileText size={18} />
                                     </div>
                                     <div className={styles.fileInfo}>
-                                      <span className={styles.fileName}>{coi.attachment[0].name}</span>
+                                      <span className={styles.fileName}>
+                                        {coi.attachment[0].name}
+                                      </span>
                                       <span className={styles.fileReady}>
-                                        <CheckCircle size={12} /> Ready to submit
+                                        <CheckCircle size={12} /> Ready to
+                                        submit
                                       </span>
                                     </div>
                                   </div>
@@ -551,39 +762,45 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                                   </button>
                                 </div>
                               )
-                            ) : (
-                              coi.attachment.length > 0 ? (
-                                <div className={styles.filePreview}>
-                                  <div
-                                    className={styles.filePreviewLeft}
-                                    onClick={() => handlePreview(coi.attachment[0])}
-                                    style={{ cursor: "pointer" }}
-                                  >
-                                    <div className={styles.fileIconWrap}>
-                                      <FileText size={18} />
-                                    </div>
-                                    <div className={styles.fileInfo}>
-                                      <span className={styles.fileName}>{coi.attachment[0].name}</span>
-                                      <span className={styles.fileReady}>
-                                        <CheckCircle size={12} />
-                                        {isReadOnly ? "Click to preview" : "Ready to submit"}
-                                      </span>
-                                    </div>
+                            ) : coi.attachment.length > 0 ? (
+                              <div className={styles.filePreview}>
+                                <div
+                                  className={styles.filePreviewLeft}
+                                  onClick={() =>
+                                    handlePreview(coi.attachment[0])
+                                  }
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  <div className={styles.fileIconWrap}>
+                                    <FileText size={18} />
                                   </div>
-                                  {!isReadOnly && (
-                                    <button
-                                      type="button"
-                                      className={styles.clearFileBtn}
-                                      onClick={handleClearFile}
-                                      aria-label="Remove file"
-                                    >
-                                      <Trash2 size={16} />
-                                    </button>
-                                  )}
+                                  <div className={styles.fileInfo}>
+                                    <span className={styles.fileName}>
+                                      {coi.attachment[0].name}
+                                    </span>
+                                    <span className={styles.fileReady}>
+                                      <CheckCircle size={12} />
+                                      {isReadOnly
+                                        ? "Click to preview"
+                                        : "Ready to submit"}
+                                    </span>
+                                  </div>
                                 </div>
-                              ) : (
-                                <span className={styles.fieldLabel}>No attachment</span>
-                              )
+                                {!isReadOnly && (
+                                  <button
+                                    type="button"
+                                    className={styles.clearFileBtn}
+                                    onClick={handleClearFile}
+                                    aria-label="Remove file"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                )}
+                              </div>
+                            ) : (
+                              <span className={styles.fieldLabel}>
+                                No attachment
+                              </span>
                             )}
 
                             <input
@@ -598,7 +815,8 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
 
                         <div className={styles.coiTextareaWrap}>
                           <label className={styles.fieldLabel}>
-                            Reason / Comments <span className={styles.fieldRequired}>*</span>
+                            Reason / Comments{" "}
+                            <span className={styles.fieldRequired}>*</span>
                           </label>
                           <div className={styles.coiTextareaRelative}>
                             <textarea
@@ -606,16 +824,22 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                               maxLength={256}
                               placeholder="Enter your comments (max 256 characters)..."
                               value={coi.comments}
-                              onChange={(e) => setCoi((p) => ({ ...p, comments: e.target.value }))}
+                              onChange={(e) =>
+                                setCoi((p) => ({
+                                  ...p,
+                                  comments: e.target.value,
+                                }))
+                              }
                               readOnly={isReadOnly}
                             />
-                            <span className={styles.charCount}>{coi.comments.length}/256</span>
+                            <span className={styles.charCount}>
+                              {coi.comments.length}/256
+                            </span>
                           </div>
                         </div>
                       </div>
                     </motion.section>
                   )}
-
 
                   {showDisability && (
                     <motion.section
@@ -628,13 +852,21 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                       <SectionHeader title="Disability" accent="blue" />
                       <div className={styles.disabilityCard}>
                         <div className={styles.disabilityField}>
-                          <span className={styles.disabilityFieldLabel}>Disability status</span>
-                          <span className={styles.disabilityFieldValue}>{data?.disability ?? "--"}</span>
+                          <span className={styles.disabilityFieldLabel}>
+                            Disability status
+                          </span>
+                          <span className={styles.disabilityFieldValue}>
+                            {data?.disability ?? "--"}
+                          </span>
                         </div>
                         {data?.disability && (
                           <div className={styles.disabilityDivider}>
-                            <span className={styles.disabilityFieldLabel}>Comments</span>
-                            <span className={styles.disabilityReason}>{data.disabilityReason}</span>
+                            <span className={styles.disabilityFieldLabel}>
+                              Comments
+                            </span>
+                            <span className={styles.disabilityReason}>
+                              {data.disabilityReason}
+                            </span>
                           </div>
                         )}
                       </div>
@@ -649,10 +881,14 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                     animate="visible"
                   >
                     <div className={styles.hrFeedbackCard}>
-                      <SectionHeader title="HR Review Feedback" accent="green" />
+                      <SectionHeader
+                        title="HR Review Feedback"
+                        accent="green"
+                      />
                       <div className={styles.hrFeedbackFieldWrap}>
                         <label className={styles.fieldLabel}>
-                          Review Profile Feedback - HR <span className={styles.fieldRequired}>*</span>
+                          Review Profile Feedback - HR{" "}
+                          <span className={styles.fieldRequired}>*</span>
                         </label>
                         <div className={`${styles.dropdownWrapper} dropdown`}>
                           <div
@@ -660,7 +896,13 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
               ${isReadOnly ? styles.dropdownDisabled : ""}`}
                             onClick={() => !isReadOnly && setOpen(!open)}
                           >
-                            <span className={HRReview ? styles.dropdownSelected : styles.dropdownPlaceholder}>
+                            <span
+                              className={
+                                HRReview
+                                  ? styles.dropdownSelected
+                                  : styles.dropdownPlaceholder
+                              }
+                            >
                               {HRReview || "Select feedback"}
                             </span>
                             <ChevronDown
@@ -679,7 +921,10 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                                 {feedbackOptions.map((option, index) => (
                                   <div
                                     key={index}
-                                    onClick={() => { setHRReview(option); setOpen(false); }}
+                                    onClick={() => {
+                                      setHRReview(option);
+                                      setOpen(false);
+                                    }}
                                     className={`${styles.dropdownOption}${HRReview === option ? ` ${styles.dropdownOptionActive}` : ""}`}
                                   >
                                     {option}
@@ -702,23 +947,33 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                         initial="hidden"
                         animate="visible"
                       >
-                        <SectionHeader title="Interview schedule - Level 1" accent="blue" />
+                        <SectionHeader
+                          title="Interview schedule - Level 1"
+                          accent="blue"
+                        />
                         <InterviewScheduleInput
                           form={level1}
                           onChange={setLevel1}
-                          panelOptions={(paneloptions?.Level1 ?? []).map((item) => ({
-                            value: String(item.value),
-                            label: item.label,
-                          }))}
-                          onToggleMember={(val) => handlePanelToggle(setLevel1, val)}
+                          panelOptions={(paneloptions?.Level1 ?? []).map(
+                            (item) => ({
+                              value: String(item.value),
+                              label: item.label,
+                            }),
+                          )}
+                          onToggleMember={(val) =>
+                            handlePanelToggle(setLevel1, val)
+                          }
                           minPanelCount={3}
-                          Disable = {Number(panelParams?.statusId) === StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel}
-                          
+                          Disable={
+                            Number(panelParams?.statusId) ===
+                            StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+                          }
                         />
                       </motion.section>
                     </>
                   )}
-                  {Number(panelParams?.statusId) === StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel && (
+                  {Number(panelParams?.statusId) ===
+                    StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel && (
                     <>
                       <motion.section
                         className={styles.section}
@@ -727,17 +982,24 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                         initial="hidden"
                         animate="visible"
                       >
-                        <SectionHeader title="Interview schedule - Level 2" accent="green" />
+                        <SectionHeader
+                          title="Interview schedule - Level 2"
+                          accent="green"
+                        />
                         <InterviewScheduleInput
                           form={level2}
                           onChange={setLevel2}
-                          panelOptions={(paneloptions?.Level2 ?? []).map((item) => ({
-                            value: String(item.value),
-                            label: item.label,
-                          }))}
-                          onToggleMember={(val) => handlePanelToggle(setLevel2, val)}
+                          panelOptions={(paneloptions?.Level2 ?? []).map(
+                            (item) => ({
+                              value: String(item.value),
+                              label: item.label,
+                            }),
+                          )}
+                          onToggleMember={(val) =>
+                            handlePanelToggle(setLevel2, val)
+                          }
                           minPanelCount={3}
-                          Disable = {false}
+                          Disable={false}
                         />
                       </motion.section>
                     </>
@@ -757,9 +1019,12 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                             <Zap size={28} fill="currentColor" />
                           </div>
                           <div className={styles.lmDecisionTitleWrap}>
-                            <h3 className={styles.lmDecisionTitle}>Do you wish to select this candidate?</h3>
+                            <h3 className={styles.lmDecisionTitle}>
+                              Do you wish to select this candidate?
+                            </h3>
                             <p className={styles.lmDecisionSubtitle}>
-                              Please review the candidate and provide your final decision.
+                              Please review the candidate and provide your final
+                              decision.
                             </p>
                           </div>
                         </div>
@@ -767,44 +1032,71 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                         <div className={styles.decisionBtnsRow}>
                           <button
                             type="button"
-                            className={`${styles.decisionBtn} ${decision === "YES" ? styles.decisionBtnYesActive : styles.decisionBtnYesInactive
-                              }`}
+                            className={`${styles.decisionBtn} ${
+                              decision === "YES"
+                                ? styles.decisionBtnYesActive
+                                : styles.decisionBtnYesInactive
+                            }`}
                             onClick={() => setDecision("YES")}
                           >
                             <CheckCircle
                               size={36}
                               strokeWidth={2}
-                              className={decision === "YES" ? styles.iconWhite : styles.iconGreen}
+                              className={
+                                decision === "YES"
+                                  ? styles.iconWhite
+                                  : styles.iconGreen
+                              }
                             />
-                            <span className={styles.decisionBtnLabel}>YES, SELECT</span>
+                            <span className={styles.decisionBtnLabel}>
+                              YES, SELECT
+                            </span>
                           </button>
 
                           <button
                             type="button"
-                            className={`${styles.decisionBtn} ${decision === "NO" ? styles.decisionBtnNoActive : styles.decisionBtnNoInactive
-                              }`}
+                            className={`${styles.decisionBtn} ${
+                              decision === "NO"
+                                ? styles.decisionBtnNoActive
+                                : styles.decisionBtnNoInactive
+                            }`}
                             onClick={() => setDecision("NO")}
                           >
                             <XCircle
                               size={36}
                               strokeWidth={2}
-                              className={decision === "NO" ? styles.iconWhite : styles.iconRed}
+                              className={
+                                decision === "NO"
+                                  ? styles.iconWhite
+                                  : styles.iconRed
+                              }
                             />
-                            <span className={styles.decisionBtnLabel}>NO, REJECT</span>
+                            <span className={styles.decisionBtnLabel}>
+                              NO, REJECT
+                            </span>
                           </button>
 
                           <button
                             type="button"
-                            className={`${styles.decisionBtn} ${decision === "HOLD" ? styles.decisionBtnHoldActive : styles.decisionBtnHoldInactive
-                              }`}
+                            className={`${styles.decisionBtn} ${
+                              decision === "HOLD"
+                                ? styles.decisionBtnHoldActive
+                                : styles.decisionBtnHoldInactive
+                            }`}
                             onClick={() => setDecision("HOLD")}
                           >
                             <Activity
                               size={36}
                               strokeWidth={2}
-                              className={decision === "HOLD" ? styles.iconWhite : styles.iconAmber}
+                              className={
+                                decision === "HOLD"
+                                  ? styles.iconWhite
+                                  : styles.iconAmber
+                              }
                             />
-                            <span className={styles.decisionBtnLabel}>ON HOLD</span>
+                            <span className={styles.decisionBtnLabel}>
+                              ON HOLD
+                            </span>
                           </button>
                         </div>
                       </div>
@@ -824,7 +1116,10 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                       <SectionHeader title="Comments" accent="blue" />
                       <div className={styles.lmCommentsFieldWrap}>
                         <label className={styles.lmCommentsLabel}>
-                          <span className={styles.lmCommentsLabelText}> decision justification / comments</span>{" "}
+                          <span className={styles.lmCommentsLabelText}>
+                            {" "}
+                            decision justification / comments
+                          </span>{" "}
                           <span className={styles.lmCommentsRequired}>*</span>
                         </label>
                         <textarea
@@ -832,7 +1127,7 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                           placeholder="Provide your final decision rationale..."
                           value={decisionComments}
                           onChange={(e) => setDecisionComments(e.target.value)}
-                          disabled = {submitting}
+                          disabled={submitting}
                         />
                       </div>
                     </div>
@@ -841,13 +1136,20 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
               </div>
 
               <footer className={styles.footer}>
-                <button type="button" className={styles.cancelBtn} onClick={onClose}>
+                <button
+                  type="button"
+                  className={styles.cancelBtn}
+                  onClick={onClose}
+                >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  className={`${styles.submitBtn} ${canSubmit && !submitting ? styles.submitBtnActive : styles.submitBtnDisabled
-                    }`}
+                  className={`${styles.submitBtn} ${
+                    canSubmit && !submitting
+                      ? styles.submitBtnActive
+                      : styles.submitBtnDisabled
+                  }`}
                   disabled={!canSubmit || submitting}
                   onClick={handleSubmit}
                 >
@@ -869,14 +1171,8 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
                 </div>
               )}
 
-              <ModalPopup
-                {...modalState}
-                onClose={closeModal}
-              />
-              <ModalPopup
-                {...submitModalState}
-                onClose={submitCloseModal}
-              />
+              <ModalPopup {...modalState} onClose={closeModal} />
+              <ModalPopup {...submitModalState} onClose={submitCloseModal} />
             </motion.div>
           </motion.div>
         </AnimatePresence>
@@ -900,7 +1196,9 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
               <div className={styles.previewHeader}>
                 <div className={styles.previewHeaderLeft}>
                   <FileText size={18} />
-                  <span className={styles.previewFileName}>{previewFile.name}</span>
+                  <span className={styles.previewFileName}>
+                    {previewFile.name}
+                  </span>
                 </div>
                 <button
                   type="button"
@@ -914,7 +1212,7 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
               {/* iframe */}
               <div className={styles.previewBody}>
                 <iframe
-                  src={getViewerUrl(previewFile.url)}
+                  src={previewFile.url}
                   title={previewFile.name}
                   className={styles.previewIframe}
                 />
@@ -924,7 +1222,5 @@ export const ShowCandidateDetailsPopup: React.FC<ShowCandidateDetailsPopupProps>
         )}
       </AnimatePresence>
     </>
-
-
   );
 };

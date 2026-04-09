@@ -62,6 +62,20 @@ export interface IselectedPosition {
   DotAfricaCF: IDocFiles;
 
   NationalityCode: string;
+
+  PreChecklist: IPreChecklist;
+}
+
+export interface IPreChecklist {
+  BackgroundChecks: boolean;
+  SignedOfferLetterVerified: boolean;
+  VisaProcess: boolean;
+  AccommodationBooked: boolean;
+  SignedEmploymentContract: boolean;
+  WorkPermitApproved: boolean;
+  TravelProcess: boolean;
+  MedicalCheckStatus: boolean;
+  ReadyForOnboarding: boolean;
 }
 
 export interface PositionFrameworkProps {

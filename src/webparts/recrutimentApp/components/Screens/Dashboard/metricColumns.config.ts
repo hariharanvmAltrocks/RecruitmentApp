@@ -418,6 +418,7 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
       case RoleID.LineManager:
         roleColumns = [
           buildCol(MatricID.AdvertReviewLM, { showArrow: true }),
+          buildCol(MatricID.InterviewQuestionLM, { showArrow: true }),
           buildCol(MatricID.ReviewProfileLM, {
             showArrow: true,
             externalApi: {
@@ -429,7 +430,6 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
               ],
             },
           }),
-          buildCol(MatricID.InterviewQuestionLM, { showArrow: true }),
           buildCol(MatricID.EvalutionLM, { showArrow: true }),
           // buildCol(MatricID.ReviewScoreCard, { showArrow: false }),
           buildCol(MatricID.interviewSchedule, { showArrow: false }),
@@ -444,8 +444,8 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
       case RoleID.HOD:
         roleColumns = [
           buildCol(MatricID.AdvertReviewHOD, { showArrow: true }),
-          buildCol(MatricID.EvalutionHOD, { showArrow: true }),
           buildCol(MatricID.ReviewScoreCard, { showArrow: true }),
+          buildCol(MatricID.EvalutionHOD, { showArrow: true }),
           buildCol(MatricID.interviewSchedule, { showArrow: false }),
           // buildCol(MatricID.interviewTracker, { showArrow: false }),
           buildCol(MatricID.OfferRelease, { showArrow: false }),
@@ -484,7 +484,9 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
     }
     if (roles.includes(RoleID.LineManager) && roles.includes(RoleID.HOD)) {
       roleColumns = roleColumns.filter(
-        (col) => col.id !== MatricID.AdvertReviewHOD,
+        (col) =>
+          col.id !== MatricID.AdvertReviewHOD &&
+          col.id !== MatricID.EvalutionHOD,
       );
     }
     columns.push(...roleColumns);
@@ -535,6 +537,7 @@ const StatusFilter = (
   status: number | number[],
   columnName?: string,
   emailId?: string,
+  labourHire?: string,
 ) => {
   const filters: any[] = [
     {
@@ -557,6 +560,14 @@ const StatusFilter = (
       FilterKey: columnName,
       Operator: "eq",
       FilterValue: emailId,
+    });
+  }
+
+  if (labourHire) {
+    filters.push({
+      FilterKey: "IsLabourHire",
+      Operator: "eq",
+      FilterValue: labourHire === Choices.Yes ? Choices.Yes : Choices.No,
     });
   }
 
@@ -763,6 +774,7 @@ export const MetricQueryConfig = (
       ],
       "RecruitmentHR",
       EmailId,
+      Choices.Yes,
     ),
   ),
 
@@ -782,6 +794,7 @@ export const MetricQueryConfig = (
       ],
       "RecruitmentHR",
       EmailId,
+      Choices.No,
     ),
   ),
 
@@ -971,9 +984,9 @@ export const getRoleBasedFilters = (
   });
 
   if (roles.includes(RoleID.LineManager) && roles.includes(RoleID.HOD)) {
-    result = result.filter(
-      (item) => item.StateValue !== MatricID.AdvertReviewHOD,
-    );
+    const removeStates = [MatricID.AdvertReviewHOD, MatricID.EvalutionHOD];
+
+    result = result.filter((item) => !removeStates.includes(item.StateValue));
   }
 
   return result;
@@ -990,6 +1003,11 @@ export const priorityValues = (matrixs: Metric[]): PriorityData[] => {
 
   return matrixs
     .filter((m) => m.showArrow)
+    .sort((a, b) => {
+      if (a.value === 0 && b.value > 0) return 1;
+      if (a.value > 0 && b.value === 0) return -1;
+      return b.value - a.value;
+    })
     .map((m) => ({
       name: m.label,
       value: m.value,

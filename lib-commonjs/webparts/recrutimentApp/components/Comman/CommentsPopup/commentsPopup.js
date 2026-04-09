@@ -36,6 +36,14 @@ var ViewCommentsModal = function (_a) {
     var isOpen = _a.isOpen, onClose = _a.onClose, comments = _a.comments, _b = _a.title, title = _b === void 0 ? "View Comments" : _b, _c = _a.isLoading, isLoading = _c === void 0 ? false : _c;
     var _d = (0, react_1.useState)(false), isClosing = _d[0], setIsClosing = _d[1];
     var modalRef = (0, react_1.useRef)(null);
+    var handleClose = function () {
+        setIsClosing(true);
+        // Match the CSS animation duration (0.3s)
+        setTimeout(function () {
+            onClose();
+            setIsClosing(false);
+        }, 300);
+    };
     // Handle Entry / Exit states
     (0, react_1.useEffect)(function () {
         if (isOpen) {
@@ -49,7 +57,7 @@ var ViewCommentsModal = function (_a) {
             return;
         var handleKeyDown = function (e) {
             if (e.key === "Escape") {
-                handleClose();
+                void handleClose();
                 return;
             }
             // Basic focus trap
@@ -80,14 +88,6 @@ var ViewCommentsModal = function (_a) {
         (_a = modalRef.current) === null || _a === void 0 ? void 0 : _a.focus();
         return function () { return window.removeEventListener("keydown", handleKeyDown); };
     }, [isOpen, isClosing]);
-    var handleClose = function () {
-        setIsClosing(true);
-        // Match the CSS animation duration (0.3s)
-        setTimeout(function () {
-            onClose();
-            setIsClosing(false);
-        }, 300);
-    };
     var handleBackdropClick = function (e) {
         // Only close icon closes the popup. Do not close on backdrop click.
         e.stopPropagation();

@@ -1286,7 +1286,7 @@ export default class CandidateService implements ICandidateService {
       const results: any[] = [];
 
       payloads.interviewPanelL2.forEach((item) => {
-        batchedSP.web.lists
+        void batchedSP.web.lists
           .getByTitle(ListNames.HRMSInterviewPanelDetails)
           .items.add({
             RecruitmentIDId: item.RecruitmentIDId,
@@ -1297,7 +1297,7 @@ export default class CandidateService implements ICandidateService {
           .then((res) => results.push(res));
       });
 
-      batchedSP.web.lists
+      void batchedSP.web.lists
         .getByTitle(ListNames.HRMSRecruitmentCandidatePersonalDetails)
         .items.getById(payloads.candidateUpdate.ID)
         .update({

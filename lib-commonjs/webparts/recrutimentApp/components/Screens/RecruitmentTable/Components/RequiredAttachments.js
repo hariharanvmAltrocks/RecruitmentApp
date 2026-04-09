@@ -19,7 +19,9 @@ var getViewerUrl = function (url) {
     }
     return (0, reusehooks_1.buildOfficeViewerUrl)(url);
 };
-var getVersionUrl = function (version) { return version.fileUrl || version.content || ""; };
+var getVersionUrl = function (version) {
+    return version.fileUrl || version.content || "";
+};
 var RequiredAttachments = function (_a) {
     var attachments = _a.attachments, isLoading = _a.isLoading;
     var _b = (0, react_1.useState)(null), viewerFile = _b[0], setViewerFile = _b[1];
@@ -55,12 +57,15 @@ var RequiredAttachments = function (_a) {
                     react_1.default.createElement("div", { className: "advert-review-drawer__attachment-tag" }, "Recruitment"))),
             react_1.default.createElement("div", { className: "advert-review-drawer__attachment-body" }, doc.versions.map(function (version, idx) {
                 var fileUrl = getVersionUrl(version);
-                return (react_1.default.createElement("div", { key: "".concat(version.lang, "-").concat(idx), className: "advert-review-drawer__attachment-version", onClick: function () { return fileUrl && openViewer({
-                        url: fileUrl,
-                        title: doc.title,
-                        label: version.label,
-                        lang: version.lang,
-                    }); }, onKeyDown: function (event) {
+                return (react_1.default.createElement("div", { key: "".concat(version.lang, "-").concat(idx), className: "advert-review-drawer__attachment-version", onClick: function () {
+                        return fileUrl &&
+                            openViewer({
+                                url: fileUrl,
+                                title: doc.title,
+                                label: version.label,
+                                lang: version.lang,
+                            });
+                    }, onKeyDown: function (event) {
                         if (!fileUrl) {
                             return;
                         }
@@ -78,8 +83,11 @@ var RequiredAttachments = function (_a) {
                     react_1.default.createElement("div", { className: "advert-review-drawer__attachment-info" },
                         react_1.default.createElement("span", { className: "advert-review-drawer__attachment-label advert-review-drawer__attachment-label--link", 
                             // onClick={() => fileUrl && window.open(fileUrl, "_blank")}
-                            role: "button", "aria-disabled": !fileUrl, style: { cursor: fileUrl ? "pointer" : "not-allowed", opacity: fileUrl ? 1 : 0.5 } }, (0, reusehooks_1.truncateText)(version.label, 20))),
-                    react_1.default.createElement(lucide_react_1.Download, { size: 12 })));
+                            role: "button", "aria-disabled": !fileUrl, style: {
+                                cursor: fileUrl ? "pointer" : "not-allowed",
+                                opacity: fileUrl ? 1 : 0.5,
+                            } }, (0, reusehooks_1.truncateText)(version.label, 20))),
+                    react_1.default.createElement(lucide_react_1.EyeIcon, { size: 12 })));
             })))); });
     }, [attachments, openViewer]);
     return (react_1.default.createElement(react_1.default.Fragment, null,

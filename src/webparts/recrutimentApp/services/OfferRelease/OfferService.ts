@@ -1,7 +1,11 @@
-import { IselectedPosition } from "../../components/Screens/OfferRelease/ReviewDocument/PositionFrame";
+import {
+  IPreChecklist,
+  IselectedPosition,
+} from "../../components/Screens/OfferRelease/ReviewDocument/PositionFrame";
 import { ApiResponse } from "../../models/apimodels";
 import { initiateLaborHire, UploadDocument } from "../../models/Icareerportal";
 import {
+  ActionName,
   BGVDocumentName,
   DocumentFolderName,
   RoleName,
@@ -144,6 +148,45 @@ export default class OfferService implements IOfferService {
         FilePath: `${DocumentLibraray.HRMSCareerPortalCandidateCV}/${careerRes?.data?.[0]?.profileID}/${JobRequestID}/${DocumentFolderName.BackgroundVerification}/${"ConsentForm"}`,
       })) as IDocFiles[];
 
+      let PreOnboarding: IPreChecklist = {
+        BackgroundChecks:
+          candidatePersonal?.BackgroundChecks === ActionName.Completed
+            ? true
+            : false,
+        SignedOfferLetterVerified:
+          candidatePersonal?.SignedOfferLetterVerified === ActionName.Completed
+            ? true
+            : false,
+        VisaProcess:
+          candidatePersonal?.VisaProcess === ActionName.Completed
+            ? true
+            : false,
+        AccommodationBooked:
+          candidatePersonal?.AccommodationBooked === ActionName.Completed
+            ? true
+            : false,
+        SignedEmploymentContract:
+          candidatePersonal?.SignedEmploymentContract === ActionName.Completed
+            ? true
+            : false,
+        WorkPermitApproved:
+          candidatePersonal?.WorkPermitApproved === ActionName.Completed
+            ? true
+            : false,
+        TravelProcess:
+          candidatePersonal?.TravelProcess === ActionName.Completed
+            ? true
+            : false,
+        MedicalCheckStatus:
+          candidatePersonal?.MedicalCheckStatus === ActionName.Completed
+            ? true
+            : false,
+        ReadyForOnboarding:
+          candidatePersonal?.ReadyforOnboarding === ActionName.Completed
+            ? true
+            : false,
+      };
+
       const mappedData: IselectedPosition = {
         ID: SelectedCandidateID,
         CandidateID: CandidateID,
@@ -191,6 +234,7 @@ export default class OfferService implements IOfferService {
 
         patersonGrade: recruitmentPosition?.PatersonGrade?.PatersonGrade,
         drcGrade: recruitmentPosition?.DRCGrade?.DRCGrade,
+        PreChecklist: PreOnboarding,
       };
 
       return {
@@ -650,4 +694,54 @@ export default class OfferService implements IOfferService {
       };
     }
   }
+
+  UpdateStatusCandidatelist = async (
+    UpdateParams: any,
+  ): Promise<ApiResponse<any>> => {
+    let response: any;
+    try {
+      response = await SPServices.SPUpdateItem({
+        Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        RequestJSON: UpdateParams,
+        ID: UpdateParams.ID,
+      });
+
+      return {
+        data: response,
+        status: 200,
+        message: "Candidate details fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error during file replacement process:", error);
+      return {
+        data: response,
+        status: 500,
+        message: `Error during file replacement`,
+      };
+    }
+  };
+
+  fetchPreChecklist = async (UpdateParams: any): Promise<ApiResponse<any>> => {
+    let response: any;
+    try {
+      response = await SPServices.SPUpdateItem({
+        Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        RequestJSON: UpdateParams,
+        ID: UpdateParams.ID,
+      });
+
+      return {
+        data: response,
+        status: 200,
+        message: "Candidate details fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error during file replacement process:", error);
+      return {
+        data: response,
+        status: 500,
+        message: `Error during file replacement`,
+      };
+    }
+  };
 }

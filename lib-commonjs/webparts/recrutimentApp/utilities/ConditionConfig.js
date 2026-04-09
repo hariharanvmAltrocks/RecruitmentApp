@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EmployeementCategory = exports.ButtonAction = exports.DotTooltipStatus = exports.StatusBarValue = exports.DotAfricaStatus = exports.ExternalUserType = exports.DisplayFolderName = exports.BGVDocumentName = exports.DocumentFolderName = exports.RecuritmentHRMsg = exports.EmailTemplateCodes = exports.ActionID = exports.InterviewLevels = exports.QuestionCreatedBy = exports.InterviewLevel = exports.TabNames = exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
+exports.ActionName = exports.EmployeementCategory = exports.ButtonAction = exports.DotTooltipStatus = exports.StatusBarValue = exports.DotAfricaStatus = exports.ExternalUserType = exports.DisplayFolderName = exports.BGVDocumentName = exports.DocumentFolderName = exports.RecuritmentHRMsg = exports.EmailTemplateCodes = exports.ActionID = exports.InterviewLevels = exports.QuestionCreatedBy = exports.InterviewLevel = exports.TabNames = exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
 exports.MatricID = {
     AssignHr: 1,
     UploadONEM: 2,
@@ -398,5 +398,9 @@ exports.ButtonAction = {
 exports.EmployeementCategory = {
     KCSAEmployee: "KCSA Employee",
     LaborhireContractor: "Labour hire/Contractor",
+};
+exports.ActionName = {
+    Completed: "Completed",
+    Pending: "Pending",
 };
 //# sourceMappingURL=ConditionConfig.js.map

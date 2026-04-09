@@ -142,7 +142,7 @@ export const useConfirmAssignment = (
               onConfirm: () => {
                 closeModal();
                 handleClosePopup();
-                navigate("/RecruitmentTable");
+                navigate("/Dashboard");
                 handleRefresh();
               },
             });

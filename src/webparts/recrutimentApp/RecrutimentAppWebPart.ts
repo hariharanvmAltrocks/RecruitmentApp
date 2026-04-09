@@ -23,6 +23,10 @@ import GraphService from "./services/GraphService/GraphService";
 import "./External/style.css";
 import "./External/tailwind.css";
 
+//"8cdd0eee-7d80-45b6-a648-17a29794887a"
+
+//"948776f3-3e59-4b25-919c-eb64b0237dcb",
+
 export interface IRecrutimentAppWebPartProps {
   description: string;
 }
@@ -49,9 +53,22 @@ export default class RecrutimentAppWebPart extends BaseClientSideWebPart<IRecrut
 
   private _sp: SPFI = new SPFI();
 
+  private loadFont() {
+    const id = "inter-font";
+    if (!document.getElementById(id)) {
+      const link = document.createElement("link");
+      link.id = id;
+      link.rel = "stylesheet";
+      link.href =
+        "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap";
+
+      document.head.appendChild(link);
+    }
+  }
+
   protected async onInit(): Promise<void> {
     await super.onInit();
-
+    this.loadFont();
     initSP(this.context);
     const graphClient = await this.context.msGraphClientFactory.getClient("3");
     GraphService.setGraphClient(graphClient);
@@ -134,7 +151,7 @@ export default class RecrutimentAppWebPart extends BaseClientSideWebPart<IRecrut
         style.id = styleId;
         style.innerHTML = `
         * {
-          font-family: "Inter", "Segoe UI", sans-serif !important;
+          font-family: "Inter", ui-sans-serif, system-ui, sans-seri !important;
         }
       `;
         document.head.appendChild(style);

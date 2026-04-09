@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { FileText, FileUpIcon, X } from "lucide-react";
 import "./UploadDocument.scss";
 
@@ -53,7 +59,7 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
   required = false,
   onChange,
   hasError = false,
-  disabled = false
+  disabled = false,
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [files, setFiles] = useState<UploadedFile[]>([]);
@@ -63,7 +69,7 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
 
   const acceptedList = useMemo(
     () => parseAcceptedFormats(acceptedFormats),
-    [acceptedFormats]
+    [acceptedFormats],
   );
   const maxBytes = useMemo(() => maxFileSizeMB * 1024 * 1024, [maxFileSizeMB]);
 
@@ -71,7 +77,7 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
     () => () => {
       files.forEach((f) => URL.revokeObjectURL(f.previewUrl));
     },
-    [files]
+    [files],
   );
 
   const updateFiles = useCallback(
@@ -79,14 +85,17 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
       setFiles(nextFiles);
       onChange?.(nextFiles);
     },
-    [onChange]
+    [onChange],
   );
 
-  const buildUploadedFile = useCallback(async (file: File): Promise<UploadedFile> => {
-    const fileContent = await file.arrayBuffer();
-    const previewUrl = URL.createObjectURL(file);
-    return { name: file.name, file, fileContent, previewUrl };
-  }, []);
+  const buildUploadedFile = useCallback(
+    async (file: File): Promise<UploadedFile> => {
+      const fileContent = await file.arrayBuffer();
+      const previewUrl = URL.createObjectURL(file);
+      return { name: file.name, file, fileContent, previewUrl };
+    },
+    [],
+  );
 
   const processFiles = useCallback(
     async (fileList: FileList) => {
@@ -104,7 +113,9 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
           return;
         }
         if (file.size > maxBytes) {
-          nextErrors.push(`${file.name}: File size exceeds ${maxFileSizeMB} MB.`);
+          nextErrors.push(
+            `${file.name}: File size exceeds ${maxFileSizeMB} MB.`,
+          );
           return;
         }
         validFiles.push(file);
@@ -115,7 +126,15 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
       setErrors(nextErrors);
       updateFiles(nextFiles);
     },
-    [acceptedList, buildUploadedFile, files, maxBytes, maxFileSizeMB, multiple, updateFiles]
+    [
+      acceptedList,
+      buildUploadedFile,
+      files,
+      maxBytes,
+      maxFileSizeMB,
+      multiple,
+      updateFiles,
+    ],
   );
 
   const handleInputChange = useCallback(
@@ -125,7 +144,7 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
       await processFiles(e.target.files);
       if (inputRef.current) inputRef.current.value = "";
     },
-    [processFiles]
+    [processFiles],
   );
 
   const handleRemove = useCallback(
@@ -136,7 +155,7 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
       updateFiles(next);
       setTouched(true);
     },
-    [files, updateFiles]
+    [files, updateFiles],
   );
 
   const handleClearAll = useCallback(() => {
@@ -154,12 +173,15 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
         await processFiles(e.dataTransfer.files);
       }
     },
-    [processFiles]
+    [processFiles],
   );
 
   const requiredError = useMemo(
-    () => (required && touched && files.length === 0 ? "This field is required." : null),
-    [required, touched, files.length]
+    () =>
+      required && touched && files.length === 0
+        ? "This field is required."
+        : null,
+    [required, touched, files.length],
   );
 
   return (
@@ -172,11 +194,16 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
             {required && <span className="upload-document__required">*</span>}
           </div>
           <div className="upload-document__hint">
-            {multiple ? "Upload one or more files" : "Upload a single file"} — Max {maxFileSizeMB} MB
+            {multiple ? "Upload one or more files" : "Upload a single file"} —
+            Max {maxFileSizeMB} MB
           </div>
         </div>
-        {files.length > 0 && (
-          <button type="button" className="upload-document__clear" onClick={handleClearAll}>
+        {files.length > 1 && (
+          <button
+            type="button"
+            className="upload-document__clear"
+            onClick={handleClearAll}
+          >
             Clear all
           </button>
         )}
@@ -192,7 +219,10 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
           .filter(Boolean)
           .join(" ")}
         onClick={() => inputRef.current?.click()}
-        onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsDragging(true);
+        }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
         role="button"
@@ -207,8 +237,12 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
         <div className="upload-document__icon">
           <FileUpIcon size={22} />
         </div>
-        <div className="upload-document__title">Drop files here or click to browse</div>
-        <div className="upload-document__formats">Accepted: {acceptedFormats}</div>
+        <div className="upload-document__title">
+          Drop files here or click to browse
+        </div>
+        <div className="upload-document__formats">
+          Accepted: {acceptedFormats}
+        </div>
       </div>
 
       <input
@@ -248,7 +282,10 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
           <div className="upload-document__empty">No files selected yet.</div>
         ) : (
           files.map((file, index) => (
-            <div key={`${file.name}-${index}`} className="upload-document__item">
+            <div
+              key={`${file.name}-${index}`}
+              className="upload-document__item"
+            >
               <div className="upload-document__file">
                 <FileText size={16} />
                 <span>{file.name}</span>

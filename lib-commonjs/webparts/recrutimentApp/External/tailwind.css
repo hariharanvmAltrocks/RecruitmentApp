@@ -176,21 +176,12 @@
   margin-right: auto !important;
 }
 
-.my-\[20px\] {
-  margin-top: 20px !important;
-  margin-bottom: 20px !important;
-}
-
 .mb-2 {
   margin-bottom: 0.5rem !important;
 }
 
 .mb-6 {
   margin-bottom: 1.5rem !important;
-}
-
-.mb-\[10px\] {
-  margin-bottom: 10px !important;
 }
 
 .ml-6 {
@@ -265,20 +256,8 @@
   height: 2rem !important;
 }
 
-.h-\[68px\] {
-  height: 68px !important;
-}
-
-.h-\[76px\] {
-  height: 76px !important;
-}
-
 .h-\[80vh\] {
   height: 80vh !important;
-}
-
-.h-\[90vh\] {
-  height: 90vh !important;
 }
 
 .h-full {
@@ -311,18 +290,6 @@
 
 .w-8 {
   width: 2rem !important;
-}
-
-.w-\[15\%\] {
-  width: 15% !important;
-}
-
-.w-\[84\%\] {
-  width: 84% !important;
-}
-
-.w-\[90\%\] {
-  width: 90% !important;
 }
 
 .w-full {
@@ -421,10 +388,6 @@
   border-color: rgb(241 245 249/var(--tw-divide-opacity, 1)) !important;
 }
 
-.self-center {
-  align-self: center !important;
-}
-
 .overflow-hidden {
   overflow: hidden !important;
 }
@@ -457,19 +420,6 @@
   border-radius: 0.75rem !important;
 }
 
-.rounded-r-\[30px\] {
-  border-top-right-radius: 30px !important;
-  border-bottom-right-radius: 30px !important;
-}
-
-.rounded-br-\[14px\] {
-  border-bottom-right-radius: 14px !important;
-}
-
-.rounded-tr-\[14px\] {
-  border-top-right-radius: 14px !important;
-}
-
 .border {
   border-width: 1px !important;
 }
@@ -495,11 +445,6 @@
 .border-slate-200 {
   --tw-border-opacity: 1 !important;
   border-color: rgb(226 232 240/var(--tw-border-opacity, 1)) !important;
-}
-
-.bg-\[\#597b98\] {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(89 123 152/var(--tw-bg-opacity, 1)) !important;
 }
 
 .bg-amber-100 {
@@ -623,11 +568,6 @@
   fill: #facc15 !important;
 }
 
-.object-contain {
-  -o-object-fit: contain !important;
-  object-fit: contain !important;
-}
-
 .p-1 {
   padding: 0.25rem !important;
 }
@@ -650,10 +590,6 @@
 
 .p-\[1px\] {
   padding: 1px !important;
-}
-
-.p-\[3px\] {
-  padding: 3px !important;
 }
 
 .px-3 {
@@ -718,10 +654,6 @@
 
 .text-\[11px\] {
   font-size: 11px !important;
-}
-
-.text-\[15px\] {
-  font-size: 15px !important;
 }
 
 .text-\[8px\] {

@@ -25,12 +25,16 @@ var ShowCandidateDetailsPopup = function (_a) {
         (panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) === Config_1.workflowStatusApi.LineManagerLevel1OnHold;
     var ReviewLML2 = (panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) === Config_1.workflowStatusApi.LineManagerL2Pending ||
         (panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) === Config_1.workflowStatusApi.LineManagerLevel2OnHold;
-    var PanelMember = (panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) === Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview ||
-        Number(panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) === Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel;
-    var panelOptionFlag = (panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) === Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview ||
-        Number(panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) === Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel ||
+    var PanelMember = (panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) ===
+        Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview ||
+        Number(panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) ===
+            Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel;
+    var panelOptionFlag = (panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) ===
+        Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview ||
+        Number(panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) ===
+            Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel ||
         (panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) === Config_1.workflowStatusApi.HRPending;
-    var isEnabled = !!(panelOptionFlag);
+    var isEnabled = !!panelOptionFlag;
     var isReadOnly = !ReviewHRFlag;
     var _r = (0, fetchPanelMembers_1.useFetchPanelMembers)((_b = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.BusinessUnitCodeId) !== null && _b !== void 0 ? _b : 0, (_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.AssignEMail) !== null && _c !== void 0 ? _c : "", (_d = panelParams === null || panelParams === void 0 ? void 0 : panelParams.candidateId) !== null && _d !== void 0 ? _d : 0, (_e = panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) !== null && _e !== void 0 ? _e : "", isEnabled), paneloptions = _r.data, panelloading = _r.loading, error = _r.error;
     var _s = (0, fetchCandidateDetails_1.useFetchCandidateDetails)(candidateId, (_f = panelParams === null || panelParams === void 0 ? void 0 : panelParams.RecruitmentID) !== null && _f !== void 0 ? _f : 0), data = _s.data, loading = _s.loading;
@@ -42,7 +46,13 @@ var ShowCandidateDetailsPopup = function (_a) {
     var _w = (0, react_1.useState)(""), decisionComments = _w[0], setDecisionComments = _w[1];
     var _x = (0, react_1.useState)([]), consultoptions = _x[0], setConsultOptions = _x[1];
     var _y = (0, react_1.useState)(null), previewFile = _y[0], setPreviewFile = _y[1];
-    var feedbackOptions = ["Excellent", "Good", "Average", "Below Average", "Poor"];
+    var feedbackOptions = [
+        "Excellent",
+        "Good",
+        "Average",
+        "Below Average",
+        "Poor",
+    ];
     var _z = (0, react_1.useState)(""), HRReview = _z[0], setHRReview = _z[1];
     var _0 = (0, react_1.useState)(false), open = _0[0], setOpen = _0[1];
     var _1 = (0, react_1.useState)({
@@ -96,8 +106,7 @@ var ShowCandidateDetailsPopup = function (_a) {
             }
         });
         var level2Members = (Level2 === null || Level2 === void 0 ? void 0 : Level2.length) > 0
-            ? Level2.filter(function (item) { return item.Role !== ConditionConfig_1.RoleName.InterviewPanel; })
-                .map(function (item) { return String(item.value); })
+            ? Level2.filter(function (item) { return item.Role !== ConditionConfig_1.RoleName.InterviewPanel; }).map(function (item) { return String(item.value); })
             : [];
         return { level1Members: level1Members, level2Members: level2Members, consultOption: consultOption };
     }, [paneloptions]);
@@ -106,8 +115,16 @@ var ShowCandidateDetailsPopup = function (_a) {
             return;
         if (panelValue && (PanelMember || ReviewHRFlag)) {
             setConsultOptions(panelValue.consultOption);
-            setLevel1({ panelMembers: panelValue.level1Members, startDate: data === null || data === void 0 ? void 0 : data.InterviewStartDate, endDate: data === null || data === void 0 ? void 0 : data.InterviewEndDate });
-            setLevel2({ panelMembers: panelValue.level2Members, startDate: "", endDate: "" });
+            setLevel1({
+                panelMembers: panelValue.level1Members,
+                startDate: data === null || data === void 0 ? void 0 : data.InterviewStartDate,
+                endDate: data === null || data === void 0 ? void 0 : data.InterviewEndDate,
+            });
+            setLevel2({
+                panelMembers: panelValue.level2Members,
+                startDate: "",
+                endDate: "",
+            });
         }
         if (!data)
             return;
@@ -124,7 +141,9 @@ var ShowCandidateDetailsPopup = function (_a) {
                         return [4 /*yield*/, ServiceExport_1.CandidateTable.fetchCOIAttachment(COIAttchObj)];
                     case 1:
                         COIAttachRes = _d.sent();
-                        COIOptions = [{ value: String(data.COIAppreve), label: data.COIAppreve }];
+                        COIOptions = [
+                            { value: String(data.COIAppreve), label: data.COIAppreve },
+                        ];
                         setConsultOptions(COIOptions);
                         if ((panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) != Config_1.workflowStatusApi.HRPending) {
                             setCoi({
@@ -151,7 +170,9 @@ var ShowCandidateDetailsPopup = function (_a) {
             if (!(HRReview === null || HRReview === void 0 ? void 0 : HRReview.trim()))
                 return false;
             if (showCOI) {
-                if (!((_a = coi.consultedWith) === null || _a === void 0 ? void 0 : _a.trim()) || !((_b = coi.comments) === null || _b === void 0 ? void 0 : _b.trim()) || coi.attachment.length === 0)
+                if (!((_a = coi.consultedWith) === null || _a === void 0 ? void 0 : _a.trim()) ||
+                    !((_b = coi.comments) === null || _b === void 0 ? void 0 : _b.trim()) ||
+                    coi.attachment.length === 0)
                     return false;
             }
         }
@@ -160,12 +181,18 @@ var ShowCandidateDetailsPopup = function (_a) {
                 return false;
         }
         if (PanelMember) {
-            if ((panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) === Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview) {
-                if (level1.panelMembers.length < 3 || !level1.startDate || !level1.endDate)
+            if ((panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) ===
+                Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview) {
+                if (level1.panelMembers.length < 3 ||
+                    !level1.startDate ||
+                    !level1.endDate)
                     return false;
             }
-            if (Number(panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) === Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel) {
-                if (level2.panelMembers.length < 3 || !level2.startDate || !level2.endDate)
+            if (Number(panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) ===
+                Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel) {
+                if (level2.panelMembers.length < 3 ||
+                    !level2.startDate ||
+                    !level2.endDate)
                     return false;
             }
         }
@@ -182,7 +209,7 @@ var ShowCandidateDetailsPopup = function (_a) {
         coi,
         level1,
         level2,
-        panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId
+        panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId,
     ]);
     var handleFileChange = (0, react_1.useCallback)(function (e) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var file, reader;
@@ -231,8 +258,14 @@ var ShowCandidateDetailsPopup = function (_a) {
                         });
                         return [2 /*return*/];
                     }
-                    L1Panel = (_b = (_a = level1 === null || level1 === void 0 ? void 0 : level1.panelMembers) === null || _a === void 0 ? void 0 : _a.map(function (item) { return ({ key: Number(item), text: item }); })) !== null && _b !== void 0 ? _b : [];
-                    L2Panel = (_d = (_c = level2 === null || level2 === void 0 ? void 0 : level2.panelMembers) === null || _c === void 0 ? void 0 : _c.map(function (item) { return ({ key: Number(item), text: item }); })) !== null && _d !== void 0 ? _d : [];
+                    L1Panel = (_b = (_a = level1 === null || level1 === void 0 ? void 0 : level1.panelMembers) === null || _a === void 0 ? void 0 : _a.map(function (item) { return ({
+                        key: Number(item),
+                        text: item,
+                    }); })) !== null && _b !== void 0 ? _b : [];
+                    L2Panel = (_d = (_c = level2 === null || level2 === void 0 ? void 0 : level2.panelMembers) === null || _c === void 0 ? void 0 : _c.map(function (item) { return ({
+                        key: Number(item),
+                        text: item,
+                    }); })) !== null && _d !== void 0 ? _d : [];
                     return [4 /*yield*/, submit({
                             candidateId: candidateId,
                             CandidateDetails: data,
@@ -253,7 +286,17 @@ var ShowCandidateDetailsPopup = function (_a) {
                     return [2 /*return*/];
             }
         });
-    }); }, [data, candidateId, decision, decisionComments, coi, level1, level2, submit, canSubmit]);
+    }); }, [
+        data,
+        candidateId,
+        decision,
+        decisionComments,
+        coi,
+        level1,
+        level2,
+        submit,
+        canSubmit,
+    ]);
     if (!isOpen)
         return null;
     return (react_1.default.createElement(react_1.default.Fragment, null,
@@ -305,11 +348,12 @@ var ShowCandidateDetailsPopup = function (_a) {
                                             react_1.default.createElement(reuseUI_1.InfoItem, { label: "Tax dependents", value: String(data === null || data === void 0 ? void 0 : data.NumberOftax) })),
                                         react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.infoRowItem },
                                             react_1.default.createElement(reuseUI_1.InfoItem, { label: "Current position", value: data === null || data === void 0 ? void 0 : data.CurrentPosition }))),
-                                    (data === null || data === void 0 ? void 0 : data.hasIvanhoeZijinExperience) && react_1.default.createElement(reuseUI_1.InfoItem, { label: "Group / partner companies", value: data === null || data === void 0 ? void 0 : data.hasIvanhoeZijinExperience })),
+                                    (data === null || data === void 0 ? void 0 : data.hasIvanhoeZijinExperience) && (react_1.default.createElement(reuseUI_1.InfoItem, { label: "Group / partner companies", value: data === null || data === void 0 ? void 0 : data.hasIvanhoeZijinExperience }))),
                                 react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.attachmentsSection },
                                     react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.attachmentsLabel },
                                         react_1.default.createElement(lucide_react_1.FileText, { size: 14, className: ShowCandidateDetailsPopup_module_scss_1.default.attachmentsLabelIcon }),
-                                        " Attachments"),
+                                        " ",
+                                        "Attachments"),
                                     react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.attachmentsBox },
                                         react_1.default.createElement(RequiredAttachments_1.RequiredAttachments, { attachments: (_m = data === null || data === void 0 ? void 0 : data.OverallAtttachment) !== null && _m !== void 0 ? _m : [], isLoading: loading })))),
                             react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.mainContent },
@@ -332,16 +376,20 @@ var ShowCandidateDetailsPopup = function (_a) {
                                         react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.coiFields },
                                             react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.coiField },
                                                 react_1.default.createElement("label", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldLabel },
-                                                    "Consulted with ",
+                                                    "Consulted with",
+                                                    " ",
                                                     react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldRequired }, "*")),
                                                 react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.selectWrapper },
-                                                    react_1.default.createElement("select", { className: ShowCandidateDetailsPopup_module_scss_1.default.selectInput, value: coi.consultedWith, onChange: function (e) { return setCoi(function (p) { return (tslib_1.__assign(tslib_1.__assign({}, p), { consultedWith: e.target.value })); }); }, disabled: isReadOnly },
+                                                    react_1.default.createElement("select", { className: ShowCandidateDetailsPopup_module_scss_1.default.selectInput, value: coi.consultedWith, onChange: function (e) {
+                                                            return setCoi(function (p) { return (tslib_1.__assign(tslib_1.__assign({}, p), { consultedWith: e.target.value })); });
+                                                        }, disabled: isReadOnly },
                                                         react_1.default.createElement("option", { value: "" }, "Select..."),
                                                         consultoptions.map(function (opt) { return (react_1.default.createElement("option", { key: opt.value, value: opt.value }, opt.label)); })),
                                                     react_1.default.createElement(lucide_react_1.ChevronDown, { size: 18, className: ShowCandidateDetailsPopup_module_scss_1.default.selectChevron }))),
                                             react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.coiField },
                                                 react_1.default.createElement("label", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldLabel },
-                                                    "Proof of discussion ",
+                                                    "Proof of discussion",
+                                                    " ",
                                                     react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldRequired }, "*")),
                                                 !isReadOnly ? (coi.attachment.length === 0 ? (react_1.default.createElement("button", { type: "button", className: ShowCandidateDetailsPopup_module_scss_1.default.uploadBtn, onClick: function () { var _a; return (_a = fileInputRef.current) === null || _a === void 0 ? void 0 : _a.click(); } },
                                                     react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.uploadIconWrap },
@@ -358,24 +406,31 @@ var ShowCandidateDetailsPopup = function (_a) {
                                                                 react_1.default.createElement(lucide_react_1.CheckCircle, { size: 12 }),
                                                                 " Ready to submit"))),
                                                     react_1.default.createElement("button", { type: "button", className: ShowCandidateDetailsPopup_module_scss_1.default.clearFileBtn, onClick: handleClearFile, "aria-label": "Remove file" },
-                                                        react_1.default.createElement(lucide_react_1.Trash2, { size: 16 }))))) : (coi.attachment.length > 0 ? (react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.filePreview },
-                                                    react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.filePreviewLeft, onClick: function () { return handlePreview(coi.attachment[0]); }, style: { cursor: "pointer" } },
+                                                        react_1.default.createElement(lucide_react_1.Trash2, { size: 16 }))))) : coi.attachment.length > 0 ? (react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.filePreview },
+                                                    react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.filePreviewLeft, onClick: function () {
+                                                            return handlePreview(coi.attachment[0]);
+                                                        }, style: { cursor: "pointer" } },
                                                         react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.fileIconWrap },
                                                             react_1.default.createElement(lucide_react_1.FileText, { size: 18 })),
                                                         react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.fileInfo },
                                                             react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.fileName }, coi.attachment[0].name),
                                                             react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.fileReady },
                                                                 react_1.default.createElement(lucide_react_1.CheckCircle, { size: 12 }),
-                                                                isReadOnly ? "Click to preview" : "Ready to submit"))),
+                                                                isReadOnly
+                                                                    ? "Click to preview"
+                                                                    : "Ready to submit"))),
                                                     !isReadOnly && (react_1.default.createElement("button", { type: "button", className: ShowCandidateDetailsPopup_module_scss_1.default.clearFileBtn, onClick: handleClearFile, "aria-label": "Remove file" },
-                                                        react_1.default.createElement(lucide_react_1.Trash2, { size: 16 }))))) : (react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldLabel }, "No attachment"))),
+                                                        react_1.default.createElement(lucide_react_1.Trash2, { size: 16 }))))) : (react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldLabel }, "No attachment")),
                                                 react_1.default.createElement("input", { ref: fileInputRef, type: "file", accept: ".pdf,.doc,.docx,.png,.jpg", style: { display: "none" }, onChange: handleFileChange }))),
                                         react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.coiTextareaWrap },
                                             react_1.default.createElement("label", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldLabel },
-                                                "Reason / Comments ",
+                                                "Reason / Comments",
+                                                " ",
                                                 react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldRequired }, "*")),
                                             react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.coiTextareaRelative },
-                                                react_1.default.createElement("textarea", { className: ShowCandidateDetailsPopup_module_scss_1.default.coiTextarea, maxLength: 256, placeholder: "Enter your comments (max 256 characters)...", value: coi.comments, onChange: function (e) { return setCoi(function (p) { return (tslib_1.__assign(tslib_1.__assign({}, p), { comments: e.target.value })); }); }, readOnly: isReadOnly }),
+                                                react_1.default.createElement("textarea", { className: ShowCandidateDetailsPopup_module_scss_1.default.coiTextarea, maxLength: 256, placeholder: "Enter your comments (max 256 characters)...", value: coi.comments, onChange: function (e) {
+                                                        return setCoi(function (p) { return (tslib_1.__assign(tslib_1.__assign({}, p), { comments: e.target.value })); });
+                                                    }, readOnly: isReadOnly }),
                                                 react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.charCount },
                                                     coi.comments.length,
                                                     "/256")))))),
@@ -393,27 +448,39 @@ var ShowCandidateDetailsPopup = function (_a) {
                                         react_1.default.createElement(reuseUI_1.SectionHeader, { title: "HR Review Feedback", accent: "green" }),
                                         react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.hrFeedbackFieldWrap },
                                             react_1.default.createElement("label", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldLabel },
-                                                "Review Profile Feedback - HR ",
+                                                "Review Profile Feedback - HR",
+                                                " ",
                                                 react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldRequired }, "*")),
                                             react_1.default.createElement("div", { className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.dropdownWrapper, " dropdown") },
                                                 react_1.default.createElement("div", { className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.customDropdownTrigger).concat(open ? " ".concat(ShowCandidateDetailsPopup_module_scss_1.default.dropdownOpen) : "", "\n              ").concat(isReadOnly ? ShowCandidateDetailsPopup_module_scss_1.default.dropdownDisabled : ""), onClick: function () { return !isReadOnly && setOpen(!open); } },
-                                                    react_1.default.createElement("span", { className: HRReview ? ShowCandidateDetailsPopup_module_scss_1.default.dropdownSelected : ShowCandidateDetailsPopup_module_scss_1.default.dropdownPlaceholder }, HRReview || "Select feedback"),
+                                                    react_1.default.createElement("span", { className: HRReview
+                                                            ? ShowCandidateDetailsPopup_module_scss_1.default.dropdownSelected
+                                                            : ShowCandidateDetailsPopup_module_scss_1.default.dropdownPlaceholder }, HRReview || "Select feedback"),
                                                     react_1.default.createElement(lucide_react_1.ChevronDown, { size: 18, className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.dropdownChevron).concat(open ? " ".concat(ShowCandidateDetailsPopup_module_scss_1.default.open) : "") })),
-                                                react_1.default.createElement(framer_motion_1.AnimatePresence, null, open && (react_1.default.createElement(framer_motion_1.motion.div, { initial: { opacity: 0, y: -10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -10 }, className: ShowCandidateDetailsPopup_module_scss_1.default.dropdownMenu }, feedbackOptions.map(function (option, index) { return (react_1.default.createElement("div", { key: index, onClick: function () { setHRReview(option); setOpen(false); }, className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.dropdownOption).concat(HRReview === option ? " ".concat(ShowCandidateDetailsPopup_module_scss_1.default.dropdownOptionActive) : "") }, option)); })))))))),
+                                                react_1.default.createElement(framer_motion_1.AnimatePresence, null, open && (react_1.default.createElement(framer_motion_1.motion.div, { initial: { opacity: 0, y: -10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -10 }, className: ShowCandidateDetailsPopup_module_scss_1.default.dropdownMenu }, feedbackOptions.map(function (option, index) { return (react_1.default.createElement("div", { key: index, onClick: function () {
+                                                        setHRReview(option);
+                                                        setOpen(false);
+                                                    }, className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.dropdownOption).concat(HRReview === option ? " ".concat(ShowCandidateDetailsPopup_module_scss_1.default.dropdownOptionActive) : "") }, option)); })))))))),
                                 PanelMember && (react_1.default.createElement(react_1.default.Fragment, null,
                                     react_1.default.createElement(framer_motion_1.motion.section, { className: ShowCandidateDetailsPopup_module_scss_1.default.section, custom: 3, variants: reuseUI_1.sectionVariants, initial: "hidden", animate: "visible" },
                                         react_1.default.createElement(reuseUI_1.SectionHeader, { title: "Interview schedule - Level 1", accent: "blue" }),
                                         react_1.default.createElement(reuseUI_1.InterviewScheduleInput, { form: level1, onChange: setLevel1, panelOptions: ((_p = paneloptions === null || paneloptions === void 0 ? void 0 : paneloptions.Level1) !== null && _p !== void 0 ? _p : []).map(function (item) { return ({
                                                 value: String(item.value),
                                                 label: item.label,
-                                            }); }), onToggleMember: function (val) { return handlePanelToggle(setLevel1, val); }, minPanelCount: 3, Disable: Number(panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) === Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel })))),
-                                Number(panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) === Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel && (react_1.default.createElement(react_1.default.Fragment, null,
+                                            }); }), onToggleMember: function (val) {
+                                                return handlePanelToggle(setLevel1, val);
+                                            }, minPanelCount: 3, Disable: Number(panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) ===
+                                                Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel })))),
+                                Number(panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) ===
+                                    Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel && (react_1.default.createElement(react_1.default.Fragment, null,
                                     react_1.default.createElement(framer_motion_1.motion.section, { className: ShowCandidateDetailsPopup_module_scss_1.default.section, custom: 4, variants: reuseUI_1.sectionVariants, initial: "hidden", animate: "visible" },
                                         react_1.default.createElement(reuseUI_1.SectionHeader, { title: "Interview schedule - Level 2", accent: "green" }),
                                         react_1.default.createElement(reuseUI_1.InterviewScheduleInput, { form: level2, onChange: setLevel2, panelOptions: ((_q = paneloptions === null || paneloptions === void 0 ? void 0 : paneloptions.Level2) !== null && _q !== void 0 ? _q : []).map(function (item) { return ({
                                                 value: String(item.value),
                                                 label: item.label,
-                                            }); }), onToggleMember: function (val) { return handlePanelToggle(setLevel2, val); }, minPanelCount: 3, Disable: false })))),
+                                            }); }), onToggleMember: function (val) {
+                                                return handlePanelToggle(setLevel2, val);
+                                            }, minPanelCount: 3, Disable: false })))),
                                 !ReviewHRFlag && !PanelMember ? (react_1.default.createElement(framer_motion_1.motion.section, { className: ShowCandidateDetailsPopup_module_scss_1.default.section, custom: 5, variants: reuseUI_1.sectionVariants, initial: "hidden", animate: "visible" },
                                     react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.lmDecisionCard },
                                         react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.lmDecisionHeader },
@@ -423,14 +490,26 @@ var ShowCandidateDetailsPopup = function (_a) {
                                                 react_1.default.createElement("h3", { className: ShowCandidateDetailsPopup_module_scss_1.default.lmDecisionTitle }, "Do you wish to select this candidate?"),
                                                 react_1.default.createElement("p", { className: ShowCandidateDetailsPopup_module_scss_1.default.lmDecisionSubtitle }, "Please review the candidate and provide your final decision."))),
                                         react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnsRow },
-                                            react_1.default.createElement("button", { type: "button", className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.decisionBtn, " ").concat(decision === "YES" ? ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnYesActive : ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnYesInactive), onClick: function () { return setDecision("YES"); } },
-                                                react_1.default.createElement(lucide_react_1.CheckCircle, { size: 36, strokeWidth: 2, className: decision === "YES" ? ShowCandidateDetailsPopup_module_scss_1.default.iconWhite : ShowCandidateDetailsPopup_module_scss_1.default.iconGreen }),
+                                            react_1.default.createElement("button", { type: "button", className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.decisionBtn, " ").concat(decision === "YES"
+                                                    ? ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnYesActive
+                                                    : ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnYesInactive), onClick: function () { return setDecision("YES"); } },
+                                                react_1.default.createElement(lucide_react_1.CheckCircle, { size: 36, strokeWidth: 2, className: decision === "YES"
+                                                        ? ShowCandidateDetailsPopup_module_scss_1.default.iconWhite
+                                                        : ShowCandidateDetailsPopup_module_scss_1.default.iconGreen }),
                                                 react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnLabel }, "YES, SELECT")),
-                                            react_1.default.createElement("button", { type: "button", className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.decisionBtn, " ").concat(decision === "NO" ? ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnNoActive : ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnNoInactive), onClick: function () { return setDecision("NO"); } },
-                                                react_1.default.createElement(lucide_react_1.XCircle, { size: 36, strokeWidth: 2, className: decision === "NO" ? ShowCandidateDetailsPopup_module_scss_1.default.iconWhite : ShowCandidateDetailsPopup_module_scss_1.default.iconRed }),
+                                            react_1.default.createElement("button", { type: "button", className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.decisionBtn, " ").concat(decision === "NO"
+                                                    ? ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnNoActive
+                                                    : ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnNoInactive), onClick: function () { return setDecision("NO"); } },
+                                                react_1.default.createElement(lucide_react_1.XCircle, { size: 36, strokeWidth: 2, className: decision === "NO"
+                                                        ? ShowCandidateDetailsPopup_module_scss_1.default.iconWhite
+                                                        : ShowCandidateDetailsPopup_module_scss_1.default.iconRed }),
                                                 react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnLabel }, "NO, REJECT")),
-                                            react_1.default.createElement("button", { type: "button", className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.decisionBtn, " ").concat(decision === "HOLD" ? ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnHoldActive : ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnHoldInactive), onClick: function () { return setDecision("HOLD"); } },
-                                                react_1.default.createElement(lucide_react_1.Activity, { size: 36, strokeWidth: 2, className: decision === "HOLD" ? ShowCandidateDetailsPopup_module_scss_1.default.iconWhite : ShowCandidateDetailsPopup_module_scss_1.default.iconAmber }),
+                                            react_1.default.createElement("button", { type: "button", className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.decisionBtn, " ").concat(decision === "HOLD"
+                                                    ? ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnHoldActive
+                                                    : ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnHoldInactive), onClick: function () { return setDecision("HOLD"); } },
+                                                react_1.default.createElement(lucide_react_1.Activity, { size: 36, strokeWidth: 2, className: decision === "HOLD"
+                                                        ? ShowCandidateDetailsPopup_module_scss_1.default.iconWhite
+                                                        : ShowCandidateDetailsPopup_module_scss_1.default.iconAmber }),
                                                 react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnLabel }, "ON HOLD")))))) : (react_1.default.createElement(react_1.default.Fragment, null)),
                                 react_1.default.createElement("hr", { className: ShowCandidateDetailsPopup_module_scss_1.default.sectionDivider }),
                                 react_1.default.createElement(framer_motion_1.motion.section, { custom: 6, variants: reuseUI_1.sectionVariants, initial: "hidden", animate: "visible" },
@@ -438,13 +517,17 @@ var ShowCandidateDetailsPopup = function (_a) {
                                         react_1.default.createElement(reuseUI_1.SectionHeader, { title: "Comments", accent: "blue" }),
                                         react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.lmCommentsFieldWrap },
                                             react_1.default.createElement("label", { className: ShowCandidateDetailsPopup_module_scss_1.default.lmCommentsLabel },
-                                                react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.lmCommentsLabelText }, " decision justification / comments"),
+                                                react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.lmCommentsLabelText },
+                                                    " ",
+                                                    "decision justification / comments"),
                                                 " ",
                                                 react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.lmCommentsRequired }, "*")),
                                             react_1.default.createElement("textarea", { className: ShowCandidateDetailsPopup_module_scss_1.default.lmCommentsTextarea, placeholder: "Provide your final decision rationale...", value: decisionComments, onChange: function (e) { return setDecisionComments(e.target.value); }, disabled: submitting })))))),
                         react_1.default.createElement("footer", { className: ShowCandidateDetailsPopup_module_scss_1.default.footer },
                             react_1.default.createElement("button", { type: "button", className: ShowCandidateDetailsPopup_module_scss_1.default.cancelBtn, onClick: onClose }, "Cancel"),
-                            react_1.default.createElement("button", { type: "button", className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.submitBtn, " ").concat(canSubmit && !submitting ? ShowCandidateDetailsPopup_module_scss_1.default.submitBtnActive : ShowCandidateDetailsPopup_module_scss_1.default.submitBtnDisabled), disabled: !canSubmit || submitting, onClick: handleSubmit }, submitting ? ("Submitting...") : (react_1.default.createElement(react_1.default.Fragment, null,
+                            react_1.default.createElement("button", { type: "button", className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.submitBtn, " ").concat(canSubmit && !submitting
+                                    ? ShowCandidateDetailsPopup_module_scss_1.default.submitBtnActive
+                                    : ShowCandidateDetailsPopup_module_scss_1.default.submitBtnDisabled), disabled: !canSubmit || submitting, onClick: handleSubmit }, submitting ? ("Submitting...") : (react_1.default.createElement(react_1.default.Fragment, null,
                                 react_1.default.createElement(lucide_react_1.CheckCircle, { size: 16 }),
                                 PanelMember ? "Interview Schedule" : "Submit action")))),
                         loading && (react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.loadingOverlay },
@@ -461,7 +544,7 @@ var ShowCandidateDetailsPopup = function (_a) {
                         react_1.default.createElement("button", { type: "button", className: ShowCandidateDetailsPopup_module_scss_1.default.previewClose, onClick: function () { return setPreviewFile(null); } },
                             react_1.default.createElement(lucide_react_1.X, { size: 18 }))),
                     react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.previewBody },
-                        react_1.default.createElement("iframe", { src: getViewerUrl(previewFile.url), title: previewFile.name, className: ShowCandidateDetailsPopup_module_scss_1.default.previewIframe }))))))));
+                        react_1.default.createElement("iframe", { src: previewFile.url, title: previewFile.name, className: ShowCandidateDetailsPopup_module_scss_1.default.previewIframe }))))))));
 };
 exports.ShowCandidateDetailsPopup = ShowCandidateDetailsPopup;
 //# sourceMappingURL=ShowCandidateDetailsPopup.js.map

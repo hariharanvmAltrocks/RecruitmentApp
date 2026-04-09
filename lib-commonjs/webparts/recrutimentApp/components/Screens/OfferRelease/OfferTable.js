@@ -109,7 +109,7 @@ var OfferTable = function () {
     }).updateListPortal;
     (0, react_1.useEffect)(function () {
         if (!tableLoading && updateList.length > 0) {
-            updateListPortal();
+            void updateListPortal();
         }
     }, [updateList, tableLoading, refreshKey]);
     var _t = (0, useStateFromManage_1.useStateOfferRelease)(), drawerOpen = _t.drawerOpen, reviewerComments = _t.reviewerComments, acknowledgementCheckbox = _t.acknowledgementCheckbox, loadingState = _t.loadingState, openDrawer = _t.openDrawer, closeDrawer = _t.closeDrawer, setComments = _t.setComments, toggleAcknowledgement = _t.toggleAcknowledgement, setLoadingState = _t.setLoadingState;

@@ -167,7 +167,7 @@ export const OfferTable: React.FC = () => {
 
   useEffect(() => {
     if (!tableLoading && updateList.length > 0) {
-      updateListPortal();
+      void updateListPortal();
     }
   }, [updateList, tableLoading, refreshKey]);
 

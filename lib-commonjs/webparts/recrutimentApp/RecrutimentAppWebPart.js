@@ -41,6 +41,17 @@ var RecrutimentAppWebPart = /** @class */ (function (_super) {
         });
         ReactDom.render(element, this.domElement);
     };
+    RecrutimentAppWebPart.prototype.loadFont = function () {
+        var id = "inter-font";
+        if (!document.getElementById(id)) {
+            var link = document.createElement("link");
+            link.id = id;
+            link.rel = "stylesheet";
+            link.href =
+                "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap";
+            document.head.appendChild(link);
+        }
+    };
     RecrutimentAppWebPart.prototype.onInit = function () {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var graphClient;
@@ -49,6 +60,7 @@ var RecrutimentAppWebPart = /** @class */ (function (_super) {
                     case 0: return [4 /*yield*/, _super.prototype.onInit.call(this)];
                     case 1:
                         _a.sent();
+                        this.loadFont();
                         (0, spservice_1.initSP)(this.context);
                         return [4 /*yield*/, this.context.msGraphClientFactory.getClient("3")];
                     case 2:
@@ -117,7 +129,7 @@ var RecrutimentAppWebPart = /** @class */ (function (_super) {
             if (!document.getElementById(styleId)) {
                 var style = document.createElement("style");
                 style.id = styleId;
-                style.innerHTML = "\n        * {\n          font-family: \"Inter\", \"Segoe UI\", sans-serif !important;\n        }\n      ";
+                style.innerHTML = "\n        * {\n          font-family: \"Inter\", ui-sans-serif, system-ui, sans-seri !important;\n        }\n      ";
                 document.head.appendChild(style);
             }
         }

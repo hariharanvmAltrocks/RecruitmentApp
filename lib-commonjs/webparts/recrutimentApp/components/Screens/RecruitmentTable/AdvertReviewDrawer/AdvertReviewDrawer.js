@@ -97,7 +97,7 @@ var AdvertReviewDrawer = function (_a) {
             NumberOfPersonNeeded: (_h = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.NumberOfPersonNeeded) !== null && _h !== void 0 ? _h : "",
             Dptcode: (_j = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.DeptCode) !== null && _j !== void 0 ? _j : "",
             reviewerComments: reviewerComments,
-            StatusId: (_k = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusId) !== null && _k !== void 0 ? _k : 0
+            StatusId: (_k = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusId) !== null && _k !== void 0 ? _k : 0,
         });
     }, [positionDetails, reviewerComments]);
     var docFiles = (0, react_1.useMemo)(function () { return toDocFiles(uploadDocument); }, [uploadDocument]);
@@ -148,7 +148,14 @@ var AdvertReviewDrawer = function (_a) {
         return rules.some(function (rule) {
             return rule.roles.some(function (role) { return roleIDs.includes(role); }) && rule.validate();
         });
-    }, [commentValid, uploadValid, checkboxValid, bgvValid, positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.Nationality, roleIDs]);
+    }, [
+        commentValid,
+        uploadValid,
+        checkboxValid,
+        bgvValid,
+        positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.Nationality,
+        roleIDs,
+    ]);
     var updateMainRecord = (0, useUpdateMainRecord_1.useUpdateMainRecord)(formData, roleID).updateMainRecord;
     var handleHRLeadProcess = (0, useHRLeadProcess_1.useHRLeadProcess)(formData, Config_1.RoleID.RecruitmentHRLead, docFiles, (_d = BGVData === null || BGVData === void 0 ? void 0 : BGVData.checkboxBGVOption) !== null && _d !== void 0 ? _d : []).handleHRLeadProcess;
     var handleHRProcess = (0, useHRProcess_1.useHRProcess)(formData, Config_1.RoleID.RecruitmentHR, docFiles).handleHRProcess;
@@ -161,7 +168,7 @@ var AdvertReviewDrawer = function (_a) {
             onConfirm: function () {
                 closeModal();
                 onClose();
-                navigate("/RecruitmentTable");
+                navigate("/Dashboard");
                 refreshKey();
             },
         });
@@ -250,7 +257,10 @@ var AdvertReviewDrawer = function (_a) {
     var commentError = sv && !commentValid;
     var checkboxError = sv && !checkboxValid;
     var bgvError = sv && !optionValid;
-    var showUploadONEMSection = [ConditionConfig_1.MatricID.UploadONEM, ConditionConfig_1.MatricID.JobAdvert].includes(metricId);
+    var showUploadONEMSection = [
+        ConditionConfig_1.MatricID.UploadONEM,
+        ConditionConfig_1.MatricID.JobAdvert,
+    ].includes(metricId);
     var showBGVSection = metricId === ConditionConfig_1.MatricID.UploadONEM &&
         (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.Nationality) === ConditionConfig_1.Nationality.Expatriate;
     var showReviewFooter = metricId !== 0 &&
@@ -269,7 +279,7 @@ var AdvertReviewDrawer = function (_a) {
                         react_1.default.createElement("div", { className: "advert-review-drawer__header-icon" },
                             react_1.default.createElement(lucide_react_1.FileCheck, { size: 22 })),
                         react_1.default.createElement("div", null,
-                            react_1.default.createElement("h2", { className: "advert-review-drawer__title" }, isLoading ? react_1.default.createElement(SkeletonBlock, { width: "220px" }) : headerMeta.title),
+                            react_1.default.createElement("h2", { className: "advert-review-drawer__title" }, isLoading ? (react_1.default.createElement(SkeletonBlock, { width: "220px" })) : (headerMeta.title)),
                             react_1.default.createElement("div", { className: "advert-review-drawer__meta" }, isLoading ? (react_1.default.createElement(SkeletonBlock, { width: "160px" })) : (react_1.default.createElement(react_1.default.Fragment, null,
                                 react_1.default.createElement("span", { className: "advert-review-drawer__badge" }, headerMeta.code),
                                 react_1.default.createElement("span", { className: "advert-review-drawer__dot" }),
@@ -290,7 +300,9 @@ var AdvertReviewDrawer = function (_a) {
                         react_1.default.createElement("div", { className: "advert-review-drawer__footer" },
                             react_1.default.createElement("div", { className: "advert-review-drawer__footer-actions" },
                                 react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__button", onClick: onClose }, "Cancel"),
-                                react_1.default.createElement("button", { type: "button", className: !canApprove ? "advert-review-drawer__button advert-review-drawer__button--primary__is-disabled" : "advert-review-drawer__button advert-review-drawer__button--primary", disabled: !canApprove || isSubmittingRef.current, onClick: handleApprove }, isSubmittingRef.current ? (react_1.default.createElement(react_1.default.Fragment, null,
+                                react_1.default.createElement("button", { type: "button", className: !canApprove
+                                        ? "advert-review-drawer__button advert-review-drawer__button--primary__is-disabled"
+                                        : "advert-review-drawer__button advert-review-drawer__button--primary", disabled: !canApprove || isSubmittingRef.current, onClick: handleApprove }, isSubmittingRef.current ? (react_1.default.createElement(react_1.default.Fragment, null,
                                     react_1.default.createElement(lucide_react_1.Loader2, { size: 16, className: "modal-popup__spinner" }),
                                     "Sending...")) : (react_1.default.createElement(react_1.default.Fragment, null,
                                     react_1.default.createElement(lucide_react_1.Send, { size: 16, style: { marginRight: 8 } }),

@@ -27,9 +27,9 @@ var buildStatusFlags = function (statusID, empCat, consentVerification) { return
         statusID === EvaluationConfig_1.StatusId.PendingLabourhireWPPayment ||
         statusID === EvaluationConfig_1.StatusId.PendingLHECRelease,
     PendingHREmploymentContractReview: statusID === EvaluationConfig_1.StatusId.PendingHREmploymentContractReview,
+    PreOnboardingChecklist: statusID === EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist,
 }); };
 exports.buildStatusFlags = buildStatusFlags;
-// ─── Visibility flag builder ──────────────────────────────────────────────────
 var resolveVerificationToggle = function (is) {
     return is.pendingHRReviewBGCheck ||
         is.pendingHROfferReview ||
@@ -64,6 +64,7 @@ var buildVisibilityFlags = function (is, hasDetails, rejectFlag, revertFlag) {
         showDOTAficaBadge: is.pendingDOTAficaVerify,
         uploadDocLabel: uploadDocLabel,
         ViewFlag: is.ViewFlag,
+        PreOnboardingChecklist: is.PreOnboardingChecklist,
     };
 };
 exports.buildVisibilityFlags = buildVisibilityFlags;

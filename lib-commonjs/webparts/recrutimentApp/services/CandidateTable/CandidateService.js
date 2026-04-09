@@ -1228,7 +1228,7 @@ var CandidateService = /** @class */ (function () {
                         _a = (0, spservice_1.getSP)().batched(), batchedSP_1 = _a[0], execute = _a[1];
                         results_1 = [];
                         payloads.interviewPanelL2.forEach(function (item) {
-                            batchedSP_1.web.lists
+                            void batchedSP_1.web.lists
                                 .getByTitle(Config_1.ListNames.HRMSInterviewPanelDetails)
                                 .items.add({
                                 RecruitmentIDId: item.RecruitmentIDId,
@@ -1238,7 +1238,7 @@ var CandidateService = /** @class */ (function () {
                             })
                                 .then(function (res) { return results_1.push(res); });
                         });
-                        batchedSP_1.web.lists
+                        void batchedSP_1.web.lists
                             .getByTitle(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails)
                             .items.getById(payloads.candidateUpdate.ID)
                             .update({

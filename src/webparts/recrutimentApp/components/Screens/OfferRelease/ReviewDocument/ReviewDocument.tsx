@@ -36,6 +36,7 @@ import {
   useSubmitWorkflow,
 } from "./saveHooks/Usesubmitworkflow";
 import {
+  ActionName,
   ButtonAction,
   DocumentFolderName,
   NationalityCode,
@@ -52,6 +53,8 @@ import { ResponeStatus } from "../../../../utilities/ApiConfig";
 import { ViewCommentsModal } from "../../../Comman/CommentsPopup/commentsPopup";
 import { StatusId } from "../../../../utilities/Config";
 import { WorkflowHODConfig } from "../../../Hooks/WorkflowConfig";
+import { usePreChecklist } from "./Hooks/fetchPreChecklist";
+import PreChecklist from "./Component/Prechecklist/Prechecklist";
 
 export interface ReviewDocumentProps {
   drawerOpen: boolean;
@@ -145,6 +148,9 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
       jobrequestID,
     );
 
+  const isPendingDOTAfrica =
+    positionDetails?.StatusID === StatusId.PendingDOTAficaVerification;
+
   const {
     data: bgvStatusDetails,
     bgvStatus,
@@ -153,7 +159,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     allCompleted,
     rejectFlag,
     revertFLag,
-  } = useBGVStatusDetails(jobrequestID);
+  } = useBGVStatusDetails(jobrequestID, isPendingDOTAfrica);
 
   const isConsentVerified = consentVerification === "verified";
 
@@ -183,6 +189,16 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
   const { data: signatureDetails, loading: signatureLoading } =
     useSignatureDetails();
 
+  const isExpat =
+    positionDetails?.NationalityCode !== NationalityCode.Nationals;
+  const isPreOnboarding =
+    positionDetails?.StatusID === StatusId.PendingHRpreonboardingchecklist;
+  const { checklist, allChecked, loading, updateCheckItem } = usePreChecklist(
+    isExpat,
+    positionDetails?.PreChecklist ?? undefined,
+    isPreOnboarding,
+  );
+
   const isLoading = signatureLoading;
   const isSubmittingRef = useRef(false);
 
@@ -191,26 +207,8 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
   let ConsultOptions = [];
 
   useEffect(() => {
-    let isMounted = true;
-
-    const fetchEmails = async () => {
-      if (loadingState !== isLoading) setLoadingState(isLoading);
-
-      // const response = await masterService.fetchJDEEmailIDs(
-      //   positionDetails?.BusinessUnitCodeId ?? 0
-      // );
-
-      // if (isMounted) {
-      //   ConsultOptions = response.data;
-      // }
-    };
-
-    fetchEmails();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [isLoading, positionDetails?.BusinessUnitCodeId]);
+    if (loadingState !== isLoading) setLoadingState(isLoading);
+  }, [isLoading, loadingState, setLoadingState]);
 
   const { is, vis } = useReviewConditions({
     statusID: positionDetails?.StatusID,
@@ -230,12 +228,40 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     [positionDetails],
   );
 
+  const handleError = useCallback(() => {
+    showModal({
+      type: "error", title: "Something Went Wrong",
+      message: "An unexpected error occurred. Please try again.",
+      confirmLabel: "Close", onConfirm: closeModal,
+    });
+  }, [showModal, closeModal]);
+
+  const ensureValid = useCallback(() => {
+    if (!validateAll(vis)) {
+      showModal({
+        type: "warning", title: "Required Fields Missing",
+        message: "Please complete all highlighted fields before submitting.",
+        confirmLabel: "OK", onConfirm: closeModal,
+      });
+      return false;
+    }
+    return true;
+  }, [validateAll, vis, showModal, closeModal]);
+
+  const getCheckStatus = (title: string) =>
+    checklist.find((item) => item.Title === title)?.value ? ActionName.Completed : ActionName.Pending;
+
+  const renderBtnContent = (text: string) =>
+    isSubmittingRef.current ? (
+      <><Loader2 size={16} className="modal-popup__spinner" />Sending...</>
+    ) : (
+      <><Send size={16} />{text}</>
+    );
+
   const showSuccessModal = useCallback(
     (msg: string) => {
       showModal({
-        type: "success",
-        title: "Submitted Successfully",
-        message: msg,
+        type: "success", title: "Submitted Successfully", message: msg,
         confirmLabel: "Go to Dashboard",
         onConfirm: () => {
           closeModal();
@@ -250,88 +276,38 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
 
   const handleReinitiate = useCallback(() => {
     showModal({
-      type: "confirmation",
-      title: "Reinitiate BGV",
-      message: RecuritmentHRMsg.ReinitiateBGVWarningMsg,
-      confirmLabel: "Yes",
-      cancelLabel: "No",
+      type: "confirmation", title: "Reinitiate BGV", message: RecuritmentHRMsg.ReinitiateBGVWarningMsg,
+      confirmLabel: "Yes", cancelLabel: "No",
       onConfirm: async () => {
-        let UpdateBGV = await OfferServices.PerformCriminalRecordCheck(
-          Number(jobrequestID),
-        );
+        let UpdateBGV = await OfferServices.PerformCriminalRecordCheck(Number(jobrequestID));
         if (UpdateBGV.status === ResponeStatus.SUCCESS) {
           showSuccessModal(RecuritmentHRMsg.ReinitiateBGVProcess);
-          closeModal();
-          onClose();
-          navigate("/RecruitmentTable");
-          refreshKey();
         } else {
-          showModal({
-            type: "error",
-            title: "Something Went Wrong",
-            message: "An unexpected error occurred. Please try again.",
-            confirmLabel: "Close",
-            onConfirm: closeModal,
-          });
+          handleError();
         }
       },
     });
-  }, []);
+  }, [jobrequestID, showSuccessModal, handleError, showModal]);
 
   const handleApprove = useCallback(async () => {
-    const isValid = validateAll(vis);
-
-    if (!isValid) {
-      showModal({
-        type: "warning",
-        title: "Required Fields Missing",
-        message: "Please complete all highlighted fields before submitting.",
-        confirmLabel: "OK",
-        onConfirm: closeModal,
-      });
-      return;
-    }
-
+    if (!ensureValid()) return;
     if (isSubmittingRef.current) return;
     isSubmittingRef.current = true;
 
     try {
-      let action =
-        consentVerification === "verified"
-          ? ButtonAction.Review
-          : consentVerification === "rejected"
-            ? ButtonAction.Revert
-            : ButtonAction.Initiated;
+      let action = consentVerification === "verified" ? ButtonAction.Review : consentVerification === "rejected" ? ButtonAction.Revert : ButtonAction.Initiated;
       void submit(action);
-      // showSuccessModal("Your review has been submitted successfully.");
     } catch (error) {
       console.error(error);
-      showModal({
-        type: "error",
-        title: "Something Went Wrong",
-        message: "An unexpected error occurred. Please try again.",
-        confirmLabel: "Close",
-        onConfirm: closeModal,
-      });
+      handleError();
     } finally {
       isSubmittingRef.current = false;
     }
-  }, [validateAll, showModal, closeModal, showSuccessModal, submit]);
+  }, [ensureValid, consentVerification, submit, handleError]);
 
   const handleRejectCheck = useCallback(
     async (btn: "Reject" | "Approve") => {
-      const isValid = validateAll(vis);
-
-      if (!isValid) {
-        showModal({
-          type: "warning",
-          title: "Required Fields Missing",
-          message: "Please complete all highlighted fields before submitting.",
-          confirmLabel: "OK",
-          onConfirm: closeModal,
-        });
-        return;
-      }
+      if (!ensureValid()) return;
 
       const isExpat =
         positionDetails?.NationalityCode !== NationalityCode.Nationals;
@@ -395,31 +371,38 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
               throw new Error("Unexpected status");
             }
           } catch {
-            showModal({
-              type: "error",
-              title: "Something Went Wrong",
-              message: "An unexpected error occurred. Please try again.",
-              confirmLabel: "Close",
-              onConfirm: closeModal,
-            });
+            handleError();
           }
         },
       });
     },
-    [
-      positionDetails,
-      coiState,
-      bgvStatusDetails,
-      CandidateID,
-      selectedcandidateID,
-      showModal,
-      closeModal,
-      onClose,
-      navigate,
-      refreshKey,
-      showSuccessModal,
-    ],
+    [positionDetails, coiState, bgvStatusDetails, CandidateID, selectedcandidateID, showModal, closeModal, onClose, refreshKey, showSuccessModal, ensureValid, handleError]
   );
+
+  const handleSaveAsDraft = async () => {
+    const BtnAction = !allChecked ? ButtonAction.SaveAsDraft : ButtonAction.Submit;
+    const ChecklistValue = {
+      BackgroundChecks: getCheckStatus("Background Checks"),
+      SignedOfferLetterVerified: getCheckStatus("Signed Offer Letter"),
+      SignedEmploymentContract: getCheckStatus("Employment Contract"),
+      WorkPermitApproved: getCheckStatus("Work Permit Approved"),
+      VisaProcess: getCheckStatus("Visa Process"),
+      AccommodationBooked: getCheckStatus("Accommodation Booked"),
+      TravelProcess: getCheckStatus("Travel Process"),
+      ReadyforOnboarding: getCheckStatus("Ready for Onboarding"),
+      MedicalChecks: getCheckStatus("Medical Checks"),
+      ID: CandidateID,
+    };
+    
+    const UpdateStatusCandidateList = await OfferServices.UpdateStatusCandidatelist(ChecklistValue);
+    if (UpdateStatusCandidateList.status === ResponeStatus.SUCCESS) {
+      if (BtnAction === ButtonAction.Submit) {
+        let Obj = [{ ID: selectedcandidateID, StatusId: isExpat ? StatusId.OnboardingProcessinitiatedforExpat : StatusId.OnboardingProcessinitiatedforDRC }];
+        await OfferServices.UpdateStatusSelectedHOD(Obj);
+      }
+      showSuccessModal(BtnAction === ButtonAction.SaveAsDraft ? RecuritmentHRMsg.ChecklistSaveAsDraftMsg : RecuritmentHRMsg.OnboardingMsg);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -559,6 +542,19 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                       />
                     )}
 
+                    {positionDetails?.StatusID ===
+                      StatusId.PendingHRpreonboardingchecklist && (
+                      <PreChecklist
+                        nationalItems={checklist}
+                        expatItems={[]}
+                        isExpat={isExpat}
+                        onToggle={(id: number, value: boolean) =>
+                          updateCheckItem(id, value)
+                        }
+                        allChecked={allChecked}
+                      />
+                    )}
+
                     {!vis.ViewFlag && (
                       <ReviewCommentSignature
                         reviewerComments={reviewerComments}
@@ -602,38 +598,52 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                               : "Cancel"}
                         </button>
 
-                        {revertFLag && (
+                        {positionDetails?.StatusID ===
+                          StatusId.PendingDOTAficaVerification && (
+                          <>
+                            {revertFLag && (
+                              <button
+                                type="button"
+                                className="review-document__button review-document__button--primary"
+                                disabled={isSubmittingRef.current}
+                                onClick={handleReinitiate}
+                              >
+                                Re Initiate
+                              </button>
+                            )}
+
+                            {rejectFlag && coiState.wishesToProceed && (
+                              <button
+                                type="button"
+                                className="review-document__button review-document__button--primary"
+                                disabled={isSubmittingRef.current}
+                                onClick={() =>
+                                  handleRejectCheck(
+                                    coiState.wishesToProceed === "Yes"
+                                      ? "Approve"
+                                      : "Reject",
+                                  )
+                                }
+                              >
+                                {coiState.wishesToProceed === "Yes"
+                                  ? "Approve"
+                                  : "Reject"}
+                              </button>
+                            )}
+                          </>
+                        )}
+
+                        {positionDetails?.StatusID ===
+                          StatusId.PendingHRpreonboardingchecklist && (
                           <button
                             type="button"
                             className="review-document__button review-document__button--primary"
                             disabled={isSubmittingRef.current}
-                            onClick={handleReinitiate}
+                            onClick={handleSaveAsDraft}
                           >
-                            Re Initiate
+                            {renderBtnContent(!allChecked ? "Save As Draft" : "Submit")}
                           </button>
                         )}
-
-                        {rejectFlag &&
-                          coiState.wishesToProceed &&
-                          positionDetails?.StatusID ===
-                            StatusId.PendingDOTAficaVerification && (
-                            <button
-                              type="button"
-                              className="review-document__button review-document__button--primary"
-                              disabled={isSubmittingRef.current}
-                              onClick={() =>
-                                handleRejectCheck(
-                                  coiState.wishesToProceed === "Yes"
-                                    ? "Approve"
-                                    : "Reject",
-                                )
-                              }
-                            >
-                              {coiState.wishesToProceed === "Yes"
-                                ? "Approve"
-                                : "Reject"}
-                            </button>
-                          )}
 
                         {!vis.ViewFlag && (
                           <button
@@ -642,23 +652,14 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                             disabled={isSubmittingRef.current}
                             onClick={handleApprove}
                           >
-                            {isSubmittingRef.current ? (
-                              <>
-                                <Loader2
-                                  size={16}
-                                  className="modal-popup__spinner"
-                                />
-                                Sending...
-                              </>
-                            ) : (
-                              <>
-                                <Send size={16} />
-                                {consentVerification === "verified"
-                                  ? "Reviewed"
-                                  : consentVerification === "rejected"
-                                    ? "Revert"
-                                    : "Submit"}
-                              </>
+                            {renderBtnContent(
+                              consentVerification === "verified"
+                                ? "Reviewed"
+                                : consentVerification === "rejected"
+                                  ? "Revert"
+                                  : !allChecked
+                                    ? "Save As Draft"
+                                    : "Submit"
                             )}
                           </button>
                         )}

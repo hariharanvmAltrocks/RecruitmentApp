@@ -6,7 +6,7 @@ var react_1 = require("react");
 var UIStateContext_1 = require("../../../../RecrutimentApp/UIStateContext");
 var ConditionConfig_1 = require("../../../../../utilities/ConditionConfig");
 var ServiceExport_1 = require("../../../../../services/ServiceExport");
-var useBGVStatusDetails = function (jobRequestID) {
+var useBGVStatusDetails = function (jobRequestID, isActive) {
     var _a = (0, react_1.useState)(null), data = _a[0], setData = _a[1];
     var _b = (0, react_1.useState)([]), bgvStatus = _b[0], setBGVStatus = _b[1];
     var _c = (0, react_1.useState)([]), bgvComments = _c[0], setBGVComments = _c[1];
@@ -16,7 +16,7 @@ var useBGVStatusDetails = function (jobRequestID) {
     var _g = (0, react_1.useState)(false), loading = _g[0], setLoading = _g[1];
     var MatricID = (0, UIStateContext_1.useUIState)().MatricID;
     (0, react_1.useEffect)(function () {
-        if (!jobRequestID)
+        if (!jobRequestID && !isActive)
             return;
         var fetchData = function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
             var res, bgData, mappedStatus, remarks, revertflag, isRejected, allCompleted_1, error_1;

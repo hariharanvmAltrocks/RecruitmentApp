@@ -1,5 +1,5 @@
 import React from "react";
-import { CheckCircle2, MessageSquare } from "lucide-react";
+import { CheckCircle2, MessageSquare, User } from "lucide-react";
 import "../AdvertReviewDrawer/AdvertReviewDrawer.scss"
 import { SignatureDetails } from "../AdvertReviewDrawer/Hooks/getSignatureDetails";
 
@@ -103,7 +103,7 @@ export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
       {/* ── Signature card ── */}
       <div className="advert-review-drawer__signature-details">
         <div className="advert-review-drawer__avatar">
-          {isLoading ? "" : (signatureDetails?.reviewerInitial ?? "JD")}
+          {isLoading ? "" : <User size={24} />}
         </div>
         <div className="advert-review-drawer__signature-meta">
           <div>

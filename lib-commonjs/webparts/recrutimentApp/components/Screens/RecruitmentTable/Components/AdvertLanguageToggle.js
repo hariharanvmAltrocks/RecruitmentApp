@@ -41,10 +41,8 @@ var renderList = function (items, muted) {
         react_1.default.createElement("span", { className: "advert-review-drawer__list-dot".concat(muted ? " advert-review-drawer__list-dot--muted" : "") }),
         item)); })));
 };
-// ─── Main Component ───────────────────────────────────────────────────────────
 var AdvertLanguageToggle = function (_a) {
     var advertLanguage = _a.advertLanguage, advertContent = _a.advertContent, isLoading = _a.isLoading, onLanguageChange = _a.onLanguageChange;
-    // ── Memoised list nodes ──────────────────────────────────────────────────
     var responsibilitiesList = (0, react_1.useMemo)(function () { return renderList(advertContent === null || advertContent === void 0 ? void 0 : advertContent.responsibilities); }, [advertContent === null || advertContent === void 0 ? void 0 : advertContent.responsibilities]);
     var qualificationsList = (0, react_1.useMemo)(function () { return renderList(advertContent === null || advertContent === void 0 ? void 0 : advertContent.qualifications, true); }, [advertContent === null || advertContent === void 0 ? void 0 : advertContent.qualifications]);
     var preferredQualificationsList = (0, react_1.useMemo)(function () { return renderList(advertContent === null || advertContent === void 0 ? void 0 : advertContent.PrefeQualification, true); }, [advertContent === null || advertContent === void 0 ? void 0 : advertContent.PrefeQualification]);
@@ -55,35 +53,39 @@ var AdvertLanguageToggle = function (_a) {
     var levelProficiencyList = (0, react_1.useMemo)(function () { return renderList(advertContent === null || advertContent === void 0 ? void 0 : advertContent.LevelProficiency, true); }, [advertContent === null || advertContent === void 0 ? void 0 : advertContent.LevelProficiency]);
     var jobFunctionalTypeList = (0, react_1.useMemo)(function () { return renderList(advertContent === null || advertContent === void 0 ? void 0 : advertContent.JobFunctionalType, true); }, [advertContent === null || advertContent === void 0 ? void 0 : advertContent.JobFunctionalType]);
     var jobBGVList = (0, react_1.useMemo)(function () { return renderList(advertContent === null || advertContent === void 0 ? void 0 : advertContent.JobBasedBGVVerification, true); }, [advertContent === null || advertContent === void 0 ? void 0 : advertContent.JobBasedBGVVerification]);
-    // ── Helpers ──────────────────────────────────────────────────────────────
     var isEmpty = function (arr) {
         return !arr || arr.length === 0;
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement("div", { className: "advert-review-drawer__section advert-review-drawer__section--toggle" },
-            react_1.default.createElement("div", { className: "advert-review-drawer__toggle-label" },
-                react_1.default.createElement(lucide_react_1.Globe, { size: 14 }),
-                "Advert Language"),
-            react_1.default.createElement("div", { className: "advert-review-drawer__toggle" },
-                react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__toggle-button ".concat(advertLanguage === "EN" ? "is-active" : "").trim(), onClick: function () { return onLanguageChange("EN"); } }, "English"),
-                react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__toggle-button ".concat(advertLanguage === "FR" ? "is-active" : "").trim(), onClick: function () { return onLanguageChange("FR"); } }, "French"))),
-        react_1.default.createElement("section", { className: "advert-review-drawer__section" },
-            react_1.default.createElement("h3", { className: "advert-review-drawer__section-title" },
-                react_1.default.createElement(lucide_react_1.FileText, { size: 12 }),
-                "Job Description (",
-                advertLanguage,
-                ")"),
-            isLoading ? (react_1.default.createElement(SkeletonBlock, { height: "72px" })) : (react_1.default.createElement("p", { className: "advert-review-drawer__description" }, (advertContent === null || advertContent === void 0 ? void 0 : advertContent.description) || ""))),
-        react_1.default.createElement(Section, { title: "Key Responsibilities (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.CheckCircle2, { size: 12 }), isLoading: isLoading, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.responsibilities) }, responsibilitiesList),
-        react_1.default.createElement(Section, { title: "Preferred Total Experience (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.Activity, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.experience) }, experienceList),
-        react_1.default.createElement("div", { className: "advert-review-drawer__grid advert-review-drawer__grid--split" },
-            react_1.default.createElement(Section, { title: "Minimum Qualification (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.Award, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.qualifications) }, qualificationsList),
-            react_1.default.createElement(Section, { title: "Preferred Qualification (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.Star, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.PrefeQualification) }, preferredQualificationsList),
-            react_1.default.createElement(Section, { title: "Role Specific Knowledge (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.BookOpen, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.RoleSpecificKnowledge) }, roleSpecificKnowledgeList),
-            react_1.default.createElement(Section, { title: "Required Level (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.TrendingUp, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.RequiredLevel) }, requiredLevelList),
-            react_1.default.createElement(Section, { title: "Technical Skills - Ability to Apply Knowledge (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.Wrench, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.TechnicalSkills) }, technicalSkillsList),
-            react_1.default.createElement(Section, { title: "Level of Proficiency (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.Zap, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.LevelProficiency) }, levelProficiencyList),
-            react_1.default.createElement(Section, { title: "Job Functional Type (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.Briefcase, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.JobFunctionalType) }, jobFunctionalTypeList))));
+        react_1.default.createElement("section", { className: "advert-review-drawer__section advert-review-drawer__section--frame" },
+            react_1.default.createElement("div", { className: "advert-review-drawer__section-header" },
+                react_1.default.createElement("h3", null,
+                    react_1.default.createElement("span", { className: "advert-review-drawer__section-indicator" }),
+                    "Job Advertisement")),
+            react_1.default.createElement("div", { className: "advert-review-drawer__section advert-review-drawer__section--toggle" },
+                react_1.default.createElement("div", { className: "advert-review-drawer__toggle-label" },
+                    react_1.default.createElement(lucide_react_1.Globe, { size: 14 }),
+                    "Advert Language"),
+                react_1.default.createElement("div", { className: "advert-review-drawer__toggle" },
+                    react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__toggle-button ".concat(advertLanguage === "EN" ? "is-active" : "").trim(), onClick: function () { return onLanguageChange("EN"); } }, "English"),
+                    react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__toggle-button ".concat(advertLanguage === "FR" ? "is-active" : "").trim(), onClick: function () { return onLanguageChange("FR"); } }, "French"))),
+            react_1.default.createElement("section", { className: "advert-review-drawer__section" },
+                react_1.default.createElement("h3", { className: "advert-review-drawer__section-title" },
+                    react_1.default.createElement(lucide_react_1.FileText, { size: 12 }),
+                    "Job Description (",
+                    advertLanguage,
+                    ")"),
+                isLoading ? (react_1.default.createElement(SkeletonBlock, { height: "72px" })) : (react_1.default.createElement("p", { className: "advert-review-drawer__description" }, (advertContent === null || advertContent === void 0 ? void 0 : advertContent.description) || ""))),
+            react_1.default.createElement(Section, { title: "Key Responsibilities (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.CheckCircle2, { size: 12 }), isLoading: isLoading, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.responsibilities) }, responsibilitiesList),
+            react_1.default.createElement(Section, { title: "Preferred Total Experience (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.Activity, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.experience) }, experienceList),
+            react_1.default.createElement("div", { className: "advert-review-drawer__grid advert-review-drawer__grid--split" },
+                react_1.default.createElement(Section, { title: "Minimum Qualification (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.Award, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.qualifications) }, qualificationsList),
+                react_1.default.createElement(Section, { title: "Preferred Qualification (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.Star, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.PrefeQualification) }, preferredQualificationsList),
+                react_1.default.createElement(Section, { title: "Role Specific Knowledge (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.BookOpen, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.RoleSpecificKnowledge) }, roleSpecificKnowledgeList),
+                react_1.default.createElement(Section, { title: "Required Level (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.TrendingUp, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.RequiredLevel) }, requiredLevelList),
+                react_1.default.createElement(Section, { title: "Technical Skills - Ability to Apply Knowledge (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.Wrench, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.TechnicalSkills) }, technicalSkillsList),
+                react_1.default.createElement(Section, { title: "Level of Proficiency (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.Zap, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.LevelProficiency) }, levelProficiencyList),
+                react_1.default.createElement(Section, { title: "Job Functional Type (".concat(advertLanguage, ")"), icon: react_1.default.createElement(lucide_react_1.Briefcase, { size: 12 }), isLoading: isLoading, skeletonLines: 2, isEmpty: isEmpty(advertContent === null || advertContent === void 0 ? void 0 : advertContent.JobFunctionalType) }, jobFunctionalTypeList)))));
 };
 exports.AdvertLanguageToggle = AdvertLanguageToggle;
 //# sourceMappingURL=AdvertLanguageToggle.js.map

@@ -6,6 +6,7 @@ import {
 } from "../../../../../utilities/ConditionConfig";
 import { OfferServices } from "../../../../../services/ServiceExport";
 import { VerificationStep } from "../../../../Comman/Statusbadge/Statusbadge";
+import { StatusId } from "../../../../../utilities/Config";
 
 interface BGVRemark {
   id: number;
@@ -14,7 +15,10 @@ interface BGVRemark {
   Remarks: string;
 }
 
-export const useBGVStatusDetails = (jobRequestID: string) => {
+export const useBGVStatusDetails = (
+  jobRequestID: string,
+  isActive: boolean,
+) => {
   const [data, setData] = useState<any>(null);
   const [bgvStatus, setBGVStatus] = useState<VerificationStep[]>([]);
   const [bgvComments, setBGVComments] = useState<BGVRemark[]>([]);
@@ -26,7 +30,7 @@ export const useBGVStatusDetails = (jobRequestID: string) => {
   const { MatricID } = useUIState();
 
   useEffect(() => {
-    if (!jobRequestID) return;
+    if (!jobRequestID && !isActive) return;
 
     const fetchData = async () => {
       setLoading(true);

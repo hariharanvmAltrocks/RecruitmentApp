@@ -89,7 +89,15 @@ var UploadDocument = function (_a) {
                     return [2 /*return*/];
             }
         });
-    }); }, [acceptedList, buildUploadedFile, files, maxBytes, maxFileSizeMB, multiple, updateFiles]);
+    }); }, [
+        acceptedList,
+        buildUploadedFile,
+        files,
+        maxBytes,
+        maxFileSizeMB,
+        multiple,
+        updateFiles,
+    ]);
     var handleInputChange = (0, react_1.useCallback)(function (e) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
@@ -136,7 +144,11 @@ var UploadDocument = function (_a) {
             }
         });
     }); }, [processFiles]);
-    var requiredError = (0, react_1.useMemo)(function () { return (required && touched && files.length === 0 ? "This field is required." : null); }, [required, touched, files.length]);
+    var requiredError = (0, react_1.useMemo)(function () {
+        return required && touched && files.length === 0
+            ? "This field is required."
+            : null;
+    }, [required, touched, files.length]);
     return (react_1.default.createElement("div", { className: "upload-document" },
         react_1.default.createElement("div", { className: "upload-document__header" },
             react_1.default.createElement("div", null,
@@ -148,14 +160,17 @@ var UploadDocument = function (_a) {
                     " \u2014 Max ",
                     maxFileSizeMB,
                     " MB")),
-            files.length > 0 && (react_1.default.createElement("button", { type: "button", className: "upload-document__clear", onClick: handleClearAll }, "Clear all"))),
+            files.length > 1 && (react_1.default.createElement("button", { type: "button", className: "upload-document__clear", onClick: handleClearAll }, "Clear all"))),
         react_1.default.createElement("div", { className: [
                 "upload-document__dropzone",
                 isDragging ? "is-dragging" : "",
                 hasError ? "upload-document__dropzone--error" : "",
             ]
                 .filter(Boolean)
-                .join(" "), onClick: function () { var _a; return (_a = inputRef.current) === null || _a === void 0 ? void 0 : _a.click(); }, onDragOver: function (e) { e.preventDefault(); setIsDragging(true); }, onDragLeave: function () { return setIsDragging(false); }, onDrop: handleDrop, role: "button", tabIndex: 0, onKeyDown: function (e) {
+                .join(" "), onClick: function () { var _a; return (_a = inputRef.current) === null || _a === void 0 ? void 0 : _a.click(); }, onDragOver: function (e) {
+                e.preventDefault();
+                setIsDragging(true);
+            }, onDragLeave: function () { return setIsDragging(false); }, onDrop: handleDrop, role: "button", tabIndex: 0, onKeyDown: function (e) {
                 var _a;
                 if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();

@@ -37,7 +37,6 @@ var PositionFramework = function (_a) {
                 react_1.default.createElement(InfoField, { label: "Sub Department", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.subDepartment, icon: lucide_react_1.ChevronRight }),
                 react_1.default.createElement(InfoField, { label: "Section", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.section, icon: lucide_react_1.ChevronRight }),
                 react_1.default.createElement(InfoField, { label: "Dept Code", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.deptCode, icon: lucide_react_1.FileText }),
-                react_1.default.createElement(InfoField, { label: "Reports To", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.reportsTo, icon: lucide_react_1.UserCheck }),
                 react_1.default.createElement(InfoField, { label: "Area of Work", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.areaOfWork, icon: lucide_react_1.Globe })),
             react_1.default.createElement("div", { className: "advert-review-drawer__divider" }),
             react_1.default.createElement("h4", { className: "advert-review-drawer__group-title" },

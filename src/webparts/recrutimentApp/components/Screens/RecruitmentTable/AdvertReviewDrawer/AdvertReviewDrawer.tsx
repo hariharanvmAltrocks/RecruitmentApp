@@ -1,7 +1,16 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FileCheck, Loader2, Send, X } from "lucide-react";
-import { PositionDetails, usePositionDetails } from "./Hooks/getPositionDetails";
+import {
+  PositionDetails,
+  usePositionDetails,
+} from "./Hooks/getPositionDetails";
 import { useAdvertismentDetails } from "./Hooks/getAdvertismentDetails";
 import { useAttachmentDetails } from "./Hooks/getAttachmentDetails";
 import { useSignatureDetails } from "./Hooks/getSignatureDetails";
@@ -12,7 +21,11 @@ import { AdvertLanguageToggle } from "../Components/AdvertLanguageToggle";
 import { RequiredAttachments } from "../Components/RequiredAttachments";
 import { ReviewCommentSignature } from "../Components/ReviewCommentSignature";
 import { UploadDocument, UploadedFile } from "../Components/UploadDocument";
-import { MatricID, Nationality, RecuritmentHRMsg } from "../../../../utilities/ConditionConfig";
+import {
+  MatricID,
+  Nationality,
+  RecuritmentHRMsg,
+} from "../../../../utilities/ConditionConfig";
 import { useUIState } from "../../../RecrutimentApp/UIStateContext";
 import BGVerification from "../Components/BGVerification/BGVerification";
 import { userInfo } from "../../../../utilities/hooks/RoleContext";
@@ -25,7 +38,6 @@ import { IDptData } from "../../../../services/RecruitmentTable/IRecruitmentServ
 import { useNavigate } from "react-router-dom";
 import { ModalPopup } from "../../../Comman/ModalPopup/ModalPopup";
 import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
-
 
 export interface AdvertReviewDrawerProps {
   drawerOpen: boolean;
@@ -44,7 +56,6 @@ export interface AdvertReviewDrawerProps {
   refreshKey: () => void;
 }
 
-
 const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({
   width = "100%",
   height = "14px",
@@ -59,7 +70,9 @@ const toDocFiles = (files: UploadedFile[]): IDocFiles[] =>
     type: "New",
   }));
 
-const toPositionDetails = (p: NonNullable<ReturnType<typeof usePositionDetails>["data"]>): PositionDetails => ({
+const toPositionDetails = (
+  p: NonNullable<ReturnType<typeof usePositionDetails>["data"]>,
+): PositionDetails => ({
   jobId: p.RecordID,
   jobTitle: p.JobTitleEnglish,
   jobCode: p.JobCode,
@@ -79,7 +92,6 @@ const toPositionDetails = (p: NonNullable<ReturnType<typeof usePositionDetails>[
   dateRequired: String(p.DateRequried),
   JobCodeID: p.JobCodeId,
 });
-
 
 export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   drawerOpen,
@@ -120,7 +132,8 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   const { data: attachments, loading: attachmentLoading } =
     useAttachmentDetails(jobCode, { enabled: !!jobCode });
 
-  const isLoading = positionLoading || advertLoading || attachmentLoading || signatureLoading;
+  const isLoading =
+    positionLoading || advertLoading || attachmentLoading || signatureLoading;
 
   const [uploadDocument, setUploadDocument] = useState<UploadedFile[]>([]);
 
@@ -138,7 +151,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
       roleIDs.includes(RoleID.LineManager) || roleIDs.includes(RoleID.HOD)
         ? RoleID.LineManager
         : roleIDs[0],
-    [roleIDs]
+    [roleIDs],
   );
 
   const formData: IDptData = useMemo(
@@ -153,19 +166,19 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
       NumberOfPersonNeeded: positionDetails?.NumberOfPersonNeeded ?? "",
       Dptcode: positionDetails?.DeptCode ?? "",
       reviewerComments,
-      StatusId: positionDetails?.StatusId ?? 0
+      StatusId: positionDetails?.StatusId ?? 0,
     }),
-    [positionDetails, reviewerComments]
+    [positionDetails, reviewerComments],
   );
 
   const docFiles: IDocFiles[] = useMemo(
     () => toDocFiles(uploadDocument),
-    [uploadDocument]
+    [uploadDocument],
   );
 
   const mappedData: PositionDetails | null = useMemo(
     () => (positionDetails ? toPositionDetails(positionDetails) : null),
-    [positionDetails]
+    [positionDetails],
   );
   const advertContent = useMemo(
     () =>
@@ -174,7 +187,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
           ? advertDetails.english
           : advertDetails.french
         : null,
-    [advertDetails, advertLanguage]
+    [advertDetails, advertLanguage],
   );
 
   const headerMeta = useMemo(
@@ -183,7 +196,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
       code: positionDetails?.JobCode ?? "",
       department: positionDetails?.Department ?? "",
     }),
-    [positionDetails]
+    [positionDetails],
   );
 
   const commentValid = reviewerComments.trim().length > 0;
@@ -195,7 +208,6 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
     BGVData.checkboxBGVOption.some((o) => o.checked);
 
   const bgvValid = optionValid;
-
 
   const canApprove = useMemo(() => {
     const rules: { roles: number[]; validate: () => boolean }[] = [
@@ -221,20 +233,29 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
 
     return rules.some(
       (rule) =>
-        rule.roles.some((role) => roleIDs.includes(role)) && rule.validate()
+        rule.roles.some((role) => roleIDs.includes(role)) && rule.validate(),
     );
-  }, [commentValid, uploadValid, checkboxValid, bgvValid, positionDetails?.Nationality, roleIDs]);
-
+  }, [
+    commentValid,
+    uploadValid,
+    checkboxValid,
+    bgvValid,
+    positionDetails?.Nationality,
+    roleIDs,
+  ]);
 
   const { updateMainRecord } = useUpdateMainRecord(formData, roleID);
   const { handleHRLeadProcess } = useHRLeadProcess(
     formData,
     RoleID.RecruitmentHRLead,
     docFiles,
-    BGVData?.checkboxBGVOption ?? []
+    BGVData?.checkboxBGVOption ?? [],
   );
-  const { handleHRProcess } = useHRProcess(formData, RoleID.RecruitmentHR, docFiles);
-
+  const { handleHRProcess } = useHRProcess(
+    formData,
+    RoleID.RecruitmentHR,
+    docFiles,
+  );
 
   const showSuccessModal = useCallback(
     (msg: string) => {
@@ -246,12 +267,12 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
         onConfirm: () => {
           closeModal();
           onClose();
-          navigate("/RecruitmentTable");
+          navigate("/Dashboard");
           refreshKey();
         },
       });
     },
-    [showModal, closeModal, onClose, navigate, refreshKey]
+    [showModal, closeModal, onClose, navigate, refreshKey],
   );
 
   const handleApprove = useCallback(async () => {
@@ -276,7 +297,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
       const isHRLead = roleIDs.includes(RoleID.RecruitmentHRLead);
       const isHR = roleIDs.includes(RoleID.RecruitmentHR);
       const isHODorLM = [RoleID.HOD, RoleID.LineManager].some((role) =>
-        roleIDs.includes(role)
+        roleIDs.includes(role),
       );
 
       if (isHRLead && metricId === MatricID.UploadONEM) {
@@ -300,8 +321,8 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
       });
     } finally {
       if (isSubmittingRef.current) {
-  isSubmittingRef.current = false;
-}
+        isSubmittingRef.current = false;
+      }
     }
   }, [
     canApprove,
@@ -315,16 +336,16 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
     closeModal,
   ]);
 
-
   const sv = showValidationRef.current;
   const uploadError = sv && !uploadValid;
   const commentError = sv && !commentValid;
   const checkboxError = sv && !checkboxValid;
   const bgvError = sv && !optionValid;
 
-
-  const showUploadONEMSection =
-    [MatricID.UploadONEM, MatricID.JobAdvert].includes(metricId);
+  const showUploadONEMSection = [
+    MatricID.UploadONEM,
+    MatricID.JobAdvert,
+  ].includes(metricId);
 
   const showBGVSection =
     metricId === MatricID.UploadONEM &&
@@ -367,16 +388,24 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                   </div>
                   <div>
                     <h2 className="advert-review-drawer__title">
-                      {isLoading ? <SkeletonBlock width="220px" /> : headerMeta.title}
+                      {isLoading ? (
+                        <SkeletonBlock width="220px" />
+                      ) : (
+                        headerMeta.title
+                      )}
                     </h2>
                     <div className="advert-review-drawer__meta">
                       {isLoading ? (
                         <SkeletonBlock width="160px" />
                       ) : (
                         <>
-                          <span className="advert-review-drawer__badge">{headerMeta.code}</span>
+                          <span className="advert-review-drawer__badge">
+                            {headerMeta.code}
+                          </span>
                           <span className="advert-review-drawer__dot" />
-                          <span className="advert-review-drawer__meta-text">{headerMeta.department}</span>
+                          <span className="advert-review-drawer__meta-text">
+                            {headerMeta.department}
+                          </span>
                         </>
                       )}
                     </div>
@@ -406,7 +435,10 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                   onLanguageChange={onLanguageChange}
                 />
 
-                <RequiredAttachments attachments={attachments} isLoading={isLoading} />
+                <RequiredAttachments
+                  attachments={attachments}
+                  isLoading={isLoading}
+                />
 
                 {showUploadONEMSection && (
                   <UploadDocument
@@ -462,13 +494,20 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
 
                         <button
                           type="button"
-                          className={!canApprove ? "advert-review-drawer__button advert-review-drawer__button--primary__is-disabled" : "advert-review-drawer__button advert-review-drawer__button--primary"}
+                          className={
+                            !canApprove
+                              ? "advert-review-drawer__button advert-review-drawer__button--primary__is-disabled"
+                              : "advert-review-drawer__button advert-review-drawer__button--primary"
+                          }
                           disabled={!canApprove || isSubmittingRef.current}
                           onClick={handleApprove}
                         >
                           {isSubmittingRef.current ? (
                             <>
-                              <Loader2 size={16} className="modal-popup__spinner" />
+                              <Loader2
+                                size={16}
+                                className="modal-popup__spinner"
+                              />
                               Sending...
                             </>
                           ) : (

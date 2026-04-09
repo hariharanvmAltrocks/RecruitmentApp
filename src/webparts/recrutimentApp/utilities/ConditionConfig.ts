@@ -495,3 +495,8 @@ export const EmployeementCategory = {
   KCSAEmployee: "KCSA Employee",
   LaborhireContractor: "Labour hire/Contractor",
 };
+
+export const ActionName = {
+  Completed: "Completed",
+  Pending: "Pending",
+};

@@ -5,9 +5,37 @@ var tslib_1 = require("tslib");
 var react_1 = require("react");
 var react_2 = tslib_1.__importDefault(require("react"));
 var Config_1 = require("../../../utilities/Config");
+var UIStateContext_1 = require("../../RecrutimentApp/UIStateContext");
+var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
+var getActionLabel = function (actionMode, item, matricID) {
+    var submissionMatricIds = [
+        ConditionConfig_1.MatricID.MySubmission,
+        ConditionConfig_1.MatricID.MySubmissionHR,
+        ConditionConfig_1.MatricID.MySubmissionLM,
+        ConditionConfig_1.MatricID.MySubmissionHOD,
+        ConditionConfig_1.MatricID.MySubmissionBGV,
+    ];
+    if (submissionMatricIds.includes(matricID)) {
+        return "VIEW";
+    }
+    else if (actionMode === "Upload") {
+        return "UPLOAD";
+    }
+    else if (item.statusId === Config_1.StatusId.CareerPortalQuestions) {
+        return "CREATE";
+    }
+    else if (item.statusId === Config_1.StatusId.PendingReviewAdvertHOD ||
+        item.statusId === Config_1.StatusId.PendingwithLineManagereviewAdv) {
+        return "REVIEW";
+    }
+    else {
+        return "VIEW";
+    }
+};
 var useRecruitmentColumns = function (_a) {
     var _b;
     var role = _a.role, actionMode = _a.actionMode, onAction = _a.onAction;
+    var matricID = (0, UIStateContext_1.useUIState)().MatricID;
     var onActionRef = (0, react_1.useRef)(onAction);
     (0, react_1.useEffect)(function () {
         onActionRef.current = onAction;
@@ -17,7 +45,7 @@ var useRecruitmentColumns = function (_a) {
         header: "Actions",
         align: "left",
         cellClassName: "data-table__cell--actions",
-        render: function (item) { return (react_2.default.createElement("button", { className: "data-table__action-btn", onClick: function () { return onActionRef.current(item); }, type: "button", "aria-label": actionMode === "Upload" ? "Upload document" : "View vacancy" }, actionMode === "Upload" ? "UPLOAD" : item.statusId === Config_1.StatusId.CareerPortalQuestions ? "CREATE" : "REVIEW")); },
+        render: function (item) { return (react_2.default.createElement("button", { className: "data-table__action-btn", onClick: function () { return onActionRef.current(item); }, type: "button", "aria-label": actionMode === "Upload" ? "Upload document" : "View vacancy" }, getActionLabel(actionMode, item, matricID))); },
     }); }, [actionMode]);
     var defaultColumns = (0, react_1.useMemo)(function () { return [
         {

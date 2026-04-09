@@ -486,7 +486,9 @@ var RecruitmentService = /** @class */ (function () {
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 6, , 7]);
-                        uniqueJobCodeIds = Array.from(new Set(payloads.map(function (p) { return p.Data.JobCodeId; })));
+                        uniqueJobCodeIds = payloads
+                            .map(function (p) { return p.Data.JobCodeId; })
+                            .filter(function (value, index, self) { return self.indexOf(value) === index; });
                         return [4 /*yield*/, Promise.all(tslib_1.__spreadArray([
                                 ServiceExport_1.CommonServices.GetMasterData(Config_1.ListNames.HRMSExternalAgents)
                             ], uniqueJobCodeIds.map(function (id) {

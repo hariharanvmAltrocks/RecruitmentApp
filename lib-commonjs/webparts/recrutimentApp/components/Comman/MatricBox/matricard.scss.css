@@ -8,7 +8,8 @@
   cursor: pointer;
   transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
   min-width: 160px;
-  max-width: 163px;
+  max-width: 160px;
+  height: 80px;
   flex: 1;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
   margin-right: 12px;

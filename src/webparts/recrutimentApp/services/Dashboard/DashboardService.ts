@@ -26,6 +26,8 @@ import {
   NationalityCode,
 } from "../../utilities/ConditionConfig";
 import { CommonServices, masterService } from "../ServiceExport";
+import { EvalQueryConfig } from "../../components/Screens/SelectionProcess/config/EvaluationConfig";
+import { IJobGrade } from "../../models/master";
 
 export default class DashboardService implements IDashboard {
   async GetDashboardCount(
@@ -111,15 +113,13 @@ export default class DashboardService implements IDashboard {
     const result = new Map<string, number>();
     if (!externalMetrics.length) return result;
 
-    const allJobCodeIds = Array.from(
-      new Set(
-        externalMetrics.flatMap((m) =>
-          (spCounts[m.id] ?? [])
-            .map((item: any) => item.JobCodeId)
-            .filter(Boolean),
-        ),
-      ),
-    );
+    const allJobCodeIds = externalMetrics
+      .flatMap((m) =>
+        (spCounts[m.id] ?? [])
+          .map((item: any) => item.JobCodeId)
+          .filter(Boolean),
+      )
+      .filter((value, index, self) => self.indexOf(value) === index);
 
     if (!allJobCodeIds.length) return result;
 
@@ -387,9 +387,46 @@ export default class DashboardService implements IDashboard {
   async GetCandidateDetails(
     filterParam: any,
     filterConditions: any,
+    MatricId?: number,
+    EmailID?: string,
   ): Promise<ApiResponse<any[]>> {
     try {
-      let GridResult: any[] = [];
+      const isEvaluationFlow =
+        MatricId === MatricID.EvalutionHR ||
+        MatricId === MatricID.EvalutionLM ||
+        MatricId === MatricID.EvalutionHOD ||
+        MatricId === MatricID.EvalutionEXCO;
+
+      if (EmailID && isEvaluationFlow) {
+        const UserID = await CommonServices.getUserGuidByEmail(EmailID);
+
+        const listItems: any[] = await SPServices.SPReadItems({
+          Listname: ListNames.HRMSInterviewPanelDetails,
+          Select: EvalQueryConfig.InterviewPanel.Select,
+          Expand: EvalQueryConfig.InterviewPanel.Expand,
+          Filter: [
+            {
+              FilterKey: "InterviewPanelId",
+              Operator: "eq",
+              FilterValue: UserID.data?.key ?? "",
+            },
+          ],
+        });
+
+        const recruitmentIds = listItems
+          .map((item) => item.CandidateID?.ID)
+          .filter(Boolean); // ← also filter falsy IDs
+
+        if (recruitmentIds.length === 0) {
+          return { data: [], status: 200, message: "No records found" };
+        }
+
+        filterParam.push({
+          FilterKey: "ID",
+          Operator: "in",
+          FilterValue: recruitmentIds,
+        });
+      }
 
       const res: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
@@ -406,11 +443,11 @@ export default class DashboardService implements IDashboard {
         return { data: [], status: 200, message: "No records found" };
       }
 
-      const ids: number[] = res
+      const recruitmentIds: number[] = res
         .map((item: any) => item.RecruitmentID?.Id)
         .filter(Boolean);
 
-      if (!ids.length) {
+      if (!recruitmentIds.length) {
         return {
           data: [],
           status: 200,
@@ -418,70 +455,75 @@ export default class DashboardService implements IDashboard {
         };
       }
 
+      const uniqueGrades = Array.from(
+        new Set(res.map((item) => item?.JobGrade).filter(Boolean)),
+      );
+
       const recruitmentFilter = [
-        { FilterKey: "ID", Operator: "in", FilterValue: ids },
+        { FilterKey: "ID", Operator: "in", FilterValue: recruitmentIds },
       ];
 
-      let DeptDetails = await this.GetRecruitmentDetails(
-        recruitmentFilter,
-        filterConditions,
+      const [deptResult, ...gradeResults] = await Promise.all([
+        this.GetRecruitmentDetails(recruitmentFilter, filterConditions),
+        ...uniqueGrades.map((grade) =>
+          masterService.GetGradeLevel(grade).catch((err) => {
+            console.error(`GradeLevel API failed for grade "${grade}":`, err);
+            return { data: [] };
+          }),
+        ),
+      ]);
+
+      const gradeLevelMap = new Map<string, IJobGrade | any[]>(
+        uniqueGrades.map((grade, i): [string, IJobGrade | any[]] => [
+          grade,
+          gradeResults[i]?.data ?? [],
+        ]),
       );
-      GridResult = await Promise.all(
-        res.map(async (item, index) => {
-          const deptDetails = DeptDetails.data.filter(
-            (dpt) => dpt.ID === item.RecruitmentID?.Id,
-          );
 
-          let GradeLevel;
-          try {
-            GradeLevel = await masterService.GetGradeLevel(item?.JobGrade);
-          } catch (err) {
-            console.error("GradeLevel API failed:", err);
-            GradeLevel = { data: [] }; // fallback
-          }
+      const deptMap = new Map<number, any[]>();
+      for (const dept of deptResult.data ?? []) {
+        const existing = deptMap.get(dept.ID) ?? [];
+        existing.push(dept);
+        deptMap.set(dept.ID, existing);
+      }
 
-          const InterviewDate = item?.InterviewDateLevel2
-            ? item?.InterviewDateLevel2
-            : item?.InterviewDate;
+      const GridResult = res.map((item, index) => {
+        const InterviewDate = item?.InterviewDateLevel2 ?? item?.InterviewDate;
 
-          return {
-            ID: item.ID,
-            RecordID: index + 1,
+        return {
+          ID: item.ID,
+          RecordID: index + 1,
 
-            ApplicantName:
-              `${item.FristName || ""} ${item.MiddleName || ""} ${item.LastName || ""}`.trim(),
+          ApplicantName:
+            `${item.FristName ?? ""} ${item.MiddleName ?? ""} ${item.LastName ?? ""}`.trim(),
 
-            PositionTitle: item?.PositionTitle,
-            JobGrade: item?.JobGrade,
-            Nationality: item?.Nationality,
+          PositionTitle: item?.PositionTitle,
+          JobGrade: item?.JobGrade,
+          Nationality: item?.Nationality,
 
-            interviewLevels: GradeLevel?.data || [],
-            jobrequestID: item?.JobRequestID,
+          interviewLevels: (gradeLevelMap.get(item?.JobGrade) as any[]) ?? [],
+          jobrequestID: item?.JobRequestID,
 
-            Status: item?.Status?.StatusDescription ?? "",
-            StatusId: item?.StatusId,
+          Status: item?.Status?.StatusDescription ?? "",
+          StatusId: item?.StatusId,
 
-            InterviewDate: InterviewDate
-              ? moment(InterviewDate).format("YYYY-MM-DD")
-              : undefined,
+          InterviewDate: InterviewDate
+            ? moment(InterviewDate).format("YYYY-MM-DD")
+            : undefined,
 
-            ModifiedDate: item?.Modified
-              ? moment(item.Modified).format("YYYY-MM-DD")
-              : undefined,
+          ModifiedDate: item?.Modified
+            ? moment(item.Modified).format("YYYY-MM-DD")
+            : undefined,
 
-            CreatedDate: item?.Created
-              ? moment(item.Created).format("YYYY-MM-DD")
-              : undefined,
+          CreatedDate: item?.Created
+            ? moment(item.Created).format("YYYY-MM-DD")
+            : undefined,
 
-            isExpat:
-              item?.NationalityCode === NationalityCode.Nationals
-                ? false
-                : true,
+          isExpat: item?.NationalityCode !== NationalityCode.Nationals,
 
-            DeptDetails: deptDetails,
-          };
-        }),
-      );
+          DeptDetails: deptMap.get(item.RecruitmentID?.Id) ?? [],
+        };
+      });
 
       return { data: GridResult, status: 200, message: "Success" };
     } catch (error) {

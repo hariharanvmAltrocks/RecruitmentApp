@@ -51,6 +51,15 @@ export const ViewCommentsModal: React.FC<ViewCommentsModalProps> = ({
   const [isClosing, setIsClosing] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
+  const handleClose = () => {
+    setIsClosing(true);
+    // Match the CSS animation duration (0.3s)
+    setTimeout(() => {
+      onClose();
+      setIsClosing(false);
+    }, 300);
+  };
+
   // Handle Entry / Exit states
   useEffect(() => {
     if (isOpen) {
@@ -64,7 +73,7 @@ export const ViewCommentsModal: React.FC<ViewCommentsModalProps> = ({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        handleClose();
+        void handleClose();
         return;
       }
 
@@ -102,15 +111,6 @@ export const ViewCommentsModal: React.FC<ViewCommentsModalProps> = ({
 
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, isClosing]);
-
-  const handleClose = () => {
-    setIsClosing(true);
-    // Match the CSS animation duration (0.3s)
-    setTimeout(() => {
-      onClose();
-      setIsClosing(false);
-    }, 300);
-  };
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // Only close icon closes the popup. Do not close on backdrop click.

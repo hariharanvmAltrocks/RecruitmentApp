@@ -4,10 +4,10 @@ import { DataTableColumn } from "../../Comman/DataTable/DataTable";
 import { EvalutionItem, RecruitmentItem } from "./RecruitmentTable.types";
 import React from "react";
 import { StatusId } from "../../../utilities/Config";
-
+import { useUIState } from "../../RecrutimentApp/UIStateContext";
+import { MatricID } from "../../../utilities/ConditionConfig";
 
 export type ColumnRole = "default" | "evaluation";
-
 
 interface UseRecruitmentColumnsOptions {
   role: ColumnRole;
@@ -15,12 +15,40 @@ interface UseRecruitmentColumnsOptions {
   onAction: (item: RecruitmentItem) => void;
 }
 
+const getActionLabel = (
+  actionMode: "Upload" | "View",
+  item: RecruitmentItem,
+  matricID: number,
+) => {
+  const submissionMatricIds = [
+    MatricID.MySubmission,
+    MatricID.MySubmissionHR,
+    MatricID.MySubmissionLM,
+    MatricID.MySubmissionHOD,
+    MatricID.MySubmissionBGV,
+  ];
+  if (submissionMatricIds.includes(matricID)) {
+    return "VIEW";
+  } else if (actionMode === "Upload") {
+    return "UPLOAD";
+  } else if (item.statusId === StatusId.CareerPortalQuestions) {
+    return "CREATE";
+  } else if (
+    item.statusId === StatusId.PendingReviewAdvertHOD ||
+    item.statusId === StatusId.PendingwithLineManagereviewAdv
+  ) {
+    return "REVIEW";
+  } else {
+    return "VIEW";
+  }
+};
+
 export const useRecruitmentColumns = ({
   role,
   actionMode,
   onAction,
 }: UseRecruitmentColumnsOptions): DataTableColumn<RecruitmentItem>[] => {
-
+  const { MatricID: matricID } = useUIState();
   const onActionRef = useRef(onAction);
   useEffect(() => {
     onActionRef.current = onAction;
@@ -37,14 +65,15 @@ export const useRecruitmentColumns = ({
           className="data-table__action-btn"
           onClick={() => onActionRef.current(item)}
           type="button"
-          aria-label={actionMode === "Upload" ? "Upload document" : "View vacancy"}
+          aria-label={
+            actionMode === "Upload" ? "Upload document" : "View vacancy"
+          }
         >
-          {/* {actionMode === "Upload" ? <Upload size={16} /> : <Eye size={16} />} */}
-          {actionMode === "Upload" ? "UPLOAD" : item.statusId === StatusId.CareerPortalQuestions ? "CREATE" : "REVIEW"}
+          {getActionLabel(actionMode, item, matricID)}
         </button>
       ),
     }),
-    [actionMode]
+    [actionMode],
   );
 
   const defaultColumns: DataTableColumn<RecruitmentItem>[] = useMemo(
@@ -91,12 +120,14 @@ export const useRecruitmentColumns = ({
         id: "status",
         header: "Status",
         render: (item) => (
-          <span className="data-table__status-badge status-badge">{item.status}</span>
+          <span className="data-table__status-badge status-badge">
+            {item.status}
+          </span>
         ),
       },
       actionColumn,
     ],
-    [actionColumn]
+    [actionColumn],
   );
 
   const evaluationColumns: DataTableColumn<any>[] = useMemo(
@@ -144,12 +175,14 @@ export const useRecruitmentColumns = ({
         id: "status",
         header: "Status",
         render: (item) => (
-          <span className="data-table__status-badge status-badge">{item.status}</span>
+          <span className="data-table__status-badge status-badge">
+            {item.status}
+          </span>
         ),
       },
       actionColumn,
     ],
-    [actionColumn]
+    [actionColumn],
   );
 
   const columnMap: Record<ColumnRole, DataTableColumn<any>[]> = {
