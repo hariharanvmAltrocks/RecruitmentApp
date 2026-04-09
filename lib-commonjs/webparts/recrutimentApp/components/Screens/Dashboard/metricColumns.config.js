@@ -638,6 +638,9 @@ var MetricQueryConfig = function (EmailId) {
             Config_1.StatusId.RESIProcessInitiatedforDRC,
             Config_1.StatusId.RESIProcessInitiatedforExpatriate,
             Config_1.StatusId.RESProcessInitiated,
+            Config_1.StatusId.onboardingInProcess,
+            Config_1.StatusId.OnboardingProcessinitiatedforDRC,
+            Config_1.StatusId.OnboardingProcessinitiatedforExpat,
         ], "RecruitmentHR", EmailId)),
         _a);
 };

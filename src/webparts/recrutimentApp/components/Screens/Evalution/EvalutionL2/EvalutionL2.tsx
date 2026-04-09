@@ -1,21 +1,23 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import { X, Users, ChevronRight } from "lucide-react";
-import styles from "../ReviewScorecard.module.scss";
+import styles from "../../ReviewScoreCard/ReviewScorecard.module.scss";
 import {
-  ScorecardCandidateRow,
-  HODDecision,
-  PositionOption,
   CommentEntry,
-  CandidateReviewData,
   ErrorsType,
-} from "../State/types";
-import QuestionnaireTab from "./QuestionnaireTab";
-import ScoreTable from "./ScoreTable";
-import HODDecisionPanel from "./HODDecisionPanel";
-import CommentsModal from "./Commentsmodal";
-import { canEdit } from "../Hooks/useReviewScorecard";
-import { SubmitHookDeps } from "./useSubmitReviewScoreCard";
+  ScorecardCandidateRow,
+} from "../../ReviewScoreCard/State/types";
+import {
+  CandidateReviewData,
+  HODDecision,
+} from "../../SelectionProcess/tabs/EvaluationTab/Reviewscorecardtab/types";
+import { SubmitHookDeps } from "../../ReviewScoreCard/Components/useSubmitReviewScoreCard";
+import QuestionnaireTab from "../../ReviewScoreCard/Components/QuestionnaireTab";
+import ScoreTable from "../../ReviewScoreCard/Components/ScoreTable";
+import CommentsModal from "../../ReviewScoreCard/Components/Commentsmodal";
+import { useReviewScorecard } from "../../ReviewScoreCard/Hooks/useReviewScorecard";
+import { userInfo } from "../../../../utilities/hooks/RoleContext";
+import { useNavigate } from "react-router-dom";
 
 const SCORE_CRITERIA = [
   { field: "RelevantQualification", label: "Qualification (Relevant)" },
@@ -32,41 +34,9 @@ const SCORE_CRITERIA = [
 ];
 const MAX_OVERALL_PER_PANEL = 40;
 interface Props {
-  candidate: ScorecardCandidateRow;
-  reviewData: CandidateReviewData | null;
-  reviewLoading: boolean;
-  job?: any;
-  scoreData: any[];
-  scoreLoading: boolean;
-
-  showComments: boolean;
-  level1Comments: CommentEntry[];
-  level2Comments: CommentEntry[];
-  commentsLoading: boolean;
-  onViewComments: () => void;
-  onCloseComments: () => void;
-
-  hodDecision: HODDecision;
-  decisionComment: string;
-  confirmed: boolean;
-  selectedPositionId: number | null;
-  selectedPositionText: string;
-  positionOptions: PositionOption[];
-  submitting: boolean;
-  submitError: string;
-  successMessage: string;
-  errors: ErrorsType;
-  shouldShowPositionId: (statusId: number, decision: HODDecision) => boolean;
-
-  onDecisionChange: (d: HODDecision) => void;
-  onCommentChange: (v: string) => void;
-  onConfirmChange: (v: boolean) => void;
-  onPositionChange: (id: number | null, text: string) => void;
+  ID: number;
+  EmailId: string;
   onClose: () => void;
-
-  currentRoleId: number;
-  isLevel2Status: boolean;
-  submitDeps: SubmitHookDeps;
 }
 
 type ScorecardTabKey = "questions" | "qEval" | "overall";
@@ -78,52 +48,28 @@ const MField = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
-const CandidateReviewModal: React.FC<Props> = ({
-  candidate,
-  reviewData,
-  reviewLoading,
-  job,
-  scoreData,
-  scoreLoading,
-  showComments,
-  level1Comments,
-  level2Comments,
-  commentsLoading,
-  onViewComments,
-  onCloseComments,
-  hodDecision,
-  decisionComment,
-  confirmed,
-  selectedPositionId,
-  selectedPositionText,
-  positionOptions,
-  submitting,
-  submitError,
-  successMessage,
-  errors,
-  shouldShowPositionId,
-  onDecisionChange,
-  onCommentChange,
-  onConfirmChange,
-  onPositionChange,
-  onClose,
-  currentRoleId,
-  isLevel2Status,
-  submitDeps,
-}) => {
+const EvalutionL2: React.FC = (props: any) => {
+  const ID = props.ID;
+  const EmailId = props.EmailID;
+  const hook = useReviewScorecard(ID, EmailId, "", true);
+  const navigate = useNavigate();
   const [activePanelTab, setActivePanelTab] = React.useState(0);
   const [activeScorecardTab, setActiveScorecardTab] =
     React.useState<ScorecardTabKey>("questions");
 
+  const onClose = () => {
+    navigate("/RecruitmentTable");
+  };
+
   const panelMembers: string[] = React.useMemo(() => {
-    const fromReview = reviewData?.panelMembers || [];
+    const fromReview = hook.reviewData?.panelMembers || [];
     if (fromReview.length > 0) return fromReview;
-    return (scoreData || []).map(
+    return (hook.scoreData || []).map(
       (s: any, i: number) => s.InterviewPersonName || `Interviewer ${i + 1}`,
     );
-  }, [reviewData, scoreData]);
+  }, [hook.reviewData, hook.scoreData]);
 
-  const activeScore: any = (scoreData || [])[activePanelTab] || null;
+  const activeScore: any = (hook.scoreData || [])[activePanelTab] || null;
   const activeQJson: any[] = React.useMemo(() => {
     if (!activeScore?.QuestionJson) return [];
     if (Array.isArray(activeScore.QuestionJson))
@@ -137,7 +83,7 @@ const CandidateReviewModal: React.FC<Props> = ({
 
   const questionTableRows = React.useMemo(() => {
     const qMap: Record<string, any> = {};
-    (scoreData || []).forEach((s: any, i: number) => {
+    (hook.scoreData || []).forEach((s: any, i: number) => {
       const qJson: any[] = Array.isArray(s.QuestionJson)
         ? s.QuestionJson
         : (() => {
@@ -154,12 +100,12 @@ const CandidateReviewModal: React.FC<Props> = ({
       });
     });
     return Object.values(qMap);
-  }, [scoreData]);
+  }, [hook.scoreData]);
 
   const overallTableRows = React.useMemo(() => {
     const rows = SCORE_CRITERIA.map(({ field, label }) => {
       const row: any = { criteria: label, total: 0 };
-      (scoreData || []).forEach((s: any, i: number) => {
+      (hook.scoreData || []).forEach((s: any, i: number) => {
         const val = Number(s[field]) || 0;
         row[`panel_${i}`] = val;
         row.total += val;
@@ -167,7 +113,7 @@ const CandidateReviewModal: React.FC<Props> = ({
       return row;
     });
     const totalRow: any = { criteria: "Total", total: 0 };
-    (scoreData || []).forEach((_: any, i: number) => {
+    (hook.scoreData || []).forEach((_: any, i: number) => {
       const sum = rows.reduce((acc, r) => {
         const v = r[`panel_${i}`];
         return typeof v === "number" ? acc + v : acc;
@@ -180,18 +126,18 @@ const CandidateReviewModal: React.FC<Props> = ({
     );
     rows.push(totalRow);
     return rows;
-  }, [scoreData]);
+  }, [hook.scoreData]);
 
-  const raw = reviewData?.candidateData || {};
+  const raw = hook.reviewData?.candidateData || {};
   const formattedDate =
     (
       raw.InterviewDate ||
       raw.InterviewDateLevel2 ||
-      candidate.interviewDate ||
+      hook.reviewingCandidate?.interviewDate ||
       ""
     ).split("T")[0] || "";
   const nationLabel = (() => {
-    const n = (candidate.nationality || "").toLowerCase();
+    const n = (hook.reviewingCandidate?.nationality || "").toLowerCase();
     if (n.includes("expat")) return "EXPAT";
     if (
       n.includes("national") ||
@@ -199,11 +145,17 @@ const CandidateReviewModal: React.FC<Props> = ({
       n.includes("local")
     )
       return "LOCAL";
-    return (candidate.nationality || "").toUpperCase() || "";
+    return (hook.reviewingCandidate?.nationality || "").toUpperCase() || "";
   })();
-  const userInitial = (reviewData?.reviewerName || "").charAt(0).toUpperCase();
-  const safeLevel1 = Array.isArray(level1Comments) ? level1Comments : [];
-  const safeLevel2 = Array.isArray(level2Comments) ? level2Comments : [];
+  const userInitial = (hook.reviewData?.reviewerName || "")
+    .charAt(0)
+    .toUpperCase();
+  const safeLevel1 = Array.isArray(hook.level1Comments)
+    ? hook.level1Comments
+    : [];
+  const safeLevel2 = Array.isArray(hook.level2Comments)
+    ? hook.level2Comments
+    : [];
 
   return (
     <div className={styles.modalOverlay}>
@@ -232,11 +184,14 @@ const CandidateReviewModal: React.FC<Props> = ({
                 <h2 className={styles.mTitle}>Candidate Details</h2>
                 <p className={styles.mSubtitle}>
                   <span className={styles.mJobCode}>
-                    {job?.jobCode || candidate.jobCode || ""}
+                    {/*  job?.jobCode */}
+                    {hook.reviewingCandidate?.jobCode || ""}
                   </span>
                   <span className={styles.mDot}>›</span>
                   <span>
-                    {raw?.PositionTitle || candidate.positionTitle || ""}
+                    {raw?.PositionTitle ||
+                      hook.reviewingCandidate?.positionTitle ||
+                      ""}
                   </span>
                 </p>
               </div>
@@ -245,7 +200,9 @@ const CandidateReviewModal: React.FC<Props> = ({
           <div className={styles.mHeaderRight}>
             <div className={styles.mGpa}>
               <span className={styles.mGpaLabel}>OVERALL GPA</span>
-              <span className={styles.mGpaValue}>{candidate.gpa || "—"}</span>
+              <span className={styles.mGpaValue}>
+                {hook.reviewingCandidate?.gpa || "—"}
+              </span>
             </div>
             <button onClick={onClose} className={styles.mCloseBtn}>
               <X size={20} />
@@ -258,19 +215,25 @@ const CandidateReviewModal: React.FC<Props> = ({
           {/* ── LEFT SIDEBAR ── */}
           <aside className={styles.mLeft}>
             <div className={styles.mLeftCard}>
-              <div className={styles.mCandidateName}>{candidate.fullName}</div>
+              <div className={styles.mCandidateName}>
+                {hook.reviewingCandidate?.fullName}
+              </div>
               <div className={styles.mCandidateType}>{nationLabel}</div>
-              {reviewLoading ? (
+              {hook.reviewLoading ? (
                 <div className={styles.mNoData}>Loading info...</div>
               ) : (
                 <div className={styles.mFieldList}>
                   <MField
                     label="NATIONALITY"
-                    value={raw.Nationality || candidate.nationality || ""}
+                    value={
+                      raw.Nationality ||
+                      hook.reviewingCandidate?.nationality ||
+                      ""
+                    }
                   />
                   <MField
                     label="GENDER"
-                    value={raw.Gender || candidate.gender || ""}
+                    value={raw.Gender || hook.reviewingCandidate?.gender || ""}
                   />
                   <MField
                     label="QUALIFICATION"
@@ -290,11 +253,14 @@ const CandidateReviewModal: React.FC<Props> = ({
                     <MField label="INTERVIEW DATE" value={formattedDate} />
                     <MField
                       label="LEVELS"
-                      value={candidate.interviewLevel || ""}
+                      value={hook.reviewingCandidate?.interviewLevel || ""}
                     />
                   </div>
                   <div className={styles.mTwoCol}>
-                    <MField label="GRADE" value={candidate.grade || ""} />
+                    <MField
+                      label="GRADE"
+                      value={hook.reviewingCandidate?.grade || ""}
+                    />
                     <MField
                       label="CONFLICTS"
                       value={raw.ConflictsOfInterest || ""}
@@ -327,9 +293,9 @@ const CandidateReviewModal: React.FC<Props> = ({
 
           {/* ── RIGHT MAIN ── */}
           <main className={styles.mRight}>
-            {!scoreLoading && (scoreData || []).length > 0 && (
+            {!hook.scoreLoading && (hook.scoreData || []).length > 0 && (
               <div className={styles.panelTabBar}>
-                {(scoreData || []).map((s: any, i: number) => (
+                {(hook.scoreData || []).map((s: any, i: number) => (
                   <button
                     key={i}
                     className={`${styles.panelTab} ${activePanelTab === i ? styles.panelTabActive : ""}`}
@@ -349,11 +315,11 @@ const CandidateReviewModal: React.FC<Props> = ({
 
             {activeScorecardTab === "questions" && (
               <QuestionnaireTab
-                questions={reviewData?.questions || []}
+                questions={hook.reviewData?.questions || []}
                 activeScore={activeScore}
                 activeQJson={activeQJson}
                 panelMemberName={panelMembers[activePanelTab] || ""}
-                fetchingQuestions={reviewLoading}
+                fetchingQuestions={hook.reviewLoading}
               />
             )}
             {activeScorecardTab === "qEval" && (
@@ -378,47 +344,19 @@ const CandidateReviewModal: React.FC<Props> = ({
                 emptyText="No scorecard data available."
               />
             )}
-            <HODDecisionPanel
-              canEdit={canEdit(candidate.statusId)}
-              isLevel2Status={isLevel2Status}
-              statusId={candidate.statusId}
-              hodDecision={hodDecision}
-              decisionComment={decisionComment}
-              confirmed={confirmed}
-              selectedPositionId={selectedPositionId}
-              selectedPositionText={selectedPositionText}
-              positionOptions={positionOptions || []}
-              submitting={submitting}
-              submitError={submitError}
-              successMessage={successMessage}
-              reviewerName={reviewData?.reviewerName || ""}
-              jobTitleEn={reviewData?.jobTitleEn || ""}
-              jobTitleFr={reviewData?.jobTitleFr || ""}
-              userInitial={userInitial}
-              errors={errors}
-              shouldShowPositionId={shouldShowPositionId}
-              onDecisionChange={onDecisionChange}
-              onCommentChange={onCommentChange}
-              onConfirmChange={onConfirmChange}
-              onPositionChange={onPositionChange}
-              onViewComments={onViewComments}
-              onClose={onClose}
-              submitDeps={submitDeps}
-              roleId={currentRoleId}
-            />
           </main>
         </div>
       </motion.div>
 
       <CommentsModal
-        open={showComments}
-        loading={commentsLoading}
+        open={hook?.showComments}
+        loading={hook.commentsLoading}
         level1={safeLevel1}
         level2={safeLevel2}
-        onClose={onCloseComments}
+        onClose={hook.closeReview}
       />
     </div>
   );
 };
 
-export default CandidateReviewModal;
+export default EvalutionL2;

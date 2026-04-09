@@ -104,23 +104,32 @@ var ReviewDocument = function (_a) {
     }, [positionDetails]);
     var handleError = (0, react_1.useCallback)(function () {
         showModal({
-            type: "error", title: "Something Went Wrong",
+            type: "error",
+            title: "Something Went Wrong",
             message: "An unexpected error occurred. Please try again.",
-            confirmLabel: "Close", onConfirm: closeModal,
+            confirmLabel: "Close",
+            onConfirm: closeModal,
         });
     }, [showModal, closeModal]);
     var ensureValid = (0, react_1.useCallback)(function () {
         if (!validateAll(vis)) {
             showModal({
-                type: "warning", title: "Required Fields Missing",
+                type: "warning",
+                title: "Required Fields Missing",
                 message: "Please complete all highlighted fields before submitting.",
-                confirmLabel: "OK", onConfirm: closeModal,
+                confirmLabel: "OK",
+                onConfirm: closeModal,
             });
             return false;
         }
         return true;
     }, [validateAll, vis, showModal, closeModal]);
-    var getCheckStatus = function (title) { var _a; return ((_a = checklist.find(function (item) { return item.Title === title; })) === null || _a === void 0 ? void 0 : _a.value) ? ConditionConfig_1.ActionName.Completed : ConditionConfig_1.ActionName.Pending; };
+    var getCheckStatus = function (title) {
+        var _a;
+        return ((_a = checklist.find(function (item) { return item.Title === title; })) === null || _a === void 0 ? void 0 : _a.value)
+            ? ConditionConfig_1.ActionName.Completed
+            : ConditionConfig_1.ActionName.Pending;
+    };
     var renderBtnContent = function (text) {
         return isSubmittingRef.current ? (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(lucide_react_1.Loader2, { size: 16, className: "modal-popup__spinner" }),
@@ -130,20 +139,25 @@ var ReviewDocument = function (_a) {
     };
     var showSuccessModal = (0, react_1.useCallback)(function (msg) {
         showModal({
-            type: "success", title: "Submitted Successfully", message: msg,
+            type: "success",
+            title: "Submitted Successfully",
+            message: msg,
             confirmLabel: "Go to Dashboard",
             onConfirm: function () {
                 closeModal();
                 onClose();
-                navigate("/RecruitmentTable");
+                navigate("/Dashboard");
                 refreshKey();
             },
         });
     }, [showModal, closeModal, onClose, navigate, refreshKey]);
     var handleReinitiate = (0, react_1.useCallback)(function () {
         showModal({
-            type: "confirmation", title: "Reinitiate BGV", message: ConditionConfig_1.RecuritmentHRMsg.ReinitiateBGVWarningMsg,
-            confirmLabel: "Yes", cancelLabel: "No",
+            type: "confirmation",
+            title: "Reinitiate BGV",
+            message: ConditionConfig_1.RecuritmentHRMsg.ReinitiateBGVWarningMsg,
+            confirmLabel: "Yes",
+            cancelLabel: "No",
             onConfirm: function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
                 var UpdateBGV;
                 return tslib_1.__generator(this, function (_a) {
@@ -172,7 +186,11 @@ var ReviewDocument = function (_a) {
                 return [2 /*return*/];
             isSubmittingRef.current = true;
             try {
-                action = consentVerification === "verified" ? ConditionConfig_1.ButtonAction.Review : consentVerification === "rejected" ? ConditionConfig_1.ButtonAction.Revert : ConditionConfig_1.ButtonAction.Initiated;
+                action = consentVerification === "verified"
+                    ? ConditionConfig_1.ButtonAction.Review
+                    : consentVerification === "rejected"
+                        ? ConditionConfig_1.ButtonAction.Revert
+                        : ConditionConfig_1.ButtonAction.Initiated;
                 void submit(action);
             }
             catch (error) {
@@ -256,13 +274,32 @@ var ReviewDocument = function (_a) {
             });
             return [2 /*return*/];
         });
-    }); }, [positionDetails, coiState, bgvStatusDetails, CandidateID, selectedcandidateID, showModal, closeModal, onClose, refreshKey, showSuccessModal, ensureValid, handleError]);
+    }); }, [
+        positionDetails,
+        coiState,
+        bgvStatusDetails,
+        CandidateID,
+        selectedcandidateID,
+        showModal,
+        closeModal,
+        onClose,
+        refreshKey,
+        showSuccessModal,
+        ensureValid,
+        handleError,
+    ]);
     var handleSaveAsDraft = function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var BtnAction, ChecklistValue, UpdateStatusCandidateList, Obj;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    BtnAction = !allChecked ? ConditionConfig_1.ButtonAction.SaveAsDraft : ConditionConfig_1.ButtonAction.Submit;
+                    BtnAction = !allChecked
+                        ? ConditionConfig_1.ButtonAction.SaveAsDraft
+                        : ConditionConfig_1.ButtonAction.Submit;
+                    if (BtnAction === ConditionConfig_1.ButtonAction.Submit) {
+                        if (!ensureValid())
+                            return [2 /*return*/];
+                    }
                     ChecklistValue = {
                         BackgroundChecks: getCheckStatus("Background Checks"),
                         SignedOfferLetterVerified: getCheckStatus("Signed Offer Letter"),
@@ -280,13 +317,22 @@ var ReviewDocument = function (_a) {
                     UpdateStatusCandidateList = _a.sent();
                     if (!(UpdateStatusCandidateList.status === ApiConfig_1.ResponeStatus.SUCCESS)) return [3 /*break*/, 4];
                     if (!(BtnAction === ConditionConfig_1.ButtonAction.Submit)) return [3 /*break*/, 3];
-                    Obj = [{ ID: selectedcandidateID, StatusId: isExpat ? Config_1.StatusId.OnboardingProcessinitiatedforExpat : Config_1.StatusId.OnboardingProcessinitiatedforDRC }];
+                    Obj = [
+                        {
+                            ID: selectedcandidateID,
+                            StatusId: isExpat
+                                ? Config_1.StatusId.OnboardingProcessinitiatedforExpat
+                                : Config_1.StatusId.OnboardingProcessinitiatedforDRC,
+                        },
+                    ];
                     return [4 /*yield*/, ServiceExport_1.OfferServices.UpdateStatusSelectedHOD(Obj)];
                 case 2:
                     _a.sent();
                     _a.label = 3;
                 case 3:
-                    showSuccessModal(BtnAction === ConditionConfig_1.ButtonAction.SaveAsDraft ? ConditionConfig_1.RecuritmentHRMsg.ChecklistSaveAsDraftMsg : ConditionConfig_1.RecuritmentHRMsg.OnboardingMsg);
+                    showSuccessModal(BtnAction === ConditionConfig_1.ButtonAction.SaveAsDraft
+                        ? ConditionConfig_1.RecuritmentHRMsg.ChecklistSaveAsDraftMsg
+                        : ConditionConfig_1.RecuritmentHRMsg.OnboardingMsg);
                     _a.label = 4;
                 case 4: return [2 /*return*/];
             }
@@ -327,7 +373,7 @@ var ReviewDocument = function (_a) {
                         Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement(Prechecklist_1.default, { nationalItems: checklist, expatItems: [], isExpat: isExpat, onToggle: function (id, value) {
                             return updateCheckItem(id, value);
                         }, allChecked: allChecked })),
-                    !vis.ViewFlag && (react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, disabled: isSubmittingRef.current, commentError: validationError.comments, checkboxError: validationError.acknowledgement })),
+                    !vis.ViewFlag && allChecked && (react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, disabled: isSubmittingRef.current, commentError: validationError.comments, checkboxError: validationError.acknowledgement })),
                     bgvComments.length > 0 &&
                         (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) ===
                             Config_1.StatusId.PendingDOTAficaVerification && (react_1.default.createElement("div", { className: "review-documnet__BGVCommentBtn" },
@@ -351,13 +397,13 @@ var ReviewDocument = function (_a) {
                                     : "Reject")))),
                             (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) ===
                                 Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", disabled: isSubmittingRef.current, onClick: handleSaveAsDraft }, renderBtnContent(!allChecked ? "Save As Draft" : "Submit"))),
-                            !vis.ViewFlag && (react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", disabled: isSubmittingRef.current, onClick: handleApprove }, renderBtnContent(consentVerification === "verified"
+                            !vis.ViewFlag &&
+                                (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) !=
+                                    Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", disabled: isSubmittingRef.current, onClick: handleApprove }, renderBtnContent(consentVerification === "verified"
                                 ? "Reviewed"
                                 : consentVerification === "rejected"
                                     ? "Revert"
-                                    : !allChecked
-                                        ? "Save As Draft"
-                                        : "Submit")))))))))),
+                                    : "Submit")))))))))),
         react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal })),
         react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, SubmitModalState, { onClose: SubmitCloseModal })),
         react_1.default.createElement(commentsPopup_1.ViewCommentsModal, { isOpen: showComments, onClose: function () { return setshowComments(false); }, comments: bgvComments, title: "View BGV Comments", isLoading: false })))));

@@ -375,7 +375,7 @@ var EMPTY = function (id) { return ({
 var ReviewScoreCardServices = /** @class */ (function () {
     function ReviewScoreCardServices() {
     }
-    ReviewScoreCardServices.prototype.getCandidatesByRecruitmentId = function (recruitmentID) {
+    ReviewScoreCardServices.prototype.getCandidatesByRecruitmentId = function (recruitmentID, isEvalution) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var res, defaultGrade_1, defaultLevel_1, posRes, gr, _1, enriched, e_6;
             var _this = this;
@@ -389,19 +389,20 @@ var ReviewScoreCardServices = /** @class */ (function () {
                                 Select: "*,JobCode/JobCode,RecruitmentID/ID,Status/ID,Status/StatusDescription,ID",
                                 Expand: "JobCode,RecruitmentID,Status",
                                 FilterCondition: "and",
-                                Filter: [
+                                Filter: tslib_1.__spreadArray([
                                     {
-                                        FilterKey: "RecruitmentIDId",
+                                        FilterKey: isEvalution ? "ID" : "RecruitmentIDId",
                                         Operator: "eq",
                                         FilterValue: recruitmentID,
                                     },
-                                    { FilterKey: "ItemCreated", Operator: "eq", FilterValue: "No" },
+                                    { FilterKey: "ItemCreated", Operator: "eq", FilterValue: "No" }
+                                ], (!isEvalution ? [] : [
                                     {
                                         FilterKey: "StatusId",
                                         Operator: "in",
                                         FilterValue: exports.HOD_SCORECARD_STATUS_IDS,
-                                    },
-                                ],
+                                    }
+                                ]), true),
                                 Topcount: 1000,
                             })];
                     case 1:

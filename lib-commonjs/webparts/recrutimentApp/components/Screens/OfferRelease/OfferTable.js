@@ -43,7 +43,7 @@ function buildColumns(onAction) {
             id: "PositionID",
             header: "Position ID",
             accessor: "positionId",
-            render: function (item) { return (react_1.default.createElement("div", { className: "data-table__job-title" },
+            render: function (item) { return (react_1.default.createElement("div", { className: "data-table__job-code" },
                 react_1.default.createElement("span", { className: "offer-table__code" }, item.positionId))); },
         },
         {

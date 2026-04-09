@@ -407,6 +407,7 @@ class ReviewScoreCardServices {
 
   async getCandidatesByRecruitmentId(
     recruitmentID: number,
+    isEvalution?: boolean,
   ): Promise<CandidateListItem[]> {
     try {
       const res: any[] = await SPServices.SPReadItems({
@@ -417,16 +418,18 @@ class ReviewScoreCardServices {
         FilterCondition: "and",
         Filter: [
           {
-            FilterKey: "RecruitmentIDId",
+            FilterKey: isEvalution ? "ID" : "RecruitmentIDId",
             Operator: "eq",
             FilterValue: recruitmentID,
           },
           { FilterKey: "ItemCreated", Operator: "eq", FilterValue: "No" },
-          {
+          ...(!isEvalution ? [] : [
+            {
             FilterKey: "StatusId",
             Operator: "in",
             FilterValue: HOD_SCORECARD_STATUS_IDS,
-          },
+          }
+          ]),
         ],
         Topcount: 1000,
       });

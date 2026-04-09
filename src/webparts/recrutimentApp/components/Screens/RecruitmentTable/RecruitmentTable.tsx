@@ -289,7 +289,7 @@ export const RecruitmentTable: React.FC = () => {
               id,
               item.statusId === StatusId.InterviewLevel2InProgress
                 ? //  hook.openReview :
-                  "/ReviewScoreCard"
+                  "/EvalutionL2"
                 : "/Evalution",
             ]),
           ),
@@ -303,6 +303,7 @@ export const RecruitmentTable: React.FC = () => {
               ID: ItemID,
               department: item.department,
               StatusID: item.statusId,
+              EmailID: ADGroupData.EmailId[0],
             },
           });
           return;
@@ -471,51 +472,6 @@ export const RecruitmentTable: React.FC = () => {
           refreshKey={handleRefresh}
         />
       )}
-
-      <AnimatePresence>
-        {/* {hook.reviewingCandidate && (
-          <CandidateReviewModal
-            candidate={hook.reviewingCandidate}
-            reviewData={hook.reviewData}
-            reviewLoading={hook.reviewLoading}
-            scoreData={hook.scoreData}
-            scoreLoading={hook.scoreLoading}
-
-            showComments={hook.showComments}
-            level1Comments={hook.level1Comments}
-            level2Comments={hook.level2Comments}
-            commentsLoading={hook.commentsLoading}
-            onViewComments={hook.openComments}
-            onCloseComments={() => hook.setShowComments(false)}
-
-            hodDecision={hook.hodDecision}
-            decisionComment={hook.decisionComment}
-            confirmed={hook.confirmed}
-            selectedPositionId={hook.selectedPositionId}
-            selectedPositionText={hook.selectedPositionText}
-            positionOptions={hook.positionOptions}
-            submitting={hook.submitting}
-            submitError={hook.submitError}
-            successMessage={hook.successMessage}
-            errors={hook.errors}
-            shouldShowPositionId={hook.shouldShowPositionId}
-
-            onDecisionChange={hook.setHodDecision}
-            onCommentChange={hook.setDecisionComment}
-            onConfirmChange={hook.setConfirmed}
-            onPositionChange={(id, text) => {
-              hook.setSelectedPositionId(id);
-              hook.setSelectedPositionText(text);
-              hook.setErrors({ ...hook.errors, position: false });
-            }}
-            onClose={hook.closeReview}
-
-            currentRoleId={roleIDs[0]}
-            isLevel2Status={hook.isLevel2(hook.reviewingCandidate.statusId)}
-            submitDeps={hook.submitDeps}
-          />
-        )} */}
-      </AnimatePresence>
 
       <ModalPopup {...assignmentModalState} onClose={assignmentCloseModal} />
       <ModalPopup {...modalState} onClose={closeModal} />

@@ -23,7 +23,6 @@ var RoleContext_1 = require("../../../utilities/hooks/RoleContext");
 var Evaluationformservice_1 = require("../Evalution/Evaluationservice/Evaluationformservice");
 var moment_1 = tslib_1.__importDefault(require("moment"));
 var Config_1 = require("../../../utilities/Config");
-var framer_motion_1 = require("framer-motion");
 var AssignHRPopup = react_1.default.lazy(function () {
     return Promise.resolve().then(function () { return tslib_1.__importStar(require("./Components/AssignHRPopup/AssignHRPopup")); }).then(function (module) { return ({
         default: module.AssignHRPopup,
@@ -186,7 +185,7 @@ var RecruitmentTable = function () {
                         id,
                         item.statusId === Config_1.StatusId.InterviewLevel2InProgress
                             ? //  hook.openReview :
-                                "/ReviewScoreCard"
+                                "/EvalutionL2"
                             : "/Evalution",
                     ]; })));
                     route = routeMap[matricID];
@@ -196,6 +195,7 @@ var RecruitmentTable = function () {
                                 ID: ItemID,
                                 department: item.department,
                                 StatusID: item.statusId,
+                                EmailID: ADGroupData.EmailId[0],
                             },
                         });
                         return [2 /*return*/];
@@ -265,7 +265,6 @@ var RecruitmentTable = function () {
         isPopupOpen && (react_1.default.createElement(react_1.Suspense, { fallback: null },
             react_1.default.createElement(AssignHRPopup, { isOpen: isPopupOpen, selectedItems: selectedItems, assignedMember: selectedMember, onClose: handleClosePopup, onConfirm: handleConfirmAssignment }))),
         drawerMeta.current.isOpen && (react_1.default.createElement(AdvertReviewDrawer_1.AdvertReviewDrawer, { drawerOpen: drawerOpen, selectedJobId: selectedJobId, selectedJobCode: selectedJobCode, selectedType: drawerMeta.current.selectedType, advertLanguage: advertLanguage, reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, loadingState: loadingState, onClose: closeDrawer, onLanguageChange: setAdvertLanguage, onCommentsChange: setComments, onToggleAcknowledgement: toggleAcknowledgement, setLoadingState: setLoadingState, refreshKey: handleRefresh })),
-        react_1.default.createElement(framer_motion_1.AnimatePresence, null),
         react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, assignmentModalState, { onClose: assignmentCloseModal })),
         react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal }))));
 };

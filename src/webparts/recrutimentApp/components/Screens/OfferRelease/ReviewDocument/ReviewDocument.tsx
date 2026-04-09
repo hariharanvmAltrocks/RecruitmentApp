@@ -230,18 +230,22 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
 
   const handleError = useCallback(() => {
     showModal({
-      type: "error", title: "Something Went Wrong",
+      type: "error",
+      title: "Something Went Wrong",
       message: "An unexpected error occurred. Please try again.",
-      confirmLabel: "Close", onConfirm: closeModal,
+      confirmLabel: "Close",
+      onConfirm: closeModal,
     });
   }, [showModal, closeModal]);
 
   const ensureValid = useCallback(() => {
     if (!validateAll(vis)) {
       showModal({
-        type: "warning", title: "Required Fields Missing",
+        type: "warning",
+        title: "Required Fields Missing",
         message: "Please complete all highlighted fields before submitting.",
-        confirmLabel: "OK", onConfirm: closeModal,
+        confirmLabel: "OK",
+        onConfirm: closeModal,
       });
       return false;
     }
@@ -249,24 +253,34 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
   }, [validateAll, vis, showModal, closeModal]);
 
   const getCheckStatus = (title: string) =>
-    checklist.find((item) => item.Title === title)?.value ? ActionName.Completed : ActionName.Pending;
+    checklist.find((item) => item.Title === title)?.value
+      ? ActionName.Completed
+      : ActionName.Pending;
 
   const renderBtnContent = (text: string) =>
     isSubmittingRef.current ? (
-      <><Loader2 size={16} className="modal-popup__spinner" />Sending...</>
+      <>
+        <Loader2 size={16} className="modal-popup__spinner" />
+        Sending...
+      </>
     ) : (
-      <><Send size={16} />{text}</>
+      <>
+        <Send size={16} />
+        {text}
+      </>
     );
 
   const showSuccessModal = useCallback(
     (msg: string) => {
       showModal({
-        type: "success", title: "Submitted Successfully", message: msg,
+        type: "success",
+        title: "Submitted Successfully",
+        message: msg,
         confirmLabel: "Go to Dashboard",
         onConfirm: () => {
           closeModal();
           onClose();
-          navigate("/RecruitmentTable");
+          navigate("/Dashboard");
           refreshKey();
         },
       });
@@ -276,10 +290,15 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
 
   const handleReinitiate = useCallback(() => {
     showModal({
-      type: "confirmation", title: "Reinitiate BGV", message: RecuritmentHRMsg.ReinitiateBGVWarningMsg,
-      confirmLabel: "Yes", cancelLabel: "No",
+      type: "confirmation",
+      title: "Reinitiate BGV",
+      message: RecuritmentHRMsg.ReinitiateBGVWarningMsg,
+      confirmLabel: "Yes",
+      cancelLabel: "No",
       onConfirm: async () => {
-        let UpdateBGV = await OfferServices.PerformCriminalRecordCheck(Number(jobrequestID));
+        let UpdateBGV = await OfferServices.PerformCriminalRecordCheck(
+          Number(jobrequestID),
+        );
         if (UpdateBGV.status === ResponeStatus.SUCCESS) {
           showSuccessModal(RecuritmentHRMsg.ReinitiateBGVProcess);
         } else {
@@ -295,7 +314,12 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     isSubmittingRef.current = true;
 
     try {
-      let action = consentVerification === "verified" ? ButtonAction.Review : consentVerification === "rejected" ? ButtonAction.Revert : ButtonAction.Initiated;
+      let action =
+        consentVerification === "verified"
+          ? ButtonAction.Review
+          : consentVerification === "rejected"
+            ? ButtonAction.Revert
+            : ButtonAction.Initiated;
       void submit(action);
     } catch (error) {
       console.error(error);
@@ -376,11 +400,29 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
         },
       });
     },
-    [positionDetails, coiState, bgvStatusDetails, CandidateID, selectedcandidateID, showModal, closeModal, onClose, refreshKey, showSuccessModal, ensureValid, handleError]
+    [
+      positionDetails,
+      coiState,
+      bgvStatusDetails,
+      CandidateID,
+      selectedcandidateID,
+      showModal,
+      closeModal,
+      onClose,
+      refreshKey,
+      showSuccessModal,
+      ensureValid,
+      handleError,
+    ],
   );
 
   const handleSaveAsDraft = async () => {
-    const BtnAction = !allChecked ? ButtonAction.SaveAsDraft : ButtonAction.Submit;
+    const BtnAction = !allChecked
+      ? ButtonAction.SaveAsDraft
+      : ButtonAction.Submit;
+    if (BtnAction === ButtonAction.Submit) {
+      if (!ensureValid()) return;
+    }
     const ChecklistValue = {
       BackgroundChecks: getCheckStatus("Background Checks"),
       SignedOfferLetterVerified: getCheckStatus("Signed Offer Letter"),
@@ -393,14 +435,26 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
       MedicalChecks: getCheckStatus("Medical Checks"),
       ID: CandidateID,
     };
-    
-    const UpdateStatusCandidateList = await OfferServices.UpdateStatusCandidatelist(ChecklistValue);
+
+    const UpdateStatusCandidateList =
+      await OfferServices.UpdateStatusCandidatelist(ChecklistValue);
     if (UpdateStatusCandidateList.status === ResponeStatus.SUCCESS) {
       if (BtnAction === ButtonAction.Submit) {
-        let Obj = [{ ID: selectedcandidateID, StatusId: isExpat ? StatusId.OnboardingProcessinitiatedforExpat : StatusId.OnboardingProcessinitiatedforDRC }];
+        let Obj = [
+          {
+            ID: selectedcandidateID,
+            StatusId: isExpat
+              ? StatusId.OnboardingProcessinitiatedforExpat
+              : StatusId.OnboardingProcessinitiatedforDRC,
+          },
+        ];
         await OfferServices.UpdateStatusSelectedHOD(Obj);
       }
-      showSuccessModal(BtnAction === ButtonAction.SaveAsDraft ? RecuritmentHRMsg.ChecklistSaveAsDraftMsg : RecuritmentHRMsg.OnboardingMsg);
+      showSuccessModal(
+        BtnAction === ButtonAction.SaveAsDraft
+          ? RecuritmentHRMsg.ChecklistSaveAsDraftMsg
+          : RecuritmentHRMsg.OnboardingMsg,
+      );
     }
   };
 
@@ -555,7 +609,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                       />
                     )}
 
-                    {!vis.ViewFlag && (
+                    {!vis.ViewFlag && allChecked && (
                       <ReviewCommentSignature
                         reviewerComments={reviewerComments}
                         acknowledgementCheckbox={acknowledgementCheckbox}
@@ -641,28 +695,30 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                             disabled={isSubmittingRef.current}
                             onClick={handleSaveAsDraft}
                           >
-                            {renderBtnContent(!allChecked ? "Save As Draft" : "Submit")}
-                          </button>
-                        )}
-
-                        {!vis.ViewFlag && (
-                          <button
-                            type="button"
-                            className="review-document__button review-document__button--primary"
-                            disabled={isSubmittingRef.current}
-                            onClick={handleApprove}
-                          >
                             {renderBtnContent(
-                              consentVerification === "verified"
-                                ? "Reviewed"
-                                : consentVerification === "rejected"
-                                  ? "Revert"
-                                  : !allChecked
-                                    ? "Save As Draft"
-                                    : "Submit"
+                              !allChecked ? "Save As Draft" : "Submit",
                             )}
                           </button>
                         )}
+
+                        {!vis.ViewFlag &&
+                          positionDetails?.StatusID !=
+                            StatusId.PendingHRpreonboardingchecklist && (
+                            <button
+                              type="button"
+                              className="review-document__button review-document__button--primary"
+                              disabled={isSubmittingRef.current}
+                              onClick={handleApprove}
+                            >
+                              {renderBtnContent(
+                                consentVerification === "verified"
+                                  ? "Reviewed"
+                                  : consentVerification === "rejected"
+                                    ? "Revert"
+                                    : "Submit",
+                              )}
+                            </button>
+                          )}
                       </div>
                     </div>
                   </>

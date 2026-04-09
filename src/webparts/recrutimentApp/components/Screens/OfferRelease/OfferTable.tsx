@@ -73,7 +73,7 @@ function buildColumns(
       header: "Position ID",
       accessor: "positionId",
       render: (item: any) => (
-        <div className="data-table__job-title">
+        <div className="data-table__job-code">
           <span className="offer-table__code">{item.positionId}</span>
         </div>
       ),
