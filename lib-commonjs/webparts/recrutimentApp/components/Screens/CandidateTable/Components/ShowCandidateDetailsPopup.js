@@ -37,7 +37,8 @@ var ShowCandidateDetailsPopup = function (_a) {
     var isEnabled = !!panelOptionFlag;
     var isReadOnly = !ReviewHRFlag;
     var _r = (0, fetchPanelMembers_1.useFetchPanelMembers)((_b = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.BusinessUnitCodeId) !== null && _b !== void 0 ? _b : 0, (_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.AssignEMail) !== null && _c !== void 0 ? _c : "", (_d = panelParams === null || panelParams === void 0 ? void 0 : panelParams.candidateId) !== null && _d !== void 0 ? _d : 0, (_e = panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) !== null && _e !== void 0 ? _e : "", isEnabled), paneloptions = _r.data, panelloading = _r.loading, error = _r.error;
-    var _s = (0, fetchCandidateDetails_1.useFetchCandidateDetails)(candidateId, (_f = panelParams === null || panelParams === void 0 ? void 0 : panelParams.RecruitmentID) !== null && _f !== void 0 ? _f : 0), data = _s.data, loading = _s.loading;
+    var isCandidateflag = !candidateId || !(panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId);
+    var _s = (0, fetchCandidateDetails_1.useFetchCandidateDetails)(candidateId, (_f = panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) !== null && _f !== void 0 ? _f : ""), data = _s.data, loading = _s.loading;
     // const { submitting, submit, modalState, closeModal } = useSubmitCandidateReview(onClose, handleRefresh);
     var _t = (0, Usesubmitcandidatereview_1.useSubmitCandidateReview)(onClose, handleRefresh), submitting = _t.submitting, submit = _t.submit, submitModalState = _t.modalState, submitCloseModal = _t.closeModal;
     var _u = (0, useModalPopup_1.useModalPopup)(), modalState = _u.modalState, showModal = _u.showModal, closeModal = _u.closeModal;

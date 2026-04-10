@@ -108,11 +108,10 @@ export function useSubmitEvaluationL2(
       // FIX 4: use submitError — never set commentError on API failure
       setSubmitError("Submission failed. Please try again or contact support.");
     } finally {
+      // eslint-disable-next-line require-atomic-updates
       isSubmittingRef.current = false;
       setSubmitting(false);
     }
-
-    // FIX 1 + FIX 3: comments, acknowledgementCheckbox, panelId all in dep array
   }, [
     comments,
     acknowledgementCheckbox,

@@ -82,6 +82,7 @@ function useSubmitEvaluationL2(deps) {
                     setSubmitError("Submission failed. Please try again or contact support.");
                     return [3 /*break*/, 5];
                 case 4:
+                    // eslint-disable-next-line require-atomic-updates
                     isSubmittingRef.current = false;
                     setSubmitting(false);
                     return [7 /*endfinally*/];

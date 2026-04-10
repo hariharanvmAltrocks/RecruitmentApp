@@ -3,6 +3,7 @@ import { CandidateTable } from "../../../../services/ServiceExport";
 import { CandidateProfile } from "../../../../models/Icareerportal";
 import { MatricID } from "../../../../utilities/ConditionConfig";
 import { useUIState } from "../../../RecrutimentApp/UIStateContext";
+import { StatusId } from "../../../../utilities/Config";
 
 interface CandidateDetailsState {
   data: CandidateProfile | null;
@@ -14,8 +15,7 @@ const cache = new Map<string, any>();
 
 export const useFetchCandidateDetails = (
   candidateId: string,
-  recruitmentID: number,
-  enabled = true,
+  StatusID: string,
 ): CandidateDetailsState => {
   const [state, setState] = useState<CandidateDetailsState>({
     data: null,
@@ -23,10 +23,8 @@ export const useFetchCandidateDetails = (
     error: null,
   });
 
-  const { MatricID: matricId } = useUIState();
-
   useEffect(() => {
-    if (!candidateId || !enabled) return;
+    if (!candidateId) return;
 
     let isMounted = true;
     setState({ data: null, loading: true, error: null });
@@ -37,7 +35,10 @@ export const useFetchCandidateDetails = (
       }
 
       let response;
-      if (matricId === MatricID.AssignInterviewPanel) {
+      if (
+        Number(StatusID) ===
+        StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+      ) {
         response = await CandidateTable.getCandidateDetailsL2(
           Number(candidateId),
         );
@@ -57,7 +58,7 @@ export const useFetchCandidateDetails = (
       isMounted = false;
       clearTimeout(timer);
     };
-  }, [candidateId, enabled]);
+  }, [candidateId]);
 
   return state;
 };

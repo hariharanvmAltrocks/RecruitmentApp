@@ -328,15 +328,20 @@ async function _assignPositionID(p: {
     });
     if (!posRes?.length) return;
     const pos = posRes[0];
+
     await SPServices.SPAddItem({
       Listname: ListNames.HRMSSelectedCandidateDetailsByHOD,
       RequestJSON: {
         PositionIDId: pos.ID,
         CandidateIDId: p.candidateId,
         RecruitmentIDId: p.recruitmentID,
-        ItemCreated: "Yes",
-        ActionId: WorkflowAction.Submitted,
-        StatusId: StatusId.Pending,
+        // ItemCreated: "Yes",
+        // ActionId: WorkflowAction.Submitted,
+        StatusId: StatusId.PendingHRBGVInitiation,
+        // IsExpat:
+        // RecruitmentHR:
+        // RecruitmentHRLead:
+        // IsLabourHire:
       },
     });
     await SPServices.SPUpdateItem({
@@ -1208,8 +1213,17 @@ class ReviewScoreCardServices {
         statusId === StatusId.CandidateOnHoldbyHODLevel1;
 
       let actionId: number, workflowStatus: string, successMsg: string;
-      let StatusID = WorkflowCandidateListConfig(statusId);
-
+      let ActionID =
+        hodDecision === "Yes"
+          ? ButtonAction.Approve
+          : hodDecision === "No"
+            ? ButtonAction.Reject
+            : WorkflowAction.OnHold;
+      let StatusID = WorkflowCandidateListConfig(
+        statusId,
+        params.isLevel2,
+        ActionID,
+      );
       switch (hodDecision) {
         case "Yes":
           actionId = WorkflowAction.Approved;
@@ -1247,8 +1261,9 @@ class ReviewScoreCardServices {
       await SPServices.SPUpdateItem({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
         RequestJSON: {
-          ActionId: actionId,
-          ItemCreated: "Yes",
+          // ActionId: actionId,
+          StatusId: StatusID,
+          // ItemCreated: "Yes",
           GPA: gpa || "",
           OthersInterviewed: othersInterviewed,
         },

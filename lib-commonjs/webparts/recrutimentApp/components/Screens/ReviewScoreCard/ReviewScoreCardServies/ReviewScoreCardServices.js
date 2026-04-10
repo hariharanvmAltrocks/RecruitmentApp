@@ -288,9 +288,13 @@ function _assignPositionID(p) {
                                 PositionIDId: pos.ID,
                                 CandidateIDId: p.candidateId,
                                 RecruitmentIDId: p.recruitmentID,
-                                ItemCreated: "Yes",
-                                ActionId: Config_1.WorkflowAction.Submitted,
-                                StatusId: Config_1.StatusId.Pending,
+                                // ItemCreated: "Yes",
+                                // ActionId: WorkflowAction.Submitted,
+                                StatusId: Config_1.StatusId.PendingHRBGVInitiation,
+                                // IsExpat:
+                                // RecruitmentHR:
+                                // RecruitmentHRLead:
+                                // IsLabourHire:
                             },
                         })];
                 case 2:
@@ -1125,7 +1129,7 @@ var ReviewScoreCardServices = /** @class */ (function () {
     };
     ReviewScoreCardServices.prototype.submitHODDecision = function (params) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var candidateId_1, hodDecision, comments, currentUserEmail, currentRoleId, gpa, positionId, lv2, jobCodeID, recruitmentID, statusId, jobRequestId, currentUserGuid_2, allPanels, matchingPanels, userPanels, _i, userPanels_1, panel, refreshed, level2Panels, uploadedCount, BtnAction, StatusID_1, othersInterviewed, isLevel2StatusId, actionId, workflowStatus, successMsg, StatusID, e_10;
+            var candidateId_1, hodDecision, comments, currentUserEmail, currentRoleId, gpa, positionId, lv2, jobCodeID, recruitmentID, statusId, jobRequestId, currentUserGuid_2, allPanels, matchingPanels, userPanels, _i, userPanels_1, panel, refreshed, level2Panels, uploadedCount, BtnAction, StatusID_1, othersInterviewed, isLevel2StatusId, actionId, workflowStatus, successMsg, ActionID, StatusID, e_10;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1236,7 +1240,12 @@ var ReviewScoreCardServices = /** @class */ (function () {
                         isLevel2StatusId = statusId === Config_1.StatusId.pendingL2shorlistingwithHOD ||
                             statusId === Config_1.StatusId.CandidateOnHoldbyHODLevel1;
                         actionId = void 0, workflowStatus = void 0, successMsg = void 0;
-                        StatusID = (0, WorkflowConfig_1.WorkflowCandidateListConfig)(statusId);
+                        ActionID = hodDecision === "Yes"
+                            ? ConditionConfig_1.ButtonAction.Approve
+                            : hodDecision === "No"
+                                ? ConditionConfig_1.ButtonAction.Reject
+                                : Config_1.WorkflowAction.OnHold;
+                        StatusID = (0, WorkflowConfig_1.WorkflowCandidateListConfig)(statusId, params.isLevel2, ActionID);
                         switch (hodDecision) {
                             case "Yes":
                                 actionId = Config_1.WorkflowAction.Approved;
@@ -1266,8 +1275,9 @@ var ReviewScoreCardServices = /** @class */ (function () {
                         return [4 /*yield*/, spservice_1.default.SPUpdateItem({
                                 Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
                                 RequestJSON: {
-                                    ActionId: actionId,
-                                    ItemCreated: "Yes",
+                                    // ActionId: actionId,
+                                    StatusId: StatusID,
+                                    // ItemCreated: "Yes",
                                     GPA: gpa || "",
                                     OthersInterviewed: othersInterviewed,
                                 },

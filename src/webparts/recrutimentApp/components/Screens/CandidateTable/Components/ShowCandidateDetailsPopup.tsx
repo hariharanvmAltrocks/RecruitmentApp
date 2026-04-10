@@ -124,9 +124,11 @@ export const ShowCandidateDetailsPopup: React.FC<
     panelParams?.statusId ?? "",
     isEnabled,
   );
+
+  let isCandidateflag = !candidateId || !panelParams?.statusId;
   const { data, loading } = useFetchCandidateDetails(
     candidateId,
-    panelParams?.RecruitmentID ?? 0,
+    panelParams?.statusId ?? "",
   );
 
   // const { submitting, submit, modalState, closeModal } = useSubmitCandidateReview(onClose, handleRefresh);

@@ -4,19 +4,16 @@ exports.useFetchCandidateDetails = void 0;
 var tslib_1 = require("tslib");
 var react_1 = require("react");
 var ServiceExport_1 = require("../../../../services/ServiceExport");
-var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
-var UIStateContext_1 = require("../../../RecrutimentApp/UIStateContext");
+var Config_1 = require("../../../../utilities/Config");
 var cache = new Map();
-var useFetchCandidateDetails = function (candidateId, recruitmentID, enabled) {
-    if (enabled === void 0) { enabled = true; }
+var useFetchCandidateDetails = function (candidateId, StatusID) {
     var _a = (0, react_1.useState)({
         data: null,
         loading: false,
         error: null,
     }), state = _a[0], setState = _a[1];
-    var matricId = (0, UIStateContext_1.useUIState)().MatricID;
     (0, react_1.useEffect)(function () {
-        if (!candidateId || !enabled)
+        if (!candidateId)
             return;
         var isMounted = true;
         setState({ data: null, loading: true, error: null });
@@ -29,7 +26,8 @@ var useFetchCandidateDetails = function (candidateId, recruitmentID, enabled) {
                         if (!isMounted) {
                             return [2 /*return*/];
                         }
-                        if (!(matricId === ConditionConfig_1.MatricID.AssignInterviewPanel)) return [3 /*break*/, 2];
+                        if (!(Number(StatusID) ===
+                            Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel)) return [3 /*break*/, 2];
                         return [4 /*yield*/, ServiceExport_1.CandidateTable.getCandidateDetailsL2(Number(candidateId))];
                     case 1:
                         response = _c.sent();
@@ -50,7 +48,7 @@ var useFetchCandidateDetails = function (candidateId, recruitmentID, enabled) {
             isMounted = false;
             clearTimeout(timer);
         };
-    }, [candidateId, enabled]);
+    }, [candidateId]);
     return state;
 };
 exports.useFetchCandidateDetails = useFetchCandidateDetails;
