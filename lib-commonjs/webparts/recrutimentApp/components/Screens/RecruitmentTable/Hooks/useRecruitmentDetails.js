@@ -8,19 +8,24 @@ var UIStateContext_1 = require("../../../RecrutimentApp/UIStateContext");
 var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
 var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
 var reusehooks_1 = require("../../../Hooks/reusehooks");
-var mapEvaluationItem = function (item) { return ({
-    id: item.RecordID,
-    ItemID: item.ID,
-    applicantName: item.ApplicantName,
-    title: item.PositionTitle,
-    nationlity: item.Nationality,
-    interviewDate: item.InterviewDate,
-    interviewLevels: item.interviewLevels,
-    grade: item.JobGrade,
-    status: item.Status,
-    statusId: item.StatusId,
-    jobCodeID: item.JobCodeId,
-}); };
+var mapEvaluationItem = function (item) {
+    var _a, _b;
+    return ({
+        id: item.RecordID,
+        RecID: item.RecID,
+        department: (_b = (_a = item.DeptDetails) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.Department,
+        ItemID: item.ID,
+        applicantName: item.ApplicantName,
+        title: item.PositionTitle,
+        nationlity: item.Nationality,
+        interviewDate: item.InterviewDate,
+        interviewLevels: item.interviewLevels,
+        grade: item.JobGrade,
+        status: item.Status,
+        statusId: item.StatusId,
+        jobCodeID: item.JobCodeId,
+    });
+};
 var mapCandidateItem = function (item) {
     var _a, _b;
     var dept = (_a = item.DeptDetails) === null || _a === void 0 ? void 0 : _a[0];

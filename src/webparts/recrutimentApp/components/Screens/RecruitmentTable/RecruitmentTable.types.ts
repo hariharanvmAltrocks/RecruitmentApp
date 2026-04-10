@@ -62,6 +62,8 @@ export interface ISelectedCandidate {
 export interface EvalutionItem {
   id: string;
   ItemID: number;
+  RecID: number;
+  department: string;
   applicantName: string;
   title: string;
   nationlity: string;

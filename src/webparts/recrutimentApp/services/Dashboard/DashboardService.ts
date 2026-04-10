@@ -493,7 +493,7 @@ export default class DashboardService implements IDashboard {
         return {
           ID: item.ID,
           RecordID: index + 1,
-
+          RecID: item.RecruitmentID?.Id,
           ApplicantName:
             `${item.FristName ?? ""} ${item.MiddleName ?? ""} ${item.LastName ?? ""}`.trim(),
 

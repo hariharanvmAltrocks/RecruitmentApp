@@ -621,6 +621,7 @@ export async function submitScorecard(
 export async function checkIsAlreadySubmitted(
   candidateId: number,
   currentUserEmail: string,
+  Level: string,
 ): Promise<boolean> {
   console.log(
     "[checkIsAlreadySubmitted] candidateId:",
@@ -645,7 +646,7 @@ export async function checkIsAlreadySubmitted(
           {
             FilterKey: "InterviewLevel",
             Operator: "eq",
-            FilterValue: candidateId,
+            FilterValue: Level,
           },
         ],
       }),

@@ -146,7 +146,7 @@ function _parseJson(raw: any): Record<string, number>[] {
   }
 }
 
-async function _calculateGPA(candidateId: number): Promise<string> {
+export async function _calculateGPA(candidateId: number): Promise<string> {
   try {
     const panels: any[] = await SPServices.SPReadItems({
       Listname: ListNames.HRMSInterviewPanelDetails,
@@ -210,7 +210,7 @@ async function _calculateGPA(candidateId: number): Promise<string> {
   }
 }
 
-async function _getUserGuid(email: string): Promise<string | null> {
+export async function _getUserGuid(email: string): Promise<string | null> {
   try {
     if (!email) return null;
     const res = await _common.getUserGuidByEmail(email);
@@ -367,7 +367,7 @@ async function _updatePortalWorkflowStatus(
   }
 }
 
-const EMPTY = (id: number): ReviewScoreCardResult => ({
+export const EMPTY = (id: number): ReviewScoreCardResult => ({
   success: false,
   candidateId: id,
   applicantName: "",
@@ -423,13 +423,15 @@ class ReviewScoreCardServices {
             FilterValue: recruitmentID,
           },
           { FilterKey: "ItemCreated", Operator: "eq", FilterValue: "No" },
-          ...(!isEvalution ? [] : [
-            {
-            FilterKey: "StatusId",
-            Operator: "in",
-            FilterValue: HOD_SCORECARD_STATUS_IDS,
-          }
-          ]),
+          ...(!isEvalution
+            ? []
+            : [
+                {
+                  FilterKey: "StatusId",
+                  Operator: "in",
+                  FilterValue: HOD_SCORECARD_STATUS_IDS,
+                },
+              ]),
         ],
         Topcount: 1000,
       });

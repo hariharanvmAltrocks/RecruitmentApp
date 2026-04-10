@@ -22,7 +22,7 @@ import {
 import "./RecruitmentTable.scss";
 import { DataTable } from "../../Comman/DataTable/DataTable";
 import { useUIState } from "../../RecrutimentApp/UIStateContext";
-import { MatricID } from "../../../utilities/ConditionConfig";
+import { InterviewLevel, MatricID } from "../../../utilities/ConditionConfig";
 import { useNavigate } from "react-router-dom";
 import { useRecruitmentColumns } from "./config";
 import { ModalPopup } from "../../Comman/ModalPopup/ModalPopup";
@@ -242,9 +242,14 @@ export const RecruitmentTable: React.FC = () => {
           interviewDate.setHours(0, 0, 0, 0);
 
           const Validation = interviewDate <= today;
+          const interviewLevel =
+            item.statusId === StatusId.InterviewLevel2InProgress
+              ? InterviewLevel.Level2
+              : InterviewLevel.Level1;
           const alreadySubmitted = await checkIsAlreadySubmitted(
             ItemID,
             ADGroupData.EmailId[0],
+            interviewLevel,
           );
           if (!Validation) {
             showModal({
@@ -301,6 +306,7 @@ export const RecruitmentTable: React.FC = () => {
           navigate(route, {
             state: {
               ID: ItemID,
+              RecruitmentID: item.RecID,
               department: item.department,
               StatusID: item.statusId,
               EmailID: ADGroupData.EmailId[0],
@@ -334,7 +340,13 @@ export const RecruitmentTable: React.FC = () => {
     activeTabs?.tableMode === "checkbox" && selectedIds.length > 0;
 
   const columns = useRecruitmentColumns({
-    role: matricID === MatricID.EvalutionHR ? "evaluation" : "default",
+    role:
+      matricID === MatricID.EvalutionHR ||
+      matricID === MatricID.EvalutionLM ||
+      matricID === MatricID.EvalutionHOD ||
+      matricID === MatricID.EvalutionEXCO
+        ? "evaluation"
+        : "default",
     actionMode: activeTabs?.actionMode ?? "View",
     onAction: handleAction,
   });

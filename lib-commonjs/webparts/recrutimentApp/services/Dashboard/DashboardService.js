@@ -440,18 +440,19 @@ var DashboardService = /** @class */ (function () {
                             deptMap_1.set(dept.ID, existing);
                         }
                         GridResult = res.map(function (item, index) {
-                            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+                            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
                             var InterviewDate = (_a = item === null || item === void 0 ? void 0 : item.InterviewDateLevel2) !== null && _a !== void 0 ? _a : item === null || item === void 0 ? void 0 : item.InterviewDate;
                             return {
                                 ID: item.ID,
                                 RecordID: index + 1,
-                                ApplicantName: "".concat((_b = item.FristName) !== null && _b !== void 0 ? _b : "", " ").concat((_c = item.MiddleName) !== null && _c !== void 0 ? _c : "", " ").concat((_d = item.LastName) !== null && _d !== void 0 ? _d : "").trim(),
+                                RecID: (_b = item.RecruitmentID) === null || _b === void 0 ? void 0 : _b.Id,
+                                ApplicantName: "".concat((_c = item.FristName) !== null && _c !== void 0 ? _c : "", " ").concat((_d = item.MiddleName) !== null && _d !== void 0 ? _d : "", " ").concat((_e = item.LastName) !== null && _e !== void 0 ? _e : "").trim(),
                                 PositionTitle: item === null || item === void 0 ? void 0 : item.PositionTitle,
                                 JobGrade: item === null || item === void 0 ? void 0 : item.JobGrade,
                                 Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
-                                interviewLevels: (_e = gradeLevelMap_1.get(item === null || item === void 0 ? void 0 : item.JobGrade)) !== null && _e !== void 0 ? _e : [],
+                                interviewLevels: (_f = gradeLevelMap_1.get(item === null || item === void 0 ? void 0 : item.JobGrade)) !== null && _f !== void 0 ? _f : [],
                                 jobrequestID: item === null || item === void 0 ? void 0 : item.JobRequestID,
-                                Status: (_g = (_f = item === null || item === void 0 ? void 0 : item.Status) === null || _f === void 0 ? void 0 : _f.StatusDescription) !== null && _g !== void 0 ? _g : "",
+                                Status: (_h = (_g = item === null || item === void 0 ? void 0 : item.Status) === null || _g === void 0 ? void 0 : _g.StatusDescription) !== null && _h !== void 0 ? _h : "",
                                 StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
                                 InterviewDate: InterviewDate
                                     ? (0, moment_1.default)(InterviewDate).format("YYYY-MM-DD")
@@ -463,7 +464,7 @@ var DashboardService = /** @class */ (function () {
                                     ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
                                     : undefined,
                                 isExpat: (item === null || item === void 0 ? void 0 : item.NationalityCode) !== ConditionConfig_1.NationalityCode.Nationals,
-                                DeptDetails: (_j = deptMap_1.get((_h = item.RecruitmentID) === null || _h === void 0 ? void 0 : _h.Id)) !== null && _j !== void 0 ? _j : [],
+                                DeptDetails: (_k = deptMap_1.get((_j = item.RecruitmentID) === null || _j === void 0 ? void 0 : _j.Id)) !== null && _k !== void 0 ? _k : [],
                             };
                         });
                         return [2 /*return*/, { data: GridResult, status: 200, message: "Success" }];

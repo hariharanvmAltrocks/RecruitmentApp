@@ -128,7 +128,7 @@ var RecruitmentTable = function () {
     var processingRef = (0, react_1.useRef)(false);
     var EvalutionFlagL2 = (0, react_1.useRef)(false);
     var handleAction = (0, react_1.useCallback)(function (item) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var ItemID, isEvaluationFlow, today, interviewDate, Validation, alreadySubmitted, evalutionIDs, routeMap, route;
+        var ItemID, isEvaluationFlow, today, interviewDate, Validation, interviewLevel, alreadySubmitted, evalutionIDs, routeMap, route;
         var _a;
         return tslib_1.__generator(this, function (_b) {
             switch (_b.label) {
@@ -150,7 +150,10 @@ var RecruitmentTable = function () {
                     interviewDate = new Date(item.interviewDate);
                     interviewDate.setHours(0, 0, 0, 0);
                     Validation = interviewDate <= today;
-                    return [4 /*yield*/, (0, Evaluationformservice_1.checkIsAlreadySubmitted)(ItemID, ADGroupData.EmailId[0])];
+                    interviewLevel = item.statusId === Config_1.StatusId.InterviewLevel2InProgress
+                        ? ConditionConfig_1.InterviewLevel.Level2
+                        : ConditionConfig_1.InterviewLevel.Level1;
+                    return [4 /*yield*/, (0, Evaluationformservice_1.checkIsAlreadySubmitted)(ItemID, ADGroupData.EmailId[0], interviewLevel)];
                 case 2:
                     alreadySubmitted = _b.sent();
                     if (!Validation) {
@@ -193,6 +196,7 @@ var RecruitmentTable = function () {
                         navigate(route, {
                             state: {
                                 ID: ItemID,
+                                RecruitmentID: item.RecID,
                                 department: item.department,
                                 StatusID: item.statusId,
                                 EmailID: ADGroupData.EmailId[0],
@@ -223,7 +227,12 @@ var RecruitmentTable = function () {
     ]);
     var showAssignmentBar = (activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.tableMode) === "checkbox" && selectedIds.length > 0;
     var columns = (0, config_1.useRecruitmentColumns)({
-        role: matricID === ConditionConfig_1.MatricID.EvalutionHR ? "evaluation" : "default",
+        role: matricID === ConditionConfig_1.MatricID.EvalutionHR ||
+            matricID === ConditionConfig_1.MatricID.EvalutionLM ||
+            matricID === ConditionConfig_1.MatricID.EvalutionHOD ||
+            matricID === ConditionConfig_1.MatricID.EvalutionEXCO
+            ? "evaluation"
+            : "default",
         actionMode: (_a = activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.actionMode) !== null && _a !== void 0 ? _a : "View",
         onAction: handleAction,
     });

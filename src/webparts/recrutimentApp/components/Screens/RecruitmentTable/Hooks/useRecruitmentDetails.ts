@@ -21,6 +21,8 @@ interface UseRecruitmentDetailsResult {
 
 const mapEvaluationItem = (item: any): EvalutionItem => ({
   id: item.RecordID,
+  RecID: item.RecID,
+  department: item.DeptDetails?.[0]?.Department,
   ItemID: item.ID,
   applicantName: item.ApplicantName,
   title: item.PositionTitle,

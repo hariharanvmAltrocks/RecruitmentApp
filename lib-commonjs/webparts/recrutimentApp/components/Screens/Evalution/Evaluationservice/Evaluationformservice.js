@@ -468,7 +468,7 @@ function submitScorecard(params) {
         });
     });
 }
-function checkIsAlreadySubmitted(candidateId, currentUserEmail) {
+function checkIsAlreadySubmitted(candidateId, currentUserEmail, Level) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
         var _a, currentUserGuid_2, panelRows, rows, userPanel, alreadySubmitted, err_1;
         return tslib_1.__generator(this, function (_b) {
@@ -493,7 +493,7 @@ function checkIsAlreadySubmitted(candidateId, currentUserEmail) {
                                     {
                                         FilterKey: "InterviewLevel",
                                         Operator: "eq",
-                                        FilterValue: candidateId,
+                                        FilterValue: Level,
                                     },
                                 ],
                             }),

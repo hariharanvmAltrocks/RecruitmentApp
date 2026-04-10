@@ -136,7 +136,7 @@ export const useRecruitmentColumns = ({
         id: "applicantName",
         header: "Applicant Name",
         accessor: "applicantName",
-        cellClassName: "data-table__cell--muted",
+        cellClassName: "data-table__job-code",
         hideOnMobile: true,
       },
       {

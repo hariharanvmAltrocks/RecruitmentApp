@@ -1,23 +1,25 @@
 import * as React from "react";
 import { motion } from "framer-motion";
-import { X, Users, ChevronRight } from "lucide-react";
+import {
+  X,
+  Users,
+  ChevronRight,
+  FileText,
+  CheckCircle2,
+  Loader2,
+} from "lucide-react";
 import styles from "../../ReviewScoreCard/ReviewScorecard.module.scss";
-import {
-  CommentEntry,
-  ErrorsType,
-  ScorecardCandidateRow,
-} from "../../ReviewScoreCard/State/types";
-import {
-  CandidateReviewData,
-  HODDecision,
-} from "../../SelectionProcess/tabs/EvaluationTab/Reviewscorecardtab/types";
-import { SubmitHookDeps } from "../../ReviewScoreCard/Components/useSubmitReviewScoreCard";
 import QuestionnaireTab from "../../ReviewScoreCard/Components/QuestionnaireTab";
 import ScoreTable from "../../ReviewScoreCard/Components/ScoreTable";
 import CommentsModal from "../../ReviewScoreCard/Components/Commentsmodal";
-import { useReviewScorecard } from "../../ReviewScoreCard/Hooks/useReviewScorecard";
-import { userInfo } from "../../../../utilities/hooks/RoleContext";
 import { useNavigate } from "react-router-dom";
+import { fetchCandidateValue } from "./Hooks/fetchCandidateValue";
+import { ReviewCommentSignature } from "../../RecruitmentTable/Components/ReviewCommentSignature";
+import { useSignatureDetails } from "../../RecruitmentTable/AdvertReviewDrawer/Hooks/getSignatureDetails";
+import { useSubmitEvaluationL2 } from "./Hooks/Usesubmitevaluationl2";
+import { ModalPopup } from "../../../Comman/ModalPopup/ModalPopup";
+import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
+import { RecuritmentHRMsg } from "../../../../utilities/ConditionConfig";
 
 const SCORE_CRITERIA = [
   { field: "RelevantQualification", label: "Qualification (Relevant)" },
@@ -32,14 +34,8 @@ const SCORE_CRITERIA = [
   { field: "Experience", label: "Experience" },
   { field: "OtherCriteriaScore", label: "Other Criteria Recognized by Panel" },
 ];
-const MAX_OVERALL_PER_PANEL = 40;
-interface Props {
-  ID: number;
-  EmailId: string;
-  onClose: () => void;
-}
 
-type ScorecardTabKey = "questions" | "qEval" | "overall";
+const MAX_OVERALL_PER_PANEL = 40;
 
 const MField = ({ label, value }: { label: string; value: string }) => (
   <div className={styles.mfField}>
@@ -48,21 +44,83 @@ const MField = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
-const EvalutionL2: React.FC = (props: any) => {
-  const ID = props.ID;
-  const EmailId = props.EmailID;
-  const hook = useReviewScorecard(ID, EmailId, "", true);
+const PageLoader = () => (
+  <div className={styles.modalOverlay}>
+    <div
+      className={styles.modalWindow}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: 320,
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 12,
+        }}
+      >
+        <Loader2
+          size={36}
+          style={{ animation: "spin 1s linear infinite", color: "#2563eb" }}
+        />
+        <span style={{ fontSize: 14, color: "#64748b", fontWeight: 500 }}>
+          Loading candidate data…
+        </span>
+      </div>
+    </div>
+    <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+  </div>
+);
+
+type ScorecardTabKey = "questions" | "qEval" | "overall";
+
+const EvalutionL2: React.FC<any> = (props) => {
+  const ID: number = props.ID;
+  const RecrutimentID: number = props.RecruitmentID;
+
+  const hook = fetchCandidateValue(ID, RecrutimentID);
   const navigate = useNavigate();
+  const { modalState, showModal, closeModal } = useModalPopup();
+
+  // ── tab state ────────────────────────────────────────────────────────────────
   const [activePanelTab, setActivePanelTab] = React.useState(0);
   const [activeScorecardTab, setActiveScorecardTab] =
     React.useState<ScorecardTabKey>("questions");
 
-  const onClose = () => {
-    navigate("/RecruitmentTable");
+  // ── signature ────────────────────────────────────────────────────────────────
+  const { data: signatureDetails, loading: signatureLoading } =
+    useSignatureDetails();
+
+  // ── navigation callback ──────────────────────────────────────────────────────
+  const onClose = React.useCallback(() => navigate("/Recruitment"), [navigate]);
+
+  const successModel = () => {
+    showModal({
+      type: "success",
+      title: "Success",
+      message: RecuritmentHRMsg.ScoreCardMsgLevel2,
+      confirmLabel: "Go to Dashboard",
+      onConfirm: () => {
+        closeModal();
+        onClose();
+      },
+    });
   };
+
+  const submitHook = useSubmitEvaluationL2({
+    candidateId: ID,
+    panelId: hook.reviewData?.currentUserPanelId ?? 0,
+    onSuccess: successModel,
+  });
 
   const panelMembers: string[] = React.useMemo(() => {
     const fromReview = hook.reviewData?.panelMembers || [];
+    console.log();
+
     if (fromReview.length > 0) return fromReview;
     return (hook.scoreData || []).map(
       (s: any, i: number) => s.InterviewPersonName || `Interviewer ${i + 1}`,
@@ -70,6 +128,7 @@ const EvalutionL2: React.FC = (props: any) => {
   }, [hook.reviewData, hook.scoreData]);
 
   const activeScore: any = (hook.scoreData || [])[activePanelTab] || null;
+
   const activeQJson: any[] = React.useMemo(() => {
     if (!activeScore?.QuestionJson) return [];
     if (Array.isArray(activeScore.QuestionJson))
@@ -136,6 +195,7 @@ const EvalutionL2: React.FC = (props: any) => {
       hook.reviewingCandidate?.interviewDate ||
       ""
     ).split("T")[0] || "";
+
   const nationLabel = (() => {
     const n = (hook.reviewingCandidate?.nationality || "").toLowerCase();
     if (n.includes("expat")) return "EXPAT";
@@ -147,9 +207,7 @@ const EvalutionL2: React.FC = (props: any) => {
       return "LOCAL";
     return (hook.reviewingCandidate?.nationality || "").toUpperCase() || "";
   })();
-  const userInitial = (hook.reviewData?.reviewerName || "")
-    .charAt(0)
-    .toUpperCase();
+
   const safeLevel1 = Array.isArray(hook.level1Comments)
     ? hook.level1Comments
     : [];
@@ -157,6 +215,13 @@ const EvalutionL2: React.FC = (props: any) => {
     ? hook.level2Comments
     : [];
 
+  // ── Global page loading guard ─────────────────────────────────────────────────
+  // Show loader until ALL three data sources have resolved
+  if (hook.candidatesLoading || hook.scoreLoading || hook.reviewLoading) {
+    return <PageLoader />;
+  }
+
+  // ── Render ────────────────────────────────────────────────────────────────────
   return (
     <div className={styles.modalOverlay}>
       <motion.div
@@ -173,7 +238,7 @@ const EvalutionL2: React.FC = (props: any) => {
               <span>CANDIDATE SELECTION</span>
               <ChevronRight size={11} />
               <span className={styles.mBreadcrumbActive}>
-                Review score card{" "}
+                Evaluation Level 2
               </span>
             </div>
             <div className={styles.mTitleRow}>
@@ -184,7 +249,6 @@ const EvalutionL2: React.FC = (props: any) => {
                 <h2 className={styles.mTitle}>Candidate Details</h2>
                 <p className={styles.mSubtitle}>
                   <span className={styles.mJobCode}>
-                    {/*  job?.jobCode */}
                     {hook.reviewingCandidate?.jobCode || ""}
                   </span>
                   <span className={styles.mDot}>›</span>
@@ -204,7 +268,11 @@ const EvalutionL2: React.FC = (props: any) => {
                 {hook.reviewingCandidate?.gpa || "—"}
               </span>
             </div>
-            <button onClick={onClose} className={styles.mCloseBtn}>
+            <button
+              onClick={onClose}
+              className={styles.mCloseBtn}
+              disabled={submitHook.submitting}
+            >
               <X size={20} />
             </button>
           </div>
@@ -219,59 +287,53 @@ const EvalutionL2: React.FC = (props: any) => {
                 {hook.reviewingCandidate?.fullName}
               </div>
               <div className={styles.mCandidateType}>{nationLabel}</div>
-              {hook.reviewLoading ? (
-                <div className={styles.mNoData}>Loading info...</div>
-              ) : (
-                <div className={styles.mFieldList}>
+              <div className={styles.mFieldList}>
+                <MField
+                  label="NATIONALITY"
+                  value={
+                    raw.Nationality ||
+                    hook.reviewingCandidate?.nationality ||
+                    ""
+                  }
+                />
+                <MField
+                  label="GENDER"
+                  value={raw.Gender || hook.reviewingCandidate?.gender || ""}
+                />
+                <MField label="QUALIFICATION" value={raw.Qualification || ""} />
+                <div className={styles.mTwoCol}>
                   <MField
-                    label="NATIONALITY"
-                    value={
-                      raw.Nationality ||
-                      hook.reviewingCandidate?.nationality ||
-                      ""
-                    }
+                    label="MINING EXP."
+                    value={raw.TotalYearOfExperiance || ""}
                   />
                   <MField
-                    label="GENDER"
-                    value={raw.Gender || hook.reviewingCandidate?.gender || ""}
-                  />
-                  <MField
-                    label="QUALIFICATION"
-                    value={raw.Qualification || ""}
-                  />
-                  <div className={styles.mTwoCol}>
-                    <MField
-                      label="MINING EXP."
-                      value={raw.TotalYearOfExperiance || ""}
-                    />
-                    <MField
-                      label="RELATED EXP."
-                      value={raw.ReleventExperience || ""}
-                    />
-                  </div>
-                  <div className={styles.mTwoCol}>
-                    <MField label="INTERVIEW DATE" value={formattedDate} />
-                    <MField
-                      label="LEVELS"
-                      value={hook.reviewingCandidate?.interviewLevel || ""}
-                    />
-                  </div>
-                  <div className={styles.mTwoCol}>
-                    <MField
-                      label="GRADE"
-                      value={hook.reviewingCandidate?.grade || ""}
-                    />
-                    <MField
-                      label="CONFLICTS"
-                      value={raw.ConflictsOfInterest || ""}
-                    />
-                  </div>
-                  <MField
-                    label="DISABILITY"
-                    value={raw.Disability || raw.disability || ""}
+                    label="RELATED EXP."
+                    value={raw.ReleventExperience || ""}
                   />
                 </div>
-              )}
+                <div className={styles.mTwoCol}>
+                  <MField label="INTERVIEW DATE" value={formattedDate} />
+                  <MField
+                    label="LEVELS"
+                    value={hook.reviewingCandidate?.interviewLevel || ""}
+                  />
+                </div>
+                <div className={styles.mTwoCol}>
+                  <MField
+                    label="GRADE"
+                    value={hook.reviewingCandidate?.grade || ""}
+                  />
+                  <MField
+                    label="CONFLICTS"
+                    value={raw.ConflictsOfInterest || ""}
+                  />
+                </div>
+                <MField
+                  label="DISABILITY"
+                  value={raw.Disability || raw.disability || ""}
+                />
+              </div>
+
               {panelMembers.length > 0 && (
                 <div className={styles.mPanelSection}>
                   <div className={styles.mPanelHeader}>
@@ -293,7 +355,8 @@ const EvalutionL2: React.FC = (props: any) => {
 
           {/* ── RIGHT MAIN ── */}
           <main className={styles.mRight}>
-            {!hook.scoreLoading && (hook.scoreData || []).length > 0 && (
+            {/* Panel tab switcher */}
+            {(hook.scoreData || []).length > 0 && (
               <div className={styles.panelTabBar}>
                 {(hook.scoreData || []).map((s: any, i: number) => (
                   <button
@@ -313,6 +376,7 @@ const EvalutionL2: React.FC = (props: any) => {
               </div>
             )}
 
+            {/* Scorecard tab content */}
             {activeScorecardTab === "questions" && (
               <QuestionnaireTab
                 questions={hook.reviewData?.questions || []}
@@ -344,9 +408,77 @@ const EvalutionL2: React.FC = (props: any) => {
                 emptyText="No scorecard data available."
               />
             )}
+
+            {/* View Comments button */}
+            <div className={styles.mFormGroup}>
+              <button
+                onClick={hook.openComments}
+                className={styles.mSubmitBtn}
+                type="button"
+                // disabled={submitHook.submitting}
+              >
+                <FileText size={16} />
+                VIEW COMMENTS
+              </button>
+            </div>
+
+            <ReviewCommentSignature
+              reviewerComments={submitHook.comments}
+              acknowledgementCheckbox={submitHook.acknowledgementCheckbox}
+              signatureDetails={signatureDetails}
+              isLoading={signatureLoading}
+              onCommentsChange={submitHook.onCommentsChange}
+              onToggleAcknowledgement={submitHook.onToggleAcknowledgement}
+              commentError={submitHook.commentError}
+              checkboxError={submitHook.checkboxError}
+              disabled={submitHook.isSubmittingRef.current}
+            />
+
+            {/* ── Action buttons row ── */}
+            <div
+              className={styles.mActionBtn}
+              style={{ background: "white", justifyContent: "flex-end" }}
+            >
+              <button
+                className={styles.mCancelBtn}
+                onClick={onClose}
+                disabled={submitHook.submitting}
+                type="button"
+              >
+                CANCEL
+              </button>
+
+              <button
+                className={styles.mSubmitBtn}
+                onClick={submitHook.handleSubmitClick}
+                disabled={submitHook.submitting}
+                type="button"
+              >
+                {submitHook.submitting ? (
+                  <>
+                    <Loader2
+                      size={15}
+                      style={{
+                        marginRight: 6,
+                        animation: "spin 1s linear infinite",
+                      }}
+                    />
+                    Submitting…
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 size={15} style={{ marginRight: 6 }} />
+                    SUBMIT ACTION
+                  </>
+                )}
+              </button>
+            </div>
           </main>
         </div>
       </motion.div>
+
+      {/* Spinner keyframe */}
+      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
 
       <CommentsModal
         open={hook?.showComments}
@@ -355,6 +487,7 @@ const EvalutionL2: React.FC = (props: any) => {
         level2={safeLevel2}
         onClose={hook.closeReview}
       />
+      <ModalPopup {...modalState} onClose={closeModal} />
     </div>
   );
 };
