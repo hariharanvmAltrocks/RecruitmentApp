@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CandidateTable = void 0;
+exports.CandidateTable = exports.panelVariants = void 0;
 var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importStar(require("react"));
 var framer_motion_1 = require("framer-motion");
@@ -16,9 +16,12 @@ var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
 var useModalPopup_1 = require("../../Comman/ModalPopup/useModalPopup");
 var moment_1 = tslib_1.__importDefault(require("moment"));
 var ModalPopup_1 = require("../../Comman/ModalPopup/ModalPopup");
-var panelVariants = {
+exports.panelVariants = {
     hidden: { x: "100%" },
-    visible: { x: 0, transition: { type: "spring", damping: 25, stiffness: 200 } },
+    visible: {
+        x: 0,
+        transition: { type: "spring", damping: 25, stiffness: 200 },
+    },
     exit: { x: "100%" },
 };
 // interface CandidateTableProps {
@@ -36,7 +39,12 @@ var CandidateTable = function (props) {
     }, [positionDetails]);
     var _e = (0, react_1.useState)(false), isRefreshing = _e[0], setIsRefreshing = _e[1];
     var jobId = (_a = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCodeId) !== null && _a !== void 0 ? _a : 0;
-    var _f = (0, fetchCandidateDashboardDetails_1.useFetchCandidateDashboardDetails)({ jobId: jobId, recruitmentId: props.ID, initialPageSize: 10, enable: !positionLoading }), data = _f.data, loading = _f.loading, error = _f.error, pagination = _f.pagination, fetchPage = _f.fetchPage, setPageSize = _f.setPageSize, refresh = _f.refresh;
+    var _f = (0, fetchCandidateDashboardDetails_1.useFetchCandidateDashboardDetails)({
+        jobId: jobId,
+        recruitmentId: props.ID,
+        initialPageSize: 10,
+        enable: !positionLoading,
+    }), data = _f.data, loading = _f.loading, error = _f.error, pagination = _f.pagination, fetchPage = _f.fetchPage, setPageSize = _f.setPageSize, refresh = _f.refresh;
     var handleRefresh = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         return tslib_1.__generator(this, function (_a) {
             setIsRefreshing(true);
@@ -52,7 +60,10 @@ var CandidateTable = function (props) {
     var headerMeta = (0, react_1.useMemo)(function () {
         if (!positionDetails)
             return { code: "—", title: "—" };
-        return { code: positionDetails.JobCode, title: positionDetails.JobTitleEnglish };
+        return {
+            code: positionDetails.JobCode,
+            title: positionDetails.JobTitleEnglish,
+        };
     }, [positionDetails]);
     var _g = (0, useModalPopup_1.useModalPopup)(), modalState = _g.modalState, showModal = _g.showModal, closeModal = _g.closeModal;
     var handleClose = (0, react_1.useCallback)(function () { return navigate("/RecruitmentTable"); }, [navigate]);
@@ -155,8 +166,10 @@ var CandidateTable = function (props) {
                 icon: react_1.default.createElement(lucide_react_1.PauseCircle, { size: 14 }),
             };
         }
-        if (item.workflowStatusId === Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview ||
-            Number(item.workflowStatusId) === Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel) {
+        if (item.workflowStatusId ===
+            Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview ||
+            Number(item.workflowStatusId) ===
+                Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel) {
             return {
                 label: "Schedule",
                 icon: react_1.default.createElement(lucide_react_1.Calendar, { size: 14 }),
@@ -210,12 +223,12 @@ var CandidateTable = function (props) {
                         icon,
                         label)));
             },
-        }
+        },
     ]; }, []);
     return (react_1.default.createElement(framer_motion_1.AnimatePresence, null,
         react_1.default.createElement("div", { className: "candidate-table" },
             react_1.default.createElement(framer_motion_1.motion.div, { className: "candidate-table__backdrop", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, onClick: handleClose }),
-            react_1.default.createElement(framer_motion_1.motion.div, { className: "candidate-table__panel", variants: panelVariants, initial: "hidden", animate: "visible", exit: "exit" },
+            react_1.default.createElement(framer_motion_1.motion.div, { className: "candidate-table__panel", variants: exports.panelVariants, initial: "hidden", animate: "visible", exit: "exit" },
                 react_1.default.createElement("div", { className: "candidate-table__header" },
                     react_1.default.createElement("div", { className: "candidate-table__header-left" },
                         react_1.default.createElement("div", { className: "candidate-table__header-icon" },

@@ -1,6 +1,6 @@
 import React from "react";
 import { CheckCircle2, MessageSquare, User } from "lucide-react";
-import "../AdvertReviewDrawer/AdvertReviewDrawer.scss"
+import "../AdvertReviewDrawer/AdvertReviewDrawer.scss";
 import { SignatureDetails } from "../AdvertReviewDrawer/Hooks/getSignatureDetails";
 
 export interface ReviewCommentSignatureProps {
@@ -13,16 +13,14 @@ export interface ReviewCommentSignatureProps {
   commentError?: boolean;
   checkboxError?: boolean;
   disabled?: boolean;
+  ReviewLabel?: string;
 }
 
 const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({
   width = "100%",
   height = "14px",
 }) => (
-  <div
-    className="advert-review-drawer__skeleton"
-    style={{ width, height }}
-  />
+  <div className="advert-review-drawer__skeleton" style={{ width, height }} />
 );
 
 export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
@@ -34,12 +32,13 @@ export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
   onToggleAcknowledgement,
   commentError = false,
   checkboxError = false,
-  disabled = false
+  disabled = false,
+  ReviewLabel,
 }) => (
   <section className="advert-review-drawer__section advert-review-drawer__section--comments">
     <h3 className="advert-review-drawer__section-title">
       <MessageSquare size={12} />
-      Reviewer Comments
+      {ReviewLabel ? ReviewLabel : "Reviewer Comments"}
     </h3>
 
     {/* ── Textarea — red border when commentError=true ── */}
@@ -89,9 +88,9 @@ export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
           <CheckCircle2 size={12} />
         </span>
         <span>
-          I hereby acknowledge that I have reviewed the job advertisement details
-          and attachments, and I confirm that the information is accurate and
-          ready for publication.
+          I hereby acknowledge that I have reviewed the job advertisement
+          details and attachments, and I confirm that the information is
+          accurate and ready for publication.
         </span>
       </label>
       {checkboxError && (

@@ -10,11 +10,11 @@ var SkeletonBlock = function (_a) {
     return (react_1.default.createElement("div", { className: "advert-review-drawer__skeleton", style: { width: width, height: height } }));
 };
 var ReviewCommentSignature = function (_a) {
-    var reviewerComments = _a.reviewerComments, acknowledgementCheckbox = _a.acknowledgementCheckbox, signatureDetails = _a.signatureDetails, isLoading = _a.isLoading, onCommentsChange = _a.onCommentsChange, onToggleAcknowledgement = _a.onToggleAcknowledgement, _b = _a.commentError, commentError = _b === void 0 ? false : _b, _c = _a.checkboxError, checkboxError = _c === void 0 ? false : _c, _d = _a.disabled, disabled = _d === void 0 ? false : _d;
+    var reviewerComments = _a.reviewerComments, acknowledgementCheckbox = _a.acknowledgementCheckbox, signatureDetails = _a.signatureDetails, isLoading = _a.isLoading, onCommentsChange = _a.onCommentsChange, onToggleAcknowledgement = _a.onToggleAcknowledgement, _b = _a.commentError, commentError = _b === void 0 ? false : _b, _c = _a.checkboxError, checkboxError = _c === void 0 ? false : _c, _d = _a.disabled, disabled = _d === void 0 ? false : _d, ReviewLabel = _a.ReviewLabel;
     return (react_1.default.createElement("section", { className: "advert-review-drawer__section advert-review-drawer__section--comments" },
         react_1.default.createElement("h3", { className: "advert-review-drawer__section-title" },
             react_1.default.createElement(lucide_react_1.MessageSquare, { size: 12 }),
-            "Reviewer Comments"),
+            ReviewLabel ? ReviewLabel : "Reviewer Comments"),
         react_1.default.createElement("textarea", { className: [
                 "advert-review-drawer__textarea",
                 commentError ? "advert-review-drawer__textarea--error" : "",

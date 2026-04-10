@@ -1,3 +1,461 @@
+.lmDecisionCard {
+  background: #ffffff;
+  border: 4px solid #eff6ff;
+  border-radius: 40px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+
+  @media (min-width: 768px) {
+    padding: 11px;
+  }
+}
+
+.lmDecisionHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.lmDecisionZap {
+  color: #ea7a08;
+  // margin-top: 1.25rem;
+  flex-shrink: 0;
+}
+
+.lmDecisionTitleWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lmDecisionTitle {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1b264e;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.lmDecisionSubtitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: #8e9bba;
+}
+
+.decisionBtnsRow {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  width: 100%;
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+  }
+}
+
+// Base decision button
+.decisionBtn {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 28px 16px;
+  border-radius: 24px;
+  border: 1.5px solid;
+  transition: all 0.3s ease;
+  outline: none;
+  cursor: pointer;
+  background: #ffffff;
+}
+
+.decisionBtnLabel {
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+// YES
+.decisionBtnYesInactive {
+  border-color: rgba(12, 175, 96, 0.4);
+  color: #0caf60;
+
+  &:hover {
+    background-color: #f2fbf4;
+  }
+}
+
+.decisionBtnYesActive {
+  background-color: #0caf60;
+  border-color: transparent;
+  box-shadow: 0 8px 20px rgba(12, 175, 96, 0.3);
+  transform: scale(1.02);
+  color: #ffffff;
+}
+
+// NO
+.decisionBtnNoInactive {
+  border-color: rgba(255, 59, 92, 0.4);
+  color: #ff3b5c;
+
+  &:hover {
+    background-color: #fff0f2;
+  }
+}
+
+.decisionBtnNoActive {
+  background-color: #fd3c54;
+  border-color: transparent;
+  box-shadow: 0 8px 20px rgba(253, 60, 84, 0.3);
+  transform: scale(1.02);
+  color: #ffffff;
+}
+
+// HOLD
+.decisionBtnHoldInactive {
+  border-color: rgba(234, 122, 8, 0.4);
+  color: #ea7a08;
+
+  &:hover {
+    background-color: #fffaf0;
+  }
+}
+
+.decisionBtnHoldActive {
+  background-color: #ea7a08;
+  border-color: transparent;
+  box-shadow: 0 8px 20px rgba(234, 122, 8, 0.4);
+  transform: scale(1.02);
+  color: #ffffff;
+}
+
+// Icon color helpers
+.iconWhite {
+  color: #ffffff;
+}
+
+.iconGreen {
+  color: #0caf60;
+}
+
+.iconRed {
+  color: #ff3b5c;
+}
+
+.iconAmber {
+  color: #ea7a08;
+}
+
+// ─── Section Divider ──────────────────────────────────────────────────────────
+.sectionDivider {
+  border-top: 2px solid #f1f5f9;
+  margin: 1.5rem 0;
+}
+
+// ─── LM Comments ─────────────────────────────────────────────────────────────
+.lmCommentsCard {
+  background-color: rgba(239, 246, 255, 0.2);
+  border: 2px solid #bfdbfe;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 96%;
+  min-width: 0;
+  margin-bottom: 1rem;
+}
+
+.lmCommentsFieldWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.lmCommentsLabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lmCommentsLabelText {
+  color: #8e9bba;
+}
+
+.lmCommentsRequired {
+  color: #ff3b5c;
+}
+
+.lmCommentsTextarea {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #fcfdfe;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1b264e;
+  resize: none;
+  min-height: 140px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  &::placeholder {
+    color: #8e9bba;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.1);
+  }
+}
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e4e8f1;
+  flex-shrink: 0;
+  background: #ffffff;
+  z-index: 10;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.headerIcon {
+  width: 48px;
+  height: 48px;
+  background-color: #f0f4ff;
+  color: #3f62ed;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.headerMeta {
+  display: flex;
+  flex-direction: column;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8e9bba;
+  margin-bottom: 0.25rem;
+}
+
+.breadcrumbActive {
+  color: #1b264e;
+}
+
+.breadcrumbChevron {
+  color: #e4e8f1;
+}
+
+.headerTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1b264e;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.headerSubtitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #8e9bba;
+  margin-top: 0.25rem;
+}
+
+.jobCodeBadge {
+  font-weight: 700;
+  color: #3f62ed;
+  background-color: #f0f4ff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.headerDot {
+  width: 4px;
+  height: 4px;
+  background-color: #e4e8f1;
+  border-radius: 9999px;
+}
+
+.headerJobTitle {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.closeBtn {
+  padding: 10px;
+  color: #3f62ed;
+  background-color: #f0f4ff;
+  border: 1px solid #ffffff;
+  border-radius: 9999px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e0e8ff;
+    border-color: #e0e8ff;
+  }
+}
+
+// ─── Body ─────────────────────────────────────────────────────────────────────
+.body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  background: #ffffff;
+}
+
+// ─── Sidebar ──────────────────────────────────────────────────────────────────
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background: #ffffff;
+  border-right: 1px solid #e4e8f1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: #e5e7eb transparent;
+}
+
+.avatarSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2rem;
+  gap: 0.25rem;
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  background-color: #f0f4ff;
+  color: #3f62ed;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 4px 12px rgba(63, 98, 237, 0.1);
+}
+
+.avatarName {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1b264e;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.avatarNationality {
+  font-size: 11px;
+  font-weight: 700;
+  color: #3f62ed;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+
+.infoGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.infoRow {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.infoRowItem {
+  flex: 1;
+  min-width: 0;
+}
+
+// ─── InfoItem ─────────────────────────────────────────────────────────────────
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.infoLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #8e9bba;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.infoLabelIcon {
+  color: #3f62ed;
+  display: flex;
+  align-items: center;
+}
+
+.infoValue {
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  border: 1px solid #e4e8f1;
+  border-radius: 14px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1b264e;
+  overflow-wrap: break-word;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
 .pageBtnActive {
   background-color: #2563eb !important;
   color: #fff !important;
@@ -1645,10 +2103,10 @@
 }
 
 .mDecisionCard {
-  background-color: white;
+  // background-color: white;
   padding: 2rem;
   border-radius: 2.5rem;
-  border: 4px solid #eff6ff;
+  // border: 4px solid #eff6ff;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   text-align: center;
   margin-top: 2rem;
@@ -3464,4 +3922,118 @@
   border-bottom-color: #2563eb !important;
   background: transparent !important;
   font-weight: 700 !important;
+}
+
+.hrFeedbackCard {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  width: 96%;
+  min-width: 0;
+}
+
+.hrFeedbackFieldWrap {
+  width: 100%;
+
+  @media (min-width: 768px) {
+    width: 50%;
+  }
+}
+
+.customDropdownTrigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f5f7fa;
+  border: 1px solid #e4e8f1;
+  border-radius: 1rem;
+  padding: 14px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  &.dropdownOpen {
+    border-color: #3f62ed;
+    box-shadow: 0 0 0 2px rgba(63, 98, 237, 0.1);
+  }
+}
+
+.dropdownPlaceholder {
+  color: #8e9bba;
+}
+
+.dropdownSelected {
+  color: #1b264e;
+}
+
+.dropdownChevron {
+  color: #8e9bba;
+  transition: transform 0.2s ease;
+
+  &.open {
+    transform: rotate(180deg);
+  }
+}
+
+.dropdownMenu {
+  position: absolute;
+  z-index: 20;
+  width: 100%;
+  margin-top: 0.5rem;
+  background: #ffffff;
+  border: 1px solid #e4e8f1;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  padding: 0.5rem 0;
+}
+
+.dropdownOption {
+  padding: 0.75rem 1.25rem;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  color: #1b264e;
+
+  &:hover {
+    background-color: #f5f7fa;
+  }
+}
+
+.dropdownOptionActive {
+  background-color: #f0f4ff;
+  color: #3f62ed;
+}
+
+.dropdownWrapper {
+  position: relative;
+}
+.section {
+  margin-bottom: 3rem;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: #8e9bba;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.fieldRequired {
+  color: #ff3b5c;
+}
+.dropdownDisabled {
+  pointer-events: none;
+  opacity: 0.6;
+  background: #f8fafc;
+  cursor: not-allowed;
 }

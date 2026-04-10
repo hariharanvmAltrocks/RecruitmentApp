@@ -1,6 +1,16 @@
 import * as React from "react";
-import { motion } from "framer-motion";
-import { X, Users, ChevronRight } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  X,
+  Users,
+  ChevronRight,
+  User,
+  Globe,
+  FileText,
+  Zap,
+  AlertTriangle,
+  Accessibility,
+} from "lucide-react";
 import styles from "../ReviewScorecard.module.scss";
 import {
   ScorecardCandidateRow,
@@ -16,6 +26,9 @@ import HODDecisionPanel from "./HODDecisionPanel";
 import CommentsModal from "./Commentsmodal";
 import { canEdit } from "../Hooks/useReviewScorecard";
 import { SubmitHookDeps } from "./useSubmitReviewScoreCard";
+import { InfoItem } from "../../CandidateTable/Components/reuseUI";
+
+// ─── Constants ───────────────────────────────────────────────────────────────
 
 const SCORE_CRITERIA = [
   { field: "RelevantQualification", label: "Qualification (Relevant)" },
@@ -30,7 +43,13 @@ const SCORE_CRITERIA = [
   { field: "Experience", label: "Experience" },
   { field: "OtherCriteriaScore", label: "Other Criteria Recognized by Panel" },
 ];
+
 const MAX_OVERALL_PER_PANEL = 40;
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type ScorecardTabKey = "questions" | "qEval" | "overall";
+
 interface Props {
   candidate: ScorecardCandidateRow;
   reviewData: CandidateReviewData | null;
@@ -69,7 +88,7 @@ interface Props {
   submitDeps: SubmitHookDeps;
 }
 
-type ScorecardTabKey = "questions" | "qEval" | "overall";
+// ─── Sub-component ────────────────────────────────────────────────────────────
 
 const MField = ({ label, value }: { label: string; value: string }) => (
   <div className={styles.mfField}>
@@ -77,6 +96,8 @@ const MField = ({ label, value }: { label: string; value: string }) => (
     <div className={styles.mfValue}>{value || "—"}</div>
   </div>
 );
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 
 const CandidateReviewModal: React.FC<Props> = ({
   candidate,
@@ -111,9 +132,12 @@ const CandidateReviewModal: React.FC<Props> = ({
   isLevel2Status,
   submitDeps,
 }) => {
+  // ── Local state ────────────────────────────────────────────────────────────
   const [activePanelTab, setActivePanelTab] = React.useState(0);
   const [activeScorecardTab, setActiveScorecardTab] =
     React.useState<ScorecardTabKey>("questions");
+
+  // ── Derived data ───────────────────────────────────────────────────────────
 
   const panelMembers: string[] = React.useMemo(() => {
     const fromReview = reviewData?.panelMembers || [];
@@ -124,6 +148,7 @@ const CandidateReviewModal: React.FC<Props> = ({
   }, [reviewData, scoreData]);
 
   const activeScore: any = (scoreData || [])[activePanelTab] || null;
+
   const activeQJson: any[] = React.useMemo(() => {
     if (!activeScore?.QuestionJson) return [];
     if (Array.isArray(activeScore.QuestionJson))
@@ -166,6 +191,7 @@ const CandidateReviewModal: React.FC<Props> = ({
       });
       return row;
     });
+
     const totalRow: any = { criteria: "Total", total: 0 };
     (scoreData || []).forEach((_: any, i: number) => {
       const sum = rows.reduce((acc, r) => {
@@ -182,7 +208,10 @@ const CandidateReviewModal: React.FC<Props> = ({
     return rows;
   }, [scoreData]);
 
+  // ── Helpers ────────────────────────────────────────────────────────────────
+
   const raw = reviewData?.candidateData || {};
+
   const formattedDate =
     (
       raw.InterviewDate ||
@@ -190,6 +219,7 @@ const CandidateReviewModal: React.FC<Props> = ({
       candidate.interviewDate ||
       ""
     ).split("T")[0] || "";
+
   const nationLabel = (() => {
     const n = (candidate.nationality || "").toLowerCase();
     if (n.includes("expat")) return "EXPAT";
@@ -201,215 +231,252 @@ const CandidateReviewModal: React.FC<Props> = ({
       return "LOCAL";
     return (candidate.nationality || "").toUpperCase() || "";
   })();
+
   const userInitial = (reviewData?.reviewerName || "").charAt(0).toUpperCase();
   const safeLevel1 = Array.isArray(level1Comments) ? level1Comments : [];
   const safeLevel2 = Array.isArray(level2Comments) ? level2Comments : [];
 
+  // ── Render ─────────────────────────────────────────────────────────────────
+
   return (
-    <div className={styles.modalOverlay}>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.96 }}
-        transition={{ duration: 0.2 }}
-        className={styles.modalWindow}
-      >
-        {/* ══ HEADER ══ */}
-        <div className={styles.mHeader}>
-          <div className={styles.mHeaderLeft}>
-            <div className={styles.mBreadcrumb}>
-              <span>CANDIDATE SELECTION</span>
-              <ChevronRight size={11} />
-              <span className={styles.mBreadcrumbActive}>
-                Review score card{" "}
+    <div
+      style={{ display: "flex", flexDirection: "column", height: "100%" }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <header className={styles.header}>
+        <div className={styles.headerLeft}>
+          <div className={styles.headerIcon}>
+            <User size={24} />
+          </div>
+          <div className={styles.headerMeta}>
+            <div className={styles.breadcrumb}>
+              <span>Candidate selection</span>
+              <ChevronRight size={12} className={styles.breadcrumbChevron} />
+              <span className={styles.breadcrumbActive}>Review Scorecard</span>
+            </div>
+            <h2 className={styles.headerTitle}>Candidate Scorecard Review</h2>
+            <div className={styles.headerSubtitle}>
+              <span className={styles.jobCodeBadge}>
+                {candidate.jobCode || "---"}
+              </span>
+              <span className={styles.headerDot} />
+              <span className={styles.headerJobTitle}>
+                {candidate.positionTitle || "---"}
               </span>
             </div>
-            <div className={styles.mTitleRow}>
-              <div className={styles.mIconBox}>
-                <Users size={20} />
-              </div>
-              <div>
-                <h2 className={styles.mTitle}>Candidate Details</h2>
-                <p className={styles.mSubtitle}>
-                  <span className={styles.mJobCode}>
-                    {job?.jobCode || candidate.jobCode || ""}
-                  </span>
-                  <span className={styles.mDot}>›</span>
-                  <span>
-                    {raw?.PositionTitle || candidate.positionTitle || ""}
-                  </span>
-                </p>
-              </div>
-            </div>
           </div>
+        </div>
+        <div>
           <div className={styles.mHeaderRight}>
             <div className={styles.mGpa}>
               <span className={styles.mGpaLabel}>OVERALL GPA</span>
               <span className={styles.mGpaValue}>{candidate.gpa || "—"}</span>
             </div>
-            <button onClick={onClose} className={styles.mCloseBtn}>
-              <X size={20} />
+            <button
+              className={styles.closeBtn}
+              type="button"
+              onClick={onClose}
+              aria-label="Close"
+            >
+              <X size={20} strokeWidth={2.5} />
             </button>
           </div>
         </div>
+      </header>
 
-        {/* ══ BODY ══ */}
-        <div className={styles.mBody}>
-          {/* ── LEFT SIDEBAR ── */}
-          <aside className={styles.mLeft}>
-            <div className={styles.mLeftCard}>
-              <div className={styles.mCandidateName}>{candidate.fullName}</div>
-              <div className={styles.mCandidateType}>{nationLabel}</div>
-              {reviewLoading ? (
-                <div className={styles.mNoData}>Loading info...</div>
-              ) : (
-                <div className={styles.mFieldList}>
-                  <MField
-                    label="NATIONALITY"
-                    value={raw.Nationality || candidate.nationality || ""}
-                  />
-                  <MField
-                    label="GENDER"
-                    value={raw.Gender || candidate.gender || ""}
-                  />
-                  <MField
-                    label="QUALIFICATION"
-                    value={raw.Qualification || ""}
-                  />
-                  <div className={styles.mTwoCol}>
-                    <MField
-                      label="MINING EXP."
-                      value={raw.TotalYearOfExperiance || ""}
-                    />
-                    <MField
-                      label="RELATED EXP."
-                      value={raw.ReleventExperience || ""}
-                    />
-                  </div>
-                  <div className={styles.mTwoCol}>
-                    <MField label="INTERVIEW DATE" value={formattedDate} />
-                    <MField
-                      label="LEVELS"
-                      value={candidate.interviewLevel || ""}
-                    />
-                  </div>
-                  <div className={styles.mTwoCol}>
-                    <MField label="GRADE" value={candidate.grade || ""} />
-                    <MField
-                      label="CONFLICTS"
-                      value={raw.ConflictsOfInterest || ""}
-                    />
-                  </div>
-                  <MField
-                    label="DISABILITY"
-                    value={raw.Disability || raw.disability || ""}
-                  />
-                </div>
-              )}
-              {panelMembers.length > 0 && (
-                <div className={styles.mPanelSection}>
-                  <div className={styles.mPanelHeader}>
-                    <Users size={12} color="#2563eb" />
-                    <span>INTERVIEW PANEL</span>
-                  </div>
-                  <div className={styles.mPanelList}>
-                    {panelMembers.map((name, i) => (
-                      <div key={i} className={styles.mPanelRow}>
-                        <span className={styles.mPanelBadge}>{i + 1}</span>
-                        <span className={styles.mPanelName}>{name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+      <div className={styles.mBody}>
+        <aside className={styles.sidebar}>
+          <div className={styles.avatarSection}>
+            <div className={styles.avatar}>
+              {(candidate.fullName ?? "A").charAt(0)}
             </div>
-          </aside>
+            <h3 className={styles.avatarName}>{candidate.fullName ?? "--"}</h3>
+            <span className={styles.avatarNationality}>
+              {nationLabel ?? "--"}
+            </span>
+          </div>
 
-          {/* ── RIGHT MAIN ── */}
-          <main className={styles.mRight}>
-            {!scoreLoading && (scoreData || []).length > 0 && (
-              <div className={styles.panelTabBar}>
-                {(scoreData || []).map((s: any, i: number) => (
-                  <button
-                    key={i}
-                    className={`${styles.panelTab} ${activePanelTab === i ? styles.panelTabActive : ""}`}
-                    onClick={() => setActivePanelTab(i)}
-                    type="button"
-                  >
-                    <span className={styles.panelTabNum}>{i + 1}</span>
-                    <span className={styles.panelTabName}>
-                      {panelMembers[i] ||
-                        s.InterviewPersonName ||
-                        `Interviewer ${i + 1}`}
-                    </span>
-                  </button>
+          <div className={styles.infoGrid}>
+            <InfoItem
+              icon={<Globe size={14} />}
+              label="Nationality"
+              value={raw.Nationality || candidate.nationality || ""}
+            />
+            <InfoItem
+              icon={<Users size={14} />}
+              label="Gender"
+              value={raw.Gender || candidate.gender || ""}
+            />
+            <InfoItem
+              icon={<FileText size={14} />}
+              label="Qualification"
+              value={raw.Qualification || ""}
+            />
+
+            <div className={styles.infoRow}>
+              <div className={styles.infoRowItem}>
+                <InfoItem
+                  icon={<Zap size={14} />}
+                  label="Mining exp."
+                  value={raw.TotalYearOfExperiance || ""}
+                />
+              </div>
+              <div className={styles.infoRowItem}>
+                <InfoItem
+                  icon={<Zap size={14} />}
+                  label="Related exp."
+                  value={raw.ReleventExperience || ""}
+                />
+              </div>
+            </div>
+
+            <div className={styles.infoRow}>
+              <div className={styles.infoRowItem}>
+                <InfoItem
+                  icon={<AlertTriangle size={14} />}
+                  label="Conflicts"
+                  value={raw.ConflictsOfInterest || ""}
+                />
+              </div>
+              <div className={styles.infoRowItem}>
+                <InfoItem
+                  icon={<Accessibility size={14} />}
+                  label="Disability"
+                  value={raw.Disability || raw.disability || ""}
+                />
+              </div>
+            </div>
+
+            <div className={styles.infoRow}>
+              <div className={styles.infoRowItem}>
+                <InfoItem
+                  label="Levels"
+                  value={candidate.interviewLevel || ""}
+                />
+              </div>
+              <div className={styles.infoRowItem}>
+                <InfoItem label="Interview Date" value={formattedDate} />
+              </div>
+            </div>
+
+            <InfoItem label="GRADE" value={candidate.grade || ""} />
+          </div>
+
+          {panelMembers.length > 0 && (
+            <div className={styles.mPanelSection}>
+              <div className={styles.mPanelHeader}>
+                <Users size={12} color="#2563eb" />
+                <span>INTERVIEW PANEL</span>
+              </div>
+              <div className={styles.mPanelList}>
+                {panelMembers.map((name, i) => (
+                  <div key={i} className={styles.mPanelRow}>
+                    <span className={styles.mPanelBadge}>{i + 1}</span>
+                    <span className={styles.mPanelName}>{name}</span>
+                  </div>
                 ))}
               </div>
-            )}
+            </div>
+          )}
+        </aside>
 
-            {activeScorecardTab === "questions" && (
-              <QuestionnaireTab
-                questions={reviewData?.questions || []}
-                activeScore={activeScore}
-                activeQJson={activeQJson}
-                panelMemberName={panelMembers[activePanelTab] || ""}
-                fetchingQuestions={reviewLoading}
-              />
-            )}
-            {activeScorecardTab === "qEval" && (
-              <ScoreTable
-                title="QUESTION EVALUATION SCORECARD"
-                subtitle="Panel-wise Question Scores — All Interviewers"
-                accentColor="#6366f1"
-                rows={questionTableRows}
-                panelMembers={panelMembers}
-                showTotal={false}
-                emptyText="No question data available."
-              />
-            )}
-            {activeScorecardTab === "overall" && (
-              <ScoreTable
-                title="OVERALL EVALUATION SCORECARD"
-                subtitle="Core Criteria Scores — All Interviewers (Max 5 per criterion)"
-                accentColor="#22c55e"
-                rows={overallTableRows}
-                panelMembers={panelMembers}
-                showTotal={true}
-                emptyText="No scorecard data available."
-              />
-            )}
-            <HODDecisionPanel
-              canEdit={canEdit(candidate.statusId)}
-              isLevel2Status={isLevel2Status}
-              statusId={candidate.statusId}
-              hodDecision={hodDecision}
-              decisionComment={decisionComment}
-              confirmed={confirmed}
-              selectedPositionId={selectedPositionId}
-              selectedPositionText={selectedPositionText}
-              positionOptions={positionOptions || []}
-              submitting={submitting}
-              submitError={submitError}
-              successMessage={successMessage}
-              reviewerName={reviewData?.reviewerName || ""}
-              jobTitleEn={reviewData?.jobTitleEn || ""}
-              jobTitleFr={reviewData?.jobTitleFr || ""}
-              userInitial={userInitial}
-              errors={errors}
-              shouldShowPositionId={shouldShowPositionId}
-              onDecisionChange={onDecisionChange}
-              onCommentChange={onCommentChange}
-              onConfirmChange={onConfirmChange}
-              onPositionChange={onPositionChange}
-              onViewComments={onViewComments}
-              onClose={onClose}
-              submitDeps={submitDeps}
-              roleId={currentRoleId}
+        {/* ── RIGHT MAIN ───────────────────────────────────────────────── */}
+        <main className={styles.mRight}>
+          {/* Panel member tab bar */}
+          {!scoreLoading && (scoreData || []).length > 0 && (
+            <div className={styles.panelTabBar}>
+              {(scoreData || []).map((s: any, i: number) => (
+                <button
+                  key={i}
+                  type="button"
+                  className={`${styles.panelTab} ${
+                    activePanelTab === i ? styles.panelTabActive : ""
+                  }`}
+                  onClick={() => setActivePanelTab(i)}
+                >
+                  <span className={styles.panelTabNum}>{i + 1}</span>
+                  <span className={styles.panelTabName}>
+                    {panelMembers[i] ||
+                      s.InterviewPersonName ||
+                      `Interviewer ${i + 1}`}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Scorecard tab content */}
+          {activeScorecardTab === "questions" && (
+            <QuestionnaireTab
+              questions={reviewData?.questions || []}
+              activeScore={activeScore}
+              activeQJson={activeQJson}
+              panelMemberName={panelMembers[activePanelTab] || ""}
+              fetchingQuestions={reviewLoading}
             />
-          </main>
-        </div>
-      </motion.div>
+          )}
 
+          {activeScorecardTab === "qEval" && (
+            <ScoreTable
+              title="QUESTION EVALUATION SCORECARD"
+              subtitle="Panel-wise Question Scores — All Interviewers"
+              accentColor="#6366f1"
+              rows={questionTableRows}
+              panelMembers={panelMembers}
+              showTotal={false}
+              emptyText="No question data available."
+            />
+          )}
+
+          {activeScorecardTab === "overall" && (
+            <ScoreTable
+              title="OVERALL EVALUATION SCORECARD"
+              subtitle="Core Criteria Scores — All Interviewers (Max 5 per criterion)"
+              accentColor="#22c55e"
+              rows={overallTableRows}
+              panelMembers={panelMembers}
+              showTotal={true}
+              emptyText="No scorecard data available."
+            />
+          )}
+
+          {/* HOD Decision panel */}
+          <HODDecisionPanel
+            canEdit={canEdit(candidate.statusId)}
+            isLevel2Status={isLevel2Status}
+            statusId={candidate.statusId}
+            hodDecision={hodDecision}
+            decisionComment={decisionComment}
+            confirmed={confirmed}
+            selectedPositionId={selectedPositionId}
+            selectedPositionText={selectedPositionText}
+            positionOptions={positionOptions || []}
+            submitting={submitting}
+            submitError={submitError}
+            successMessage={successMessage}
+            reviewerName={reviewData?.reviewerName || ""}
+            jobTitleEn={reviewData?.jobTitleEn || ""}
+            jobTitleFr={reviewData?.jobTitleFr || ""}
+            userInitial={userInitial}
+            errors={errors}
+            shouldShowPositionId={shouldShowPositionId}
+            onDecisionChange={onDecisionChange}
+            onCommentChange={onCommentChange}
+            onConfirmChange={onConfirmChange}
+            onPositionChange={onPositionChange}
+            onViewComments={onViewComments}
+            onClose={onClose}
+            submitDeps={submitDeps}
+            roleId={currentRoleId}
+          />
+        </main>
+      </div>
+
+      {/* ══ COMMENTS MODAL ══════════════════════════════════════════════════ */}
+      {/*
+        CommentsModal renders its own overlay/portal internally,
+        so it sits correctly above everything else without any extra z-index work.
+      */}
       <CommentsModal
         open={showComments}
         loading={commentsLoading}

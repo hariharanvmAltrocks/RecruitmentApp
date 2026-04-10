@@ -30,13 +30,16 @@ var QuestionnaireTab = function (_a) {
                 React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mSectionSub },
                     "Panel Assessment Results",
                     panelMemberName ? " \u2014 ".concat(panelMemberName) : ""))),
-        React.createElement("div", { style: { maxHeight: "500px", overflowY: "auto" } },
-            fetchingQuestions ? (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mNoData }, "Loading questions\u2026")) : questions.length === 0 ? (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mNoData }, "No questions found for this job.")) : questions.map(function (q, idx) {
+        React.createElement("div", null,
+            " ",
+            fetchingQuestions ? (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mNoData }, "Loading questions\u2026")) : questions.length === 0 ? (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mNoData }, "No questions found for this job.")) : (questions.map(function (q, idx) {
                 var qScore = activeQJson[idx]
-                    ? Number(Object.values(activeQJson[idx])[0] || 0) : 0;
+                    ? Number(Object.values(activeQJson[idx])[0] || 0)
+                    : 0;
                 var rl = ratingLabel(qScore);
                 var answerText = (q.answer || q.response || "")
-                    .replace(/<p>|<\/p>|<br\s*\/?>/gi, "").trim();
+                    .replace(/<p>|<\/p>|<br\s*\/?>/gi, "")
+                    .trim();
                 return (React.createElement("div", { key: idx, className: ReviewScorecard_module_scss_1.default.mQCard },
                     React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mQTop },
                         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mQBadge },
@@ -44,7 +47,9 @@ var QuestionnaireTab = function (_a) {
                             idx + 1),
                         React.createElement("div", { style: { flex: 1 } },
                             React.createElement("p", { className: ReviewScorecard_module_scss_1.default.mQText, dangerouslySetInnerHTML: {
-                                    __html: (q.question || "").replace(/<p>|<\/p>|<br\s*\/?>/gi, "").trim(),
+                                    __html: (q.question || "")
+                                        .replace(/<p>|<\/p>|<br\s*\/?>/gi, "")
+                                        .trim(),
                                 } }),
                             answerText && (React.createElement("p", { className: ReviewScorecard_module_scss_1.default.mQAnswer },
                                 React.createElement("strong", null, "Expected Answer:"),
@@ -53,13 +58,17 @@ var QuestionnaireTab = function (_a) {
                     React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mQBottom },
                         React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } },
                             React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mRatingLabel }, "RATING:"),
-                            React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mRatingBadge, style: { color: rl.color, background: rl.bg, border: "1px solid ".concat(rl.color, "33") } }, rl.text)),
+                            React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mRatingBadge, style: {
+                                    color: rl.color,
+                                    background: rl.bg,
+                                    border: "1px solid ".concat(rl.color, "33"),
+                                } }, rl.text)),
                         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mScoreDisplay },
                             React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mScoreLabel }, "SCORE"),
                             React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mScoreNum },
                                 qScore,
                                 React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mScoreMax }, "/3"))))));
-            }),
+            })),
             activeScore && (React.createElement("div", { style: { marginTop: "1.5rem" } },
                 React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mSectionHeader },
                     React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mSectionBar, style: { background: "#22c55e" } }),

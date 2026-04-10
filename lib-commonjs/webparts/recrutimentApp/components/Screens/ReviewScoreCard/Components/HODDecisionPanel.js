@@ -5,103 +5,78 @@ var React = tslib_1.__importStar(require("react"));
 var lucide_react_1 = require("lucide-react");
 var ReviewScorecard_module_scss_1 = tslib_1.__importDefault(require("../ReviewScorecard.module.scss"));
 var Submitreviewscorecard_1 = tslib_1.__importDefault(require("./Submitreviewscorecard"));
+var framer_motion_1 = require("framer-motion");
+var reuseUI_1 = require("../../CandidateTable/Components/reuseUI");
+var ReviewCommentSignature_1 = require("../../RecruitmentTable/Components/ReviewCommentSignature");
+var getSignatureDetails_1 = require("../../RecruitmentTable/AdvertReviewDrawer/Hooks/getSignatureDetails");
 var _FEEDBACK_LEVEL2_STATUS_IDS = [130, 129];
 var HODDecisionPanel = function (_a) {
+    var _b;
     var canEdit = _a.canEdit, isLevel2Status = _a.isLevel2Status, statusId = _a.statusId, hodDecision = _a.hodDecision, decisionComment = _a.decisionComment, confirmed = _a.confirmed, selectedPositionId = _a.selectedPositionId, selectedPositionText = _a.selectedPositionText, positionOptions = _a.positionOptions, submitting = _a.submitting, submitError = _a.submitError, successMessage = _a.successMessage, reviewerName = _a.reviewerName, jobTitleEn = _a.jobTitleEn, jobTitleFr = _a.jobTitleFr, userInitial = _a.userInitial, errors = _a.errors, shouldShowPositionId = _a.shouldShowPositionId, onDecisionChange = _a.onDecisionChange, onCommentChange = _a.onCommentChange, onConfirmChange = _a.onConfirmChange, onPositionChange = _a.onPositionChange, onViewComments = _a.onViewComments, onClose = _a.onClose, submitDeps = _a.submitDeps, roleId = _a.roleId;
     var feedbackLabel = _FEEDBACK_LEVEL2_STATUS_IDS.includes(statusId)
-        ? 'Feedback — Level 2'
-        : 'Feedback — Level 1';
+        ? "Feedback — Level 2"
+        : "Feedback — Level 1";
+    var _c = React.useState(false), openPosition = _c[0], setOpenPosition = _c[1];
+    var _d = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _d.data, signatureLoading = _d.loading;
     // ── VIEW-ONLY mode ────────────────────────────────────────────────────────
-    if (!canEdit) {
-        return (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionCard, style: { borderColor: '#e2e8f0', background: '#f8fafc' } },
-            React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionHeader },
-                React.createElement(lucide_react_1.Eye, { size: 22, color: "#2563eb" }),
-                React.createElement("div", null,
-                    React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionTitle }, "HOD Decision (Submitted)"),
-                    React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionSub }, "This candidate has already been reviewed."))),
-            React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFormGroup },
-                React.createElement("button", { onClick: onViewComments, className: ReviewScorecard_module_scss_1.default.mActionBtn, type: "button" },
-                    React.createElement(lucide_react_1.FileText, { size: 16 }),
-                    " VIEW COMMENTS")),
-            hodDecision && (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFormGroup },
-                React.createElement("label", { className: ReviewScorecard_module_scss_1.default.mFormLabel }, "Decision"),
-                React.createElement("div", { style: {
-                        padding: '0.5rem 1rem', borderRadius: '0.5rem', fontWeight: 700,
-                        fontSize: '0.875rem', display: 'inline-block',
-                        background: hodDecision === 'Yes' ? '#f0fdf4' : hodDecision === 'No' ? '#fef2f2' : '#fffbeb',
-                        color: hodDecision === 'Yes' ? '#16a34a' : hodDecision === 'No' ? '#dc2626' : '#d97706',
-                    } }, hodDecision === 'Yes' ? '✓ SELECTED' : hodDecision === 'No' ? '✗ REJECTED' : '⏸ ON HOLD'))),
-            selectedPositionText && (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFormGroup },
-                React.createElement("label", { className: ReviewScorecard_module_scss_1.default.mFormLabel }, "Assigned Position ID"),
-                React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mfValue }, selectedPositionText))),
-            decisionComment && (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFormGroup },
-                React.createElement("label", { className: ReviewScorecard_module_scss_1.default.mFormLabel }, feedbackLabel),
-                React.createElement("div", { style: {
-                        background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: '0.5rem',
-                        padding: '0.75rem', fontSize: '0.875rem', color: '#334155',
-                    } }, decisionComment))),
-            React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFooter },
-                React.createElement("button", { onClick: onClose, className: ReviewScorecard_module_scss_1.default.mCancelBtn, type: "button" }, "CLOSE"))));
-    }
     // ── EDITABLE mode ─────────────────────────────────────────────────────────
-    return (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionCard },
-        React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionHeader },
-            React.createElement(lucide_react_1.Zap, { size: 22, color: "#f59e0b", fill: "#f59e0b" }),
-            React.createElement("div", null,
-                React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionTitle }, "Do you wish to select this candidate?"),
-                React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionSub }, "As HOD, review the evaluation and provide your decision."))),
-        React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mDecisionGrid }, ([
-            { val: 'Yes', cls: ReviewScorecard_module_scss_1.default.mDCardYes, Icon: lucide_react_1.CheckCircle2, label: 'YES, SELECT' },
-            { val: 'No', cls: ReviewScorecard_module_scss_1.default.mDCardNo, Icon: lucide_react_1.X, label: 'NO, REJECT' },
-            { val: 'On Hold', cls: ReviewScorecard_module_scss_1.default.mDCardHold, Icon: lucide_react_1.Activity, label: 'ON HOLD' },
-        ]).map(function (_a) {
-            var val = _a.val, cls = _a.cls, Icon = _a.Icon, label = _a.label;
-            return (React.createElement("button", { key: val, className: "".concat(ReviewScorecard_module_scss_1.default.mDCard, " ").concat(hodDecision === val ? cls : '', " ").concat(errors.decision ? ReviewScorecard_module_scss_1.default.mInputErr : ''), onClick: function () { return onDecisionChange(val); }, type: "button" },
-                React.createElement(Icon, { size: 28 }),
-                React.createElement("span", null, label)));
-        })),
-        errors.decision && (React.createElement("div", { style: { color: '#ef4444', fontSize: '0.75rem', marginBottom: '0.5rem' } }, "\u26A0 Please select a decision.")),
+    return (React.createElement("div", null,
         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFormGroup },
-            React.createElement("button", { onClick: onViewComments, className: ReviewScorecard_module_scss_1.default.mActionBtn, type: "button" },
+            React.createElement("button", { onClick: onViewComments, className: ReviewScorecard_module_scss_1.default.mSubmitBtn, type: "button" },
                 React.createElement(lucide_react_1.FileText, { size: 16 }),
-                " VIEW COMMENTS")),
-        shouldShowPositionId(statusId, hodDecision) && (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFormGroup },
-            React.createElement("label", { className: "".concat(ReviewScorecard_module_scss_1.default.mFormLabel, " ").concat(errors.position ? ReviewScorecard_module_scss_1.default.mErrLabel : '') },
-                "Assign Position ID ",
-                React.createElement("span", { style: { color: '#ef4444' } }, "*"),
-                errors.position && React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mErrText }, " \u2014 Required")),
-            React.createElement("select", { className: "".concat(ReviewScorecard_module_scss_1.default.mSelect, " ").concat(errors.position ? ReviewScorecard_module_scss_1.default.mInputErr : ''), value: selectedPositionId !== null && selectedPositionId !== void 0 ? selectedPositionId : '', onChange: function (e) {
-                    var v = Number(e.target.value) || null;
-                    var opt = positionOptions.find(function (o) { return o.key === v; });
-                    onPositionChange(v, (opt === null || opt === void 0 ? void 0 : opt.text) || '');
-                } },
-                React.createElement("option", { value: "" }, "Select a position\u2026"),
-                positionOptions.map(function (opt) { return (React.createElement("option", { key: opt.key, value: opt.key }, opt.text || "#".concat(opt.key))); })),
-            positionOptions.length === 0 && (React.createElement("p", { className: ReviewScorecard_module_scss_1.default.mNoData, style: { marginTop: 6 } }, "No positions available.")))),
-        React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFormGroup },
-            React.createElement("label", { className: "".concat(ReviewScorecard_module_scss_1.default.mFormLabel, " ").concat(errors.comment ? ReviewScorecard_module_scss_1.default.mErrLabel : '') },
-                feedbackLabel,
-                " ",
-                React.createElement("span", { style: { color: '#ef4444' } }, "*"),
-                errors.comment && React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mErrText }, " \u2014 Required")),
-            React.createElement("textarea", { className: "".concat(ReviewScorecard_module_scss_1.default.mTextarea, " ").concat(errors.comment ? ReviewScorecard_module_scss_1.default.mInputErr : ''), placeholder: "Provide your final decision rationale...", value: decisionComment, onChange: function (e) { return onCommentChange(e.target.value); } })),
-        React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFormGroup },
-            React.createElement("label", { className: ReviewScorecard_module_scss_1.default.mCheckboxRow },
-                React.createElement("input", { type: "checkbox", checked: confirmed, onChange: function (e) { return onConfirmChange(e.target.checked); } }),
-                React.createElement("span", null, "I confirm that the above decision is accurate and in line with the evaluation of the candidate's scorecard details.")),
-            errors.checkbox && (React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mCheckboxErrText }, "\u26A0 You must confirm before submitting."))),
-        React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFormGroup },
-            React.createElement("div", { className: ReviewScorecard_module_scss_1.default.reviewerCard },
-                React.createElement("div", { className: ReviewScorecard_module_scss_1.default.reviewerAvatar }, userInitial || ''),
-                React.createElement("div", { className: ReviewScorecard_module_scss_1.default.reviewerInfo },
-                    React.createElement("div", { className: ReviewScorecard_module_scss_1.default.reviewerCol },
-                        React.createElement("p", { className: ReviewScorecard_module_scss_1.default.reviewerMeta }, "REVIEWER NAME"),
-                        React.createElement("p", { className: ReviewScorecard_module_scss_1.default.reviewerVal }, reviewerName || '')),
-                    React.createElement("div", { className: ReviewScorecard_module_scss_1.default.reviewerCol },
-                        React.createElement("p", { className: ReviewScorecard_module_scss_1.default.reviewerMeta }, "JOB TITLE (EN)"),
-                        React.createElement("p", { className: ReviewScorecard_module_scss_1.default.reviewerVal }, jobTitleEn || ''),
-                        React.createElement("p", { className: ReviewScorecard_module_scss_1.default.reviewerMeta, style: { marginTop: 12 } }, "JOB TITLE (FR)"),
-                        React.createElement("p", { className: ReviewScorecard_module_scss_1.default.reviewerVal }, jobTitleFr || ''))))),
+                "VIEW COMMENTS")),
+        React.createElement("div", { className: ReviewScorecard_module_scss_1.default.lmDecisionCard, style: { marginBottom: "4%" } },
+            React.createElement("div", { className: ReviewScorecard_module_scss_1.default.lmDecisionHeader },
+                React.createElement("div", { className: ReviewScorecard_module_scss_1.default.lmDecisionZap },
+                    React.createElement(lucide_react_1.Zap, { size: 28, fill: "currentColor" })),
+                React.createElement("div", { className: ReviewScorecard_module_scss_1.default.lmDecisionTitleWrap },
+                    React.createElement("h3", { className: ReviewScorecard_module_scss_1.default.lmDecisionTitle }, "Do you wish to select this candidate?"),
+                    React.createElement("p", { className: ReviewScorecard_module_scss_1.default.lmDecisionSubtitle }, "As HOD, review the evaluation and provide your decision."))),
+            React.createElement("div", { className: ReviewScorecard_module_scss_1.default.decisionBtnsRow },
+                React.createElement("button", { type: "button", className: "".concat(ReviewScorecard_module_scss_1.default.decisionBtn, " ").concat(hodDecision === "Yes"
+                        ? ReviewScorecard_module_scss_1.default.decisionBtnYesActive
+                        : ReviewScorecard_module_scss_1.default.decisionBtnYesInactive, " ").concat(errors.decision ? ReviewScorecard_module_scss_1.default.mInputErr : ""), onClick: function () { return onDecisionChange("Yes"); } },
+                    React.createElement(lucide_react_1.CheckCircle2, { size: 36, strokeWidth: 2, className: hodDecision === "Yes" ? ReviewScorecard_module_scss_1.default.iconWhite : ReviewScorecard_module_scss_1.default.iconGreen }),
+                    React.createElement("span", { className: ReviewScorecard_module_scss_1.default.decisionBtnLabel }, "YES, SELECT")),
+                React.createElement("button", { type: "button", className: "".concat(ReviewScorecard_module_scss_1.default.decisionBtn, " ").concat(hodDecision === "No"
+                        ? ReviewScorecard_module_scss_1.default.decisionBtnNoActive
+                        : ReviewScorecard_module_scss_1.default.decisionBtnNoInactive, " ").concat(errors.decision ? ReviewScorecard_module_scss_1.default.mInputErr : ""), onClick: function () { return onDecisionChange("No"); } },
+                    React.createElement(lucide_react_1.X, { size: 36, strokeWidth: 2, className: hodDecision === "No" ? ReviewScorecard_module_scss_1.default.iconWhite : ReviewScorecard_module_scss_1.default.iconRed }),
+                    React.createElement("span", { className: ReviewScorecard_module_scss_1.default.decisionBtnLabel }, "NO, REJECT")),
+                React.createElement("button", { type: "button", className: "".concat(ReviewScorecard_module_scss_1.default.decisionBtn, " ").concat(hodDecision === "On Hold"
+                        ? ReviewScorecard_module_scss_1.default.decisionBtnHoldActive
+                        : ReviewScorecard_module_scss_1.default.decisionBtnHoldInactive, " ").concat(errors.decision ? ReviewScorecard_module_scss_1.default.mInputErr : ""), onClick: function () { return onDecisionChange("On Hold"); } },
+                    React.createElement(lucide_react_1.Activity, { size: 36, strokeWidth: 2, className: hodDecision === "On Hold" ? ReviewScorecard_module_scss_1.default.iconWhite : ReviewScorecard_module_scss_1.default.iconAmber }),
+                    React.createElement("span", { className: ReviewScorecard_module_scss_1.default.decisionBtnLabel }, "ON HOLD"))),
+            errors.decision && (React.createElement("div", { style: {
+                    color: "#ef4444",
+                    fontSize: "0.75rem",
+                    marginTop: "0.4rem",
+                } }, "\u26A0 Please select a decision."))),
+        shouldShowPositionId(statusId, hodDecision) && (React.createElement(framer_motion_1.motion.section, { className: ReviewScorecard_module_scss_1.default.section, custom: 4, variants: reuseUI_1.sectionVariants, initial: "hidden", animate: "visible" },
+            React.createElement("div", { className: ReviewScorecard_module_scss_1.default.hrFeedbackCard, style: { marginTop: "5%" } },
+                React.createElement(reuseUI_1.SectionHeader, { title: "Assign Position ID", accent: "green" }),
+                React.createElement("div", { className: ReviewScorecard_module_scss_1.default.hrFeedbackFieldWrap },
+                    React.createElement("label", { className: "".concat(ReviewScorecard_module_scss_1.default.fieldLabel, " ").concat(errors.position ? ReviewScorecard_module_scss_1.default.mErrLabel : "") },
+                        "Assign Position ID",
+                        " ",
+                        React.createElement("span", { className: ReviewScorecard_module_scss_1.default.fieldRequired }, "*"),
+                        errors.position && (React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mErrText }, " \u2014 Required"))),
+                    React.createElement("div", { className: "".concat(ReviewScorecard_module_scss_1.default.dropdownWrapper, " dropdown") },
+                        React.createElement("div", { className: "".concat(ReviewScorecard_module_scss_1.default.customDropdownTrigger, "\n    ").concat(openPosition ? " ".concat(ReviewScorecard_module_scss_1.default.dropdownOpen) : "", "\n    ").concat(errors.position ? " ".concat(ReviewScorecard_module_scss_1.default.mInputErr) : "", "\n  "), onClick: function () { return setOpenPosition(!openPosition); } },
+                            React.createElement("span", { className: selectedPositionId
+                                    ? ReviewScorecard_module_scss_1.default.dropdownSelected
+                                    : ReviewScorecard_module_scss_1.default.dropdownPlaceholder }, selectedPositionId
+                                ? ((_b = positionOptions.find(function (o) { return o.key === selectedPositionId; })) === null || _b === void 0 ? void 0 : _b.text) || "#".concat(selectedPositionId)
+                                : "Select a position…"),
+                            React.createElement(lucide_react_1.ChevronDown, { size: 18, className: "".concat(ReviewScorecard_module_scss_1.default.dropdownChevron, " ").concat(openPosition ? ReviewScorecard_module_scss_1.default.open : "") })),
+                        React.createElement(framer_motion_1.AnimatePresence, null, positionOptions && (React.createElement(framer_motion_1.motion.div, { initial: { opacity: 0, y: -10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -10 }, className: ReviewScorecard_module_scss_1.default.dropdownMenu }, positionOptions.length > 0 ? (positionOptions.map(function (opt) { return (React.createElement("div", { key: opt.key, onClick: function () {
+                                onPositionChange(opt.key, opt.text || "");
+                                setOpenPosition(false);
+                            }, className: "".concat(ReviewScorecard_module_scss_1.default.dropdownOption, " ").concat(selectedPositionId === opt.key
+                                ? ReviewScorecard_module_scss_1.default.dropdownOptionActive
+                                : "") }, opt.text || "#".concat(opt.key))); })) : (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mNoData }, "No positions available.")))))))))),
+        React.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: decisionComment, acknowledgementCheckbox: confirmed, signatureDetails: signatureDetails, isLoading: signatureLoading, onCommentsChange: function (value) { return onCommentChange(value); }, onToggleAcknowledgement: function (value) { return onConfirmChange(value); }, ReviewLabel: "FEEDBACK - LEVEL 2" }),
         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFooter },
             React.createElement(Submitreviewscorecard_1.default, tslib_1.__assign({ roleId: roleId, onClose: onClose }, submitDeps)))));
 };
