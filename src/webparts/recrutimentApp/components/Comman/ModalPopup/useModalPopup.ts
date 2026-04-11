@@ -30,7 +30,7 @@ export const useModalPopup = () => {
         isLoading: false,
       });
     },
-    []
+    [],
   );
 
   const closeModal = useCallback(() => {

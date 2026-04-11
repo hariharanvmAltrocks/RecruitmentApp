@@ -37,14 +37,16 @@ export const CareerPortalQuestionBank: React.FC<CareerPortalBankProps> = ({
   onSearchChange,
   onAddFromBank,
 }) => {
+  console.log("questionBank", questionBank);
+
   const filtered = useMemo(
     () =>
       questionBank.filter(
         (q) =>
           q.questionEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          q.questionFr.toLowerCase().includes(searchQuery.toLowerCase())
+          q.questionFr.toLowerCase().includes(searchQuery.toLowerCase()),
       ),
-    [questionBank, searchQuery]
+    [questionBank, searchQuery],
   );
 
   return (
@@ -55,7 +57,9 @@ export const CareerPortalQuestionBank: React.FC<CareerPortalBankProps> = ({
             <span className="qc-bank__title-bar" />
             Question Bank
           </h3>
-          <span className="qc-bank__count">{questionBank.length} Templates</span>
+          <span className="qc-bank__count">
+            {questionBank.length} Templates
+          </span>
         </div>
       </div>
 
@@ -80,7 +84,11 @@ export const CareerPortalQuestionBank: React.FC<CareerPortalBankProps> = ({
                   className={`qc-bank__card ${isAdded ? "qc-bank__card--added" : ""}`}
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05, duration: 0.3, ease: "easeOut" }}
+                  transition={{
+                    delay: i * 0.05,
+                    duration: 0.3,
+                    ease: "easeOut",
+                  }}
                   whileHover={{ scale: 1.01, transition: { duration: 0.15 } }}
                 >
                   <div className="qc-bank__card-header">
@@ -90,19 +98,29 @@ export const CareerPortalQuestionBank: React.FC<CareerPortalBankProps> = ({
                       onClick={() => !isAdded && onAddFromBank(q)}
                       title={isAdded ? "Already added" : "Add to criteria"}
                     >
-                      {isAdded ? <CheckCircle2 size={16} /> : <Plus size={16} />}
+                      {isAdded ? (
+                        <CheckCircle2 size={16} />
+                      ) : (
+                        <Plus size={16} />
+                      )}
                     </button>
                   </div>
 
                   <div className="qc-bank__card-body">
                     <div className="qc-bank__lang-block">
-                      <span className="qc-bank__lang-label qc-bank__lang-label--en">English</span>
+                      <span className="qc-bank__lang-label qc-bank__lang-label--en">
+                        English
+                      </span>
                       <p className="qc-bank__question-text">{q.questionEn}</p>
                     </div>
                     <div className="qc-bank__divider" />
                     <div className="qc-bank__lang-block">
-                      <span className="qc-bank__lang-label qc-bank__lang-label--fr">Français</span>
-                      <p className="qc-bank__question-text qc-bank__question-text--italic">{q.questionFr}</p>
+                      <span className="qc-bank__lang-label qc-bank__lang-label--fr">
+                        Français
+                      </span>
+                      <p className="qc-bank__question-text qc-bank__question-text--italic">
+                        {q.questionFr}
+                      </p>
                     </div>
 
                     <div className="qc-bank__options">

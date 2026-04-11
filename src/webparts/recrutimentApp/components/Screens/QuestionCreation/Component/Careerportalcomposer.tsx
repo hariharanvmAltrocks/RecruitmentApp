@@ -1,5 +1,13 @@
 import React from "react";
-import { Plus, X, CheckCircle2, Circle, Square, CheckSquare, Globe } from "lucide-react";
+import {
+  Plus,
+  X,
+  CheckCircle2,
+  Circle,
+  Square,
+  CheckSquare,
+  Globe,
+} from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Question } from "../QuestionCreation.types";
 import "./Interviewmode.scss";
@@ -29,10 +37,14 @@ export const CareerPortalComposer: React.FC<CareerPortalComposerProps> = ({
     onChange({ ...newQuestion, options: updated });
   };
 
-  const updateOptionText = (optionId: string, field: "textEn" | "textFr", value: string) => {
+  const updateOptionText = (
+    optionId: string,
+    field: "textEn" | "textFr",
+    value: string,
+  ) => {
     if (!newQuestion.options) return;
     const updated = newQuestion.options.map((opt) =>
-      opt.id === optionId ? { ...opt, [field]: value } : opt
+      opt.id === optionId ? { ...opt, [field]: value } : opt,
     );
     onChange({ ...newQuestion, options: updated });
   };
@@ -50,12 +62,17 @@ export const CareerPortalComposer: React.FC<CareerPortalComposerProps> = ({
 
   const removeOption = (id: string) => {
     if (!newQuestion.options || newQuestion.options.length <= 2) return;
-    onChange({ ...newQuestion, options: newQuestion.options.filter((o) => o.id !== id) });
+    onChange({
+      ...newQuestion,
+      options: newQuestion.options.filter((o) => o.id !== id),
+    });
   };
 
   const canAdd =
-    (!!newQuestion.questionEn || !!newQuestion.questionFr) &&
-    newQuestion.options?.some((o) => o.isCorrect);
+    !!newQuestion.questionEn &&
+    !!newQuestion.questionFr &&
+    newQuestion.options?.some((o) => o.isCorrect) &&
+    newQuestion.options?.every((o) => o.textEn && o.textFr);
 
   return (
     <div className="qc-composer">
@@ -91,7 +108,9 @@ export const CareerPortalComposer: React.FC<CareerPortalComposerProps> = ({
               className="qc-composer__textarea"
               placeholder="Enter question in English..."
               value={newQuestion.questionEn ?? ""}
-              onChange={(e) => onChange({ ...newQuestion, questionEn: e.target.value })}
+              onChange={(e) =>
+                onChange({ ...newQuestion, questionEn: e.target.value })
+              }
             />
           </div>
           <div className="qc-composer__field">
@@ -102,7 +121,9 @@ export const CareerPortalComposer: React.FC<CareerPortalComposerProps> = ({
               className="qc-composer__textarea qc-composer__textarea--italic"
               placeholder="Saisir la question en français..."
               value={newQuestion.questionFr ?? ""}
-              onChange={(e) => onChange({ ...newQuestion, questionFr: e.target.value })}
+              onChange={(e) =>
+                onChange({ ...newQuestion, questionFr: e.target.value })
+              }
             />
           </div>
         </div>
@@ -130,9 +151,17 @@ export const CareerPortalComposer: React.FC<CareerPortalComposerProps> = ({
                   className={`qc-composer__option-check ${opt.isCorrect ? "qc-composer__option-check--active" : ""}`}
                   onClick={() => toggleOptionCorrect(opt.id)}
                 >
-                  {newQuestion.type === "single"
-                    ? opt.isCorrect ? <CheckCircle2 size={22} /> : <Circle size={22} />
-                    : opt.isCorrect ? <CheckSquare size={22} /> : <Square size={22} />}
+                  {newQuestion.type === "single" ? (
+                    opt.isCorrect ? (
+                      <CheckCircle2 size={22} />
+                    ) : (
+                      <Circle size={22} />
+                    )
+                  ) : opt.isCorrect ? (
+                    <CheckSquare size={22} />
+                  ) : (
+                    <Square size={22} />
+                  )}
                 </button>
                 <div className="qc-composer__option-inputs">
                   <input
@@ -140,14 +169,18 @@ export const CareerPortalComposer: React.FC<CareerPortalComposerProps> = ({
                     className="qc-composer__option-input"
                     placeholder="Option (English)"
                     value={opt.textEn}
-                    onChange={(e) => updateOptionText(opt.id, "textEn", e.target.value)}
+                    onChange={(e) =>
+                      updateOptionText(opt.id, "textEn", e.target.value)
+                    }
                   />
                   <input
                     type="text"
                     className="qc-composer__option-input qc-composer__option-input--italic"
                     placeholder="Option (Français)"
                     value={opt.textFr}
-                    onChange={(e) => updateOptionText(opt.id, "textFr", e.target.value)}
+                    onChange={(e) =>
+                      updateOptionText(opt.id, "textFr", e.target.value)
+                    }
                   />
                 </div>
                 <button
@@ -163,7 +196,9 @@ export const CareerPortalComposer: React.FC<CareerPortalComposerProps> = ({
         </div>
 
         <div className="qc-composer__footer">
-          <button className="qc-composer__clear-btn" onClick={onClear}>Clear All</button>
+          <button className="qc-composer__clear-btn" onClick={onClear}>
+            Clear All
+          </button>
           <button
             className={`qc-composer__submit-btn ${!canAdd ? "qc-composer__submit-btn--disabled" : ""}`}
             onClick={onAdd}

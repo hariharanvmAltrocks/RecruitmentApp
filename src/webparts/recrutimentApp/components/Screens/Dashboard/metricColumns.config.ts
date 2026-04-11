@@ -488,6 +488,14 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
           col.id !== MatricID.AdvertReviewHOD &&
           col.id !== MatricID.EvalutionHOD,
       );
+      roleColumns = roleColumns.map((item) =>
+        item.id === MatricID.ReviewScoreCard
+          ? buildCol(MatricID.ReviewScoreCard, {
+              showArrow: true,
+              TabValue: "tab5",
+            })
+          : item,
+      );
     }
     columns.push(...roleColumns);
   });

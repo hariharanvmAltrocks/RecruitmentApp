@@ -441,6 +441,14 @@ var MatricColums = function (roles) {
                 return col.id !== ConditionConfig_1.MatricID.AdvertReviewHOD &&
                     col.id !== ConditionConfig_1.MatricID.EvalutionHOD;
             });
+            roleColumns = roleColumns.map(function (item) {
+                return item.id === ConditionConfig_1.MatricID.ReviewScoreCard
+                    ? buildCol(ConditionConfig_1.MatricID.ReviewScoreCard, {
+                        showArrow: true,
+                        TabValue: "tab5",
+                    })
+                    : item;
+            });
         }
         columns.push.apply(columns, roleColumns);
     });

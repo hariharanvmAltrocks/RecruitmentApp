@@ -1,5 +1,5 @@
 import React from "react";
-import { X, Check, CheckCircle2, ClipboardList } from "lucide-react";
+import { X, Check, CheckCircle2, ClipboardList, Pencil } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Question } from "../QuestionCreation.types";
 import "./Interviewmode.scss";
@@ -8,11 +8,13 @@ import "../Questioncreation.scss";
 interface CareerPortalPreparedProps {
   questions: Question[];
   onRemove: (id: string | number) => void;
+  onEdit: (id: string | number) => void;
 }
 
 export const CareerPortalPreparedSet: React.FC<CareerPortalPreparedProps> = ({
   questions,
   onRemove,
+  onEdit,
 }) => (
   <div className="qc-prepared">
     <div className="qc-prepared__header">
@@ -30,7 +32,9 @@ export const CareerPortalPreparedSet: React.FC<CareerPortalPreparedProps> = ({
             <ClipboardList size={30} />
           </div>
           <p className="qc-prepared__empty-title">No criteria added yet</p>
-          <p className="qc-prepared__empty-sub">Select from bank or create new</p>
+          <p className="qc-prepared__empty-sub">
+            Select from bank or create new
+          </p>
         </div>
       ) : (
         <AnimatePresence>
@@ -54,8 +58,12 @@ export const CareerPortalPreparedSet: React.FC<CareerPortalPreparedProps> = ({
 
               <div className="qc-prepared__content">
                 <div className="qc-prepared__lang-header">
-                  <span className="qc-prepared__lang-tag qc-prepared__lang-tag--en">English</span>
-                  <span className={`qc-prepared__type-tag qc-prepared__type-tag--${q.type}`}>
+                  <span className="qc-prepared__lang-tag qc-prepared__lang-tag--en">
+                    English
+                  </span>
+                  <span
+                    className={`qc-prepared__type-tag qc-prepared__type-tag--${q.type}`}
+                  >
                     {q.type === "single" ? "Single" : "Multiple"}
                   </span>
                 </div>
@@ -63,8 +71,12 @@ export const CareerPortalPreparedSet: React.FC<CareerPortalPreparedProps> = ({
 
                 <div className="qc-prepared__sep" />
 
-                <span className="qc-prepared__lang-tag qc-prepared__lang-tag--fr">Français</span>
-                <p className="qc-prepared__question qc-prepared__question--italic">{q.questionFr}</p>
+                <span className="qc-prepared__lang-tag qc-prepared__lang-tag--fr">
+                  Français
+                </span>
+                <p className="qc-prepared__question qc-prepared__question--italic">
+                  {q.questionFr}
+                </p>
 
                 <div className="qc-prepared__options">
                   {q.options.map((opt) => (
@@ -78,6 +90,14 @@ export const CareerPortalPreparedSet: React.FC<CareerPortalPreparedProps> = ({
                   ))}
                 </div>
               </div>
+
+              <button
+                className="qc-prepared__remove"
+                onClick={() => onEdit(q.id)}
+                title="Edit"
+              >
+                <Pencil size={16} />
+              </button>
 
               <button
                 className="qc-prepared__remove"

@@ -38,6 +38,7 @@ import { StatusId } from "../../../utilities/Config";
 import { AnimatePresence } from "framer-motion";
 import CandidateReviewModal from "../ReviewScoreCard/Components/CandidateReviewModal";
 import { useReviewScoreCardContext } from "../ReviewScoreCard/State/ReviewScoreCardProvider";
+import Loading from "../../Comman/Loading/loading";
 
 const AssignHRPopup = React.lazy(() =>
   import("./Components/AssignHRPopup/AssignHRPopup").then((module) => ({
@@ -63,6 +64,8 @@ export const RecruitmentTable: React.FC = () => {
     activeTabKey,
     refreshKey,
   );
+
+  const [loading, setLoading] = useState(false);
 
   const {
     MatricID: matricID,
@@ -488,6 +491,7 @@ export const RecruitmentTable: React.FC = () => {
 
       <ModalPopup {...assignmentModalState} onClose={assignmentCloseModal} />
       <ModalPopup {...modalState} onClose={closeModal} />
+      {loading && <Loading />}
     </section>
   );
 };

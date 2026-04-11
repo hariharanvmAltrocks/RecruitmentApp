@@ -19,7 +19,7 @@ import { InterviewQuestionBank } from "./Component/Interviewquestionbank";
 import { ModalPopup } from "../../Comman/ModalPopup/ModalPopup";
 import { useModalPopup } from "../../Comman/ModalPopup/useModalPopup";
 import { RecuritmentHRMsg } from "../../../utilities/ConditionConfig";
-
+import Loading from "../../Comman/Loading/loading";
 
 const DEFAULT_NEW_QUESTION = (): Partial<Question> => ({
   type: "single",
@@ -34,7 +34,8 @@ const DEFAULT_NEW_QUESTION = (): Partial<Question> => ({
 });
 
 const QuestionCreation: React.FC = (props: any) => {
-  const { data: positionDetails, loading: positionLoading } = usePositionDetails(props.ID, "");
+  const { data: positionDetails, loading: positionLoading } =
+    usePositionDetails(props.ID, "");
 
   const deptCode = positionDetails?.DeptCode;
   const statusId = positionDetails?.StatusId;
@@ -43,10 +44,10 @@ const QuestionCreation: React.FC = (props: any) => {
   const mode: QuestionMode =
     statusId === StatusId.CareerPortalQuestions ? "careerPortal" : "interview";
 
-  const { questionBank, loading } = useFetchQuestionBank(
+  const { questionBank, loading: questionloading } = useFetchQuestionBank(
     shouldFetch ? deptCode : "",
     shouldFetch ? statusId : 0,
-    !positionLoading
+    !positionLoading,
   );
 
   const { modalState, showModal, closeModal } = useModalPopup();
@@ -54,11 +55,16 @@ const QuestionCreation: React.FC = (props: any) => {
   const { saving, save } = useSaveQuestions();
 
   const [preparedQuestions, setPreparedQuestions] = useState<Question[]>([]);
-  const [newQuestion, setNewQuestion] = useState<Partial<Question>>(DEFAULT_NEW_QUESTION());
+  const [newQuestion, setNewQuestion] = useState<Partial<Question>>(
+    DEFAULT_NEW_QUESTION(),
+  );
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleAddFromBank = (q: Question) => {
-    const alreadyAdded = preparedQuestions.some((pq) => pq.id === q.id && pq.fromBank);
+    const alreadyAdded = preparedQuestions.some(
+      (pq) => pq.id === q.id && pq.fromBank,
+    );
     if (!alreadyAdded) {
       setPreparedQuestions((prev) => [...prev, { ...q, fromBank: true }]);
     }
@@ -76,7 +82,7 @@ const QuestionCreation: React.FC = (props: any) => {
 
     const question: Question = {
       id: Date.now(),
-      type: mode === "interview" ? "interview" : newQuestion.type ?? "single",
+      type: mode === "interview" ? "interview" : (newQuestion.type ?? "single"),
       questionEn: newQuestion.questionEn ?? "",
       questionFr: newQuestion.questionFr ?? "",
       answerEn: newQuestion.answerEn ?? "",
@@ -90,6 +96,13 @@ const QuestionCreation: React.FC = (props: any) => {
   };
 
   const handleRemovePrepared = (id: string | number) => {
+    setPreparedQuestions((prev) => prev.filter((q) => q.id !== id));
+  };
+
+  const handleEditPrepared = (id: string | number) => {
+    setNewQuestion(
+      preparedQuestions.find((q) => q.id === id) || DEFAULT_NEW_QUESTION(),
+    );
     setPreparedQuestions((prev) => prev.filter((q) => q.id !== id));
   };
 
@@ -116,20 +129,24 @@ const QuestionCreation: React.FC = (props: any) => {
       });
       return;
     }
-
+    setLoading(true);
     const success = await save({
       positionId: props.ID,
       mode,
       questions: preparedQuestions,
       JobCodeId: positionDetails?.JobCodeId,
-      DptCode: positionDetails?.DeptCode
+      DptCode: positionDetails?.DeptCode,
     });
 
     if (success) {
+      setLoading(false);
       showModal({
         type: "success",
         title: "Submitted Successfully",
-        message: mode === "careerPortal" ? RecuritmentHRMsg.CareerportalSuccessMsg : RecuritmentHRMsg.InterviewQuestionSuccessMsg,
+        message:
+          mode === "careerPortal"
+            ? RecuritmentHRMsg.CareerportalSuccessMsg
+            : RecuritmentHRMsg.InterviewQuestionSuccessMsg,
         confirmLabel: "Go to Dashboard",
         onConfirm: () => {
           closeModal();
@@ -151,7 +168,9 @@ const QuestionCreation: React.FC = (props: any) => {
 
   const onBack = () => navigate("/RecruitmentTable");
 
-  const preparedIds = preparedQuestions.filter((q) => q.fromBank).map((q) => q.id);
+  const preparedIds = preparedQuestions
+    .filter((q) => q.fromBank)
+    .map((q) => q.id);
 
   const job = {
     jobCode: positionDetails?.JobCode,
@@ -162,6 +181,7 @@ const QuestionCreation: React.FC = (props: any) => {
 
   return (
     <>
+      {loading && <Loading />}
       <motion.div
         className="qc"
         initial={{ opacity: 0, y: 20 }}
@@ -194,14 +214,20 @@ const QuestionCreation: React.FC = (props: any) => {
           <div className="qc__header-right">
             <div className="qc__criteria-count">
               <span className="qc__criteria-label">
-                {mode === "careerPortal" ? "Prepared Criteria" : "Interview Set"}
+                {mode === "careerPortal"
+                  ? "Prepared Criteria"
+                  : "Interview Set"}
               </span>
               <span className="qc__criteria-value">
                 {preparedQuestions.length}
                 <span className="qc__criteria-unit"> Questions</span>
               </span>
             </div>
-            <button className="qc__save-btn" onClick={handleSave} disabled={saving}>
+            <button
+              className="qc__save-btn"
+              onClick={handleSave}
+              disabled={saving}
+            >
               <Save size={15} />
               {saving ? "Saving..." : "Finalize & Save"}
             </button>
@@ -214,7 +240,7 @@ const QuestionCreation: React.FC = (props: any) => {
               <div className="qc__col qc__col--left">
                 <CareerPortalQuestionBank
                   questionBank={questionBank}
-                  loading={loading}
+                  loading={questionloading}
                   preparedQuestionIds={preparedIds}
                   searchQuery={searchQuery}
                   onSearchChange={setSearchQuery}
@@ -232,6 +258,7 @@ const QuestionCreation: React.FC = (props: any) => {
                 <CareerPortalPreparedSet
                   questions={preparedQuestions}
                   onRemove={handleRemovePrepared}
+                  onEdit={handleEditPrepared}
                 />
               </div>
             </>
@@ -240,7 +267,7 @@ const QuestionCreation: React.FC = (props: any) => {
               <div className="qc__col qc__col--left">
                 <InterviewQuestionBank
                   questionBank={questionBank}
-                  loading={loading}
+                  loading={questionloading}
                   preparedQuestionIds={preparedIds}
                   onAddFromBank={handleAddFromBank}
                 />

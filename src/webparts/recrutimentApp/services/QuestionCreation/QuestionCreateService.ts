@@ -8,60 +8,74 @@ import { CareerPotalServices } from "../ServiceExport";
 import { IQuestionCreation } from "./IQuestionCreation";
 
 export default class QuestionCreateService implements IQuestionCreation {
-
   async GetQuestionaireByScope(
-    GetExistingQuestion: getQuestionById
+    GetExistingQuestion: getQuestionById,
   ): Promise<ApiResponse<ViewQuestion[] | null>> {
     try {
-      const response = await QuestionnaireApi.GetQuestionaireByScope(GetExistingQuestion);
-      const GetQuestionnaire: ViewQuestion[] = response.data.data.map((item: any, index: number) => {
-        const incrementedIndex = index + 1;
+      const response =
+        await QuestionnaireApi.GetQuestionaireByScope(GetExistingQuestion);
+      const GetQuestionnaire: ViewQuestion[] = response.data.data
+        .map((item: any, index: number) => {
+          const incrementedIndex = index + 1;
 
-        const question = stripHtml(item?.question?.quesContent?.contentEn);
-        const questionFr = stripHtml(item?.question?.quesContent?.contentFr);
-        const expectedAnswer = item?.question?.questionXAnswers.map((item: any) => stripHtml(item?.optContent?.contentEn));
-        const expectedAnswerFr = item?.question?.questionXAnswers.map((item: any) => stripHtml(item?.optContent?.contentFr));
+          const question = stripHtml(item?.question?.quesContent?.contentEn);
+          const questionFr = stripHtml(item?.question?.quesContent?.contentFr);
+          const expectedAnswer = item?.question?.questionXAnswers.map(
+            (item: any) => stripHtml(item?.optContent?.contentEn),
+          );
+          const expectedAnswerFr = item?.question?.questionXAnswers.map(
+            (item: any) => stripHtml(item?.optContent?.contentFr),
+          );
 
-        if (!question || !expectedAnswer) {
-          return null;
-        }
+          if (!question || !expectedAnswer) {
+            return null;
+          }
 
-        const options = item?.question?.questionXOptions.map((item: any) => {
+          const options = item?.question?.questionXOptions.map((item: any) => {
+            const userAnswer = item?.optContent?.contentEn;
+            const correctAnswer =
+              typeof expectedAnswer[0] === "string" ? expectedAnswer[0] : "";
+            return {
+              key: item?.questionId,
+              text: stripHtml(item?.optContent?.contentEn),
+              textFr: stripHtml(item?.optContent?.contentFr),
+              isCorrect:
+                userAnswer?.toLowerCase() === correctAnswer.toLowerCase()
+                  ? true
+                  : false,
+            };
+          });
+
+          const CareerportalAnswer = item?.question?.questionXAnswers?.map(
+            (item: any, index: number) => {
+              return {
+                key: index,
+                text: stripHtml(item?.optContent?.contentEn),
+                textFr: stripHtml(item?.optContent?.contentFr),
+                isCorrect: false,
+              };
+            },
+          );
+
           return {
-            key: item?.questionId,
-            text: stripHtml(item?.optContent?.contentEn),
-            textFr: stripHtml(item?.optContent?.contentFr),
-            isCorrect: false,
+            id: incrementedIndex,
+            Checked: false,
+            header: "Q" + incrementedIndex,
+            HeaderLabel: "Question" + incrementedIndex,
+            discipline: item?.question?.scopeId,
+            scope: item?.question?.questionType?.displayText,
+            questionType: item?.question?.questionTypeId,
+            question: question,
+            questionFr: questionFr,
+            expectedAnswer: expectedAnswer,
+            expectedAnswerFr: expectedAnswerFr,
+            CareerportalAnswer: CareerportalAnswer,
+            options: options,
+            Disqualification: item?.question?.isQualifier,
+            Type: DataType.Existing,
           };
-        });
-
-        const CareerportalAnswer = item?.question?.questionXAnswers?.map((item: any, index: number) => {
-          return {
-            key: index,
-            text: stripHtml(item?.optContent?.contentEn),
-            textFr: stripHtml(item?.optContent?.contentFr),
-            isCorrect: false,
-          };
-        });
-
-        return {
-          id: incrementedIndex,
-          Checked: false,
-          header: "Q" + incrementedIndex,
-          HeaderLabel: "Question" + incrementedIndex,
-          discipline: item?.question?.scopeId,
-          scope: item?.question?.questionType?.displayText,
-          questionType: item?.question?.questionTypeId,
-          question: question,
-          questionFr: questionFr,
-          expectedAnswer: expectedAnswer,
-          expectedAnswerFr: expectedAnswerFr,
-          CareerportalAnswer: CareerportalAnswer,
-          options: options,
-          Disqualification: item?.question?.isQualifier,
-          Type: DataType.Existing,
-        };
-      }).filter((item: null) => item !== null);
+        })
+        .filter((item: null) => item !== null);
 
       return {
         data: GetQuestionnaire,
@@ -74,7 +88,9 @@ export default class QuestionCreateService implements IQuestionCreation {
     }
   }
 
-  async UpsertQuestions(data: UpsertQuestions[]): Promise<ApiResponse<any | null>> {
+  async UpsertQuestions(
+    data: UpsertQuestions[],
+  ): Promise<ApiResponse<any | null>> {
     try {
       let UpsertQuestions: UpsertQuestions[] = data.map((item) => ({
         questionEn: item.questionEn,
@@ -91,17 +107,15 @@ export default class QuestionCreateService implements IQuestionCreation {
         createdBy: item.createdBy,
       }));
 
-      const response = await QuestionnaireApi.PostQuestionnaire(UpsertQuestions);
+      const response =
+        await QuestionnaireApi.PostQuestionnaire(UpsertQuestions);
       return {
         data: response.data,
         status: response.status,
         message: response.data.message,
       };
     } catch (error) {
-      console.error(
-        "Error inserting data into AdvertisementDetails:",
-        error
-      );
+      console.error("Error inserting data into AdvertisementDetails:", error);
       return {
         data: [],
         status: 500,
@@ -109,5 +123,4 @@ export default class QuestionCreateService implements IQuestionCreation {
       };
     }
   }
-
 }
