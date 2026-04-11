@@ -458,6 +458,8 @@ export async function submitScorecard(
     overallFeedbackLen: params.overallFeedback.length,
   });
 
+  console.log("params.level", params.level);
+
   try {
     const scorecardObj: Record<string, any> = {
       RelevantQualification: String(params.qualifications ?? ""),

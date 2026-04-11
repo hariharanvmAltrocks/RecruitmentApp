@@ -10,18 +10,26 @@ function useSubmitReviewScoreCard(deps) {
     var _this = this;
     var reviewingCandidate = deps.reviewingCandidate, reviewData = deps.reviewData, hodDecision = deps.hodDecision, decisionComment = deps.decisionComment, confirmed = deps.confirmed, selectedPositionId = deps.selectedPositionId, currentUserEmail = deps.currentUserEmail, shouldShowPositionId = deps.shouldShowPositionId, onSuccess = deps.onSuccess;
     var _a = React.useState(false), submitting = _a[0], setSubmitting = _a[1];
-    var _b = React.useState(''), submitError = _b[0], setSubmitError = _b[1];
-    var _c = React.useState(''), successMessage = _c[0], setSuccessMessage = _c[1];
+    var _b = React.useState(""), submitError = _b[0], setSubmitError = _b[1];
+    var _c = React.useState(""), successMessage = _c[0], setSuccessMessage = _c[1];
     var _d = React.useState([]), validationErrors = _d[0], setValidationErrors = _d[1];
     var _e = React.useState({
-        decision: false, comment: false, checkbox: false, position: false,
+        decision: false,
+        comment: false,
+        checkbox: false,
+        position: false,
     }), errors = _e[0], setErrors = _e[1];
     var resetSubmit = React.useCallback(function () {
         setSubmitting(false);
-        setSubmitError('');
-        setSuccessMessage('');
+        setSubmitError("");
+        setSuccessMessage("");
         setValidationErrors([]);
-        setErrors({ decision: false, comment: false, checkbox: false, position: false });
+        setErrors({
+            decision: false,
+            comment: false,
+            checkbox: false,
+            position: false,
+        });
     }, []);
     var runValidation = React.useCallback(function () {
         if (!reviewingCandidate)
@@ -34,25 +42,38 @@ function useSubmitReviewScoreCard(deps) {
             comment: !decisionComment.trim(),
             checkbox: !confirmed,
             position: !lv2 &&
-                decision === 'Yes' &&
+                decision === "Yes" &&
                 shouldShowPositionId(sid, decision) &&
                 !selectedPositionId,
         };
         setErrors(newErrors);
         var list = [];
         if (newErrors.decision)
-            list.push({ field: 'decision', message: 'HOD Decision (Yes / No / On Hold) is required.' });
+            list.push({
+                field: "decision",
+                message: "HOD Decision (Yes / No / On Hold) is required.",
+            });
         if (newErrors.comment)
-            list.push({ field: 'comment', message: 'Feedback Comment is required.' });
+            list.push({ field: "comment", message: "Feedback Comment is required." });
         if (newErrors.position)
-            list.push({ field: 'position', message: 'Position ID assignment is required.' });
+            list.push({
+                field: "position",
+                message: "Position ID assignment is required.",
+            });
         if (newErrors.checkbox)
-            list.push({ field: 'checkbox', message: 'Confirmation checkbox must be checked.' });
+            list.push({
+                field: "checkbox",
+                message: "Confirmation checkbox must be checked.",
+            });
         setValidationErrors(list);
         return list.length === 0;
     }, [
-        reviewingCandidate, hodDecision, decisionComment,
-        confirmed, selectedPositionId, shouldShowPositionId,
+        reviewingCandidate,
+        hodDecision,
+        decisionComment,
+        confirmed,
+        selectedPositionId,
+        shouldShowPositionId,
     ]);
     var submitDecision = React.useCallback(function (roleId) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
         var jobRequestId, result, e_1;
@@ -62,7 +83,7 @@ function useSubmitReviewScoreCard(deps) {
                 case 0:
                     if (!reviewingCandidate)
                         return [2 /*return*/];
-                    setSubmitError('');
+                    setSubmitError("");
                     setSubmitting(true);
                     _e.label = 1;
                 case 1:
@@ -74,7 +95,7 @@ function useSubmitReviewScoreCard(deps) {
                             comments: decisionComment,
                             currentUserEmail: currentUserEmail,
                             currentRoleId: roleId,
-                            gpa: reviewingCandidate.gpa || '',
+                            gpa: reviewingCandidate.gpa || "",
                             positionId: selectedPositionId,
                             isLevel2: (0, useReviewScorecard_1.isLevel2)(reviewingCandidate.statusId),
                             jobCodeID: reviewingCandidate.jobCodeID || 0,
@@ -82,18 +103,19 @@ function useSubmitReviewScoreCard(deps) {
                             statusId: reviewingCandidate.statusId,
                             scoreCardId: (_d = (_c = reviewData === null || reviewData === void 0 ? void 0 : reviewData.candidateData) === null || _c === void 0 ? void 0 : _c.level2ScorecardId) !== null && _d !== void 0 ? _d : null,
                             jobRequestId: jobRequestId,
+                            isExapt: reviewingCandidate.isExapt,
                         })];
                 case 2:
                     result = _e.sent();
                     if (!result.success) {
-                        setSubmitError(result.message || 'Submission failed.');
+                        setSubmitError(result.message || "Submission failed.");
                         return [2 /*return*/];
                     }
-                    setSuccessMessage(result.message || '');
+                    setSuccessMessage(result.message || "");
                     return [3 /*break*/, 5];
                 case 3:
                     e_1 = _e.sent();
-                    console.error('[useSubmitReviewScoreCard] submitDecision error:', e_1);
+                    console.error("[useSubmitReviewScoreCard] submitDecision error:", e_1);
                     setSubmitError(e_1 instanceof Error ? e_1.message : ConditionConfig_1.RecuritmentHRMsg.APIErrorMsg);
                     return [3 /*break*/, 5];
                 case 4:
@@ -103,8 +125,13 @@ function useSubmitReviewScoreCard(deps) {
             }
         });
     }); }, [
-        reviewingCandidate, reviewData, hodDecision, decisionComment,
-        currentUserEmail, selectedPositionId, onSuccess,
+        reviewingCandidate,
+        reviewData,
+        hodDecision,
+        decisionComment,
+        currentUserEmail,
+        selectedPositionId,
+        onSuccess,
     ]);
     return {
         submitting: submitting,

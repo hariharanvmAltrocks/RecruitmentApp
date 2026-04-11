@@ -373,7 +373,10 @@ var ReviewDocument = function (_a) {
                         Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement(Prechecklist_1.default, { nationalItems: checklist, expatItems: [], isExpat: isExpat, onToggle: function (id, value) {
                             return updateCheckItem(id, value);
                         }, allChecked: allChecked })),
-                    !vis.ViewFlag && allChecked && (react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, disabled: isSubmittingRef.current, commentError: validationError.comments, checkboxError: validationError.acknowledgement })),
+                    !vis.ViewFlag && (react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, disabled: isSubmittingRef.current, commentError: validationError.comments, checkboxError: validationError.acknowledgement })),
+                    allChecked &&
+                        (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) ===
+                            Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, disabled: isSubmittingRef.current, commentError: validationError.comments, checkboxError: validationError.acknowledgement })),
                     bgvComments.length > 0 &&
                         (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) ===
                             Config_1.StatusId.PendingDOTAficaVerification && (react_1.default.createElement("div", { className: "review-documnet__BGVCommentBtn" },

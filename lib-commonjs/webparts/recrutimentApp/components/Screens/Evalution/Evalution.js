@@ -21,12 +21,12 @@ var Evalution = function (props) {
     var candidateId = Number(stateCandidateId || props.ID || 0);
     console.log("[Evalution] candidateId:", candidateId, "from state:", stateCandidateId, "props:", props.ID);
     return (React.createElement(CommonStateManagement_1.EvaluationProvider, null,
-        React.createElement(EvalutionContent, { candidateId: candidateId, onBack: props.onBack, StatusID: props.StatusID })));
+        React.createElement(EvalutionContent, { candidateId: candidateId, onBack: props.onBack, StatusID: props.StatusID, InterviewLevels: props.InterviewLevels })));
 };
 exports.Evalution = Evalution;
 function EvalutionContent(_a) {
     var _this = this;
-    var candidateId = _a.candidateId, onBack = _a.onBack, StatusID = _a.StatusID;
+    var candidateId = _a.candidateId, onBack = _a.onBack, StatusID = _a.StatusID, InterviewLevels = _a.InterviewLevels;
     var navigate = (0, react_router_dom_1.useNavigate)();
     var goBack = React.useCallback(function () {
         if (onBack) {
@@ -36,7 +36,7 @@ function EvalutionContent(_a) {
             navigate("/RecruitmentTable");
         }
     }, [navigate, onBack]);
-    var _b = (0, fetchCandidateDetails_1.useCandidateDetails)({ candidateId: candidateId }), candidate = _b.candidate, questions = _b.questions, candidateLoading = _b.loading, candidateError = _b.error, reloadCandidate = _b.reload;
+    var _b = (0, fetchCandidateDetails_1.useCandidateDetails)({ candidateId: candidateId, InterviewLevels: InterviewLevels }), candidate = _b.candidate, questions = _b.questions, candidateLoading = _b.loading, candidateError = _b.error, reloadCandidate = _b.reload;
     var _c = (0, fetchScoreCard_1.useScoreCard)(candidateId), scoreCardData = _c.data, scoreCardLoading = _c.loading, scoreCardError = _c.error, reloadScoreCard = _c.reload;
     var _d = (0, CommonStateManagement_1.useEvaluationState)(), answers = _d.answers, initializeAnswers = _d.initializeAnswers, updateAnswer = _d.updateAnswer, scorecard = _d.scorecard, updateScorecard = _d.updateScorecard, recommendation = _d.recommendation, setRecommendation = _d.setRecommendation, overallFeedback = _d.overallFeedback, setOverallFeedback = _d.setOverallFeedback, evaluationFeedback = _d.evaluationFeedback, setEvaluationFeedback = _d.setEvaluationFeedback, acknowledged = _d.acknowledged, setAcknowledged = _d.setAcknowledged;
     React.useEffect(function () {

@@ -25,7 +25,8 @@ var buildStatusFlags = function (statusID, empCat, consentVerification) { return
         statusID === EvaluationConfig_1.StatusId.PendingCandidateEmploymentContractUpload ||
         statusID === EvaluationConfig_1.StatusId.PendingLabourHireOfferRelease ||
         statusID === EvaluationConfig_1.StatusId.PendingLabourhireWPPayment ||
-        statusID === EvaluationConfig_1.StatusId.PendingLHECRelease,
+        statusID === EvaluationConfig_1.StatusId.PendingLHECRelease ||
+        statusID === EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist,
     PendingHREmploymentContractReview: statusID === EvaluationConfig_1.StatusId.PendingHREmploymentContractReview,
     PreOnboardingChecklist: statusID === EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist,
 }); };

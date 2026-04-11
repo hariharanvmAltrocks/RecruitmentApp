@@ -117,7 +117,7 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 3, 4, 5]);
-                    return [4 /*yield*/, ReviewScoreCardServices_1.default.getCandidatesByRecruitmentId(recruitmentId, isEvalution)];
+                    return [4 /*yield*/, ReviewScoreCardServices_1.default.getCandidatesByRecruitmentId(recruitmentId)];
                 case 2:
                     list = _a.sent();
                     mapped = list.map(function (c) { return ({
@@ -138,6 +138,7 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
                         positionTitle: c.positionTitle || "",
                         disability: c.disability || "",
                         jobTitle: c.jobTitle || "",
+                        isExapt: c.isExapt,
                     }); });
                     setCandidates(mapped);
                     return [3 /*break*/, 5];

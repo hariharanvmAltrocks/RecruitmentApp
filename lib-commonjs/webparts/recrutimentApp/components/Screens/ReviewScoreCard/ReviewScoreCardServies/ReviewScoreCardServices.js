@@ -12,6 +12,7 @@ var CareerPortalService_1 = tslib_1.__importDefault(require("../../../../service
 var Config_1 = require("../../../../utilities/Config");
 var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
 var WorkflowConfig_1 = require("../../../Hooks/WorkflowConfig");
+var ServiceExport_1 = require("../../../../services/ServiceExport");
 var _common = new CommonServices_1.default();
 var _master = new MasterService_1.default();
 var _questApi = new QuestionnaireApi_1.default();
@@ -267,51 +268,66 @@ function _insertOrUpdateLevel2Comment(candidateId, roleId, comments, level) {
 }
 function _assignPositionID(p) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
-        var posRes, pos, e_4;
-        return tslib_1.__generator(this, function (_a) {
-            switch (_a.label) {
+        var posRes, pos, Filter, RecrutimentData, e_4;
+        var _a, _b, _c;
+        return tslib_1.__generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
-                    _a.trys.push([0, 4, , 5]);
+                    _d.trys.push([0, 5, , 6]);
                     return [4 /*yield*/, spservice_1.default.SPReadItems({
                             Listname: Config_1.ListNames.HRMSPositionIDMaster,
                             Select: "*",
                             Filter: [{ FilterKey: "ID", Operator: "eq", FilterValue: p.positionId }],
                         })];
                 case 1:
-                    posRes = _a.sent();
+                    posRes = _d.sent();
                     if (!(posRes === null || posRes === void 0 ? void 0 : posRes.length))
                         return [2 /*return*/];
                     pos = posRes[0];
+                    Filter = [
+                        {
+                            FilterKey: "ID",
+                            Operator: "eq",
+                            FilterValue: p.recruitmentID,
+                        },
+                    ];
+                    return [4 /*yield*/, ServiceExport_1.RecruitmentServices.GetRecruitmentDetails(Filter, "")];
+                case 2:
+                    RecrutimentData = _d.sent();
+                    console.log(RecrutimentData, "RecrutimentData");
                     return [4 /*yield*/, spservice_1.default.SPAddItem({
                             Listname: Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD,
                             RequestJSON: {
                                 PositionIDId: pos.ID,
                                 CandidateIDId: p.candidateId,
                                 RecruitmentIDId: p.recruitmentID,
-                                // ItemCreated: "Yes",
+                                ItemCreated: "No",
                                 // ActionId: WorkflowAction.Submitted,
                                 StatusId: Config_1.StatusId.PendingHRBGVInitiation,
-                                // IsExpat:
-                                // RecruitmentHR:
-                                // RecruitmentHRLead:
-                                // IsLabourHire:
+                                IsExpat: p.isExpat ? "Yes" : "No",
+                                RecruitmentHR: (_a = RecrutimentData.data[0]) === null || _a === void 0 ? void 0 : _a.AssignEMail,
+                                RecruitmentHRLead: (_b = RecrutimentData.data[0]) === null || _b === void 0 ? void 0 : _b.AssignHRLead,
+                                IsLabourHire: ((_c = RecrutimentData.data[0]) === null || _c === void 0 ? void 0 : _c.EmploymentCategory) ===
+                                    ConditionConfig_1.EmployeementCategory.LaborhireContractor
+                                    ? "Yes"
+                                    : "No",
                             },
                         })];
-                case 2:
-                    _a.sent();
+                case 3:
+                    _d.sent();
                     return [4 /*yield*/, spservice_1.default.SPUpdateItem({
                             Listname: Config_1.ListNames.HRMSPositionIDMaster,
                             RequestJSON: { PositionIDStatus: "Recruitment In Progress" },
                             ID: pos.ID,
                         })];
-                case 3:
-                    _a.sent();
-                    return [3 /*break*/, 5];
                 case 4:
-                    e_4 = _a.sent();
+                    _d.sent();
+                    return [3 /*break*/, 6];
+                case 5:
+                    e_4 = _d.sent();
                     console.error("[_assignPositionID]", e_4);
-                    return [3 /*break*/, 5];
-                case 5: return [2 /*return*/];
+                    return [3 /*break*/, 6];
+                case 6: return [2 /*return*/];
             }
         });
     });
@@ -382,7 +398,7 @@ exports.EMPTY = EMPTY;
 var ReviewScoreCardServices = /** @class */ (function () {
     function ReviewScoreCardServices() {
     }
-    ReviewScoreCardServices.prototype.getCandidatesByRecruitmentId = function (recruitmentID, isEvalution) {
+    ReviewScoreCardServices.prototype.getCandidatesByRecruitmentId = function (recruitmentID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var res, defaultGrade_1, defaultLevel_1, posRes, gr, _1, enriched, e_6;
             var _this = this;
@@ -396,22 +412,19 @@ var ReviewScoreCardServices = /** @class */ (function () {
                                 Select: "*,JobCode/JobCode,RecruitmentID/ID,Status/ID,Status/StatusDescription,ID",
                                 Expand: "JobCode,RecruitmentID,Status",
                                 FilterCondition: "and",
-                                Filter: tslib_1.__spreadArray([
+                                Filter: [
                                     {
-                                        FilterKey: isEvalution ? "ID" : "RecruitmentIDId",
+                                        FilterKey: "RecruitmentIDId",
                                         Operator: "eq",
                                         FilterValue: recruitmentID,
                                     },
-                                    { FilterKey: "ItemCreated", Operator: "eq", FilterValue: "No" }
-                                ], (!isEvalution
-                                    ? []
-                                    : [
-                                        {
-                                            FilterKey: "StatusId",
-                                            Operator: "in",
-                                            FilterValue: exports.HOD_SCORECARD_STATUS_IDS,
-                                        },
-                                    ]), true),
+                                    { FilterKey: "ItemCreated", Operator: "eq", FilterValue: "No" },
+                                    {
+                                        FilterKey: "StatusId",
+                                        Operator: "in",
+                                        FilterValue: exports.HOD_SCORECARD_STATUS_IDS,
+                                    },
+                                ],
                                 Topcount: 1000,
                             })];
                     case 1:
@@ -491,6 +504,9 @@ var ReviewScoreCardServices = /** @class */ (function () {
                                                     "").split("T")[0],
                                                 disability: item.Disability || "",
                                                 jobTitle: item.PositionTitle || "",
+                                                isExapt: (item === null || item === void 0 ? void 0 : item.NationalityCode) === ConditionConfig_1.NationalityCode.Nationals
+                                                    ? false
+                                                    : true,
                                             }];
                                 }
                             });
@@ -1129,7 +1145,7 @@ var ReviewScoreCardServices = /** @class */ (function () {
     };
     ReviewScoreCardServices.prototype.submitHODDecision = function (params) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var candidateId_1, hodDecision, comments, currentUserEmail, currentRoleId, gpa, positionId, lv2, jobCodeID, recruitmentID, statusId, jobRequestId, currentUserGuid_2, allPanels, matchingPanels, userPanels, _i, userPanels_1, panel, refreshed, level2Panels, uploadedCount, BtnAction, StatusID_1, othersInterviewed, isLevel2StatusId, actionId, workflowStatus, successMsg, ActionID, StatusID, e_10;
+            var candidateId_1, hodDecision, comments, currentUserEmail, currentRoleId, gpa, positionId, lv2, jobCodeID, recruitmentID, statusId, jobRequestId, isExapt, currentUserGuid_2, allPanels, matchingPanels, userPanels, _i, userPanels_1, panel, refreshed, level2Panels, uploadedCount, BtnAction, StatusID_1, othersInterviewed, isLevel2StatusId, actionId, workflowStatus, successMsg, ActionID, StatusID, e_10;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1137,7 +1153,7 @@ var ReviewScoreCardServices = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 21, , 22]);
-                        candidateId_1 = params.candidateId, hodDecision = params.hodDecision, comments = params.comments, currentUserEmail = params.currentUserEmail, currentRoleId = params.currentRoleId, gpa = params.gpa, positionId = params.positionId, lv2 = params.isLevel2, jobCodeID = params.jobCodeID, recruitmentID = params.recruitmentID, statusId = params.statusId, jobRequestId = params.jobRequestId;
+                        candidateId_1 = params.candidateId, hodDecision = params.hodDecision, comments = params.comments, currentUserEmail = params.currentUserEmail, currentRoleId = params.currentRoleId, gpa = params.gpa, positionId = params.positionId, lv2 = params.isLevel2, jobCodeID = params.jobCodeID, recruitmentID = params.recruitmentID, statusId = params.statusId, jobRequestId = params.jobRequestId, isExapt = params.isExapt;
                         console.log("[ReviewScoreCardServices] submitHODDecision branch: isLevel2 =", lv2);
                         if (!lv2) return [3 /*break*/, 12];
                         console.log("Branch 1 Step 1: Saving Level 2 comment");
@@ -1244,7 +1260,7 @@ var ReviewScoreCardServices = /** @class */ (function () {
                             ? ConditionConfig_1.ButtonAction.Approve
                             : hodDecision === "No"
                                 ? ConditionConfig_1.ButtonAction.Reject
-                                : Config_1.WorkflowAction.OnHold;
+                                : ConditionConfig_1.ButtonAction.OnHold;
                         StatusID = (0, WorkflowConfig_1.WorkflowCandidateListConfig)(statusId, params.isLevel2, ActionID);
                         switch (hodDecision) {
                             case "Yes":
@@ -1296,7 +1312,12 @@ var ReviewScoreCardServices = /** @class */ (function () {
                         console.log("Branch 2 Step 5: Level 1 comment saved (Level 1)");
                         if (!(hodDecision === "Yes" && positionId)) return [3 /*break*/, 18];
                         console.log("Branch 2 Step 6: Assigning position ID", positionId);
-                        return [4 /*yield*/, _assignPositionID({ positionId: positionId, candidateId: candidateId_1, recruitmentID: recruitmentID })];
+                        return [4 /*yield*/, _assignPositionID({
+                                positionId: positionId,
+                                candidateId: candidateId_1,
+                                recruitmentID: recruitmentID,
+                                isExpat: params.isExapt,
+                            })];
                     case 17:
                         _a.sent();
                         console.log("Branch 2 Step 6: Position assigned");

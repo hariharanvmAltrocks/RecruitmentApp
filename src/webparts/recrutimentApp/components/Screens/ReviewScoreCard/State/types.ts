@@ -19,6 +19,7 @@ export interface ScorecardCandidateRow {
   positionTitle?: string;
   disability?: string;
   jobTitle?: string;
+  isExapt: boolean;
 }
 
 export interface RawScorecard {

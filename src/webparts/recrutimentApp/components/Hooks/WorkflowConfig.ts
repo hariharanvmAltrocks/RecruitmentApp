@@ -47,14 +47,15 @@ export const WorkflowCandidateListConfig = (
         return StatusId.Selected;
       } else if (Action === ButtonAction.Reject) {
         if (isLevel1) {
-          return StatusId.CandidateRejectedbyHODLevel2;
-        } else {
           return StatusId.RejectedbyHOD;
+        } else {
+          return StatusId.CandidateRejectedbyHODLevel2;
         }
       } else if (Action === ButtonAction.OnHold) {
         if (isLevel1) {
-          return StatusId.CandidateOnHoldbyHODLevel2;
+          return StatusId.OnHoldbyHOD;
         } else {
+          return StatusId.CandidateOnHoldbyHODLevel2;
         }
       }
       break;

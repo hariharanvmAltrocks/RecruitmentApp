@@ -11,10 +11,16 @@ import {
 } from "../../../../utilities/Config";
 import {
   ButtonAction,
+  EmployeementCategory,
+  NationalityCode,
   RecuritmentHRMsg,
   RoleName,
 } from "../../../../utilities/ConditionConfig";
 import { WorkflowCandidateListConfig } from "../../../Hooks/WorkflowConfig";
+import {
+  DashboardServices,
+  RecruitmentServices,
+} from "../../../../services/ServiceExport";
 const _common = new CommonService();
 const _master = new MasterService();
 const _questApi = new QuestionnaireApi();
@@ -134,6 +140,7 @@ export interface HODSubmitParams {
   scoreCardId?: number | null;
   othersInterviewed?: string;
   jobRequestId?: number; // Added for portal workflow update
+  isExapt: boolean;
 }
 
 function _parseJson(raw: any): Record<string, number>[] {
@@ -319,6 +326,7 @@ async function _assignPositionID(p: {
   positionId: number;
   candidateId: number;
   recruitmentID: number;
+  isExpat: boolean;
 }): Promise<void> {
   try {
     const posRes: any[] = await SPServices.SPReadItems({
@@ -328,6 +336,18 @@ async function _assignPositionID(p: {
     });
     if (!posRes?.length) return;
     const pos = posRes[0];
+    const Filter = [
+      {
+        FilterKey: "ID",
+        Operator: "eq",
+        FilterValue: p.recruitmentID,
+      },
+    ];
+    let RecrutimentData = await RecruitmentServices.GetRecruitmentDetails(
+      Filter,
+      "",
+    );
+    console.log(RecrutimentData, "RecrutimentData");
 
     await SPServices.SPAddItem({
       Listname: ListNames.HRMSSelectedCandidateDetailsByHOD,
@@ -335,13 +355,17 @@ async function _assignPositionID(p: {
         PositionIDId: pos.ID,
         CandidateIDId: p.candidateId,
         RecruitmentIDId: p.recruitmentID,
-        // ItemCreated: "Yes",
+        ItemCreated: "No",
         // ActionId: WorkflowAction.Submitted,
         StatusId: StatusId.PendingHRBGVInitiation,
-        // IsExpat:
-        // RecruitmentHR:
-        // RecruitmentHRLead:
-        // IsLabourHire:
+        IsExpat: p.isExpat ? "Yes" : "No",
+        RecruitmentHR: RecrutimentData.data[0]?.AssignEMail,
+        RecruitmentHRLead: RecrutimentData.data[0]?.AssignHRLead,
+        IsLabourHire:
+          RecrutimentData.data[0]?.EmploymentCategory ===
+          EmployeementCategory.LaborhireContractor
+            ? "Yes"
+            : "No",
       },
     });
     await SPServices.SPUpdateItem({
@@ -412,7 +436,6 @@ class ReviewScoreCardServices {
 
   async getCandidatesByRecruitmentId(
     recruitmentID: number,
-    isEvalution?: boolean,
   ): Promise<CandidateListItem[]> {
     try {
       const res: any[] = await SPServices.SPReadItems({
@@ -423,20 +446,16 @@ class ReviewScoreCardServices {
         FilterCondition: "and",
         Filter: [
           {
-            FilterKey: isEvalution ? "ID" : "RecruitmentIDId",
+            FilterKey: "RecruitmentIDId",
             Operator: "eq",
             FilterValue: recruitmentID,
           },
           { FilterKey: "ItemCreated", Operator: "eq", FilterValue: "No" },
-          ...(!isEvalution
-            ? []
-            : [
-                {
-                  FilterKey: "StatusId",
-                  Operator: "in",
-                  FilterValue: HOD_SCORECARD_STATUS_IDS,
-                },
-              ]),
+          {
+            FilterKey: "StatusId",
+            Operator: "in",
+            FilterValue: HOD_SCORECARD_STATUS_IDS,
+          },
         ],
         Topcount: 1000,
       });
@@ -503,6 +522,10 @@ class ReviewScoreCardServices {
             ).split("T")[0],
             disability: item.Disability || "",
             jobTitle: item.PositionTitle || "",
+            isExapt:
+              item?.NationalityCode === NationalityCode.Nationals
+                ? false
+                : true,
           } as CandidateListItem;
         }),
       );
@@ -1095,6 +1118,7 @@ class ReviewScoreCardServices {
         recruitmentID,
         statusId,
         jobRequestId,
+        isExapt,
       } = params;
 
       console.log(
@@ -1218,7 +1242,7 @@ class ReviewScoreCardServices {
           ? ButtonAction.Approve
           : hodDecision === "No"
             ? ButtonAction.Reject
-            : WorkflowAction.OnHold;
+            : ButtonAction.OnHold;
       let StatusID = WorkflowCandidateListConfig(
         statusId,
         params.isLevel2,
@@ -1296,7 +1320,12 @@ class ReviewScoreCardServices {
       console.log("Branch 2 Step 5: Level 1 comment saved (Level 1)");
       if (hodDecision === "Yes" && positionId) {
         console.log("Branch 2 Step 6: Assigning position ID", positionId);
-        await _assignPositionID({ positionId, candidateId, recruitmentID });
+        await _assignPositionID({
+          positionId,
+          candidateId,
+          recruitmentID,
+          isExpat: params.isExapt,
+        });
         console.log("Branch 2 Step 6: Position assigned");
       }
       if ((hodDecision === "No" || hodDecision === "On Hold") && positionId) {

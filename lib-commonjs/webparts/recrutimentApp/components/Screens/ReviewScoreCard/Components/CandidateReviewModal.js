@@ -124,7 +124,19 @@ var CandidateReviewModal = function (_a) {
     var safeLevel1 = Array.isArray(level1Comments) ? level1Comments : [];
     var safeLevel2 = Array.isArray(level2Comments) ? level2Comments : [];
     // ── Render ─────────────────────────────────────────────────────────────────
+    var loading = !candidate ||
+        reviewLoading || // covers reviewData?.questions + candidateData
+        scoreLoading || // covers scoreData
+        !scoreData;
     return (React.createElement("div", { style: { display: "flex", flexDirection: "column", height: "100%" }, onClick: function (e) { return e.stopPropagation(); } },
+        loading && (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.loadingOverlay, style: {
+                width: "1095px",
+                height: "92vh",
+                marginLeft: "14%",
+                marginTop: "2%",
+            } },
+            React.createElement("div", { className: ReviewScorecard_module_scss_1.default.spinner }),
+            React.createElement("div", { className: ReviewScorecard_module_scss_1.default.loadingText }, "Loading details..."))),
         React.createElement("header", { className: ReviewScorecard_module_scss_1.default.header },
             React.createElement("div", { className: ReviewScorecard_module_scss_1.default.headerLeft },
                 React.createElement("div", { className: ReviewScorecard_module_scss_1.default.headerIcon },

@@ -20,6 +20,7 @@ export interface EvalutionProps {
   candidateId: number;
   onBack?: () => void;
   StatusID?: number;
+  InterviewLevels?: string;
 }
 export const Evalution = (props: any) => {
   const location = useLocation();
@@ -41,6 +42,7 @@ export const Evalution = (props: any) => {
         candidateId={candidateId}
         onBack={props.onBack}
         StatusID={props.StatusID}
+        InterviewLevels={props.InterviewLevels}
       />
     </EvaluationProvider>
   );
@@ -50,6 +52,7 @@ function EvalutionContent({
   candidateId,
   onBack,
   StatusID,
+  InterviewLevels,
 }: EvalutionProps): JSX.Element {
   const navigate = useNavigate();
 
@@ -67,7 +70,7 @@ function EvalutionContent({
     loading: candidateLoading,
     error: candidateError,
     reload: reloadCandidate,
-  } = useCandidateDetails({ candidateId });
+  } = useCandidateDetails({ candidateId, InterviewLevels });
 
   const {
     data: scoreCardData,

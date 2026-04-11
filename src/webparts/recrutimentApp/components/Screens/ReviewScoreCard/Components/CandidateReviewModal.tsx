@@ -238,11 +238,31 @@ const CandidateReviewModal: React.FC<Props> = ({
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
+  const loading =
+    !candidate ||
+    reviewLoading || // covers reviewData?.questions + candidateData
+    scoreLoading || // covers scoreData
+    !scoreData;
+
   return (
     <div
       style={{ display: "flex", flexDirection: "column", height: "100%" }}
       onClick={(e) => e.stopPropagation()}
     >
+      {loading && (
+        <div
+          className={styles.loadingOverlay}
+          style={{
+            width: "1095px",
+            height: "92vh",
+            marginLeft: "14%",
+            marginTop: "2%",
+          }}
+        >
+          <div className={styles.spinner} />
+          <div className={styles.loadingText}>Loading details...</div>
+        </div>
+      )}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <div className={styles.headerIcon}>

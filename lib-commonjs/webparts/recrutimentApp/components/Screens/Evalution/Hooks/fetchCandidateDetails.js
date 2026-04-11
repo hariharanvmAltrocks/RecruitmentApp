@@ -8,7 +8,7 @@ var Evaluationformservice_1 = require("../Evaluationservice/Evaluationformservic
 function useCandidateDetails(_a) {
     var _this = this;
     var _b, _c;
-    var candidateId = _a.candidateId, interviewLevel = _a.interviewLevel, grade = _a.grade;
+    var candidateId = _a.candidateId, InterviewLevels = _a.InterviewLevels, grade = _a.grade;
     var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
     var currentUserEmail = (_c = (_b = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _b === void 0 ? void 0 : _b[0]) !== null && _c !== void 0 ? _c : "";
     var _d = React.useState(null), candidate = _d[0], setCandidate = _d[1];
@@ -42,7 +42,7 @@ function useCandidateDetails(_a) {
                             setError("Failed to load candidate data. Please retry.");
                             return [2 /*return*/];
                         }
-                        jobRequestId = (_a = result._jobRequestId) !== null && _a !== void 0 ? _a : '';
+                        jobRequestId = (_a = result._jobRequestId) !== null && _a !== void 0 ? _a : "";
                         setCandidate({
                             id: result.candidateId,
                             applicantName: result.applicantName,
@@ -55,7 +55,7 @@ function useCandidateDetails(_a) {
                             miningExp: result.miningExp,
                             relevantExp: result.relevantExp,
                             interviewDate: result.interviewDate,
-                            interviewLevel: interviewLevel || result.interviewLevel,
+                            interviewLevel: InterviewLevels,
                             disability: result.disability,
                             conflictsOfInterest: result.conflictsOfInterest,
                             panelMembers: result.panelMembers,
@@ -74,7 +74,7 @@ function useCandidateDetails(_a) {
                             text: q.question,
                             expectedResponse: q.answer,
                         }); }));
-                        console.log('[useCandidateDetails] SUCCESS —', {
+                        console.log("[useCandidateDetails] SUCCESS —", {
                             candidateId: candidateId,
                             currentUserPanelId: result.currentUserPanelId,
                             questionsCount: result.questions.length,
@@ -83,7 +83,7 @@ function useCandidateDetails(_a) {
                         return [3 /*break*/, 5];
                     case 3:
                         err_1 = _b.sent();
-                        console.error('[useCandidateDetails] error:', err_1);
+                        console.error("[useCandidateDetails] error:", err_1);
                         if (isMounted)
                             setError(err_1 instanceof Error
                                 ? err_1.message
@@ -101,7 +101,7 @@ function useCandidateDetails(_a) {
         return function () {
             isMounted = false;
         };
-    }, [candidateId, currentUserEmail, grade, interviewLevel, refreshKey]);
+    }, [candidateId, currentUserEmail, grade, InterviewLevels, refreshKey]);
     var reload = React.useCallback(function () { return setRefreshKey(function (k) { return k + 1; }); }, []);
     return { candidate: candidate, questions: questions, loading: loading, error: error, reload: reload };
 }

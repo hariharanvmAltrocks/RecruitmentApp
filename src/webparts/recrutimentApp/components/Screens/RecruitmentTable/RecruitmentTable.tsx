@@ -310,6 +310,7 @@ export const RecruitmentTable: React.FC = () => {
               department: item.department,
               StatusID: item.statusId,
               EmailID: ADGroupData.EmailId[0],
+              InterviewLevels: item?.interviewLevels,
             },
           });
           return;

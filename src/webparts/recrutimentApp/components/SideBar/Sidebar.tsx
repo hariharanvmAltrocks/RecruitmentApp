@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import styles from "./SideNavigation.module.scss";
 import { useUIState } from "../RecrutimentApp/UIStateContext";
 
@@ -19,6 +19,7 @@ type SidebarItemProps = {
   onSelectCallback: (id: number, path: string) => void;
   isExpanded?: boolean;
   onToggleExpand?: () => void;
+  isCollapsed?: boolean;
 };
 
 const SidebarItem: React.FC<SidebarItemProps> = ({
@@ -27,6 +28,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   onSelectCallback,
   isExpanded,
   onToggleExpand,
+  isCollapsed = false,
 }) => {
   const hasChildren = item.Children && item.Children.length > 0;
   const isActive = activeMenuID === item.Id;
@@ -53,31 +55,37 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       <div
         onClick={handleClick}
         className={`${styles.sidebarItem} ${shouldHighlight ? styles.active : ""}`}
+        title={isCollapsed ? item.DisplayName : undefined}
       >
-        {currentIcon && (
+        {/* Icon from DB — falls back to dot if no URL */}
+        {currentIcon ? (
           <img
             src={currentIcon}
             alt={item.DisplayName}
             className={styles.icon}
           />
+        ) : (
+          <span className={styles.iconFallback} />
         )}
 
+        {/* Label + floating tooltip (shown in collapsed mode) */}
         <span className={styles.labelWrap}>
-          <span className={styles.label} title={item.DisplayName}>
-            {item.DisplayName}
-          </span>
+          <span className={styles.label}>{item.DisplayName}</span>
           <span className={styles.labelTooltip} role="tooltip">
             {item.DisplayName}
           </span>
         </span>
 
-        {hasChildren && (
-          <ChevronDown
-            className={`${styles.chevron} ${isExpanded ? styles.open : ""}`}
-          />
-        )}
+        {/* ChevronUp when open, ChevronDown when closed */}
+        {hasChildren &&
+          (isExpanded ? (
+            <ChevronUp className={styles.chevron} />
+          ) : (
+            <ChevronDown className={styles.chevron} />
+          ))}
       </div>
 
+      {/* Submenu children */}
       {hasChildren && isExpanded && (
         <div className={styles.submenu}>
           {item.Children!.map((child) => (
@@ -86,6 +94,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
               item={child}
               activeMenuID={activeMenuID}
               onSelectCallback={onSelectCallback}
+              isCollapsed={isCollapsed}
             />
           ))}
         </div>
@@ -95,10 +104,10 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
 };
 
 interface SideNavigationProps {
-  menuData: any[]; // The raw JSON injected from parent/DB
+  menuData: any[];
   activeMenuID: number;
   setactiveMenuID: (id: number) => void;
-  isCollapsed?: boolean; // Prop from MainLayout toggle
+  isCollapsed?: boolean;
 }
 
 const SideNavigation: React.FC<SideNavigationProps> = ({
@@ -111,10 +120,9 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
   const { setSideNavflag } = useUIState();
   const [expandedMenus, setExpandedMenus] = useState<number[]>([]);
 
-  // Sort and format the raw menu data
   const sortedMenu: MenuItem[] = [...menuData].sort((a, b) => a.Id - b.Id);
 
-  // Set default active if 0 or empty initially
+  // Set default active menu on first load
   useEffect(() => {
     if ((!activeMenuID || activeMenuID === 0) && sortedMenu.length > 0) {
       const firstItem = sortedMenu[0];
@@ -123,7 +131,7 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
     }
   }, [sortedMenu, activeMenuID]);
 
-  // Expand parent initially if child is active
+  // Auto-expand parent if a child is currently active
   useEffect(() => {
     sortedMenu.forEach((parent) => {
       if (parent.Children?.some((child) => child.Id === activeMenuID)) {
@@ -147,12 +155,12 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
     setSideNavflag(true);
     navigate(path);
   };
-  console.log(sortedMenu, "sortedMenu");
 
   return (
     <aside
       className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : ""}`}
     >
+      {/* ── Logo Section ── */}
       <div className={styles.logoSection}>
         <div className={styles.logoIcon}>
           <img
@@ -161,10 +169,18 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
             className={styles.logoImg}
           />
         </div>
-        <div className={styles.logoTitle}>Kamoa Copper SA</div>
+        {/* Two-line logo text: bold title + muted subtitle */}
+        <div className={styles.logoTextWrap}>
+          <div className={styles.logoTitle}>Kamoa Copper</div>
+          <div className={styles.logoSubtitle}>Enterprise</div>
+        </div>
       </div>
 
+      {/* ── Navigation ── */}
       <nav className={styles.nav}>
+        {/* "MAIN MENU" section label — matches screenshot */}
+        {!isCollapsed && <div className={styles.sectionLabel}>Main Menu</div>}
+
         {sortedMenu.map((parent) => (
           <SidebarItem
             key={parent.Id}
@@ -173,10 +189,12 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
             onSelectCallback={handleSelect}
             isExpanded={expandedMenus.includes(parent.Id)}
             onToggleExpand={() => toggleExpand(parent.Id)}
+            isCollapsed={isCollapsed}
           />
         ))}
       </nav>
 
+      {/* ── Footer ── */}
       <div className={styles.sidebarFooter}>
         <div className={styles.footerContent}>
           <div className={styles.footerVersion}>v-1.1</div>

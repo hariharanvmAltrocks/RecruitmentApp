@@ -357,6 +357,7 @@ function submitScorecard(params) {
                         hasEvalFeedback: !!params.evaluationFeedback,
                         overallFeedbackLen: params.overallFeedback.length,
                     });
+                    console.log("params.level", params.level);
                     _p.label = 1;
                 case 1:
                     _p.trys.push([1, 14, , 15]);

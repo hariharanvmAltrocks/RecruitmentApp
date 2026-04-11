@@ -1,25 +1,31 @@
-import * as React from 'react';
-import { userInfo } from '../../../../utilities/hooks/RoleContext';
-import type { Candidate, InterviewQuestion } from '../State/CommonStateManagement';
-import { EvaluationFormResult, getEvaluationFormData } from '../Evaluationservice/Evaluationformservice';
+import * as React from "react";
+import { userInfo } from "../../../../utilities/hooks/RoleContext";
+import type {
+  Candidate,
+  InterviewQuestion,
+} from "../State/CommonStateManagement";
+import {
+  EvaluationFormResult,
+  getEvaluationFormData,
+} from "../Evaluationservice/Evaluationformservice";
 
 export interface UseCandidateDetailsParams {
   candidateId: number;
-  interviewLevel?: string;
+  InterviewLevels?: string;
   grade?: string;
 }
 
 export interface CandidateDetailsHookResult {
   candidate: Candidate | null;
   questions: InterviewQuestion[];
-  loading:   boolean;
-  error:     string | null;
-  reload:    () => void;
+  loading: boolean;
+  error: string | null;
+  reload: () => void;
 }
 
 export function useCandidateDetails({
   candidateId,
-  interviewLevel,
+  InterviewLevels,
   grade,
 }: UseCandidateDetailsParams): CandidateDetailsHookResult {
   const { ADGroupData } = userInfo();
@@ -32,7 +38,10 @@ export function useCandidateDetails({
   const [refreshKey, setRefreshKey] = React.useState(0);
 
   React.useEffect(() => {
-    if (!candidateId || !currentUserEmail) { setLoading(false); return; }
+    if (!candidateId || !currentUserEmail) {
+      setLoading(false);
+      return;
+    }
     let isMounted = true;
 
     const load = async () => {
@@ -40,7 +49,8 @@ export function useCandidateDetails({
       setError(null);
       try {
         const result: EvaluationFormResult = await getEvaluationFormData(
-          candidateId, currentUserEmail
+          candidateId,
+          currentUserEmail,
         );
 
         if (!isMounted) return;
@@ -48,49 +58,51 @@ export function useCandidateDetails({
           setError("Failed to load candidate data. Please retry.");
           return;
         }
-        const jobRequestId = (result as any)._jobRequestId ?? '';
+        const jobRequestId = (result as any)._jobRequestId ?? "";
 
         setCandidate({
-          id:                  result.candidateId,
-          applicantName:       result.applicantName,
-          jobTitle:            result.positionTitle,
-          grade:               grade          || result.grade,
-          nationality:         result.nationality,
-          nationalityCode:     result.nationalityCode,
-          gender:              result.gender,
-          qualification:       result.qualification,
-          miningExp:           result.miningExp,
-          relevantExp:         result.relevantExp,
-          interviewDate:       result.interviewDate,
-          interviewLevel:      interviewLevel || result.interviewLevel,
-          disability:          result.disability,
+          id: result.candidateId,
+          applicantName: result.applicantName,
+          jobTitle: result.positionTitle,
+          grade: grade || result.grade,
+          nationality: result.nationality,
+          nationalityCode: result.nationalityCode,
+          gender: result.gender,
+          qualification: result.qualification,
+          miningExp: result.miningExp,
+          relevantExp: result.relevantExp,
+          interviewDate: result.interviewDate,
+          interviewLevel: InterviewLevels,
+          disability: result.disability,
           conflictsOfInterest: result.conflictsOfInterest,
-          panelMembers:        result.panelMembers,
-          reviewerName:        result.reviewerName,
-          jobTitleEn:          result.jobTitleEn,
-          jobTitleFr:          result.jobTitleFr,
-          currentUserPanelId:  result.currentUserPanelId,
-          currentUserGuid:     result.currentUserGuid,
-          recruitmentId:       result.recruitmentId,
-          jobCodeID:           result.jobCodeId,
-          jobRequestId,                                  
-          currentRoleIDs:      ADGroupData?.roleIDs || [4],
+          panelMembers: result.panelMembers,
+          reviewerName: result.reviewerName,
+          jobTitleEn: result.jobTitleEn,
+          jobTitleFr: result.jobTitleFr,
+          currentUserPanelId: result.currentUserPanelId,
+          currentUserGuid: result.currentUserGuid,
+          recruitmentId: result.recruitmentId,
+          jobCodeID: result.jobCodeId,
+          jobRequestId,
+          currentRoleIDs: ADGroupData?.roleIDs || [4],
         });
 
-        setQuestions(result.questions.map((q) => ({
-          id:               q.id,
-          text:             q.question,
-          expectedResponse: q.answer,
-        })));
+        setQuestions(
+          result.questions.map((q) => ({
+            id: q.id,
+            text: q.question,
+            expectedResponse: q.answer,
+          })),
+        );
 
-        console.log('[useCandidateDetails] SUCCESS —', {
+        console.log("[useCandidateDetails] SUCCESS —", {
           candidateId,
           currentUserPanelId: result.currentUserPanelId,
-          questionsCount:     result.questions.length,
+          questionsCount: result.questions.length,
           jobRequestId,
         });
       } catch (err) {
-        console.error('[useCandidateDetails] error:', err);
+        console.error("[useCandidateDetails] error:", err);
         if (isMounted)
           setError(
             err instanceof Error
@@ -106,7 +118,7 @@ export function useCandidateDetails({
     return () => {
       isMounted = false;
     };
-  }, [candidateId, currentUserEmail, grade, interviewLevel, refreshKey]);
+  }, [candidateId, currentUserEmail, grade, InterviewLevels, refreshKey]);
 
   const reload = React.useCallback(() => setRefreshKey((k) => k + 1), []);
 

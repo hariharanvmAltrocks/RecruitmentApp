@@ -938,12 +938,12 @@ export default class CandidateService implements ICandidateService {
             Role: RoleName.EXCO,
           });
         }
-        if (jdeItem.LineManagerId && nameMap[String(jdeItem.LineManagerId)]) {
+        if (assignHRId?.data?.key && nameMap[String(assignHRId.data.key)]) {
           basePanelLevel2.push({
-            value: jdeItem.LineManagerId,
-            label: nameMap[String(jdeItem.LineManagerId)],
-            Email: jdeItem.LineManager.EMail,
-            Role: RoleName.LineManager,
+            value: assignHRId.data.key,
+            label: nameMap[String(assignHRId.data.key)],
+            Email: assignHREmail,
+            Role: RoleName.RecruitmentHR,
           });
         }
         if (jdeItem.HODId && nameMap[String(jdeItem.HODId)]) {

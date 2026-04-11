@@ -609,7 +609,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                       />
                     )}
 
-                    {!vis.ViewFlag && allChecked && (
+                    {!vis.ViewFlag && (
                       <ReviewCommentSignature
                         reviewerComments={reviewerComments}
                         acknowledgementCheckbox={acknowledgementCheckbox}
@@ -622,6 +622,22 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                         checkboxError={validationError.acknowledgement}
                       />
                     )}
+
+                    {allChecked &&
+                      positionDetails?.StatusID ===
+                        StatusId.PendingHRpreonboardingchecklist && (
+                        <ReviewCommentSignature
+                          reviewerComments={reviewerComments}
+                          acknowledgementCheckbox={acknowledgementCheckbox}
+                          signatureDetails={signatureDetails}
+                          isLoading={isLoading}
+                          onCommentsChange={onCommentsChange}
+                          onToggleAcknowledgement={onToggleAcknowledgement}
+                          disabled={isSubmittingRef.current}
+                          commentError={validationError.comments}
+                          checkboxError={validationError.acknowledgement}
+                        />
+                      )}
 
                     {bgvComments.length > 0 &&
                       positionDetails?.StatusID ===

@@ -138,7 +138,6 @@ export function useReviewScorecard(
       const list =
         await ReviewScoreCardServicesInstance.getCandidatesByRecruitmentId(
           recruitmentId,
-          isEvalution,
         );
       const mapped: ScorecardCandidateRow[] = list.map((c: any) => ({
         id: c.id,
@@ -158,6 +157,7 @@ export function useReviewScorecard(
         positionTitle: c.positionTitle || "",
         disability: c.disability || "",
         jobTitle: c.jobTitle || "",
+        isExapt: c.isExapt,
       }));
       setCandidates(mapped);
     } catch (e) {

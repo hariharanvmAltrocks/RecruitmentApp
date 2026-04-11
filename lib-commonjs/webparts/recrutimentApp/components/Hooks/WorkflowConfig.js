@@ -37,17 +37,18 @@ var WorkflowCandidateListConfig = function (StatusID, isLevel1, Action) {
             }
             else if (Action === ConditionConfig_1.ButtonAction.Reject) {
                 if (isLevel1) {
-                    return Config_1.StatusId.CandidateRejectedbyHODLevel2;
+                    return Config_1.StatusId.RejectedbyHOD;
                 }
                 else {
-                    return Config_1.StatusId.RejectedbyHOD;
+                    return Config_1.StatusId.CandidateRejectedbyHODLevel2;
                 }
             }
             else if (Action === ConditionConfig_1.ButtonAction.OnHold) {
                 if (isLevel1) {
-                    return Config_1.StatusId.CandidateOnHoldbyHODLevel2;
+                    return Config_1.StatusId.OnHoldbyHOD;
                 }
                 else {
+                    return Config_1.StatusId.CandidateOnHoldbyHODLevel2;
                 }
             }
             break;

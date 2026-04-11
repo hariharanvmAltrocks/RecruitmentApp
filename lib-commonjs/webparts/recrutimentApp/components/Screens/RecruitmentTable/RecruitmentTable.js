@@ -200,6 +200,7 @@ var RecruitmentTable = function () {
                                 department: item.department,
                                 StatusID: item.statusId,
                                 EmailID: ADGroupData.EmailId[0],
+                                InterviewLevels: item === null || item === void 0 ? void 0 : item.interviewLevels,
                             },
                         });
                         return [2 /*return*/];

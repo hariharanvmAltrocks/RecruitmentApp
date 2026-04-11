@@ -7,6 +7,11 @@ import {
   FileText,
   CheckCircle2,
   Loader2,
+  User,
+  Globe,
+  Zap,
+  AlertTriangle,
+  Accessibility,
 } from "lucide-react";
 import styles from "../../ReviewScoreCard/ReviewScorecard.module.scss";
 import QuestionnaireTab from "../../ReviewScoreCard/Components/QuestionnaireTab";
@@ -20,6 +25,7 @@ import { useSubmitEvaluationL2 } from "./Hooks/Usesubmitevaluationl2";
 import { ModalPopup } from "../../../Comman/ModalPopup/ModalPopup";
 import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
 import { RecuritmentHRMsg } from "../../../../utilities/ConditionConfig";
+import { InfoItem } from "../../CandidateTable/Components/reuseUI";
 
 const SCORE_CRITERIA = [
   { field: "RelevantQualification", label: "Qualification (Relevant)" },
@@ -96,7 +102,10 @@ const EvalutionL2: React.FC<any> = (props) => {
     useSignatureDetails();
 
   // ── navigation callback ──────────────────────────────────────────────────────
-  const onClose = React.useCallback(() => navigate("/Recruitment"), [navigate]);
+  const onClose = React.useCallback(
+    () => navigate("/RecruitmentTable"),
+    [navigate],
+  );
 
   const successModel = () => {
     showModal({
@@ -106,7 +115,7 @@ const EvalutionL2: React.FC<any> = (props) => {
       confirmLabel: "Go to Dashboard",
       onConfirm: () => {
         closeModal();
-        onClose();
+        navigate("/Dashboard");
       },
     });
   };
@@ -222,6 +231,12 @@ const EvalutionL2: React.FC<any> = (props) => {
   }
 
   // ── Render ────────────────────────────────────────────────────────────────────
+  const loading =
+    !hook.candidates ||
+    hook.reviewLoading || // covers reviewData?.questions + candidateData
+    hook.scoreLoading || // covers scoreData
+    !hook.scoreData;
+
   return (
     <div className={styles.modalOverlay}>
       <motion.div
@@ -232,125 +247,160 @@ const EvalutionL2: React.FC<any> = (props) => {
         className={styles.modalWindow}
       >
         {/* ══ HEADER ══ */}
-        <div className={styles.mHeader}>
-          <div className={styles.mHeaderLeft}>
-            <div className={styles.mBreadcrumb}>
-              <span>CANDIDATE SELECTION</span>
-              <ChevronRight size={11} />
-              <span className={styles.mBreadcrumbActive}>
-                Evaluation Level 2
-              </span>
+        {loading && (
+          <div className={styles.loadingOverlay}>
+            <div className={styles.spinner} />
+            <div className={styles.loadingText}>Loading details...</div>
+          </div>
+        )}
+        <header className={styles.header}>
+          <div className={styles.headerLeft}>
+            <div className={styles.headerIcon}>
+              <User size={24} />
             </div>
-            <div className={styles.mTitleRow}>
-              <div className={styles.mIconBox}>
-                <Users size={20} />
+            <div className={styles.headerMeta}>
+              <div className={styles.breadcrumb}>
+                <span>Candidate selection</span>
+                <ChevronRight size={12} className={styles.breadcrumbChevron} />
+                <span className={styles.breadcrumbActive}>
+                  Review Scorecard
+                </span>
               </div>
-              <div>
-                <h2 className={styles.mTitle}>Candidate Details</h2>
-                <p className={styles.mSubtitle}>
-                  <span className={styles.mJobCode}>
-                    {hook.reviewingCandidate?.jobCode || ""}
-                  </span>
-                  <span className={styles.mDot}>›</span>
-                  <span>
-                    {raw?.PositionTitle ||
-                      hook.reviewingCandidate?.positionTitle ||
-                      ""}
-                  </span>
-                </p>
+              <h2 className={styles.headerTitle}>Candidate Scorecard Review</h2>
+              <div className={styles.headerSubtitle}>
+                <span className={styles.jobCodeBadge}>
+                  {hook.reviewingCandidate?.jobCode || "---"}
+                </span>
+                <span className={styles.headerDot} />
+                <span className={styles.headerJobTitle}>
+                  {hook.reviewingCandidate?.positionTitle || "---"}
+                </span>
               </div>
             </div>
           </div>
-          <div className={styles.mHeaderRight}>
-            <div className={styles.mGpa}>
-              <span className={styles.mGpaLabel}>OVERALL GPA</span>
-              <span className={styles.mGpaValue}>
-                {hook.reviewingCandidate?.gpa || "—"}
-              </span>
+          <div>
+            <div className={styles.mHeaderRight}>
+              <div className={styles.mGpa}>
+                <span className={styles.mGpaLabel}>OVERALL GPA</span>
+                <span className={styles.mGpaValue}>
+                  {hook.reviewingCandidate?.gpa || "—"}
+                </span>
+              </div>
+              <button
+                className={styles.closeBtn}
+                type="button"
+                onClick={onClose}
+                aria-label="Close"
+              >
+                <X size={20} strokeWidth={2.5} />
+              </button>
             </div>
-            <button
-              onClick={onClose}
-              className={styles.mCloseBtn}
-              disabled={submitHook.submitting}
-            >
-              <X size={20} />
-            </button>
           </div>
-        </div>
+        </header>
 
         {/* ══ BODY ══ */}
         <div className={styles.mBody}>
           {/* ── LEFT SIDEBAR ── */}
-          <aside className={styles.mLeft}>
-            <div className={styles.mLeftCard}>
-              <div className={styles.mCandidateName}>
-                {hook.reviewingCandidate?.fullName}
+          <aside className={styles.sidebar}>
+            <div className={styles.avatarSection}>
+              <div className={styles.avatar}>
+                {(hook.reviewingCandidate?.fullName ?? "A").charAt(0)}
               </div>
-              <div className={styles.mCandidateType}>{nationLabel}</div>
-              <div className={styles.mFieldList}>
-                <MField
-                  label="NATIONALITY"
-                  value={
-                    raw.Nationality ||
-                    hook.reviewingCandidate?.nationality ||
-                    ""
-                  }
-                />
-                <MField
-                  label="GENDER"
-                  value={raw.Gender || hook.reviewingCandidate?.gender || ""}
-                />
-                <MField label="QUALIFICATION" value={raw.Qualification || ""} />
-                <div className={styles.mTwoCol}>
-                  <MField
-                    label="MINING EXP."
+              <h3 className={styles.avatarName}>
+                {hook.reviewingCandidate?.fullName ?? "--"}
+              </h3>
+              <span className={styles.avatarNationality}>
+                {nationLabel ?? "--"}
+              </span>
+            </div>
+
+            <div className={styles.infoGrid}>
+              <InfoItem
+                icon={<Globe size={14} />}
+                label="Nationality"
+                value={
+                  raw.Nationality || hook.reviewingCandidate?.nationality || ""
+                }
+              />
+              <InfoItem
+                icon={<Users size={14} />}
+                label="Gender"
+                value={raw.Gender || hook.reviewingCandidate?.gender || ""}
+              />
+              <InfoItem
+                icon={<FileText size={14} />}
+                label="Qualification"
+                value={raw.Qualification || ""}
+              />
+
+              <div className={styles.infoRow}>
+                <div className={styles.infoRowItem}>
+                  <InfoItem
+                    icon={<Zap size={14} />}
+                    label="Mining exp."
                     value={raw.TotalYearOfExperiance || ""}
                   />
-                  <MField
-                    label="RELATED EXP."
+                </div>
+                <div className={styles.infoRowItem}>
+                  <InfoItem
+                    icon={<Zap size={14} />}
+                    label="Related exp."
                     value={raw.ReleventExperience || ""}
                   />
                 </div>
-                <div className={styles.mTwoCol}>
-                  <MField label="INTERVIEW DATE" value={formattedDate} />
-                  <MField
-                    label="LEVELS"
-                    value={hook.reviewingCandidate?.interviewLevel || ""}
-                  />
-                </div>
-                <div className={styles.mTwoCol}>
-                  <MField
-                    label="GRADE"
-                    value={hook.reviewingCandidate?.grade || ""}
-                  />
-                  <MField
-                    label="CONFLICTS"
+              </div>
+
+              <div className={styles.infoRow}>
+                <div className={styles.infoRowItem}>
+                  <InfoItem
+                    icon={<AlertTriangle size={14} />}
+                    label="Conflicts"
                     value={raw.ConflictsOfInterest || ""}
                   />
                 </div>
-                <MField
-                  label="DISABILITY"
-                  value={raw.Disability || raw.disability || ""}
-                />
+                <div className={styles.infoRowItem}>
+                  <InfoItem
+                    icon={<Accessibility size={14} />}
+                    label="Disability"
+                    value={raw.Disability || raw.disability || ""}
+                  />
+                </div>
               </div>
 
-              {panelMembers.length > 0 && (
-                <div className={styles.mPanelSection}>
-                  <div className={styles.mPanelHeader}>
-                    <Users size={12} color="#2563eb" />
-                    <span>INTERVIEW PANEL</span>
-                  </div>
-                  <div className={styles.mPanelList}>
-                    {panelMembers.map((name, i) => (
-                      <div key={i} className={styles.mPanelRow}>
-                        <span className={styles.mPanelBadge}>{i + 1}</span>
-                        <span className={styles.mPanelName}>{name}</span>
-                      </div>
-                    ))}
-                  </div>
+              <div className={styles.infoRow}>
+                <div className={styles.infoRowItem}>
+                  <InfoItem
+                    label="Levels"
+                    value={hook.reviewingCandidate?.interviewLevel || ""}
+                  />
                 </div>
-              )}
+                <div className={styles.infoRowItem}>
+                  <InfoItem label="Interview Date" value={formattedDate} />
+                </div>
+              </div>
+
+              <InfoItem
+                label="GRADE"
+                value={hook.reviewingCandidate?.grade || ""}
+              />
             </div>
+
+            {panelMembers.length > 0 && (
+              <div className={styles.mPanelSection}>
+                <div className={styles.mPanelHeader}>
+                  <Users size={12} color="#2563eb" />
+                  <span>INTERVIEW PANEL</span>
+                </div>
+                <div className={styles.mPanelList}>
+                  {panelMembers.map((name, i) => (
+                    <div key={i} className={styles.mPanelRow}>
+                      <span className={styles.mPanelBadge}>{i + 1}</span>
+                      <span className={styles.mPanelName}>{name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </aside>
 
           {/* ── RIGHT MAIN ── */}
