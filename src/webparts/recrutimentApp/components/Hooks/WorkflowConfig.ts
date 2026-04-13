@@ -32,30 +32,30 @@ export const WorkflowConfig = (StatusID: number) => {
 
 export const WorkflowCandidateListConfig = (
   StatusID: number,
-  isLevel1?: boolean,
+  isLevel2?: boolean,
   Action?: number,
 ) => {
   switch (StatusID) {
     case StatusId.InterviewLevel1InProgress:
-      if (isLevel1) {
-        return StatusId.PendingwithpositionIDAssignmentWithHOD;
-      } else {
+      if (isLevel2) {
         return StatusId.pendingL2shorlistingwithHOD;
+      } else {
+        return StatusId.PendingwithpositionIDAssignmentWithHOD;
       }
     case StatusId.PendingwithpositionIDAssignmentWithHOD:
       if (Action === ButtonAction.Approve) {
         return StatusId.Selected;
       } else if (Action === ButtonAction.Reject) {
-        if (isLevel1) {
-          return StatusId.RejectedbyHOD;
-        } else {
+        if (isLevel2) {
           return StatusId.CandidateRejectedbyHODLevel2;
+        } else {
+          return StatusId.RejectedbyHOD;
         }
       } else if (Action === ButtonAction.OnHold) {
-        if (isLevel1) {
-          return StatusId.OnHoldbyHOD;
-        } else {
+        if (isLevel2) {
           return StatusId.CandidateOnHoldbyHODLevel2;
+        } else {
+          return StatusId.OnHoldbyHOD;
         }
       }
       break;
@@ -71,15 +71,15 @@ export const WorkflowCandidateListConfig = (
       break;
 
     case StatusId.CandidateOnHoldbyHODLevel1:
-      if (isLevel1) {
+      if (isLevel2) {
         if (Action === ButtonAction.Approve) {
-          return StatusId.Selected;
+          return StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel;
         } else if (Action === ButtonAction.Reject) {
           return StatusId.CandidateRejectedbyHODLevel1;
         }
       } else {
         if (Action === ButtonAction.Approve) {
-          return StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel;
+          return StatusId.Selected;
         } else if (Action === ButtonAction.Reject) {
           return StatusId.CandidateRejectedbyHODLevel1;
         }

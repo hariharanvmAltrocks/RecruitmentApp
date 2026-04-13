@@ -38,6 +38,7 @@ import { IDptData } from "../../../../services/RecruitmentTable/IRecruitmentServ
 import { useNavigate } from "react-router-dom";
 import { ModalPopup } from "../../../Comman/ModalPopup/ModalPopup";
 import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
+import Loading from "../../../Comman/Loading/loading";
 
 export interface AdvertReviewDrawerProps {
   drawerOpen: boolean;
@@ -113,6 +114,8 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   const { roleIDs } = userInfo();
   const navigate = useNavigate();
   const { modalState, showModal, closeModal } = useModalPopup();
+
+  const [loading, setLoading] = useState(false);
 
   const { data: positionDetails, loading: positionLoading } =
     usePositionDetails(selectedJobId, selectedType);
@@ -294,6 +297,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
     isSubmittingRef.current = true;
 
     try {
+      setLoading(true);
       const isHRLead = roleIDs.includes(RoleID.RecruitmentHRLead);
       const isHR = roleIDs.includes(RoleID.RecruitmentHR);
       const isHODorLM = [RoleID.HOD, RoleID.LineManager].some((role) =>
@@ -323,6 +327,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
       if (isSubmittingRef.current) {
         isSubmittingRef.current = false;
       }
+      setLoading(false);
     }
   }, [
     canApprove,
@@ -360,10 +365,27 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
       MatricID.AdvertReviewLM,
     ].includes(metricId);
 
+  const handleCancel = () => {
+    showModal({
+      type: "confirmation",
+      title: "Cancel",
+      message: "Are you sure you want to cancel?",
+      confirmLabel: "Yes",
+      cancelLabel: "No",
+      onConfirm: () => {
+        onClose();
+        closeModal();
+        navigate("/Dashboard");
+      },
+      onCancel: closeModal,
+    });
+  };
+
   return (
     <AnimatePresence>
       {drawerOpen && (
         <>
+          {loading && <Loading />}
           <div className="advert-review-drawer">
             <motion.div
               className="advert-review-drawer__backdrop"
@@ -487,7 +509,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                         <button
                           type="button"
                           className="advert-review-drawer__button"
-                          onClick={onClose}
+                          onClick={handleCancel}
                         >
                           Cancel
                         </button>

@@ -26,6 +26,7 @@ var useHRProcess_1 = require("./Hooks/SaveHooks/useHRProcess");
 var react_router_dom_1 = require("react-router-dom");
 var ModalPopup_1 = require("../../../Comman/ModalPopup/ModalPopup");
 var useModalPopup_1 = require("../../../Comman/ModalPopup/useModalPopup");
+var loading_1 = tslib_1.__importDefault(require("../../../Comman/Loading/loading"));
 var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
     return (react_1.default.createElement("div", { className: "advert-review-drawer__skeleton", style: { width: width, height: height } }));
@@ -64,14 +65,15 @@ var AdvertReviewDrawer = function (_a) {
     var roleIDs = (0, RoleContext_1.userInfo)().roleIDs;
     var navigate = (0, react_router_dom_1.useNavigate)();
     var _e = (0, useModalPopup_1.useModalPopup)(), modalState = _e.modalState, showModal = _e.showModal, closeModal = _e.closeModal;
-    var _f = (0, getPositionDetails_1.usePositionDetails)(selectedJobId, selectedType), positionDetails = _f.data, positionLoading = _f.loading;
-    var _g = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _g.data, signatureLoading = _g.loading;
+    var _f = (0, react_1.useState)(false), loading = _f[0], setLoading = _f[1];
+    var _g = (0, getPositionDetails_1.usePositionDetails)(selectedJobId, selectedType), positionDetails = _g.data, positionLoading = _g.loading;
+    var _h = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _h.data, signatureLoading = _h.loading;
     var jobCodeId = (_b = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCodeId) !== null && _b !== void 0 ? _b : 0;
     var jobCode = (_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCode) !== null && _c !== void 0 ? _c : selectedJobCode;
-    var _h = (0, getAdvertismentDetails_1.useAdvertismentDetails)(jobCodeId, { enabled: !!jobCodeId }), advertDetails = _h.data, BGVData = _h.BGVValue, handleBvgToggle = _h.handleBvgToggle, advertLoading = _h.loading;
-    var _j = (0, getAttachmentDetails_1.useAttachmentDetails)(jobCode, { enabled: !!jobCode }), attachments = _j.data, attachmentLoading = _j.loading;
+    var _j = (0, getAdvertismentDetails_1.useAdvertismentDetails)(jobCodeId, { enabled: !!jobCodeId }), advertDetails = _j.data, BGVData = _j.BGVValue, handleBvgToggle = _j.handleBvgToggle, advertLoading = _j.loading;
+    var _k = (0, getAttachmentDetails_1.useAttachmentDetails)(jobCode, { enabled: !!jobCode }), attachments = _k.data, attachmentLoading = _k.loading;
     var isLoading = positionLoading || advertLoading || attachmentLoading || signatureLoading;
-    var _k = (0, react_1.useState)([]), uploadDocument = _k[0], setUploadDocument = _k[1];
+    var _l = (0, react_1.useState)([]), uploadDocument = _l[0], setUploadDocument = _l[1];
     var showValidationRef = (0, react_1.useRef)(false);
     var isSubmittingRef = (0, react_1.useRef)(false);
     (0, react_1.useEffect)(function () {
@@ -195,6 +197,7 @@ var AdvertReviewDrawer = function (_a) {
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 9, 10, 11]);
+                    setLoading(true);
                     isHRLead = roleIDs.includes(Config_1.RoleID.RecruitmentHRLead);
                     isHR = roleIDs.includes(Config_1.RoleID.RecruitmentHR);
                     isHODorLM = [Config_1.RoleID.HOD, Config_1.RoleID.LineManager].some(function (role) {
@@ -237,6 +240,7 @@ var AdvertReviewDrawer = function (_a) {
                     if (isSubmittingRef.current) {
                         isSubmittingRef.current = false;
                     }
+                    setLoading(false);
                     return [7 /*endfinally*/];
                 case 11: return [2 /*return*/];
             }
@@ -270,7 +274,23 @@ var AdvertReviewDrawer = function (_a) {
             ConditionConfig_1.MatricID.AdvertReviewHOD,
             ConditionConfig_1.MatricID.AdvertReviewLM,
         ].includes(metricId);
+    var handleCancel = function () {
+        showModal({
+            type: "confirmation",
+            title: "Cancel",
+            message: "Are you sure you want to cancel?",
+            confirmLabel: "Yes",
+            cancelLabel: "No",
+            onConfirm: function () {
+                onClose();
+                closeModal();
+                navigate("/Dashboard");
+            },
+            onCancel: closeModal,
+        });
+    };
     return (react_1.default.createElement(framer_motion_1.AnimatePresence, null, drawerOpen && (react_1.default.createElement(react_1.default.Fragment, null,
+        loading && react_1.default.createElement(loading_1.default, null),
         react_1.default.createElement("div", { className: "advert-review-drawer" },
             react_1.default.createElement(framer_motion_1.motion.div, { className: "advert-review-drawer__backdrop", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, onClick: onClose }),
             react_1.default.createElement(framer_motion_1.motion.div, { className: "advert-review-drawer__panel", initial: { x: "100%" }, animate: { x: 0 }, exit: { x: "100%" }, transition: { type: "spring", damping: 25, stiffness: 200 } },
@@ -299,7 +319,7 @@ var AdvertReviewDrawer = function (_a) {
                         react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, commentError: commentError, checkboxError: checkboxError, disabled: isSubmittingRef.current }),
                         react_1.default.createElement("div", { className: "advert-review-drawer__footer" },
                             react_1.default.createElement("div", { className: "advert-review-drawer__footer-actions" },
-                                react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__button", onClick: onClose }, "Cancel"),
+                                react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__button", onClick: handleCancel }, "Cancel"),
                                 react_1.default.createElement("button", { type: "button", className: !canApprove
                                         ? "advert-review-drawer__button advert-review-drawer__button--primary__is-disabled"
                                         : "advert-review-drawer__button advert-review-drawer__button--primary", disabled: !canApprove || isSubmittingRef.current, onClick: handleApprove }, isSubmittingRef.current ? (react_1.default.createElement(react_1.default.Fragment, null,

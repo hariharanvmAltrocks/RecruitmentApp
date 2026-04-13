@@ -22,33 +22,33 @@ var WorkflowConfig = function (StatusID) {
     }
 };
 exports.WorkflowConfig = WorkflowConfig;
-var WorkflowCandidateListConfig = function (StatusID, isLevel1, Action) {
+var WorkflowCandidateListConfig = function (StatusID, isLevel2, Action) {
     switch (StatusID) {
         case Config_1.StatusId.InterviewLevel1InProgress:
-            if (isLevel1) {
-                return Config_1.StatusId.PendingwithpositionIDAssignmentWithHOD;
+            if (isLevel2) {
+                return Config_1.StatusId.pendingL2shorlistingwithHOD;
             }
             else {
-                return Config_1.StatusId.pendingL2shorlistingwithHOD;
+                return Config_1.StatusId.PendingwithpositionIDAssignmentWithHOD;
             }
         case Config_1.StatusId.PendingwithpositionIDAssignmentWithHOD:
             if (Action === ConditionConfig_1.ButtonAction.Approve) {
                 return Config_1.StatusId.Selected;
             }
             else if (Action === ConditionConfig_1.ButtonAction.Reject) {
-                if (isLevel1) {
-                    return Config_1.StatusId.RejectedbyHOD;
+                if (isLevel2) {
+                    return Config_1.StatusId.CandidateRejectedbyHODLevel2;
                 }
                 else {
-                    return Config_1.StatusId.CandidateRejectedbyHODLevel2;
+                    return Config_1.StatusId.RejectedbyHOD;
                 }
             }
             else if (Action === ConditionConfig_1.ButtonAction.OnHold) {
-                if (isLevel1) {
-                    return Config_1.StatusId.OnHoldbyHOD;
+                if (isLevel2) {
+                    return Config_1.StatusId.CandidateOnHoldbyHODLevel2;
                 }
                 else {
-                    return Config_1.StatusId.CandidateOnHoldbyHODLevel2;
+                    return Config_1.StatusId.OnHoldbyHOD;
                 }
             }
             break;
@@ -64,9 +64,9 @@ var WorkflowCandidateListConfig = function (StatusID, isLevel1, Action) {
             }
             break;
         case Config_1.StatusId.CandidateOnHoldbyHODLevel1:
-            if (isLevel1) {
+            if (isLevel2) {
                 if (Action === ConditionConfig_1.ButtonAction.Approve) {
-                    return Config_1.StatusId.Selected;
+                    return Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel;
                 }
                 else if (Action === ConditionConfig_1.ButtonAction.Reject) {
                     return Config_1.StatusId.CandidateRejectedbyHODLevel1;
@@ -74,7 +74,7 @@ var WorkflowCandidateListConfig = function (StatusID, isLevel1, Action) {
             }
             else {
                 if (Action === ConditionConfig_1.ButtonAction.Approve) {
-                    return Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel;
+                    return Config_1.StatusId.Selected;
                 }
                 else if (Action === ConditionConfig_1.ButtonAction.Reject) {
                     return Config_1.StatusId.CandidateRejectedbyHODLevel1;

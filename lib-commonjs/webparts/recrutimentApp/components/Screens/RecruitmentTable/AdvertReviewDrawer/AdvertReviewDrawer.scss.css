@@ -39,7 +39,7 @@
   height: 48px;
   border-radius: 12px;
   background: rgba(37, 99, 235, 0.12);
-  color: #2563eb;
+  color: #7c3aed;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,7 +61,7 @@
   padding: 4px 8px;
   border-radius: 999px;
   background: rgba(37, 99, 235, 0.1);
-  color: #2563eb;
+  color: #7c3aed;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -149,7 +149,7 @@
   width: 6px;
   height: 24px;
   border-radius: 999px;
-  background: #2563eb;
+  background: #7c3aed;
 }
 .advert-review-drawer__ref {
   font-size: 10px;
@@ -173,7 +173,7 @@
   gap: 12px;
   font-size: 10px;
   font-weight: 700;
-  color: #2563eb;
+  color: #7c3aed;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   margin: 0;
@@ -246,7 +246,7 @@
 .advert-review-drawer__toggle-button.is-active {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  color: #2563eb;
+  color: #7c3aed;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
 }
 .advert-review-drawer__section-title {
@@ -292,7 +292,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #2563eb;
+  background: #7c3aed;
   margin-top: 6px;
 }
 .advert-review-drawer__list-dot--muted {
@@ -314,7 +314,7 @@
   transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 .advert-review-drawer__attachment-card:hover {
-  border-color: #2563eb;
+  border-color: #7c3aed;
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
 }
 .advert-review-drawer__attachment-header {
@@ -390,7 +390,7 @@
   color: #334155;
 }
 .advert-review-drawer__attachment-version:hover {
-  border-color: #2563eb;
+  border-color: #7c3aed;
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
   color: #2563eb;
 }
@@ -406,7 +406,7 @@
   color: #ffffff;
 }
 .advert-review-drawer__attachment-lang--en {
-  background: #2563eb;
+  background: #7c3aed;
 }
 .advert-review-drawer__attachment-lang--fr {
   background: #f97316;
@@ -441,7 +441,7 @@
 }
 .advert-review-drawer__textarea:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #7c3aed;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 .advert-review-drawer__signature {
@@ -484,8 +484,8 @@
   transition: opacity 0.2s ease;
 }
 .advert-review-drawer__checkbox.is-checked {
-  background: #2563eb;
-  border-color: #2563eb;
+  background: #7c3aed;
+  border-color: #7c3aed;
 }
 .advert-review-drawer__checkbox.is-checked svg {
   opacity: 1;
@@ -502,7 +502,7 @@
   height: 48px;
   border-radius: 50%;
   background: rgba(37, 99, 235, 0.18);
-  color: #2563eb;
+  color: #7c3aed;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -564,7 +564,7 @@
   cursor: pointer;
 }
 .advert-review-drawer__button--primary {
-  background: #2563eb;
+  background: #7c3aed;
   color: #ffffff;
   display: inline-flex;
   align-items: center;
@@ -746,8 +746,8 @@
   max-width: "180px";
 }
 .advert-review-drawer__attachment-label--link:hover {
-  color: #2563eb;
-  border-color: #2563eb;
+  color: #7c3aed;
+  border-color: #7c3aed;
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
 }
 

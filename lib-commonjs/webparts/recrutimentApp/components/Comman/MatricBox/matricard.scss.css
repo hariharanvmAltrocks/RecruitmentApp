@@ -20,7 +20,7 @@
   transform: translateY(-2px);
 }
 .metric-card--active {
-  border-color: #2563eb;
+  border-color: #7c3aed;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
   box-shadow: 0 0 0 1px 0 10px 24px rgba(15, 23, 42, 0.12), 0 10px 15px -3px #dbeafe, 0 4px 6px -4px #dbeafe;
 }
@@ -92,7 +92,7 @@
 }
 .metric-card .status-active {
   background: #dbeafe;
-  color: #2563eb;
+  color: #7c3aed;
 }
 .metric-card .status-default {
   background: #f1f5f9;

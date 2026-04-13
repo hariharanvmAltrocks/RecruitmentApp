@@ -3,7 +3,7 @@ import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import Header from "../SideBar/Header/Header";
 import SideNavigation from "../SideBar/Sidebar";
-import "./MainLayout.scss";
+import "./mainlayout.scss";
 import { useMenuData } from "../../utilities/hooks/MenuDataContext";
 import { userInfo } from "../../utilities/hooks/RoleContext";
 
@@ -25,12 +25,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({
 
   return (
     <div className="main-layout">
-
       <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
         <SideNavigation
           menuData={menuData}
           activeMenuID={activeMenuID}
           setactiveMenuID={setactiveMenuID}
+          isCollapsed={isSidebarOpen}
         />
       </div>
 

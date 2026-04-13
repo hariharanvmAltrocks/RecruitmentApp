@@ -172,7 +172,7 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
         {/* Two-line logo text: bold title + muted subtitle */}
         <div className={styles.logoTextWrap}>
           <div className={styles.logoTitle}>Kamoa Copper</div>
-          <div className={styles.logoSubtitle}>Enterprise</div>
+          <div className={styles.logoSubtitle}>SA</div>
         </div>
       </div>
 

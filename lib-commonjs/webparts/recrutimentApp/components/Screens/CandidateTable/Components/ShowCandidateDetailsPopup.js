@@ -530,7 +530,7 @@ var ShowCandidateDetailsPopup = function (_a) {
                                     ? ShowCandidateDetailsPopup_module_scss_1.default.submitBtnActive
                                     : ShowCandidateDetailsPopup_module_scss_1.default.submitBtnDisabled), disabled: !canSubmit || submitting, onClick: handleSubmit }, submitting ? ("Submitting...") : (react_1.default.createElement(react_1.default.Fragment, null,
                                 react_1.default.createElement(lucide_react_1.CheckCircle, { size: 16 }),
-                                PanelMember ? "Interview Schedule" : "Submit action")))),
+                                PanelMember ? "Schedule Interview" : "Submit action")))),
                         loading && (react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.loadingOverlay },
                             react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.spinner }),
                             react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.loadingText }, "Loading details..."))),

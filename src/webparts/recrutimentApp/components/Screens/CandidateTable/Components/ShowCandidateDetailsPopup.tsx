@@ -1160,7 +1160,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                   ) : (
                     <>
                       <CheckCircle size={16} />
-                      {PanelMember ? "Interview Schedule" : "Submit action"}
+                      {PanelMember ? "Schedule Interview" : "Submit action"}
                     </>
                   )}
                 </button>

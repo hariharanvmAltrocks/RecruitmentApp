@@ -23,13 +23,13 @@
   margin-top: 4px;
 }
 .tracker__header .highlight {
-  color: #2563eb;
+  color: #7c3aed;
   font-weight: 600;
 }
 .tracker__header .view-btn {
   background: none;
   border: none;
-  color: #2563eb;
+  color: #7c3aed;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -98,7 +98,7 @@
 .tracker__table tbody tr .status-badge {
   display: inline-block;
   background: #dde8f5;
-  color: #2563eb;
+  color: #7c3aed;
   padding: 5px 14px;
   border-radius: 20px;
   font-size: 12px;

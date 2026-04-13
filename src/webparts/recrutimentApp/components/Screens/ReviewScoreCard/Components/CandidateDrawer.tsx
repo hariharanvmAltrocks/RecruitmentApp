@@ -111,7 +111,7 @@ const CandidateDrawer: React.FC<Props> = ({
     setIsRefreshing(true);
     // If you need to trigger a parent refetch, add an `onRefresh` prop
     // or do local logic here
-    await new Promise((res) => setTimeout(res, 800)); // simulate
+    await new Promise((resolve) => setTimeout(resolve, 800)); // simulate
     setIsRefreshing(false);
   };
 

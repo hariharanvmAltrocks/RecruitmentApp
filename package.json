@@ -12,7 +12,8 @@
     "build": "heft test --clean --production && heft package-solution --production",
     "start": "heft start --clean",
     "clean": "heft clean",
-    "eject-webpack": "heft eject-webpack"
+    "eject-webpack": "heft eject-webpack",
+    "serve": "gulp serve"
   },
   "dependencies": {
     "@fluentui/react": "^8.106.4",
@@ -43,6 +44,8 @@
   "devDependencies": {
     "@microsoft/eslint-config-spfx": "1.22.2",
     "@microsoft/eslint-plugin-spfx": "1.22.2",
+    "@microsoft/rush-stack-compiler-4.7": "^0.1.1",
+    "@microsoft/sp-build-web": "^1.22.2",
     "@microsoft/sp-module-interfaces": "1.22.2",
     "@microsoft/spfx-heft-plugins": "1.22.2",
     "@microsoft/spfx-web-build-rig": "1.22.2",
@@ -60,7 +63,6 @@
     "gulp": "^5.0.1",
     "postcss": "^8.5.8",
     "postcss-loader": "^8.2.1",
-    "spfx-fast-serve": "^4.0.2",
     "tailwindcss": "^3.4.13",
     "ts-node": "^10.9.2",
     "typescript": "~5.8.0"

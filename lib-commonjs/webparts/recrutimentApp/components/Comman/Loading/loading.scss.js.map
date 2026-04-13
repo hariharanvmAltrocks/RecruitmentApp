@@ -1,0 +1,1 @@
+{"version":3,"file":"loading.scss.js","sourceRoot":"","sources":["../../../../../../src/webparts/recrutimentApp/components/Comman/Loading/loading.scss.ts"],"names":[],"mappings":";;AACA,OAAO,CAAC,eAAe,CAAC,CAAC;AACzB,IAAM,MAAM,GAAG,EAEd,CAAC;AAEF,kBAAe,MAAM,CAAC","sourcesContent":["\r\nrequire(\"./loading.css\");\r\nconst styles = {\r\n\r\n};\r\n\r\nexport default styles;\r\n"]}

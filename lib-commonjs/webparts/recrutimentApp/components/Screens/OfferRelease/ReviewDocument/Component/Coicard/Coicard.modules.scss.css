@@ -87,7 +87,7 @@
 .coi-card__titleBar {
   width: 4px;
   height: 24px;
-  background: #2563eb;
+  background: #7c3aed;
   border-radius: 2px;
 }
 
@@ -168,7 +168,7 @@
 }
 .coi-card__select:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #7c3aed;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 .coi-card__select:disabled {
@@ -200,11 +200,11 @@
   transition: border-color 0.16s cubic-bezier(0.4, 0, 0.2, 1), background 0.16s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .coi-card__upload-btn:hover {
-  border-color: #2563eb;
+  border-color: #7c3aed;
   background: rgba(37, 99, 235, 0.04);
 }
 .coi-card__upload-btn:hover .coi-card__upload-icon {
-  background: #2563eb;
+  background: #7c3aed;
   color: #ffffff;
 }
 .coi-card__upload-btn--error {
@@ -234,7 +234,7 @@
 .coi-card__upload-primary {
   font-size: 13px;
   font-weight: 600;
-  color: #2563eb;
+  color: #7c3aed;
 }
 
 .coi-card__upload-hint {
@@ -359,7 +359,7 @@
 }
 .coi-card__textarea:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #7c3aed;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 .coi-card__textarea[readonly] {

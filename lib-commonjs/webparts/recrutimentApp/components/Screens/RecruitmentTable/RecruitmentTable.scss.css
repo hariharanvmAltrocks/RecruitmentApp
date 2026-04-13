@@ -37,12 +37,12 @@
   transition: all 0.2s ease;
 }
 .recruitment-table__tab:hover {
-  border-color: #2563eb;
-  color: #2563eb;
+  border-color: #7c3aed;
+  color: #7c3aed;
 }
 .recruitment-table__tab--active {
-  border-color: #2563eb;
-  color: #2563eb;
+  border-color: #7c3aed;
+  color: #7c3aed;
   box-shadow: 0 8px 18px rgba(37, 99, 235, 0.15);
 }
 .recruitment-table__tabs-loading {
@@ -127,7 +127,7 @@
   background-color: #0f172a;
 }
 .assignment .assignment-bar__button {
-  background: #2563eb;
+  background: #7c3aed;
   color: #ffffff;
   border: none;
   border-radius: 999px;

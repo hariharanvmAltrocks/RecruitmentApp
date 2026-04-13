@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importStar(require("react"));
-var StatusBadge_module_scss_1 = tslib_1.__importDefault(require("./StatusBadge.module.scss"));
+var Statusbadge_module_scss_1 = tslib_1.__importDefault(require("./Statusbadge.module.scss"));
 var DoneIcon = function (_a) {
     var color = _a.color;
     return (react_1.default.createElement("svg", { width: "14", height: "14", viewBox: "0 0 16 16", fill: "none", stroke: color, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
@@ -58,44 +58,44 @@ var StatusBadge = function (_a) {
         if (next && !animated)
             setAnimated(true);
     };
-    return (react_1.default.createElement("div", { className: StatusBadge_module_scss_1.default.root, ref: panelRef },
-        react_1.default.createElement("button", { className: StatusBadge_module_scss_1.default.triggerBtn, onClick: handleToggle, "aria-expanded": open, "aria-haspopup": "true" },
-            react_1.default.createElement("div", { className: StatusBadge_module_scss_1.default.ringWrap },
-                react_1.default.createElement("svg", { className: StatusBadge_module_scss_1.default.ringSvg, viewBox: "0 0 44 44" },
-                    react_1.default.createElement("circle", { className: StatusBadge_module_scss_1.default.ringBg, cx: "22", cy: "22", r: "18" }),
-                    react_1.default.createElement("circle", { className: "".concat(StatusBadge_module_scss_1.default.ringFill, " ").concat(animated ? StatusBadge_module_scss_1.default.ringAnimated : ""), cx: "22", cy: "22", r: "18", style: {
+    return (react_1.default.createElement("div", { className: Statusbadge_module_scss_1.default.root, ref: panelRef },
+        react_1.default.createElement("button", { className: Statusbadge_module_scss_1.default.triggerBtn, onClick: handleToggle, "aria-expanded": open, "aria-haspopup": "true" },
+            react_1.default.createElement("div", { className: Statusbadge_module_scss_1.default.ringWrap },
+                react_1.default.createElement("svg", { className: Statusbadge_module_scss_1.default.ringSvg, viewBox: "0 0 44 44" },
+                    react_1.default.createElement("circle", { className: Statusbadge_module_scss_1.default.ringBg, cx: "22", cy: "22", r: "18" }),
+                    react_1.default.createElement("circle", { className: "".concat(Statusbadge_module_scss_1.default.ringFill, " ").concat(animated ? Statusbadge_module_scss_1.default.ringAnimated : ""), cx: "22", cy: "22", r: "18", style: {
                             strokeDashoffset: animated ? ringOffset : CIRCUMFERENCE,
                         } })),
-                react_1.default.createElement("span", { className: StatusBadge_module_scss_1.default.ringCount },
+                react_1.default.createElement("span", { className: Statusbadge_module_scss_1.default.ringCount },
                     doneCount,
                     "/",
                     total)),
-            react_1.default.createElement("div", { className: StatusBadge_module_scss_1.default.triggerText },
-                react_1.default.createElement("span", { className: StatusBadge_module_scss_1.default.triggerLabel }, "Verification Status"),
-                react_1.default.createElement("span", { className: StatusBadge_module_scss_1.default.triggerSub },
+            react_1.default.createElement("div", { className: Statusbadge_module_scss_1.default.triggerText },
+                react_1.default.createElement("span", { className: Statusbadge_module_scss_1.default.triggerLabel }, "Verification Status"),
+                react_1.default.createElement("span", { className: Statusbadge_module_scss_1.default.triggerSub },
                     doneCount,
                     " of ",
                     total,
                     " complete")),
-            react_1.default.createElement("svg", { className: "".concat(StatusBadge_module_scss_1.default.chevron, " ").concat(open ? StatusBadge_module_scss_1.default.chevronOpen : ""), width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" },
+            react_1.default.createElement("svg", { className: "".concat(Statusbadge_module_scss_1.default.chevron, " ").concat(open ? Statusbadge_module_scss_1.default.chevronOpen : ""), width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" },
                 react_1.default.createElement("polyline", { points: "6 9 12 15 18 9" }))),
-        react_1.default.createElement("div", { className: "".concat(StatusBadge_module_scss_1.default.panel, " ").concat(open ? StatusBadge_module_scss_1.default.panelOpen : ""), role: "dialog", "aria-label": "Verification checklist" },
-            react_1.default.createElement("div", { className: StatusBadge_module_scss_1.default.panelHeader },
-                react_1.default.createElement("span", { className: StatusBadge_module_scss_1.default.panelTitle }, "Verification checklist"),
-                react_1.default.createElement("span", { className: StatusBadge_module_scss_1.default.panelCountPill },
+        react_1.default.createElement("div", { className: "".concat(Statusbadge_module_scss_1.default.panel, " ").concat(open ? Statusbadge_module_scss_1.default.panelOpen : ""), role: "dialog", "aria-label": "Verification checklist" },
+            react_1.default.createElement("div", { className: Statusbadge_module_scss_1.default.panelHeader },
+                react_1.default.createElement("span", { className: Statusbadge_module_scss_1.default.panelTitle }, "Verification checklist"),
+                react_1.default.createElement("span", { className: Statusbadge_module_scss_1.default.panelCountPill },
                     doneCount,
                     " / ",
                     total,
                     " done")),
-            react_1.default.createElement("div", { className: StatusBadge_module_scss_1.default.stepList }, steps.map(function (step, idx) { return (react_1.default.createElement(react_1.default.Fragment, { key: step.id },
-                idx > 0 && (react_1.default.createElement("div", { className: "".concat(StatusBadge_module_scss_1.default.connector, " ").concat(steps[idx - 1].state === "done" ? StatusBadge_module_scss_1.default.connectorDone : "") })),
-                react_1.default.createElement("div", { className: StatusBadge_module_scss_1.default.stepItem },
-                    react_1.default.createElement("div", { className: "".concat(StatusBadge_module_scss_1.default.stepIcon, " ").concat(StatusBadge_module_scss_1.default["stepIcon_".concat(step.state)], " ").concat(animated ? StatusBadge_module_scss_1.default.stepIconAnimate : ""), style: { animationDelay: "".concat(idx * 0.08 + 0.1, "s") } }, ICON_MAP[step.state]),
-                    react_1.default.createElement("div", { className: StatusBadge_module_scss_1.default.stepInfo },
-                        react_1.default.createElement("div", { className: StatusBadge_module_scss_1.default.stepName }, step.name),
-                        react_1.default.createElement("div", { className: StatusBadge_module_scss_1.default.stepSub }, step.sub)),
-                    react_1.default.createElement("span", { className: "".concat(StatusBadge_module_scss_1.default.stepBadge, " ").concat(StatusBadge_module_scss_1.default["badge_".concat(step.state)]) }, BADGE_LABEL[step.state])))); })),
-            react_1.default.createElement("div", { className: StatusBadge_module_scss_1.default.panelFooter },
+            react_1.default.createElement("div", { className: Statusbadge_module_scss_1.default.stepList }, steps.map(function (step, idx) { return (react_1.default.createElement(react_1.default.Fragment, { key: step.id },
+                idx > 0 && (react_1.default.createElement("div", { className: "".concat(Statusbadge_module_scss_1.default.connector, " ").concat(steps[idx - 1].state === "done" ? Statusbadge_module_scss_1.default.connectorDone : "") })),
+                react_1.default.createElement("div", { className: Statusbadge_module_scss_1.default.stepItem },
+                    react_1.default.createElement("div", { className: "".concat(Statusbadge_module_scss_1.default.stepIcon, " ").concat(Statusbadge_module_scss_1.default["stepIcon_".concat(step.state)], " ").concat(animated ? Statusbadge_module_scss_1.default.stepIconAnimate : ""), style: { animationDelay: "".concat(idx * 0.08 + 0.1, "s") } }, ICON_MAP[step.state]),
+                    react_1.default.createElement("div", { className: Statusbadge_module_scss_1.default.stepInfo },
+                        react_1.default.createElement("div", { className: Statusbadge_module_scss_1.default.stepName }, step.name),
+                        react_1.default.createElement("div", { className: Statusbadge_module_scss_1.default.stepSub }, step.sub)),
+                    react_1.default.createElement("span", { className: "".concat(Statusbadge_module_scss_1.default.stepBadge, " ").concat(Statusbadge_module_scss_1.default["badge_".concat(step.state)]) }, BADGE_LABEL[step.state])))); })),
+            react_1.default.createElement("div", { className: Statusbadge_module_scss_1.default.panelFooter },
                 INFO_ICON,
                 "Pending steps require document upload"))));
 };

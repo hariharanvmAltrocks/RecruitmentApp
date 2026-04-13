@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import styles from "./StatusBadge.module.scss";
+import styles from "./Statusbadge.module.scss";
 
 export type VerificationState = "done" | "pending" | "warning";
 

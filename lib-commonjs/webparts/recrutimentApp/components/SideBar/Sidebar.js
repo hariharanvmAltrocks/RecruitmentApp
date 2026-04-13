@@ -76,7 +76,7 @@ var SideNavigation = function (_a) {
                 react_1.default.createElement("img", { src: require("../../assets/komoa-logo.png"), alt: "Kamoa Logo", className: SideNavigation_module_scss_1.default.logoImg })),
             react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.logoTextWrap },
                 react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.logoTitle }, "Kamoa Copper"),
-                react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.logoSubtitle }, "Enterprise"))),
+                react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.logoSubtitle }, "SA"))),
         react_1.default.createElement("nav", { className: SideNavigation_module_scss_1.default.nav },
             !isCollapsed && react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.sectionLabel }, "Main Menu"),
             sortedMenu.map(function (parent) { return (react_1.default.createElement(SidebarItem, { key: parent.Id, item: parent, activeMenuID: activeMenuID, onSelectCallback: handleSelect, isExpanded: expandedMenus.includes(parent.Id), onToggleExpand: function () { return toggleExpand(parent.Id); }, isCollapsed: isCollapsed })); })),

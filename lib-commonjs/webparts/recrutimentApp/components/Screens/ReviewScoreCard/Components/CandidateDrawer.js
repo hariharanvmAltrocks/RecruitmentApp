@@ -69,7 +69,7 @@ var CandidateDrawer = function (_a) {
                     setIsRefreshing(true);
                     // If you need to trigger a parent refetch, add an `onRefresh` prop
                     // or do local logic here
-                    return [4 /*yield*/, new Promise(function (res) { return setTimeout(res, 800); })];
+                    return [4 /*yield*/, new Promise(function (resolve) { return setTimeout(resolve, 800); })];
                 case 1:
                     // If you need to trigger a parent refetch, add an `onRefresh` prop
                     // or do local logic here

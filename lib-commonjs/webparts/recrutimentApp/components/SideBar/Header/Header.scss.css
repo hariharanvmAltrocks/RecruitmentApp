@@ -1,7 +1,7 @@
 .header {
   background: #ffffff;
   border-bottom: 1px solid #e2e8f0;
-  padding: 16px 32px;
+  padding: 19px 14px;
   position: sticky;
   top: 0;
   z-index: 30;
@@ -21,9 +21,8 @@
 }
 
 .menu-btn {
-  display: none;
   padding: 8px;
-  color: #2563eb;
+  color: #7c3aed;
   border-radius: 8px;
   border: none;
   background: transparent;
@@ -62,10 +61,10 @@
   transition: color 0.2s;
 }
 .breadcrumbs a:hover {
-  color: #2563eb;
+  color: #7c3aed;
 }
 .breadcrumbs a.active {
-  color: #2563eb;
+  color: #7c3aed;
 }
 .breadcrumbs .crumb-icon {
   color: #94a3b8;
@@ -86,7 +85,7 @@
   cursor: pointer;
 }
 .notification-btn:hover {
-  color: #2563eb;
+  color: #7c3aed;
 }
 
 .notification-dot {
@@ -145,7 +144,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2563eb;
+  color: #7c3aed;
   font-weight: 700;
   border: 2px solid white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
