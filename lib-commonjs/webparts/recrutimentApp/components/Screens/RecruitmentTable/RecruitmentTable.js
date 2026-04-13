@@ -39,26 +39,38 @@ var RecruitmentTable = function () {
     var _e = (0, react_1.useState)(0), refreshKey = _e[0], setRefreshKey = _e[1];
     var handleRefresh = (0, react_1.useCallback)(function () { return setRefreshKey(function (k) { return k + 1; }); }, []);
     var _f = (0, useRecruitmentDetails_1.useRecruitmentDetails)(activeTabKey, refreshKey), items = _f.items, tableLoading = _f.loading;
-    var _g = (0, react_1.useState)(false), loading = _g[0], setLoading = _g[1];
-    var _h = (0, UIStateContext_1.useUIState)(), matricID = _h.MatricID, setMatricID = _h.setMatricID, sideNavflag = _h.sideNavflag, setCurrentTabName = _h.setCurrentTabName, currentTabName = _h.currentTabName;
-    var _j = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _j.drawerOpen, selectedJobId = _j.selectedJobId, advertLanguage = _j.advertLanguage, reviewerComments = _j.reviewerComments, acknowledgementCheckbox = _j.acknowledgementCheckbox, loadingState = _j.loadingState, openDrawer = _j.openDrawer, closeDrawer = _j.closeDrawer, setAdvertLanguage = _j.setAdvertLanguage, setComments = _j.setComments, toggleAcknowledgement = _j.toggleAcknowledgement, setLoadingState = _j.setLoadingState;
+    var _g = (0, UIStateContext_1.useUIState)(), matricID = _g.MatricID, setMatricID = _g.setMatricID, sideNavflag = _g.sideNavflag, setCurrentTabName = _g.setCurrentTabName, currentTabName = _g.currentTabName;
+    var _h = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _h.drawerOpen, selectedJobId = _h.selectedJobId, advertLanguage = _h.advertLanguage, reviewerComments = _h.reviewerComments, acknowledgementCheckbox = _h.acknowledgementCheckbox, loadingState = _h.loadingState, openDrawer = _h.openDrawer, closeDrawer = _h.closeDrawer, setAdvertLanguage = _h.setAdvertLanguage, setComments = _h.setComments, toggleAcknowledgement = _h.toggleAcknowledgement, setLoadingState = _h.setLoadingState;
     var drawerMeta = (0, react_1.useRef)({
         isOpen: false,
         selectedType: "",
     });
-    var _k = (0, react_1.useState)(false), isPopupOpen = _k[0], setIsPopupOpen = _k[1];
+    var _j = (0, react_1.useState)(false), isPopupOpen = _j[0], setIsPopupOpen = _j[1];
     var handleClosePopup = (0, react_1.useCallback)(function () { return setIsPopupOpen(false); }, []);
-    var _l = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh), handleConfirmAssignment = _l.handleConfirmAssignment, assignmentModalState = _l.modalState, assignmentCloseModal = _l.closeModal;
-    //  const hook             = useReviewScoreCardContext();
-    var _m = (0, useModalPopup_1.useModalPopup)(), modalState = _m.modalState, showModal = _m.showModal, closeModal = _m.closeModal;
-    var _o = (0, react_1.useState)([]), selectedIds = _o[0], setSelectedIds = _o[1];
-    var _p = (0, react_1.useState)(0), selectedMemberId = _p[0], setSelectedMemberId = _p[1];
-    var _q = (0, react_1.useState)(5), pageSize = _q[0], setPageSize = _q[1];
-    var _r = (0, react_1.useState)(1), currentPage = _r[0], setCurrentPage = _r[1];
+    var handleCancel = (0, react_1.useCallback)(function () {
+        showModal({
+            type: "warning",
+            title: "Cancel Assignment",
+            message: "Are you sure you want to cancel the assignment?",
+            confirmLabel: "Yes",
+            cancelLabel: "No",
+            onConfirm: function () {
+                handleClosePopup();
+                closeModal();
+            },
+            onCancel: closeModal,
+        });
+    }, []);
+    var _k = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh), handleConfirmAssignment = _k.handleConfirmAssignment, assignmentModalState = _k.modalState, assignmentCloseModal = _k.closeModal, loading = _k.loading;
+    var _l = (0, useModalPopup_1.useModalPopup)(), modalState = _l.modalState, showModal = _l.showModal, closeModal = _l.closeModal;
+    var _m = (0, react_1.useState)([]), selectedIds = _m[0], setSelectedIds = _m[1];
+    var _o = (0, react_1.useState)(0), selectedMemberId = _o[0], setSelectedMemberId = _o[1];
+    var _p = (0, react_1.useState)(5), pageSize = _p[0], setPageSize = _p[1];
+    var _q = (0, react_1.useState)(1), currentPage = _q[0], setCurrentPage = _q[1];
     var selectedItems = (0, react_1.useMemo)(function () { return items.filter(function (item) { return selectedIds.includes(item.id); }); }, [items, selectedIds]);
     var selectedJobCode = (0, react_1.useMemo)(function () { var _a; return (selectedItems.length === 1 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.jobCode : ""); }, [selectedItems]);
     var selectedNationality = (0, react_1.useMemo)(function () { var _a; return (selectedItems.length === 1 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.nationality : ""); }, [selectedItems]);
-    var _s = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _s.members, membersLoading = _s.loading;
+    var _r = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _r.members, membersLoading = _r.loading;
     var selectedMember = (0, react_1.useMemo)(function () { var _a; return (_a = members.find(function (m) { return m.id === selectedMemberId; })) !== null && _a !== void 0 ? _a : null; }, [members, selectedMemberId]);
     var activeTabs = (0, react_1.useMemo)(function () { return tabs.find(function (tab) { return tab.key === activeTabKey; }); }, [activeTabKey, tabs]);
     (0, react_1.useEffect)(function () {
@@ -240,6 +252,7 @@ var RecruitmentTable = function () {
         onAction: handleAction,
     });
     return (react_1.default.createElement("section", { className: "recruitment-table" },
+        loading && react_1.default.createElement(loading_1.default, null),
         react_1.default.createElement("div", { className: "recruitment-table__tabs" },
             react_1.default.createElement(Tabs_1.default, { tabs: tabs, activeKey: activeTabKey, onChange: handleTabChange, loading: tabsLoading, variant: "boxed" })),
         react_1.default.createElement("div", { className: "recruitment-table__table-card" },
@@ -275,11 +288,10 @@ var RecruitmentTable = function () {
                         "Execute Assignment",
                         react_1.default.createElement(lucide_react_1.ChevronRight, { size: 16 })))))),
         isPopupOpen && (react_1.default.createElement(react_1.Suspense, { fallback: null },
-            react_1.default.createElement(AssignHRPopup, { isOpen: isPopupOpen, selectedItems: selectedItems, assignedMember: selectedMember, onClose: handleClosePopup, onConfirm: handleConfirmAssignment }))),
+            react_1.default.createElement(AssignHRPopup, { isOpen: isPopupOpen, selectedItems: selectedItems, assignedMember: selectedMember, onClose: handleClosePopup, oncancel: handleCancel, onConfirm: handleConfirmAssignment }))),
         drawerMeta.current.isOpen && (react_1.default.createElement(AdvertReviewDrawer_1.AdvertReviewDrawer, { drawerOpen: drawerOpen, selectedJobId: selectedJobId, selectedJobCode: selectedJobCode, selectedType: drawerMeta.current.selectedType, advertLanguage: advertLanguage, reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, loadingState: loadingState, onClose: closeDrawer, onLanguageChange: setAdvertLanguage, onCommentsChange: setComments, onToggleAcknowledgement: toggleAcknowledgement, setLoadingState: setLoadingState, refreshKey: handleRefresh })),
         react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, assignmentModalState, { onClose: assignmentCloseModal })),
-        react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal })),
-        loading && react_1.default.createElement(loading_1.default, null)));
+        react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal }))));
 };
 exports.RecruitmentTable = RecruitmentTable;
 //# sourceMappingURL=RecruitmentTable.js.map

@@ -75,7 +75,7 @@ var mapResponseByListName = function (listName, data) {
     }
 };
 exports.mapResponseByListName = mapResponseByListName;
-var useTrackerData = function (MatricID) {
+var useTrackerData = function (MatricID, refreshKey) {
     var _a = (0, RoleContext_1.userInfo)(), ADGroupData = _a.ADGroupData, roleIDs = _a.roleIDs;
     var _b = (0, react_1.useState)([]), trackerData = _b[0], setTrackerData = _b[1];
     var _c = (0, react_1.useState)(false), loading = _c[0], setLoading = _c[1];
@@ -117,7 +117,7 @@ var useTrackerData = function (MatricID) {
                 case 4: return [2 /*return*/];
             }
         });
-    }); }, [MatricID]);
+    }); }, [MatricID, refreshKey]);
     (0, react_1.useEffect)(function () {
         if (!MatricID)
             return;

@@ -7,7 +7,7 @@ var metricColumns_config_1 = require("../metricColumns.config");
 var ServiceExport_1 = require("../../../../services/ServiceExport");
 var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
 var ApiConfig_1 = require("../../../../utilities/ApiConfig");
-var useDashboardMetrics = function () {
+var useDashboardMetrics = function (refreshKey) {
     var _a = (0, RoleContext_1.useRoleContext)(), roleIDs = _a.roleIDs, ADGroupData = _a.ADGroupData;
     var _b = (0, react_1.useState)([]), metrics = _b[0], setMetrics = _b[1];
     var _c = (0, react_1.useState)(false), loading = _c[0], setLoading = _c[1];
@@ -44,12 +44,12 @@ var useDashboardMetrics = function () {
         if (!queries.length)
             return;
         void fetchMetrics();
-    }, [fetchMetrics, queries]);
+    }, [fetchMetrics, queries, refreshKey]);
     var memoizedMetrics = (0, react_1.useMemo)(function () { return metrics; }, [metrics]);
     return {
         metrics: memoizedMetrics,
         loading: loading,
-        refresh: fetchMetrics
+        refresh: fetchMetrics,
     };
 };
 exports.useDashboardMetrics = useDashboardMetrics;

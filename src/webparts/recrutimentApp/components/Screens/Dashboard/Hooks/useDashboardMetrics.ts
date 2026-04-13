@@ -5,55 +5,42 @@ import { DashboardServices } from "../../../../services/ServiceExport";
 import { useRoleContext } from "../../../../utilities/hooks/RoleContext";
 import { ResponeStatus } from "../../../../utilities/ApiConfig";
 
-export const useDashboardMetrics = () => {
-    const { roleIDs, ADGroupData } = useRoleContext();
-    const [metrics, setMetrics] = useState<Metric[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+export const useDashboardMetrics = (refreshKey: number) => {
+  const { roleIDs, ADGroupData } = useRoleContext();
+  const [metrics, setMetrics] = useState<Metric[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-    console.log(ADGroupData.EmailId, "EmailId");
+  console.log(ADGroupData.EmailId, "EmailId");
 
+  const queries = useMemo(() => {
+    return getRoleBasedFilters(roleIDs, ADGroupData.EmailId[0]);
+  }, [roleIDs]);
 
-    const queries = useMemo(() => {
-        return getRoleBasedFilters(roleIDs, ADGroupData.EmailId[0]);
-    }, [roleIDs]);
+  const fetchMetrics = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await DashboardServices.GetDashboardCount(queries, roleIDs);
+      if (data.status === ResponeStatus.SUCCESS) {
+        setMetrics(data.data);
+      }
+    } catch (error) {
+      console.error("Dashboard metrics error", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [queries]);
 
+  useEffect(() => {
+    if (!queries.length) return;
 
-    const fetchMetrics = useCallback(async () => {
+    void fetchMetrics();
+  }, [fetchMetrics, queries, refreshKey]);
 
-        try {
+  const memoizedMetrics = useMemo(() => metrics, [metrics]);
 
-            setLoading(true);
-            const data = await DashboardServices.GetDashboardCount(queries, roleIDs)
-            if (data.status === ResponeStatus.SUCCESS) {
-                setMetrics(data.data);
-            }
-
-        } catch (error) {
-
-            console.error("Dashboard metrics error", error);
-
-        } finally {
-
-            setLoading(false);
-
-        }
-
-    }, [queries]);
-
-    useEffect(() => {
-
-        if (!queries.length) return;
-
-        void fetchMetrics();
-
-    }, [fetchMetrics, queries]);
-
-    const memoizedMetrics = useMemo(() => metrics, [metrics]);
-
-    return {
-        metrics: memoizedMetrics,
-        loading,
-        refresh: fetchMetrics
-    };
-
+  return {
+    metrics: memoizedMetrics,
+    loading,
+    refresh: fetchMetrics,
+  };
 };

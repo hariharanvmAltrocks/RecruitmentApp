@@ -910,6 +910,7 @@ const RoleMetricFilters: Record<number, number[]> = {
   [RoleID.RecruitmentHR]: [
     MatricID.JobAdvert,
     MatricID.ReviewProfileHR,
+    MatricID.AssignAgencies,
     MatricID.AssignInterviewPanel,
     MatricID.InterviewQuestionHR,
     MatricID.EvalutionHR,

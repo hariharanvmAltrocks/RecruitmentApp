@@ -18,10 +18,12 @@ var DashboardSkeleton_1 = require("./DashboardSkeleton");
 var Dashboard = function (props) {
     var _a;
     var _b = (0, react_1.useState)(0), activeMetric = _b[0], setActiveMetric = _b[1];
+    var _c = (0, react_1.useState)(0), refreshKey = _c[0], setRefreshKey = _c[1];
+    var martics = (0, useDashboardMetrics_1.useDashboardMetrics)(refreshKey);
+    var _d = (0, usetrackerdata_1.useTrackerData)(activeMetric, refreshKey), trackerData = _d.trackerData, trackerLoading = _d.loading;
+    var _e = (0, useUrgentTasks_1.useUrgentTasks)(refreshKey), urgentTasks = _e.urgentTasks, urgentLoading = _e.loading;
     var navigate = (0, react_router_1.useNavigate)();
-    var martics = (0, useDashboardMetrics_1.useDashboardMetrics)();
-    var _c = (0, UIStateContext_1.useUIState)(), setActiveMenuID = _c.setActiveMenuID, setNavigationPath = _c.setNavigationPath, setActiveTab = _c.setActiveTab, navigationPath = _c.navigationPath, setMatricID = _c.setMatricID, setCurrentTabName = _c.setCurrentTabName;
-    var _d = (0, usetrackerdata_1.useTrackerData)(activeMetric), trackerData = _d.trackerData, trackerLoading = _d.loading;
+    var _f = (0, UIStateContext_1.useUIState)(), setActiveMenuID = _f.setActiveMenuID, setNavigationPath = _f.setNavigationPath, setActiveTab = _f.setActiveTab, navigationPath = _f.navigationPath, setMatricID = _f.setMatricID, setCurrentTabName = _f.setCurrentTabName;
     var ref = (0, react_1.useRef)(0);
     (0, react_1.useEffect)(function () {
         if (martics.metrics.length > 0 && !activeMetric) {
@@ -34,7 +36,6 @@ var Dashboard = function (props) {
             setMatricID(martics.metrics[0].id);
         }
     }, [martics.metrics]);
-    var _e = (0, useUrgentTasks_1.useUrgentTasks)(), urgentTasks = _e.urgentTasks, urgentLoading = _e.loading;
     var onMetricChange = function (data) {
         setActiveMetric(data.id);
         setNavigationPath(data.path);
@@ -44,10 +45,17 @@ var Dashboard = function (props) {
         setCurrentTabName(data.TabName);
         setMatricID(data.id);
     };
+    var handleRefresh = function () {
+        setRefreshKey(function (prev) { return prev + 1; });
+        setActiveMetric(0);
+    };
     var selectedMetric = (_a = martics.metrics.find(function (m) { return m.id === activeMetric; })) !== null && _a !== void 0 ? _a : martics.metrics[0];
     var priorityData = (0, metricColumns_config_1.priorityValues)(martics.metrics);
     var total = (0, metricColumns_config_1.totalPriority)(martics.metrics);
-    var loading = martics.loading || trackerLoading || urgentLoading;
+    var loading = martics.loading ||
+        trackerLoading ||
+        urgentLoading ||
+        martics.metrics.length === 0;
     var hasMetrics = martics.metrics && martics.metrics.length > 0;
     var onTrackerChange = function (row) {
         if (selectedMetric === null || selectedMetric === void 0 ? void 0 : selectedMetric.showArrow) {
@@ -57,13 +65,21 @@ var Dashboard = function (props) {
     };
     var metricsContainer = {
         hidden: {},
-        visible: { transition: { staggerChildren: 0.1 } }
+        visible: { transition: { staggerChildren: 0.1 } },
     };
     var metricItem = {
         hidden: { opacity: 0, y: 10 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.25 } }
+        visible: { opacity: 1, y: 0, transition: { duration: 0.25 } },
     };
     return (react_1.default.createElement(framer_motion_1.motion.div, { className: "dashboard", key: "dashboard", initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 10 }, transition: { duration: 0.3 } },
+        react_1.default.createElement("div", { className: "dashboard-header" },
+            react_1.default.createElement("button", { className: "refresh-btn", onClick: handleRefresh, disabled: loading },
+                react_1.default.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: loading ? "spin" : "" },
+                    react_1.default.createElement("path", { d: "M21 2v6h-6" }),
+                    react_1.default.createElement("path", { d: "M3 12a9 9 0 0 1 15-6.7L21 8" }),
+                    react_1.default.createElement("path", { d: "M3 22v-6h6" }),
+                    react_1.default.createElement("path", { d: "M21 12a9 9 0 0 1-15 6.7L3 16" })),
+                "Refresh")),
         react_1.default.createElement(framer_motion_1.AnimatePresence, null, loading ? (react_1.default.createElement(DashboardSkeleton_1.DashboardSkeleton, { key: "dashboard-skeleton" })) : (react_1.default.createElement(framer_motion_1.motion.div, { key: "dashboard-content", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 } }, !hasMetrics ? (react_1.default.createElement("div", { className: "dashboard-empty" },
             react_1.default.createElement("div", { className: "dashboard-empty__title" }, "No dashboard metrics available"),
             react_1.default.createElement("div", { className: "dashboard-empty__subtitle" }, "Please check your permissions or try again later."))) : (react_1.default.createElement(react_1.default.Fragment, null,

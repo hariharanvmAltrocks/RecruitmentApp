@@ -74,7 +74,7 @@ export const mapResponseByListName = (listName: string, data: any[]) => {
   }
 };
 
-export const useTrackerData = (MatricID: number) => {
+export const useTrackerData = (MatricID: number, refreshKey: number) => {
   const { ADGroupData, roleIDs } = userInfo();
 
   const [trackerData, setTrackerData] = useState<any[]>([]);
@@ -117,7 +117,7 @@ export const useTrackerData = (MatricID: number) => {
     } finally {
       setLoading(false);
     }
-  }, [MatricID]);
+  }, [MatricID, refreshKey]);
 
   useEffect(() => {
     if (!MatricID) return;

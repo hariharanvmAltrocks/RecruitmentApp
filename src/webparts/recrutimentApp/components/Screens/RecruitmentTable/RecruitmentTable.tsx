@@ -65,8 +65,6 @@ export const RecruitmentTable: React.FC = () => {
     refreshKey,
   );
 
-  const [loading, setLoading] = useState(false);
-
   const {
     MatricID: matricID,
     setMatricID,
@@ -98,13 +96,27 @@ export const RecruitmentTable: React.FC = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const handleClosePopup = useCallback(() => setIsPopupOpen(false), []);
 
+  const handleCancel = useCallback(() => {
+    showModal({
+      type: "warning",
+      title: "Cancel Assignment",
+      message: "Are you sure you want to cancel the assignment?",
+      confirmLabel: "Yes",
+      cancelLabel: "No",
+      onConfirm: () => {
+        handleClosePopup();
+        closeModal();
+      },
+      onCancel: closeModal,
+    });
+  }, []);
+
   const {
     handleConfirmAssignment,
     modalState: assignmentModalState,
     closeModal: assignmentCloseModal,
+    loading,
   } = useConfirmAssignment(handleClosePopup, handleRefresh);
-
-  //  const hook             = useReviewScoreCardContext();
 
   const { modalState, showModal, closeModal } = useModalPopup();
 
@@ -357,6 +369,8 @@ export const RecruitmentTable: React.FC = () => {
 
   return (
     <section className="recruitment-table">
+      {loading && <Loading />}
+
       <div className="recruitment-table__tabs">
         <Tabs
           tabs={tabs}
@@ -465,6 +479,7 @@ export const RecruitmentTable: React.FC = () => {
             selectedItems={selectedItems}
             assignedMember={selectedMember}
             onClose={handleClosePopup}
+            oncancel={handleCancel}
             onConfirm={handleConfirmAssignment}
           />
         </Suspense>
@@ -491,7 +506,6 @@ export const RecruitmentTable: React.FC = () => {
 
       <ModalPopup {...assignmentModalState} onClose={assignmentCloseModal} />
       <ModalPopup {...modalState} onClose={closeModal} />
-      {loading && <Loading />}
     </section>
   );
 };

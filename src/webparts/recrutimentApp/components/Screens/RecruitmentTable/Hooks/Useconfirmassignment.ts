@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AssignmentPayload, RecruitmentItem } from "../RecruitmentTable.types";
 import {
@@ -23,6 +23,7 @@ export const useConfirmAssignment = (
   handleClosePopup: () => void,
   handleRefresh: () => void,
 ) => {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { roleIDs, ADGroupData } = userInfo();
   const { MatricID } = useUIState();
@@ -35,6 +36,7 @@ export const useConfirmAssignment = (
       Submitted.current = true;
 
       try {
+        setLoading(true);
         const isHRLead = roleIDs.includes(RoleID.RecruitmentHRLead);
 
         const userIDResult = isHRLead
@@ -219,6 +221,8 @@ export const useConfirmAssignment = (
         Submitted.current = false;
         console.error("Critical error during submission:", error);
         showError("An unexpected error occurred. Please try again.");
+      } finally {
+        setLoading(false);
       }
     },
     [roleIDs, ADGroupData, navigate, showModal, closeModal, showError],
@@ -229,5 +233,6 @@ export const useConfirmAssignment = (
     Submitted,
     modalState,
     closeModal,
+    loading,
   };
 };

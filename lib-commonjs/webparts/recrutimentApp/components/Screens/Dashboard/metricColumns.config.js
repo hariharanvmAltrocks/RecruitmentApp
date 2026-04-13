@@ -668,6 +668,7 @@ var RoleMetricFilters = (_b = {},
     _b[Config_1.RoleID.RecruitmentHR] = [
         ConditionConfig_1.MatricID.JobAdvert,
         ConditionConfig_1.MatricID.ReviewProfileHR,
+        ConditionConfig_1.MatricID.AssignAgencies,
         ConditionConfig_1.MatricID.AssignInterviewPanel,
         ConditionConfig_1.MatricID.InterviewQuestionHR,
         ConditionConfig_1.MatricID.EvalutionHR,

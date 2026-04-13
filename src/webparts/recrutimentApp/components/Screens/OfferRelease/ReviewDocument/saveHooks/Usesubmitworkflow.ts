@@ -195,43 +195,43 @@ async function resolveStatus(
           StatusId: StatusID,
           documentResponse,
         };
+      } else {
+        let initiateLabour: InitiateLaborHire = {
+          ID: data.ID,
+          IsExpat: data.Nationality === "Expatriate" ? true : false,
+          jobRequestID: Number(data.JobRequestID),
+          positionId: data.positionID,
+          location: data.Location,
+          businessUnit: data.BusinessUnitCode,
+          department: data.Department,
+          section: data.Section,
+          patersonGrade: data.patersonGrade,
+          drcGrade: data.drcGrade,
+          reportingManager: "",
+          dateOfJoining: data.JoiningDate ? new Date(data.JoiningDate) : null,
+          typeOfContract: data.TypeofContract,
+          noOfMonths: data.NoticePeriod,
+          createdOn: new Date(),
+          createdBy: RoleName.RecruitmentHR,
+          createrEmail: email,
+        };
+
+        const response = await OfferServices.InitiateLabouHireOfferRelease(
+          initiateLabour,
+          email,
+        );
+        return {
+          workflowStatusValue: workflowStatusApi.PendingHROfferInitiate,
+          successMsg: RecuritmentHRMsg.OfferLetterinit,
+          StatusId: StatusID,
+          documentResponse: {
+            status:
+              response.status === 200
+                ? ResponeStatus.SUCCESS
+                : ResponeStatus.FAILED,
+          },
+        };
       }
-
-      let initiateLabour: InitiateLaborHire = {
-        ID: data.ID,
-        IsExpat: data.Nationality === "Expatriate" ? true : false,
-        jobRequestID: Number(data.JobRequestID),
-        positionId: data.positionID,
-        location: data.Location,
-        businessUnit: data.BusinessUnitCode,
-        department: data.Department,
-        section: data.Section,
-        patersonGrade: data.patersonGrade,
-        drcGrade: data.drcGrade,
-        reportingManager: "",
-        dateOfJoining: data.JoiningDate ? new Date(data.JoiningDate) : null,
-        typeOfContract: data.TypeofContract,
-        noOfMonths: data.NoticePeriod,
-        createdOn: new Date(),
-        createdBy: RoleName.RecruitmentHR,
-        createrEmail: email,
-      };
-
-      const response = await OfferServices.InitiateLabouHireOfferRelease(
-        initiateLabour,
-        email,
-      );
-      return {
-        workflowStatusValue: workflowStatusApi.PendingHROfferInitiate,
-        successMsg: RecuritmentHRMsg.OfferLetterinit,
-        StatusId: StatusID,
-        documentResponse: {
-          status:
-            response.status === 200
-              ? ResponeStatus.SUCCESS
-              : ResponeStatus.FAILED,
-        },
-      };
     }
 
     case StatusId.PendingHROfferReview: {

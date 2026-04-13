@@ -22,7 +22,10 @@ const Header: React.FC<HeaderProps> = ({ menuData, onToggleSidebar, onLogout }) 
 
   const breadcrumbs = useMemo(() => findBreadcrumbPath(menuData, pathname), [menuData, pathname]);
 
-  const UserName = ADGroupData.userDetails[0]?.FirstName + " " + ADGroupData.userDetails[0]?.MiddleName + " " + ADGroupData.userDetails[0]?.LastName;
+  const user = ADGroupData?.userDetails?.[0];
+  const UserName = [user?.FirstName, user?.MiddleName, user?.LastName]
+    .filter(Boolean)
+    .join(" ");
   return (
     <header className="header" style={{ background: theme.headerColor }}>
       <div className="header-container">

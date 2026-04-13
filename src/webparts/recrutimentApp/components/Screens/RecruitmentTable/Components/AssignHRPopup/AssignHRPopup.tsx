@@ -1,6 +1,10 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { BadgeCheck, Loader2, Send, X } from "lucide-react";
-import { AssignmentPayload, HrMember, RecruitmentItem } from "../../RecruitmentTable.types";
+import {
+  AssignmentPayload,
+  HrMember,
+  RecruitmentItem,
+} from "../../RecruitmentTable.types";
 import "./AssignHRPopup.scss";
 
 interface AssignHRPopupProps {
@@ -8,6 +12,7 @@ interface AssignHRPopupProps {
   selectedItems: RecruitmentItem[];
   assignedMember: HrMember | null;
   onClose: () => void;
+  oncancel: () => void;
   onConfirm: (payload: AssignmentPayload) => void;
 }
 
@@ -16,6 +21,7 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
   selectedItems,
   assignedMember,
   onClose,
+  oncancel,
   onConfirm,
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,7 +48,14 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
     } finally {
       setIsSubmitting(false);
     }
-  }, [comments, onConfirm, assignedMember, selectedItems, isSubmitting, isCommentsValid]);
+  }, [
+    comments,
+    onConfirm,
+    assignedMember,
+    selectedItems,
+    isSubmitting,
+    isCommentsValid,
+  ]);
 
   if (!isOpen) {
     return null;
@@ -51,7 +64,12 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
   return (
     <div className="modal-popup" role="dialog" aria-modal="true">
       <div className="modal-popup__card">
-        <button className="modal-popup__close" type="button" onClick={onClose} aria-label="Close">
+        <button
+          className="modal-popup__close"
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+        >
           <X size={20} />
         </button>
         <div className="modal-popup__title">
@@ -89,7 +107,9 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
         </div>
 
         <div className="modal-popup__section">
-          <div className="modal-popup__section-title">Instructions / Comments for Staff</div>
+          <div className="modal-popup__section-title">
+            Instructions / Comments for Staff
+          </div>
           <textarea
             className="modal-popup__input"
             placeholder="Enter specific instructions for the assigned HR member..."
@@ -104,7 +124,7 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
           <button
             className="modal-popup__btn modal-popup__btn--ghost"
             type="button"
-            onClick={onClose}
+            onClick={oncancel}
             disabled={isSubmitting}
           >
             Cancel

@@ -13,11 +13,12 @@ var useModalPopup_1 = require("../../../Comman/ModalPopup/useModalPopup");
 var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
 var UIStateContext_1 = require("../../../RecrutimentApp/UIStateContext");
 var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
+    var _a = (0, react_1.useState)(false), loading = _a[0], setLoading = _a[1];
     var navigate = (0, react_router_dom_1.useNavigate)();
-    var _a = (0, RoleContext_1.userInfo)(), roleIDs = _a.roleIDs, ADGroupData = _a.ADGroupData;
+    var _b = (0, RoleContext_1.userInfo)(), roleIDs = _b.roleIDs, ADGroupData = _b.ADGroupData;
     var MatricID = (0, UIStateContext_1.useUIState)().MatricID;
     var showError = (0, useToast_1.useToast)().showError;
-    var _b = (0, useModalPopup_1.useModalPopup)(), modalState = _b.modalState, showModal = _b.showModal, closeModal = _b.closeModal;
+    var _c = (0, useModalPopup_1.useModalPopup)(), modalState = _c.modalState, showModal = _c.showModal, closeModal = _c.closeModal;
     var Submitted = (0, react_1.useRef)(false);
     var handleConfirmAssignment = (0, react_1.useCallback)(function (payload) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var isHRLead, userIDResult_1, _a, vacancyDetailResults, unresolved, batchPayloads, batchResponse, batchPayloads, batchResponse, error_1;
@@ -28,7 +29,8 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                     Submitted.current = true;
                     _d.label = 1;
                 case 1:
-                    _d.trys.push([1, 11, , 12]);
+                    _d.trys.push([1, 11, 12, 13]);
+                    setLoading(true);
                     isHRLead = roleIDs.includes(Config_1.RoleID.RecruitmentHRLead);
                     if (!isHRLead) return [3 /*break*/, 3];
                     return [4 /*yield*/, ServiceExport_1.CommonServices.getUserIDByEmail((_c = Number((_b = payload.member) === null || _b === void 0 ? void 0 : _b.id)) !== null && _c !== void 0 ? _c : 0)];
@@ -208,14 +210,17 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                         showError("Something went wrong. Please try again.");
                     }
                     _d.label = 10;
-                case 10: return [3 /*break*/, 12];
+                case 10: return [3 /*break*/, 13];
                 case 11:
                     error_1 = _d.sent();
                     Submitted.current = false;
                     console.error("Critical error during submission:", error_1);
                     showError("An unexpected error occurred. Please try again.");
-                    return [3 /*break*/, 12];
-                case 12: return [2 /*return*/];
+                    return [3 /*break*/, 13];
+                case 12:
+                    setLoading(false);
+                    return [7 /*endfinally*/];
+                case 13: return [2 /*return*/];
             }
         });
     }); }, [roleIDs, ADGroupData, navigate, showModal, closeModal, showError]);
@@ -224,6 +229,7 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
         Submitted: Submitted,
         modalState: modalState,
         closeModal: closeModal,
+        loading: loading,
     };
 };
 exports.useConfirmAssignment = useConfirmAssignment;
