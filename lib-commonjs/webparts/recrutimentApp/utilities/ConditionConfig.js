@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ActionName = exports.EmployeementCategory = exports.ButtonAction = exports.DotTooltipStatus = exports.StatusBarValue = exports.DotAfricaStatus = exports.ExternalUserType = exports.DisplayFolderName = exports.BGVDocumentName = exports.DocumentFolderName = exports.RecuritmentHRMsg = exports.EmailTemplateCodes = exports.ActionID = exports.InterviewLevels = exports.QuestionCreatedBy = exports.InterviewLevel = exports.TabNames = exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
+exports.CheckboxContent = exports.ActionName = exports.EmployeementCategory = exports.ButtonAction = exports.DotTooltipStatus = exports.StatusBarValue = exports.DotAfricaStatus = exports.ExternalUserType = exports.DisplayFolderName = exports.BGVDocumentName = exports.DocumentFolderName = exports.RecuritmentHRMsg = exports.EmailTemplateCodes = exports.ActionID = exports.InterviewLevels = exports.QuestionCreatedBy = exports.InterviewLevel = exports.TabNames = exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
 exports.MatricID = {
     AssignHr: 1,
     UploadONEM: 2,
@@ -21,7 +21,7 @@ exports.MatricID = {
     interviewTracker: 14,
     AdvertReviewLM: 15,
     AdvertReviewHOD: 16,
-    InterviewQuestionLM: 17,
+    DisqualifiQuesLM: 17,
     ReviewProfileLM: 21,
     MySubmission: 22,
     AssignAgencies: 23,
@@ -33,6 +33,7 @@ exports.MatricID = {
     MySubmissionLM: 29,
     MySubmissionHOD: 30,
     MySubmissionBGV: 31,
+    InterviewQuestionLM: 32,
 };
 exports.RoleName = {
     LineManager: "Line Manager",
@@ -402,5 +403,16 @@ exports.EmployeementCategory = {
 exports.ActionName = {
     Completed: "Completed",
     Pending: "Pending",
+};
+exports.CheckboxContent = {
+    CheckboxContent: "I hereby agree to submit this request for approval.",
+    ApprovalCheckbox: "I hereby acknowledge that I have reviewed the job advertisement.",
+    UploadOnemDocument: "I hereby agree to post the advert on the portal.",
+    ReviewedCandidate: "I hereby acknowledge that I have reviewed the candidate details.",
+    InterviewPanel: "I hereby reviewed candidate details and assigning interview panel.",
+    RescheduleInterview: "I hereby acknowledge that I have reschedule the interview.",
+    ScorecardEntry: "I hereby acknowledge completion of the scorecard entry.",
+    HODscorecarddetails: "I hereby acknowledge that I have reviewed the candidate scorecard details.",
+    PostRecrutimentCheckboxContent: "I confirm that I have carefully reviewed the contents and will take necessary action based on my expertise.",
 };
 //# sourceMappingURL=ConditionConfig.js.map

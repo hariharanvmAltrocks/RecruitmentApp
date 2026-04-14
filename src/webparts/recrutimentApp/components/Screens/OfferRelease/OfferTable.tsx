@@ -49,7 +49,7 @@ const ActionCell: React.FC<{
   const isInitiate = actionMode === "Initiate";
   const isReview = actionMode === "Review";
   const ActionIcon = isInitiate ? Play : isReview ? Pencil : Eye;
-  const actionLabel = isInitiate ? "INITIATE" : isReview ? "REVIEW" : "VIEW";
+  const actionLabel = isInitiate ? "Initiate" : isReview ? "REVIEW" : "VIEW";
 
   return (
     <button
@@ -58,7 +58,7 @@ const ActionCell: React.FC<{
       type="button"
       aria-label={`${actionLabel} action`}
     >
-      <ActionIcon size={16} style={{ marginRight: 8 }} />
+      {/* <ActionIcon size={16} style={{ marginRight: 8 }} /> */}
       {actionLabel}
     </button>
   );
@@ -235,6 +235,7 @@ export const OfferTable: React.FC = () => {
     candidateID: number;
     selectedcandidateID: number;
     jobrequestID: string;
+    IsExpat: boolean;
   } | null>(null);
 
   const handleAction = useCallback(
@@ -244,6 +245,7 @@ export const OfferTable: React.FC = () => {
         candidateID: item.CandidateID,
         selectedcandidateID: item.ItemID,
         jobrequestID: item.jobrequestID,
+        IsExpat: item.IsExpat,
       };
       openDrawer(item.ItemID);
     },
@@ -318,6 +320,7 @@ export const OfferTable: React.FC = () => {
           selectedcandidateID={
             selectedItemRef?.current?.selectedcandidateID ?? 0
           }
+          IsExpat={selectedItemRef?.current?.IsExpat ?? false}
           jobrequestID={selectedItemRef?.current?.jobrequestID ?? ""}
           reviewerComments={reviewerComments}
           acknowledgementCheckbox={acknowledgementCheckbox}

@@ -14,14 +14,17 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
     var matricID = (0, UIStateContext_1.useUIState)().MatricID;
     var roleIDs = (0, RoleContext_1.userInfo)().roleIDs;
     var _a = (0, react_1.useState)(false), submitting = _a[0], setSubmitting = _a[1];
+    var _b = (0, react_1.useState)(false), pageLoading = _b[0], setPageLoading = _b[1];
     var abortRef = (0, react_1.useRef)(null);
-    var _b = (0, useModalPopup_1.useModalPopup)(), modalState = _b.modalState, showModal = _b.showModal, closeModal = _b.closeModal;
+    var _c = (0, useModalPopup_1.useModalPopup)(), modalState = _c.modalState, showModal = _c.showModal, closeModal = _c.closeModal;
+    // ─── Helpers ────────────────────────────────────────────────────────────────
     var splitDateOnly = function (date) {
         var year = date.getFullYear();
         var month = String(date.getMonth() + 1).padStart(2, "0");
         var day = String(date.getDate()).padStart(2, "0");
         return new Date(Date.UTC(Number(year), Number(month) - 1, Number(day))).toISOString();
     };
+    // ─── Upload Candidate Details ────────────────────────────────────────────────
     var uploadCandidateDetails = (0, react_1.useCallback)(function (payload) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var cp, recrutimentData, interviewLevel1, COIDetails, interviewPanelL1, dobValue, dobData, startDate, endDate, candidateDetails, selectedPanel;
         var _a, _b;
@@ -57,7 +60,6 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                 InterviewTime: endDate,
                 CandidateResumeLink: (_a = cp.CandidateResumeLink) !== null && _a !== void 0 ? _a : "",
                 ActionId: Config_1.WorkflowAction.Approved,
-                // StatusId: StatusId.InterviewScheduled,
                 ConflictsOfInterest: cp.ConflictsOfInterest,
                 Disability: cp.disability,
                 DisabilityDetails: cp.disabilityReason,
@@ -102,6 +104,7 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
             return [2 /*return*/, ServiceExport_1.CandidateTable.InsertCandidateDetailsInList(candidateDetails, selectedPanel)];
         });
     }); }, [ServiceExport_1.CandidateTable]);
+    // ─── Schedule Meeting ────────────────────────────────────────────────────────
     var scheduleMeeting = (0, react_1.useCallback)(function (payload) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var cp, recrutimentData, interviewLevel1, interviewLevel2, StatusId, interviewPanelL1, organizer, requiredAttendees, startdate, enddate, optionalAttendeeL1, optionalAttendeeL2, meetingObj;
         var _a;
@@ -136,34 +139,7 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
             return [2 /*return*/, ServiceExport_1.MeetingSchedules.createMeeting(meetingObj)];
         });
     }); }, [ServiceExport_1.MeetingSchedules]);
-    // const buildInterviewObject = useCallback(
-    //   (payload: SubmitPayload) => {
-    //     const { stateValue, dateState, CandidateDetails: cp } = payload;
-    //     const isLevel2Pending =
-    //       stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel;
-    //     const isScheduledL1 = stateValue?.StatusId === StatusId.InterviewScheduled;
-    //     const startDateRaw = isLevel2Pending || !isScheduledL1 ? dateState?.startDateL2 : dateState?.startDateL1;
-    //     const endDateRaw = isLevel2Pending || !isScheduledL1 ? dateState?.endDateL2 : dateState?.endDateL1;
-    //     const roomKey = isLevel2Pending || !isScheduledL1 ? dateState.RoomDateL2?.key : dateState.RoomData?.key;
-    //     const obj: any = {
-    //       ID: Number(cp?.CandidateID),
-    //       InterviewDate: splitDateOnly(startDateRaw ?? new Date()),
-    //       InterviewTime: splitDateOnly(endDateRaw ?? new Date()),
-    //       InterviewLink: String(roomKey ?? ""),
-    //     };
-    //     if (isLevel2Pending || !isScheduledL1) {
-    //       obj.InterviewDateLevel2 = obj.InterviewDate;
-    //       obj.InterviewTimeLevel2 = obj.InterviewTime;
-    //       obj.InterviewLinkLevel2 = obj.InterviewLink;
-    //     }
-    //     if (isLevel2Pending &&  === config.TabName.AssignInterviewPanel) {
-    //       obj.ActionId = WorkflowAction.Approved;
-    //       obj.ItemCreated = Choices.Yes;
-    //     }
-    //     return obj;
-    //   },
-    //   [config]
-    // );
+    // ─── Build Workflow Data ─────────────────────────────────────────────────────
     var buildWorkflowData = (0, react_1.useCallback)(function (payload, COIButtonAction) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var COIDetails, cp, candidateId, decisionComments, decision, HRReviewComents, COIFlag, StatusId, currentUserRole, createFilter, candidateData, emailNot, popupMessage, isLineManager, isAssignInterview, isLevel2, attachmentPath, docResponse;
         var _a, _b, _c;
@@ -195,7 +171,7 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                     if (isLineManager) {
                         isLevel2 = String(StatusId) === Config_1.workflowStatusApi.LineManagerL2Pending ||
                             String(StatusId) === Config_1.workflowStatusApi.LineManagerLevel2OnHold;
-                        switch (decision) {
+                        switch (COIButtonAction) {
                             case "YES":
                                 candidateData = createFilter(isLevel2
                                     ? Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview
@@ -230,8 +206,14 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                                     : ConditionConfig_1.RecuritmentHRMsg.InterviewPanalAssignedSuccessfully;
                         }
                         else {
-                            candidateData = createFilter(Config_1.workflowStatusApi.LineManagerL1Pending);
-                            popupMessage = ConditionConfig_1.RecuritmentHRMsg.HRReviewCandidate;
+                            if (decision === "YES") {
+                                candidateData = createFilter(Config_1.workflowStatusApi.LineManagerL1Pending);
+                                popupMessage = ConditionConfig_1.RecuritmentHRMsg.HRReviewCandidate;
+                            }
+                            if (decision === "NO") {
+                                candidateData = createFilter(Config_1.workflowStatusApi.HRRejected);
+                                popupMessage = ConditionConfig_1.RecuritmentHRMsg.ProfileReviewedNo;
+                            }
                         }
                     }
                     if (!(COIFlag && String(StatusId) === Config_1.workflowStatusApi.HRPending)) return [3 /*break*/, 4];
@@ -257,48 +239,22 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                 case 4: return [2 /*return*/, { candidateData: candidateData, emailNot: emailNot, popupMessage: popupMessage }];
             }
         });
-    }); }, [ServiceExport_1.CandidateTable]);
-    // const handleInterviewReschedule = useCallback(
-    //   async (payload: SubmitPayload) => {
-    //     const { interviewedLevel, CandidateDetails: cp } = payload;
-    //     const { StatusId, InterviewLevels, RecuritmentHRMsg, HRMSAlertOptions, ListNames } = config;
-    //     const interviewObj = buildInterviewObject(payload);
-    //     const res = await CandidateTable.RescheduledInterview(interviewObj, ListNames.HRMSRecruitmentCandidatePersonalDetails);
-    //     if (res.status !== 200) {
-    //       callbacks.showAlert(RecuritmentHRMsg.APIErrorMsg, HRMSAlertOptions.Error);
-    //       return;
-    //     }
-    //     if (stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel) {
-    //       const selectedPanel = interviewedLevel.AssignInterviewedLevel2.map((item: any) => ({
-    //         RecruitmentIDId: stateValue?.RecruitmentID,
-    //         InterviewLevel: InterviewLevels.Level2,
-    //         InterviewPanel: item.key,
-    //         CandidateID: Number(cp?.CandidateID),
-    //       }));
-    //       await CandidateTable.InsertInterviewPanel(selectedPanel, Number(cp?.CandidateID));
-    //     }
-    //     const msg =
-    //       stateValue?.StatusId === StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
-    //         ? RecuritmentHRMsg.InterviewPanalLevel2
-    //         : RecuritmentHRMsg.RescheduleSuccessMsg;
-    //     callbacks.showAlert(msg, HRMSAlertOptions.Success);
-    //   },
-    //   [buildInterviewObject, config, CandidateTable, callbacks]
-    // );
+    }); }, [ServiceExport_1.CandidateTable, matricID, roleIDs]);
+    // ─── Handle Workflow Process ─────────────────────────────────────────────────
+    // NOTE: No setPageLoading calls here — all managed in executeSubmit's finally block
     var handleWorkflowProcess = (0, react_1.useCallback)(function (payload, COIButtonAction) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var _a, candidateData, emailNot, popupMessage, StatusId, interviewLevel1, interviewLevel2, uploadRes, res;
+        var _a, candidateData, emailNot, popupMessage, StatusId, interviewLevel1, uploadRes, res;
         return tslib_1.__generator(this, function (_b) {
             switch (_b.label) {
                 case 0: return [4 /*yield*/, buildWorkflowData(payload, COIButtonAction)];
                 case 1:
                     _a = _b.sent(), candidateData = _a.candidateData, emailNot = _a.emailNot, popupMessage = _a.popupMessage;
-                    StatusId = payload.StatusId, interviewLevel1 = payload.interviewLevel1, interviewLevel2 = payload.interviewLevel2;
+                    StatusId = payload.StatusId, interviewLevel1 = payload.interviewLevel1;
                     if (StatusId === Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview) {
                         emailNot.templateCode = ConditionConfig_1.EmailTemplateCodes.InterviewSchedule;
                         emailNot.dynamicFields = {
                             InterviewDate: interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startDate,
                             InterviewTime: interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startDate,
-                            // MeetingLink: String(dateState.RoomData?.key) ?? "",
                             InterviewLevel: "Level1",
                         };
                     }
@@ -321,7 +277,9 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                         return [2 /*return*/];
                     }
                     _b.label = 3;
-                case 3: return [4 /*yield*/, ServiceExport_1.CandidateTable.UpdateCandidateStatus(candidateData)];
+                case 3:
+                    console.log("candidateData", candidateData);
+                    return [4 /*yield*/, ServiceExport_1.CandidateTable.UpdateCandidateStatus(candidateData)];
                 case 4:
                     res = _b.sent();
                     if (!(res.status === 200)) return [3 /*break*/, 7];
@@ -362,8 +320,12 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
             }
         });
     }); }, [buildWorkflowData, uploadCandidateDetails, ServiceExport_1.CandidateTable]);
+    // ─── Execute Submit ──────────────────────────────────────────────────────────
+    // Single source of truth for pageLoading and submitting states.
+    // setPageLoading(true)  → top of this function
+    // setPageLoading(false) → always in the finally block
     var executeSubmit = (0, react_1.useCallback)(function (payload, COIButtonAction) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var scheduleResponse, panelL2, InterviewscheduleL2, response, err_1;
+        var isLevel2Pending, isScheduleInterview, panelL2, interviewscheduleL2Data, response, err_1;
         var _a, _b, _c;
         return tslib_1.__generator(this, function (_d) {
             switch (_d.label) {
@@ -371,21 +333,24 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                     (_a = abortRef.current) === null || _a === void 0 ? void 0 : _a.abort();
                     abortRef.current = new AbortController();
                     setSubmitting(true);
+                    setPageLoading(true); // ✅ Start loader — single entry point
                     _d.label = 1;
                 case 1:
                     _d.trys.push([1, 9, 10, 11]);
-                    if (!(payload.StatusId ===
-                        Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview)) return [3 /*break*/, 3];
+                    isLevel2Pending = Number(payload.StatusId) ===
+                        Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel;
+                    isScheduleInterview = payload.StatusId ===
+                        Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview;
+                    if (!isScheduleInterview) return [3 /*break*/, 3];
                     return [4 /*yield*/, scheduleMeeting(payload)];
                 case 2:
-                    _d.sent(); // status: 201
+                    _d.sent();
                     _d.label = 3;
                 case 3:
-                    if (!(Number(payload.StatusId) ===
-                        Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel)) return [3 /*break*/, 6];
+                    if (!isLevel2Pending) return [3 /*break*/, 6];
                     return [4 /*yield*/, scheduleMeeting(payload)];
                 case 4:
-                    scheduleResponse = _d.sent();
+                    _d.sent();
                     panelL2 = payload.interviewPanelL2.map(function (item) {
                         var _a, _b, _c, _d;
                         return ({
@@ -395,7 +360,7 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                             CandidateIDId: (_d = Number(payload.candidateId)) !== null && _d !== void 0 ? _d : 0,
                         });
                     });
-                    InterviewscheduleL2 = {
+                    interviewscheduleL2Data = {
                         candidateUpdate: {
                             ID: Number(payload.candidateId),
                             StatusId: Config_1.StatusId.InterviewScheduledforLevel2,
@@ -404,7 +369,7 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                         },
                         interviewPanelL2: panelL2,
                     };
-                    return [4 /*yield*/, ServiceExport_1.CandidateTable.InterviewScheduleLevel2(InterviewscheduleL2)];
+                    return [4 /*yield*/, ServiceExport_1.CandidateTable.InterviewScheduleLevel2(interviewscheduleL2Data)];
                 case 5:
                     response = _d.sent();
                     if (response.status === 200) {
@@ -420,9 +385,25 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                             },
                         });
                     }
+                    else {
+                        showModal({
+                            type: "error",
+                            title: "Error",
+                            message: ConditionConfig_1.RecuritmentHRMsg.APIErrorMsg,
+                            confirmLabel: "Go to Candidate Table",
+                            onConfirm: function () {
+                                closeModal();
+                                onClose();
+                                handleRefresh();
+                            },
+                        });
+                    }
                     return [3 /*break*/, 8];
-                case 6: return [4 /*yield*/, handleWorkflowProcess(payload, COIButtonAction)];
+                case 6: 
+                // All other workflow actions
+                return [4 /*yield*/, handleWorkflowProcess(payload, COIButtonAction)];
                 case 7:
+                    // All other workflow actions
                     _d.sent();
                     _d.label = 8;
                 case 8: return [3 /*break*/, 11];
@@ -431,14 +412,25 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                     if ((err_1 === null || err_1 === void 0 ? void 0 : err_1.name) === "AbortError")
                         return [2 /*return*/];
                     console.error("Submit failed:", err_1);
+                    showModal({
+                        type: "error",
+                        title: "Error",
+                        message: ConditionConfig_1.RecuritmentHRMsg.APIErrorMsg,
+                        confirmLabel: "Close",
+                        onConfirm: function () {
+                            closeModal();
+                        },
+                    });
                     return [3 /*break*/, 11];
                 case 10:
                     setSubmitting(false);
+                    setPageLoading(false); // ✅ Stop loader — always runs (success, error, or abort)
                     return [7 /*endfinally*/];
                 case 11: return [2 /*return*/];
             }
         });
-    }); }, [scheduleMeeting, handleWorkflowProcess]);
+    }); }, [scheduleMeeting, handleWorkflowProcess, ServiceExport_1.CandidateTable]);
+    // ─── Submit (Public API) ─────────────────────────────────────────────────────
     var submit = (0, react_1.useCallback)(function (payload_1) {
         var args_1 = [];
         for (var _i = 1; _i < arguments.length; _i++) {
@@ -454,6 +446,7 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                             Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel ||
                             payload.StatusId ===
                                 Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview;
+                        // Show COI confirmation modal before proceeding
                         if (!isRestrictedStatus && payload.COIFlag) {
                             showModal({
                                 type: "confirmation",
@@ -463,24 +456,26 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                                 cancelLabel: "No",
                                 onConfirm: function () {
                                     closeModal();
-                                    void executeSubmit(payload, COIButtonAction);
+                                    void executeSubmit(payload, COIButtonAction); // pageLoading starts inside executeSubmit
                                 },
                                 onCancel: function () {
                                     closeModal();
-                                    void executeSubmit(payload, "NO");
+                                    void executeSubmit(payload, "NO"); // pageLoading starts inside executeSubmit
                                 },
                             });
                             return [2 /*return*/];
                         }
+                        // Direct submit — no COI confirmation needed
                         return [4 /*yield*/, executeSubmit(payload, COIButtonAction)];
                     case 1:
-                        _a.sent();
+                        // Direct submit — no COI confirmation needed
+                        _a.sent(); // pageLoading starts inside executeSubmit
                         return [2 /*return*/];
                 }
             });
         });
-    }, [scheduleMeeting, handleWorkflowProcess]);
-    return { submitting: submitting, submit: submit, modalState: modalState, closeModal: closeModal };
+    }, [executeSubmit]);
+    return { submitting: submitting, pageLoading: pageLoading, submit: submit, modalState: modalState, closeModal: closeModal };
 };
 exports.useSubmitCandidateReview = useSubmitCandidateReview;
 //# sourceMappingURL=Usesubmitcandidatereview.js.map

@@ -17,7 +17,10 @@ export const InterviewComposer: React.FC<InterviewComposerProps> = ({
   onAdd,
   onClear,
 }) => {
-  const canAdd = !!(newQuestion.questionEn || newQuestion.questionFr);
+  const canAdd =
+    !!(newQuestion.questionEn && newQuestion.questionFr) &&
+    newQuestion.answerEn &&
+    newQuestion.answerFr;
 
   return (
     <div className="iq-composer">
@@ -29,7 +32,9 @@ export const InterviewComposer: React.FC<InterviewComposerProps> = ({
           </div>
           <div>
             <h3 className="iq-composer__title">Create New Question</h3>
-            <p className="iq-composer__subtitle">Draft custom bilingual content</p>
+            <p className="iq-composer__subtitle">
+              Draft custom bilingual content
+            </p>
           </div>
         </div>
         <div className="iq-composer__header-actions">
@@ -52,7 +57,9 @@ export const InterviewComposer: React.FC<InterviewComposerProps> = ({
         {/* English */}
         <div className="iq-composer__col">
           <div className="iq-composer__lang-header">
-            <span className="iq-composer__lang-badge iq-composer__lang-badge--en">EN</span>
+            <span className="iq-composer__lang-badge iq-composer__lang-badge--en">
+              EN
+            </span>
             <span className="iq-composer__lang-title">English Version</span>
           </div>
 
@@ -64,7 +71,9 @@ export const InterviewComposer: React.FC<InterviewComposerProps> = ({
               className="iq-composer__textarea"
               placeholder="Enter the question in English..."
               value={newQuestion.questionEn ?? ""}
-              onChange={(e) => onChange({ ...newQuestion, questionEn: e.target.value })}
+              onChange={(e) =>
+                onChange({ ...newQuestion, questionEn: e.target.value })
+              }
             />
           </div>
 
@@ -76,7 +85,9 @@ export const InterviewComposer: React.FC<InterviewComposerProps> = ({
               className="iq-composer__textarea"
               placeholder="What are the key points for a good answer?"
               value={newQuestion.answerEn ?? ""}
-              onChange={(e) => onChange({ ...newQuestion, answerEn: e.target.value })}
+              onChange={(e) =>
+                onChange({ ...newQuestion, answerEn: e.target.value })
+              }
             />
           </div>
         </div>
@@ -84,7 +95,9 @@ export const InterviewComposer: React.FC<InterviewComposerProps> = ({
         {/* French */}
         <div className="iq-composer__col iq-composer__col--fr">
           <div className="iq-composer__lang-header">
-            <span className="iq-composer__lang-badge iq-composer__lang-badge--fr">FR</span>
+            <span className="iq-composer__lang-badge iq-composer__lang-badge--fr">
+              FR
+            </span>
             <span className="iq-composer__lang-title">Version Française</span>
           </div>
 
@@ -96,7 +109,9 @@ export const InterviewComposer: React.FC<InterviewComposerProps> = ({
               className="iq-composer__textarea iq-composer__textarea--italic"
               placeholder="Saisissez la question en français..."
               value={newQuestion.questionFr ?? ""}
-              onChange={(e) => onChange({ ...newQuestion, questionFr: e.target.value })}
+              onChange={(e) =>
+                onChange({ ...newQuestion, questionFr: e.target.value })
+              }
             />
           </div>
 
@@ -108,7 +123,9 @@ export const InterviewComposer: React.FC<InterviewComposerProps> = ({
               className="iq-composer__textarea iq-composer__textarea--italic"
               placeholder="Quels sont les points clés d'une bonne réponse ?"
               value={newQuestion.answerFr ?? ""}
-              onChange={(e) => onChange({ ...newQuestion, answerFr: e.target.value })}
+              onChange={(e) =>
+                onChange({ ...newQuestion, answerFr: e.target.value })
+              }
             />
           </div>
         </div>

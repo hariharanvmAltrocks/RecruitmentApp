@@ -16,6 +16,7 @@ export const useCandidatDetails = (
   candidateID: number,
   selectedCandidateID: number,
   JobRequestID: string,
+  IsExpat: boolean,
 ) => {
   const [data, setData] = useState<IselectedPosition | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -38,6 +39,7 @@ export const useCandidatDetails = (
         candidateID,
         selectedCandidateID,
         JobRequestID,
+        IsExpat,
       );
       if (response.status === ResponeStatus.SUCCESS) {
         const data = response.data;

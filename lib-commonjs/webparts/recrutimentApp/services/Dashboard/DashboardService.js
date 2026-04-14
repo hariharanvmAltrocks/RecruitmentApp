@@ -53,7 +53,7 @@ var DashboardService = /** @class */ (function () {
                             var hasExternalCount = externalCountMap_1.has(String(config.id));
                             var spCount = (_b = (_a = spCounts_1[config.id]) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0;
                             var value = hasExternalCount
-                                ? ((_c = externalCountMap_1.get(String(config.id))) !== null && _c !== void 0 ? _c : 0) + spCount
+                                ? ((_c = externalCountMap_1.get(String(config.id))) !== null && _c !== void 0 ? _c : 0)
                                 : spCount;
                             return tslib_1.__assign(tslib_1.__assign({}, config), { value: value, showArrow: config.showArrow || hasExternalCount });
                         })
@@ -158,13 +158,86 @@ var DashboardService = /** @class */ (function () {
             });
         });
     };
-    DashboardService.prototype.GetRecruitmentDetails = function (filterParam, filterConditions) {
+    DashboardService.prototype._fetchCandidateCounts = function (jobCodeId, workflowStatusId) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var res, GridResult, error_2;
+            var portalItems, jobUniqueKey, params, response, error_2;
+            var _a, _b, _c, _d;
+            return tslib_1.__generator(this, function (_e) {
+                switch (_e.label) {
+                    case 0:
+                        if (!jobCodeId)
+                            return [2 /*return*/, 0];
+                        _e.label = 1;
+                    case 1:
+                        _e.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.RecruitAppCareerPortalIntegration,
+                                Select: "*,JobCode/JobCode",
+                                Filter: [
+                                    { FilterKey: "JobCodeId", Operator: "in", FilterValue: jobCodeId },
+                                ],
+                                FilterCondition: "and",
+                                Expand: "JobCode",
+                                Topcount: ApiConfig_1.count.Topcount,
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            })];
+                    case 2:
+                        portalItems = (_e.sent());
+                        jobUniqueKey = (_a = portalItems === null || portalItems === void 0 ? void 0 : portalItems[0]) === null || _a === void 0 ? void 0 : _a.JobUniqueKey;
+                        if (!jobUniqueKey)
+                            return [2 /*return*/, 0];
+                        params = {
+                            jobCodes: [jobUniqueKey],
+                            workflowStatus: workflowStatusId,
+                        };
+                        return [4 /*yield*/, CareerPortalAPI_1.getProfileData.GetJobAppliedCount(params)];
+                    case 3:
+                        response = _e.sent();
+                        // Safe access with fallback to 0
+                        return [2 /*return*/, (_d = (_c = (_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.data[0]) === null || _c === void 0 ? void 0 : _c.count) !== null && _d !== void 0 ? _d : 0];
+                    case 4:
+                        error_2 = _e.sent();
+                        console.error("[_fetchCandidateCounts] Failed for JobCodeId ".concat(jobCodeId, ":"), error_2);
+                        return [2 /*return*/, 0];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    DashboardService.prototype._getCandidateCountByMatric = function (jobCodeId, MatricId) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            return tslib_1.__generator(this, function (_a) {
+                if (MatricId === ConditionConfig_1.MatricID.ReviewProfileHR) {
+                    return [2 /*return*/, this._fetchCandidateCounts(jobCodeId, [
+                            Config_1.workflowStatusApi.HRPending,
+                        ])];
+                }
+                else if (MatricId === ConditionConfig_1.MatricID.ReviewProfileLM) {
+                    return [2 /*return*/, this._fetchCandidateCounts(jobCodeId, [
+                            Config_1.workflowStatusApi.LineManagerL1Pending,
+                            Config_1.workflowStatusApi.LineManagerL2Pending,
+                            Config_1.workflowStatusApi.LineManagerLevel1OnHold,
+                            Config_1.workflowStatusApi.LineManagerLevel2OnHold,
+                        ])];
+                }
+                else if (MatricId === ConditionConfig_1.MatricID.AssignInterviewPanel) {
+                    return [2 /*return*/, this._fetchCandidateCounts(jobCodeId, [
+                            Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+                        ])];
+                }
+                return [2 /*return*/, 0];
+            });
+        });
+    };
+    DashboardService.prototype.GetRecruitmentDetails = function (filterParam, filterConditions, MatricId) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var res, candidateCount, GridResult, error_3;
+            var _this = this;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
+                        _a.trys.push([0, 3, , 4]);
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,
                                 Select: "*,Status/StatusDescription,JobCode/JobCode,JobCode/ID,JobCode/JobTitleInEnglish,BusinessUnitCode/BusineesUnitCode,Department/DepartmentName",
@@ -180,40 +253,52 @@ var DashboardService = /** @class */ (function () {
                         if (!res.length) {
                             return [2 /*return*/, { data: [], status: 200, message: "No records found" }];
                         }
-                        GridResult = res.map(function (item, index) {
-                            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
-                            return ({
-                                ID: item.ID,
-                                RecordID: index + 1,
-                                BusinessUnitCode: (_b = (_a = item === null || item === void 0 ? void 0 : item.BusinessUnitCode) === null || _a === void 0 ? void 0 : _a.BusineesUnitCode) !== null && _b !== void 0 ? _b : "",
-                                Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
-                                NumberOfPersonNeeded: item === null || item === void 0 ? void 0 : item.NumberOfPersonNeeded,
-                                Type: (_c = item === null || item === void 0 ? void 0 : item.DataFrom) !== null && _c !== void 0 ? _c : "",
-                                Status: (_e = (_d = item === null || item === void 0 ? void 0 : item.Status) === null || _d === void 0 ? void 0 : _d.StatusDescription) !== null && _e !== void 0 ? _e : "",
-                                StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
-                                JobCodeId: (_g = (_f = item === null || item === void 0 ? void 0 : item.JobCode) === null || _f === void 0 ? void 0 : _f.ID) !== null && _g !== void 0 ? _g : 0,
-                                JobCode: (_j = (_h = item === null || item === void 0 ? void 0 : item.JobCode) === null || _h === void 0 ? void 0 : _h.JobCode) !== null && _j !== void 0 ? _j : "",
-                                JobTitleEnglish: (_l = (_k = item === null || item === void 0 ? void 0 : item.JobCode) === null || _k === void 0 ? void 0 : _k.JobTitleInEnglish) !== null && _l !== void 0 ? _l : "",
-                                ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
-                                    ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
-                                    : undefined,
-                                CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
-                                    ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
-                                    : undefined,
-                                Department: (_o = (_m = item === null || item === void 0 ? void 0 : item.Department) === null || _m === void 0 ? void 0 : _m.DepartmentName) !== null && _o !== void 0 ? _o : "",
-                                EmploymentCategory: item === null || item === void 0 ? void 0 : item.EmploymentCategory,
-                            });
-                        });
+                        candidateCount = 0;
+                        return [4 /*yield*/, Promise.all(res.map(function (item, index) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                var candidateCount;
+                                var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+                                return tslib_1.__generator(this, function (_p) {
+                                    switch (_p.label) {
+                                        case 0: return [4 /*yield*/, this._getCandidateCountByMatric(item.JobCodeId, MatricId !== null && MatricId !== void 0 ? MatricId : 0)];
+                                        case 1:
+                                            candidateCount = _p.sent();
+                                            return [2 /*return*/, {
+                                                    ID: item.ID,
+                                                    RecordID: index + 1,
+                                                    BusinessUnitCode: (_b = (_a = item === null || item === void 0 ? void 0 : item.BusinessUnitCode) === null || _a === void 0 ? void 0 : _a.BusineesUnitCode) !== null && _b !== void 0 ? _b : "",
+                                                    Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
+                                                    NumberOfPersonNeeded: item === null || item === void 0 ? void 0 : item.NumberOfPersonNeeded,
+                                                    Type: (_c = item === null || item === void 0 ? void 0 : item.DataFrom) !== null && _c !== void 0 ? _c : "",
+                                                    Status: (_e = (_d = item === null || item === void 0 ? void 0 : item.Status) === null || _d === void 0 ? void 0 : _d.StatusDescription) !== null && _e !== void 0 ? _e : "",
+                                                    StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
+                                                    JobCodeId: (_g = (_f = item === null || item === void 0 ? void 0 : item.JobCode) === null || _f === void 0 ? void 0 : _f.ID) !== null && _g !== void 0 ? _g : 0,
+                                                    JobCode: (_j = (_h = item === null || item === void 0 ? void 0 : item.JobCode) === null || _h === void 0 ? void 0 : _h.JobCode) !== null && _j !== void 0 ? _j : "",
+                                                    JobTitleEnglish: (_l = (_k = item === null || item === void 0 ? void 0 : item.JobCode) === null || _k === void 0 ? void 0 : _k.JobTitleInEnglish) !== null && _l !== void 0 ? _l : "",
+                                                    ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
+                                                        ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
+                                                        : undefined,
+                                                    CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
+                                                        ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
+                                                        : undefined,
+                                                    Department: (_o = (_m = item === null || item === void 0 ? void 0 : item.Department) === null || _m === void 0 ? void 0 : _m.DepartmentName) !== null && _o !== void 0 ? _o : "",
+                                                    EmploymentCategory: item === null || item === void 0 ? void 0 : item.EmploymentCategory,
+                                                    CandidateCount: candidateCount,
+                                                }];
+                                    }
+                                });
+                            }); }))];
+                    case 2:
+                        GridResult = _a.sent();
                         return [2 /*return*/, {
                                 data: GridResult,
                                 status: 200,
                                 message: "GetRecruitmentDetails fetched successfully",
                             }];
-                    case 2:
-                        error_2 = _a.sent();
-                        console.error("Error fetching GetRecruitmentDetails:", error_2);
+                    case 3:
+                        error_3 = _a.sent();
+                        console.error("Error fetching GetRecruitmentDetails:", error_3);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
-                    case 3: return [2 /*return*/];
+                    case 4: return [2 /*return*/];
                 }
             });
         });
@@ -346,7 +431,7 @@ var DashboardService = /** @class */ (function () {
     // }
     DashboardService.prototype.GetCandidateDetails = function (filterParam, filterConditions, MatricId, EmailID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var isEvaluationFlow, UserID, listItems, recruitmentIds_1, res, recruitmentIds, uniqueGrades, recruitmentFilter, _a, deptResult, gradeResults_1, gradeLevelMap_1, deptMap_1, _i, _b, dept, existing, GridResult, error_3;
+            var isEvaluationFlow, UserID, listItems, recruitmentIds_1, res, recruitmentIds, uniqueGrades, recruitmentFilter, _a, deptResult, gradeResults_1, gradeLevelMap_1, deptMap_1, _i, _b, dept, existing, GridResult, error_4;
             var _c, _d, _e, _f;
             return tslib_1.__generator(this, function (_g) {
                 switch (_g.label) {
@@ -469,8 +554,8 @@ var DashboardService = /** @class */ (function () {
                         });
                         return [2 /*return*/, { data: GridResult, status: 200, message: "Success" }];
                     case 6:
-                        error_3 = _g.sent();
-                        console.error("Error fetching from Candidate details:", error_3);
+                        error_4 = _g.sent();
+                        console.error("Error fetching from Candidate details:", error_4);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
                     case 7: return [2 /*return*/];
                 }
@@ -479,7 +564,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetSelectedCandidate = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var GridResult, res, ids, candidateIds, recruitmentFilter, candidateFilter, DeptDetails, getCandidateDetails, deptMap_2, candidateMap_1, error_4;
+            var GridResult, res, ids, candidateIds, recruitmentFilter, candidateFilter, DeptDetails, getCandidateDetails, deptMap_2, candidateMap_1, error_5;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -554,8 +639,8 @@ var DashboardService = /** @class */ (function () {
                         });
                         return [2 /*return*/, { data: GridResult, status: 200, message: "Success" }];
                     case 4:
-                        error_4 = _a.sent();
-                        console.error("Error fetching from Candidate details:", error_4);
+                        error_5 = _a.sent();
+                        console.error("Error fetching from Candidate details:", error_5);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
                     case 5: return [2 /*return*/];
                 }
@@ -564,7 +649,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetNPAEPVRRDetails = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var queries, batchRes, additionalExistingItems, newPositionItems, vacancyItems, additionalIds, newPositionIds, _a, additionalPositionRes, newPositionRes, additionalPositionMap_1, newPositionMap_1, mapCommonFields_1, additionalExistingResult, newPositionResult, vacancyResult, GridResult, error_5;
+            var queries, batchRes, additionalExistingItems, newPositionItems, vacancyItems, additionalIds, newPositionIds, _a, additionalPositionRes, newPositionRes, additionalPositionMap_1, newPositionMap_1, mapCommonFields_1, additionalExistingResult, newPositionResult, vacancyResult, GridResult, error_6;
             var _b, _c;
             return tslib_1.__generator(this, function (_d) {
                 switch (_d.label) {
@@ -692,8 +777,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "GetNPAEPVRRDetails fetched successfully",
                             }];
                     case 3:
-                        error_5 = _d.sent();
-                        console.error("Error fetching GetNPAEPVRRDetails:", error_5);
+                        error_6 = _d.sent();
+                        console.error("Error fetching GetNPAEPVRRDetails:", error_6);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
                     case 4: return [2 /*return*/];
                 }
@@ -702,7 +787,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetPositionDetails = function (Filter, filterConditions, ListName) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var resdata, result, error_6;
+            var resdata, result, error_7;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -735,8 +820,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "GetPositionDetails fetched successfully",
                             }];
                     case 2:
-                        error_6 = _a.sent();
-                        console.error("GetPositionDetails error:", error_6);
+                        error_7 = _a.sent();
+                        console.error("GetPositionDetails error:", error_7);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -749,7 +834,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.EvalutionValidation = function (data) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var getCurrentUserId, levelFilter, resdata, IsSubmitted, error_7;
+            var getCurrentUserId, levelFilter, resdata, IsSubmitted, error_8;
             var _a;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
@@ -792,8 +877,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "Validation success",
                             }];
                     case 3:
-                        error_7 = _b.sent();
-                        console.error("EvalutionValidation error:", error_7);
+                        error_8 = _b.sent();
+                        console.error("EvalutionValidation error:", error_8);
                         return [2 /*return*/, {
                                 data: false,
                                 status: 500,

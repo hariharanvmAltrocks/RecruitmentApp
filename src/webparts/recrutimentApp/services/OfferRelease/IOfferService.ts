@@ -106,6 +106,7 @@ export type IOfferService = {
     CandidateID: number,
     SelectedCandidateID: number,
     JobRequestID: string,
+    isExpat: boolean,
   ): Promise<ApiResponse<IselectedPosition | null>>;
   InitiateLabouHireOfferRelease(
     data: InitiateLaborHire,

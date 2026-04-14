@@ -176,7 +176,7 @@ var CandidateDrawer = function (_a) {
                         React.createElement("div", { className: "candidate-table__card" },
                             React.createElement(DataTable_1.DataTable, { columns: columns, data: candidates, loading: loading, 
                                 // error={error ?? undefined}
-                                pageSize: pagination.pageSize, currentPage: pagination.currentPage, totalCount: pagination.totalItems, onPageChange: handlePageChange, onPageSizeChange: handlePageSizeChange, pageSizeOptions: [5, 10, 20, 50], emptyMessage: "No candidates found for this job." }))))),
+                                pageSize: pagination.pageSize, currentPage: pagination.currentPage, totalCount: pagination.totalItems, onPageChange: handlePageChange, onPageSizeChange: handlePageSizeChange, pageSizeOptions: [10, 20, 50], emptyMessage: "No candidates found for this job." }))))),
             hook.reviewingCandidate &&
                 react_dom_1.default.createPortal(React.createElement(framer_motion_1.AnimatePresence, null,
                     React.createElement(React.Fragment, null,

@@ -207,6 +207,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 }
 .review-document__info-label {
   display: flex;
@@ -217,6 +218,17 @@
   letter-spacing: 0.12em;
   color: #94a3b8;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.review-document__info-label svg {
+  flex-shrink: 0;
+}
+.review-document__info-label span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .review-document__info-value {
   font-size: 13px;
@@ -229,6 +241,7 @@
   transition: transform 0.2s ease;
   width: 100%;
   word-break: break-all;
+  min-height: 15px;
 }
 .review-document__info-value:hover {
   transform: translateY(-2px) translateZ(0px);

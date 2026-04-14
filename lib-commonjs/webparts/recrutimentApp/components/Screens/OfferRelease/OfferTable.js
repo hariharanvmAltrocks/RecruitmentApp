@@ -32,10 +32,8 @@ var ActionCell = react_1.default.memo(function (_a) {
     var isInitiate = actionMode === "Initiate";
     var isReview = actionMode === "Review";
     var ActionIcon = isInitiate ? lucide_react_1.Play : isReview ? lucide_react_1.Pencil : lucide_react_1.Eye;
-    var actionLabel = isInitiate ? "INITIATE" : isReview ? "REVIEW" : "VIEW";
-    return (react_1.default.createElement("button", { className: "data-table__action-btn", onClick: function () { return onAction(item); }, type: "button", "aria-label": "".concat(actionLabel, " action") },
-        react_1.default.createElement(ActionIcon, { size: 16, style: { marginRight: 8 } }),
-        actionLabel));
+    var actionLabel = isInitiate ? "Initiate" : isReview ? "REVIEW" : "VIEW";
+    return (react_1.default.createElement("button", { className: "data-table__action-btn", onClick: function () { return onAction(item); }, type: "button", "aria-label": "".concat(actionLabel, " action") }, actionLabel));
 });
 function buildColumns(onAction) {
     return [
@@ -83,17 +81,17 @@ function buildColumns(onAction) {
     ];
 }
 var OfferTable = function () {
-    var _a, _b, _c, _d, _e, _f, _g, _h;
-    var _j = (0, useTabDetails_1.useTabDetails)(), tabs = _j.tabs, tabsLoading = _j.loading;
-    var _k = (0, UIStateContext_1.useUIState)(), activeTab = _k.activeTab, matricID = _k.MatricID, setMatricID = _k.setMatricID, sideNavflag = _k.sideNavflag, setCurrentTabName = _k.setCurrentTabName, currentTabName = _k.currentTabName;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+    var _l = (0, useTabDetails_1.useTabDetails)(), tabs = _l.tabs, tabsLoading = _l.loading;
+    var _m = (0, UIStateContext_1.useUIState)(), activeTab = _m.activeTab, matricID = _m.MatricID, setMatricID = _m.setMatricID, sideNavflag = _m.sideNavflag, setCurrentTabName = _m.setCurrentTabName, currentTabName = _m.currentTabName;
     var navigate = (0, react_router_dom_1.useNavigate)();
-    var _l = (0, useModalPopup_1.useModalPopup)(), modalState = _l.modalState, closeModal = _l.closeModal;
-    var _m = (0, react_1.useState)(activeTab), activeTabKey = _m[0], setActiveTabKey = _m[1];
-    var _o = (0, react_1.useState)(0), refreshKey = _o[0], setRefreshKey = _o[1];
-    var _p = (0, react_1.useState)([]), selectedIds = _p[0], setSelectedIds = _p[1];
-    var _q = (0, react_1.useState)(5), pageSize = _q[0], setPageSize = _q[1];
-    var _r = (0, react_1.useState)(1), currentPage = _r[0], setCurrentPage = _r[1];
-    var _s = (0, useRecruitmentDetails_1.useRecruitmentDetails)(activeTabKey, refreshKey), items = _s.items, tableLoading = _s.loading;
+    var _o = (0, useModalPopup_1.useModalPopup)(), modalState = _o.modalState, closeModal = _o.closeModal;
+    var _p = (0, react_1.useState)(activeTab), activeTabKey = _p[0], setActiveTabKey = _p[1];
+    var _q = (0, react_1.useState)(0), refreshKey = _q[0], setRefreshKey = _q[1];
+    var _r = (0, react_1.useState)([]), selectedIds = _r[0], setSelectedIds = _r[1];
+    var _s = (0, react_1.useState)(5), pageSize = _s[0], setPageSize = _s[1];
+    var _t = (0, react_1.useState)(1), currentPage = _t[0], setCurrentPage = _t[1];
+    var _u = (0, useRecruitmentDetails_1.useRecruitmentDetails)(activeTabKey, refreshKey), items = _u.items, tableLoading = _u.loading;
     var updateList = (0, react_1.useMemo)(function () {
         return items.map(function (item) { return ({
             StatusID: item.statusId,
@@ -112,7 +110,7 @@ var OfferTable = function () {
             void updateListPortal();
         }
     }, [updateList, tableLoading, refreshKey]);
-    var _t = (0, useStateFromManage_1.useStateOfferRelease)(), drawerOpen = _t.drawerOpen, reviewerComments = _t.reviewerComments, acknowledgementCheckbox = _t.acknowledgementCheckbox, loadingState = _t.loadingState, openDrawer = _t.openDrawer, closeDrawer = _t.closeDrawer, setComments = _t.setComments, toggleAcknowledgement = _t.toggleAcknowledgement, setLoadingState = _t.setLoadingState;
+    var _v = (0, useStateFromManage_1.useStateOfferRelease)(), drawerOpen = _v.drawerOpen, reviewerComments = _v.reviewerComments, acknowledgementCheckbox = _v.acknowledgementCheckbox, loadingState = _v.loadingState, openDrawer = _v.openDrawer, closeDrawer = _v.closeDrawer, setComments = _v.setComments, toggleAcknowledgement = _v.toggleAcknowledgement, setLoadingState = _v.setLoadingState;
     var activeTabs = (0, react_1.useMemo)(function () { return tabs.find(function (t) { return t.key === activeTabKey; }); }, [activeTabKey, tabs]);
     var totalCount = items.length;
     var totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
@@ -156,6 +154,7 @@ var OfferTable = function () {
             candidateID: item.CandidateID,
             selectedcandidateID: item.ItemID,
             jobrequestID: item.jobrequestID,
+            IsExpat: item.IsExpat,
         };
         openDrawer(item.ItemID);
     }, [openDrawer]);
@@ -177,7 +176,7 @@ var OfferTable = function () {
                     setPageSize(size);
                     setCurrentPage(1);
                 }, loading: tableLoading })),
-        drawerOpen && (react_1.default.createElement(ReviewDocument_1.ReviewDocument, { drawerOpen: drawerOpen, selectedJobId: (_b = (_a = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _a === void 0 ? void 0 : _a.jobId) !== null && _b !== void 0 ? _b : 0, CandidateID: (_d = (_c = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _c === void 0 ? void 0 : _c.candidateID) !== null && _d !== void 0 ? _d : 0, selectedcandidateID: (_f = (_e = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _e === void 0 ? void 0 : _e.selectedcandidateID) !== null && _f !== void 0 ? _f : 0, jobrequestID: (_h = (_g = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _g === void 0 ? void 0 : _g.jobrequestID) !== null && _h !== void 0 ? _h : "", reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, loadingState: loadingState, onClose: closeDrawer, onCommentsChange: setComments, onToggleAcknowledgement: toggleAcknowledgement, setLoadingState: setLoadingState, refreshKey: handleRefresh })),
+        drawerOpen && (react_1.default.createElement(ReviewDocument_1.ReviewDocument, { drawerOpen: drawerOpen, selectedJobId: (_b = (_a = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _a === void 0 ? void 0 : _a.jobId) !== null && _b !== void 0 ? _b : 0, CandidateID: (_d = (_c = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _c === void 0 ? void 0 : _c.candidateID) !== null && _d !== void 0 ? _d : 0, selectedcandidateID: (_f = (_e = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _e === void 0 ? void 0 : _e.selectedcandidateID) !== null && _f !== void 0 ? _f : 0, IsExpat: (_h = (_g = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _g === void 0 ? void 0 : _g.IsExpat) !== null && _h !== void 0 ? _h : false, jobrequestID: (_k = (_j = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _j === void 0 ? void 0 : _j.jobrequestID) !== null && _k !== void 0 ? _k : "", reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, loadingState: loadingState, onClose: closeDrawer, onCommentsChange: setComments, onToggleAcknowledgement: toggleAcknowledgement, setLoadingState: setLoadingState, refreshKey: handleRefresh })),
         react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal }))));
 };
 exports.OfferTable = OfferTable;

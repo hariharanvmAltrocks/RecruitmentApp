@@ -21,7 +21,8 @@ var getActionLabel = function (actionMode, item, matricID) {
     else if (actionMode === "Upload") {
         return "UPLOAD";
     }
-    else if (item.statusId === Config_1.StatusId.CareerPortalQuestions) {
+    else if (item.statusId === Config_1.StatusId.CareerPortalQuestions ||
+        item.statusId === Config_1.StatusId.PendingInterviewquestion) {
         return "CREATE";
     }
     else if (item.statusId === Config_1.StatusId.PendingReviewAdvertHOD ||

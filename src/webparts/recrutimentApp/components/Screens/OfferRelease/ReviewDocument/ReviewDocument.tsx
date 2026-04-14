@@ -38,6 +38,7 @@ import {
 import {
   ActionName,
   ButtonAction,
+  CheckboxContent,
   DocumentFolderName,
   NationalityCode,
   RecuritmentHRMsg,
@@ -55,12 +56,14 @@ import { StatusId } from "../../../../utilities/Config";
 import { WorkflowHODConfig } from "../../../Hooks/WorkflowConfig";
 import { usePreChecklist } from "./Hooks/fetchPreChecklist";
 import PreChecklist from "./Component/Prechecklist/Prechecklist";
+import Loading from "../../../Comman/Loading/loading";
 
 export interface ReviewDocumentProps {
   drawerOpen: boolean;
   selectedJobId: number | null;
   CandidateID: number;
   selectedcandidateID: number;
+  IsExpat: boolean;
   jobrequestID: string;
   reviewerComments: string;
   acknowledgementCheckbox: boolean;
@@ -72,6 +75,15 @@ export interface ReviewDocumentProps {
   refreshKey: () => void;
 }
 
+// ─── Button action types ───────────────────────────────────────────────────────
+// Tracks WHICH button is currently submitting so each button shows its own spinner
+type ActiveButton =
+  | "approve"
+  | "reinitiate"
+  | "rejectCheck"
+  | "saveAsDraft"
+  | null;
+
 const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({
   width = "100%",
   height = "14px",
@@ -81,15 +93,12 @@ const PositionSkeleton = () => (
   <div className="review-document__skeleton-wrapper">
     <SkeletonBlock height="24px" width="250px" />
     <SkeletonBlock height="14px" width="180px" />
-
     <div style={{ marginTop: 16 }}>
       <SkeletonBlock height="100px" />
     </div>
-
     <div style={{ marginTop: 16 }}>
       <SkeletonBlock height="60px" />
     </div>
-
     <div style={{ marginTop: 16 }}>
       <SkeletonBlock height="40px" />
     </div>
@@ -107,6 +116,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
   CandidateID,
   selectedcandidateID,
   jobrequestID,
+  IsExpat,
   loadingState,
   onClose,
   setLoadingState,
@@ -114,6 +124,16 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
 }) => {
   const navigate = useNavigate();
   const { modalState, showModal, closeModal } = useModalPopup();
+
+  // ── Full-page loader (blocks entire panel during API call) ──────────────────
+  const [pageloading, setPageLoading] = useState(false);
+
+  // ── Which button is currently active (drives per-button spinner icon) ───────
+  // Unlike isSubmittingRef, this IS a state so React re-renders and shows spinner
+  const [activeButton, setActiveButton] = useState<ActiveButton>(null);
+
+  // True when ANY button is submitting — used to disable all buttons at once
+  const isAnySubmitting = activeButton !== null;
 
   const {
     consentVerification,
@@ -140,12 +160,14 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
   } = useStateOfferRelease();
 
   const [showComments, setshowComments] = useState(false);
+
   const { data: positionDetails, loading: positionLoading } =
     useCandidatDetails(
       selectedJobId,
       CandidateID,
       selectedcandidateID,
       jobrequestID,
+      IsExpat,
     );
 
   const isPendingDOTAfrica =
@@ -191,8 +213,10 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
 
   const isExpat =
     positionDetails?.NationalityCode !== NationalityCode.Nationals;
+
   const isPreOnboarding =
     positionDetails?.StatusID === StatusId.PendingHRpreonboardingchecklist;
+
   const { checklist, allChecked, loading, updateCheckItem } = usePreChecklist(
     isExpat,
     positionDetails?.PreChecklist ?? undefined,
@@ -200,11 +224,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
   );
 
   const isLoading = signatureLoading;
-  const isSubmittingRef = useRef(false);
-
   const isPageLoading = positionLoading || signatureLoading || bgvStatusLoading;
-
-  let ConsultOptions = [];
 
   useEffect(() => {
     if (loadingState !== isLoading) setLoadingState(isLoading);
@@ -227,6 +247,8 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     }),
     [positionDetails],
   );
+
+  // ─── Helpers ─────────────────────────────────────────────────────────────────
 
   const handleError = useCallback(() => {
     showModal({
@@ -257,19 +279,6 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
       ? ActionName.Completed
       : ActionName.Pending;
 
-  const renderBtnContent = (text: string) =>
-    isSubmittingRef.current ? (
-      <>
-        <Loader2 size={16} className="modal-popup__spinner" />
-        Sending...
-      </>
-    ) : (
-      <>
-        <Send size={16} />
-        {text}
-      </>
-    );
-
   const showSuccessModal = useCallback(
     (msg: string) => {
       showModal({
@@ -288,6 +297,32 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     [showModal, closeModal, onClose, navigate, refreshKey],
   );
 
+  // ─── Render button content ────────────────────────────────────────────────────
+  // Shows spinner icon when THIS specific button is active, normal icon otherwise
+
+  const renderBtnContent = (
+    text: string,
+    buttonKey: ActiveButton,
+    loadingText: string = "Sending...",
+  ) => {
+    const isThisButtonLoading = activeButton === buttonKey;
+    return isThisButtonLoading ? (
+      <>
+        <Loader2 size={16} className="modal-popup__spinner" />
+        {loadingText}
+      </>
+    ) : (
+      <>
+        <Send size={16} />
+        {text}
+      </>
+    );
+  };
+
+  // ─── handleReinitiate ─────────────────────────────────────────────────────────
+  // Loader: pageloading=true → API → pageloading=false
+  // Button: activeButton="reinitiate" shows spinner on Re Initiate button only
+
   const handleReinitiate = useCallback(() => {
     showModal({
       type: "confirmation",
@@ -296,38 +331,56 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
       confirmLabel: "Yes",
       cancelLabel: "No",
       onConfirm: async () => {
-        let UpdateBGV = await OfferServices.PerformCriminalRecordCheck(
-          Number(jobrequestID),
-        );
-        if (UpdateBGV.status === ResponeStatus.SUCCESS) {
-          showSuccessModal(RecuritmentHRMsg.ReinitiateBGVProcess);
-        } else {
+        setActiveButton("reinitiate"); // ✅ Show spinner on Re Initiate button
+        setPageLoading(true); // ✅ Show full-page loader
+        try {
+          const UpdateBGV = await OfferServices.PerformCriminalRecordCheck(
+            Number(jobrequestID),
+          );
+          if (UpdateBGV.status === ResponeStatus.SUCCESS) {
+            showSuccessModal(RecuritmentHRMsg.ReinitiateBGVProcess);
+          } else {
+            handleError();
+          }
+        } catch {
           handleError();
+        } finally {
+          setActiveButton(null); // ✅ Remove button spinner
+          setPageLoading(false); // ✅ Hide full-page loader
         }
       },
     });
   }, [jobrequestID, showSuccessModal, handleError, showModal]);
 
+  // ─── handleApprove ────────────────────────────────────────────────────────────
+  // Loader: pageloading=true → API → pageloading=false
+  // Button: activeButton="approve" shows spinner on Submit/Reviewed/Revert button
+
   const handleApprove = useCallback(async () => {
     if (!ensureValid()) return;
-    if (isSubmittingRef.current) return;
-    isSubmittingRef.current = true;
-
+    if (isAnySubmitting) return; // Guard: prevent double-click
+    setActiveButton("approve"); // ✅ Show spinner on approve button
+    setPageLoading(true); // ✅ Show full-page loader
     try {
-      let action =
+      const action =
         consentVerification === "verified"
           ? ButtonAction.Review
           : consentVerification === "rejected"
             ? ButtonAction.Revert
             : ButtonAction.Initiated;
-      void submit(action);
+      await submit(action);
     } catch (error) {
       console.error(error);
       handleError();
     } finally {
-      isSubmittingRef.current = false;
+      setActiveButton(null); // ✅ Remove button spinner
+      setPageLoading(false); // ✅ Hide full-page loader
     }
-  }, [ensureValid, consentVerification, submit, handleError]);
+  }, [ensureValid, consentVerification, submit, handleError, isAnySubmitting]);
+
+  // ─── handleRejectCheck ────────────────────────────────────────────────────────
+  // Loader: pageloading=true → API inside modal confirm → pageloading=false
+  // Button: activeButton="rejectCheck" shows spinner on Approve/Reject button
 
   const handleRejectCheck = useCallback(
     async (btn: "Reject" | "Approve") => {
@@ -361,6 +414,8 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
         cancelLabel: "No",
         onCancel: closeModal,
         onConfirm: async () => {
+          setActiveButton("rejectCheck"); // ✅ Show spinner on Approve/Reject button
+          setPageLoading(true); // ✅ Show full-page loader
           try {
             const bgvDocData = makeDocData(
               positionDetails?.ProfileID ?? "",
@@ -389,13 +444,15 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
               closeModal();
               showSuccessModal(RecuritmentHRMsg.ReinitiateBGVProcess);
               onClose();
-              // navigate("/RecruitmentTable");
               refreshKey();
             } else {
               throw new Error("Unexpected status");
             }
           } catch {
             handleError();
+          } finally {
+            setActiveButton(null); // ✅ Remove button spinner
+            setPageLoading(false); // ✅ Hide full-page loader
           }
         },
       });
@@ -416,47 +473,77 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     ],
   );
 
-  const handleSaveAsDraft = async () => {
+  // ─── handleSaveAsDraft ────────────────────────────────────────────────────────
+  // Loader: pageloading=true → API → pageloading=false
+  // Button: activeButton="saveAsDraft" shows spinner on Save As Draft / Submit button
+
+  const handleSaveAsDraft = useCallback(async () => {
     const BtnAction = !allChecked
       ? ButtonAction.SaveAsDraft
       : ButtonAction.Submit;
+
     if (BtnAction === ButtonAction.Submit) {
       if (!ensureValid()) return;
     }
-    const ChecklistValue = {
-      BackgroundChecks: getCheckStatus("Background Checks"),
-      SignedOfferLetterVerified: getCheckStatus("Signed Offer Letter"),
-      SignedEmploymentContract: getCheckStatus("Employment Contract"),
-      WorkPermitApproved: getCheckStatus("Work Permit Approved"),
-      VisaProcess: getCheckStatus("Visa Process"),
-      AccommodationBooked: getCheckStatus("Accommodation Booked"),
-      TravelProcess: getCheckStatus("Travel Process"),
-      ReadyforOnboarding: getCheckStatus("Ready for Onboarding"),
-      MedicalChecks: getCheckStatus("Medical Checks"),
-      ID: CandidateID,
-    };
 
-    const UpdateStatusCandidateList =
-      await OfferServices.UpdateStatusCandidatelist(ChecklistValue);
-    if (UpdateStatusCandidateList.status === ResponeStatus.SUCCESS) {
-      if (BtnAction === ButtonAction.Submit) {
-        let Obj = [
-          {
-            ID: selectedcandidateID,
-            StatusId: isExpat
-              ? StatusId.OnboardingProcessinitiatedforExpat
-              : StatusId.OnboardingProcessinitiatedforDRC,
-          },
-        ];
-        await OfferServices.UpdateStatusSelectedHOD(Obj);
+    setActiveButton("saveAsDraft"); // ✅ Show spinner on Save As Draft / Submit button
+    setPageLoading(true); // ✅ Show full-page loader
+
+    try {
+      const ChecklistValue = {
+        BackgroundChecks: getCheckStatus("Background Checks"),
+        SignedOfferLetterVerified: getCheckStatus("Signed Offer Letter"),
+        SignedEmploymentContract: getCheckStatus("Employment Contract"),
+        WorkPermitApproved: getCheckStatus("Work Permit Approved"),
+        VisaProcess: getCheckStatus("Visa Process"),
+        AccommodationBooked: getCheckStatus("Accommodation Booked"),
+        TravelProcess: getCheckStatus("Travel Process"),
+        ReadyforOnboarding: getCheckStatus("Ready for Onboarding"),
+        MedicalChecks: getCheckStatus("Medical Checks"),
+        ID: CandidateID,
+      };
+
+      const UpdateStatusCandidateList =
+        await OfferServices.UpdateStatusCandidatelist(ChecklistValue);
+
+      if (UpdateStatusCandidateList.status === ResponeStatus.SUCCESS) {
+        if (BtnAction === ButtonAction.Submit) {
+          const Obj = [
+            {
+              ID: selectedcandidateID,
+              StatusId: isExpat
+                ? StatusId.OnboardingProcessinitiatedforExpat
+                : StatusId.OnboardingProcessinitiatedforDRC,
+            },
+          ];
+          await OfferServices.UpdateStatusSelectedHOD(Obj);
+        }
+        showSuccessModal(
+          BtnAction === ButtonAction.SaveAsDraft
+            ? RecuritmentHRMsg.ChecklistSaveAsDraftMsg
+            : RecuritmentHRMsg.OnboardingMsg,
+        );
+      } else {
+        handleError();
       }
-      showSuccessModal(
-        BtnAction === ButtonAction.SaveAsDraft
-          ? RecuritmentHRMsg.ChecklistSaveAsDraftMsg
-          : RecuritmentHRMsg.OnboardingMsg,
-      );
+    } catch {
+      handleError();
+    } finally {
+      setActiveButton(null); // ✅ Remove button spinner
+      setPageLoading(false); // ✅ Hide full-page loader
     }
-  };
+  }, [
+    allChecked,
+    ensureValid,
+    CandidateID,
+    selectedcandidateID,
+    isExpat,
+    showSuccessModal,
+    handleError,
+    checklist,
+  ]);
+
+  // ─── JSX ─────────────────────────────────────────────────────────────────────
 
   return (
     <AnimatePresence>
@@ -556,7 +643,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                       <ConsentFormSection
                         onFileChange={handleConsentFile}
                         downloadUrl={positionDetails?.DotAfricaCF?.downloadUrl}
-                        disabled={isSubmittingRef.current}
+                        disabled={isAnySubmitting}
                         hasFileError={validationError.showConsentErrors}
                         consentform={positionDetails?.DotAfricaCF}
                       />
@@ -565,7 +652,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                     {vis.showCOICard && (
                       <COICard
                         consultOptions={CONSULT_OPTIONS}
-                        isReadOnly={isSubmittingRef.current}
+                        isReadOnly={isAnySubmitting}
                         hasError={validationError.showCoiErrors}
                         onChange={handleCoiChange}
                       />
@@ -577,7 +664,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                         selectedFile={selectedFile}
                         isReading={isReading}
                         hasFileError={validationError.workPermit}
-                        disabled={isSubmittingRef.current}
+                        disabled={isAnySubmitting}
                         onUploadClick={handleUploadClick}
                         onFileChange={handleFileChange}
                         onClearFile={clearFile}
@@ -591,7 +678,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                         label={vis.uploadDocLabel}
                         required
                         onChange={handleDocumnetUpload}
-                        disabled={isSubmittingRef.current}
+                        disabled={isAnySubmitting}
                         hasError={validationError.uploadError}
                       />
                     )}
@@ -617,9 +704,12 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                         isLoading={isLoading}
                         onCommentsChange={onCommentsChange}
                         onToggleAcknowledgement={onToggleAcknowledgement}
-                        disabled={isSubmittingRef.current}
+                        disabled={isAnySubmitting}
                         commentError={validationError.comments}
                         checkboxError={validationError.acknowledgement}
+                        acknowledgementLabel={
+                          CheckboxContent.PostRecrutimentCheckboxContent
+                        }
                       />
                     )}
 
@@ -633,7 +723,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                           isLoading={isLoading}
                           onCommentsChange={onCommentsChange}
                           onToggleAcknowledgement={onToggleAcknowledgement}
-                          disabled={isSubmittingRef.current}
+                          disabled={isAnySubmitting}
                           commentError={validationError.comments}
                           checkboxError={validationError.acknowledgement}
                         />
@@ -655,7 +745,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
 
                     <div className="review-document__footer">
                       <div className="review-document__footer-actions">
-                        {/* Back button — always shown */}
+                        {/* Back / Cancel button — always shown, never disabled */}
                         <button
                           type="button"
                           className="review-document__button"
@@ -668,6 +758,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                               : "Cancel"}
                         </button>
 
+                        {/* ── DOT Africa buttons ── */}
                         {positionDetails?.StatusID ===
                           StatusId.PendingDOTAficaVerification && (
                           <>
@@ -675,10 +766,15 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                               <button
                                 type="button"
                                 className="review-document__button review-document__button--primary"
-                                disabled={isSubmittingRef.current}
+                                disabled={isAnySubmitting} // ✅ disabled when any button is loading
                                 onClick={handleReinitiate}
                               >
-                                Re Initiate
+                                {/* ✅ Spinner shows only on THIS button */}
+                                {renderBtnContent(
+                                  "Re Initiate",
+                                  "reinitiate",
+                                  "Processing...",
+                                )}
                               </button>
                             )}
 
@@ -686,7 +782,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                               <button
                                 type="button"
                                 className="review-document__button review-document__button--primary"
-                                disabled={isSubmittingRef.current}
+                                disabled={isAnySubmitting} // ✅ disabled when any button is loading
                                 onClick={() =>
                                   handleRejectCheck(
                                     coiState.wishesToProceed === "Yes"
@@ -695,43 +791,62 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                                   )
                                 }
                               >
-                                {coiState.wishesToProceed === "Yes"
-                                  ? "Approve"
-                                  : "Reject"}
+                                {/* ✅ Spinner shows only on THIS button */}
+                                {renderBtnContent(
+                                  coiState.wishesToProceed === "Yes"
+                                    ? "Approve"
+                                    : "Reject",
+                                  "rejectCheck",
+                                  coiState.wishesToProceed === "Yes"
+                                    ? "Approving..."
+                                    : "Rejecting...",
+                                )}
                               </button>
                             )}
                           </>
                         )}
 
+                        {/* ── Pre-onboarding checklist button ── */}
                         {positionDetails?.StatusID ===
                           StatusId.PendingHRpreonboardingchecklist && (
                           <button
                             type="button"
                             className="review-document__button review-document__button--primary"
-                            disabled={isSubmittingRef.current}
+                            disabled={isAnySubmitting} // ✅ disabled when any button is loading
                             onClick={handleSaveAsDraft}
                           >
+                            {/* ✅ Spinner shows only on THIS button */}
                             {renderBtnContent(
                               !allChecked ? "Save As Draft" : "Submit",
+                              "saveAsDraft",
+                              !allChecked ? "Saving..." : "Submitting...",
                             )}
                           </button>
                         )}
 
+                        {/* ── Main approve/submit button ── */}
                         {!vis.ViewFlag &&
                           positionDetails?.StatusID !=
                             StatusId.PendingHRpreonboardingchecklist && (
                             <button
                               type="button"
                               className="review-document__button review-document__button--primary"
-                              disabled={isSubmittingRef.current}
+                              disabled={isAnySubmitting} // ✅ disabled when any button is loading
                               onClick={handleApprove}
                             >
+                              {/* ✅ Spinner shows only on THIS button */}
                               {renderBtnContent(
                                 consentVerification === "verified"
                                   ? "Reviewed"
                                   : consentVerification === "rejected"
                                     ? "Revert"
                                     : "Submit",
+                                "approve",
+                                consentVerification === "verified"
+                                  ? "Reviewing..."
+                                  : consentVerification === "rejected"
+                                    ? "Reverting..."
+                                    : "Submitting...",
                               )}
                             </button>
                           )}
@@ -742,6 +857,10 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
               </div>
             </motion.div>
           </div>
+
+          {/* ✅ Full-page loader — shows during any API call */}
+          {pageloading && <Loading />}
+
           <ModalPopup {...modalState} onClose={closeModal} />
           <ModalPopup {...SubmitModalState} onClose={SubmitCloseModal} />
           <ViewCommentsModal

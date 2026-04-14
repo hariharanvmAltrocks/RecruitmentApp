@@ -407,7 +407,7 @@ export const CandidateTable: React.FC = (props: any) => {
                 totalCount={pagination.totalItems}
                 onPageChange={handlePageChange}
                 onPageSizeChange={handlePageSizeChange}
-                pageSizeOptions={[5, 10, 20, 50]}
+                pageSizeOptions={[10, 20, 50]}
                 emptyMessage="No candidates found for this job."
               />
             </div>

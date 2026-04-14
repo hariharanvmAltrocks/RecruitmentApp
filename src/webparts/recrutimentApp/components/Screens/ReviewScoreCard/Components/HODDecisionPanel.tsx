@@ -20,6 +20,7 @@ import {
 import { ReviewCommentSignature } from "../../RecruitmentTable/Components/ReviewCommentSignature";
 import { useSignatureDetails } from "../../RecruitmentTable/AdvertReviewDrawer/Hooks/getSignatureDetails";
 import { canView } from "../ReviewScoreCardServies/ReviewScoreCardServices";
+import { CheckboxContent } from "../../../../utilities/ConditionConfig";
 const _FEEDBACK_LEVEL2_STATUS_IDS = [130, 129];
 
 interface Props {
@@ -191,140 +192,140 @@ const HODDecisionPanel: React.FC<Props> = ({
             ⚠ Please select a decision.
           </div>
         )}
-      </div>
 
-      {!canEdit && (
-        <motion.section
-          className={styles.section}
-          custom={4}
-          variants={sectionVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <div className={styles.hrFeedbackCard} style={{ marginTop: "5%" }}>
-            <SectionHeader title="Assign Position ID" accent="green" />
+        {!canEdit && (
+          <motion.section
+            className={styles.section}
+            custom={4}
+            variants={sectionVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <div className={styles.hrFeedbackCard} style={{ marginTop: "5%" }}>
+              <SectionHeader title="Assign Position ID" accent="green" />
 
-            <div className={styles.hrFeedbackFieldWrap}>
-              <label
-                className={`${styles.fieldLabel} ${
-                  errors.position ? styles.mErrLabel : ""
-                }`}
-              >
-                Assign Position ID{" "}
-              </label>
+              <div className={styles.hrFeedbackFieldWrap}>
+                <label
+                  className={`${styles.fieldLabel} ${
+                    errors.position ? styles.mErrLabel : ""
+                  }`}
+                >
+                  Assign Position ID{" "}
+                </label>
 
-              <div className={`${styles.dropdownWrapper} dropdown`}>
-                <div
-                  className={`${styles.customDropdownTrigger}
+                <div className={`${styles.dropdownWrapper} dropdown`}>
+                  <div
+                    className={`${styles.customDropdownTrigger}
       ${openPosition ? ` ${styles.dropdownOpen}` : ""}
     `}
-                >
-                  <span
-                    className={
-                      selectedPositionText
-                        ? styles.dropdownSelected
-                        : styles.dropdownPlaceholder
-                    }
                   >
-                    {selectedPositionText}
-                  </span>
-                  <ChevronDown
-                    size={18}
-                    className={`${styles.dropdownChevron} ${openPosition ? styles.open : ""}`}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.section>
-      )}
-      {canEdit && shouldShowPositionId(statusId, hodDecision) && (
-        <motion.section
-          className={styles.section}
-          custom={4}
-          variants={sectionVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <div className={styles.hrFeedbackCard} style={{ marginTop: "5%" }}>
-            <SectionHeader title="Assign Position ID" accent="green" />
-
-            <div className={styles.hrFeedbackFieldWrap}>
-              <label
-                className={`${styles.fieldLabel} ${
-                  errors.position ? styles.mErrLabel : ""
-                }`}
-              >
-                Assign Position ID{" "}
-                <span className={styles.fieldRequired}>*</span>
-                {errors.position && (
-                  <span className={styles.mErrText}> — Required</span>
-                )}
-              </label>
-
-              <div className={`${styles.dropdownWrapper} dropdown`}>
-                <div
-                  className={`${styles.customDropdownTrigger}
-      ${openPosition ? ` ${styles.dropdownOpen}` : ""}
-    `}
-                  onClick={() => setOpenPosition(!openPosition)}
-                >
-                  <span
-                    className={
-                      selectedPositionText
-                        ? styles.dropdownSelected
-                        : styles.dropdownPlaceholder
-                    }
-                  >
-                    {selectedPositionText
-                      ? selectedPositionText
-                      : "Select a position…"}
-                  </span>
-                  <ChevronDown
-                    size={18}
-                    className={`${styles.dropdownChevron} ${openPosition ? styles.open : ""}`}
-                  />
-                </div>
-
-                {/* ✅ Controlled only by openPosition, not selectedPositionText */}
-                <AnimatePresence>
-                  {openPosition && positionOptions && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className={styles.dropdownMenu}
+                    <span
+                      className={
+                        selectedPositionText
+                          ? styles.dropdownSelected
+                          : styles.dropdownPlaceholder
+                      }
                     >
-                      {positionOptions.length > 0 ? (
-                        positionOptions.map((opt) => (
-                          <div
-                            key={opt.key}
-                            onClick={() => {
-                              onPositionChange(opt.key, opt.text || "");
-                              setOpenPosition(false); // ✅ closes after selection
-                            }}
-                            className={`${styles.dropdownOption} ${
-                              selectedPositionId === opt.key
-                                ? styles.dropdownOptionActive
-                                : ""
-                            }`}
-                          >
-                            {opt.text}
-                          </div>
-                        ))
-                      ) : (
-                        <div className={styles.mNoData}>
-                          No positions available.
-                        </div>
-                      )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                      {selectedPositionText}
+                    </span>
+                    <ChevronDown
+                      size={18}
+                      className={`${styles.dropdownChevron} ${openPosition ? styles.open : ""}`}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </motion.section>
-      )}
+          </motion.section>
+        )}
+        {canEdit && shouldShowPositionId(statusId, hodDecision) && (
+          <motion.section
+            className={styles.section}
+            custom={4}
+            variants={sectionVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <div className={styles.hrFeedbackCard} style={{ marginTop: "5%" }}>
+              <SectionHeader title="Assign Position ID" accent="green" />
+
+              <div className={styles.hrFeedbackFieldWrap}>
+                <label
+                  className={`${styles.fieldLabel} ${
+                    errors.position ? styles.mErrLabel : ""
+                  }`}
+                >
+                  Assign Position ID{" "}
+                  <span className={styles.fieldRequired}>*</span>
+                  {errors.position && (
+                    <span className={styles.mErrText}> — Required</span>
+                  )}
+                </label>
+
+                <div className={`${styles.dropdownWrapper} dropdown`}>
+                  <div
+                    className={`${styles.customDropdownTrigger}
+      ${openPosition ? ` ${styles.dropdownOpen}` : ""}
+    `}
+                    onClick={() => setOpenPosition(!openPosition)}
+                  >
+                    <span
+                      className={
+                        selectedPositionText
+                          ? styles.dropdownSelected
+                          : styles.dropdownPlaceholder
+                      }
+                    >
+                      {selectedPositionText
+                        ? selectedPositionText
+                        : "Select a position…"}
+                    </span>
+                    <ChevronDown
+                      size={18}
+                      className={`${styles.dropdownChevron} ${openPosition ? styles.open : ""}`}
+                    />
+                  </div>
+
+                  {/* ✅ Controlled only by openPosition, not selectedPositionText */}
+                  <AnimatePresence>
+                    {openPosition && positionOptions && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className={styles.dropdownMenu}
+                      >
+                        {positionOptions.length > 0 ? (
+                          positionOptions.map((opt) => (
+                            <div
+                              key={opt.key}
+                              onClick={() => {
+                                onPositionChange(opt.key, opt.text || "");
+                                setOpenPosition(false); // ✅ closes after selection
+                              }}
+                              className={`${styles.dropdownOption} ${
+                                selectedPositionId === opt.key
+                                  ? styles.dropdownOptionActive
+                                  : ""
+                              }`}
+                            >
+                              {opt.text}
+                            </div>
+                          ))
+                        ) : (
+                          <div className={styles.mNoData}>
+                            No positions available.
+                          </div>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </div>
+          </motion.section>
+        )}
+      </div>
 
       {/* ── Comment textarea (new UI, same value/handler) ── */}
       {/* <div className={styles.lmCommentsCard} style={{ marginTop: "5%" }}>
@@ -398,6 +399,7 @@ const HODDecisionPanel: React.FC<Props> = ({
             onCommentsChange={(value) => onCommentChange(value)}
             onToggleAcknowledgement={(value) => onConfirmChange(value)}
             ReviewLabel={"FEEDBACK - LEVEL 2"}
+            acknowledgementLabel={CheckboxContent.HODscorecarddetails}
             // disabled={isSubmittingRef.current}
           />
 

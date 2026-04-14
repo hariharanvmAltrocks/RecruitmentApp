@@ -31,7 +31,10 @@ const getActionLabel = (
     return "VIEW";
   } else if (actionMode === "Upload") {
     return "UPLOAD";
-  } else if (item.statusId === StatusId.CareerPortalQuestions) {
+  } else if (
+    item.statusId === StatusId.CareerPortalQuestions ||
+    item.statusId === StatusId.PendingInterviewquestion
+  ) {
     return "CREATE";
   } else if (
     item.statusId === StatusId.PendingReviewAdvertHOD ||

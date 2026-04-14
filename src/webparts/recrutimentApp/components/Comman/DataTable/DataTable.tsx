@@ -65,19 +65,29 @@ export const DataTable = <T,>({
   currentPage,
   totalCount,
   onPageChange,
-  pageSizeOptions = [5, 10, 20, 50],
+  pageSizeOptions = [10, 20, 50],
   onPageSizeChange,
   loading = false,
   emptyMessage = "No records found.",
   onRowClick,
 }: DataTableProps<T>) => {
-  const rowIds = useMemo(() => data.map((row, index) => getRowId(row, index)), [data, getRowId]);
-  const allSelected = enableCheckbox && rowIds.length > 0 && rowIds.every((id) => selectedRowIds.includes(id));
-  const someSelected = enableCheckbox && rowIds.some((id) => selectedRowIds.includes(id)) && !allSelected;
+  const rowIds = useMemo(
+    () => data.map((row, index) => getRowId(row, index)),
+    [data, getRowId],
+  );
+  const allSelected =
+    enableCheckbox &&
+    rowIds.length > 0 &&
+    rowIds.every((id) => selectedRowIds.includes(id));
+  const someSelected =
+    enableCheckbox &&
+    rowIds.some((id) => selectedRowIds.includes(id)) &&
+    !allSelected;
 
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
   const safeCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
-  const rangeStart = totalCount === 0 ? 0 : (safeCurrentPage - 1) * pageSize + 1;
+  const rangeStart =
+    totalCount === 0 ? 0 : (safeCurrentPage - 1) * pageSize + 1;
   const rangeEnd = Math.min(safeCurrentPage * pageSize, totalCount);
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -94,7 +104,10 @@ export const DataTable = <T,>({
     }
   };
 
-  const skeletonRows = useMemo(() => Array.from({ length: 6 }, (_, index) => index), []);
+  const skeletonRows = useMemo(
+    () => Array.from({ length: 6 }, (_, index) => index),
+    [],
+  );
   const totalColumns = columns.length + (enableCheckbox ? 1 : 0);
 
   return (
@@ -125,7 +138,9 @@ export const DataTable = <T,>({
                   column.align ? `data-table__head-cell--${column.align}` : "",
                   column.hideOnMobile ? "data-table__cell--mobile-hidden" : "",
                   column.headerClassName ?? "",
-                ].join(" ").trim()}
+                ]
+                  .join(" ")
+                  .trim()}
                 style={column.width ? { width: column.width } : undefined}
               >
                 {column.header}
@@ -148,9 +163,13 @@ export const DataTable = <T,>({
                       key={`${column.id}-skeleton-${row}`}
                       className={[
                         "data-table__cell",
-                        column.hideOnMobile ? "data-table__cell--mobile-hidden" : "",
+                        column.hideOnMobile
+                          ? "data-table__cell--mobile-hidden"
+                          : "",
                         column.cellClassName ?? "",
-                      ].join(" ").trim()}
+                      ]
+                        .join(" ")
+                        .trim()}
                     >
                       <div className="data-table__skeleton data-table__skeleton--short" />
                     </td>
@@ -161,7 +180,10 @@ export const DataTable = <T,>({
           )}
           {!loading && data.length === 0 && (
             <tr className="data-table__row">
-              <td className="data-table__cell data-table__empty" colSpan={totalColumns}>
+              <td
+                className="data-table__cell data-table__empty"
+                colSpan={totalColumns}
+              >
                 {emptyMessage}
               </td>
             </tr>
@@ -198,9 +220,13 @@ export const DataTable = <T,>({
                       className={[
                         "data-table__cell",
                         column.align ? `data-table__cell--${column.align}` : "",
-                        column.hideOnMobile ? "data-table__cell--mobile-hidden" : "",
+                        column.hideOnMobile
+                          ? "data-table__cell--mobile-hidden"
+                          : "",
                         column.cellClassName ?? "",
-                      ].join(" ").trim()}
+                      ]
+                        .join(" ")
+                        .trim()}
                     >
                       {buildCellValue(row, column)}
                     </td>
@@ -212,77 +238,80 @@ export const DataTable = <T,>({
       </table>
 
       <div className="data-table__pagination">
-      {/* Left: summary text */}
-      <div className="data-table__pagination-summary">
-        {totalCount === 0 ? (
-          "No records"
-        ) : (
-          <>
-            Showing <strong>{rangeStart}</strong> to <strong>{rangeEnd}</strong> of{" "}
-            <strong>{totalCount}</strong> results
-          </>
-        )}
-      </div>
+        {/* Left: summary text */}
+        <div className="data-table__pagination-summary">
+          {totalCount === 0 ? (
+            "No records"
+          ) : (
+            <>
+              Showing <strong>{rangeStart}</strong> to{" "}
+              <strong>{rangeEnd}</strong> of <strong>{totalCount}</strong>{" "}
+              results
+            </>
+          )}
+        </div>
 
-      {onPageSizeChange && (
-  <div className="data-table__page-size">
-    <span className="data-table__page-size-label">Rows per page</span>
-    <div className="data-table__page-size-group">
-      {pageSizeOptions.map((size) => (
-        <button
-          key={size}
-          type="button"
-          className={`data-table__page-size-btn ${
-            size === pageSize ? "data-table__page-size-btn--active" : ""
-          }`}
-          onClick={() => {
-            onPageSizeChange(size);
-            onPageChange(1);
-          }}
-        >
-          {size}
-        </button>
-      ))}
-    </div>
-  </div>
-)}
- 
-      <div className="data-table__pagination-controls">
-        {/* Prev arrow */}
-        <button
-          className="data-table__page-arrow"
-          type="button"
-          onClick={handlePrev}
-          disabled={safeCurrentPage <= 1}
-          aria-label="Previous page"
-        >
-          ‹
-        </button>
- 
-        {pages.map((page) => (
+        {onPageSizeChange && (
+          <div className="data-table__page-size">
+            <span className="data-table__page-size-label">Rows per page</span>
+            <div className="data-table__page-size-group">
+              {pageSizeOptions.map((size) => (
+                <button
+                  key={size}
+                  type="button"
+                  className={`data-table__page-size-btn ${
+                    size === pageSize ? "data-table__page-size-btn--active" : ""
+                  }`}
+                  onClick={() => {
+                    onPageSizeChange(size);
+                    onPageChange(1);
+                  }}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="data-table__pagination-controls">
+          {/* Prev arrow */}
           <button
-            key={page}
+            className="data-table__page-arrow"
             type="button"
-            className={`data-table__page-number ${
-              page === safeCurrentPage ? "data-table__page-number--active" : ""
-            }`}
-            onClick={() => onPageChange(page)}
+            onClick={handlePrev}
+            disabled={safeCurrentPage <= 1}
+            aria-label="Previous page"
           >
-            {page}
+            ‹
           </button>
-        ))}
- 
-        <button
-          className="data-table__page-arrow"
-          type="button"
-          onClick={handleNext}
-          disabled={safeCurrentPage >= totalPages}
-          aria-label="Next page"
-        >
-          ›
-        </button>
+
+          {pages.map((page) => (
+            <button
+              key={page}
+              type="button"
+              className={`data-table__page-number ${
+                page === safeCurrentPage
+                  ? "data-table__page-number--active"
+                  : ""
+              }`}
+              onClick={() => onPageChange(page)}
+            >
+              {page}
+            </button>
+          ))}
+
+          <button
+            className="data-table__page-arrow"
+            type="button"
+            onClick={handleNext}
+            disabled={safeCurrentPage >= totalPages}
+            aria-label="Next page"
+          >
+            ›
+          </button>
+        </div>
       </div>
-    </div>
     </div>
   );
 };

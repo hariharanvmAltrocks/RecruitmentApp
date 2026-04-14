@@ -22,6 +22,7 @@ import { RequiredAttachments } from "../Components/RequiredAttachments";
 import { ReviewCommentSignature } from "../Components/ReviewCommentSignature";
 import { UploadDocument, UploadedFile } from "../Components/UploadDocument";
 import {
+  CheckboxContent,
   MatricID,
   Nationality,
   RecuritmentHRMsg,
@@ -502,6 +503,11 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                       commentError={commentError}
                       checkboxError={checkboxError}
                       disabled={isSubmittingRef.current}
+                      acknowledgementLabel={
+                        metricId === MatricID.UploadONEM
+                          ? CheckboxContent.UploadOnemDocument
+                          : CheckboxContent.ApprovalCheckbox
+                      }
                     />
 
                     <div className="advert-review-drawer__footer">

@@ -83,6 +83,7 @@ export type DashboardData = {
   JobTitleEnglish: string;
   ModifiedDate: string | undefined;
   CreatedDate: string | undefined;
+  CandidateCount?: number;
 };
 
 export type IEvaluValidate = {
@@ -95,10 +96,19 @@ export interface IInterviewPanel {
   IsScoreSheetUploaded?: string;
 }
 
+export interface IPortalItem {
+  JobUniqueKey: string;
+  JobCode?: {
+    JobCode: string;
+  };
+  [key: string]: unknown;
+}
+
 export type IDashboard = {
   GetRecruitmentDetails(
     filterParam: any,
     filterConditions: any,
+    MatricId?: number,
   ): Promise<ApiResponse<DashboardData[]>>;
   GetDashboardCount(
     queries: BatchQuery[],

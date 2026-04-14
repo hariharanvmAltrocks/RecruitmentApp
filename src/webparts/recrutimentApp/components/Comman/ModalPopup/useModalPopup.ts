@@ -8,6 +8,7 @@ export interface ModalState {
   type: ModalType;
   onConfirm?: () => void;
   onCancel?: () => void;
+  onClose?: () => void;
   confirmLabel?: string;
   cancelLabel?: string;
   isLoading?: boolean;

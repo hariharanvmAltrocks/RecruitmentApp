@@ -7,8 +7,9 @@ var ServiceExport_1 = require("../../../../services/ServiceExport");
 var ApiConfig_1 = require("../../../../utilities/ApiConfig");
 var metricColumns_config_1 = require("../metricColumns.config");
 var Config_1 = require("../../../../utilities/Config");
+var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
 var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
-var callServiceByListName = function (listName, filter, condition, roleIDs) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+var callServiceByListName = function (listName, filter, condition, roleIDs, MatricID) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
     var _a;
     return tslib_1.__generator(this, function (_b) {
         switch (_b.label) {
@@ -26,7 +27,7 @@ var callServiceByListName = function (listName, filter, condition, roleIDs) { re
                 return [3 /*break*/, 9];
             case 1: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetNPAEPVRRDetails(filter, condition)];
             case 2: return [2 /*return*/, _b.sent()];
-            case 3: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetRecruitmentDetails(filter, condition)];
+            case 3: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetRecruitmentDetails(filter, condition, MatricID)];
             case 4: return [2 /*return*/, _b.sent()];
             case 5: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetCandidateDetails(filter, condition)];
             case 6: return [2 /*return*/, _b.sent()];
@@ -38,20 +39,18 @@ var callServiceByListName = function (listName, filter, condition, roleIDs) { re
     });
 }); };
 exports.callServiceByListName = callServiceByListName;
-var mapResponseByListName = function (listName, data) {
+var mapResponseByListName = function (listName, data, MatricId) {
     if (!data)
         return [];
+    var shouldShowProfile = MatricId === ConditionConfig_1.MatricID.ReviewProfileHR ||
+        MatricId === ConditionConfig_1.MatricID.ReviewProfileLM ||
+        MatricId === ConditionConfig_1.MatricID.AssignInterviewPanel;
     switch (listName) {
         case Config_1.ListNames.HRMSNewPositionRequest:
         case Config_1.ListNames.HRMSRecruitmentDptDetails:
-            return data.map(function (item) { return ({
-                JobCode: item.JobCode,
-                JobTitle: item.JobTitleEnglish,
-                BusinessUnitCode: item.BusinessUnitCode,
-                PositionRequest: item.Type,
-                Nationality: item.Nationality,
-                Status: item.Status,
-            }); });
+            return data.map(function (item) { return (tslib_1.__assign(tslib_1.__assign({ JobCode: item.JobCode, JobTitle: item.JobTitleEnglish }, (shouldShowProfile && {
+                ProfileCount: item.CandidateCount,
+            })), { BusinessUnitCode: item.BusinessUnitCode, PositionRequest: item.Type, Nationality: item.Nationality, Status: item.Status })); });
         case Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails:
             return data.map(function (item) { return ({
                 ApplicantName: item.ApplicantName,
@@ -94,14 +93,14 @@ var useTrackerData = function (MatricID, refreshKey) {
                     }
                     configs_1 = Array.isArray(config) ? config : [config];
                     return [4 /*yield*/, Promise.all(configs_1.map(function (cfg) {
-                            return (0, exports.callServiceByListName)(cfg.ListName, cfg.Filter, "and", roleIDs);
+                            return (0, exports.callServiceByListName)(cfg.ListName, cfg.Filter, "and", roleIDs, MatricID);
                         }))];
                 case 1:
                     responses = _a.sent();
                     allData_1 = [];
                     responses.forEach(function (response, index) {
                         if ((response === null || response === void 0 ? void 0 : response.status) === ApiConfig_1.ResponeStatus.SUCCESS) {
-                            var mapped = (0, exports.mapResponseByListName)(configs_1[index].ListName, response.data);
+                            var mapped = (0, exports.mapResponseByListName)(configs_1[index].ListName, response.data, MatricID);
                             allData_1.push.apply(allData_1, mapped);
                         }
                     });

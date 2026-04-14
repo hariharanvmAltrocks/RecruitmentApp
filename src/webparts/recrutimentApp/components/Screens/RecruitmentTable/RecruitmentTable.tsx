@@ -116,6 +116,7 @@ export const RecruitmentTable: React.FC = () => {
     modalState: assignmentModalState,
     closeModal: assignmentCloseModal,
     loading,
+    Submitted,
   } = useConfirmAssignment(handleClosePopup, handleRefresh);
 
   const { modalState, showModal, closeModal } = useModalPopup();
@@ -157,6 +158,11 @@ export const RecruitmentTable: React.FC = () => {
     if (sideNavflag && tabs.length > 0 && !currentTabName) {
       setMatricID(tabs[0].matricId);
       setCurrentTabName(tabs[1]?.description ?? "");
+    }
+    if (Submitted) {
+      setSelectedIds([]);
+      setSelectedMemberId(0);
+      handleRefresh();
     }
   }, [tabs]);
 
@@ -226,14 +232,7 @@ export const RecruitmentTable: React.FC = () => {
     );
   }, [paginatedItems, selectedIds]);
 
-  // const isEvalutionItem = (
-  //   item: RecruitmentItem | EvalutionItem
-  // ): item is EvalutionItem => {
-  //   return matricID === MatricID.EvalutionHR || matricID === MatricID.EvalutionLM || matricID === MatricID.EvalutionHOD || matricID === MatricID.EvalutionEXCO;
-  // };
   const processingRef = useRef(false);
-
-  const EvalutionFlagL2 = useRef(false);
 
   const handleAction = useCallback(
     async (item: any) => {
@@ -299,6 +298,7 @@ export const RecruitmentTable: React.FC = () => {
 
         const routeMap: Record<number, string> = {
           [MatricID.InterviewQuestionHR]: "/QuestionCreation",
+          [MatricID.DisqualifiQuesLM]: "/QuestionCreation",
           [MatricID.InterviewQuestionLM]: "/QuestionCreation",
           [MatricID.ReviewProfileHR]: "/CandidateTable",
           [MatricID.ReviewProfileLM]: "/CandidateTable",

@@ -14,6 +14,7 @@ export interface ReviewCommentSignatureProps {
   checkboxError?: boolean;
   disabled?: boolean;
   ReviewLabel?: string;
+  acknowledgementLabel?: string;
 }
 
 const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({
@@ -34,6 +35,7 @@ export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
   checkboxError = false,
   disabled = false,
   ReviewLabel,
+  acknowledgementLabel,
 }) => (
   <section className="advert-review-drawer__section advert-review-drawer__section--comments">
     <h3 className="advert-review-drawer__section-title">
@@ -88,9 +90,9 @@ export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
           <CheckCircle2 size={12} />
         </span>
         <span>
-          I hereby acknowledge that I have reviewed the job advertisement
-          details and attachments, and I confirm that the information is
-          accurate and ready for publication.
+          {acknowledgementLabel
+            ? acknowledgementLabel
+            : "I hereby acknowledge that I have reviewed the job advertisement details and attachments, and I confirm that the information is accurate and ready for publication."}
         </span>
       </label>
       {checkboxError && (

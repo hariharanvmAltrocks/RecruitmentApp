@@ -30,50 +30,65 @@ var useAttachmentDetails = function (jobId, options) {
                         ])];
                     case 1:
                         _a = _b.sent(), RoleProfileDocment = _a[0], GradingDocument = _a[1], AdvertismentDocment = _a[2], OnamSignedStampsDocment = _a[3];
-                        mappedData = tslib_1.__spreadArray(tslib_1.__spreadArray([
-                            {
-                                title: "Role Profile Document",
-                                type: "PDF",
-                                versions: RoleProfileDocment.data.English.map(function (d) { return ({
-                                    lang: "EN",
-                                    label: d.name,
-                                    content: d.content,
-                                }); }).concat(RoleProfileDocment.data.French.map(function (d) { return ({
-                                    lang: "FR",
-                                    label: d.name,
-                                    content: d.content,
-                                }); })),
-                            },
-                            {
-                                title: "Grading Document",
-                                type: "PDF",
-                                versions: GradingDocument.data.English.map(function (d) { return ({
-                                    lang: "EN",
-                                    label: d.name,
-                                    content: d.content,
-                                }); }).concat(GradingDocument.data.French.map(function (d) { return ({
-                                    lang: "FR",
-                                    label: d.name,
-                                    content: d.content,
-                                }); })),
-                            }
-                        ], (AdvertismentDocment.data.length > 0 ? [{
-                                title: "Advertisement Document",
-                                type: "PDF",
-                                versions: AdvertismentDocment.data.map(function (d) { return ({
-                                    lang: "EN",
-                                    label: d.name,
-                                    content: d.content,
-                                }); })
-                            }] : []), true), (OnamSignedStampsDocment.data.length > 0 ? [{
-                                title: "ONAM Signed Stamps",
-                                type: "PDF",
-                                versions: OnamSignedStampsDocment.data.map(function (d) { return ({
-                                    lang: "EN",
-                                    label: d.name,
-                                    content: d.content,
-                                }); })
-                            }] : []), true);
+                        mappedData = tslib_1.__spreadArray(tslib_1.__spreadArray(tslib_1.__spreadArray(tslib_1.__spreadArray([], (RoleProfileDocment.data.English.length > 0 ||
+                            RoleProfileDocment.data.French.length > 0
+                            ? [
+                                {
+                                    title: "Role Profile Document",
+                                    type: "PDF",
+                                    versions: RoleProfileDocment.data.English.map(function (d) { return ({
+                                        lang: "EN",
+                                        label: d.name,
+                                        content: d.content,
+                                    }); }).concat(RoleProfileDocment.data.French.map(function (d) { return ({
+                                        lang: "FR",
+                                        label: d.name,
+                                        content: d.content,
+                                    }); })),
+                                },
+                            ]
+                            : []), true), (GradingDocument.data.English.length > 0 ||
+                            GradingDocument.data.French.length > 0
+                            ? [
+                                {
+                                    title: "Grading Document",
+                                    type: "PDF",
+                                    versions: GradingDocument.data.English.map(function (d) { return ({
+                                        lang: "EN",
+                                        label: d.name,
+                                        content: d.content,
+                                    }); }).concat(GradingDocument.data.French.map(function (d) { return ({
+                                        lang: "FR",
+                                        label: d.name,
+                                        content: d.content,
+                                    }); })),
+                                },
+                            ]
+                            : []), true), (AdvertismentDocment.data.length > 0
+                            ? [
+                                {
+                                    title: "Advertisement Document",
+                                    type: "PDF",
+                                    versions: AdvertismentDocment.data.map(function (d) { return ({
+                                        lang: "EN",
+                                        label: d.name,
+                                        content: d.content,
+                                    }); }),
+                                },
+                            ]
+                            : []), true), (OnamSignedStampsDocment.data.length > 0
+                            ? [
+                                {
+                                    title: "ONAM Signed Stamps",
+                                    type: "PDF",
+                                    versions: OnamSignedStampsDocment.data.map(function (d) { return ({
+                                        lang: "EN",
+                                        label: d.name,
+                                        content: d.content,
+                                    }); }),
+                                },
+                            ]
+                            : []), true);
                         setData(mappedData);
                         setLoading(false);
                         return [2 /*return*/];

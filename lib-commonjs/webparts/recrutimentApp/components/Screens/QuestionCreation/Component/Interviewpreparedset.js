@@ -8,7 +8,7 @@ var framer_motion_1 = require("framer-motion");
 require("./Interviewmode.scss");
 require("../Questioncreation.scss");
 var InterviewPreparedSet = function (_a) {
-    var questions = _a.questions, onRemove = _a.onRemove;
+    var questions = _a.questions, onRemove = _a.onRemove, onEdit = _a.onEdit;
     return (react_1.default.createElement("div", { className: "iq-prepared" },
         react_1.default.createElement("div", { className: "iq-prepared__header" },
             react_1.default.createElement("div", { className: "iq-prepared__header-left" },
@@ -47,6 +47,8 @@ var InterviewPreparedSet = function (_a) {
                         q.answerFr && (react_1.default.createElement("div", { className: "iq-prepared__answer-block" },
                             react_1.default.createElement("span", { className: "iq-prepared__answer-label iq-prepared__answer-label--fr" }, "R\u00E9ponse Attendue"),
                             react_1.default.createElement("p", { className: "iq-prepared__answer-text iq-prepared__answer-text--italic" }, q.answerFr)))))),
+            react_1.default.createElement("button", { className: "qc-prepared__remove", onClick: function () { return onEdit(q.id); }, title: "Edit" },
+                react_1.default.createElement(lucide_react_1.Pencil, { size: 16 })),
             react_1.default.createElement("button", { className: "iq-prepared__remove", onClick: function () { return onRemove(q.id); }, title: "Remove" },
                 react_1.default.createElement(lucide_react_1.X, { size: 16 })))); }))))));
 };

@@ -9,7 +9,6 @@ var useDashboardMetrics_1 = require("./Hooks/useDashboardMetrics");
 var usetrackerdata_1 = require("./Hooks/usetrackerdata");
 var Tracker_1 = tslib_1.__importDefault(require("../../Comman/Tracker/Tracker"));
 var PriorityWidget_1 = tslib_1.__importDefault(require("../../Comman/PriorityWidget/PriorityWidget"));
-var UrgentWidget_1 = tslib_1.__importDefault(require("../../Comman/UrgentWidget/UrgentWidget"));
 var useUrgentTasks_1 = require("./Hooks/useUrgentTasks");
 var metricColumns_config_1 = require("./metricColumns.config");
 var react_router_1 = require("react-router");
@@ -89,9 +88,7 @@ var Dashboard = function (props) {
                 react_1.default.createElement("div", { className: "tracker-panel" },
                     react_1.default.createElement(Tracker_1.default, { rows: trackerData, selectedMetric: selectedMetric, activeMetric: activeMetric, onRowClick: function (row) { return onTrackerChange(row); } })),
                 react_1.default.createElement("div", { className: "priority-panel" },
-                    react_1.default.createElement(PriorityWidget_1.default, { data: priorityData, total: total })),
-                react_1.default.createElement("div", { className: "urgent-panel" },
-                    react_1.default.createElement(UrgentWidget_1.default, { tasks: urgentTasks }))))))))));
+                    react_1.default.createElement(PriorityWidget_1.default, { data: priorityData, total: total }))))))))));
 };
 exports.default = Dashboard;
 //# sourceMappingURL=Dashboard.js.map

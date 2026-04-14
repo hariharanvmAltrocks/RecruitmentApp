@@ -187,7 +187,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     TabName: TabNames.Evaluation,
   },
 
-  [MatricID.InterviewQuestionLM]: {
+  [MatricID.DisqualifiQuesLM]: {
     label: "Pending Create Minimum Criteria Question",
     status: "PENDING",
     icon: Activity,
@@ -200,6 +200,21 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     TabValue: "tab2",
     TabName: TabNames.InterviewQuestion,
   },
+
+  [MatricID.InterviewQuestionLM]: {
+    label: "Pending Interview Question",
+    status: "PENDING",
+    icon: Activity,
+    color: "#10b981",
+    bgColor: "#ecfdf5",
+    statusColor: "#ef4444",
+    statusBg: "#fee2e2",
+    path: "/RecruitmentTable",
+    menuId: menuID.SelectionProcess,
+    TabValue: "tab2",
+    TabName: TabNames.InterviewQuestion,
+  },
+
   [MatricID.EvalutionLM]: {
     label: "Pending Evaluation",
     status: "PENDING",
@@ -418,6 +433,7 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
       case RoleID.LineManager:
         roleColumns = [
           buildCol(MatricID.AdvertReviewLM, { showArrow: true }),
+          buildCol(MatricID.DisqualifiQuesLM, { showArrow: true }),
           buildCol(MatricID.InterviewQuestionLM, { showArrow: true }),
           buildCol(MatricID.ReviewProfileLM, {
             showArrow: true,
@@ -673,13 +689,14 @@ export const MetricQueryConfig = (
   ),
 
   // ✅ Interview Question LM (FIXED)
+  [MatricID.DisqualifiQuesLM]: createQuery(
+    ListNames.HRMSRecruitmentDptDetails,
+    StatusFilter([StatusId.CareerPortalQuestions], "LineManager", EmailId),
+  ),
+
   [MatricID.InterviewQuestionLM]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter(
-      [StatusId.PendingInterviewquestion, StatusId.CareerPortalQuestions],
-      "LineManager",
-      EmailId,
-    ),
+    StatusFilter([StatusId.PendingInterviewquestion], "LineManager", EmailId),
   ),
 
   // ✅ Interview Tracker
@@ -928,6 +945,7 @@ const RoleMetricFilters: Record<number, number[]> = {
     MatricID.AdvertReviewLM,
     MatricID.EvalutionLM,
     MatricID.ReviewProfileLM,
+    MatricID.DisqualifiQuesLM,
     MatricID.InterviewQuestionLM,
     MatricID.interviewSchedule,
     MatricID.OfferRelease,

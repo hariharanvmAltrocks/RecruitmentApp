@@ -20,10 +20,14 @@ var buildCellValue = function (row, column) {
     return "-";
 };
 var DataTable = function (_a) {
-    var columns = _a.columns, data = _a.data, _b = _a.enableCheckbox, enableCheckbox = _b === void 0 ? false : _b, _c = _a.selectedRowIds, selectedRowIds = _c === void 0 ? [] : _c, _d = _a.getRowId, getRowId = _d === void 0 ? getRowIdFallback : _d, onToggleRow = _a.onToggleRow, onToggleAll = _a.onToggleAll, pageSize = _a.pageSize, currentPage = _a.currentPage, totalCount = _a.totalCount, onPageChange = _a.onPageChange, _e = _a.pageSizeOptions, pageSizeOptions = _e === void 0 ? [5, 10, 20, 50] : _e, onPageSizeChange = _a.onPageSizeChange, _f = _a.loading, loading = _f === void 0 ? false : _f, _g = _a.emptyMessage, emptyMessage = _g === void 0 ? "No records found." : _g, onRowClick = _a.onRowClick;
+    var columns = _a.columns, data = _a.data, _b = _a.enableCheckbox, enableCheckbox = _b === void 0 ? false : _b, _c = _a.selectedRowIds, selectedRowIds = _c === void 0 ? [] : _c, _d = _a.getRowId, getRowId = _d === void 0 ? getRowIdFallback : _d, onToggleRow = _a.onToggleRow, onToggleAll = _a.onToggleAll, pageSize = _a.pageSize, currentPage = _a.currentPage, totalCount = _a.totalCount, onPageChange = _a.onPageChange, _e = _a.pageSizeOptions, pageSizeOptions = _e === void 0 ? [10, 20, 50] : _e, onPageSizeChange = _a.onPageSizeChange, _f = _a.loading, loading = _f === void 0 ? false : _f, _g = _a.emptyMessage, emptyMessage = _g === void 0 ? "No records found." : _g, onRowClick = _a.onRowClick;
     var rowIds = (0, react_1.useMemo)(function () { return data.map(function (row, index) { return getRowId(row, index); }); }, [data, getRowId]);
-    var allSelected = enableCheckbox && rowIds.length > 0 && rowIds.every(function (id) { return selectedRowIds.includes(id); });
-    var someSelected = enableCheckbox && rowIds.some(function (id) { return selectedRowIds.includes(id); }) && !allSelected;
+    var allSelected = enableCheckbox &&
+        rowIds.length > 0 &&
+        rowIds.every(function (id) { return selectedRowIds.includes(id); });
+    var someSelected = enableCheckbox &&
+        rowIds.some(function (id) { return selectedRowIds.includes(id); }) &&
+        !allSelected;
     var totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
     var safeCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
     var rangeStart = totalCount === 0 ? 0 : (safeCurrentPage - 1) * pageSize + 1;
@@ -56,7 +60,9 @@ var DataTable = function (_a) {
                                 column.align ? "data-table__head-cell--".concat(column.align) : "",
                                 column.hideOnMobile ? "data-table__cell--mobile-hidden" : "",
                                 (_a = column.headerClassName) !== null && _a !== void 0 ? _a : "",
-                            ].join(" ").trim(), style: column.width ? { width: column.width } : undefined }, column.header));
+                            ]
+                                .join(" ")
+                                .trim(), style: column.width ? { width: column.width } : undefined }, column.header));
                     }))),
             react_1.default.createElement("tbody", null,
                 loading && (react_1.default.createElement(react_1.default.Fragment, null, skeletonRows.map(function (row) { return (react_1.default.createElement("tr", { className: "data-table__row", key: "skeleton-".concat(row) },
@@ -66,9 +72,13 @@ var DataTable = function (_a) {
                         var _a;
                         return (react_1.default.createElement("td", { key: "".concat(column.id, "-skeleton-").concat(row), className: [
                                 "data-table__cell",
-                                column.hideOnMobile ? "data-table__cell--mobile-hidden" : "",
+                                column.hideOnMobile
+                                    ? "data-table__cell--mobile-hidden"
+                                    : "",
                                 (_a = column.cellClassName) !== null && _a !== void 0 ? _a : "",
-                            ].join(" ").trim() },
+                            ]
+                                .join(" ")
+                                .trim() },
                             react_1.default.createElement("div", { className: "data-table__skeleton data-table__skeleton--short" })));
                     }))); }))),
                 !loading && data.length === 0 && (react_1.default.createElement("tr", { className: "data-table__row" },
@@ -85,21 +95,26 @@ var DataTable = function (_a) {
                                 return (react_1.default.createElement("td", { key: "".concat(column.id, "-").concat(rowId), className: [
                                         "data-table__cell",
                                         column.align ? "data-table__cell--".concat(column.align) : "",
-                                        column.hideOnMobile ? "data-table__cell--mobile-hidden" : "",
+                                        column.hideOnMobile
+                                            ? "data-table__cell--mobile-hidden"
+                                            : "",
                                         (_a = column.cellClassName) !== null && _a !== void 0 ? _a : "",
-                                    ].join(" ").trim() }, buildCellValue(row, column)));
+                                    ]
+                                        .join(" ")
+                                        .trim() }, buildCellValue(row, column)));
                             })));
                     }))),
         react_1.default.createElement("div", { className: "data-table__pagination" },
             react_1.default.createElement("div", { className: "data-table__pagination-summary" }, totalCount === 0 ? ("No records") : (react_1.default.createElement(react_1.default.Fragment, null,
                 "Showing ",
                 react_1.default.createElement("strong", null, rangeStart),
-                " to ",
-                react_1.default.createElement("strong", null, rangeEnd),
-                " of",
+                " to",
                 " ",
+                react_1.default.createElement("strong", null, rangeEnd),
+                " of ",
                 react_1.default.createElement("strong", null, totalCount),
-                " results"))),
+                " ",
+                "results"))),
             onPageSizeChange && (react_1.default.createElement("div", { className: "data-table__page-size" },
                 react_1.default.createElement("span", { className: "data-table__page-size-label" }, "Rows per page"),
                 react_1.default.createElement("div", { className: "data-table__page-size-group" }, pageSizeOptions.map(function (size) { return (react_1.default.createElement("button", { key: size, type: "button", className: "data-table__page-size-btn ".concat(size === pageSize ? "data-table__page-size-btn--active" : ""), onClick: function () {
@@ -108,7 +123,9 @@ var DataTable = function (_a) {
                     } }, size)); })))),
             react_1.default.createElement("div", { className: "data-table__pagination-controls" },
                 react_1.default.createElement("button", { className: "data-table__page-arrow", type: "button", onClick: handlePrev, disabled: safeCurrentPage <= 1, "aria-label": "Previous page" }, "\u2039"),
-                pages.map(function (page) { return (react_1.default.createElement("button", { key: page, type: "button", className: "data-table__page-number ".concat(page === safeCurrentPage ? "data-table__page-number--active" : ""), onClick: function () { return onPageChange(page); } }, page)); }),
+                pages.map(function (page) { return (react_1.default.createElement("button", { key: page, type: "button", className: "data-table__page-number ".concat(page === safeCurrentPage
+                        ? "data-table__page-number--active"
+                        : ""), onClick: function () { return onPageChange(page); } }, page)); }),
                 react_1.default.createElement("button", { className: "data-table__page-arrow", type: "button", onClick: handleNext, disabled: safeCurrentPage >= totalPages, "aria-label": "Next page" }, "\u203A")))));
 };
 exports.DataTable = DataTable;

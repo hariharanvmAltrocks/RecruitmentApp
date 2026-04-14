@@ -1,7 +1,13 @@
 import moment from "moment";
 import { ApiResponse } from "../../models/apimodels";
 import { count, InOperator } from "../../utilities/ApiConfig";
-import { DataFrom, ListNames, RoleID, StatusId } from "../../utilities/Config";
+import {
+  DataFrom,
+  ListNames,
+  RoleID,
+  StatusId,
+  workflowStatusApi,
+} from "../../utilities/Config";
 import SPServices from "../SPService/spservice";
 import {
   DashboardData,
@@ -9,6 +15,7 @@ import {
   IDashboard,
   IEvaluValidate,
   IInterviewPanel,
+  IPortalItem,
 } from "./IDashboard";
 import { BatchQuery } from "../SPService/Ispservice";
 import { getProfileData } from "../AxiosService/CareerPortalAPI";
@@ -79,7 +86,7 @@ export default class DashboardService implements IDashboard {
           const spCount = (spCounts[config.id] as any[])?.length ?? 0;
 
           const value = hasExternalCount
-            ? (externalCountMap.get(String(config.id)) ?? 0) + spCount
+            ? (externalCountMap.get(String(config.id)) ?? 0)
             : spCount;
 
           return {
@@ -180,9 +187,75 @@ export default class DashboardService implements IDashboard {
     return result;
   }
 
+  private async _fetchCandidateCounts(
+    jobCodeId: number,
+    workflowStatusId: string[],
+  ): Promise<number> {
+    if (!jobCodeId) return 0;
+
+    try {
+      const portalItems = (await SPServices.SPReadItems({
+        Listname: ListNames.RecruitAppCareerPortalIntegration,
+        Select: `*,JobCode/JobCode`,
+        Filter: [
+          { FilterKey: "JobCodeId", Operator: "in", FilterValue: jobCodeId },
+        ],
+        FilterCondition: "and",
+        Expand: `JobCode`,
+        Topcount: count.Topcount,
+        Orderby: "ID",
+        Orderbydecorasc: true,
+      })) as IPortalItem[];
+
+      // Guard: no portal items found
+      const jobUniqueKey = portalItems?.[0]?.JobUniqueKey;
+      if (!jobUniqueKey) return 0;
+
+      const params: ExternalApiParams = {
+        jobCodes: [jobUniqueKey],
+        workflowStatus: workflowStatusId,
+      };
+
+      const response = await getProfileData.GetJobAppliedCount(params);
+
+      // Safe access with fallback to 0
+      return response?.data?.data[0]?.count ?? 0;
+    } catch (error) {
+      console.error(
+        `[_fetchCandidateCounts] Failed for JobCodeId ${jobCodeId}:`,
+        error,
+      );
+      return 0;
+    }
+  }
+
+  private async _getCandidateCountByMatric(
+    jobCodeId: number,
+    MatricId: number,
+  ): Promise<number> {
+    if (MatricId === MatricID.ReviewProfileHR) {
+      return this._fetchCandidateCounts(jobCodeId, [
+        workflowStatusApi.HRPending,
+      ]);
+    } else if (MatricId === MatricID.ReviewProfileLM) {
+      return this._fetchCandidateCounts(jobCodeId, [
+        workflowStatusApi.LineManagerL1Pending,
+        workflowStatusApi.LineManagerL2Pending,
+        workflowStatusApi.LineManagerLevel1OnHold,
+        workflowStatusApi.LineManagerLevel2OnHold,
+      ]);
+    } else if (MatricId === MatricID.AssignInterviewPanel) {
+      return this._fetchCandidateCounts(jobCodeId, [
+        workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+      ]);
+    }
+    return 0;
+  }
+
   async GetRecruitmentDetails(
     filterParam: any,
     filterConditions: any,
+    MatricId?: number,
   ): Promise<ApiResponse<DashboardData[]>> {
     try {
       const res: any[] = await SPServices.SPReadItems({
@@ -199,28 +272,37 @@ export default class DashboardService implements IDashboard {
       if (!res.length) {
         return { data: [], status: 200, message: "No records found" };
       }
+      let candidateCount: number = 0;
 
-      const GridResult: DashboardData[] = res.map(
-        (item: any, index: number) => ({
-          ID: item.ID,
-          RecordID: index + 1,
-          BusinessUnitCode: item?.BusinessUnitCode?.BusineesUnitCode ?? "",
-          Nationality: item?.Nationality,
-          NumberOfPersonNeeded: item?.NumberOfPersonNeeded,
-          Type: item?.DataFrom ?? "",
-          Status: item?.Status?.StatusDescription ?? "",
-          StatusId: item?.StatusId,
-          JobCodeId: item?.JobCode?.ID ?? 0,
-          JobCode: item?.JobCode?.JobCode ?? "",
-          JobTitleEnglish: item?.JobCode?.JobTitleInEnglish ?? "",
-          ModifiedDate: item?.Modified
-            ? moment(item.Modified).format("YYYY-MM-DD")
-            : undefined,
-          CreatedDate: item?.Created
-            ? moment(item.Created).format("YYYY-MM-DD")
-            : undefined,
-          Department: item?.Department?.DepartmentName ?? "",
-          EmploymentCategory: item?.EmploymentCategory,
+      const GridResult: DashboardData[] = await Promise.all(
+        res.map(async (item: any, index: number) => {
+          const candidateCount = await this._getCandidateCountByMatric(
+            item.JobCodeId,
+            MatricId ?? 0,
+          );
+
+          return {
+            ID: item.ID,
+            RecordID: index + 1,
+            BusinessUnitCode: item?.BusinessUnitCode?.BusineesUnitCode ?? "",
+            Nationality: item?.Nationality,
+            NumberOfPersonNeeded: item?.NumberOfPersonNeeded,
+            Type: item?.DataFrom ?? "",
+            Status: item?.Status?.StatusDescription ?? "",
+            StatusId: item?.StatusId,
+            JobCodeId: item?.JobCode?.ID ?? 0,
+            JobCode: item?.JobCode?.JobCode ?? "",
+            JobTitleEnglish: item?.JobCode?.JobTitleInEnglish ?? "",
+            ModifiedDate: item?.Modified
+              ? moment(item.Modified).format("YYYY-MM-DD")
+              : undefined,
+            CreatedDate: item?.Created
+              ? moment(item.Created).format("YYYY-MM-DD")
+              : undefined,
+            Department: item?.Department?.DepartmentName ?? "",
+            EmploymentCategory: item?.EmploymentCategory,
+            CandidateCount: candidateCount,
+          };
         }),
       );
 

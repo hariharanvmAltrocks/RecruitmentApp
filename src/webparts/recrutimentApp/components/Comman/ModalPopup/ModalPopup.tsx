@@ -109,7 +109,7 @@ const CONFIG: Record<
     iconGradient: "linear-gradient(135deg, #9333ea, #7e22ce)",
     accentColor: "#9333ea",
     defaultTitle: "Are you sure?",
-    defaultMessage: "This action cannot be undone.",
+    defaultMessage: "",
     defaultConfirmLabel: "Yes, Continue",
     defaultCancelLabel: "Cancel",
     confirmBtnClass: "btn--confirmation",
@@ -146,9 +146,6 @@ const CONFIG: Record<
   },
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Component
-// ─────────────────────────────────────────────────────────────────────────────
 export const ModalPopup: React.FC<ModalProps> = ({
   open,
   type = "info",
@@ -244,14 +241,14 @@ export const ModalPopup: React.FC<ModalProps> = ({
             />
 
             {/* Close button */}
-            <button
+            {/* <button
               className="modal-popup__close-btn"
               onClick={onClose}
               aria-label="Close modal"
               disabled={isLoading}
             >
               <X size={14} />
-            </button>
+            </button> */}
 
             {/* Circular gradient icon */}
             <div className="modal-popup__icon-wrap">
@@ -307,7 +304,13 @@ export const ModalPopup: React.FC<ModalProps> = ({
               {/* Cancel / Close / Got it */}
               <button
                 className="modal-popup__btn btn--secondary"
-                onClick={onCancel ?? onClose}
+                onClick={() => {
+                  if (type === "success" && onConfirm) {
+                    onConfirm(); // call parent handler
+                  } else {
+                    (onCancel ?? onClose ?? onConfirm)?.();
+                  }
+                }}
                 disabled={isLoading}
               >
                 {resolvedCancelLabel}

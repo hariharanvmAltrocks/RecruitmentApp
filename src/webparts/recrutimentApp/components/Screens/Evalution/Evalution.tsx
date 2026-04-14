@@ -147,7 +147,7 @@ function EvalutionContent({
           </button>
         </div>
       )}
-      {StatusID === StatusId.InterviewLevel2InProgress} {}else
+      {StatusID === StatusId.InterviewLevel2InProgress} {<></>}else
       {
         <div className={styles.layout}>
           <CandidateInfo candidate={candidate} />

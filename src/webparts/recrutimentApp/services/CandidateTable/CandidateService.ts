@@ -508,6 +508,11 @@ export default class CandidateService implements ICandidateService {
             PPEDetails: PPEData,
             RoleProfile: [],
             OverallAtttachment: OverallAttachment,
+
+            NationalityShort:
+              op?.profile?.nationality?.value === NationalityCode.Nationals
+                ? "DRC"
+                : "EXPAT",
           };
 
           GetProfileByJobCodeData.push(GetProfileDahboard);
@@ -651,7 +656,7 @@ export default class CandidateService implements ICandidateService {
             disabilityReason: item?.DisabilityDetails,
             identityValue: "",
             identityType: "",
-            NatioCode: "",
+            NatioCode: item?.NationalityCode,
 
             Age: "",
             NumberOftax: item.NumberOfTaxDependents,
@@ -695,6 +700,11 @@ export default class CandidateService implements ICandidateService {
 
             InterviewStartDate: formatToDateTimeLocal(item?.InterviewDate),
             InterviewEndDate: formatToDateTimeLocal(item?.InterviewTime),
+
+            NationalityShort:
+              item?.NationalityCode === NationalityCode.Nationals
+                ? "DRC"
+                : "EXPAT",
           } as CandidateProfile;
         }),
       );

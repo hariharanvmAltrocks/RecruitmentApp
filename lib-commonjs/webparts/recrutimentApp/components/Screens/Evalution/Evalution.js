@@ -80,6 +80,7 @@ function EvalutionContent(_a) {
             React.createElement("button", { className: Evalution_module_scss_1.default.retryBtn, onClick: handleRetry }, "Retry"))),
         StatusID === Config_1.StatusId.InterviewLevel2InProgress,
         " ",
+        React.createElement(React.Fragment, null),
         "else",
         React.createElement("div", { className: Evalution_module_scss_1.default.layout },
             React.createElement(CandidateInfo_1.default, { candidate: candidate }),

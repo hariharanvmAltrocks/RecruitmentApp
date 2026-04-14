@@ -185,9 +185,9 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                     <PriorityWidget data={priorityData} total={total} />
                   </div>
 
-                  <div className="urgent-panel">
+                  {/* <div className="urgent-panel">
                     <UrgentWidget tasks={urgentTasks} />
-                  </div>
+                  </div> */}
                 </div>
               </>
             )}

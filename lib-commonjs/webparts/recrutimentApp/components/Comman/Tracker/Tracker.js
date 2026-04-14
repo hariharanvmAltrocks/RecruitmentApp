@@ -46,22 +46,25 @@ var Tracker = function (_a) {
                 var value = item[key];
                 var formattedValue = renderCell(value);
                 if (key === "JobCode" && item.JobCode) {
-                    return react_1.default.createElement("span", { className: "candidate-table__code" }, formattedValue);
+                    return (react_1.default.createElement("span", { className: "candidate-table__code" }, formattedValue));
                 }
                 if (key === "JobTitle" && item.JobTitle) {
-                    return react_1.default.createElement("span", { className: "data-table__job-title" }, formattedValue);
+                    return (react_1.default.createElement("span", { className: "data-table__job-title" }, formattedValue));
                 }
                 if (key === "ApplicantName" && item.ApplicantName) {
-                    return react_1.default.createElement("span", { className: "candidate-table__code" }, formattedValue);
+                    return (react_1.default.createElement("span", { className: "candidate-table__code" }, formattedValue));
                 }
                 if (key === "PositionTitle" && item.PositionTitle) {
-                    return react_1.default.createElement("span", { className: "data-table__job-title" }, formattedValue);
+                    return (react_1.default.createElement("span", { className: "data-table__job-title" }, formattedValue));
                 }
                 if (key === "InterviewDate" && item.InterviewDate) {
-                    return react_1.default.createElement("span", { className: "candidate-table__code" }, formattedValue);
+                    return (react_1.default.createElement("span", { className: "candidate-table__code" }, formattedValue));
                 }
                 if (key === "PositionID" && item.PositionID) {
-                    return react_1.default.createElement("span", { className: "candidate-table__code" }, formattedValue);
+                    return (react_1.default.createElement("span", { className: "candidate-table__code" }, formattedValue));
+                }
+                if (key === "CandidateCount" && item.CandidateCount) {
+                    return (react_1.default.createElement("span", { className: "candidate-table__code" }, formattedValue));
                 }
                 if (key === "Status" || key === "status") {
                     return react_1.default.createElement("span", { className: "status-badge" }, formattedValue);

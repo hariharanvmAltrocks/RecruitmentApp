@@ -120,7 +120,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                 case 8:
                     initiateLabour = {
                         ID: data.ID,
-                        IsExpat: data.Nationality === "Expatriate" ? true : false,
+                        IsExpat: data.NationalityCode === ConditionConfig_1.NationalityCode.Nationals ? false : true,
                         jobRequestID: Number(data.JobRequestID),
                         positionId: data.positionID,
                         location: data.Location,

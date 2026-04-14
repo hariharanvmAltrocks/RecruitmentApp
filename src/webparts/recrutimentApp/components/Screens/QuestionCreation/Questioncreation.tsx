@@ -283,6 +283,7 @@ const QuestionCreation: React.FC = (props: any) => {
                 <InterviewPreparedSet
                   questions={preparedQuestions}
                   onRemove={handleRemovePrepared}
+                  onEdit={handleEditPrepared}
                 />
               </div>
             </>

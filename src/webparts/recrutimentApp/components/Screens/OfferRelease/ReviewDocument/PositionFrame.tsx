@@ -12,6 +12,7 @@ import {
   Users,
 } from "lucide-react";
 import "../OfferTable.scss";
+import "./ReviewDocument.scss";
 import moment from "moment";
 import {
   PPEItem,
@@ -64,6 +65,8 @@ export interface IselectedPosition {
   NationalityCode: string;
 
   PreChecklist: IPreChecklist;
+
+  labourHire: string;
 }
 
 export interface IPreChecklist {
@@ -90,15 +93,20 @@ interface InfoFieldProps {
   icon?: React.ElementType;
 }
 
-const InfoField: React.FC<InfoFieldProps> = ({ label, value, icon: Icon }) => (
-  <div className="review-document__info-field">
-    <div className="review-document__info-label">
-      {Icon && <Icon size={12} />}
-      <span>{label}</span>
+const InfoField: React.FC<InfoFieldProps> = ({ label, value, icon: Icon }) => {
+  const displayValue = value != null ? String(value) : "-";
+  return (
+    <div className="review-document__info-field">
+      <div className="review-document__info-label" title={label}>
+        {Icon && <Icon size={12} />}
+        <span>{label}</span>
+      </div>
+      <div className="review-document__info-value" title={displayValue}>
+        {displayValue}
+      </div>
     </div>
-    <div className="review-document__info-value">{value ?? "-"}</div>
-  </div>
-);
+  );
+};
 
 const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({
   width = "100%",
@@ -226,6 +234,13 @@ export const PositionFrame: React.FC<PositionFrameworkProps> = ({
               value={positionDetails?.AreaofWork}
               icon={Users}
             />
+            {positionDetails?.labourHire && (
+              <InfoField
+                label="Labour Hire"
+                value={positionDetails?.labourHire}
+                icon={Users}
+              />
+            )}
             {positionDetails?.JoiningDate && (
               <InfoField
                 label="Joining Date"

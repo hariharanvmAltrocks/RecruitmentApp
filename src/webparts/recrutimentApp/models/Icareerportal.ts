@@ -184,6 +184,8 @@ export type CandidateProfile = {
 
   InterviewStartDate?: string | undefined;
   InterviewEndDate?: string | undefined;
+
+  NationalityShort: string;
 };
 
 export type childrenDetails = {

@@ -166,8 +166,21 @@ var BASE_METRICS = (_a = {},
         TabValue: "tab1",
         TabName: ConditionConfig_1.TabNames.Evaluation,
     },
-    _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = {
+    _a[ConditionConfig_1.MatricID.DisqualifiQuesLM] = {
         label: "Pending Create Minimum Criteria Question",
+        status: "PENDING",
+        icon: lucide_react_1.Activity,
+        color: "#10b981",
+        bgColor: "#ecfdf5",
+        statusColor: "#ef4444",
+        statusBg: "#fee2e2",
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab2",
+        TabName: ConditionConfig_1.TabNames.InterviewQuestion,
+    },
+    _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = {
+        label: "Pending Interview Question",
         status: "PENDING",
         icon: lucide_react_1.Activity,
         color: "#10b981",
@@ -376,6 +389,7 @@ var MatricColums = function (roles) {
             case Config_1.RoleID.LineManager:
                 roleColumns = [
                     buildCol(ConditionConfig_1.MatricID.AdvertReviewLM, { showArrow: true }),
+                    buildCol(ConditionConfig_1.MatricID.DisqualifiQuesLM, { showArrow: true }),
                     buildCol(ConditionConfig_1.MatricID.InterviewQuestionLM, { showArrow: true }),
                     buildCol(ConditionConfig_1.MatricID.ReviewProfileLM, {
                         showArrow: true,
@@ -548,7 +562,8 @@ var MetricQueryConfig = function (EmailId) {
         // ✅ Interview Question HR
         _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.PendingInterviewquestion, "AssignedHR", EmailId)),
         // ✅ Interview Question LM (FIXED)
-        _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter([Config_1.StatusId.PendingInterviewquestion, Config_1.StatusId.CareerPortalQuestions], "LineManager", EmailId)),
+        _a[ConditionConfig_1.MatricID.DisqualifiQuesLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter([Config_1.StatusId.CareerPortalQuestions], "LineManager", EmailId)),
+        _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter([Config_1.StatusId.PendingInterviewquestion], "LineManager", EmailId)),
         // ✅ Interview Tracker
         _a[ConditionConfig_1.MatricID.interviewSchedule] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter([
             Config_1.StatusId.InterviewScheduled,
@@ -685,6 +700,7 @@ var RoleMetricFilters = (_b = {},
         ConditionConfig_1.MatricID.AdvertReviewLM,
         ConditionConfig_1.MatricID.EvalutionLM,
         ConditionConfig_1.MatricID.ReviewProfileLM,
+        ConditionConfig_1.MatricID.DisqualifiQuesLM,
         ConditionConfig_1.MatricID.InterviewQuestionLM,
         ConditionConfig_1.MatricID.interviewSchedule,
         ConditionConfig_1.MatricID.OfferRelease,

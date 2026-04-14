@@ -316,7 +316,9 @@ var AdvertReviewDrawer = function (_a) {
                     showBGVSection && (react_1.default.createElement("div", { style: { marginTop: "20px" } },
                         react_1.default.createElement(BGVerification_1.default, { mandatoryChecks: BGVData.mantoryChecks, VerificationChecks: BGVData.checkboxBGVOption, onToggleOption: handleBvgToggle, hasError: bgvError, disabled: isSubmittingRef.current }))),
                     showReviewFooter && (react_1.default.createElement(react_1.default.Fragment, null,
-                        react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, commentError: commentError, checkboxError: checkboxError, disabled: isSubmittingRef.current }),
+                        react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, commentError: commentError, checkboxError: checkboxError, disabled: isSubmittingRef.current, acknowledgementLabel: metricId === ConditionConfig_1.MatricID.UploadONEM
+                                ? ConditionConfig_1.CheckboxContent.UploadOnemDocument
+                                : ConditionConfig_1.CheckboxContent.ApprovalCheckbox }),
                         react_1.default.createElement("div", { className: "advert-review-drawer__footer" },
                             react_1.default.createElement("div", { className: "advert-review-drawer__footer-actions" },
                                 react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__button", onClick: handleCancel }, "Cancel"),

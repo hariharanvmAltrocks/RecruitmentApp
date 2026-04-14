@@ -5,15 +5,17 @@ var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importDefault(require("react"));
 var lucide_react_1 = require("lucide-react");
 require("../OfferTable.scss");
+require("./ReviewDocument.scss");
 var moment_1 = tslib_1.__importDefault(require("moment"));
 var Ppesizinginfo_1 = require("./Component/Ppesizinginfo/Ppesizinginfo");
 var InfoField = function (_a) {
     var label = _a.label, value = _a.value, Icon = _a.icon;
+    var displayValue = value != null ? String(value) : "-";
     return (react_1.default.createElement("div", { className: "review-document__info-field" },
-        react_1.default.createElement("div", { className: "review-document__info-label" },
+        react_1.default.createElement("div", { className: "review-document__info-label", title: label },
             Icon && react_1.default.createElement(Icon, { size: 12 }),
             react_1.default.createElement("span", null, label)),
-        react_1.default.createElement("div", { className: "review-document__info-value" }, value !== null && value !== void 0 ? value : "-")));
+        react_1.default.createElement("div", { className: "review-document__info-value", title: displayValue }, displayValue)));
 };
 var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
@@ -60,6 +62,7 @@ var PositionFrame = function (_a) {
                     react_1.default.createElement(InfoField, { label: "Employment Category", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.EmploymentCategory, icon: lucide_react_1.Users }),
                     react_1.default.createElement(InfoField, { label: "Type of Contract", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.TypeofContract, icon: lucide_react_1.Users }),
                     react_1.default.createElement(InfoField, { label: "Area of Work", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.AreaofWork, icon: lucide_react_1.Users }),
+                    (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.labourHire) && (react_1.default.createElement(InfoField, { label: "Labour Hire", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.labourHire, icon: lucide_react_1.Users })),
                     (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JoiningDate) && (react_1.default.createElement(InfoField, { label: "Joining Date", value: (0, moment_1.default)(positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JoiningDate).format("DD-MM-YYYY"), icon: lucide_react_1.Users })),
                     (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.NoticePeriod) && (react_1.default.createElement(InfoField, { label: "Notice Period", value: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.NoticePeriod, icon: lucide_react_1.Users }))),
                 (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.ReferenceName) && (react_1.default.createElement(react_1.default.Fragment, null,

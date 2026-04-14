@@ -4,7 +4,7 @@ import { ResponeStatus } from "../../../../utilities/ApiConfig";
 import { DataSyncToRecruitmentResponse } from "../../../../services/Dashboard/IDashboard";
 import { MetricQueryConfig } from "../metricColumns.config";
 import { ListNames, RoleID } from "../../../../utilities/Config";
-import { Nationality } from "../../../../utilities/ConditionConfig";
+import { MatricID, Nationality } from "../../../../utilities/ConditionConfig";
 import { userInfo } from "../../../../utilities/hooks/RoleContext";
 
 export const callServiceByListName = async (
@@ -12,6 +12,7 @@ export const callServiceByListName = async (
   filter: any[],
   condition?: any,
   roleIDs?: number[],
+  MatricID?: number,
 ) => {
   if (roleIDs?.includes(RoleID.FinanceDepartment)) {
     filter = filter.filter((f: any) => f.FilterKey !== "RecruitmentHR");
@@ -21,7 +22,11 @@ export const callServiceByListName = async (
       return await DashboardServices.GetNPAEPVRRDetails(filter, condition);
 
     case ListNames.HRMSRecruitmentDptDetails:
-      return await DashboardServices.GetRecruitmentDetails(filter, condition);
+      return await DashboardServices.GetRecruitmentDetails(
+        filter,
+        condition,
+        MatricID,
+      );
 
     case ListNames.HRMSRecruitmentCandidatePersonalDetails:
       return await DashboardServices.GetCandidateDetails(filter, condition);
@@ -34,8 +39,17 @@ export const callServiceByListName = async (
   }
 };
 
-export const mapResponseByListName = (listName: string, data: any[]) => {
+export const mapResponseByListName = (
+  listName: string,
+  data: any[],
+  MatricId: number,
+) => {
   if (!data) return [];
+
+  const shouldShowProfile =
+    MatricId === MatricID.ReviewProfileHR ||
+    MatricId === MatricID.ReviewProfileLM ||
+    MatricId === MatricID.AssignInterviewPanel;
 
   switch (listName) {
     case ListNames.HRMSNewPositionRequest:
@@ -43,6 +57,9 @@ export const mapResponseByListName = (listName: string, data: any[]) => {
       return data.map((item: any) => ({
         JobCode: item.JobCode,
         JobTitle: item.JobTitleEnglish,
+        ...(shouldShowProfile && {
+          ProfileCount: item.CandidateCount,
+        }),
         BusinessUnitCode: item.BusinessUnitCode,
         PositionRequest: item.Type,
         Nationality: item.Nationality,
@@ -95,7 +112,13 @@ export const useTrackerData = (MatricID: number, refreshKey: number) => {
 
       const responses = await Promise.all(
         configs.map((cfg) =>
-          callServiceByListName(cfg.ListName, cfg.Filter, "and", roleIDs),
+          callServiceByListName(
+            cfg.ListName,
+            cfg.Filter,
+            "and",
+            roleIDs,
+            MatricID,
+          ),
         ),
       );
 
@@ -106,6 +129,7 @@ export const useTrackerData = (MatricID: number, refreshKey: number) => {
           const mapped = mapResponseByListName(
             configs[index].ListName,
             response.data,
+            MatricID,
           );
           allData.push(...mapped);
         }

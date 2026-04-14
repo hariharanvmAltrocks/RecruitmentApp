@@ -6,7 +6,7 @@ var react_1 = require("react");
 var ServiceExport_1 = require("../../../../../services/ServiceExport");
 var ApiConfig_1 = require("../../../../../utilities/ApiConfig");
 var UIStateContext_1 = require("../../../../RecrutimentApp/UIStateContext");
-var useCandidatDetails = function (jobId, candidateID, selectedCandidateID, JobRequestID) {
+var useCandidatDetails = function (jobId, candidateID, selectedCandidateID, JobRequestID, IsExpat) {
     var _a = (0, react_1.useState)(null), data = _a[0], setData = _a[1];
     var _b = (0, react_1.useState)(false), loading = _b[0], setLoading = _b[1];
     var MatricID = (0, UIStateContext_1.useUIState)().MatricID;
@@ -23,7 +23,7 @@ var useCandidatDetails = function (jobId, candidateID, selectedCandidateID, JobR
                 switch (_a.label) {
                     case 0:
                         condition = "and";
-                        return [4 /*yield*/, ServiceExport_1.OfferServices.GetSelectedCandidate(jobId, candidateID, selectedCandidateID, JobRequestID)];
+                        return [4 /*yield*/, ServiceExport_1.OfferServices.GetSelectedCandidate(jobId, candidateID, selectedCandidateID, JobRequestID, IsExpat)];
                     case 1:
                         response = _a.sent();
                         if (response.status === ApiConfig_1.ResponeStatus.SUCCESS) {

@@ -37,6 +37,7 @@ export default class OfferService implements IOfferService {
     CandidateID: number,
     SelectedCandidateID: number,
     JobRequestID: string,
+    isExpat: boolean,
   ): Promise<ApiResponse<IselectedPosition | null>> {
     try {
       const queries: BatchQuery[] = [
@@ -121,19 +122,38 @@ export default class OfferService implements IOfferService {
           ],
           expand: ["RecruitmentID", "Status", "CandidateID", "PositionID"],
         },
+        {
+          StateValue: 5,
+          ListName: isExpat
+            ? ListNames.HRMSRESIExpatDetails
+            : ListNames.HRMSRESIDRCDetails,
+          Filter: [
+            {
+              FilterKey: "SelectedCandidateHODId",
+              Operator: "eq",
+              FilterValue: SelectedCandidateID,
+            },
+          ],
+          FilterCondition: "and",
+          select: [
+            "*",
+            "SelectedCandidateHODId/ID",
+            "LabourhireORContractor/AgentName",
+          ],
+          expand: ["SelectedCandidateHODId", "LabourhireORContractor"],
+        },
       ];
 
-      // ── Fire both calls simultaneously ────────────────────────────────────────
       const [batchRes, careerRes] = await Promise.all([
         SPServices.batchGet(queries),
         CandidateTable.fetchCandidateDetails(JobRequestID),
       ]);
 
-      // ── Destructure SP results ────────────────────────────────────────────────
       const recruitment = batchRes[1]?.[0] as any;
       const recruitmentPosition = batchRes[2]?.[0] as any;
       const candidatePersonal = batchRes[3]?.[0] as any;
       const candidateSelected = batchRes[4]?.[0] as any;
+      const residetails = batchRes[5]?.[0] as any;
 
       const ref = careerRes?.data?.[0]?.PreviousEmployerDetails;
 
@@ -235,6 +255,8 @@ export default class OfferService implements IOfferService {
         patersonGrade: recruitmentPosition?.PatersonGrade?.PatersonGrade,
         drcGrade: recruitmentPosition?.DRCGrade?.DRCGrade,
         PreChecklist: PreOnboarding,
+
+        labourHire: residetails?.LabourhireORContractor?.AgentName ?? "-",
       };
 
       return {

@@ -198,7 +198,8 @@ async function resolveStatus(
       } else {
         let initiateLabour: InitiateLaborHire = {
           ID: data.ID,
-          IsExpat: data.Nationality === "Expatriate" ? true : false,
+          IsExpat:
+            data.NationalityCode === NationalityCode.Nationals ? false : true,
           jobRequestID: Number(data.JobRequestID),
           positionId: data.positionID,
           location: data.Location,

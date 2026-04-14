@@ -56,7 +56,7 @@ const Tracker: React.FC<Props> = ({
     if (!rows || rows.length === 0) return [];
 
     const dynamicKeys = Object.keys(rows[0]).filter(
-      (key) => !excludeColumns.includes(key)
+      (key) => !excludeColumns.includes(key),
     );
 
     const generatedCols: DataTableColumn<TrackerItem>[] = dynamicKeys.map(
@@ -69,27 +69,45 @@ const Tracker: React.FC<Props> = ({
           const formattedValue = renderCell(value);
 
           if (key === "JobCode" && item.JobCode) {
-            return <span className="candidate-table__code">{formattedValue}</span>
+            return (
+              <span className="candidate-table__code">{formattedValue}</span>
+            );
           }
 
           if (key === "JobTitle" && item.JobTitle) {
-            return <span className="data-table__job-title">{formattedValue}</span>
+            return (
+              <span className="data-table__job-title">{formattedValue}</span>
+            );
           }
 
           if (key === "ApplicantName" && item.ApplicantName) {
-            return <span className="candidate-table__code">{formattedValue}</span>
+            return (
+              <span className="candidate-table__code">{formattedValue}</span>
+            );
           }
 
           if (key === "PositionTitle" && item.PositionTitle) {
-            return <span className="data-table__job-title">{formattedValue}</span>
+            return (
+              <span className="data-table__job-title">{formattedValue}</span>
+            );
           }
 
           if (key === "InterviewDate" && item.InterviewDate) {
-            return <span className="candidate-table__code">{formattedValue}</span>
+            return (
+              <span className="candidate-table__code">{formattedValue}</span>
+            );
           }
 
           if (key === "PositionID" && item.PositionID) {
-            return <span className="candidate-table__code">{formattedValue}</span>
+            return (
+              <span className="candidate-table__code">{formattedValue}</span>
+            );
+          }
+
+          if (key === "CandidateCount" && item.CandidateCount) {
+            return (
+              <span className="candidate-table__code">{formattedValue}</span>
+            );
           }
 
           if (key === "Status" || key === "status") {
@@ -98,9 +116,8 @@ const Tracker: React.FC<Props> = ({
 
           return <>{formattedValue}</>;
         },
-      })
+      }),
     );
-
 
     if (selectedMetric?.showArrow) {
       generatedCols.push({
@@ -147,9 +164,7 @@ const Tracker: React.FC<Props> = ({
           <h2>My Tracker</h2>
           <p>
             Showing <b>{selectedMetric?.value ?? 0}</b> results for{" "}
-            <span className="highlight">
-              {selectedMetric?.label ?? "-"}
-            </span>
+            <span className="highlight">{selectedMetric?.label ?? "-"}</span>
           </p>
         </div>
 

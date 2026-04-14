@@ -61,7 +61,7 @@ var RecruitmentTable = function () {
             onCancel: closeModal,
         });
     }, []);
-    var _k = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh), handleConfirmAssignment = _k.handleConfirmAssignment, assignmentModalState = _k.modalState, assignmentCloseModal = _k.closeModal, loading = _k.loading;
+    var _k = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh), handleConfirmAssignment = _k.handleConfirmAssignment, assignmentModalState = _k.modalState, assignmentCloseModal = _k.closeModal, loading = _k.loading, Submitted = _k.Submitted;
     var _l = (0, useModalPopup_1.useModalPopup)(), modalState = _l.modalState, showModal = _l.showModal, closeModal = _l.closeModal;
     var _m = (0, react_1.useState)([]), selectedIds = _m[0], setSelectedIds = _m[1];
     var _o = (0, react_1.useState)(0), selectedMemberId = _o[0], setSelectedMemberId = _o[1];
@@ -78,6 +78,11 @@ var RecruitmentTable = function () {
         if (sideNavflag && tabs.length > 0 && !currentTabName) {
             setMatricID(tabs[0].matricId);
             setCurrentTabName((_b = (_a = tabs[1]) === null || _a === void 0 ? void 0 : _a.description) !== null && _b !== void 0 ? _b : "");
+        }
+        if (Submitted) {
+            setSelectedIds([]);
+            setSelectedMemberId(0);
+            handleRefresh();
         }
     }, [tabs]);
     (0, react_1.useEffect)(function () {
@@ -134,13 +139,7 @@ var RecruitmentTable = function () {
                 : Array.from(new Set(tslib_1.__spreadArray(tslib_1.__spreadArray([], prev, true), pageIds, true)));
         });
     }, [paginatedItems, selectedIds]);
-    // const isEvalutionItem = (
-    //   item: RecruitmentItem | EvalutionItem
-    // ): item is EvalutionItem => {
-    //   return matricID === MatricID.EvalutionHR || matricID === MatricID.EvalutionLM || matricID === MatricID.EvalutionHOD || matricID === MatricID.EvalutionEXCO;
-    // };
     var processingRef = (0, react_1.useRef)(false);
-    var EvalutionFlagL2 = (0, react_1.useRef)(false);
     var handleAction = (0, react_1.useCallback)(function (item) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var ItemID, isEvaluationFlow, today, interviewDate, Validation, interviewLevel, alreadySubmitted, evalutionIDs, routeMap, route;
         var _a;
@@ -198,7 +197,7 @@ var RecruitmentTable = function () {
                         ConditionConfig_1.MatricID.EvalutionHOD,
                         ConditionConfig_1.MatricID.EvalutionEXCO,
                     ];
-                    routeMap = tslib_1.__assign((_a = {}, _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.ReviewProfileHR] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewProfileLM] = "/CandidateTable", _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/ReviewScoreCard", _a), Object.fromEntries(evalutionIDs.map(function (id) { return [
+                    routeMap = tslib_1.__assign((_a = {}, _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.DisqualifiQuesLM] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.ReviewProfileHR] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewProfileLM] = "/CandidateTable", _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/ReviewScoreCard", _a), Object.fromEntries(evalutionIDs.map(function (id) { return [
                         id,
                         item.statusId === Config_1.StatusId.InterviewLevel2InProgress
                             ? //  hook.openReview :

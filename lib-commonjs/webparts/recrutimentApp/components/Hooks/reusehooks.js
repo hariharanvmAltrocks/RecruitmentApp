@@ -130,7 +130,7 @@ var findMatricID = function (roleIDs, statusID, TabName, MenuId) {
             case Config_1.StatusId.PendingInterviewquestion:
                 return ConditionConfig_1.MatricID.InterviewQuestionHR;
             case Config_1.StatusId.CareerPortalQuestions:
-                return ConditionConfig_1.MatricID.InterviewQuestionLM;
+                return ConditionConfig_1.MatricID.DisqualifiQuesLM;
             case Config_1.StatusId.InterviewScheduled:
             case Config_1.StatusId.InterviewScheduledforLevel2:
                 return ConditionConfig_1.MatricID.EvalutionHR;

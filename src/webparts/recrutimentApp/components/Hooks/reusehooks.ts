@@ -156,7 +156,7 @@ export const findMatricID = (
         return MatricID.InterviewQuestionHR;
 
       case StatusId.CareerPortalQuestions:
-        return MatricID.InterviewQuestionLM;
+        return MatricID.DisqualifiQuesLM;
 
       case StatusId.InterviewScheduled:
       case StatusId.InterviewScheduledforLevel2:

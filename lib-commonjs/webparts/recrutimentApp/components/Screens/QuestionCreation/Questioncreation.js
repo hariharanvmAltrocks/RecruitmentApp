@@ -201,7 +201,7 @@ var QuestionCreation = function (props) {
                     react_1.default.createElement(Interviewquestionbank_1.InterviewQuestionBank, { questionBank: questionBank, loading: questionloading, preparedQuestionIds: preparedIds, onAddFromBank: handleAddFromBank })),
                 react_1.default.createElement("div", { className: "qc__col qc__col--right" },
                     react_1.default.createElement(Interviewcomposer_1.InterviewComposer, { newQuestion: newQuestion, onChange: setNewQuestion, onAdd: handleAddNew, onClear: function () { return setNewQuestion(DEFAULT_NEW_QUESTION()); } }),
-                    react_1.default.createElement(Interviewpreparedset_1.InterviewPreparedSet, { questions: preparedQuestions, onRemove: handleRemovePrepared })))))),
+                    react_1.default.createElement(Interviewpreparedset_1.InterviewPreparedSet, { questions: preparedQuestions, onRemove: handleRemovePrepared, onEdit: handleEditPrepared })))))),
         react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal }))));
 };
 exports.default = QuestionCreation;
