@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.buildVisibilityFlags = exports.buildStatusFlags = void 0;
 var ConditionConfig_1 = require("../../../../../../utilities/ConditionConfig");
 var EvaluationConfig_1 = require("../../../../SelectionProcess/config/EvaluationConfig");
-var buildStatusFlags = function (statusID, empCat, consentVerification) { return ({
+var buildStatusFlags = function (statusID, empCat, consentVerification, isExpat) { return ({
     pendingHRBGVInit: statusID === EvaluationConfig_1.StatusId.PendingHRBGVInitiation,
     pendingHRReviewBGCheck: statusID === EvaluationConfig_1.StatusId.PendingHRReviewBGCheck,
     pendingHROfferReview: statusID === EvaluationConfig_1.StatusId.PendingHROfferReview,
@@ -29,6 +29,7 @@ var buildStatusFlags = function (statusID, empCat, consentVerification) { return
         statusID === EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist,
     PendingHREmploymentContractReview: statusID === EvaluationConfig_1.StatusId.PendingHREmploymentContractReview,
     PreOnboardingChecklist: statusID === EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist,
+    isExpat: isExpat === true,
 }); };
 exports.buildStatusFlags = buildStatusFlags;
 var resolveVerificationToggle = function (is) {
@@ -58,7 +59,7 @@ var buildVisibilityFlags = function (is, hasDetails, rejectFlag, revertFlag) {
     return {
         showCandidateDocs: hasDetails && !is.pendingHRBGVInit,
         showVerificationToggle: resolveVerificationToggle(is),
-        showConsentForm: is.pendingHRReviewBGCheck && is.isVerified,
+        showConsentForm: is.pendingHRReviewBGCheck && is.isVerified && is.isExpat,
         showCOICard: is.pendingDOTAficaVerify && rejectFlag && !revertFlag,
         showWorkPermitUpload: is.wpAckContractUploaded,
         showUploadDocument: showUploadDocument,

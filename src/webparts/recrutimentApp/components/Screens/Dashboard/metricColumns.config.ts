@@ -556,13 +556,21 @@ const DataSyncFilter = [
 ];
 
 type SingleQuery = Omit<FilterQuery, "StateValue">;
+interface StatusFilterOptions {
+  status: number | number[];
+  columnName?: string;
+  emailId?: string;
+  labourHire?: string;
+  questionBy?: string;
+}
 
-const StatusFilter = (
-  status: number | number[],
-  columnName?: string,
-  emailId?: string,
-  labourHire?: string,
-) => {
+const StatusFilter = ({
+  status,
+  columnName,
+  emailId,
+  labourHire,
+  questionBy,
+}: StatusFilterOptions) => {
   const filters: any[] = [
     {
       FilterKey: "ItemCreated",
@@ -595,6 +603,14 @@ const StatusFilter = (
     });
   }
 
+  if (questionBy) {
+    filters.push({
+      FilterKey: questionBy,
+      Operator: "eq",
+      FilterValue: Choices.No,
+    });
+  }
+
   return filters;
 };
 
@@ -615,12 +631,18 @@ export const MetricQueryConfig = (
   [MatricID.AssignHr]: [
     createQuery(
       ListNames.HRMSNewPositionRequest,
-      [...StatusFilter(StatusId.ReadyforRecruitmentProcess), ...DataSyncFilter],
+      [
+        ...StatusFilter({ status: StatusId.ReadyforRecruitmentProcess }),
+        ...DataSyncFilter,
+      ],
       ["Id"],
     ),
     createQuery(
       ListNames.HRMSVacancyReplacementRequest,
-      [...StatusFilter(StatusId.ReadyforRecruitmentProcess), ...DataSyncFilter],
+      [
+        ...StatusFilter({ status: StatusId.ReadyforRecruitmentProcess }),
+        ...DataSyncFilter,
+      ],
       ["Id"],
     ),
   ],
@@ -628,165 +650,207 @@ export const MetricQueryConfig = (
   // ✅ Upload ONEM
   [MatricID.UploadONEM]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter(StatusId.PendingUploadONEM),
+    StatusFilter({ status: StatusId.PendingUploadONEM }),
   ),
 
   // ✅ Job Advert
   [MatricID.JobAdvert]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter(StatusId.PendingUploadAdvert, "AssignedHR", EmailId),
+    StatusFilter({
+      status: StatusId.PendingUploadAdvert,
+      columnName: "AssignedHR",
+      emailId: EmailId,
+    }),
   ),
 
   // ✅ Advert Review HOD
   [MatricID.AdvertReviewHOD]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter(StatusId.PendingReviewAdvertHOD, "HOD", EmailId),
+    StatusFilter({
+      status: StatusId.PendingReviewAdvertHOD,
+      columnName: "HOD",
+      emailId: EmailId,
+    }),
   ),
 
   // ✅ Advert Review LM
   [MatricID.AdvertReviewLM]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter(
-      StatusId.PendingwithLineManagereviewAdv,
-      "LineManager",
-      EmailId,
-    ),
+    StatusFilter({
+      status: StatusId.PendingwithLineManagereviewAdv,
+      columnName: "LineManager",
+      emailId: EmailId,
+    }),
   ),
 
   // ✅ Review Score Card (FIXED - only one)
   [MatricID.ReviewScoreCard]: createQuery(
     ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    StatusFilter([
-      StatusId.PendingwithpositionIDAssignmentWithHOD,
-      StatusId.pendingL2shorlistingwithHOD,
-      StatusId.CandidateOnHoldbyHODLevel1,
-      StatusId.CandidateOnHoldbyHODLevel2,
-    ]),
+    StatusFilter({
+      status: [
+        StatusId.PendingwithpositionIDAssignmentWithHOD,
+        StatusId.pendingL2shorlistingwithHOD,
+        StatusId.CandidateOnHoldbyHODLevel1,
+        StatusId.CandidateOnHoldbyHODLevel2,
+      ],
+    }),
   ),
 
   // ✅ Review Profile HR
   [MatricID.ReviewProfileHR]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter(StatusId.RecruitmentInProgress, "AssignedHR", EmailId),
+    StatusFilter({
+      status: StatusId.RecruitmentInProgress,
+      columnName: "AssignedHR",
+      emailId: EmailId,
+    }),
   ),
 
   // ✅ Review Profile LM
   [MatricID.ReviewProfileLM]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter(StatusId.RecruitmentInProgress, "LineManager", EmailId),
+    StatusFilter({
+      status: StatusId.RecruitmentInProgress,
+      columnName: "LineManager",
+      emailId: EmailId,
+    }),
   ),
 
   // ✅ Assign Interview Panel
   [MatricID.AssignInterviewPanel]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter(StatusId.RecruitmentInProgress, "AssignedHR", EmailId),
+    StatusFilter({
+      status: StatusId.RecruitmentInProgress,
+      columnName: "AssignedHR",
+      emailId: EmailId,
+    }),
   ),
 
   // ✅ Interview Question HR
   [MatricID.InterviewQuestionHR]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter(StatusId.PendingInterviewquestion, "AssignedHR", EmailId),
+    StatusFilter({
+      status: StatusId.PendingInterviewquestion,
+      columnName: "AssignedHR",
+      emailId: EmailId,
+      questionBy: "QuestionByHR",
+    }),
   ),
 
   // ✅ Interview Question LM (FIXED)
   [MatricID.DisqualifiQuesLM]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter([StatusId.CareerPortalQuestions], "LineManager", EmailId),
+    StatusFilter({
+      status: StatusId.CareerPortalQuestions,
+      columnName: "LineManager",
+      emailId: EmailId,
+    }),
   ),
 
   [MatricID.InterviewQuestionLM]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter([StatusId.PendingInterviewquestion], "LineManager", EmailId),
+    StatusFilter({
+      status: StatusId.PendingInterviewquestion,
+      columnName: "LineManager",
+      emailId: EmailId,
+      questionBy: "QuestionByLM",
+    }),
   ),
 
   // ✅ Interview Tracker
   [MatricID.interviewSchedule]: createQuery(
     ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    StatusFilter([
-      StatusId.InterviewScheduled,
-      StatusId.InterviewScheduledforLevel2,
-    ]),
+    StatusFilter({
+      status: [
+        StatusId.InterviewScheduled,
+        StatusId.InterviewScheduledforLevel2,
+      ],
+    }),
   ),
 
   // ✅ Evaluation HR
   [MatricID.EvalutionHR]: createQuery(
     ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    StatusFilter([
-      StatusId.InterviewLevel1InProgress,
-      StatusId.InterviewLevel2InProgress,
-    ]),
+    // StatusFilter({
+    //   status: [
+    //     StatusId.InterviewLevel1InProgress,
+    //     StatusId.InterviewLevel2InProgress,
+    //   ],
+    // }),
   ),
 
   // ✅ Evaluation LM
   [MatricID.EvalutionLM]: createQuery(
     ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    StatusFilter(StatusId.InterviewLevel1InProgress),
+    // StatusFilter({ status: StatusId.InterviewLevel1InProgress }),
   ),
 
   // ✅ Evaluation HOD
   [MatricID.EvalutionHOD]: createQuery(
     ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    StatusFilter([
-      StatusId.InterviewLevel1InProgress,
-      StatusId.InterviewLevel2InProgress,
-    ]),
+    // StatusFilter({
+    //   status: [
+    //     StatusId.InterviewLevel1InProgress,
+    //     StatusId.InterviewLevel2InProgress,
+    //   ],
+    // }),
   ),
 
   // ✅ Evaluation EXCO
   [MatricID.EvalutionEXCO]: createQuery(
     ListNames.HRMSRecruitmentCandidatePersonalDetails,
-    StatusFilter(StatusId.InterviewLevel2InProgress),
+    // StatusFilter({ status: StatusId.InterviewLevel2InProgress }),
   ),
 
   // ✅ Offer Release
   [MatricID.OfferRelease]: createQuery(
     ListNames.HRMSSelectedCandidateDetailsByHOD,
-    StatusFilter(StatusId.PendingCandidateOfferLetterUpload),
+    StatusFilter({ status: StatusId.PendingCandidateOfferLetterUpload }),
   ),
 
   // ✅ Offer Accepted
   [MatricID.OfferAccepted]: createQuery(
     ListNames.HRMSSelectedCandidateDetailsByHOD,
-    StatusFilter(StatusId.PendingHROfferReview),
+    StatusFilter({ status: StatusId.PendingHROfferReview }),
   ),
 
   // ✅ Offer Rejected
   [MatricID.OfferRejected]: createQuery(
     ListNames.HRMSSelectedCandidateDetailsByHOD,
-    StatusFilter(StatusId.offerdecline),
+    StatusFilter({ status: StatusId.offerdecline }),
   ),
 
   // ✅ Onboarding
   [MatricID.Onbording]: createQuery(
     ListNames.HRMSSelectedCandidateDetailsByHOD,
-    StatusFilter(StatusId.Onboarded),
+    StatusFilter({ status: StatusId.Onboarded }),
   ),
 
   //Assign Agencies
   [MatricID.AssignAgencies]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter(StatusId.RecruitmentInProgress),
+    StatusFilter({ status: StatusId.RecruitmentInProgress }),
   ),
 
   //Background Check
   [MatricID.BackgroundCheck]: createQuery(
     ListNames.HRMSSelectedCandidateDetailsByHOD,
-    StatusFilter(
-      [
+    StatusFilter({
+      status: [
         StatusId.PendingHRBGVInitiation,
         StatusId.PendingHRReviewBGCheck,
         StatusId.PendingDOTAficaVerification,
       ],
-      "RecruitmentHR",
-      EmailId,
-    ),
+      columnName: "RecruitmentHR",
+      emailId: EmailId,
+    }),
   ),
 
   //LabourHire
   [MatricID.LabourHire]: createQuery(
     ListNames.HRMSSelectedCandidateDetailsByHOD,
-    StatusFilter(
-      [
+    StatusFilter({
+      status: [
         StatusId.PendingHROfferInitiate,
         StatusId.PendingHROfferReview,
         StatusId.PendingHRReviewOfferWorkPermitInit,
@@ -797,17 +861,17 @@ export const MetricQueryConfig = (
         StatusId.PendingHREmploymentContractVerification,
         StatusId.PendingHRpreonboardingchecklist,
       ],
-      "RecruitmentHR",
-      EmailId,
-      Choices.Yes,
-    ),
+      columnName: "RecruitmentHR",
+      emailId: EmailId,
+      labourHire: Choices.Yes,
+    }),
   ),
 
   //KCSA
   [MatricID.Kcsa]: createQuery(
     ListNames.HRMSSelectedCandidateDetailsByHOD,
-    StatusFilter(
-      [
+    StatusFilter({
+      status: [
         StatusId.PendingHROfferInitiate,
         StatusId.PendingHRReviewOfferWorkPermitInit,
         StatusId.PendingHRReviewWorkpermitDocs,
@@ -817,74 +881,78 @@ export const MetricQueryConfig = (
         StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract,
         StatusId.PendingHRpreonboardingchecklist,
       ],
-      "RecruitmentHR",
-      EmailId,
-      Choices.No,
-    ),
+      columnName: "RecruitmentHR",
+      emailId: EmailId,
+      labourHire: Choices.No,
+    }),
   ),
 
   //Reviewscordcard HOD
   [MatricID.ReviewScoredHOD]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter(StatusId.RecruitmentInProgress, "HOD", EmailId),
+    StatusFilter({
+      status: StatusId.RecruitmentInProgress,
+      columnName: "HOD",
+      emailId: EmailId,
+    }),
   ),
 
   //MySubmission
   [MatricID.MySubmission]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter([], "", ""),
+    StatusFilter({ status: [], columnName: "", emailId: "" }),
   ),
 
   // MySubmissionHR: 28,
 
   [MatricID.MySubmissionHR]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter(
-      [
+    StatusFilter({
+      status: [
         StatusId.PendingwithLineManagereviewAdv,
         StatusId.PendingReviewAdvertHOD,
         StatusId.CareerPortalQuestions,
         StatusId.PendingUploadONEM,
         StatusId.RecruitmentInProgress,
       ],
-      "AssignedHR",
-      EmailId,
-    ),
+      columnName: "AssignedHR",
+      emailId: EmailId,
+    }),
   ),
 
   // MySubmissionLM: 29,
 
   [MatricID.MySubmissionLM]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter(
-      [
+    StatusFilter({
+      status: [
         StatusId.PendingReviewAdvertHOD,
         StatusId.CareerPortalQuestions,
         StatusId.PendingUploadONEM,
         StatusId.RecruitmentInProgress,
       ],
-      "LineManager",
-      EmailId,
-    ),
+      columnName: "LineManager",
+      emailId: EmailId,
+    }),
   ),
 
   //MySubmissionHOD: 30,
 
   [MatricID.MySubmissionHOD]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter(
-      [StatusId.PendingUploadONEM, StatusId.RecruitmentInProgress],
-      "HOD",
-      EmailId,
-    ),
+    StatusFilter({
+      status: [StatusId.PendingUploadONEM, StatusId.RecruitmentInProgress],
+      columnName: "HOD",
+      emailId: EmailId,
+    }),
   ),
 
   //MySubmissionBGV: 31,
 
   [MatricID.MySubmissionBGV]: createQuery(
     ListNames.HRMSSelectedCandidateDetailsByHOD,
-    StatusFilter(
-      [
+    StatusFilter({
+      status: [
         StatusId.PendingBGdocuploadedbycandidate,
         StatusId.PendingwithTAforMedicalScreening,
         StatusId.PendingwithTAforMedicalScreening,
@@ -905,9 +973,9 @@ export const MetricQueryConfig = (
         StatusId.OnboardingProcessinitiatedforDRC,
         StatusId.OnboardingProcessinitiatedforExpat,
       ],
-      "RecruitmentHR",
-      EmailId,
-    ),
+      columnName: "RecruitmentHR",
+      emailId: EmailId,
+    }),
   ),
 });
 

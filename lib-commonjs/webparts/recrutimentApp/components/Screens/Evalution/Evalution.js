@@ -13,7 +13,6 @@ var ScorecardDetails_1 = tslib_1.__importDefault(require("./Components/Scorecard
 var Evalution_module_scss_1 = tslib_1.__importDefault(require("./Evalution.module.scss"));
 var Usesubmitevaluation_1 = require("./Hooks/Usesubmitevaluation");
 var Submitevaluation_1 = tslib_1.__importDefault(require("./Components/Submitevaluation"));
-var Config_1 = require("../../../utilities/Config");
 var Evalution = function (props) {
     var _a;
     var location = (0, react_router_dom_1.useLocation)();
@@ -78,10 +77,6 @@ function EvalutionContent(_a) {
         hasError && (React.createElement("div", { className: Evalution_module_scss_1.default.errorBanner },
             React.createElement("span", null, "We could not load all evaluation data. Please try again."),
             React.createElement("button", { className: Evalution_module_scss_1.default.retryBtn, onClick: handleRetry }, "Retry"))),
-        StatusID === Config_1.StatusId.InterviewLevel2InProgress,
-        " ",
-        React.createElement(React.Fragment, null),
-        "else",
         React.createElement("div", { className: Evalution_module_scss_1.default.layout },
             React.createElement(CandidateInfo_1.default, { candidate: candidate }),
             React.createElement("main", { className: Evalution_module_scss_1.default.rightPanel },

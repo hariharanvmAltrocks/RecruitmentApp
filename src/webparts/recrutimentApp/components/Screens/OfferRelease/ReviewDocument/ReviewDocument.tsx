@@ -185,15 +185,20 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
 
   const isConsentVerified = consentVerification === "verified";
 
+  const { data: docData } = useRequiredDocuments(
+    positionDetails?.ProfileID ?? "",
+    positionDetails?.JobRequestID ?? "",
+  );
+
   const submitDeps: SubmitWorkflowDeps = {
     data: positionDetails!,
-    uploadDocs,
-    BGVerifiedStatus: bgvStatusDetails!,
+    BGVerifiedStatus: docData?.categories ?? [],
     rejectflag: rejectFlag!,
     consentFile,
     coiState,
     consentVerification: isConsentVerified,
     reviewerComments,
+    uploadDocs,
   };
 
   const {
@@ -202,11 +207,6 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     closeModal: SubmitCloseModal,
     submit,
   } = useSubmitWorkflow(submitDeps);
-
-  const { data: docData } = useRequiredDocuments(
-    positionDetails?.ProfileID ?? "",
-    positionDetails?.JobRequestID ?? "",
-  );
 
   const { data: signatureDetails, loading: signatureLoading } =
     useSignatureDetails();
@@ -237,6 +237,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     hasDetails: !!positionDetails,
     rejectFlag: !!rejectFlag,
     revertFlag: !!revertFLag,
+    isExpat: isExpat,
   });
 
   const headerMeta = useMemo(

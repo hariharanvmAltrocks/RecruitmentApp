@@ -325,6 +325,7 @@ exports.BGVDocumentName = {
 };
 exports.DisplayFolderName = {
     Offerletter: "Offer Letter",
+    offerLetterUnsigned: "Offer Letters (Unsigned)",
     LabourHireOffer: "Labour Hire Offer Letter Release",
     LabourHireEC: "Labour Hire Employment Contract Release",
     ConsentForm: "Code of Business Content",

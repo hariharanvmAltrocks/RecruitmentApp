@@ -10,9 +10,10 @@ import { userInfo } from "../../../../utilities/hooks/RoleContext";
 export const callServiceByListName = async (
   listName: string,
   filter: any[],
-  condition?: any,
-  roleIDs?: number[],
-  MatricID?: number,
+  condition: any,
+  roleIDs: number[],
+  MatricID: number,
+  EmailID: string,
 ) => {
   if (roleIDs?.includes(RoleID.FinanceDepartment)) {
     filter = filter.filter((f: any) => f.FilterKey !== "RecruitmentHR");
@@ -29,7 +30,12 @@ export const callServiceByListName = async (
       );
 
     case ListNames.HRMSRecruitmentCandidatePersonalDetails:
-      return await DashboardServices.GetCandidateDetails(filter, condition);
+      return await DashboardServices.GetCandidateDetails(
+        filter,
+        condition,
+        MatricID,
+        EmailID,
+      );
 
     case ListNames.HRMSSelectedCandidateDetailsByHOD:
       return await DashboardServices.GetSelectedCandidate(filter, condition);
@@ -118,6 +124,7 @@ export const useTrackerData = (MatricID: number, refreshKey: number) => {
             "and",
             roleIDs,
             MatricID,
+            ADGroupData.EmailId[0],
           ),
         ),
       );

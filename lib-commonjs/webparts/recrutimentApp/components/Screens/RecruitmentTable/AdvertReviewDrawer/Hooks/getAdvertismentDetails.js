@@ -124,10 +124,10 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
                                     PrefeQualification: ((_b = items === null || items === void 0 ? void 0 : items.qualificationValue) === null || _b === void 0 ? void 0 : _b.PrefeQualification.map(function (q) { return q.text; })) || [],
                                     experience: [
                                         (items === null || items === void 0 ? void 0 : items.TotalExperience)
-                                            ? "".concat(items.TotalExperience.text, " of experience")
+                                            ? "Total Experience: ".concat(items.TotalExperience.text)
                                             : "",
                                         (items === null || items === void 0 ? void 0 : items.ExperienceinMiningIndustry)
-                                            ? "Preferred: ".concat(items.ExperienceinMiningIndustry.text, " ")
+                                            ? "Preferred Experience: ".concat(items.ExperienceinMiningIndustry.text, " ")
                                             : "",
                                     ].filter(Boolean),
                                     RoleSpecificKnowledge: ((_c = items === null || items === void 0 ? void 0 : items.RoleSpeKnowledgeValue) === null || _c === void 0 ? void 0 : _c.map(function (k) { return k.RoleSpeKnowledge.text; })) || [],
@@ -146,10 +146,10 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
                                     PrefeQualification: ((_k = items === null || items === void 0 ? void 0 : items.qualificationValue) === null || _k === void 0 ? void 0 : _k.PrefeQualification_fr.map(function (q) { return q.text; })) || [],
                                     experience: [
                                         (items === null || items === void 0 ? void 0 : items.YearofExperience)
-                                            ? "".concat(items.YearofExperience.text, " ans d'exp\u00E9rience")
+                                            ? "exp\u00E9rience totale: ".concat(items.YearofExperience.text)
                                             : "",
                                         (items === null || items === void 0 ? void 0 : items.PreferredExperience)
-                                            ? "Pr\u00E9f\u00E9r\u00E9: ".concat(items.PreferredExperience.ExperienceInYearRange.text, " ans")
+                                            ? "exp\u00E9rience Pr\u00E9f\u00E9r\u00E9: ".concat(items.PreferredExperience.ExperienceInYearRange.text)
                                             : "",
                                     ].filter(Boolean),
                                     RoleSpecificKnowledge: ((_l = items === null || items === void 0 ? void 0 : items.RoleSpeKnowledgeValue) === null || _l === void 0 ? void 0 : _l.map(function (k) { return k.RoleSpeKnowledge_fr.text; })) || [],

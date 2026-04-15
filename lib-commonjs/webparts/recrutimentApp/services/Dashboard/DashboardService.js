@@ -13,13 +13,14 @@ var EvaluationConfig_1 = require("../../components/Screens/SelectionProcess/conf
 var DashboardService = /** @class */ (function () {
     function DashboardService() {
     }
-    DashboardService.prototype.GetDashboardCount = function (queries, currentRoleID) {
+    DashboardService.prototype.GetDashboardCount = function (queries, currentRoleID, EmailID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var metricConfigs, spCounts_1, externalMetrics, externalCountMap_1, metrics, error_1;
-            return tslib_1.__generator(this, function (_a) {
-                switch (_a.label) {
+            var metricConfigs, EvalutionFilter, UserID, listItems, CandidateIds, filterParam_1, filterParam_2, spCounts_1, externalMetrics, externalCountMap_1, metrics, error_1;
+            var _a, _b;
+            return tslib_1.__generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        _a.trys.push([0, 3, , 4]);
+                        _c.trys.push([0, 6, , 7]);
                         metricConfigs = (0, metricColumns_config_1.MatricColums)(currentRoleID);
                         if (!(metricConfigs === null || metricConfigs === void 0 ? void 0 : metricConfigs.length)) {
                             return [2 /*return*/, {
@@ -40,13 +41,82 @@ var DashboardService = /** @class */ (function () {
                                 return item;
                             });
                         }
-                        return [4 /*yield*/, spservice_1.default.batchGet(queries)];
+                        EvalutionFilter = queries.filter(function (item) {
+                            return item.StateValue === ConditionConfig_1.MatricID.EvalutionHR ||
+                                item.StateValue === ConditionConfig_1.MatricID.EvalutionHOD ||
+                                item.StateValue === ConditionConfig_1.MatricID.EvalutionLM ||
+                                item.StateValue === ConditionConfig_1.MatricID.EvalutionEXCO;
+                        });
+                        if (!(EvalutionFilter.length > 0)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, ServiceExport_1.CommonServices.getUserGuidByEmail(EmailID !== null && EmailID !== void 0 ? EmailID : "")];
                     case 1:
-                        spCounts_1 = _a.sent();
+                        UserID = _c.sent();
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
+                                Select: EvaluationConfig_1.EvalQueryConfig.InterviewPanel.Select,
+                                Expand: EvaluationConfig_1.EvalQueryConfig.InterviewPanel.Expand,
+                                Filter: [
+                                    {
+                                        FilterKey: "InterviewPanelId",
+                                        Operator: "eq",
+                                        FilterValue: (_b = (_a = UserID.data) === null || _a === void 0 ? void 0 : _a.key) !== null && _b !== void 0 ? _b : "",
+                                    },
+                                    {
+                                        FilterKey: "IsScoreSheetUploaded",
+                                        Operator: "eq",
+                                        FilterValue: ApiConfig_1.Choices.No,
+                                    },
+                                ],
+                            })];
+                    case 2:
+                        listItems = _c.sent();
+                        CandidateIds = listItems
+                            .map(function (item) { var _a; return (_a = item.CandidateID) === null || _a === void 0 ? void 0 : _a.ID; })
+                            .filter(Boolean);
+                        if (CandidateIds.length > 0) {
+                            filterParam_1 = [
+                                {
+                                    FilterKey: "ID",
+                                    Operator: "in",
+                                    FilterValue: CandidateIds,
+                                },
+                            ];
+                            queries = queries.map(function (item) {
+                                if (item.StateValue === ConditionConfig_1.MatricID.EvalutionHR ||
+                                    item.StateValue === ConditionConfig_1.MatricID.EvalutionHOD ||
+                                    item.StateValue === ConditionConfig_1.MatricID.EvalutionLM ||
+                                    item.StateValue === ConditionConfig_1.MatricID.EvalutionEXCO) {
+                                    return tslib_1.__assign(tslib_1.__assign({}, item), { Filter: tslib_1.__spreadArray(tslib_1.__spreadArray([], item.Filter, true), filterParam_1, true) });
+                                }
+                                return item;
+                            });
+                        }
+                        else {
+                            filterParam_2 = [
+                                {
+                                    FilterKey: "ItemCreated",
+                                    Operator: "eq",
+                                    FilterValue: ApiConfig_1.Choices.Yes,
+                                },
+                            ];
+                            queries = queries.map(function (item) {
+                                if (item.StateValue === ConditionConfig_1.MatricID.EvalutionHR ||
+                                    item.StateValue === ConditionConfig_1.MatricID.EvalutionHOD ||
+                                    item.StateValue === ConditionConfig_1.MatricID.EvalutionLM ||
+                                    item.StateValue === ConditionConfig_1.MatricID.EvalutionEXCO) {
+                                    return tslib_1.__assign(tslib_1.__assign({}, item), { Filter: tslib_1.__spreadArray(tslib_1.__spreadArray([], item.Filter, true), filterParam_2, true) });
+                                }
+                                return item;
+                            });
+                        }
+                        _c.label = 3;
+                    case 3: return [4 /*yield*/, spservice_1.default.batchGet(queries)];
+                    case 4:
+                        spCounts_1 = _c.sent();
                         externalMetrics = metricConfigs.filter(function (m) { return m.externalApi; });
                         return [4 /*yield*/, this._fetchExternalCounts(externalMetrics, spCounts_1, new Map())];
-                    case 2:
-                        externalCountMap_1 = _a.sent();
+                    case 5:
+                        externalCountMap_1 = _c.sent();
                         metrics = metricConfigs
                             .map(function (config) {
                             var _a, _b, _c;
@@ -63,15 +133,15 @@ var DashboardService = /** @class */ (function () {
                                 status: 200,
                                 message: "Dashboard counts fetched successfully",
                             }];
-                    case 3:
-                        error_1 = _a.sent();
+                    case 6:
+                        error_1 = _c.sent();
                         console.error("GetDashboardCount error:", error_1);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
                                 message: "Error fetching dashboard counts",
                             }];
-                    case 4: return [2 /*return*/];
+                    case 7: return [2 /*return*/];
                 }
             });
         });
@@ -454,6 +524,11 @@ var DashboardService = /** @class */ (function () {
                                         FilterKey: "InterviewPanelId",
                                         Operator: "eq",
                                         FilterValue: (_d = (_c = UserID.data) === null || _c === void 0 ? void 0 : _c.key) !== null && _d !== void 0 ? _d : "",
+                                    },
+                                    {
+                                        FilterKey: "IsScoreSheetUploaded",
+                                        Operator: "eq",
+                                        FilterValue: ApiConfig_1.Choices.No,
                                     },
                                 ],
                             })];

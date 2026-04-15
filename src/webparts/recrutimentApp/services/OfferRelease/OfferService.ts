@@ -250,13 +250,13 @@ export default class OfferService implements IOfferService {
         JobRequestID: String(JobRequestID) ?? "-",
         PPEItems: PPT ?? [],
         DotAfricaCF: getDotAfricaCF[0],
-        NationalityCode: careerRes?.data?.[0]?.NatioCode ?? "",
+        NationalityCode: candidatePersonal?.NationalityCode ?? "",
 
         patersonGrade: recruitmentPosition?.PatersonGrade?.PatersonGrade,
         drcGrade: recruitmentPosition?.DRCGrade?.DRCGrade,
         PreChecklist: PreOnboarding,
 
-        labourHire: residetails?.LabourhireORContractor?.AgentName ?? "-",
+        labourHire: residetails?.LabourhireORContractor?.AgentName ?? "",
       };
 
       return {

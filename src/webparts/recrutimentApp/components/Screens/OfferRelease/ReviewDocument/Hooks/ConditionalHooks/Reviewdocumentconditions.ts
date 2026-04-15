@@ -19,6 +19,7 @@ export interface ReviewStatusFlags {
   isVerified: boolean;
   ViewFlag: boolean;
   PreOnboardingChecklist: boolean;
+  isExpat: boolean;
 }
 
 export interface ReviewVisibilityFlags {
@@ -38,6 +39,7 @@ export const buildStatusFlags = (
   statusID: number | undefined,
   empCat: string | undefined,
   consentVerification: string | null,
+  isExpat: boolean,
 ): ReviewStatusFlags => ({
   pendingHRBGVInit: statusID === StatusId.PendingHRBGVInitiation,
   pendingHRReviewBGCheck: statusID === StatusId.PendingHRReviewBGCheck,
@@ -70,6 +72,7 @@ export const buildStatusFlags = (
   PendingHREmploymentContractReview:
     statusID === StatusId.PendingHREmploymentContractReview,
   PreOnboardingChecklist: statusID === StatusId.PendingHRpreonboardingchecklist,
+  isExpat: isExpat === true,
 });
 
 const resolveVerificationToggle = (is: ReviewStatusFlags): boolean =>
@@ -106,7 +109,7 @@ export const buildVisibilityFlags = (
   return {
     showCandidateDocs: hasDetails && !is.pendingHRBGVInit,
     showVerificationToggle: resolveVerificationToggle(is),
-    showConsentForm: is.pendingHRReviewBGCheck && is.isVerified,
+    showConsentForm: is.pendingHRReviewBGCheck && is.isVerified && is.isExpat,
     showCOICard: is.pendingDOTAficaVerify && rejectFlag && !revertFlag,
     showWorkPermitUpload: is.wpAckContractUploaded,
     showUploadDocument,

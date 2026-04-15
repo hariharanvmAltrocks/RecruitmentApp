@@ -494,7 +494,8 @@ var DataSyncFilter = [
     //     FilterValue: StatusId.ReadyforRecruitmentProcess
     // }
 ];
-var StatusFilter = function (status, columnName, emailId, labourHire) {
+var StatusFilter = function (_a) {
+    var status = _a.status, columnName = _a.columnName, emailId = _a.emailId, labourHire = _a.labourHire, questionBy = _a.questionBy;
     var filters = [
         {
             FilterKey: "ItemCreated",
@@ -523,6 +524,13 @@ var StatusFilter = function (status, columnName, emailId, labourHire) {
             FilterValue: labourHire === ApiConfig_1.Choices.Yes ? ApiConfig_1.Choices.Yes : ApiConfig_1.Choices.No,
         });
     }
+    if (questionBy) {
+        filters.push({
+            FilterKey: questionBy,
+            Operator: "eq",
+            FilterValue: ApiConfig_1.Choices.No,
+        });
+    }
     return filters;
 };
 var createQuery = function (ListName, Filter, select) { return ({
@@ -535,136 +543,206 @@ var MetricQueryConfig = function (EmailId) {
     return (_a = {},
         // ✅ Assign HR
         _a[ConditionConfig_1.MatricID.AssignHr] = [
-            createQuery(Config_1.ListNames.HRMSNewPositionRequest, tslib_1.__spreadArray(tslib_1.__spreadArray([], StatusFilter(Config_1.StatusId.ReadyforRecruitmentProcess), true), DataSyncFilter, true), ["Id"]),
-            createQuery(Config_1.ListNames.HRMSVacancyReplacementRequest, tslib_1.__spreadArray(tslib_1.__spreadArray([], StatusFilter(Config_1.StatusId.ReadyforRecruitmentProcess), true), DataSyncFilter, true), ["Id"]),
+            createQuery(Config_1.ListNames.HRMSNewPositionRequest, tslib_1.__spreadArray(tslib_1.__spreadArray([], StatusFilter({ status: Config_1.StatusId.ReadyforRecruitmentProcess }), true), DataSyncFilter, true), ["Id"]),
+            createQuery(Config_1.ListNames.HRMSVacancyReplacementRequest, tslib_1.__spreadArray(tslib_1.__spreadArray([], StatusFilter({ status: Config_1.StatusId.ReadyforRecruitmentProcess }), true), DataSyncFilter, true), ["Id"]),
         ],
         // ✅ Upload ONEM
-        _a[ConditionConfig_1.MatricID.UploadONEM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.PendingUploadONEM)),
+        _a[ConditionConfig_1.MatricID.UploadONEM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({ status: Config_1.StatusId.PendingUploadONEM })),
         // ✅ Job Advert
-        _a[ConditionConfig_1.MatricID.JobAdvert] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.PendingUploadAdvert, "AssignedHR", EmailId)),
+        _a[ConditionConfig_1.MatricID.JobAdvert] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+            status: Config_1.StatusId.PendingUploadAdvert,
+            columnName: "AssignedHR",
+            emailId: EmailId,
+        })),
         // ✅ Advert Review HOD
-        _a[ConditionConfig_1.MatricID.AdvertReviewHOD] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.PendingReviewAdvertHOD, "HOD", EmailId)),
+        _a[ConditionConfig_1.MatricID.AdvertReviewHOD] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+            status: Config_1.StatusId.PendingReviewAdvertHOD,
+            columnName: "HOD",
+            emailId: EmailId,
+        })),
         // ✅ Advert Review LM
-        _a[ConditionConfig_1.MatricID.AdvertReviewLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.PendingwithLineManagereviewAdv, "LineManager", EmailId)),
+        _a[ConditionConfig_1.MatricID.AdvertReviewLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+            status: Config_1.StatusId.PendingwithLineManagereviewAdv,
+            columnName: "LineManager",
+            emailId: EmailId,
+        })),
         // ✅ Review Score Card (FIXED - only one)
-        _a[ConditionConfig_1.MatricID.ReviewScoreCard] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter([
-            Config_1.StatusId.PendingwithpositionIDAssignmentWithHOD,
-            Config_1.StatusId.pendingL2shorlistingwithHOD,
-            Config_1.StatusId.CandidateOnHoldbyHODLevel1,
-            Config_1.StatusId.CandidateOnHoldbyHODLevel2,
-        ])),
+        _a[ConditionConfig_1.MatricID.ReviewScoreCard] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter({
+            status: [
+                Config_1.StatusId.PendingwithpositionIDAssignmentWithHOD,
+                Config_1.StatusId.pendingL2shorlistingwithHOD,
+                Config_1.StatusId.CandidateOnHoldbyHODLevel1,
+                Config_1.StatusId.CandidateOnHoldbyHODLevel2,
+            ],
+        })),
         // ✅ Review Profile HR
-        _a[ConditionConfig_1.MatricID.ReviewProfileHR] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.RecruitmentInProgress, "AssignedHR", EmailId)),
+        _a[ConditionConfig_1.MatricID.ReviewProfileHR] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+            status: Config_1.StatusId.RecruitmentInProgress,
+            columnName: "AssignedHR",
+            emailId: EmailId,
+        })),
         // ✅ Review Profile LM
-        _a[ConditionConfig_1.MatricID.ReviewProfileLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.RecruitmentInProgress, "LineManager", EmailId)),
+        _a[ConditionConfig_1.MatricID.ReviewProfileLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+            status: Config_1.StatusId.RecruitmentInProgress,
+            columnName: "LineManager",
+            emailId: EmailId,
+        })),
         // ✅ Assign Interview Panel
-        _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.RecruitmentInProgress, "AssignedHR", EmailId)),
+        _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+            status: Config_1.StatusId.RecruitmentInProgress,
+            columnName: "AssignedHR",
+            emailId: EmailId,
+        })),
         // ✅ Interview Question HR
-        _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.PendingInterviewquestion, "AssignedHR", EmailId)),
+        _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+            status: Config_1.StatusId.PendingInterviewquestion,
+            columnName: "AssignedHR",
+            emailId: EmailId,
+            questionBy: "QuestionByHR",
+        })),
         // ✅ Interview Question LM (FIXED)
-        _a[ConditionConfig_1.MatricID.DisqualifiQuesLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter([Config_1.StatusId.CareerPortalQuestions], "LineManager", EmailId)),
-        _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter([Config_1.StatusId.PendingInterviewquestion], "LineManager", EmailId)),
+        _a[ConditionConfig_1.MatricID.DisqualifiQuesLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+            status: Config_1.StatusId.CareerPortalQuestions,
+            columnName: "LineManager",
+            emailId: EmailId,
+        })),
+        _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+            status: Config_1.StatusId.PendingInterviewquestion,
+            columnName: "LineManager",
+            emailId: EmailId,
+            questionBy: "QuestionByLM",
+        })),
         // ✅ Interview Tracker
-        _a[ConditionConfig_1.MatricID.interviewSchedule] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter([
-            Config_1.StatusId.InterviewScheduled,
-            Config_1.StatusId.InterviewScheduledforLevel2,
-        ])),
+        _a[ConditionConfig_1.MatricID.interviewSchedule] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter({
+            status: [
+                Config_1.StatusId.InterviewScheduled,
+                Config_1.StatusId.InterviewScheduledforLevel2,
+            ],
+        })),
         // ✅ Evaluation HR
-        _a[ConditionConfig_1.MatricID.EvalutionHR] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter([
-            Config_1.StatusId.InterviewLevel1InProgress,
-            Config_1.StatusId.InterviewLevel2InProgress,
-        ])),
+        _a[ConditionConfig_1.MatricID.EvalutionHR] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails),
         // ✅ Evaluation LM
-        _a[ConditionConfig_1.MatricID.EvalutionLM] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter(Config_1.StatusId.InterviewLevel1InProgress)),
+        _a[ConditionConfig_1.MatricID.EvalutionLM] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails),
         // ✅ Evaluation HOD
-        _a[ConditionConfig_1.MatricID.EvalutionHOD] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter([
-            Config_1.StatusId.InterviewLevel1InProgress,
-            Config_1.StatusId.InterviewLevel2InProgress,
-        ])),
+        _a[ConditionConfig_1.MatricID.EvalutionHOD] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails),
         // ✅ Evaluation EXCO
-        _a[ConditionConfig_1.MatricID.EvalutionEXCO] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter(Config_1.StatusId.InterviewLevel2InProgress)),
+        _a[ConditionConfig_1.MatricID.EvalutionEXCO] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails),
         // ✅ Offer Release
-        _a[ConditionConfig_1.MatricID.OfferRelease] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter(Config_1.StatusId.PendingCandidateOfferLetterUpload)),
+        _a[ConditionConfig_1.MatricID.OfferRelease] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter({ status: Config_1.StatusId.PendingCandidateOfferLetterUpload })),
         // ✅ Offer Accepted
-        _a[ConditionConfig_1.MatricID.OfferAccepted] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter(Config_1.StatusId.PendingHROfferReview)),
+        _a[ConditionConfig_1.MatricID.OfferAccepted] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter({ status: Config_1.StatusId.PendingHROfferReview })),
         // ✅ Offer Rejected
-        _a[ConditionConfig_1.MatricID.OfferRejected] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter(Config_1.StatusId.offerdecline)),
+        _a[ConditionConfig_1.MatricID.OfferRejected] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter({ status: Config_1.StatusId.offerdecline })),
         // ✅ Onboarding
-        _a[ConditionConfig_1.MatricID.Onbording] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter(Config_1.StatusId.Onboarded)),
+        _a[ConditionConfig_1.MatricID.Onbording] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter({ status: Config_1.StatusId.Onboarded })),
         //Assign Agencies
-        _a[ConditionConfig_1.MatricID.AssignAgencies] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.RecruitmentInProgress)),
+        _a[ConditionConfig_1.MatricID.AssignAgencies] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({ status: Config_1.StatusId.RecruitmentInProgress })),
         //Background Check
-        _a[ConditionConfig_1.MatricID.BackgroundCheck] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter([
-            Config_1.StatusId.PendingHRBGVInitiation,
-            Config_1.StatusId.PendingHRReviewBGCheck,
-            Config_1.StatusId.PendingDOTAficaVerification,
-        ], "RecruitmentHR", EmailId)),
+        _a[ConditionConfig_1.MatricID.BackgroundCheck] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter({
+            status: [
+                Config_1.StatusId.PendingHRBGVInitiation,
+                Config_1.StatusId.PendingHRReviewBGCheck,
+                Config_1.StatusId.PendingDOTAficaVerification,
+            ],
+            columnName: "RecruitmentHR",
+            emailId: EmailId,
+        })),
         //LabourHire
-        _a[ConditionConfig_1.MatricID.LabourHire] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter([
-            Config_1.StatusId.PendingHROfferInitiate,
-            Config_1.StatusId.PendingHROfferReview,
-            Config_1.StatusId.PendingHRReviewOfferWorkPermitInit,
-            Config_1.StatusId.PendingFinancePaymentReview,
-            Config_1.StatusId.PendingHRReviewOfferuploadEmploymentInit,
-            Config_1.StatusId.PendingHREmploymentContractInit,
-            Config_1.StatusId.PendingHREmploymentContractReview,
-            Config_1.StatusId.PendingHREmploymentContractVerification,
-            Config_1.StatusId.PendingHRpreonboardingchecklist,
-        ], "RecruitmentHR", EmailId, ApiConfig_1.Choices.Yes)),
+        _a[ConditionConfig_1.MatricID.LabourHire] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter({
+            status: [
+                Config_1.StatusId.PendingHROfferInitiate,
+                Config_1.StatusId.PendingHROfferReview,
+                Config_1.StatusId.PendingHRReviewOfferWorkPermitInit,
+                Config_1.StatusId.PendingFinancePaymentReview,
+                Config_1.StatusId.PendingHRReviewOfferuploadEmploymentInit,
+                Config_1.StatusId.PendingHREmploymentContractInit,
+                Config_1.StatusId.PendingHREmploymentContractReview,
+                Config_1.StatusId.PendingHREmploymentContractVerification,
+                Config_1.StatusId.PendingHRpreonboardingchecklist,
+            ],
+            columnName: "RecruitmentHR",
+            emailId: EmailId,
+            labourHire: ApiConfig_1.Choices.Yes,
+        })),
         //KCSA
-        _a[ConditionConfig_1.MatricID.Kcsa] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter([
-            Config_1.StatusId.PendingHROfferInitiate,
-            Config_1.StatusId.PendingHRReviewOfferWorkPermitInit,
-            Config_1.StatusId.PendingHRReviewWorkpermitDocs,
-            Config_1.StatusId.WorkPermitAcknowledgedContractUploaded,
-            Config_1.StatusId.PendingHREmploymentContractVerification,
-            Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract,
-            Config_1.StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract,
-            Config_1.StatusId.PendingHRpreonboardingchecklist,
-        ], "RecruitmentHR", EmailId, ApiConfig_1.Choices.No)),
+        _a[ConditionConfig_1.MatricID.Kcsa] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter({
+            status: [
+                Config_1.StatusId.PendingHROfferInitiate,
+                Config_1.StatusId.PendingHRReviewOfferWorkPermitInit,
+                Config_1.StatusId.PendingHRReviewWorkpermitDocs,
+                Config_1.StatusId.WorkPermitAcknowledgedContractUploaded,
+                Config_1.StatusId.PendingHREmploymentContractVerification,
+                Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract,
+                Config_1.StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract,
+                Config_1.StatusId.PendingHRpreonboardingchecklist,
+            ],
+            columnName: "RecruitmentHR",
+            emailId: EmailId,
+            labourHire: ApiConfig_1.Choices.No,
+        })),
         //Reviewscordcard HOD
-        _a[ConditionConfig_1.MatricID.ReviewScoredHOD] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter(Config_1.StatusId.RecruitmentInProgress, "HOD", EmailId)),
+        _a[ConditionConfig_1.MatricID.ReviewScoredHOD] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+            status: Config_1.StatusId.RecruitmentInProgress,
+            columnName: "HOD",
+            emailId: EmailId,
+        })),
         //MySubmission
-        _a[ConditionConfig_1.MatricID.MySubmission] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter([], "", "")),
+        _a[ConditionConfig_1.MatricID.MySubmission] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({ status: [], columnName: "", emailId: "" })),
         // MySubmissionHR: 28,
-        _a[ConditionConfig_1.MatricID.MySubmissionHR] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter([
-            Config_1.StatusId.PendingwithLineManagereviewAdv,
-            Config_1.StatusId.PendingReviewAdvertHOD,
-            Config_1.StatusId.CareerPortalQuestions,
-            Config_1.StatusId.PendingUploadONEM,
-            Config_1.StatusId.RecruitmentInProgress,
-        ], "AssignedHR", EmailId)),
+        _a[ConditionConfig_1.MatricID.MySubmissionHR] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+            status: [
+                Config_1.StatusId.PendingwithLineManagereviewAdv,
+                Config_1.StatusId.PendingReviewAdvertHOD,
+                Config_1.StatusId.CareerPortalQuestions,
+                Config_1.StatusId.PendingUploadONEM,
+                Config_1.StatusId.RecruitmentInProgress,
+            ],
+            columnName: "AssignedHR",
+            emailId: EmailId,
+        })),
         // MySubmissionLM: 29,
-        _a[ConditionConfig_1.MatricID.MySubmissionLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter([
-            Config_1.StatusId.PendingReviewAdvertHOD,
-            Config_1.StatusId.CareerPortalQuestions,
-            Config_1.StatusId.PendingUploadONEM,
-            Config_1.StatusId.RecruitmentInProgress,
-        ], "LineManager", EmailId)),
+        _a[ConditionConfig_1.MatricID.MySubmissionLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+            status: [
+                Config_1.StatusId.PendingReviewAdvertHOD,
+                Config_1.StatusId.CareerPortalQuestions,
+                Config_1.StatusId.PendingUploadONEM,
+                Config_1.StatusId.RecruitmentInProgress,
+            ],
+            columnName: "LineManager",
+            emailId: EmailId,
+        })),
         //MySubmissionHOD: 30,
-        _a[ConditionConfig_1.MatricID.MySubmissionHOD] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter([Config_1.StatusId.PendingUploadONEM, Config_1.StatusId.RecruitmentInProgress], "HOD", EmailId)),
+        _a[ConditionConfig_1.MatricID.MySubmissionHOD] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+            status: [Config_1.StatusId.PendingUploadONEM, Config_1.StatusId.RecruitmentInProgress],
+            columnName: "HOD",
+            emailId: EmailId,
+        })),
         //MySubmissionBGV: 31,
-        _a[ConditionConfig_1.MatricID.MySubmissionBGV] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter([
-            Config_1.StatusId.PendingBGdocuploadedbycandidate,
-            Config_1.StatusId.PendingwithTAforMedicalScreening,
-            Config_1.StatusId.PendingwithTAforMedicalScreening,
-            Config_1.StatusId.PendingCandidateOfferLetterUpload,
-            Config_1.StatusId.PendingCandidateWorkPermitreleatedDoc,
-            Config_1.StatusId.PendingCandidateEmploymentContractUpload,
-            Config_1.StatusId.PendingLabourHireOfferRelease,
-            Config_1.StatusId.PendingLabourhireWPPayment,
-            Config_1.StatusId.PendingFinancePaymentReview,
-            Config_1.StatusId.PendingLHWorkPermitProcess,
-            Config_1.StatusId.PendingLHECRelease,
-            Config_1.StatusId.BackgroundCheckVerificationFailed,
-            Config_1.StatusId.FailedmedicalscreeningUnfit,
-            Config_1.StatusId.RESIProcessInitiatedforDRC,
-            Config_1.StatusId.RESIProcessInitiatedforExpatriate,
-            Config_1.StatusId.RESProcessInitiated,
-            Config_1.StatusId.onboardingInProcess,
-            Config_1.StatusId.OnboardingProcessinitiatedforDRC,
-            Config_1.StatusId.OnboardingProcessinitiatedforExpat,
-        ], "RecruitmentHR", EmailId)),
+        _a[ConditionConfig_1.MatricID.MySubmissionBGV] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter({
+            status: [
+                Config_1.StatusId.PendingBGdocuploadedbycandidate,
+                Config_1.StatusId.PendingwithTAforMedicalScreening,
+                Config_1.StatusId.PendingwithTAforMedicalScreening,
+                Config_1.StatusId.PendingCandidateOfferLetterUpload,
+                Config_1.StatusId.PendingCandidateWorkPermitreleatedDoc,
+                Config_1.StatusId.PendingCandidateEmploymentContractUpload,
+                Config_1.StatusId.PendingLabourHireOfferRelease,
+                Config_1.StatusId.PendingLabourhireWPPayment,
+                Config_1.StatusId.PendingFinancePaymentReview,
+                Config_1.StatusId.PendingLHWorkPermitProcess,
+                Config_1.StatusId.PendingLHECRelease,
+                Config_1.StatusId.BackgroundCheckVerificationFailed,
+                Config_1.StatusId.FailedmedicalscreeningUnfit,
+                Config_1.StatusId.RESIProcessInitiatedforDRC,
+                Config_1.StatusId.RESIProcessInitiatedforExpatriate,
+                Config_1.StatusId.RESProcessInitiated,
+                Config_1.StatusId.onboardingInProcess,
+                Config_1.StatusId.OnboardingProcessinitiatedforDRC,
+                Config_1.StatusId.OnboardingProcessinitiatedforExpat,
+            ],
+            columnName: "RecruitmentHR",
+            emailId: EmailId,
+        })),
         _a);
 };
 exports.MetricQueryConfig = MetricQueryConfig;

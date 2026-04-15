@@ -1,6 +1,6 @@
 import moment from "moment";
 import { ApiResponse } from "../../models/apimodels";
-import { count, InOperator } from "../../utilities/ApiConfig";
+import { Choices, count, InOperator } from "../../utilities/ApiConfig";
 import {
   DataFrom,
   ListNames,
@@ -40,6 +40,7 @@ export default class DashboardService implements IDashboard {
   async GetDashboardCount(
     queries: BatchQuery[],
     currentRoleID: number[],
+    EmailID?: string,
   ): Promise<ApiResponse<Metric[]>> {
     try {
       const metricConfigs = MatricColums(currentRoleID);
@@ -68,6 +69,87 @@ export default class DashboardService implements IDashboard {
           }
           return item;
         });
+      }
+
+      let EvalutionFilter = queries.filter(
+        (item: any) =>
+          item.StateValue === MatricID.EvalutionHR ||
+          item.StateValue === MatricID.EvalutionHOD ||
+          item.StateValue === MatricID.EvalutionLM ||
+          item.StateValue === MatricID.EvalutionEXCO,
+      );
+
+      if (EvalutionFilter.length > 0) {
+        const UserID = await CommonServices.getUserGuidByEmail(EmailID ?? "");
+
+        const listItems: any[] = await SPServices.SPReadItems({
+          Listname: ListNames.HRMSInterviewPanelDetails,
+          Select: EvalQueryConfig.InterviewPanel.Select,
+          Expand: EvalQueryConfig.InterviewPanel.Expand,
+          Filter: [
+            {
+              FilterKey: "InterviewPanelId",
+              Operator: "eq",
+              FilterValue: UserID.data?.key ?? "",
+            },
+            {
+              FilterKey: "IsScoreSheetUploaded",
+              Operator: "eq",
+              FilterValue: Choices.No,
+            },
+          ],
+        });
+
+        const CandidateIds = listItems
+          .map((item) => item.CandidateID?.ID)
+          .filter(Boolean);
+
+        if (CandidateIds.length > 0) {
+          let filterParam = [
+            {
+              FilterKey: "ID",
+              Operator: "in",
+              FilterValue: CandidateIds,
+            },
+          ];
+
+          queries = queries.map((item: any) => {
+            if (
+              item.StateValue === MatricID.EvalutionHR ||
+              item.StateValue === MatricID.EvalutionHOD ||
+              item.StateValue === MatricID.EvalutionLM ||
+              item.StateValue === MatricID.EvalutionEXCO
+            ) {
+              return {
+                ...item,
+                Filter: [...item.Filter, ...filterParam],
+              };
+            }
+            return item;
+          });
+        } else {
+          let filterParam = [
+            {
+              FilterKey: "ItemCreated",
+              Operator: "eq",
+              FilterValue: Choices.Yes,
+            },
+          ];
+          queries = queries.map((item: any) => {
+            if (
+              item.StateValue === MatricID.EvalutionHR ||
+              item.StateValue === MatricID.EvalutionHOD ||
+              item.StateValue === MatricID.EvalutionLM ||
+              item.StateValue === MatricID.EvalutionEXCO
+            ) {
+              return {
+                ...item,
+                Filter: [...item.Filter, ...filterParam],
+              };
+            }
+            return item;
+          });
+        }
       }
 
       const spCounts = await SPServices.batchGet(queries);
@@ -491,6 +573,11 @@ export default class DashboardService implements IDashboard {
               FilterKey: "InterviewPanelId",
               Operator: "eq",
               FilterValue: UserID.data?.key ?? "",
+            },
+            {
+              FilterKey: "IsScoreSheetUploaded",
+              Operator: "eq",
+              FilterValue: Choices.No,
             },
           ],
         });

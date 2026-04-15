@@ -461,8 +461,8 @@ function buildCandidateData(
   comments: string,
 ): WorkflowJson {
   const isBGVStatus =
-    data.StatusId === StatusId.PendingHRBGVInitiation ||
-    data.StatusId === StatusId.PendingHRReviewBGCheck;
+    data.StatusID === StatusId.PendingHRBGVInitiation ||
+    data.StatusID === StatusId.PendingHRReviewBGCheck;
 
   const base: WorkflowJson = {
     workflowStatus: workflowStatusValue,
@@ -474,7 +474,7 @@ function buildCandidateData(
   };
 
   if (
-    data.StatusId === StatusId.PendingHROfferInitiate &&
+    data.StatusID === StatusId.PendingHROfferInitiate &&
     data.EmploymentCategory === EmployeementCategory.KCSAEmployee
   ) {
     const offerDoc = documentResponse.data?.find((d: any) =>
@@ -483,30 +483,30 @@ function buildCandidateData(
     base.OfferLatterPath = offerDoc?.content;
   }
 
-  if (data.StatusId === StatusId.WorkPermitAcknowledgedContractUploaded) {
+  if (data.StatusID === StatusId.WorkPermitAcknowledgedContractUploaded) {
     base.EmpContractLatterPath = documentResponse.data?.[0]?.content;
     base.signedWorkPermitPath = workPermitDocs?.data?.[0]?.content;
   }
 
-  if (data.StatusId === StatusId.PendingHROfferReview) {
+  if (data.StatusID === StatusId.PendingHROfferReview) {
     const labourOffer = bgvStatus.find(
-      (d) => d.categoryName === DisplayFolderName.LabourHireOffer,
+      (d) => d.categoryName === DisplayFolderName.offerLetterUnsigned,
     );
     base.OfferLatterPath = labourOffer?.documents[0]?.downloadUrl;
   }
 
-  if (data.StatusId === StatusId.PendingHREmploymentContractReview) {
+  if (data.StatusID === StatusId.PendingHREmploymentContractReview) {
     const labourEC = bgvStatus.find(
       (d) => d.categoryName === DisplayFolderName.LabourHireEC,
     );
     base.EmpContractLatterPath = labourEC?.documents[0]?.downloadUrl;
   }
 
-  if (data.StatusId === StatusId.PendingFinancePaymentReview) {
+  if (data.StatusID === StatusId.PendingFinancePaymentReview) {
     base.proofOfPaymentPath = documentResponse.data?.[0]?.content;
   }
 
-  if (data.StatusId === StatusId.PendingHREmploymentContractInit) {
+  if (data.StatusID === StatusId.PendingHREmploymentContractInit) {
     const wpDoc = bgvStatus.find(
       (d) => d.categoryName === DisplayFolderName.WorkPermitDocument,
     );
@@ -514,7 +514,7 @@ function buildCandidateData(
   }
 
   if (
-    data.StatusId ===
+    data.StatusID ===
       StatusId.PendingHRReviewOfferanduploadEmployementContract &&
     data.RadioAction === "Yes"
   ) {

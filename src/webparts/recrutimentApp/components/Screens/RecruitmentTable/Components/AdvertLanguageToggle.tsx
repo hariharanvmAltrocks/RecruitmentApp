@@ -219,7 +219,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
         </Section>
 
         <Section
-          title={`Preferred Total Experience (${advertLanguage})`}
+          title={`Experience (${advertLanguage})`}
           icon={<Activity size={12} />}
           isLoading={isLoading}
           skeletonLines={2}

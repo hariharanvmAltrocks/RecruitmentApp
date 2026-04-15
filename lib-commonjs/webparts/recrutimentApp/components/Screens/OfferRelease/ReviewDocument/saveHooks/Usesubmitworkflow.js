@@ -337,8 +337,8 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
 }
 function buildCandidateData(data, workflowStatusValue, documentResponse, workPermitDocs, EmailId, bgvStatus, comments) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
-    var isBGVStatus = data.StatusId === EvaluationConfig_1.StatusId.PendingHRBGVInitiation ||
-        data.StatusId === EvaluationConfig_1.StatusId.PendingHRReviewBGCheck;
+    var isBGVStatus = data.StatusID === EvaluationConfig_1.StatusId.PendingHRBGVInitiation ||
+        data.StatusID === EvaluationConfig_1.StatusId.PendingHRReviewBGCheck;
     var base = {
         workflowStatus: workflowStatusValue,
         jobRequestId: Number(data === null || data === void 0 ? void 0 : data.JobRequestID),
@@ -347,31 +347,31 @@ function buildCandidateData(data, workflowStatusValue, documentResponse, workPer
         HrUserId: isBGVStatus ? "" : "",
         HrUserEmail: isBGVStatus ? EmailId : "",
     };
-    if (data.StatusId === EvaluationConfig_1.StatusId.PendingHROfferInitiate &&
+    if (data.StatusID === EvaluationConfig_1.StatusId.PendingHROfferInitiate &&
         data.EmploymentCategory === ConditionConfig_1.EmployeementCategory.KCSAEmployee) {
         var offerDoc = (_a = documentResponse.data) === null || _a === void 0 ? void 0 : _a.find(function (d) { var _a; return (_a = d.name) === null || _a === void 0 ? void 0 : _a.includes("OfferLetter"); });
         base.OfferLatterPath = offerDoc === null || offerDoc === void 0 ? void 0 : offerDoc.content;
     }
-    if (data.StatusId === EvaluationConfig_1.StatusId.WorkPermitAcknowledgedContractUploaded) {
+    if (data.StatusID === EvaluationConfig_1.StatusId.WorkPermitAcknowledgedContractUploaded) {
         base.EmpContractLatterPath = (_c = (_b = documentResponse.data) === null || _b === void 0 ? void 0 : _b[0]) === null || _c === void 0 ? void 0 : _c.content;
         base.signedWorkPermitPath = (_e = (_d = workPermitDocs === null || workPermitDocs === void 0 ? void 0 : workPermitDocs.data) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e.content;
     }
-    if (data.StatusId === EvaluationConfig_1.StatusId.PendingHROfferReview) {
-        var labourOffer = bgvStatus.find(function (d) { return d.categoryName === ConditionConfig_1.DisplayFolderName.LabourHireOffer; });
+    if (data.StatusID === EvaluationConfig_1.StatusId.PendingHROfferReview) {
+        var labourOffer = bgvStatus.find(function (d) { return d.categoryName === ConditionConfig_1.DisplayFolderName.offerLetterUnsigned; });
         base.OfferLatterPath = (_f = labourOffer === null || labourOffer === void 0 ? void 0 : labourOffer.documents[0]) === null || _f === void 0 ? void 0 : _f.downloadUrl;
     }
-    if (data.StatusId === EvaluationConfig_1.StatusId.PendingHREmploymentContractReview) {
+    if (data.StatusID === EvaluationConfig_1.StatusId.PendingHREmploymentContractReview) {
         var labourEC = bgvStatus.find(function (d) { return d.categoryName === ConditionConfig_1.DisplayFolderName.LabourHireEC; });
         base.EmpContractLatterPath = (_g = labourEC === null || labourEC === void 0 ? void 0 : labourEC.documents[0]) === null || _g === void 0 ? void 0 : _g.downloadUrl;
     }
-    if (data.StatusId === EvaluationConfig_1.StatusId.PendingFinancePaymentReview) {
+    if (data.StatusID === EvaluationConfig_1.StatusId.PendingFinancePaymentReview) {
         base.proofOfPaymentPath = (_j = (_h = documentResponse.data) === null || _h === void 0 ? void 0 : _h[0]) === null || _j === void 0 ? void 0 : _j.content;
     }
-    if (data.StatusId === EvaluationConfig_1.StatusId.PendingHREmploymentContractInit) {
+    if (data.StatusID === EvaluationConfig_1.StatusId.PendingHREmploymentContractInit) {
         var wpDoc = bgvStatus.find(function (d) { return d.categoryName === ConditionConfig_1.DisplayFolderName.WorkPermitDocument; });
         base.signedWorkPermitPath = (_k = wpDoc === null || wpDoc === void 0 ? void 0 : wpDoc.documents[0]) === null || _k === void 0 ? void 0 : _k.downloadUrl;
     }
-    if (data.StatusId ===
+    if (data.StatusID ===
         EvaluationConfig_1.StatusId.PendingHRReviewOfferanduploadEmployementContract &&
         data.RadioAction === "Yes") {
         base.EmpContractLatterPath = (_m = (_l = documentResponse.data) === null || _l === void 0 ? void 0 : _l[0]) === null || _m === void 0 ? void 0 : _m.content;

@@ -234,13 +234,14 @@ export const PositionFrame: React.FC<PositionFrameworkProps> = ({
               value={positionDetails?.AreaofWork}
               icon={Users}
             />
-            {positionDetails?.labourHire && (
-              <InfoField
-                label="Labour Hire"
-                value={positionDetails?.labourHire}
-                icon={Users}
-              />
-            )}
+            {positionDetails?.labourHire != null &&
+              positionDetails.labourHire !== "" && (
+                <InfoField
+                  label="Labour Hire"
+                  value={positionDetails.labourHire}
+                  icon={Users}
+                />
+              )}
             {positionDetails?.JoiningDate && (
               <InfoField
                 label="Joining Date"

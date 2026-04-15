@@ -113,11 +113,16 @@ var WorkflowHODConfig = function (StatusID, isRevet, IsExpat, EmpCat) {
         case Config_1.StatusId.PendingBGdocuploadedbycandidate:
             return Config_1.StatusId.PendingHRReviewBGCheck;
         case Config_1.StatusId.PendingHRReviewBGCheck:
-            if (isRevet) {
-                return Config_1.StatusId.PendingBGdocuploadedbycandidate;
+            if (IsExpat) {
+                if (isRevet) {
+                    return Config_1.StatusId.PendingBGdocuploadedbycandidate;
+                }
+                else {
+                    return Config_1.StatusId.PendingDOTAficaVerification;
+                }
             }
             else {
-                return Config_1.StatusId.PendingDOTAficaVerification;
+                return Config_1.StatusId.RESIProcessInitiatedforDRC;
             }
         case Config_1.StatusId.PendingDOTAficaVerification:
             if (IsExpat) {

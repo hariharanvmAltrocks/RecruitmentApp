@@ -147,46 +147,44 @@ function EvalutionContent({
           </button>
         </div>
       )}
-      {StatusID === StatusId.InterviewLevel2InProgress} {<></>}else
-      {
-        <div className={styles.layout}>
-          <CandidateInfo candidate={candidate} />
 
-          <main className={styles.rightPanel}>
-            <InterviewQuestionList
-              questions={questions}
-              answers={answers}
-              ratingErrors={submitHook.ratingErrors}
-              onAnswerChange={(qId, patch) => updateAnswer(qId, patch)}
-            />
-            <div className={questions.length > 0 ? styles.scorecardMargin : ""}>
-              <ScorecardDetails
-                scorecard={scorecard}
-                scorecardErrors={submitHook.scorecardErrors}
-                onScorecardChange={(key, val) => updateScorecard(key, val)}
-                recommendation={recommendation}
-                recError={submitHook.recError}
-                onRecommendationChange={setRecommendation}
-                overallFeedback={overallFeedback}
-                feedbackError={submitHook.feedbackError}
-                onFeedbackChange={setOverallFeedback}
-                evaluationFeedback={evaluationFeedback}
-                evalFeedbackError={submitHook.evalFeedbackError}
-                onEvalFeedbackChange={setEvaluationFeedback}
-                acknowledged={acknowledged}
-                ackError={submitHook.ackError}
-                onAcknowledgedChange={setAcknowledged}
-                candidate={candidate}
-              />
-            </div>
-            <SubmitEvaluation
-              submitHook={submitHook}
+      <div className={styles.layout}>
+        <CandidateInfo candidate={candidate} />
+
+        <main className={styles.rightPanel}>
+          <InterviewQuestionList
+            questions={questions}
+            answers={answers}
+            ratingErrors={submitHook.ratingErrors}
+            onAnswerChange={(qId, patch) => updateAnswer(qId, patch)}
+          />
+          <div className={questions.length > 0 ? styles.scorecardMargin : ""}>
+            <ScorecardDetails
+              scorecard={scorecard}
+              scorecardErrors={submitHook.scorecardErrors}
+              onScorecardChange={(key, val) => updateScorecard(key, val)}
+              recommendation={recommendation}
+              recError={submitHook.recError}
+              onRecommendationChange={setRecommendation}
+              overallFeedback={overallFeedback}
+              feedbackError={submitHook.feedbackError}
+              onFeedbackChange={setOverallFeedback}
+              evaluationFeedback={evaluationFeedback}
+              evalFeedbackError={submitHook.evalFeedbackError}
+              onEvalFeedbackChange={setEvaluationFeedback}
               acknowledged={acknowledged}
-              onCancel={goBack}
+              ackError={submitHook.ackError}
+              onAcknowledgedChange={setAcknowledged}
+              candidate={candidate}
             />
-          </main>
-        </div>
-      }
+          </div>
+          <SubmitEvaluation
+            submitHook={submitHook}
+            acknowledged={acknowledged}
+            onCancel={goBack}
+          />
+        </main>
+      </div>
     </div>
   );
 }

@@ -19,7 +19,11 @@ export const useDashboardMetrics = (refreshKey: number) => {
   const fetchMetrics = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await DashboardServices.GetDashboardCount(queries, roleIDs);
+      const data = await DashboardServices.GetDashboardCount(
+        queries,
+        roleIDs,
+        ADGroupData.EmailId[0],
+      );
       if (data.status === ResponeStatus.SUCCESS) {
         setMetrics(data.data);
       }

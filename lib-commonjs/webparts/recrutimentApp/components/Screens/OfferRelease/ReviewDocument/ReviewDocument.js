@@ -53,53 +53,54 @@ var CONSULT_OPTIONS = [
     { value: "legal", label: "Evodie Mushiya Kadima" },
 ];
 var ReviewDocument = function (_a) {
-    var _b, _c, _d, _e;
+    var _b, _c, _d, _e, _f;
     var drawerOpen = _a.drawerOpen, selectedJobId = _a.selectedJobId, CandidateID = _a.CandidateID, selectedcandidateID = _a.selectedcandidateID, jobrequestID = _a.jobrequestID, IsExpat = _a.IsExpat, loadingState = _a.loadingState, onClose = _a.onClose, setLoadingState = _a.setLoadingState, refreshKey = _a.refreshKey;
     var navigate = (0, react_router_dom_1.useNavigate)();
-    var _f = (0, useModalPopup_1.useModalPopup)(), modalState = _f.modalState, showModal = _f.showModal, closeModal = _f.closeModal;
+    var _g = (0, useModalPopup_1.useModalPopup)(), modalState = _g.modalState, showModal = _g.showModal, closeModal = _g.closeModal;
     // ── Full-page loader (blocks entire panel during API call) ──────────────────
-    var _g = (0, react_1.useState)(false), pageloading = _g[0], setPageLoading = _g[1];
+    var _h = (0, react_1.useState)(false), pageloading = _h[0], setPageLoading = _h[1];
     // ── Which button is currently active (drives per-button spinner icon) ───────
     // Unlike isSubmittingRef, this IS a state so React re-renders and shows spinner
-    var _h = (0, react_1.useState)(null), activeButton = _h[0], setActiveButton = _h[1];
+    var _j = (0, react_1.useState)(null), activeButton = _j[0], setActiveButton = _j[1];
     // True when ANY button is submitting — used to disable all buttons at once
     var isAnySubmitting = activeButton !== null;
-    var _j = (0, useReviewDocumentManage_1.useStateOfferRelease)(), consentVerification = _j.consentVerification, consentFile = _j.consentFile, showConsentErrors = _j.showConsentErrors, handleConsentVerification = _j.handleConsentVerification, handleConsentFile = _j.handleConsentFile, coiState = _j.coiState, handleCoiChange = _j.handleCoiChange, fileInputRef = _j.fileInputRef, selectedFile = _j.selectedFile, isReading = _j.isReading, handleUploadClick = _j.handleUploadClick, handleFileChange = _j.handleFileChange, clearFile = _j.clearFile, uploadDocs = _j.uploadDocs, handleDocumnetUpload = _j.handleDocumnetUpload, reviewerComments = _j.reviewerComments, acknowledgementCheckbox = _j.acknowledgementCheckbox, onCommentsChange = _j.onCommentsChange, onToggleAcknowledgement = _j.onToggleAcknowledgement, validateAll = _j.validateAll, validationError = _j.validationError;
-    var _k = (0, react_1.useState)(false), showComments = _k[0], setshowComments = _k[1];
-    var _l = (0, getCandidateDetails_1.useCandidatDetails)(selectedJobId, CandidateID, selectedcandidateID, jobrequestID, IsExpat), positionDetails = _l.data, positionLoading = _l.loading;
+    var _k = (0, useReviewDocumentManage_1.useStateOfferRelease)(), consentVerification = _k.consentVerification, consentFile = _k.consentFile, showConsentErrors = _k.showConsentErrors, handleConsentVerification = _k.handleConsentVerification, handleConsentFile = _k.handleConsentFile, coiState = _k.coiState, handleCoiChange = _k.handleCoiChange, fileInputRef = _k.fileInputRef, selectedFile = _k.selectedFile, isReading = _k.isReading, handleUploadClick = _k.handleUploadClick, handleFileChange = _k.handleFileChange, clearFile = _k.clearFile, uploadDocs = _k.uploadDocs, handleDocumnetUpload = _k.handleDocumnetUpload, reviewerComments = _k.reviewerComments, acknowledgementCheckbox = _k.acknowledgementCheckbox, onCommentsChange = _k.onCommentsChange, onToggleAcknowledgement = _k.onToggleAcknowledgement, validateAll = _k.validateAll, validationError = _k.validationError;
+    var _l = (0, react_1.useState)(false), showComments = _l[0], setshowComments = _l[1];
+    var _m = (0, getCandidateDetails_1.useCandidatDetails)(selectedJobId, CandidateID, selectedcandidateID, jobrequestID, IsExpat), positionDetails = _m.data, positionLoading = _m.loading;
     var isPendingDOTAfrica = (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) === Config_1.StatusId.PendingDOTAficaVerification;
-    var _m = (0, useStatusDetails_1.useBGVStatusDetails)(jobrequestID, isPendingDOTAfrica), bgvStatusDetails = _m.data, bgvStatus = _m.bgvStatus, bgvStatusLoading = _m.loading, bgvComments = _m.bgvComments, allCompleted = _m.allCompleted, rejectFlag = _m.rejectFlag, revertFLag = _m.revertFLag;
+    var _o = (0, useStatusDetails_1.useBGVStatusDetails)(jobrequestID, isPendingDOTAfrica), bgvStatusDetails = _o.data, bgvStatus = _o.bgvStatus, bgvStatusLoading = _o.loading, bgvComments = _o.bgvComments, allCompleted = _o.allCompleted, rejectFlag = _o.rejectFlag, revertFLag = _o.revertFLag;
     var isConsentVerified = consentVerification === "verified";
+    var docData = (0, Userequireddocuments_1.useRequiredDocuments)((_b = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.ProfileID) !== null && _b !== void 0 ? _b : "", (_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobRequestID) !== null && _c !== void 0 ? _c : "").data;
     var submitDeps = {
         data: positionDetails,
-        uploadDocs: uploadDocs,
-        BGVerifiedStatus: bgvStatusDetails,
+        BGVerifiedStatus: (_d = docData === null || docData === void 0 ? void 0 : docData.categories) !== null && _d !== void 0 ? _d : [],
         rejectflag: rejectFlag,
         consentFile: consentFile,
         coiState: coiState,
         consentVerification: isConsentVerified,
         reviewerComments: reviewerComments,
+        uploadDocs: uploadDocs,
     };
-    var _o = (0, Usesubmitworkflow_1.useSubmitWorkflow)(submitDeps), SubmitLoading = _o.isLoading, SubmitModalState = _o.modalState, SubmitCloseModal = _o.closeModal, submit = _o.submit;
-    var docData = (0, Userequireddocuments_1.useRequiredDocuments)((_b = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.ProfileID) !== null && _b !== void 0 ? _b : "", (_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobRequestID) !== null && _c !== void 0 ? _c : "").data;
-    var _p = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _p.data, signatureLoading = _p.loading;
+    var _p = (0, Usesubmitworkflow_1.useSubmitWorkflow)(submitDeps), SubmitLoading = _p.isLoading, SubmitModalState = _p.modalState, SubmitCloseModal = _p.closeModal, submit = _p.submit;
+    var _q = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _q.data, signatureLoading = _q.loading;
     var isExpat = (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.NationalityCode) !== ConditionConfig_1.NationalityCode.Nationals;
     var isPreOnboarding = (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) === Config_1.StatusId.PendingHRpreonboardingchecklist;
-    var _q = (0, fetchPreChecklist_1.usePreChecklist)(isExpat, (_d = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.PreChecklist) !== null && _d !== void 0 ? _d : undefined, isPreOnboarding), checklist = _q.checklist, allChecked = _q.allChecked, loading = _q.loading, updateCheckItem = _q.updateCheckItem;
+    var _r = (0, fetchPreChecklist_1.usePreChecklist)(isExpat, (_e = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.PreChecklist) !== null && _e !== void 0 ? _e : undefined, isPreOnboarding), checklist = _r.checklist, allChecked = _r.allChecked, loading = _r.loading, updateCheckItem = _r.updateCheckItem;
     var isLoading = signatureLoading;
     var isPageLoading = positionLoading || signatureLoading || bgvStatusLoading;
     (0, react_1.useEffect)(function () {
         if (loadingState !== isLoading)
             setLoadingState(isLoading);
     }, [isLoading, loadingState, setLoadingState]);
-    var _r = (0, Usereviewconditions_1.useReviewConditions)({
+    var _s = (0, Usereviewconditions_1.useReviewConditions)({
         statusID: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID,
         empCat: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.EmploymentCategory,
         consentVerification: consentVerification,
         hasDetails: !!positionDetails,
         rejectFlag: !!rejectFlag,
         revertFlag: !!revertFLag,
-    }), is = _r.is, vis = _r.vis;
+        isExpat: isExpat,
+    }), is = _s.is, vis = _s.vis;
     var headerMeta = (0, react_1.useMemo)(function () {
         var _a, _b, _c;
         return ({
@@ -447,7 +448,7 @@ var ReviewDocument = function (_a) {
                     react_1.default.createElement(PositionFrame_1.PositionFrame, { positionDetails: positionDetails, isLoading: positionLoading, headerCode: headerMeta.code }),
                     vis.showCandidateDocs && (react_1.default.createElement(CandidateDocumentsRepository_1.default, { data: docData !== null && docData !== void 0 ? docData : null })),
                     vis.showVerificationToggle && (react_1.default.createElement(ResueComponent_1.VerificationToggle, { value: consentVerification, onChange: handleConsentVerification, hasError: validationError.verification })),
-                    vis.showConsentForm && (react_1.default.createElement(consentform_1.default, { onFileChange: handleConsentFile, downloadUrl: (_e = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.DotAfricaCF) === null || _e === void 0 ? void 0 : _e.downloadUrl, disabled: isAnySubmitting, hasFileError: validationError.showConsentErrors, consentform: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.DotAfricaCF })),
+                    vis.showConsentForm && (react_1.default.createElement(consentform_1.default, { onFileChange: handleConsentFile, downloadUrl: (_f = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.DotAfricaCF) === null || _f === void 0 ? void 0 : _f.downloadUrl, disabled: isAnySubmitting, hasFileError: validationError.showConsentErrors, consentform: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.DotAfricaCF })),
                     vis.showCOICard && (react_1.default.createElement(Coicard_1.default, { consultOptions: CONSULT_OPTIONS, isReadOnly: isAnySubmitting, hasError: validationError.showCoiErrors, onChange: handleCoiChange })),
                     vis.showWorkPermitUpload && (react_1.default.createElement(Workpermituploadbox_1.WorkPermitUploadBox, { fileInputRef: fileInputRef, selectedFile: selectedFile, isReading: isReading, hasFileError: validationError.workPermit, disabled: isAnySubmitting, onUploadClick: handleUploadClick, onFileChange: handleFileChange, onClearFile: clearFile })),
                     vis.showUploadDocument && (react_1.default.createElement(UploadDocument_1.UploadDocument, { multiple: false, acceptedFormats: ".pdf", label: vis.uploadDocLabel, required: true, onChange: handleDocumnetUpload, disabled: isAnySubmitting, hasError: validationError.uploadError })),

@@ -9,7 +9,7 @@ var metricColumns_config_1 = require("../metricColumns.config");
 var Config_1 = require("../../../../utilities/Config");
 var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
 var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
-var callServiceByListName = function (listName, filter, condition, roleIDs, MatricID) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+var callServiceByListName = function (listName, filter, condition, roleIDs, MatricID, EmailID) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
     var _a;
     return tslib_1.__generator(this, function (_b) {
         switch (_b.label) {
@@ -29,7 +29,7 @@ var callServiceByListName = function (listName, filter, condition, roleIDs, Matr
             case 2: return [2 /*return*/, _b.sent()];
             case 3: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetRecruitmentDetails(filter, condition, MatricID)];
             case 4: return [2 /*return*/, _b.sent()];
-            case 5: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetCandidateDetails(filter, condition)];
+            case 5: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetCandidateDetails(filter, condition, MatricID, EmailID)];
             case 6: return [2 /*return*/, _b.sent()];
             case 7: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetSelectedCandidate(filter, condition)];
             case 8: return [2 /*return*/, _b.sent()];
@@ -93,7 +93,7 @@ var useTrackerData = function (MatricID, refreshKey) {
                     }
                     configs_1 = Array.isArray(config) ? config : [config];
                     return [4 /*yield*/, Promise.all(configs_1.map(function (cfg) {
-                            return (0, exports.callServiceByListName)(cfg.ListName, cfg.Filter, "and", roleIDs, MatricID);
+                            return (0, exports.callServiceByListName)(cfg.ListName, cfg.Filter, "and", roleIDs, MatricID, ADGroupData.EmailId[0]);
                         }))];
                 case 1:
                     responses = _a.sent();

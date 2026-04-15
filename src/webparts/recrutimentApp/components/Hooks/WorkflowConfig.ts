@@ -125,10 +125,14 @@ export const WorkflowHODConfig = (
     case StatusId.PendingBGdocuploadedbycandidate:
       return StatusId.PendingHRReviewBGCheck;
     case StatusId.PendingHRReviewBGCheck:
-      if (isRevet) {
-        return StatusId.PendingBGdocuploadedbycandidate;
+      if (IsExpat) {
+        if (isRevet) {
+          return StatusId.PendingBGdocuploadedbycandidate;
+        } else {
+          return StatusId.PendingDOTAficaVerification;
+        }
       } else {
-        return StatusId.PendingDOTAficaVerification;
+        return StatusId.RESIProcessInitiatedforDRC;
       }
 
     case StatusId.PendingDOTAficaVerification:

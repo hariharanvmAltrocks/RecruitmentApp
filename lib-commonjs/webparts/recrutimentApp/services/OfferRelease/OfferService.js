@@ -361,11 +361,11 @@ var OfferService = /** @class */ (function () {
     OfferService.prototype.GetSelectedCandidate = function (RecID, CandidateID, SelectedCandidateID, JobRequestID, isExpat) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var queries, _a, batchRes, careerRes, recruitment, recruitmentPosition, candidatePersonal, candidateSelected, residetails, ref, PPT, getDotAfricaCF, PreOnboarding, mappedData, error_7;
-            var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19;
-            return tslib_1.__generator(this, function (_20) {
-                switch (_20.label) {
+            var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17;
+            return tslib_1.__generator(this, function (_18) {
+                switch (_18.label) {
                     case 0:
-                        _20.trys.push([0, 3, , 4]);
+                        _18.trys.push([0, 3, , 4]);
                         queries = [
                             {
                                 StateValue: 1,
@@ -474,7 +474,7 @@ var OfferService = /** @class */ (function () {
                                 ServiceExport_1.CandidateTable.fetchCandidateDetails(JobRequestID),
                             ])];
                     case 1:
-                        _a = _20.sent(), batchRes = _a[0], careerRes = _a[1];
+                        _a = _18.sent(), batchRes = _a[0], careerRes = _a[1];
                         recruitment = (_b = batchRes[1]) === null || _b === void 0 ? void 0 : _b[0];
                         recruitmentPosition = (_c = batchRes[2]) === null || _c === void 0 ? void 0 : _c[0];
                         candidatePersonal = (_d = batchRes[3]) === null || _d === void 0 ? void 0 : _d[0];
@@ -491,7 +491,7 @@ var OfferService = /** @class */ (function () {
                                 FilePath: "".concat(Config_1.DocumentLibraray.HRMSCareerPortalCandidateCV, "/").concat((_o = (_m = careerRes === null || careerRes === void 0 ? void 0 : careerRes.data) === null || _m === void 0 ? void 0 : _m[0]) === null || _o === void 0 ? void 0 : _o.profileID, "/").concat(JobRequestID, "/").concat(ConditionConfig_1.DocumentFolderName.BackgroundVerification, "/").concat("ConsentForm"),
                             })];
                     case 2:
-                        getDotAfricaCF = (_20.sent());
+                        getDotAfricaCF = (_18.sent());
                         PreOnboarding = {
                             BackgroundChecks: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.BackgroundChecks) === ConditionConfig_1.ActionName.Completed
                                 ? true
@@ -563,11 +563,11 @@ var OfferService = /** @class */ (function () {
                             JobRequestID: (_12 = String(JobRequestID)) !== null && _12 !== void 0 ? _12 : "-",
                             PPEItems: PPT !== null && PPT !== void 0 ? PPT : [],
                             DotAfricaCF: getDotAfricaCF[0],
-                            NationalityCode: (_15 = (_14 = (_13 = careerRes === null || careerRes === void 0 ? void 0 : careerRes.data) === null || _13 === void 0 ? void 0 : _13[0]) === null || _14 === void 0 ? void 0 : _14.NatioCode) !== null && _15 !== void 0 ? _15 : "",
-                            patersonGrade: (_16 = recruitmentPosition === null || recruitmentPosition === void 0 ? void 0 : recruitmentPosition.PatersonGrade) === null || _16 === void 0 ? void 0 : _16.PatersonGrade,
-                            drcGrade: (_17 = recruitmentPosition === null || recruitmentPosition === void 0 ? void 0 : recruitmentPosition.DRCGrade) === null || _17 === void 0 ? void 0 : _17.DRCGrade,
+                            NationalityCode: (_13 = candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.NationalityCode) !== null && _13 !== void 0 ? _13 : "",
+                            patersonGrade: (_14 = recruitmentPosition === null || recruitmentPosition === void 0 ? void 0 : recruitmentPosition.PatersonGrade) === null || _14 === void 0 ? void 0 : _14.PatersonGrade,
+                            drcGrade: (_15 = recruitmentPosition === null || recruitmentPosition === void 0 ? void 0 : recruitmentPosition.DRCGrade) === null || _15 === void 0 ? void 0 : _15.DRCGrade,
                             PreChecklist: PreOnboarding,
-                            labourHire: (_19 = (_18 = residetails === null || residetails === void 0 ? void 0 : residetails.LabourhireORContractor) === null || _18 === void 0 ? void 0 : _18.AgentName) !== null && _19 !== void 0 ? _19 : "-",
+                            labourHire: (_17 = (_16 = residetails === null || residetails === void 0 ? void 0 : residetails.LabourhireORContractor) === null || _16 === void 0 ? void 0 : _16.AgentName) !== null && _17 !== void 0 ? _17 : "",
                         };
                         return [2 /*return*/, {
                                 data: mappedData,
@@ -575,7 +575,7 @@ var OfferService = /** @class */ (function () {
                                 message: "Selected candidate fetched successfully",
                             }];
                     case 3:
-                        error_7 = _20.sent();
+                        error_7 = _18.sent();
                         console.error("GetSelectedCandidate error:", error_7);
                         return [2 /*return*/, {
                                 data: null,

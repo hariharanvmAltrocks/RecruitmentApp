@@ -15,6 +15,7 @@ interface UseReviewConditionsParams {
   hasDetails: boolean;
   rejectFlag: boolean;
   revertFlag: boolean;
+  isExpat: boolean;
 }
 
 interface UseReviewConditionsReturn {
@@ -29,10 +30,11 @@ export const useReviewConditions = ({
   hasDetails,
   rejectFlag,
   revertFlag,
+  isExpat,
 }: UseReviewConditionsParams): UseReviewConditionsReturn => {
   const is = useMemo(
-    () => buildStatusFlags(statusID, empCat, consentVerification),
-    [statusID, empCat, consentVerification],
+    () => buildStatusFlags(statusID, empCat, consentVerification, isExpat),
+    [statusID, empCat, consentVerification, isExpat],
   );
 
   const vis = useMemo(

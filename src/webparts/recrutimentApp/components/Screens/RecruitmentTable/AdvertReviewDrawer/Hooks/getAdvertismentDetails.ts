@@ -167,10 +167,10 @@ export const useAdvertismentDetails = (
                 ) || [],
               experience: [
                 items?.TotalExperience
-                  ? `${items.TotalExperience.text} of experience`
+                  ? `Total Experience: ${items.TotalExperience.text}`
                   : "",
                 items?.ExperienceinMiningIndustry
-                  ? `Preferred: ${items.ExperienceinMiningIndustry.text} `
+                  ? `Preferred Experience: ${items.ExperienceinMiningIndustry.text} `
                   : "",
               ].filter(Boolean),
               RoleSpecificKnowledge:
@@ -208,10 +208,10 @@ export const useAdvertismentDetails = (
                 ) || [],
               experience: [
                 items?.YearofExperience
-                  ? `${items.YearofExperience.text} ans d'expérience`
+                  ? `expérience totale: ${items.YearofExperience.text}`
                   : "",
                 items?.PreferredExperience
-                  ? `Préféré: ${items.PreferredExperience.ExperienceInYearRange.text} ans`
+                  ? `expérience Préféré: ${items.PreferredExperience.ExperienceInYearRange.text}`
                   : "",
               ].filter(Boolean),
               RoleSpecificKnowledge:

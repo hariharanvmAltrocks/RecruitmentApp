@@ -113,6 +113,7 @@ export type IDashboard = {
   GetDashboardCount(
     queries: BatchQuery[],
     CurrentRoleID: number[],
+    EmailID?: string,
   ): Promise<ApiResponse<Metric[]>>;
   GetNPAEPVRRDetails(
     filterParam: any,

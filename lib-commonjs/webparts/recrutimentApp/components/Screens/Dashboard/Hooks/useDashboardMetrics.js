@@ -22,7 +22,7 @@ var useDashboardMetrics = function (refreshKey) {
                 case 0:
                     _a.trys.push([0, 2, 3, 4]);
                     setLoading(true);
-                    return [4 /*yield*/, ServiceExport_1.DashboardServices.GetDashboardCount(queries, roleIDs)];
+                    return [4 /*yield*/, ServiceExport_1.DashboardServices.GetDashboardCount(queries, roleIDs, ADGroupData.EmailId[0])];
                 case 1:
                     data = _a.sent();
                     if (data.status === ApiConfig_1.ResponeStatus.SUCCESS) {
