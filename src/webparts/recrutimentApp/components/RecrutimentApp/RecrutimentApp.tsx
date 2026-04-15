@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
-import MainLayout from './MainLayout';
-import AppRoutes from '../SideBar/Approutes';
-import { IRecrutimentAppProps } from '../IRecrutimentAppProps';
-import { useRoleContext } from '../../utilities/hooks/RoleContext';
-import { useUIState } from './UIStateContext';
+import React, { useState } from "react";
+import MainLayout from "./MainLayout";
+import AppRoutes from "../SideBar/Approutes";
+import { IRecrutimentAppProps } from "../IRecrutimentAppProps";
+import { useRoleContext } from "../../utilities/hooks/RoleContext";
+import { useUIState } from "./UIStateContext";
 
 export default function RecrutimentApp(props: IRecrutimentAppProps) {
-
   const { roleIDs } = useRoleContext();
 
   const { activeMenuID, setActiveMenuID } = useUIState();
+
+  console.log("Recruitment App V-1.2 -- 15-04-2025");
 
   return (
     <>
@@ -18,9 +19,7 @@ export default function RecrutimentApp(props: IRecrutimentAppProps) {
         activeMenuID={activeMenuID}
         setactiveMenuID={setActiveMenuID}
       >
-        <AppRoutes
-          props={props}
-        />
+        <AppRoutes props={props} />
       </MainLayout>
     </>
   );
