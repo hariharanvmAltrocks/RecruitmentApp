@@ -286,11 +286,11 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
         type: "success",
         title: "Submitted Successfully",
         message: msg,
-        confirmLabel: "Go to Dashboard",
+        confirmLabel: "OK",
         onConfirm: () => {
           closeModal();
           onClose();
-          navigate("/Dashboard");
+          navigate("/OfferTable");
           refreshKey();
         },
       });
@@ -697,22 +697,24 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                       />
                     )}
 
-                    {!vis.ViewFlag && (
-                      <ReviewCommentSignature
-                        reviewerComments={reviewerComments}
-                        acknowledgementCheckbox={acknowledgementCheckbox}
-                        signatureDetails={signatureDetails}
-                        isLoading={isLoading}
-                        onCommentsChange={onCommentsChange}
-                        onToggleAcknowledgement={onToggleAcknowledgement}
-                        disabled={isAnySubmitting}
-                        commentError={validationError.comments}
-                        checkboxError={validationError.acknowledgement}
-                        acknowledgementLabel={
-                          CheckboxContent.PostRecrutimentCheckboxContent
-                        }
-                      />
-                    )}
+                    {!vis.ViewFlag &&
+                      positionDetails?.StatusID !=
+                        StatusId.PendingHRpreonboardingchecklist && (
+                        <ReviewCommentSignature
+                          reviewerComments={reviewerComments}
+                          acknowledgementCheckbox={acknowledgementCheckbox}
+                          signatureDetails={signatureDetails}
+                          isLoading={isLoading}
+                          onCommentsChange={onCommentsChange}
+                          onToggleAcknowledgement={onToggleAcknowledgement}
+                          disabled={isAnySubmitting}
+                          commentError={validationError.comments}
+                          checkboxError={validationError.acknowledgement}
+                          acknowledgementLabel={
+                            CheckboxContent.PostRecrutimentCheckboxContent
+                          }
+                        />
+                      )}
 
                     {allChecked &&
                       positionDetails?.StatusID ===

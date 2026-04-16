@@ -42,7 +42,7 @@ export const fetchByMetricId = async (
         );
 
       case ListNames.HRMSSelectedCandidateDetailsByHOD:
-        if (roleIDs?.includes(RoleID.FinanceDepartment)) {
+        if (roleIDs?.includes(RoleID.RecruitmentHR)) {
           filter = filter.map((f: any) => {
             if (f.FilterKey === "StatusId" && Array.isArray(f.FilterValue)) {
               return {
@@ -55,6 +55,31 @@ export const fetchByMetricId = async (
             }
             return f;
           });
+        }
+        if (roleIDs?.includes(RoleID.FinanceDepartment)) {
+          filter = filter
+            .filter((f: any) => f.FilterKey !== "RecruitmentHR")
+            .map((f: any) => {
+              if (f.FilterKey === "StatusId" && Array.isArray(f.FilterValue)) {
+                return {
+                  ...f,
+                  FilterValue: f.FilterValue.filter(
+                    (status: number) =>
+                      status !== StatusId.PendingHROfferInitiate &&
+                      status !== StatusId.PendingHROfferReview &&
+                      status !== StatusId.PendingHRReviewOfferWorkPermitInit &&
+                      status !==
+                        StatusId.PendingHRReviewOfferuploadEmploymentInit &&
+                      status !== StatusId.PendingHREmploymentContractInit &&
+                      status !== StatusId.PendingHREmploymentContractReview &&
+                      status !==
+                        StatusId.PendingHREmploymentContractVerification &&
+                      status !== StatusId.PendingHRpreonboardingchecklist,
+                  ),
+                };
+              }
+              return f;
+            });
         }
 
         return DashboardServices.GetSelectedCandidate(filter, condition);

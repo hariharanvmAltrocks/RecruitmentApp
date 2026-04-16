@@ -31,7 +31,39 @@ var callServiceByListName = function (listName, filter, condition, roleIDs, Matr
             case 4: return [2 /*return*/, _b.sent()];
             case 5: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetCandidateDetails(filter, condition, MatricID, EmailID)];
             case 6: return [2 /*return*/, _b.sent()];
-            case 7: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetSelectedCandidate(filter, condition)];
+            case 7:
+                if (roleIDs === null || roleIDs === void 0 ? void 0 : roleIDs.includes(Config_1.RoleID.FinanceDepartment)) {
+                    filter = filter
+                        .filter(function (f) { return f.FilterKey !== "RecruitmentHR"; })
+                        .map(function (f) {
+                        if (f.FilterKey === "StatusId" && Array.isArray(f.FilterValue)) {
+                            return tslib_1.__assign(tslib_1.__assign({}, f), { FilterValue: f.FilterValue.filter(function (status) {
+                                    return status !== Config_1.StatusId.PendingHROfferInitiate &&
+                                        status !== Config_1.StatusId.PendingHROfferReview &&
+                                        status !== Config_1.StatusId.PendingHRReviewOfferWorkPermitInit &&
+                                        status !==
+                                            Config_1.StatusId.PendingHRReviewOfferuploadEmploymentInit &&
+                                        status !== Config_1.StatusId.PendingHREmploymentContractInit &&
+                                        status !== Config_1.StatusId.PendingHREmploymentContractReview &&
+                                        status !==
+                                            Config_1.StatusId.PendingHREmploymentContractVerification &&
+                                        status !== Config_1.StatusId.PendingHRpreonboardingchecklist;
+                                }) });
+                        }
+                        return f;
+                    });
+                }
+                if (roleIDs === null || roleIDs === void 0 ? void 0 : roleIDs.includes(Config_1.RoleID.RecruitmentHR)) {
+                    filter = filter.map(function (f) {
+                        if (f.FilterKey === "StatusId" && Array.isArray(f.FilterValue)) {
+                            return tslib_1.__assign(tslib_1.__assign({}, f), { FilterValue: f.FilterValue.filter(function (status) {
+                                    return status !== Config_1.StatusId.PendingFinancePaymentReview;
+                                }) });
+                        }
+                        return f;
+                    });
+                }
+                return [4 /*yield*/, ServiceExport_1.DashboardServices.GetSelectedCandidate(filter, condition)];
             case 8: return [2 /*return*/, _b.sent()];
             case 9: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetRecruitmentDetails(filter, condition)];
             case 10: return [2 /*return*/, _b.sent()];

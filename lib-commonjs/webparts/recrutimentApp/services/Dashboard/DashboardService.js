@@ -36,7 +36,25 @@ var DashboardService = /** @class */ (function () {
                         if (currentRoleID.includes(Config_1.RoleID.FinanceDepartment)) {
                             queries = queries.map(function (item) {
                                 if (item.StateValue === ConditionConfig_1.MatricID.LabourHire) {
-                                    return tslib_1.__assign(tslib_1.__assign({}, item), { Filter: item.Filter.filter(function (f) { return f.FilterKey !== "RecruitmentHR"; }) });
+                                    return tslib_1.__assign(tslib_1.__assign({}, item), { Filter: item.Filter.filter(function (f) { return f.FilterKey !== "RecruitmentHR"; }).map(function (f) {
+                                            if (f.FilterKey === "StatusId" &&
+                                                Array.isArray(f.FilterValue)) {
+                                                return tslib_1.__assign(tslib_1.__assign({}, f), { FilterValue: f.FilterValue.filter(function (status) {
+                                                        return status !== Config_1.StatusId.PendingHROfferInitiate &&
+                                                            status !== Config_1.StatusId.PendingHROfferReview &&
+                                                            status !==
+                                                                Config_1.StatusId.PendingHRReviewOfferWorkPermitInit &&
+                                                            status !==
+                                                                Config_1.StatusId.PendingHRReviewOfferuploadEmploymentInit &&
+                                                            status !== Config_1.StatusId.PendingHREmploymentContractInit &&
+                                                            status !== Config_1.StatusId.PendingHREmploymentContractReview &&
+                                                            status !==
+                                                                Config_1.StatusId.PendingHREmploymentContractVerification &&
+                                                            status !== Config_1.StatusId.PendingHRpreonboardingchecklist;
+                                                    }) });
+                                            }
+                                            return f;
+                                        }) });
                                 }
                                 return item;
                             });

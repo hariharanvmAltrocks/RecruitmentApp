@@ -143,11 +143,11 @@ var ReviewDocument = function (_a) {
             type: "success",
             title: "Submitted Successfully",
             message: msg,
-            confirmLabel: "Go to Dashboard",
+            confirmLabel: "OK",
             onConfirm: function () {
                 closeModal();
                 onClose();
-                navigate("/Dashboard");
+                navigate("/OfferTable");
                 refreshKey();
             },
         });
@@ -456,7 +456,9 @@ var ReviewDocument = function (_a) {
                         Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement(Prechecklist_1.default, { nationalItems: checklist, expatItems: [], isExpat: isExpat, onToggle: function (id, value) {
                             return updateCheckItem(id, value);
                         }, allChecked: allChecked })),
-                    !vis.ViewFlag && (react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, disabled: isAnySubmitting, commentError: validationError.comments, checkboxError: validationError.acknowledgement, acknowledgementLabel: ConditionConfig_1.CheckboxContent.PostRecrutimentCheckboxContent })),
+                    !vis.ViewFlag &&
+                        (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) !=
+                            Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, disabled: isAnySubmitting, commentError: validationError.comments, checkboxError: validationError.acknowledgement, acknowledgementLabel: ConditionConfig_1.CheckboxContent.PostRecrutimentCheckboxContent })),
                     allChecked &&
                         (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) ===
                             Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, disabled: isAnySubmitting, commentError: validationError.comments, checkboxError: validationError.acknowledgement })),

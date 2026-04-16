@@ -25,8 +25,8 @@ var buildStatusFlags = function (statusID, empCat, consentVerification, isExpat)
         statusID === EvaluationConfig_1.StatusId.PendingCandidateEmploymentContractUpload ||
         statusID === EvaluationConfig_1.StatusId.PendingLabourHireOfferRelease ||
         statusID === EvaluationConfig_1.StatusId.PendingLabourhireWPPayment ||
-        statusID === EvaluationConfig_1.StatusId.PendingLHECRelease ||
-        statusID === EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist,
+        statusID === EvaluationConfig_1.StatusId.PendingLHECRelease,
+    // statusID === StatusId.PendingHRpreonboardingchecklist,
     PendingHREmploymentContractReview: statusID === EvaluationConfig_1.StatusId.PendingHREmploymentContractReview,
     PreOnboardingChecklist: statusID === EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist,
     isExpat: isExpat === true,

@@ -67,8 +67,8 @@ export const buildStatusFlags = (
     statusID === StatusId.PendingCandidateEmploymentContractUpload ||
     statusID === StatusId.PendingLabourHireOfferRelease ||
     statusID === StatusId.PendingLabourhireWPPayment ||
-    statusID === StatusId.PendingLHECRelease ||
-    statusID === StatusId.PendingHRpreonboardingchecklist,
+    statusID === StatusId.PendingLHECRelease,
+  // statusID === StatusId.PendingHRpreonboardingchecklist,
   PendingHREmploymentContractReview:
     statusID === StatusId.PendingHREmploymentContractReview,
   PreOnboardingChecklist: statusID === StatusId.PendingHRpreonboardingchecklist,

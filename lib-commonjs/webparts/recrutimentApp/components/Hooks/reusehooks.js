@@ -35,11 +35,32 @@ var fetchByMetricId = function (matricID, EmailId, condition, roleIDs) { return 
                             case Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails:
                                 return [2 /*return*/, ServiceExport_1.DashboardServices.GetCandidateDetails(filter, condition, matricID, EmailId)];
                             case Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD:
-                                if (roleIDs === null || roleIDs === void 0 ? void 0 : roleIDs.includes(Config_1.RoleID.FinanceDepartment)) {
+                                if (roleIDs === null || roleIDs === void 0 ? void 0 : roleIDs.includes(Config_1.RoleID.RecruitmentHR)) {
                                     filter = filter.map(function (f) {
                                         if (f.FilterKey === "StatusId" && Array.isArray(f.FilterValue)) {
                                             return tslib_1.__assign(tslib_1.__assign({}, f), { FilterValue: f.FilterValue.filter(function (status) {
                                                     return status !== Config_1.StatusId.PendingFinancePaymentReview;
+                                                }) });
+                                        }
+                                        return f;
+                                    });
+                                }
+                                if (roleIDs === null || roleIDs === void 0 ? void 0 : roleIDs.includes(Config_1.RoleID.FinanceDepartment)) {
+                                    filter = filter
+                                        .filter(function (f) { return f.FilterKey !== "RecruitmentHR"; })
+                                        .map(function (f) {
+                                        if (f.FilterKey === "StatusId" && Array.isArray(f.FilterValue)) {
+                                            return tslib_1.__assign(tslib_1.__assign({}, f), { FilterValue: f.FilterValue.filter(function (status) {
+                                                    return status !== Config_1.StatusId.PendingHROfferInitiate &&
+                                                        status !== Config_1.StatusId.PendingHROfferReview &&
+                                                        status !== Config_1.StatusId.PendingHRReviewOfferWorkPermitInit &&
+                                                        status !==
+                                                            Config_1.StatusId.PendingHRReviewOfferuploadEmploymentInit &&
+                                                        status !== Config_1.StatusId.PendingHREmploymentContractInit &&
+                                                        status !== Config_1.StatusId.PendingHREmploymentContractReview &&
+                                                        status !==
+                                                            Config_1.StatusId.PendingHREmploymentContractVerification &&
+                                                        status !== Config_1.StatusId.PendingHRpreonboardingchecklist;
                                                 }) });
                                         }
                                         return f;

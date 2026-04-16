@@ -64,7 +64,31 @@ export default class DashboardService implements IDashboard {
               ...item,
               Filter: item.Filter.filter(
                 (f: any) => f.FilterKey !== "RecruitmentHR",
-              ),
+              ).map((f: any) => {
+                if (
+                  f.FilterKey === "StatusId" &&
+                  Array.isArray(f.FilterValue)
+                ) {
+                  return {
+                    ...f,
+                    FilterValue: f.FilterValue.filter(
+                      (status: number) =>
+                        status !== StatusId.PendingHROfferInitiate &&
+                        status !== StatusId.PendingHROfferReview &&
+                        status !==
+                          StatusId.PendingHRReviewOfferWorkPermitInit &&
+                        status !==
+                          StatusId.PendingHRReviewOfferuploadEmploymentInit &&
+                        status !== StatusId.PendingHREmploymentContractInit &&
+                        status !== StatusId.PendingHREmploymentContractReview &&
+                        status !==
+                          StatusId.PendingHREmploymentContractVerification &&
+                        status !== StatusId.PendingHRpreonboardingchecklist,
+                    ),
+                  };
+                }
+                return f;
+              }),
             };
           }
           return item;

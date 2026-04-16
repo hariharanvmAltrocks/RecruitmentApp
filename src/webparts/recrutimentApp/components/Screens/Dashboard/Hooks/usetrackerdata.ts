@@ -3,7 +3,7 @@ import { DashboardServices } from "../../../../services/ServiceExport";
 import { ResponeStatus } from "../../../../utilities/ApiConfig";
 import { DataSyncToRecruitmentResponse } from "../../../../services/Dashboard/IDashboard";
 import { MetricQueryConfig } from "../metricColumns.config";
-import { ListNames, RoleID } from "../../../../utilities/Config";
+import { ListNames, RoleID, StatusId } from "../../../../utilities/Config";
 import { MatricID, Nationality } from "../../../../utilities/ConditionConfig";
 import { userInfo } from "../../../../utilities/hooks/RoleContext";
 
@@ -38,6 +38,45 @@ export const callServiceByListName = async (
       );
 
     case ListNames.HRMSSelectedCandidateDetailsByHOD:
+      if (roleIDs?.includes(RoleID.FinanceDepartment)) {
+        filter = filter
+          .filter((f: any) => f.FilterKey !== "RecruitmentHR")
+          .map((f: any) => {
+            if (f.FilterKey === "StatusId" && Array.isArray(f.FilterValue)) {
+              return {
+                ...f,
+                FilterValue: f.FilterValue.filter(
+                  (status: number) =>
+                    status !== StatusId.PendingHROfferInitiate &&
+                    status !== StatusId.PendingHROfferReview &&
+                    status !== StatusId.PendingHRReviewOfferWorkPermitInit &&
+                    status !==
+                      StatusId.PendingHRReviewOfferuploadEmploymentInit &&
+                    status !== StatusId.PendingHREmploymentContractInit &&
+                    status !== StatusId.PendingHREmploymentContractReview &&
+                    status !==
+                      StatusId.PendingHREmploymentContractVerification &&
+                    status !== StatusId.PendingHRpreonboardingchecklist,
+                ),
+              };
+            }
+            return f;
+          });
+      }
+      if (roleIDs?.includes(RoleID.RecruitmentHR)) {
+        filter = filter.map((f: any) => {
+          if (f.FilterKey === "StatusId" && Array.isArray(f.FilterValue)) {
+            return {
+              ...f,
+              FilterValue: f.FilterValue.filter(
+                (status: number) =>
+                  status !== StatusId.PendingFinancePaymentReview,
+              ),
+            };
+          }
+          return f;
+        });
+      }
       return await DashboardServices.GetSelectedCandidate(filter, condition);
 
     default:
