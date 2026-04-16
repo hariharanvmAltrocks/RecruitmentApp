@@ -129,7 +129,7 @@ var QuestionCreation = function (props) {
                             message: mode === "careerPortal"
                                 ? ConditionConfig_1.RecuritmentHRMsg.CareerportalSuccessMsg
                                 : ConditionConfig_1.RecuritmentHRMsg.InterviewQuestionSuccessMsg,
-                            confirmLabel: "Go to Dashboard",
+                            confirmLabel: "OK",
                             onConfirm: function () {
                                 closeModal();
                                 navigate("/RecruitmentTable");

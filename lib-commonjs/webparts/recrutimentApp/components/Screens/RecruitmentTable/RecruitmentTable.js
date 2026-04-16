@@ -39,7 +39,7 @@ var RecruitmentTable = function () {
     var _e = (0, react_1.useState)(0), refreshKey = _e[0], setRefreshKey = _e[1];
     var handleRefresh = (0, react_1.useCallback)(function () { return setRefreshKey(function (k) { return k + 1; }); }, []);
     var _f = (0, useRecruitmentDetails_1.useRecruitmentDetails)(activeTabKey, refreshKey), items = _f.items, tableLoading = _f.loading;
-    var _g = (0, UIStateContext_1.useUIState)(), matricID = _g.MatricID, setMatricID = _g.setMatricID, sideNavflag = _g.sideNavflag, setCurrentTabName = _g.setCurrentTabName, currentTabName = _g.currentTabName;
+    var _g = (0, UIStateContext_1.useUIState)(), matricID = _g.MatricID, setMatricID = _g.setMatricID, sideNavflag = _g.sideNavflag, setCurrentTabName = _g.setCurrentTabName, currentTabName = _g.currentTabName, setActiveMenuID = _g.setActiveMenuID;
     var _h = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _h.drawerOpen, selectedJobId = _h.selectedJobId, advertLanguage = _h.advertLanguage, reviewerComments = _h.reviewerComments, acknowledgementCheckbox = _h.acknowledgementCheckbox, loadingState = _h.loadingState, openDrawer = _h.openDrawer, closeDrawer = _h.closeDrawer, setAdvertLanguage = _h.setAdvertLanguage, setComments = _h.setComments, toggleAcknowledgement = _h.toggleAcknowledgement, setLoadingState = _h.setLoadingState;
     var drawerMeta = (0, react_1.useRef)({
         isOpen: false,
@@ -261,7 +261,10 @@ var RecruitmentTable = function () {
                     react_1.default.createElement("button", { className: "submission-header__refresh-btn", onClick: handleRefresh, disabled: tableLoading, title: "Refresh table", "aria-label": "Refresh table" },
                         react_1.default.createElement(lucide_react_1.RefreshCw, { size: 14, className: tableLoading ? "spin" : undefined }),
                         "Refresh"),
-                    react_1.default.createElement("button", { onClick: function () { return navigate("/Dashboard"); }, className: "submission-header__button" },
+                    react_1.default.createElement("button", { onClick: function () {
+                            navigate("/Dashboard");
+                            setActiveMenuID(ConditionConfig_1.menuID.Dashboard);
+                        }, className: "submission-header__button" },
                         react_1.default.createElement(lucide_react_1.RotateCcw, { size: 14 }),
                         "Back to Dashboard"))),
             react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: paginatedItems, enableCheckbox: (activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.tableMode) === "checkbox", selectedRowIds: selectedIds, getRowId: function (item) { return item.id; }, onToggleRow: handleToggleRow, onToggleAll: handleToggleAll, pageSize: pageSize, currentPage: currentPage, totalCount: totalCount, onPageChange: setCurrentPage, onPageSizeChange: function (size) {

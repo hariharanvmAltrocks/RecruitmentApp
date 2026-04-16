@@ -327,68 +327,6 @@ const HODDecisionPanel: React.FC<Props> = ({
         )}
       </div>
 
-      {/* ── Comment textarea (new UI, same value/handler) ── */}
-      {/* <div className={styles.lmCommentsCard} style={{ marginTop: "5%" }}>
-        <div className={styles.lmCommentsFieldWrap}>
-          <label className={styles.lmCommentsLabel}>
-            <span className={styles.lmCommentsLabelText}>{feedbackLabel}</span>
-            <span className={styles.lmCommentsRequired}>*</span>
-            {errors.comment && (
-              <span className={styles.mErrText}> — Required</span>
-            )}
-          </label>
-          <textarea
-            className={`${styles.lmCommentsTextarea} ${
-              errors.comment ? styles.mInputErr : ""
-            }`}
-            placeholder="Provide your final decision rationale..."
-            value={decisionComment}
-            onChange={(e) => onCommentChange(e.target.value)}
-          />
-        </div>
-      </div> */}
-
-      {/* ── Confirmation checkbox (unchanged) ── */}
-      {/* <div className={styles.mFormGroup}>
-        <label className={styles.mCheckboxRow}>
-          <input
-            type="checkbox"
-            checked={confirmed}
-            onChange={(e) => onConfirmChange(e.target.checked)}
-          />
-          <span>
-            I confirm that the above decision is accurate and in line with the
-            evaluation of the candidate's scorecard details.
-          </span>
-        </label>
-        {errors.checkbox && (
-          <span className={styles.mCheckboxErrText}>
-            ⚠ You must confirm before submitting.
-          </span>
-        )}
-      </div> */}
-
-      {/* ── Reviewer card (unchanged) ── */}
-      {/* <div className={styles.mFormGroup}>
-        <div className={styles.reviewerCard}>
-          <div className={styles.reviewerAvatar}>{userInitial || ""}</div>
-          <div className={styles.reviewerInfo}>
-            <div className={styles.reviewerCol}>
-              <p className={styles.reviewerMeta}>REVIEWER NAME</p>
-              <p className={styles.reviewerVal}>{reviewerName || ""}</p>
-            </div>
-            <div className={styles.reviewerCol}>
-              <p className={styles.reviewerMeta}>JOB TITLE (EN)</p>
-              <p className={styles.reviewerVal}>{jobTitleEn || ""}</p>
-              <p className={styles.reviewerMeta} style={{ marginTop: 12 }}>
-                JOB TITLE (FR)
-              </p>
-              <p className={styles.reviewerVal}>{jobTitleFr || ""}</p>
-            </div>
-          </div>
-        </div>
-      </div> */}
-
       {canEdit && (
         <>
           <ReviewCommentSignature

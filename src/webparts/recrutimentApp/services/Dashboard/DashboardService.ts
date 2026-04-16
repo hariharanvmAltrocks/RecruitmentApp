@@ -71,6 +71,32 @@ export default class DashboardService implements IDashboard {
         });
       }
 
+      if (currentRoleID.includes(RoleID.RecruitmentHR)) {
+        queries = queries.map((item: any) => {
+          if (item.StateValue === MatricID.LabourHire) {
+            return {
+              ...item,
+              Filter: item.Filter.map((f: any) => {
+                if (
+                  f.FilterKey === "StatusId" &&
+                  Array.isArray(f.FilterValue)
+                ) {
+                  return {
+                    ...f,
+                    FilterValue: f.FilterValue.filter(
+                      (status: number) =>
+                        status !== StatusId.PendingFinancePaymentReview,
+                    ),
+                  };
+                }
+                return f;
+              }),
+            };
+          }
+          return item;
+        });
+      }
+
       let EvalutionFilter = queries.filter(
         (item: any) =>
           item.StateValue === MatricID.EvalutionHR ||
@@ -707,7 +733,6 @@ export default class DashboardService implements IDashboard {
   ): Promise<ApiResponse<DashboardData[]>> {
     try {
       let GridResult: any[] = [];
-
       const res: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSSelectedCandidateDetailsByHOD,
         Select: `*,Status/StatusDescription,RecruitmentID/Id,CandidateID/ID,PositionID/PositionID`,

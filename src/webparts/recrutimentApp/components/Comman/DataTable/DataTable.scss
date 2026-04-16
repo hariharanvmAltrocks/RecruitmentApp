@@ -64,8 +64,10 @@
   }
 
   &__cell--right {
-    text-align: right;
-  }
+  text-align: right;
+  vertical-align: middle;   // ← add this
+  white-space: nowrap;      // ← add this
+}
 
   &__cell--muted {
     color: $text-muted;

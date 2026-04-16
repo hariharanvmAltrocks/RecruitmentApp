@@ -22,7 +22,11 @@ import {
 import "./RecruitmentTable.scss";
 import { DataTable } from "../../Comman/DataTable/DataTable";
 import { useUIState } from "../../RecrutimentApp/UIStateContext";
-import { InterviewLevel, MatricID } from "../../../utilities/ConditionConfig";
+import {
+  InterviewLevel,
+  MatricID,
+  menuID,
+} from "../../../utilities/ConditionConfig";
 import { useNavigate } from "react-router-dom";
 import { useRecruitmentColumns } from "./config";
 import { ModalPopup } from "../../Comman/ModalPopup/ModalPopup";
@@ -71,6 +75,7 @@ export const RecruitmentTable: React.FC = () => {
     sideNavflag,
     setCurrentTabName,
     currentTabName,
+    setActiveMenuID,
   } = useUIState();
 
   const {
@@ -401,7 +406,10 @@ export const RecruitmentTable: React.FC = () => {
             </button>
 
             <button
-              onClick={() => navigate("/Dashboard")}
+              onClick={() => {
+                navigate("/Dashboard");
+                setActiveMenuID(menuID.Dashboard);
+              }}
               className="submission-header__button"
             >
               <RotateCcw size={14} />

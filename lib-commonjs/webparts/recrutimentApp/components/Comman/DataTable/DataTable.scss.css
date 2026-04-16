@@ -50,6 +50,8 @@
 }
 .data-table__cell--right {
   text-align: right;
+  vertical-align: middle;
+  white-space: nowrap;
 }
 .data-table__cell--muted {
   color: #64748b;

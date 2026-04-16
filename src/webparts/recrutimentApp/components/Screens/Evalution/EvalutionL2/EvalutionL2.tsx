@@ -26,6 +26,7 @@ import { ModalPopup } from "../../../Comman/ModalPopup/ModalPopup";
 import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
 import { RecuritmentHRMsg } from "../../../../utilities/ConditionConfig";
 import { InfoItem } from "../../CandidateTable/Components/reuseUI";
+import Loading from "../../../Comman/Loading/loading";
 
 const SCORE_CRITERIA = [
   { field: "RelevantQualification", label: "Qualification (Relevant)" },
@@ -50,37 +51,7 @@ const MField = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
-const PageLoader = () => (
-  <div className={styles.modalOverlay}>
-    <div
-      className={styles.modalWindow}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: 320,
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 12,
-        }}
-      >
-        <Loader2
-          size={36}
-          style={{ animation: "spin 1s linear infinite", color: "#2563eb" }}
-        />
-        <span style={{ fontSize: 14, color: "#64748b", fontWeight: 500 }}>
-          Loading candidate data…
-        </span>
-      </div>
-    </div>
-    <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
-  </div>
-);
+const PageLoader = () => <Loading text="Loading data" />;
 
 type ScorecardTabKey = "questions" | "qEval" | "overall";
 
@@ -224,13 +195,10 @@ const EvalutionL2: React.FC<any> = (props) => {
     ? hook.level2Comments
     : [];
 
-  // ── Global page loading guard ─────────────────────────────────────────────────
-  // Show loader until ALL three data sources have resolved
   if (hook.candidatesLoading || hook.scoreLoading || hook.reviewLoading) {
     return <PageLoader />;
   }
 
-  // ── Render ────────────────────────────────────────────────────────────────────
   const loading =
     !hook.candidates ||
     hook.reviewLoading || // covers reviewData?.questions + candidateData
@@ -239,6 +207,7 @@ const EvalutionL2: React.FC<any> = (props) => {
 
   return (
     <div className={styles.modalOverlay}>
+      {submitHook.submitting && <Loading />}
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -247,12 +216,7 @@ const EvalutionL2: React.FC<any> = (props) => {
         className={styles.modalWindow}
       >
         {/* ══ HEADER ══ */}
-        {loading && (
-          <div className={styles.loadingOverlay}>
-            <div className={styles.spinner} />
-            <div className={styles.loadingText}>Loading details...</div>
-          </div>
-        )}
+        {loading && <Loading text="Loading details..." />}
         <header className={styles.header}>
           <div className={styles.headerLeft}>
             <div className={styles.headerIcon}>

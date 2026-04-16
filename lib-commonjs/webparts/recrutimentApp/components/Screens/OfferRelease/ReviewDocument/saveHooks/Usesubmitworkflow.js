@@ -357,18 +357,18 @@ function buildCandidateData(data, workflowStatusValue, documentResponse, workPer
         base.signedWorkPermitPath = (_e = (_d = workPermitDocs === null || workPermitDocs === void 0 ? void 0 : workPermitDocs.data) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e.content;
     }
     if (data.StatusID === EvaluationConfig_1.StatusId.PendingHROfferReview) {
-        var labourOffer = bgvStatus.find(function (d) { return d.categoryName === ConditionConfig_1.DisplayFolderName.offerLetterUnsigned; });
+        var labourOffer = bgvStatus.find(function (d) { return d.categoryName === ConditionConfig_1.DocumentPath.offerLetterUnsigned; });
         base.OfferLatterPath = (_f = labourOffer === null || labourOffer === void 0 ? void 0 : labourOffer.documents[0]) === null || _f === void 0 ? void 0 : _f.downloadUrl;
     }
     if (data.StatusID === EvaluationConfig_1.StatusId.PendingHREmploymentContractReview) {
-        var labourEC = bgvStatus.find(function (d) { return d.categoryName === ConditionConfig_1.DisplayFolderName.LabourHireEC; });
+        var labourEC = bgvStatus.find(function (d) { return d.categoryName === ConditionConfig_1.DocumentPath.EmploymentContractUnsigned; });
         base.EmpContractLatterPath = (_g = labourEC === null || labourEC === void 0 ? void 0 : labourEC.documents[0]) === null || _g === void 0 ? void 0 : _g.downloadUrl;
     }
     if (data.StatusID === EvaluationConfig_1.StatusId.PendingFinancePaymentReview) {
         base.proofOfPaymentPath = (_j = (_h = documentResponse.data) === null || _h === void 0 ? void 0 : _h[0]) === null || _j === void 0 ? void 0 : _j.content;
     }
     if (data.StatusID === EvaluationConfig_1.StatusId.PendingHREmploymentContractInit) {
-        var wpDoc = bgvStatus.find(function (d) { return d.categoryName === ConditionConfig_1.DisplayFolderName.WorkPermitDocument; });
+        var wpDoc = bgvStatus.find(function (d) { return d.categoryName === ConditionConfig_1.DocumentPath.WorkPermitDocuments; });
         base.signedWorkPermitPath = (_k = wpDoc === null || wpDoc === void 0 ? void 0 : wpDoc.documents[0]) === null || _k === void 0 ? void 0 : _k.downloadUrl;
     }
     if (data.StatusID ===

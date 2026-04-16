@@ -147,7 +147,7 @@ const QuestionCreation: React.FC = (props: any) => {
           mode === "careerPortal"
             ? RecuritmentHRMsg.CareerportalSuccessMsg
             : RecuritmentHRMsg.InterviewQuestionSuccessMsg,
-        confirmLabel: "Go to Dashboard",
+        confirmLabel: "OK",
         onConfirm: () => {
           closeModal();
           navigate("/RecruitmentTable");

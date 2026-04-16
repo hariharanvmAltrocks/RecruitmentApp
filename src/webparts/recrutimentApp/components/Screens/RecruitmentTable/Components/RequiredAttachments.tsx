@@ -146,6 +146,7 @@ export const RequiredAttachments: React.FC<RequiredAttachmentsProps> = ({
                       // onClick={() => fileUrl && window.open(fileUrl, "_blank")}
                       role="button"
                       aria-disabled={!fileUrl}
+                      title={version.label}
                       style={{
                         cursor: fileUrl ? "pointer" : "not-allowed",
                         opacity: fileUrl ? 1 : 0.5,

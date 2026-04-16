@@ -83,7 +83,7 @@ var RequiredAttachments = function (_a) {
                     react_1.default.createElement("div", { className: "advert-review-drawer__attachment-info" },
                         react_1.default.createElement("span", { className: "advert-review-drawer__attachment-label advert-review-drawer__attachment-label--link", 
                             // onClick={() => fileUrl && window.open(fileUrl, "_blank")}
-                            role: "button", "aria-disabled": !fileUrl, style: {
+                            role: "button", "aria-disabled": !fileUrl, title: version.label, style: {
                                 cursor: fileUrl ? "pointer" : "not-allowed",
                                 opacity: fileUrl ? 1 : 0.5,
                             } }, (0, reusehooks_1.truncateText)(version.label, 20))),

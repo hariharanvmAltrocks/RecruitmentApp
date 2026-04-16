@@ -267,11 +267,11 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
         type: "success",
         title: "Submitted Successfully",
         message: msg,
-        confirmLabel: "Go to Dashboard",
+        confirmLabel: "OK",
         onConfirm: () => {
           closeModal();
           onClose();
-          navigate("/Dashboard");
+          navigate("/RecruitmentTable");
           refreshKey();
         },
       });
@@ -376,7 +376,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
       onConfirm: () => {
         onClose();
         closeModal();
-        navigate("/Dashboard");
+        navigate("/RecruitmentTable");
       },
       onCancel: closeModal,
     });

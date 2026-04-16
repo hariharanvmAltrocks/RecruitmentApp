@@ -17,6 +17,7 @@ var ModalPopup_1 = require("../../../Comman/ModalPopup/ModalPopup");
 var useModalPopup_1 = require("../../../Comman/ModalPopup/useModalPopup");
 var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
 var reuseUI_1 = require("../../CandidateTable/Components/reuseUI");
+var loading_1 = tslib_1.__importDefault(require("../../../Comman/Loading/loading"));
 var SCORE_CRITERIA = [
     { field: "RelevantQualification", label: "Qualification (Relevant)" },
     { field: "ReleventExperience", label: "Experience (Relevant)" },
@@ -37,22 +38,7 @@ var MField = function (_a) {
         React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mfLabel }, label),
         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mfValue }, value || "—")));
 };
-var PageLoader = function () { return (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.modalOverlay },
-    React.createElement("div", { className: ReviewScorecard_module_scss_1.default.modalWindow, style: {
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            minHeight: 320,
-        } },
-        React.createElement("div", { style: {
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 12,
-            } },
-            React.createElement(lucide_react_1.Loader2, { size: 36, style: { animation: "spin 1s linear infinite", color: "#2563eb" } }),
-            React.createElement("span", { style: { fontSize: 14, color: "#64748b", fontWeight: 500 } }, "Loading candidate data\u2026"))),
-    React.createElement("style", null, "@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }"))); };
+var PageLoader = function () { return React.createElement(loading_1.default, { text: "Loading data" }); };
 var EvalutionL2 = function (props) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
     var ID = props.ID;
@@ -172,21 +158,17 @@ var EvalutionL2 = function (props) {
     var safeLevel2 = Array.isArray(hook.level2Comments)
         ? hook.level2Comments
         : [];
-    // ── Global page loading guard ─────────────────────────────────────────────────
-    // Show loader until ALL three data sources have resolved
     if (hook.candidatesLoading || hook.scoreLoading || hook.reviewLoading) {
         return React.createElement(PageLoader, null);
     }
-    // ── Render ────────────────────────────────────────────────────────────────────
     var loading = !hook.candidates ||
         hook.reviewLoading || // covers reviewData?.questions + candidateData
         hook.scoreLoading || // covers scoreData
         !hook.scoreData;
     return (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.modalOverlay },
+        submitHook.submitting && React.createElement(loading_1.default, null),
         React.createElement(framer_motion_1.motion.div, { initial: { opacity: 0, scale: 0.96 }, animate: { opacity: 1, scale: 1 }, exit: { opacity: 0, scale: 0.96 }, transition: { duration: 0.2 }, className: ReviewScorecard_module_scss_1.default.modalWindow },
-            loading && (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.loadingOverlay },
-                React.createElement("div", { className: ReviewScorecard_module_scss_1.default.spinner }),
-                React.createElement("div", { className: ReviewScorecard_module_scss_1.default.loadingText }, "Loading details..."))),
+            loading && React.createElement(loading_1.default, { text: "Loading details..." }),
             React.createElement("header", { className: ReviewScorecard_module_scss_1.default.header },
                 React.createElement("div", { className: ReviewScorecard_module_scss_1.default.headerLeft },
                     React.createElement("div", { className: ReviewScorecard_module_scss_1.default.headerIcon },

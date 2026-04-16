@@ -42,6 +42,21 @@ export const fetchByMetricId = async (
         );
 
       case ListNames.HRMSSelectedCandidateDetailsByHOD:
+        if (roleIDs?.includes(RoleID.FinanceDepartment)) {
+          filter = filter.map((f: any) => {
+            if (f.FilterKey === "StatusId" && Array.isArray(f.FilterValue)) {
+              return {
+                ...f,
+                FilterValue: f.FilterValue.filter(
+                  (status: number) =>
+                    status !== StatusId.PendingFinancePaymentReview,
+                ),
+              };
+            }
+            return f;
+          });
+        }
+
         return DashboardServices.GetSelectedCandidate(filter, condition);
 
       default:

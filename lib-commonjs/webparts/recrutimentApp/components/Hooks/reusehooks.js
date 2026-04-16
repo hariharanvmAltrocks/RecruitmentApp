@@ -35,6 +35,16 @@ var fetchByMetricId = function (matricID, EmailId, condition, roleIDs) { return 
                             case Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails:
                                 return [2 /*return*/, ServiceExport_1.DashboardServices.GetCandidateDetails(filter, condition, matricID, EmailId)];
                             case Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD:
+                                if (roleIDs === null || roleIDs === void 0 ? void 0 : roleIDs.includes(Config_1.RoleID.FinanceDepartment)) {
+                                    filter = filter.map(function (f) {
+                                        if (f.FilterKey === "StatusId" && Array.isArray(f.FilterValue)) {
+                                            return tslib_1.__assign(tslib_1.__assign({}, f), { FilterValue: f.FilterValue.filter(function (status) {
+                                                    return status !== Config_1.StatusId.PendingFinancePaymentReview;
+                                                }) });
+                                        }
+                                        return f;
+                                    });
+                                }
                                 return [2 /*return*/, ServiceExport_1.DashboardServices.GetSelectedCandidate(filter, condition)];
                             default:
                                 return [2 /*return*/, null];

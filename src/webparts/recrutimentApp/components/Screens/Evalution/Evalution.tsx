@@ -15,6 +15,7 @@ import styles from "./Evalution.module.scss";
 import { useSubmitEvaluation } from "./Hooks/Usesubmitevaluation";
 import SubmitEvaluation from "./Components/Submitevaluation";
 import { StatusId } from "../../../utilities/Config";
+import Loading from "../../Comman/Loading/loading";
 
 export interface EvalutionProps {
   candidateId: number;
@@ -147,6 +148,7 @@ function EvalutionContent({
           </button>
         </div>
       )}
+      {submitHook.submitting && <Loading />}
 
       <div className={styles.layout}>
         <CandidateInfo candidate={candidate} />

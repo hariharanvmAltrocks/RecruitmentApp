@@ -145,11 +145,11 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
                                     qualifications: ((_j = items === null || items === void 0 ? void 0 : items.qualificationValue) === null || _j === void 0 ? void 0 : _j.MinQualification_fr.map(function (q) { return q.text; })) || [],
                                     PrefeQualification: ((_k = items === null || items === void 0 ? void 0 : items.qualificationValue) === null || _k === void 0 ? void 0 : _k.PrefeQualification_fr.map(function (q) { return q.text; })) || [],
                                     experience: [
-                                        (items === null || items === void 0 ? void 0 : items.YearofExperience)
-                                            ? "exp\u00E9rience totale: ".concat(items.YearofExperience.text)
+                                        (items === null || items === void 0 ? void 0 : items.TotalExperience)
+                                            ? "exp\u00E9rience totale: ".concat(items === null || items === void 0 ? void 0 : items.TotalExperience.text)
                                             : "",
-                                        (items === null || items === void 0 ? void 0 : items.PreferredExperience)
-                                            ? "exp\u00E9rience Pr\u00E9f\u00E9r\u00E9: ".concat(items.PreferredExperience.ExperienceInYearRange.text)
+                                        (items === null || items === void 0 ? void 0 : items.ExperienceinMiningIndustry)
+                                            ? "exp\u00E9rience Pr\u00E9f\u00E9r\u00E9: ".concat(items.ExperienceinMiningIndustry.text)
                                             : "",
                                     ].filter(Boolean),
                                     RoleSpecificKnowledge: ((_l = items === null || items === void 0 ? void 0 : items.RoleSpeKnowledgeValue) === null || _l === void 0 ? void 0 : _l.map(function (k) { return k.RoleSpeKnowledge_fr.text; })) || [],

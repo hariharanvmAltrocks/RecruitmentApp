@@ -41,6 +41,22 @@ var DashboardService = /** @class */ (function () {
                                 return item;
                             });
                         }
+                        if (currentRoleID.includes(Config_1.RoleID.RecruitmentHR)) {
+                            queries = queries.map(function (item) {
+                                if (item.StateValue === ConditionConfig_1.MatricID.LabourHire) {
+                                    return tslib_1.__assign(tslib_1.__assign({}, item), { Filter: item.Filter.map(function (f) {
+                                            if (f.FilterKey === "StatusId" &&
+                                                Array.isArray(f.FilterValue)) {
+                                                return tslib_1.__assign(tslib_1.__assign({}, f), { FilterValue: f.FilterValue.filter(function (status) {
+                                                        return status !== Config_1.StatusId.PendingFinancePaymentReview;
+                                                    }) });
+                                            }
+                                            return f;
+                                        }) });
+                                }
+                                return item;
+                            });
+                        }
                         EvalutionFilter = queries.filter(function (item) {
                             return item.StateValue === ConditionConfig_1.MatricID.EvalutionHR ||
                                 item.StateValue === ConditionConfig_1.MatricID.EvalutionHOD ||

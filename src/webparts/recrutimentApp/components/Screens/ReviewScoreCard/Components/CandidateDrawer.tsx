@@ -207,13 +207,13 @@ const CandidateDrawer: React.FC<Props> = ({
           return (
             <motion.button
               type="button"
-              className="candidate-table__review"
+              className={`candidate-table__review${label === "View" ? " candidate-table__review--view" : ""}`}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => onReview(item)}
             >
               <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                {icon}
+                {/* {icon} */}
                 {label}
               </span>
             </motion.button>

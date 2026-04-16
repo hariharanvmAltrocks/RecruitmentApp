@@ -135,16 +135,16 @@ export const useConfirmAssignment = (
           if (batchResponse.status === ResponeStatus.SUCCESS) {
             showModal({
               type: "success",
-              title: "Assignment Successfully",
+              title: "Assigned Successfully",
               message:
                 payload.vacancies.length > 1
                   ? RecuritmentHRMsg.HRSuccess
                   : RecuritmentHRMsg.SingleHRSuccessMsg,
-              confirmLabel: "Go to Dashboard",
+              confirmLabel: "OK",
               onConfirm: () => {
                 closeModal();
                 handleClosePopup();
-                navigate("/Dashboard");
+                navigate("/RecruitmentTable");
                 handleRefresh();
               },
             });
@@ -156,7 +156,7 @@ export const useConfirmAssignment = (
               type: "error",
               title: "Assignment Failed",
               message: "Something went wrong. Please try again.",
-              confirmLabel: "Go to Dashboard",
+              confirmLabel: "OK",
               onConfirm: () => {
                 closeModal();
                 handleClosePopup();
@@ -202,7 +202,7 @@ export const useConfirmAssignment = (
                 payload.vacancies.length > 1
                   ? RecuritmentHRMsg.AgencySucess
                   : RecuritmentHRMsg.SingleAgencyMsg,
-              confirmLabel: "Go to Dashboard",
+              confirmLabel: "OK",
               onConfirm: () => {
                 closeModal();
                 handleClosePopup();
@@ -214,7 +214,18 @@ export const useConfirmAssignment = (
             Submitted.current = true;
           } else {
             Submitted.current = false;
-            showError("Something went wrong. Please try again.");
+            showModal({
+              type: "error",
+              title: "Assignment Failed",
+              message: "Something went wrong. Please try again.",
+              confirmLabel: "OK",
+              onConfirm: () => {
+                closeModal();
+                handleClosePopup();
+                navigate("/RecruitmentTable");
+                handleRefresh();
+              },
+            });
           }
         }
       } catch (error) {

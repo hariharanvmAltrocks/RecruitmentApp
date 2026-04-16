@@ -13,6 +13,7 @@ import {
   ButtonAction,
   DisplayFolderName,
   DocumentFolderName,
+  DocumentPath,
   EmployeementCategory,
   NationalityCode,
   RecuritmentHRMsg,
@@ -490,14 +491,14 @@ function buildCandidateData(
 
   if (data.StatusID === StatusId.PendingHROfferReview) {
     const labourOffer = bgvStatus.find(
-      (d) => d.categoryName === DisplayFolderName.offerLetterUnsigned,
+      (d) => d.categoryName === DocumentPath.offerLetterUnsigned,
     );
     base.OfferLatterPath = labourOffer?.documents[0]?.downloadUrl;
   }
 
   if (data.StatusID === StatusId.PendingHREmploymentContractReview) {
     const labourEC = bgvStatus.find(
-      (d) => d.categoryName === DisplayFolderName.LabourHireEC,
+      (d) => d.categoryName === DocumentPath.EmploymentContractUnsigned,
     );
     base.EmpContractLatterPath = labourEC?.documents[0]?.downloadUrl;
   }
@@ -508,7 +509,7 @@ function buildCandidateData(
 
   if (data.StatusID === StatusId.PendingHREmploymentContractInit) {
     const wpDoc = bgvStatus.find(
-      (d) => d.categoryName === DisplayFolderName.WorkPermitDocument,
+      (d) => d.categoryName === DocumentPath.WorkPermitDocuments,
     );
     base.signedWorkPermitPath = wpDoc?.documents[0]?.downloadUrl;
   }

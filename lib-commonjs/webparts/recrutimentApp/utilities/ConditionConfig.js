@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CheckboxContent = exports.ActionName = exports.EmployeementCategory = exports.ButtonAction = exports.DotTooltipStatus = exports.StatusBarValue = exports.DotAfricaStatus = exports.ExternalUserType = exports.DisplayFolderName = exports.BGVDocumentName = exports.DocumentFolderName = exports.RecuritmentHRMsg = exports.EmailTemplateCodes = exports.ActionID = exports.InterviewLevels = exports.QuestionCreatedBy = exports.InterviewLevel = exports.TabNames = exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
+exports.CheckboxContent = exports.ActionName = exports.EmployeementCategory = exports.ButtonAction = exports.DotTooltipStatus = exports.StatusBarValue = exports.DotAfricaStatus = exports.ExternalUserType = exports.DocumentPath = exports.DisplayFolderName = exports.BGVDocumentName = exports.DocumentFolderName = exports.RecuritmentHRMsg = exports.EmailTemplateCodes = exports.ActionID = exports.InterviewLevels = exports.QuestionCreatedBy = exports.InterviewLevel = exports.TabNames = exports.NationalityCode = exports.Nationality = exports.menuID = exports.ListEmailName = exports.DataType = exports.quesContentId = exports.agentCode = exports.CategoryID = exports.RoleName = exports.MatricID = void 0;
 exports.MatricID = {
     AssignHr: 1,
     UploadONEM: 2,
@@ -325,7 +325,6 @@ exports.BGVDocumentName = {
 };
 exports.DisplayFolderName = {
     Offerletter: "Offer Letter",
-    offerLetterUnsigned: "Offer Letters (Unsigned)",
     LabourHireOffer: "Labour Hire Offer Letter Release",
     LabourHireEC: "Labour Hire Employment Contract Release",
     ConsentForm: "Code of Business Content",
@@ -338,6 +337,11 @@ exports.DisplayFolderName = {
     PoliceClearanceCertificate: "Police Clearance Certificate",
     CovidVaccinationCertificate: "Covid Vaccination Certificate",
     YellowFeverVaccinationCertificate: "Yellow Fever Vaccination Certificate",
+};
+exports.DocumentPath = {
+    offerLetterUnsigned: "Offer Letters (Unsigned)",
+    EmploymentContractUnsigned: "Employment Contract (Unsigned)",
+    WorkPermitDocuments: "Work Permit Documents",
 };
 exports.ExternalUserType = {
     Agent: "Agent",

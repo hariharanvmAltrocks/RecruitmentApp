@@ -166,11 +166,11 @@ var AdvertReviewDrawer = function (_a) {
             type: "success",
             title: "Submitted Successfully",
             message: msg,
-            confirmLabel: "Go to Dashboard",
+            confirmLabel: "OK",
             onConfirm: function () {
                 closeModal();
                 onClose();
-                navigate("/Dashboard");
+                navigate("/RecruitmentTable");
                 refreshKey();
             },
         });
@@ -284,7 +284,7 @@ var AdvertReviewDrawer = function (_a) {
             onConfirm: function () {
                 onClose();
                 closeModal();
-                navigate("/Dashboard");
+                navigate("/RecruitmentTable");
             },
             onCancel: closeModal,
         });

@@ -72,7 +72,10 @@ export const CareerPortalComposer: React.FC<CareerPortalComposerProps> = ({
     !!newQuestion.questionEn &&
     !!newQuestion.questionFr &&
     newQuestion.options?.some((o) => o.isCorrect) &&
-    newQuestion.options?.every((o) => o.textEn && o.textFr);
+    newQuestion.options?.every((o) => o.textEn && o.textFr) &&
+    (newQuestion.type === "multiple"
+      ? newQuestion.options?.filter((o) => o.isCorrect).length >= 2
+      : true);
 
   return (
     <div className="qc-composer">

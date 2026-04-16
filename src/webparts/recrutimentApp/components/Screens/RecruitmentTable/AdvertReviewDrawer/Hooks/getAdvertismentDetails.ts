@@ -207,11 +207,11 @@ export const useAdvertismentDetails = (
                   (q: any) => q.text,
                 ) || [],
               experience: [
-                items?.YearofExperience
-                  ? `expérience totale: ${items.YearofExperience.text}`
+                items?.TotalExperience
+                  ? `expérience totale: ${items?.TotalExperience.text}`
                   : "",
-                items?.PreferredExperience
-                  ? `expérience Préféré: ${items.PreferredExperience.ExperienceInYearRange.text}`
+                items?.ExperienceinMiningIndustry
+                  ? `expérience Préféré: ${items.ExperienceinMiningIndustry.text}`
                   : "",
               ].filter(Boolean),
               RoleSpecificKnowledge:

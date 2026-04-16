@@ -144,10 +144,8 @@ var CandidateDrawer = function (_a) {
             align: "right",
             render: function (item) {
                 var _a = getActionConfig(item), label = _a.label, icon = _a.icon;
-                return (React.createElement(framer_motion_1.motion.button, { type: "button", className: "candidate-table__review", whileHover: { scale: 1.03 }, whileTap: { scale: 0.97 }, onClick: function () { return onReview(item); } },
-                    React.createElement("span", { style: { display: "flex", alignItems: "center", gap: 6 } },
-                        icon,
-                        label)));
+                return (React.createElement(framer_motion_1.motion.button, { type: "button", className: "candidate-table__review".concat(label === "View" ? " candidate-table__review--view" : ""), whileHover: { scale: 1.03 }, whileTap: { scale: 0.97 }, onClick: function () { return onReview(item); } },
+                    React.createElement("span", { style: { display: "flex", alignItems: "center", gap: 6 } }, label)));
             },
         },
     ]; }, []);

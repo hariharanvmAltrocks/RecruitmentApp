@@ -131,15 +131,15 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                     if (batchResponse.status === ApiConfig_1.ResponeStatus.SUCCESS) {
                         showModal({
                             type: "success",
-                            title: "Assignment Successfully",
+                            title: "Assigned Successfully",
                             message: payload.vacancies.length > 1
                                 ? ConditionConfig_1.RecuritmentHRMsg.HRSuccess
                                 : ConditionConfig_1.RecuritmentHRMsg.SingleHRSuccessMsg,
-                            confirmLabel: "Go to Dashboard",
+                            confirmLabel: "OK",
                             onConfirm: function () {
                                 closeModal();
                                 handleClosePopup();
-                                navigate("/Dashboard");
+                                navigate("/RecruitmentTable");
                                 handleRefresh();
                             },
                         });
@@ -151,7 +151,7 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                             type: "error",
                             title: "Assignment Failed",
                             message: "Something went wrong. Please try again.",
-                            confirmLabel: "Go to Dashboard",
+                            confirmLabel: "OK",
                             onConfirm: function () {
                                 closeModal();
                                 handleClosePopup();
@@ -195,7 +195,7 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                             message: payload.vacancies.length > 1
                                 ? ConditionConfig_1.RecuritmentHRMsg.AgencySucess
                                 : ConditionConfig_1.RecuritmentHRMsg.SingleAgencyMsg,
-                            confirmLabel: "Go to Dashboard",
+                            confirmLabel: "OK",
                             onConfirm: function () {
                                 closeModal();
                                 handleClosePopup();
@@ -207,7 +207,18 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                     }
                     else {
                         Submitted.current = false;
-                        showError("Something went wrong. Please try again.");
+                        showModal({
+                            type: "error",
+                            title: "Assignment Failed",
+                            message: "Something went wrong. Please try again.",
+                            confirmLabel: "OK",
+                            onConfirm: function () {
+                                closeModal();
+                                handleClosePopup();
+                                navigate("/RecruitmentTable");
+                                handleRefresh();
+                            },
+                        });
                     }
                     _d.label = 10;
                 case 10: return [3 /*break*/, 13];

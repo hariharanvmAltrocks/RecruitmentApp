@@ -1154,7 +1154,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                   </motion.section>
                 )}
 
-                <hr className={styles.sectionDivider} />
+                {/* <hr className={styles.sectionDivider} /> */}
 
                 {/* Comments */}
                 {!rejectedFlag && (

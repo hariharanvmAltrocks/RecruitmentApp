@@ -416,7 +416,6 @@ export const BGVDocumentName = {
 
 export const DisplayFolderName = {
   Offerletter: "Offer Letter",
-  offerLetterUnsigned: "Offer Letters (Unsigned)",
   LabourHireOffer: "Labour Hire Offer Letter Release",
   LabourHireEC: "Labour Hire Employment Contract Release",
   ConsentForm: "Code of Business Content",
@@ -429,6 +428,12 @@ export const DisplayFolderName = {
   PoliceClearanceCertificate: "Police Clearance Certificate",
   CovidVaccinationCertificate: "Covid Vaccination Certificate",
   YellowFeverVaccinationCertificate: "Yellow Fever Vaccination Certificate",
+};
+
+export const DocumentPath = {
+  offerLetterUnsigned: "Offer Letters (Unsigned)",
+  EmploymentContractUnsigned: "Employment Contract (Unsigned)",
+  WorkPermitDocuments: "Work Permit Documents",
 };
 
 export const ExternalUserType = {
