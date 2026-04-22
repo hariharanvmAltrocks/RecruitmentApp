@@ -1,403 +1,175 @@
-﻿@import "../../../styles/theme";
+@import "../../../styles/theme";
 @import "../../../styles/variables";
 
-// .priority-widget {
-//     background: $dashboard-card-bg;
-//     border-radius: 16px;
-//     border: 1px solid $border-base;
-//     padding: 24px;
-//     box-shadow: $shadow-md;
-//     display: flex;
-//     flex-direction: column;
-//     justify-content: space-between;
+.priority-widget-dark {
+  background: linear-gradient(135deg, #181c2e, #0f121d);
+  border-radius: 30px;
+  padding: 35px 35px 40px 35px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  color: #fff;
+  width: 80%;
+  min-width: 380px;
 
-//     .header {
-//         display: flex;
-//         justify-content: space-between;
-//         align-items: center;
-//         margin-bottom: 20px;
-
-//         h3 {
-//             font-size: 13px;
-//             color: $text-muted;
-//             text-transform: uppercase;
-//             font-weight: 700;
-//             letter-spacing: 0.5px;
-//             margin: 0;
-//             display: flex;
-//             align-items: center;
-
-//             &::before {
-//                 content: "";
-//                 display: inline-block;
-//                 width: 6px;
-//                 height: 6px;
-//                 background: $primary-color;
-//                 border-radius: 50%;
-//                 margin-right: 8px;
-//             }
-//         }
-
-//         .manage-btn {
-//             background: none;
-//             border: none;
-//             color: $primary-color;
-//             font-size: 11px;
-//             font-weight: 600;
-//             cursor: pointer;
-//             text-transform: uppercase;
-//             padding: 4px 8px;
-//             border-radius: 4px;
-//             transition: background 0.2s;
-
-//             &:hover {
-//                 background: $secondary-color;
-//             }
-//         }
-//     }
-
-//     .priority-circle-wrapper {
-//         display: flex;
-//         align-items: center;
-//         gap: 24px;
-//         margin-bottom: 24px;
-
-//         @media (max-width: 640px) {
-//             flex-direction: column;
-//             gap: 16px;
-//         }
-//     }
-
-//     .circular-chart-container {
-//         position: relative;
-//         width: 120px;
-//         height: 120px;
-//         flex-shrink: 0;
-
-//         .circular-chart {
-//             display: block;
-//             margin: 0 auto;
-//             max-width: 80%;
-//             max-height: 250px;
-//         }
-
-//         .circle-bg {
-//             fill: none;
-//             stroke: $border-light;
-//             stroke-width: 4.8;
-//         }
-
-//         .circle {
-//             fill: none;
-//             stroke-width: 3.8;
-//             stroke-linecap: round;
-//         }
-
-//         .total-count {
-//             position: absolute;
-//             top: 38%;
-//             left: 50%;
-//             transform: translate(-50%, -50%);
-//             display: flex;
-//             flex-direction: column;
-//             align-items: center;
-
-//             .count {
-//                 font-size: 24px;
-//                 font-weight: 700;
-//                 color: $text-primary;
-//                 line-height: 1;
-//             }
-
-//             .label {
-//                 font-size: 9px;
-//                 font-weight: 600;
-//                 color: $text-muted;
-//                 margin-top: 2px;
-//             }
-//         }
-//     }
-
-//     .list {
-//         display: flex;
-//         flex-direction: column;
-//         gap: 16px;
-//         flex-grow: 1;
-//         width: 100%;
-//     }
-
-//     .item {
-//         display: flex;
-//         flex-direction: column;
-
-//         .top {
-//             display: flex;
-//             justify-content: space-between;
-//             font-size: 12px;
-//             font-weight: 700;
-//             color: $text-secondary;
-//             margin-bottom: 2px;
-
-//             .item-name {
-//                 display: flex;
-//                 align-items: center;
-//                 gap: 6px;
-
-//                 .icon-bolt {
-//                     font-size: 14px;
-//                 }
-//             }
-
-//             .item-percent {
-//                 color: $text-muted;
-//                 font-weight: 600;
-//             }
-//         }
-
-//         .label {
-//             font-size: 10px;
-//             color: $text-subtle;
-//             font-weight: 600;
-//             margin-bottom: 8px;
-//         }
-
-//         .bar {
-//             height: 6px;
-//             background: $border-light;
-//             border-radius: 6px;
-//             overflow: hidden;
-
-//             .fill {
-//                 height: 100%;
-//                 border-radius: 6px;
-//                 transition: width 0.5s ease-out;
-//             }
-//         }
-//     }
-
-//     .process-btn {
-//         margin-top: auto;
-//         width: 100%;
-//         background: $button-color;
-//         color: $white;
-//         border: none;
-//         border-radius: 12px;
-//         padding: 14px;
-//         font-size: 14px;
-//         font-weight: 600;
-//         cursor: pointer;
-//         display: flex;
-//         align-items: center;
-//         justify-content: center;
-//         gap: 8px;
-//         transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
-//         box-shadow: $shadow-md;
-
-//         &::before {
-//             content: "âš¡";
-//             color: $warning;
-//             font-size: 16px;
-//         }
-
-//         &:hover {
-//             background: $text-secondary;
-//             transform: translateY(-2px);
-//             box-shadow: $shadow-lg;
-//         }
-
-//         &:active {
-//             transform: translateY(0);
-//         }
-//     }
-// }
-
-.priority-widget {
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 24px;
-  border: 1px solid #f1f5f9;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  max-width: 450px;
-
-  .header {
+  &__header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #f8fafc;
-    padding-bottom: 16px;
-    margin-bottom: 24px;
+    align-items: flex-start;
+    margin-bottom: 40px;
 
-    .title-group {
+    .title {
+      font-family: "Segoe UI Black", "Arial Black", Impact, sans-serif;
+      font-size: 24px;
+      font-weight: 900;
+      color: #ffffff;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .subtitle {
+      font-family: "Segoe UI", "Inter", sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #5c6b8b;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .icon-wrapper {
+      width: 48px;
+      height: 48px;
+      background: rgba(36, 40, 65, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 14px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 
-      .dot {
-        width: 8px;
-        height: 8px;
-        background-color: #cbd5e1;
-        border-radius: 50%;
+      .activity-icon {
+        color: #9275f6;
+        stroke-width: 2.5;
       }
-
-      h3 {
-        margin: 0;
-        font-size: 13px;
-        color: #64748b;
-        letter-spacing: 0.8px;
-        font-weight: 700;
-      }
-    }
-
-    .manage-btn {
-      background: transparent;
-      border: none;
-      color: #2563eb;
-      font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
     }
   }
 
-  .widget-body {
+  &__body {
     display: flex;
     align-items: center;
-    gap: 30px;
-    margin-bottom: 30px;
+    justify-content: space-between;
+    gap: 36px;
+    
+    @media (max-width: 480px) {
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+    }
   }
 
-  .chart-section {
+  .chart-container {
     position: relative;
-    width: 140px;
-    height: 140px;
+    width: 110px;
+    height: 110px;
     flex-shrink: 0;
 
-    .circular-chart {
-      width: 100%;
-      height: 100%;
+    .recharts-wrapper {
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
     }
 
-    .circle-bg {
-      fill: none;
-      stroke: #f8fafc;
-      stroke-width: 10;
-    }
-
-    .circle-segment {
-      fill: none;
-      stroke-width: 10;
-      stroke-linecap: round; // This makes the segments look like the image
-      transition: stroke-dashoffset 0.3s;
-    }
-
-    .chart-center-text {
+    .chart-center {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
+      inset: 0;
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
 
-      .total-number {
-        font-size: 32px;
-        font-weight: 800;
-        color: #1e293b;
-        line-height: 1;
-      }
-
-      .total-label {
-        font-size: 10px;
-        color: #94a3b8;
-        font-weight: 600;
-        margin-top: 4px;
+      .total {
+        font-family: "Segoe UI Black", "Arial Black", Impact, sans-serif;
+        font-size: 22px;
+        font-weight: 900;
+        color: #ffffff;
       }
     }
   }
 
-  .task-list {
+  .list-container {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    justify-content: center;
+    gap: 18px;
+    width: 100%;
 
-    .task-item {
-      .item-row {
-        display: flex;
-        gap: 12px;
-        align-items: flex-start;
-      }
+    .list-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
 
-      .icon-box {
-        padding: 8px;
-        border-radius: 10px;
+      .item-header {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        justify-content: center;
-      }
 
-      .text-content {
-        flex-grow: 1;
-        
-        .stats {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 2px;
-
-          .count {
-            font-size: 14px;
-            font-weight: 700;
-            color: #1e293b;
-          }
-          .percent {
-            font-size: 12px;
-            color: #cbd5e1;
-            font-weight: 600;
-          }
-        }
-
-        .name {
+        .item-name {
+          font-family: "Segoe UI", "Inter", sans-serif;
           font-size: 10px;
-          color: #94a3b8;
-          font-weight: 600;
+          font-weight: 800;
+          color: #899ec2;
           text-transform: uppercase;
+          letter-spacing: 0.8px;
+        }
+
+        .item-percent {
+          font-family: "Segoe UI Black", "Arial Black", Impact, sans-serif;
+          font-size: 12px;
+          font-weight: 900;
+          color: #ffffff;
         }
       }
 
-      .progress-container {
-        margin-top: 10px;
-        .progress-bg {
-          height: 6px;
-          background: #f8fafc;
-          border-radius: 10px;
-          overflow: hidden;
-        }
+      .progress-track {
+        width: 100%;
+        height: 6px;
+        background: #202636;
+        border-radius: 6px;
+        overflow: hidden;
+
         .progress-fill {
           height: 100%;
-          border-radius: 10px;
+          border-radius: 6px;
+          box-shadow: 0 0 10px rgba(0,0,0,0.3);
+          transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
       }
     }
-  }
 
-  .process-all-btn {
-    width: 100%;
-    background-color: #0f172a; // Dark navy/black
-    color: white;
-    border: none;
-    padding: 16px;
-    border-radius: 16px;
-    font-size: 14px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    cursor: pointer;
-    transition: background 0.2s;
+    .view-more-btn {
+      align-self: flex-start;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      color: #7265f0;
+      font-family: "Segoe UI", "Inter", sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.2s, opacity 0.2s;
 
-    &:hover {
-      background-color: #1e293b;
+      &:hover {
+        color: #9287fa;
+      }
+      
+      &:active {
+        opacity: 0.7;
+      }
     }
   }
 }

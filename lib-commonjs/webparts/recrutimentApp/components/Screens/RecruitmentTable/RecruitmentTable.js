@@ -24,9 +24,15 @@ var Evaluationformservice_1 = require("../Evalution/Evaluationservice/Evaluation
 var moment_1 = tslib_1.__importDefault(require("moment"));
 var Config_1 = require("../../../utilities/Config");
 var loading_1 = tslib_1.__importDefault(require("../../Comman/Loading/loading"));
+var useadvertextend_1 = require("./AdvertReviewDrawer/Hooks/SaveHooks/useadvertextend");
 var AssignHRPopup = react_1.default.lazy(function () {
     return Promise.resolve().then(function () { return tslib_1.__importStar(require("./Components/AssignHRPopup/AssignHRPopup")); }).then(function (module) { return ({
         default: module.AssignHRPopup,
+    }); });
+});
+var AdvertExtension = react_1.default.lazy(function () {
+    return Promise.resolve().then(function () { return tslib_1.__importStar(require("./Components/AdvertExtension/advertextension")); }).then(function (module) { return ({
+        default: module.AdvertExtension,
     }); });
 });
 var RecruitmentTable = function () {
@@ -46,6 +52,7 @@ var RecruitmentTable = function () {
         selectedType: "",
     });
     var _j = (0, react_1.useState)(false), isPopupOpen = _j[0], setIsPopupOpen = _j[1];
+    var _k = (0, react_1.useState)(false), isadvertPopupOpen = _k[0], setAdvertPopupOpen = _k[1];
     var handleClosePopup = (0, react_1.useCallback)(function () { return setIsPopupOpen(false); }, []);
     var handleCancel = (0, react_1.useCallback)(function () {
         showModal({
@@ -61,16 +68,17 @@ var RecruitmentTable = function () {
             onCancel: closeModal,
         });
     }, []);
-    var _k = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh), handleConfirmAssignment = _k.handleConfirmAssignment, assignmentModalState = _k.modalState, assignmentCloseModal = _k.closeModal, loading = _k.loading, Submitted = _k.Submitted;
-    var _l = (0, useModalPopup_1.useModalPopup)(), modalState = _l.modalState, showModal = _l.showModal, closeModal = _l.closeModal;
-    var _m = (0, react_1.useState)([]), selectedIds = _m[0], setSelectedIds = _m[1];
-    var _o = (0, react_1.useState)(0), selectedMemberId = _o[0], setSelectedMemberId = _o[1];
-    var _p = (0, react_1.useState)(5), pageSize = _p[0], setPageSize = _p[1];
-    var _q = (0, react_1.useState)(1), currentPage = _q[0], setCurrentPage = _q[1];
+    var _l = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh), handleConfirmAssignment = _l.handleConfirmAssignment, assignmentModalState = _l.modalState, assignmentCloseModal = _l.closeModal, assignmentLoading = _l.loading, Submitted = _l.Submitted;
+    var _m = (0, useadvertextend_1.useAdvertExtends)(handleClosePopup, handleRefresh, setAdvertPopupOpen), handleAdvertExtend = _m.handleAdvertExtend, advertModalState = _m.modalState, advertCloseModal = _m.closeModal, advertLoading = _m.loading, advertSubmitted = _m.Submitted;
+    var _o = (0, useModalPopup_1.useModalPopup)(), modalState = _o.modalState, showModal = _o.showModal, closeModal = _o.closeModal;
+    var _p = (0, react_1.useState)([]), selectedIds = _p[0], setSelectedIds = _p[1];
+    var _q = (0, react_1.useState)(0), selectedMemberId = _q[0], setSelectedMemberId = _q[1];
+    var _r = (0, react_1.useState)(5), pageSize = _r[0], setPageSize = _r[1];
+    var _s = (0, react_1.useState)(1), currentPage = _s[0], setCurrentPage = _s[1];
     var selectedItems = (0, react_1.useMemo)(function () { return items.filter(function (item) { return selectedIds.includes(item.id); }); }, [items, selectedIds]);
     var selectedJobCode = (0, react_1.useMemo)(function () { var _a; return (selectedItems.length === 1 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.jobCode : ""); }, [selectedItems]);
     var selectedNationality = (0, react_1.useMemo)(function () { var _a; return (selectedItems.length === 1 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.nationality : ""); }, [selectedItems]);
-    var _r = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _r.members, membersLoading = _r.loading;
+    var _t = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _t.members, membersLoading = _t.loading;
     var selectedMember = (0, react_1.useMemo)(function () { var _a; return (_a = members.find(function (m) { return m.id === selectedMemberId; })) !== null && _a !== void 0 ? _a : null; }, [members, selectedMemberId]);
     var activeTabs = (0, react_1.useMemo)(function () { return tabs.find(function (tab) { return tab.key === activeTabKey; }); }, [activeTabKey, tabs]);
     (0, react_1.useEffect)(function () {
@@ -140,6 +148,7 @@ var RecruitmentTable = function () {
         });
     }, [paginatedItems, selectedIds]);
     var processingRef = (0, react_1.useRef)(false);
+    var selectedAdvertID = (0, react_1.useRef)(0);
     var handleAction = (0, react_1.useCallback)(function (item) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var ItemID, isEvaluationFlow, today, interviewDate, Validation, interviewLevel, alreadySubmitted, evalutionIDs, routeMap, route;
         var _a;
@@ -157,6 +166,11 @@ var RecruitmentTable = function () {
                         matricID === ConditionConfig_1.MatricID.EvalutionLM ||
                         matricID === ConditionConfig_1.MatricID.EvalutionHOD ||
                         matricID === ConditionConfig_1.MatricID.EvalutionEXCO;
+                    if (matricID === ConditionConfig_1.MatricID.advertExtension) {
+                        setAdvertPopupOpen(true);
+                        selectedAdvertID.current = item.ItemID;
+                        return [2 /*return*/];
+                    }
                     if (!isEvaluationFlow) return [3 /*break*/, 3];
                     today = new Date();
                     today.setHours(0, 0, 0, 0);
@@ -250,6 +264,7 @@ var RecruitmentTable = function () {
         actionMode: (_a = activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.actionMode) !== null && _a !== void 0 ? _a : "View",
         onAction: handleAction,
     });
+    var loading = assignmentLoading || advertLoading;
     return (react_1.default.createElement("section", { className: "recruitment-table" },
         loading && react_1.default.createElement(loading_1.default, null),
         react_1.default.createElement("div", { className: "recruitment-table__tabs" },
@@ -291,9 +306,16 @@ var RecruitmentTable = function () {
                         react_1.default.createElement(lucide_react_1.ChevronRight, { size: 16 })))))),
         isPopupOpen && (react_1.default.createElement(react_1.Suspense, { fallback: null },
             react_1.default.createElement(AssignHRPopup, { isOpen: isPopupOpen, selectedItems: selectedItems, assignedMember: selectedMember, onClose: handleClosePopup, oncancel: handleCancel, onConfirm: handleConfirmAssignment }))),
+        isadvertPopupOpen && (react_1.default.createElement(react_1.Suspense, { fallback: null },
+            react_1.default.createElement(AdvertExtension, { RecruitmentID: selectedAdvertID.current, onClose: function () { return setAdvertPopupOpen(false); }, useDataExtension: function (payload) { return ({
+                    triggerExtension: function () {
+                        void handleAdvertExtend(payload);
+                    },
+                }); } }))),
         drawerMeta.current.isOpen && (react_1.default.createElement(AdvertReviewDrawer_1.AdvertReviewDrawer, { drawerOpen: drawerOpen, selectedJobId: selectedJobId, selectedJobCode: selectedJobCode, selectedType: drawerMeta.current.selectedType, advertLanguage: advertLanguage, reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, loadingState: loadingState, onClose: closeDrawer, onLanguageChange: setAdvertLanguage, onCommentsChange: setComments, onToggleAcknowledgement: toggleAcknowledgement, setLoadingState: setLoadingState, refreshKey: handleRefresh })),
         react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, assignmentModalState, { onClose: assignmentCloseModal })),
-        react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal }))));
+        react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal })),
+        react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, advertModalState, { onClose: advertCloseModal }))));
 };
 exports.RecruitmentTable = RecruitmentTable;
 //# sourceMappingURL=RecruitmentTable.js.map

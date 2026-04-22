@@ -197,6 +197,8 @@ export type IRecruitmentService = {
     IsExtened: number,
     JobBasedBGVVerification?: string,
     onemDocs?: IDocFiles[],
+    extendStartDate?: Date,
+    extendEndDate?: Date,
   ): Promise<ApiResponse<null>>;
   UpsertBGVJobMaster(UpsertData: UpsertBGV[]): Promise<ApiResponse<any | null>>;
   InsertExternalAgencyDetails(

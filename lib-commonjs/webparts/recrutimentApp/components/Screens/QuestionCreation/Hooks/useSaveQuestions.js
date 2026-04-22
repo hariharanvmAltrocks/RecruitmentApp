@@ -126,8 +126,8 @@ var useSaveQuestions = function () {
                     else {
                         updatePayload =
                             userId === ConditionConfig_1.QuestionCreatedBy.LM
-                                ? { QuestionByHR: "Yes" }
-                                : { QuestionByLM: "Yes" };
+                                ? { QuestionByLM: "Yes" }
+                                : { QuestionByHR: "Yes" };
                     }
                     return [4 /*yield*/, spservice_1.default.SPUpdateItem({
                             Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,

@@ -993,6 +993,8 @@ export default class RecruitmentService implements IRecruitmentService {
     IsExtened: number,
     JobBasedBGVVerification?: string,
     onemDocs?: IDocFiles[],
+    extendStartDate?: Date,
+    extendEndDate?: Date,
   ): Promise<ApiResponse<null>> {
     try {
       const ROLE_PROFILE = 0;
@@ -1178,8 +1180,8 @@ export default class RecruitmentService implements IRecruitmentService {
         jobCode: jobUniqueKey,
         isActive: IsActive,
         noOfPositions: String(RecuritmentDetails?.NumberOfPersonNeeded),
-        validFrom: vaildFrom ?? null,
-        validTo: VaildTo ?? null,
+        validFrom: extendStartDate ? extendStartDate : vaildFrom,
+        validTo: extendEndDate ? extendEndDate : vaildFrom,
         employmentType: "Full Time",
         departmentId: DepartmentData.data[0]?.Code || "",
         role: null,

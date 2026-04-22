@@ -146,6 +146,12 @@ var findMatricID = function (roleIDs, statusID, TabName, MenuId) {
         }
         return ConditionConfig_1.MatricID.MySubmission;
     }
+    else if (TabName === ConditionConfig_1.TabNames.AssignAgencies) {
+        return ConditionConfig_1.MatricID.AssignAgencies;
+    }
+    else if (TabName === ConditionConfig_1.TabNames.AdvertExtension) {
+        return ConditionConfig_1.MatricID.advertExtension;
+    }
     else {
         switch (statusID) {
             case Config_1.StatusId.ReadyforRecruitmentProcess:

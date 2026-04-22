@@ -144,8 +144,8 @@ export const useSaveQuestions = (): UseSaveQuestionsResult => {
         } else {
           updatePayload =
             userId === QuestionCreatedBy.LM
-              ? { QuestionByHR: "Yes" }
-              : { QuestionByLM: "Yes" };
+              ? { QuestionByLM: "Yes" }
+              : { QuestionByHR: "Yes" };
         }
 
         await SPServices.SPUpdateItem({

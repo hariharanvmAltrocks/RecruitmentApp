@@ -7,7 +7,7 @@ var framer_motion_1 = require("framer-motion");
 var lucide_react_1 = require("lucide-react");
 require("./ModalPopup.scss");
 // ─────────────────────────────────────────────────────────────────────────────
-// Per-type config — icon, gradient, accent color, default labels
+// Per-type config
 // ─────────────────────────────────────────────────────────────────────────────
 var CONFIG = {
     success: {
@@ -16,6 +16,7 @@ var CONFIG = {
         accentColor: "#22c55e",
         defaultTitle: "Submitted Successfully!",
         defaultMessage: "Your request has been processed.",
+        defaultConfirmLabel: "OK",
         defaultCancelLabel: "Close",
         confirmBtnClass: "btn--success",
     },
@@ -25,7 +26,7 @@ var CONFIG = {
         accentColor: "#ef4444",
         defaultTitle: "Something Went Wrong",
         defaultMessage: "An error occurred. Please try again.",
-        defaultConfirmLabel: "Retry",
+        defaultConfirmLabel: "OK",
         defaultCancelLabel: "Close",
         confirmBtnClass: "btn--error",
     },
@@ -35,7 +36,7 @@ var CONFIG = {
         accentColor: "#f59e0b",
         defaultTitle: "Warning",
         defaultMessage: "Please review before proceeding.",
-        defaultConfirmLabel: "Proceed",
+        defaultConfirmLabel: "OK",
         defaultCancelLabel: "Cancel",
         confirmBtnClass: "btn--warning",
     },
@@ -65,7 +66,7 @@ var CONFIG = {
         accentColor: "#2563eb",
         defaultTitle: "Confirm Submission",
         defaultMessage: "Are you sure you want to submit? This action cannot be undone.",
-        defaultConfirmLabel: "Yes, Submit",
+        defaultConfirmLabel: "OK",
         defaultCancelLabel: "Cancel",
         confirmBtnClass: "btn--info",
     },
@@ -75,7 +76,7 @@ var CONFIG = {
         accentColor: "#f59e0b",
         defaultTitle: "Are you sure you want to leave?",
         defaultMessage: "Any unsaved changes will be lost.",
-        defaultConfirmLabel: "Yes, Leave",
+        defaultConfirmLabel: "OK",
         defaultCancelLabel: "Stay Here",
         confirmBtnClass: "btn--warning",
     },
@@ -85,16 +86,18 @@ var CONFIG = {
         accentColor: "#ef4444",
         defaultTitle: "Please Fill All Mandatory Fields",
         defaultMessage: "Complete the following fields before submitting:",
+        defaultConfirmLabel: "OK",
         defaultCancelLabel: "Got it",
         confirmBtnClass: "btn--error",
     },
 };
 var ModalPopup = function (_a) {
-    var open = _a.open, _b = _a.type, type = _b === void 0 ? "info" : _b, title = _a.title, message = _a.message, _c = _a.validationErrors, validationErrors = _c === void 0 ? [] : _c, onConfirm = _a.onConfirm, onCancel = _a.onCancel, onClose = _a.onClose, confirmLabel = _a.confirmLabel, cancelLabel = _a.cancelLabel, _d = _a.isLoading, isLoading = _d === void 0 ? false : _d, _e = _a.closeOnOutsideClick, closeOnOutsideClick = _e === void 0 ? true : _e, _f = _a.autoClose, autoClose = _f === void 0 ? false : _f, _g = _a.autoCloseDuration, autoCloseDuration = _g === void 0 ? 3000 : _g;
+    var _b;
+    var open = _a.open, _c = _a.type, type = _c === void 0 ? "info" : _c, title = _a.title, message = _a.message, _d = _a.validationErrors, validationErrors = _d === void 0 ? [] : _d, onConfirm = _a.onConfirm, onCancel = _a.onCancel, onClose = _a.onClose, confirmLabel = _a.confirmLabel, cancelLabel = _a.cancelLabel, _e = _a.isLoading, isLoading = _e === void 0 ? false : _e, _f = _a.closeOnOutsideClick, closeOnOutsideClick = _f === void 0 ? true : _f, _g = _a.autoClose, autoClose = _g === void 0 ? false : _g, _h = _a.autoCloseDuration, autoCloseDuration = _h === void 0 ? 3000 : _h;
     var cfg = CONFIG[type];
     var resolvedTitle = title !== null && title !== void 0 ? title : cfg.defaultTitle;
     var resolvedMessage = message !== null && message !== void 0 ? message : cfg.defaultMessage;
-    var resolvedConfirmLabel = confirmLabel !== null && confirmLabel !== void 0 ? confirmLabel : cfg.defaultConfirmLabel;
+    var resolvedConfirmLabel = (_b = confirmLabel !== null && confirmLabel !== void 0 ? confirmLabel : cfg.defaultConfirmLabel) !== null && _b !== void 0 ? _b : "OK";
     var resolvedCancelLabel = cancelLabel !== null && cancelLabel !== void 0 ? cancelLabel : cfg.defaultCancelLabel;
     // Auto-close for success type
     (0, react_1.useEffect)(function () {
@@ -126,13 +129,7 @@ var ModalPopup = function (_a) {
         if (closeOnOutsideClick && e.target === e.currentTarget)
             onClose();
     };
-    var showConfirmBtn = !!resolvedConfirmLabel &&
-        !!onConfirm &&
-        type !== "validation" &&
-        type !== "success";
-    return (react_1.default.createElement(framer_motion_1.AnimatePresence, null, open && (
-    // ── Backdrop ──
-    react_1.default.createElement(framer_motion_1.motion.div, { key: "backdrop", className: "modal-popup__overlay", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 }, onClick: handleBackdropClick, role: "dialog", "aria-modal": "true" },
+    return (react_1.default.createElement(framer_motion_1.AnimatePresence, null, open && (react_1.default.createElement(framer_motion_1.motion.div, { key: "backdrop", className: "modal-popup__overlay", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 }, onClick: handleBackdropClick, role: "dialog", "aria-modal": "true" },
         react_1.default.createElement(framer_motion_1.motion.div, { key: "card", className: "modal-popup__container", initial: { opacity: 0, scale: 0.88, y: 24 }, animate: { opacity: 1, scale: 1, y: 0 }, exit: { opacity: 0, scale: 0.88, y: 24 }, transition: { type: "spring", damping: 22, stiffness: 300 }, onClick: function (e) { return e.stopPropagation(); } },
             react_1.default.createElement("div", { className: "modal-popup__accent-bar", style: { background: cfg.accentColor } }),
             react_1.default.createElement("div", { className: "modal-popup__icon-wrap" },
@@ -143,16 +140,8 @@ var ModalPopup = function (_a) {
                 react_1.default.createElement(lucide_react_1.XCircle, { size: 13, className: "modal-popup__validation-icon" }),
                 react_1.default.createElement("span", null, err.message))); }))),
             react_1.default.createElement("div", { className: "modal-popup__actions" },
-                react_1.default.createElement("button", { className: "modal-popup__btn btn--secondary", onClick: function () {
-                        var _a, _b;
-                        if (type === "success" && onConfirm) {
-                            onConfirm(); // call parent handler
-                        }
-                        else {
-                            (_b = ((_a = onCancel !== null && onCancel !== void 0 ? onCancel : onClose) !== null && _a !== void 0 ? _a : onConfirm)) === null || _b === void 0 ? void 0 : _b();
-                        }
-                    }, disabled: isLoading }, resolvedCancelLabel),
-                showConfirmBtn && (react_1.default.createElement("button", { className: "modal-popup__btn ".concat(cfg.confirmBtnClass), onClick: onConfirm, disabled: isLoading }, isLoading ? (react_1.default.createElement(lucide_react_1.Loader2, { className: "modal-popup__spinner", size: 16 })) : (resolvedConfirmLabel)))))))));
+                type === "confirmation" && (react_1.default.createElement("button", { className: "modal-popup__btn btn--secondary", onClick: function () { var _a; return (_a = (onCancel !== null && onCancel !== void 0 ? onCancel : onClose)) === null || _a === void 0 ? void 0 : _a(); }, disabled: isLoading }, resolvedCancelLabel)),
+                react_1.default.createElement("button", { className: "modal-popup__btn ".concat(cfg.confirmBtnClass), onClick: function () { var _a; return (_a = (onConfirm !== null && onConfirm !== void 0 ? onConfirm : onClose)) === null || _a === void 0 ? void 0 : _a(); }, disabled: isLoading }, isLoading ? (react_1.default.createElement(lucide_react_1.Loader2, { className: "modal-popup__spinner", size: 16 })) : (resolvedConfirmLabel))))))));
 };
 exports.ModalPopup = ModalPopup;
 exports.default = exports.ModalPopup;

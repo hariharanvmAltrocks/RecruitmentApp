@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import MetricCard from "../../Comman/MatricBox/matric";
 import "./Dashboard.scss";
 import { useDashboardMetrics } from "./Hooks/useDashboardMetrics";
 import { useTrackerData } from "./Hooks/usetrackerdata";
@@ -14,6 +13,7 @@ import { DashboardData } from "../../../services/Dashboard/IDashboard";
 import { MetricConfig } from "../../../models/IDashboard";
 import { useUIState } from "../../RecrutimentApp/UIStateContext";
 import { DashboardSkeleton } from "./DashboardSkeleton";
+import MetricDashboard from "../../Comman/MatricBox/matric";
 
 interface DashboardProps {
   props: any;
@@ -106,35 +106,10 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
       exit={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="dashboard-header">
-        <button
-          className="refresh-btn"
-          onClick={handleRefresh}
-          disabled={loading}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className={loading ? "spin" : ""}
-          >
-            <path d="M21 2v6h-6" />
-            <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
-            <path d="M3 22v-6h6" />
-            <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
-          </svg>
-          Refresh
-        </button>
-      </div>
       <AnimatePresence>
         {loading ? (
-          <DashboardSkeleton key="dashboard-skeleton" />
+          // <DashboardSkeleton key="dashboard-skeleton" />
+          <></>
         ) : (
           <motion.div
             key="dashboard-content"
@@ -160,15 +135,13 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                   initial="hidden"
                   animate="visible"
                 >
-                  {martics.metrics.map((metric) => (
-                    <motion.div key={metric.id} variants={metricItem}>
-                      <MetricCard
-                        metric={metric}
-                        active={activeMetric === metric.id}
-                        onClick={() => onMetricChange(metric)}
-                      />
-                    </motion.div>
-                  ))}
+                  <MetricDashboard
+                    metrics={martics.metrics}
+                    onCardClick={(metric) => onMetricChange(metric)}
+                    loading={loading}
+                    handleRefresh={handleRefresh}
+                    active={activeMetric}
+                  />
                 </motion.div>
 
                 <div className="dashboard-layout">

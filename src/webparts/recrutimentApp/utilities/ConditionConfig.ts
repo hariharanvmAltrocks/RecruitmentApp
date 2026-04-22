@@ -35,6 +35,8 @@ export const MatricID = {
   MySubmissionBGV: 31,
 
   InterviewQuestionLM: 32,
+
+  advertExtension: 33,
 };
 
 export const RoleName = {

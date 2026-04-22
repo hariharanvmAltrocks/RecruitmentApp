@@ -34,6 +34,7 @@ exports.MatricID = {
     MySubmissionHOD: 30,
     MySubmissionBGV: 31,
     InterviewQuestionLM: 32,
+    advertExtension: 33,
 };
 exports.RoleName = {
     LineManager: "Line Manager",

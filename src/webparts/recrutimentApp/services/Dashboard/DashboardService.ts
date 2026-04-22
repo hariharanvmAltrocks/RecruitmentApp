@@ -1050,11 +1050,17 @@ export default class DashboardService implements IDashboard {
       const result = resdata.map((item: any, index: number) => ({
         parentId: item?.LookupIDId ?? item?.PositionRequestIDId ?? 0,
         id: index + 1,
-        title: item?.JobTitleEnglish?.JobTitleInEnglish ?? "",
+        title:
+          item?.JobTitleEnglish?.JobTitleInEnglish ??
+          item?.UnBudgetedJobTitleEnglish ??
+          "",
         jobCode: item?.JobTitleEnglish?.JobCode ?? "",
         DRCGrade: item?.DRCGrade?.DRCGrade ?? "",
         PatersonGrade: item?.PatersonGrade?.PatersonGrade ?? "",
-        JobTitleFrench: item?.JobTitleFrench?.JobTitleInFrench ?? "",
+        JobTitleFrench:
+          item?.JobTitleFrench?.JobTitleInFrench ??
+          item?.UnBudgetedJobTitleInFrench ??
+          "",
       }));
 
       return {

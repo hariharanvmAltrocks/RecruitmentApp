@@ -867,7 +867,7 @@ var RecruitmentService = /** @class */ (function () {
             });
         });
     };
-    RecruitmentService.prototype.UploadAdvertisementInPortal = function (Filter, Condition, RecuritmentDetails, IsActive, IsExtened, JobBasedBGVVerification, onemDocs) {
+    RecruitmentService.prototype.UploadAdvertisementInPortal = function (Filter, Condition, RecuritmentDetails, IsActive, IsExtened, JobBasedBGVVerification, onemDocs, extendStartDate, extendEndDate) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var ROLE_PROFILE, JOB_PORTAL, queries, batchRes, roleProfileList, jobPortalList, data, jobUniqueKey, roleSpecificKnowledge, technicalSkill, roleSpecificSkills, technicalSkills, Roleandtechnical, minQualifications, preferredQualifications, MinAndPreferedQualification, decodeBase64, Description, DescriptionFr, onemdocPath, onamdocpathfile, FilterDept, DepartmentData, NationalityValue, todaydate, vaildFrom, VaildTo, advertisementDetails, response, error_11;
             var _a, _b, _c, _d, _e;
@@ -1017,8 +1017,8 @@ var RecruitmentService = /** @class */ (function () {
                             jobCode: jobUniqueKey,
                             isActive: IsActive,
                             noOfPositions: String(RecuritmentDetails === null || RecuritmentDetails === void 0 ? void 0 : RecuritmentDetails.NumberOfPersonNeeded),
-                            validFrom: vaildFrom !== null && vaildFrom !== void 0 ? vaildFrom : null,
-                            validTo: VaildTo !== null && VaildTo !== void 0 ? VaildTo : null,
+                            validFrom: extendStartDate ? extendStartDate : vaildFrom,
+                            validTo: extendEndDate ? extendEndDate : vaildFrom,
                             employmentType: "Full Time",
                             departmentId: ((_c = DepartmentData.data[0]) === null || _c === void 0 ? void 0 : _c.Code) || "",
                             role: null,

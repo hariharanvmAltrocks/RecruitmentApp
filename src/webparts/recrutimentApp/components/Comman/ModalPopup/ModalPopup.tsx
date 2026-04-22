@@ -37,7 +37,7 @@ export interface ModalProps {
   type?: ModalType;
   title?: string;
   message?: string;
-  validationErrors?: ValidationError[]; // used when type="validation"
+  validationErrors?: ValidationError[];
   onConfirm?: () => void;
   onCancel?: () => void;
   onClose: () => void;
@@ -50,7 +50,7 @@ export interface ModalProps {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Per-type config — icon, gradient, accent color, default labels
+// Per-type config
 // ─────────────────────────────────────────────────────────────────────────────
 const CONFIG: Record<
   ModalType,
@@ -71,6 +71,7 @@ const CONFIG: Record<
     accentColor: "#22c55e",
     defaultTitle: "Submitted Successfully!",
     defaultMessage: "Your request has been processed.",
+    defaultConfirmLabel: "OK",
     defaultCancelLabel: "Close",
     confirmBtnClass: "btn--success",
   },
@@ -80,7 +81,7 @@ const CONFIG: Record<
     accentColor: "#ef4444",
     defaultTitle: "Something Went Wrong",
     defaultMessage: "An error occurred. Please try again.",
-    defaultConfirmLabel: "Retry",
+    defaultConfirmLabel: "OK",
     defaultCancelLabel: "Close",
     confirmBtnClass: "btn--error",
   },
@@ -90,7 +91,7 @@ const CONFIG: Record<
     accentColor: "#f59e0b",
     defaultTitle: "Warning",
     defaultMessage: "Please review before proceeding.",
-    defaultConfirmLabel: "Proceed",
+    defaultConfirmLabel: "OK",
     defaultCancelLabel: "Cancel",
     confirmBtnClass: "btn--warning",
   },
@@ -121,7 +122,7 @@ const CONFIG: Record<
     defaultTitle: "Confirm Submission",
     defaultMessage:
       "Are you sure you want to submit? This action cannot be undone.",
-    defaultConfirmLabel: "Yes, Submit",
+    defaultConfirmLabel: "OK",
     defaultCancelLabel: "Cancel",
     confirmBtnClass: "btn--info",
   },
@@ -131,7 +132,7 @@ const CONFIG: Record<
     accentColor: "#f59e0b",
     defaultTitle: "Are you sure you want to leave?",
     defaultMessage: "Any unsaved changes will be lost.",
-    defaultConfirmLabel: "Yes, Leave",
+    defaultConfirmLabel: "OK",
     defaultCancelLabel: "Stay Here",
     confirmBtnClass: "btn--warning",
   },
@@ -141,6 +142,7 @@ const CONFIG: Record<
     accentColor: "#ef4444",
     defaultTitle: "Please Fill All Mandatory Fields",
     defaultMessage: "Complete the following fields before submitting:",
+    defaultConfirmLabel: "OK",
     defaultCancelLabel: "Got it",
     confirmBtnClass: "btn--error",
   },
@@ -166,7 +168,7 @@ export const ModalPopup: React.FC<ModalProps> = ({
 
   const resolvedTitle = title ?? cfg.defaultTitle;
   const resolvedMessage = message ?? cfg.defaultMessage;
-  const resolvedConfirmLabel = confirmLabel ?? cfg.defaultConfirmLabel;
+  const resolvedConfirmLabel = confirmLabel ?? cfg.defaultConfirmLabel ?? "OK";
   const resolvedCancelLabel = cancelLabel ?? cfg.defaultCancelLabel;
 
   // Auto-close for success type
@@ -203,16 +205,9 @@ export const ModalPopup: React.FC<ModalProps> = ({
     if (closeOnOutsideClick && e.target === e.currentTarget) onClose();
   };
 
-  const showConfirmBtn =
-    !!resolvedConfirmLabel &&
-    !!onConfirm &&
-    type !== "validation" &&
-    type !== "success";
-
   return (
     <AnimatePresence>
       {open && (
-        // ── Backdrop ──
         <motion.div
           key="backdrop"
           className="modal-popup__overlay"
@@ -224,7 +219,6 @@ export const ModalPopup: React.FC<ModalProps> = ({
           role="dialog"
           aria-modal="true"
         >
-          {/* ── Card ── */}
           <motion.div
             key="card"
             className="modal-popup__container"
@@ -234,23 +228,13 @@ export const ModalPopup: React.FC<ModalProps> = ({
             transition={{ type: "spring", damping: 22, stiffness: 300 }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Top accent bar — color per type */}
+            {/* Top accent bar */}
             <div
               className="modal-popup__accent-bar"
               style={{ background: cfg.accentColor }}
             />
 
-            {/* Close button */}
-            {/* <button
-              className="modal-popup__close-btn"
-              onClick={onClose}
-              aria-label="Close modal"
-              disabled={isLoading}
-            >
-              <X size={14} />
-            </button> */}
-
-            {/* Circular gradient icon */}
+            {/* Icon */}
             <div className="modal-popup__icon-wrap">
               <div
                 className="modal-popup__icon-circle"
@@ -286,50 +270,31 @@ export const ModalPopup: React.FC<ModalProps> = ({
               </div>
             )}
 
-            {/* Success pulse dots */}
-            {/* {type === "success" && (
-              <div className="modal-popup__pulse-row">
-                {[0, 1, 2].map((i) => (
-                  <span
-                    key={i}
-                    className="modal-popup__pulse-dot"
-                    style={{ animationDelay: `${i * 0.2}s` }}
-                  />
-                ))}
-              </div>
-            )} */}
-
-            {/* Footer buttons */}
+            {/* ── Footer buttons ── */}
             <div className="modal-popup__actions">
-              {/* Cancel / Close / Got it */}
-              <button
-                className="modal-popup__btn btn--secondary"
-                onClick={() => {
-                  if (type === "success" && onConfirm) {
-                    onConfirm(); // call parent handler
-                  } else {
-                    (onCancel ?? onClose ?? onConfirm)?.();
-                  }
-                }}
-                disabled={isLoading}
-              >
-                {resolvedCancelLabel}
-              </button>
-
-              {/* Confirm — shown for types that have a confirm action */}
-              {showConfirmBtn && (
+              {/* Cancel button — ONLY for confirmation type */}
+              {type === "confirmation" && (
                 <button
-                  className={`modal-popup__btn ${cfg.confirmBtnClass}`}
-                  onClick={onConfirm}
+                  className="modal-popup__btn btn--secondary"
+                  onClick={() => (onCancel ?? onClose)?.()}
                   disabled={isLoading}
                 >
-                  {isLoading ? (
-                    <Loader2 className="modal-popup__spinner" size={16} />
-                  ) : (
-                    resolvedConfirmLabel
-                  )}
+                  {resolvedCancelLabel}
                 </button>
               )}
+
+              {/* OK / Confirm — always shown for every type */}
+              <button
+                className={`modal-popup__btn ${cfg.confirmBtnClass}`}
+                onClick={() => (onConfirm ?? onClose)?.()}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader2 className="modal-popup__spinner" size={16} />
+                ) : (
+                  resolvedConfirmLabel
+                )}
+              </button>
             </div>
           </motion.div>
         </motion.div>

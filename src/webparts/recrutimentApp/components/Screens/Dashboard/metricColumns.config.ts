@@ -367,6 +367,34 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     TabValue: "tab1",
     TabName: TabNames.LabourHire,
   },
+
+  [MatricID.advertExtension]: {
+    label: "Advert Extension",
+    status: "ON-GOING",
+    icon: Activity,
+    color: "#10b981",
+    bgColor: "#ecfdf5",
+    statusColor: "#ef4444",
+    statusBg: "#fee2e2",
+    path: "/RecruitmentTable",
+    menuId: menuID.SelectionProcess,
+    TabValue: "tab4",
+    TabName: TabNames.AdvertExtension,
+  },
+
+  [MatricID.AssignAgencies]: {
+    label: "Pending Assign Agencies",
+    status: "ON-GOING",
+    icon: Activity,
+    color: "#10b981",
+    bgColor: "#ecfdf5",
+    statusColor: "#ef4444",
+    statusBg: "#fee2e2",
+    path: "/RecruitmentTable",
+    menuId: menuID.PreSelectionProcess,
+    TabValue: "tab2",
+    TabName: TabNames.AssignAgencies,
+  },
 };
 
 const buildCol = (
@@ -403,6 +431,7 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
       case RoleID.RecruitmentHR:
         roleColumns = [
           buildCol(MatricID.JobAdvert, { showArrow: true }),
+          buildCol(MatricID.AssignAgencies, { showArrow: true }),
           buildCol(MatricID.ReviewProfileHR, {
             showArrow: false,
             externalApi: { workflowStatuses: [workflowStatusApi.HRPending] },
@@ -462,6 +491,7 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
           buildCol(MatricID.AdvertReviewHOD, { showArrow: true }),
           buildCol(MatricID.ReviewScoreCard, { showArrow: true }),
           buildCol(MatricID.EvalutionHOD, { showArrow: true }),
+          buildCol(MatricID.advertExtension, { showArrow: true }),
           buildCol(MatricID.interviewSchedule, { showArrow: false }),
           // buildCol(MatricID.interviewTracker, { showArrow: false }),
           buildCol(MatricID.OfferRelease, { showArrow: false }),
@@ -977,6 +1007,24 @@ export const MetricQueryConfig = (
       emailId: EmailId,
     }),
   ),
+
+  [MatricID.AssignAgencies]: createQuery(
+    ListNames.HRMSRecruitmentDptDetails,
+    StatusFilter({
+      status: [StatusId.PendingUploadONEM, StatusId.RecruitmentInProgress],
+      columnName: "RecruitmentHR",
+      emailId: EmailId,
+    }),
+  ),
+
+  [MatricID.advertExtension]: createQuery(
+    ListNames.HRMSRecruitmentDptDetails,
+    StatusFilter({
+      status: [StatusId.RecruitmentInProgress],
+      columnName: "HOD",
+      emailId: EmailId,
+    }),
+  ),
 });
 
 const RoleMetricFilters: Record<number, number[]> = {
@@ -994,6 +1042,7 @@ const RoleMetricFilters: Record<number, number[]> = {
 
   [RoleID.RecruitmentHR]: [
     MatricID.JobAdvert,
+    MatricID.AssignAgencies,
     MatricID.ReviewProfileHR,
     MatricID.AssignAgencies,
     MatricID.AssignInterviewPanel,
@@ -1026,6 +1075,7 @@ const RoleMetricFilters: Record<number, number[]> = {
     MatricID.AdvertReviewHOD,
     MatricID.ReviewScoreCard,
     MatricID.EvalutionHOD,
+    MatricID.advertExtension,
     MatricID.interviewSchedule,
     MatricID.OfferRelease,
     MatricID.OfferAccepted,

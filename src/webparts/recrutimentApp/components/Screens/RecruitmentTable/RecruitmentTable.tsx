@@ -33,20 +33,22 @@ import { ModalPopup } from "../../Comman/ModalPopup/ModalPopup";
 import { useConfirmAssignment } from "./Hooks/Useconfirmassignment";
 import { useModalPopup } from "../../Comman/ModalPopup/useModalPopup";
 import Tabs from "../../Comman/Tabs/Tabs";
-import { IEvaluValidate } from "../../../services/Dashboard/IDashboard";
 import { userInfo } from "../../../utilities/hooks/RoleContext";
-import { DashboardServices } from "../../../services/ServiceExport";
 import { checkIsAlreadySubmitted } from "../Evalution/Evaluationservice/Evaluationformservice";
 import moment from "moment";
 import { StatusId } from "../../../utilities/Config";
-import { AnimatePresence } from "framer-motion";
-import CandidateReviewModal from "../ReviewScoreCard/Components/CandidateReviewModal";
-import { useReviewScoreCardContext } from "../ReviewScoreCard/State/ReviewScoreCardProvider";
 import Loading from "../../Comman/Loading/loading";
+import { useAdvertExtends } from "./AdvertReviewDrawer/Hooks/SaveHooks/useadvertextend";
 
 const AssignHRPopup = React.lazy(() =>
   import("./Components/AssignHRPopup/AssignHRPopup").then((module) => ({
     default: module.AssignHRPopup,
+  })),
+);
+
+const AdvertExtension = React.lazy(() =>
+  import("./Components/AdvertExtension/advertextension").then((module) => ({
+    default: module.AdvertExtension,
   })),
 );
 
@@ -99,6 +101,7 @@ export const RecruitmentTable: React.FC = () => {
   });
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isadvertPopupOpen, setAdvertPopupOpen] = useState(false);
   const handleClosePopup = useCallback(() => setIsPopupOpen(false), []);
 
   const handleCancel = useCallback(() => {
@@ -120,9 +123,17 @@ export const RecruitmentTable: React.FC = () => {
     handleConfirmAssignment,
     modalState: assignmentModalState,
     closeModal: assignmentCloseModal,
-    loading,
+    loading: assignmentLoading,
     Submitted,
   } = useConfirmAssignment(handleClosePopup, handleRefresh);
+
+  const {
+    handleAdvertExtend,
+    modalState: advertModalState,
+    closeModal: advertCloseModal,
+    loading: advertLoading,
+    Submitted: advertSubmitted,
+  } = useAdvertExtends(handleClosePopup, handleRefresh, setAdvertPopupOpen);
 
   const { modalState, showModal, closeModal } = useModalPopup();
 
@@ -239,6 +250,8 @@ export const RecruitmentTable: React.FC = () => {
 
   const processingRef = useRef(false);
 
+  const selectedAdvertID = useRef<number>(0);
+
   const handleAction = useCallback(
     async (item: any) => {
       if (processingRef.current === true) return;
@@ -253,6 +266,12 @@ export const RecruitmentTable: React.FC = () => {
           matricID === MatricID.EvalutionLM ||
           matricID === MatricID.EvalutionHOD ||
           matricID === MatricID.EvalutionEXCO;
+
+        if (matricID === MatricID.advertExtension) {
+          setAdvertPopupOpen(true);
+          selectedAdvertID.current = item.ItemID;
+          return;
+        }
 
         if (isEvaluationFlow) {
           const today = new Date();
@@ -371,6 +390,8 @@ export const RecruitmentTable: React.FC = () => {
     actionMode: activeTabs?.actionMode ?? "View",
     onAction: handleAction,
   });
+
+  let loading = assignmentLoading || advertLoading;
 
   return (
     <section className="recruitment-table">
@@ -493,6 +514,20 @@ export const RecruitmentTable: React.FC = () => {
         </Suspense>
       )}
 
+      {isadvertPopupOpen && (
+        <Suspense fallback={null}>
+          <AdvertExtension
+            RecruitmentID={selectedAdvertID.current}
+            onClose={() => setAdvertPopupOpen(false)}
+            useDataExtension={(payload) => ({
+              triggerExtension: () => {
+                void handleAdvertExtend(payload);
+              },
+            })}
+          />
+        </Suspense>
+      )}
+
       {drawerMeta.current.isOpen && (
         <AdvertReviewDrawer
           drawerOpen={drawerOpen}
@@ -514,6 +549,7 @@ export const RecruitmentTable: React.FC = () => {
 
       <ModalPopup {...assignmentModalState} onClose={assignmentCloseModal} />
       <ModalPopup {...modalState} onClose={closeModal} />
+      <ModalPopup {...advertModalState} onClose={advertCloseModal} />
     </section>
   );
 };

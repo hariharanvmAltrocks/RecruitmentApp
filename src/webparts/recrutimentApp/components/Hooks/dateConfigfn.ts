@@ -71,3 +71,6 @@ export const formatToDateTimeLocal = (dateString: string) => {
     date.getDate(),
   )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 };
+
+export const toDate = (value?: string): Date | undefined =>
+  value ? new Date(value) : undefined;

@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importStar(require("react"));
 var framer_motion_1 = require("framer-motion");
-var matric_1 = tslib_1.__importDefault(require("../../Comman/MatricBox/matric"));
 require("./Dashboard.scss");
 var useDashboardMetrics_1 = require("./Hooks/useDashboardMetrics");
 var usetrackerdata_1 = require("./Hooks/usetrackerdata");
@@ -13,7 +12,7 @@ var useUrgentTasks_1 = require("./Hooks/useUrgentTasks");
 var metricColumns_config_1 = require("./metricColumns.config");
 var react_router_1 = require("react-router");
 var UIStateContext_1 = require("../../RecrutimentApp/UIStateContext");
-var DashboardSkeleton_1 = require("./DashboardSkeleton");
+var matric_1 = tslib_1.__importDefault(require("../../Comman/MatricBox/matric"));
 var Dashboard = function (props) {
     var _a;
     var _b = (0, react_1.useState)(0), activeMetric = _b[0], setActiveMetric = _b[1];
@@ -71,19 +70,13 @@ var Dashboard = function (props) {
         visible: { opacity: 1, y: 0, transition: { duration: 0.25 } },
     };
     return (react_1.default.createElement(framer_motion_1.motion.div, { className: "dashboard", key: "dashboard", initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 10 }, transition: { duration: 0.3 } },
-        react_1.default.createElement("div", { className: "dashboard-header" },
-            react_1.default.createElement("button", { className: "refresh-btn", onClick: handleRefresh, disabled: loading },
-                react_1.default.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: loading ? "spin" : "" },
-                    react_1.default.createElement("path", { d: "M21 2v6h-6" }),
-                    react_1.default.createElement("path", { d: "M3 12a9 9 0 0 1 15-6.7L21 8" }),
-                    react_1.default.createElement("path", { d: "M3 22v-6h6" }),
-                    react_1.default.createElement("path", { d: "M21 12a9 9 0 0 1-15 6.7L3 16" })),
-                "Refresh")),
-        react_1.default.createElement(framer_motion_1.AnimatePresence, null, loading ? (react_1.default.createElement(DashboardSkeleton_1.DashboardSkeleton, { key: "dashboard-skeleton" })) : (react_1.default.createElement(framer_motion_1.motion.div, { key: "dashboard-content", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 } }, !hasMetrics ? (react_1.default.createElement("div", { className: "dashboard-empty" },
+        react_1.default.createElement(framer_motion_1.AnimatePresence, null, loading ? (
+        // <DashboardSkeleton key="dashboard-skeleton" />
+        react_1.default.createElement(react_1.default.Fragment, null)) : (react_1.default.createElement(framer_motion_1.motion.div, { key: "dashboard-content", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 } }, !hasMetrics ? (react_1.default.createElement("div", { className: "dashboard-empty" },
             react_1.default.createElement("div", { className: "dashboard-empty__title" }, "No dashboard metrics available"),
             react_1.default.createElement("div", { className: "dashboard-empty__subtitle" }, "Please check your permissions or try again later."))) : (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement(framer_motion_1.motion.div, { className: "metrics-grid", variants: metricsContainer, initial: "hidden", animate: "visible" }, martics.metrics.map(function (metric) { return (react_1.default.createElement(framer_motion_1.motion.div, { key: metric.id, variants: metricItem },
-                react_1.default.createElement(matric_1.default, { metric: metric, active: activeMetric === metric.id, onClick: function () { return onMetricChange(metric); } }))); })),
+            react_1.default.createElement(framer_motion_1.motion.div, { className: "metrics-grid", variants: metricsContainer, initial: "hidden", animate: "visible" },
+                react_1.default.createElement(matric_1.default, { metrics: martics.metrics, onCardClick: function (metric) { return onMetricChange(metric); }, loading: loading, handleRefresh: handleRefresh, active: activeMetric })),
             react_1.default.createElement("div", { className: "dashboard-layout" },
                 react_1.default.createElement("div", { className: "tracker-panel" },
                     react_1.default.createElement(Tracker_1.default, { rows: trackerData, selectedMetric: selectedMetric, activeMetric: activeMetric, onRowClick: function (row) { return onTrackerChange(row); } })),

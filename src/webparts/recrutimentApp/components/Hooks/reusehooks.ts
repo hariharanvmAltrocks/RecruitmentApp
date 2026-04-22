@@ -175,6 +175,10 @@ export const findMatricID = (
       return MatricID.MySubmissionHOD;
     }
     return MatricID.MySubmission;
+  } else if (TabName === TabNames.AssignAgencies) {
+    return MatricID.AssignAgencies;
+  } else if (TabName === TabNames.AdvertExtension) {
+    return MatricID.advertExtension;
   } else {
     switch (statusID) {
       case StatusId.ReadyforRecruitmentProcess:

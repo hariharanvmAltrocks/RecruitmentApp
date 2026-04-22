@@ -335,6 +335,32 @@ var BASE_METRICS = (_a = {},
         TabValue: "tab1",
         TabName: ConditionConfig_1.TabNames.LabourHire,
     },
+    _a[ConditionConfig_1.MatricID.advertExtension] = {
+        label: "Advert Extension",
+        status: "ON-GOING",
+        icon: lucide_react_1.Activity,
+        color: "#10b981",
+        bgColor: "#ecfdf5",
+        statusColor: "#ef4444",
+        statusBg: "#fee2e2",
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        TabValue: "tab4",
+        TabName: ConditionConfig_1.TabNames.AdvertExtension,
+    },
+    _a[ConditionConfig_1.MatricID.AssignAgencies] = {
+        label: "Pending Assign Agencies",
+        status: "ON-GOING",
+        icon: lucide_react_1.Activity,
+        color: "#10b981",
+        bgColor: "#ecfdf5",
+        statusColor: "#ef4444",
+        statusBg: "#fee2e2",
+        path: "/RecruitmentTable",
+        menuId: ConditionConfig_1.menuID.PreSelectionProcess,
+        TabValue: "tab2",
+        TabName: ConditionConfig_1.TabNames.AssignAgencies,
+    },
     _a);
 var buildCol = function (id, overrides) {
     if (overrides === void 0) { overrides = {}; }
@@ -361,6 +387,7 @@ var MatricColums = function (roles) {
             case Config_1.RoleID.RecruitmentHR:
                 roleColumns = [
                     buildCol(ConditionConfig_1.MatricID.JobAdvert, { showArrow: true }),
+                    buildCol(ConditionConfig_1.MatricID.AssignAgencies, { showArrow: true }),
                     buildCol(ConditionConfig_1.MatricID.ReviewProfileHR, {
                         showArrow: false,
                         externalApi: { workflowStatuses: [Config_1.workflowStatusApi.HRPending] },
@@ -417,6 +444,7 @@ var MatricColums = function (roles) {
                     buildCol(ConditionConfig_1.MatricID.AdvertReviewHOD, { showArrow: true }),
                     buildCol(ConditionConfig_1.MatricID.ReviewScoreCard, { showArrow: true }),
                     buildCol(ConditionConfig_1.MatricID.EvalutionHOD, { showArrow: true }),
+                    buildCol(ConditionConfig_1.MatricID.advertExtension, { showArrow: true }),
                     buildCol(ConditionConfig_1.MatricID.interviewSchedule, { showArrow: false }),
                     // buildCol(MatricID.interviewTracker, { showArrow: false }),
                     buildCol(ConditionConfig_1.MatricID.OfferRelease, { showArrow: false }),
@@ -743,6 +771,16 @@ var MetricQueryConfig = function (EmailId) {
             columnName: "RecruitmentHR",
             emailId: EmailId,
         })),
+        _a[ConditionConfig_1.MatricID.AssignAgencies] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+            status: [Config_1.StatusId.PendingUploadONEM, Config_1.StatusId.RecruitmentInProgress],
+            columnName: "RecruitmentHR",
+            emailId: EmailId,
+        })),
+        _a[ConditionConfig_1.MatricID.advertExtension] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+            status: [Config_1.StatusId.RecruitmentInProgress],
+            columnName: "HOD",
+            emailId: EmailId,
+        })),
         _a);
 };
 exports.MetricQueryConfig = MetricQueryConfig;
@@ -760,6 +798,7 @@ var RoleMetricFilters = (_b = {},
     ],
     _b[Config_1.RoleID.RecruitmentHR] = [
         ConditionConfig_1.MatricID.JobAdvert,
+        ConditionConfig_1.MatricID.AssignAgencies,
         ConditionConfig_1.MatricID.ReviewProfileHR,
         ConditionConfig_1.MatricID.AssignAgencies,
         ConditionConfig_1.MatricID.AssignInterviewPanel,
@@ -790,6 +829,7 @@ var RoleMetricFilters = (_b = {},
         ConditionConfig_1.MatricID.AdvertReviewHOD,
         ConditionConfig_1.MatricID.ReviewScoreCard,
         ConditionConfig_1.MatricID.EvalutionHOD,
+        ConditionConfig_1.MatricID.advertExtension,
         ConditionConfig_1.MatricID.interviewSchedule,
         ConditionConfig_1.MatricID.OfferRelease,
         ConditionConfig_1.MatricID.OfferAccepted,
