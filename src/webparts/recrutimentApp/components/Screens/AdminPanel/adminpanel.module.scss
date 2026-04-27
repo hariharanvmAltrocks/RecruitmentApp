@@ -1,0 +1,401 @@
+// ─── Variables ────────────────────────────────────────────────────────────────
+$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+$primary:        #7c3aed;
+$primary-light:  #ede9fe;
+$primary-shadow: rgba(124, 58, 237, 0.2);
+
+$text-primary:   #0f172a;
+$text-secondary: #475569;
+$text-muted:     #94a3b8;
+$text-subtle:    #cbd5e1;
+
+$white:          #ffffff;
+$bg-page:        #f8fafc;
+$bg-surface:     #f1f5f9;
+$bg-hover:       #f8fafc;
+
+$border-light:   #e2e8f0;
+$border-focus:   #7c3aed;
+
+$success:        #10b981;
+$success-light:  #d1fae5;
+$success-shadow: rgba(16, 185, 129, 0.2);
+
+$danger:         #ef4444;
+$danger-light:   #fee2e2;
+
+$radius-sm:      8px;
+$radius-md:      12px;
+$radius-lg:      20px;
+$radius-xl:      28px;
+$radius-full:    9999px;
+
+$shadow-sm:      0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+$shadow-md:      0 4px 16px rgba(0,0,0,0.08);
+$shadow-lg:      0 12px 40px rgba(0,0,0,0.10);
+$shadow-primary: 0 8px 24px $primary-shadow;
+
+$transition:     all 0.2s ease;
+$space-xs:       4px;
+$space-sm:       8px;
+$space-md:       16px;
+$space-lg:       24px;
+$space-xl:       32px;
+
+// ─── Page Layout ─────────────────────────────────────────────────────────────
+.page {
+  font-family: $font-family;
+  color: $text-primary;
+  min-height: 100vh;
+  background: $bg-page;
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+  padding: $space-xl;
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: $space-md;
+}
+
+.headerText {
+  h2 {
+    font-size: 24px;
+    font-weight: 900;
+    color: $text-primary;
+    letter-spacing: -0.02em;
+    margin: 0 0 4px;
+  }
+
+  p {
+    font-size: 11px;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin: 0;
+  }
+}
+
+.newUserBtn {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: 12px 24px;
+  background: $primary;
+  color: $white;
+  border: none;
+  border-radius: $radius-xl;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  box-shadow: $shadow-primary;
+  transition: $transition;
+
+  &:hover {
+    transform: scale(1.04);
+    box-shadow: 0 12px 28px $primary-shadow;
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+// ─── Table Card ───────────────────────────────────────────────────────────────
+.tableCard {
+  background: $white;
+  border-radius: $radius-xl;
+  border: 1px solid $border-light;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+}
+
+// ─── Table Toolbar ────────────────────────────────────────────────────────────
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-lg $space-xl;
+  border-bottom: 1px solid $bg-surface;
+  background: $white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-wrap: wrap;
+  gap: $space-md;
+}
+
+.toolbarLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toolbarDot {
+  width: 8px;
+  height: 8px;
+  border-radius: $radius-full;
+  background: $primary;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+.toolbarTitle {
+  font-size: 11px;
+  font-weight: 900;
+  color: $text-primary;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.searchWrap {
+  position: relative;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $text-muted;
+  pointer-events: none;
+  width: 14px;
+  height: 14px;
+}
+
+.searchInput {
+  padding: 10px 16px 10px 38px;
+  background: $bg-surface;
+  border: 1px solid transparent;
+  border-radius: $radius-lg;
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-secondary;
+  width: 260px;
+  outline: none;
+  transition: $transition;
+  font-family: $font-family;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  &:hover {
+    background: $bg-hover;
+    border-color: $border-light;
+  }
+
+  &:focus {
+    background: $white;
+    border-color: $border-focus;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+  }
+}
+
+// ─── Table ────────────────────────────────────────────────────────────────────
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.thead {
+  background: $bg-page;
+}
+
+.th {
+  padding: 14px $space-xl;
+  font-size: 9px;
+  font-weight: 900;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  border-bottom: 1px solid $border-light;
+  white-space: nowrap;
+
+  &:last-child {
+    text-align: right;
+  }
+}
+
+.tr {
+  border-bottom: 1px solid $bg-surface;
+  transition: background 0.15s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: $bg-page;
+
+    .rowActions {
+      opacity: 1;
+    }
+  }
+}
+
+.td {
+  padding: 18px $space-xl;
+  vertical-align: middle;
+
+  &:last-child {
+    text-align: right;
+  }
+}
+
+.userCodeBadge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: $bg-surface;
+  border: 1px solid $border-light;
+  border-radius: $radius-sm;
+  font-size: 10px;
+  font-weight: 900;
+  color: $text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.nameText {
+  font-size: 13px;
+  font-weight: 800;
+  color: $text-primary;
+  letter-spacing: -0.01em;
+}
+
+.emailText {
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-muted;
+}
+
+// ─── Row Actions ──────────────────────────────────────────────────────────────
+.rowActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $space-sm;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid transparent;
+  border-radius: $radius-md;
+  background: transparent;
+  cursor: pointer;
+  transition: $transition;
+  color: $text-muted;
+
+  &:hover {
+    background: $white;
+    border-color: $border-light;
+    box-shadow: $shadow-sm;
+  }
+
+  &--edit:hover {
+    color: $primary;
+    border-color: $primary-light;
+    background: $primary-light;
+  }
+
+  &--delete:hover {
+    color: $danger;
+    border-color: $danger-light;
+    background: $danger-light;
+  }
+}
+
+// ─── Empty State ──────────────────────────────────────────────────────────────
+.emptyState {
+  padding: 60px $space-xl;
+  text-align: center;
+  color: $text-muted;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+// ─── Pagination ───────────────────────────────────────────────────────────────
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px $space-xl;
+  border-top: 1px solid $border-light;
+  background: rgba($bg-page, 0.4);
+  flex-wrap: wrap;
+  gap: $space-sm;
+}
+
+.paginationInfo {
+  font-size: 12px;
+  font-weight: 500;
+  color: $text-muted;
+
+  strong {
+    font-weight: 800;
+    color: $text-primary;
+  }
+}
+
+.paginationBtns {
+  display: flex;
+  align-items: center;
+  gap: $space_sm;
+}
+
+.pageBtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid $border-light;
+  border-radius: $radius-sm;
+  background: $white;
+  font-size: 12px;
+  font-weight: 700;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: $transition;
+
+  &:hover:not(:disabled) {
+    border-color: $primary;
+    color: $primary;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &--active {
+    background: $primary;
+    border-color: $primary;
+    color: $white;
+    box-shadow: 0 4px 12px $primary-shadow;
+  }
+}

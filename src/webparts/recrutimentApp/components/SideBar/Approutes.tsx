@@ -9,6 +9,7 @@ import RecruitmentProcess from "../Screens/SelectionProcess/RecruitmentProcess";
 import ReviewScoreCard from "../Screens/ReviewScoreCard/ReviewScoreCard";
 import { OfferTable } from "../Screens/OfferRelease/OfferTable";
 import EvalutionL2 from "../Screens/Evalution/EvalutionL2/EvalutionL2";
+import AdminPanel from "../Screens/AdminPanel/adminpanel";
 interface AppRoutesProps {
   props: any;
   activeMenuId?: number;
@@ -34,6 +35,8 @@ const AppRoutes: React.FC<AppRoutesProps> = ({ props, activeMenuId }) => (
       />
       <Route path="/OfferTable" element={<OfferTable {...props} />} />
       <Route path="/EvalutionL2" element={<EvalutionL2 {...props} />} />
+
+      <Route path="/AdminPanelDashboard" element={<AdminPanel {...props} />} />
     </Routes>
   )
 );

@@ -12,6 +12,7 @@ var RecruitmentProcess_1 = tslib_1.__importDefault(require("../Screens/Selection
 var ReviewScoreCard_1 = tslib_1.__importDefault(require("../Screens/ReviewScoreCard/ReviewScoreCard"));
 var OfferTable_1 = require("../Screens/OfferRelease/OfferTable");
 var EvalutionL2_1 = tslib_1.__importDefault(require("../Screens/Evalution/EvalutionL2/EvalutionL2"));
+var adminpanel_1 = tslib_1.__importDefault(require("../Screens/AdminPanel/adminpanel"));
 var AppRoutes = function (_a) {
     var props = _a.props, activeMenuId = _a.activeMenuId;
     return (console.log("Rendering AppRoutes with activeMenuId:", activeMenuId),
@@ -25,7 +26,8 @@ var AppRoutes = function (_a) {
             react_1.default.createElement(react_router_dom_1.Route, { path: "/ReviewScoreCard", element: react_1.default.createElement(ReviewScoreCard_1.default, tslib_1.__assign({}, props)) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/RecurimentProcess", element: react_1.default.createElement(RecruitmentProcess_1.default, tslib_1.__assign({}, props)) }),
             react_1.default.createElement(react_router_dom_1.Route, { path: "/OfferTable", element: react_1.default.createElement(OfferTable_1.OfferTable, tslib_1.__assign({}, props)) }),
-            react_1.default.createElement(react_router_dom_1.Route, { path: "/EvalutionL2", element: react_1.default.createElement(EvalutionL2_1.default, tslib_1.__assign({}, props)) }))));
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/EvalutionL2", element: react_1.default.createElement(EvalutionL2_1.default, tslib_1.__assign({}, props)) }),
+            react_1.default.createElement(react_router_dom_1.Route, { path: "/AdminPanelDashboard", element: react_1.default.createElement(adminpanel_1.default, tslib_1.__assign({}, props)) }))));
 };
 exports.default = AppRoutes;
 //# sourceMappingURL=Approutes.js.map

@@ -1,3 +1,5 @@
+import AdminPanelService from "./AdminPanel/AdminPanelService";
+import { IAdminPanelService } from "./AdminPanel/IAdminpanelService";
 import CandidateService from "./CandidateTable/CandidateService";
 import { ICandidateService } from "./CandidateTable/ICandidateService";
 import CareerPortalService from "./CareerPortal/CareerPortalService";
@@ -36,3 +38,5 @@ export const MeetingSchedules: IMeetingShedule = new MeetingSchedule();
 export const OfferServices: IOfferService = new OfferService();
 
 export const EvaluationserviceL2: IEvalutionL2 = new EvalutionL2Service();
+
+export const AdminPanelServices: IAdminPanelService = new AdminPanelService();

@@ -74,3 +74,7 @@ export const formatToDateTimeLocal = (dateString: string) => {
 
 export const toDate = (value?: string): Date | undefined =>
   value ? new Date(value) : undefined;
+
+export const toUTC = (dateStr: any) => {
+  return new Date(dateStr).toISOString();
+};

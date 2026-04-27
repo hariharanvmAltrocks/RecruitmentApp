@@ -94,6 +94,9 @@ exports.menuID = {
     PostSelectionProcess: 31,
     ReviewProfile: 32,
     RecruitmentProcess: 28,
+    AdminPanel: 35,
+    Agent: 39,
+    LabourHire: 40,
 };
 exports.Nationality = {
     Nationals: "Nationals (Congolese)",

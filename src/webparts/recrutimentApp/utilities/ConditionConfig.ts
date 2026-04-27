@@ -1,3 +1,5 @@
+import AdminPanel from "../components/Screens/AdminPanel/adminpanel";
+
 export const MatricID = {
   AssignHr: 1,
   UploadONEM: 2,
@@ -103,6 +105,9 @@ export const menuID = {
   PostSelectionProcess: 31,
   ReviewProfile: 32,
   RecruitmentProcess: 28,
+  AdminPanel: 35,
+  Agent: 39,
+  LabourHire: 40,
 };
 
 export const Nationality = {

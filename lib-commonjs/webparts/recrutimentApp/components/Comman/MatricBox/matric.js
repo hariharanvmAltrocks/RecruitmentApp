@@ -37,9 +37,12 @@ var OversightStat = function (_a) {
 };
 // ─── MetricDashboard (main export) ───────────────────────────────────────────
 var MetricDashboard = function (_a) {
+    var _b;
     var metrics = _a.metrics, onCardClick = _a.onCardClick, loading = _a.loading, handleRefresh = _a.handleRefresh, active = _a.active;
-    var userName = (0, RoleContext_1.userInfo)().userName;
-    var _b = (0, react_1.useState)(false), oversightOpen = _b[0], setOversightOpen = _b[1];
+    var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
+    var user = (_b = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.userDetails) === null || _b === void 0 ? void 0 : _b[0];
+    var UserName = [user === null || user === void 0 ? void 0 : user.FirstName, user === null || user === void 0 ? void 0 : user.MiddleName, user === null || user === void 0 ? void 0 : user.LastName];
+    var _c = (0, react_1.useState)(false), oversightOpen = _c[0], setOversightOpen = _c[1];
     // const [activeMetricId, setActiveMetricId] = useState<number | string | null>(
     //   () => {
     //     const first = metrics.find((m) => m.showArrow);
@@ -59,7 +62,7 @@ var MetricDashboard = function (_a) {
                 react_1.default.createElement("h1", { className: "metric-dashboard__welcome-title" },
                     "Welcome,",
                     " ",
-                    react_1.default.createElement("span", { className: "metric-dashboard__welcome-name" }, userName)),
+                    react_1.default.createElement("span", { className: "metric-dashboard__welcome-name" }, UserName)),
                 urgentCount > 0 && (react_1.default.createElement("p", { className: "metric-dashboard__urgent" },
                     "YOU HAVE",
                     " ",

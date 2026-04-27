@@ -90,7 +90,9 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
   handleRefresh,
   active,
 }) => {
-  const { userName } = userInfo();
+  const { ADGroupData } = userInfo();
+  const user = ADGroupData?.userDetails?.[0];
+  const UserName = [user?.FirstName, user?.MiddleName, user?.LastName];
   const [oversightOpen, setOversightOpen] = useState(false);
   // const [activeMetricId, setActiveMetricId] = useState<number | string | null>(
   //   () => {
@@ -115,7 +117,7 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
         <div className="metric-dashboard__welcome">
           <h1 className="metric-dashboard__welcome-title">
             Welcome,{" "}
-            <span className="metric-dashboard__welcome-name">{userName}</span>
+            <span className="metric-dashboard__welcome-name">{UserName}</span>
           </h1>
           {urgentCount > 0 && (
             <p className="metric-dashboard__urgent">
