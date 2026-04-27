@@ -164,16 +164,16 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
       <div className={styles.logoSection}>
         <div className={styles.logoIcon}>
           <img
-            src={require("../../assets/komoa-logo.png")}
+            src={require("../../assets/getsitelogo.png")}
             alt="Kamoa Logo"
             className={styles.logoImg}
           />
         </div>
         {/* Two-line logo text: bold title + muted subtitle */}
-        <div className={styles.logoTextWrap}>
+        {/* <div className={styles.logoTextWrap}>
           <div className={styles.logoTitle}>Kamoa Copper</div>
           <div className={styles.logoSubtitle}>SA</div>
-        </div>
+        </div> */}
       </div>
 
       {/* ── Navigation ── */}

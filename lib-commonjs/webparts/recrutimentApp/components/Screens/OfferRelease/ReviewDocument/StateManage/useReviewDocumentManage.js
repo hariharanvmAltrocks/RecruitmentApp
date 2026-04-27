@@ -44,7 +44,10 @@ var useStateOfferRelease = function () {
     var _m = (0, react_1.useState)(DEFAULT_VALIDATION), validationError = _m[0], setValidationError = _m[1];
     // ─── Consent handlers ─────────────────────────────────────────────────────
     var handleConsentVerification = (0, react_1.useCallback)(function (value) { return setConsentVerification(value); }, []);
-    var handleConsentFile = (0, react_1.useCallback)(function (value) { return setConsentFile(value); }, []);
+    var handleConsentFile = (0, react_1.useCallback)(function (value) {
+        setConsentFile(value);
+        setValidationError(function (prev) { return (tslib_1.__assign(tslib_1.__assign({}, prev), { showConsentErrors: false })); });
+    }, []);
     var handleConsentErrors = (0, react_1.useCallback)(function (value) { return setShowConsentErrors(value); }, []);
     // ─── Comments & acknowledgement handlers ──────────────────────────────────
     var onCommentsChange = (0, react_1.useCallback)(function (value) {

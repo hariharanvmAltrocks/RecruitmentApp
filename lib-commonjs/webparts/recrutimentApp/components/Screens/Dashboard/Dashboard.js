@@ -12,6 +12,7 @@ var useUrgentTasks_1 = require("./Hooks/useUrgentTasks");
 var metricColumns_config_1 = require("./metricColumns.config");
 var react_router_1 = require("react-router");
 var UIStateContext_1 = require("../../RecrutimentApp/UIStateContext");
+var DashboardSkeleton_1 = require("./DashboardSkeleton");
 var matric_1 = tslib_1.__importDefault(require("../../Comman/MatricBox/matric"));
 var Dashboard = function (props) {
     var _a;
@@ -70,9 +71,7 @@ var Dashboard = function (props) {
         visible: { opacity: 1, y: 0, transition: { duration: 0.25 } },
     };
     return (react_1.default.createElement(framer_motion_1.motion.div, { className: "dashboard", key: "dashboard", initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 10 }, transition: { duration: 0.3 } },
-        react_1.default.createElement(framer_motion_1.AnimatePresence, null, loading ? (
-        // <DashboardSkeleton key="dashboard-skeleton" />
-        react_1.default.createElement(react_1.default.Fragment, null)) : (react_1.default.createElement(framer_motion_1.motion.div, { key: "dashboard-content", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 } }, !hasMetrics ? (react_1.default.createElement("div", { className: "dashboard-empty" },
+        react_1.default.createElement(framer_motion_1.AnimatePresence, null, loading ? (react_1.default.createElement(DashboardSkeleton_1.DashboardSkeleton, { key: "dashboard-skeleton" })) : (react_1.default.createElement(framer_motion_1.motion.div, { key: "dashboard-content", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 } }, !hasMetrics ? (react_1.default.createElement("div", { className: "dashboard-empty" },
             react_1.default.createElement("div", { className: "dashboard-empty__title" }, "No dashboard metrics available"),
             react_1.default.createElement("div", { className: "dashboard-empty__subtitle" }, "Please check your permissions or try again later."))) : (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(framer_motion_1.motion.div, { className: "metrics-grid", variants: metricsContainer, initial: "hidden", animate: "visible" },

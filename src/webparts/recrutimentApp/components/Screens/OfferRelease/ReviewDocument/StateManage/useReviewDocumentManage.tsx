@@ -125,10 +125,13 @@ export const useStateOfferRelease = (): DrawerStateManager => {
     [],
   );
 
-  const handleConsentFile = useCallback(
-    (value: ConsentFormFile | null) => setConsentFile(value),
-    [],
-  );
+  const handleConsentFile = useCallback((value: ConsentFormFile | null) => {
+    setConsentFile(value);
+    setValidationError((prev: ValidationError) => ({
+      ...prev,
+      showConsentErrors: false,
+    }));
+  }, []);
 
   const handleConsentErrors = useCallback(
     (value: boolean) => setShowConsentErrors(value),

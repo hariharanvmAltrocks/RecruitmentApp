@@ -219,9 +219,7 @@ var CandidateTable = function (props) {
             render: function (item) {
                 var _a = getActionConfig(item), label = _a.label, icon = _a.icon;
                 return (react_1.default.createElement(framer_motion_1.motion.button, { type: "button", className: "candidate-table__review", whileHover: { scale: 1.03 }, whileTap: { scale: 0.97 }, onClick: function () { return handleAction(item); } },
-                    react_1.default.createElement("span", { style: { display: "flex", alignItems: "center", gap: 6 } },
-                        icon,
-                        label)));
+                    react_1.default.createElement("span", { style: { display: "flex", alignItems: "center", gap: 6 } }, label)));
             },
         },
     ]; }, []);

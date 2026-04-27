@@ -49,7 +49,6 @@ import {
   cardVariants,
   getViewerUrl,
   InfoItem,
-  InterviewScheduleInput,
   QuestionCard,
   SectionHeader,
   sectionVariants,
@@ -57,6 +56,10 @@ import {
 import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
 import { CandidateTable } from "../../../../services/ServiceExport";
 import Loading from "../../../Comman/Loading/loading";
+import {
+  InterviewScheduleInput,
+  ScheduleForm,
+} from "./InterviewSchedule/InterviewScheduleInput";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -98,10 +101,11 @@ const EMPTY_COI: ConflictOfInterestForm = {
   comments: "",
 };
 
-const EMPTY_SCHEDULE: InterviewScheduleForm = {
+const EMPTY_SCHEDULE: ScheduleForm = {
   panelMembers: [],
   startDate: "",
-  endDate: "",
+  startTime: "",
+  endTime: "",
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -280,8 +284,8 @@ export const ShowCandidateDetailsPopup: React.FC<
   const [HRReview, setHRReview] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [coi, setCoi] = useState<ConflictOfInterestForm>(EMPTY_COI);
-  const [level1, setLevel1] = useState<InterviewScheduleForm>(EMPTY_SCHEDULE);
-  const [level2, setLevel2] = useState<InterviewScheduleForm>(EMPTY_SCHEDULE);
+  const [level1, setLevel1] = useState<ScheduleForm>(EMPTY_SCHEDULE);
+  const [level2, setLevel2] = useState<ScheduleForm>(EMPTY_SCHEDULE);
 
   // ── Memoised panel values ──────────────────────────────────────────────────
 
@@ -333,15 +337,25 @@ export const ShowCandidateDetailsPopup: React.FC<
 
     if (panelValue && (PanelMember || ReviewHRFlag)) {
       setConsultOptions(panelValue.consultOption);
+      const start = data?.InterviewStartDate
+        ? new Date(data.InterviewStartDate)
+        : null;
+
+      const end = data?.InterviewEndDate
+        ? new Date(data.InterviewEndDate)
+        : null;
       setLevel1({
         panelMembers: panelValue.level1Members,
-        startDate: data?.InterviewStartDate ?? "",
-        endDate: data?.InterviewEndDate ?? "",
+        startDate: start ? start.toISOString().split("T")[0] : "",
+        startTime: start ? start.toTimeString().slice(0, 5) : "",
+
+        endTime: end ? end.toTimeString().slice(0, 5) : "",
       });
       setLevel2({
         panelMembers: panelValue.level2Members,
         startDate: "",
-        endDate: "",
+        startTime: "",
+        endTime: "",
       });
     }
 
@@ -398,13 +412,19 @@ export const ShowCandidateDetailsPopup: React.FC<
     if (PanelMember) {
       if (
         statusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview &&
-        (level1.panelMembers.length < 3 || !level1.startDate || !level1.endDate)
+        (level1.panelMembers.length < 3 ||
+          !level1.startDate ||
+          !level1.startTime ||
+          !level1.endTime)
       )
         return false;
 
       if (
         isLevel2Panel &&
-        (level2.panelMembers.length < 3 || !level2.startDate || !level2.endDate)
+        (level2.panelMembers.length < 3 ||
+          !level2.startDate ||
+          !level2.startTime ||
+          !level2.endTime)
       )
         return false;
     }
@@ -456,20 +476,17 @@ export const ShowCandidateDetailsPopup: React.FC<
     if (fileInputRef.current) fileInputRef.current.value = "";
   }, []);
 
-  const handlePanelToggle = useCallback(
-    (
-      setter: React.Dispatch<React.SetStateAction<InterviewScheduleForm>>,
-      val: string,
-    ) => {
-      setter((prev) => ({
-        ...prev,
-        panelMembers: prev.panelMembers.includes(val)
-          ? prev.panelMembers.filter((v) => v !== val)
-          : [...prev.panelMembers, val],
-      }));
-    },
-    [],
-  );
+  const handlePanelToggle = (
+    setter: React.Dispatch<React.SetStateAction<ScheduleForm>>,
+    val: string,
+  ) => {
+    setter((p) => ({
+      ...p,
+      panelMembers: p.panelMembers.includes(val)
+        ? p.panelMembers.filter((v) => v !== val)
+        : [...p.panelMembers, val],
+    }));
+  };
 
   const handleSubmit = useCallback(async () => {
     if (!canSubmit) {

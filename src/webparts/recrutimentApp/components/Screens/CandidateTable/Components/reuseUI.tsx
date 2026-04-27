@@ -99,172 +99,172 @@ export const QuestionCard: React.FC<{
   );
 };
 
-interface InterviewScheduleInputProps {
-  form: InterviewScheduleForm;
-  onChange: React.Dispatch<React.SetStateAction<InterviewScheduleForm>>;
-  panelOptions: { value: string; label: string }[];
-  onToggleMember: (val: string) => void;
-  minPanelCount?: number;
-  Disable: boolean;
-}
+// interface InterviewScheduleInputProps {
+//   form: InterviewScheduleForm;
+//   onChange: React.Dispatch<React.SetStateAction<InterviewScheduleForm>>;
+//   panelOptions: { value: string; label: string }[];
+//   onToggleMember: (val: string) => void;
+//   minPanelCount?: number;
+//   Disable: boolean;
+// }
 
-const toDateTimeLocal = (date: Date) => {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-};
+// const toDateTimeLocal = (date: Date) => {
+//   const pad = (n: number) => String(n).padStart(2, "0");
+//   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+// };
 
-export const InterviewScheduleInput: React.FC<InterviewScheduleInputProps> = ({
-  form,
-  onChange,
-  panelOptions,
-  onToggleMember,
-  minPanelCount = 3,
-  Disable,
-}) => {
-  const needsMore = form.panelMembers.length < minPanelCount;
+// export const InterviewScheduleInput: React.FC<InterviewScheduleInputProps> = ({
+//   form,
+//   onChange,
+//   panelOptions,
+//   onToggleMember,
+//   minPanelCount = 3,
+//   Disable,
+// }) => {
+//   const needsMore = form.panelMembers.length < minPanelCount;
 
-  // ✅ Helpers
-  const formatLocalDateTime = (date: Date) => {
-    const pad = (n: number) => n.toString().padStart(2, "0");
+//   // ✅ Helpers
+//   const formatLocalDateTime = (date: Date) => {
+//     const pad = (n: number) => n.toString().padStart(2, "0");
 
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
-      date.getDate(),
-    )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-  };
+//     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+//       date.getDate(),
+//     )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+//   };
 
-  // ✅ Today & max range
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+//   // ✅ Today & max range
+//   const today = new Date();
+//   today.setHours(0, 0, 0, 0);
 
-  const maxDay = new Date(today);
-  maxDay.setDate(today.getDate() + 5);
-  maxDay.setHours(23, 59, 0, 0);
+//   const maxDay = new Date(today);
+//   maxDay.setDate(today.getDate() + 5);
+//   maxDay.setHours(23, 59, 0, 0);
 
-  const WORK_START = "09:00";
-  const WORK_END = "18:00";
+//   const WORK_START = "09:00";
+//   const WORK_END = "18:00";
 
-  const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newStart = e.target.value;
-    if (!newStart) return;
+//   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const newStart = e.target.value;
+//     if (!newStart) return;
 
-    const startDateObj = new Date(newStart);
+//     const startDateObj = new Date(newStart);
 
-    onChange((p) => {
-      let newEndDate = p.endDate;
+//     onChange((p) => {
+//       let newEndDate = p.endDate;
 
-      const isSameDay =
-        p.endDate && p.endDate.split("T")[0] === newStart.split("T")[0];
+//       const isSameDay =
+//         p.endDate && p.endDate.split("T")[0] === newStart.split("T")[0];
 
-      const isInvalid =
-        !p.endDate || new Date(p.endDate) <= startDateObj || !isSameDay;
+//       const isInvalid =
+//         !p.endDate || new Date(p.endDate) <= startDateObj || !isSameDay;
 
-      if (isInvalid) {
-        const endDateObj = new Date(startDateObj.getTime() + 30 * 60000);
-        newEndDate = formatLocalDateTime(endDateObj);
-      }
+//       if (isInvalid) {
+//         const endDateObj = new Date(startDateObj.getTime() + 30 * 60000);
+//         newEndDate = formatLocalDateTime(endDateObj);
+//       }
 
-      return {
-        ...p,
-        startDate: newStart,
-        endDate: newEndDate,
-      };
-    });
-  };
+//       return {
+//         ...p,
+//         startDate: newStart,
+//         endDate: newEndDate,
+//       };
+//     });
+//   };
 
-  // ✅ Same-day restriction for End Date
-  const endDateMin = form.startDate
-    ? `${form.startDate.split("T")[0]}T${WORK_START}`
-    : "";
+//   // ✅ Same-day restriction for End Date
+//   const endDateMin = form.startDate
+//     ? `${form.startDate.split("T")[0]}T${WORK_START}`
+//     : "";
 
-  const endDateMax = form.startDate
-    ? `${form.startDate.split("T")[0]}T${WORK_END}`
-    : "";
+//   const endDateMax = form.startDate
+//     ? `${form.startDate.split("T")[0]}T${WORK_END}`
+//     : "";
 
-  return (
-    <div className={styles.scheduleCard}>
-      {/* ✅ Panel Members */}
-      <div className={styles.panelMembersWrap}>
-        <label className={styles.fieldLabel}>
-          Interview panel members{" "}
-          <span className={styles.fieldRequired}>*</span>
-        </label>
+//   return (
+//     <div className={styles.scheduleCard}>
+//       {/* ✅ Panel Members */}
+//       <div className={styles.panelMembersWrap}>
+//         <label className={styles.fieldLabel}>
+//           Interview panel members{" "}
+//           <span className={styles.fieldRequired}>*</span>
+//         </label>
 
-        <div className={styles.panelTagsWrap}>
-          {panelOptions.map((opt) => {
-            const selected = form.panelMembers.includes(opt.value);
+//         <div className={styles.panelTagsWrap}>
+//           {panelOptions.map((opt) => {
+//             const selected = form.panelMembers.includes(opt.value);
 
-            return (
-              <button
-                key={opt.value}
-                type="button"
-                className={`${styles.panelTag} ${
-                  selected ? styles.panelTagSelected : styles.panelTagUnselected
-                }`}
-                onClick={() => onToggleMember(opt.value)}
-                disabled={Disable}
-              >
-                {selected && (
-                  <CheckCircle size={16} className={styles.panelTagIcon} />
-                )}
-                {opt.label}
-              </button>
-            );
-          })}
-        </div>
+//             return (
+//               <button
+//                 key={opt.value}
+//                 type="button"
+//                 className={`${styles.panelTag} ${
+//                   selected ? styles.panelTagSelected : styles.panelTagUnselected
+//                 }`}
+//                 onClick={() => onToggleMember(opt.value)}
+//                 disabled={Disable}
+//               >
+//                 {selected && (
+//                   <CheckCircle size={16} className={styles.panelTagIcon} />
+//                 )}
+//                 {opt.label}
+//               </button>
+//             );
+//           })}
+//         </div>
 
-        {needsMore && (
-          <span className={styles.panelWarning}>
-            Please select at least {minPanelCount} panel members •{" "}
-            {form.panelMembers.length} selected
-          </span>
-        )}
-      </div>
+//         {needsMore && (
+//           <span className={styles.panelWarning}>
+//             Please select at least {minPanelCount} panel members •{" "}
+//             {form.panelMembers.length} selected
+//           </span>
+//         )}
+//       </div>
 
-      <div className={styles.dateRow}>
-        <div className={styles.dateField}>
-          <label className={styles.fieldLabel}>
-            Start date & time <span className={styles.fieldRequired}>*</span>
-          </label>
+//       <div className={styles.dateRow}>
+//         <div className={styles.dateField}>
+//           <label className={styles.fieldLabel}>
+//             Start date & time <span className={styles.fieldRequired}>*</span>
+//           </label>
 
-          <input
-            type="datetime-local"
-            placeholder=" dd-mm-yyyy hh:mm"
-            className={styles.dateInput}
-            value={form.startDate}
-            min={`${formatLocalDateTime(maxDay).split("T")[0]}T${WORK_START}`}
-            max={`T${WORK_END}`}
-            step={1800} // ✅ 30 mins
-            onChange={handleStartDateChange}
-            disabled={Disable}
-          />
-        </div>
+//           <input
+//             type="datetime-local"
+//             placeholder=" dd-mm-yyyy hh:mm"
+//             className={styles.dateInput}
+//             value={form.startDate}
+//             min={`${formatLocalDateTime(maxDay).split("T")[0]}T${WORK_START}`}
+//             max={`T${WORK_END}`}
+//             step={1800} // ✅ 30 mins
+//             onChange={handleStartDateChange}
+//             disabled={Disable}
+//           />
+//         </div>
 
-        <div className={styles.dateField}>
-          <label className={styles.fieldLabel}>
-            End date & time <span className={styles.fieldRequired}>*</span>
-          </label>
+//         <div className={styles.dateField}>
+//           <label className={styles.fieldLabel}>
+//             End date & time <span className={styles.fieldRequired}>*</span>
+//           </label>
 
-          <input
-            type="datetime-local"
-            placeholder="dd-mm-yyyy hh:mm"
-            className={styles.dateInput}
-            value={form.endDate}
-            min={endDateMin}
-            max={endDateMax}
-            step={1800}
-            disabled={!form.startDate || Disable}
-            onChange={(e) =>
-              onChange((p) => ({
-                ...p,
-                endDate: e.target.value,
-              }))
-            }
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
+//           <input
+//             type="datetime-local"
+//             placeholder="dd-mm-yyyy hh:mm"
+//             className={styles.dateInput}
+//             value={form.endDate}
+//             min={endDateMin}
+//             max={endDateMax}
+//             step={1800}
+//             disabled={!form.startDate || Disable}
+//             onChange={(e) =>
+//               onChange((p) => ({
+//                 ...p,
+//                 endDate: e.target.value,
+//               }))
+//             }
+//           />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 
 export const SP_ORIGIN =
   (window as any).__SP_ORIGIN__ ??

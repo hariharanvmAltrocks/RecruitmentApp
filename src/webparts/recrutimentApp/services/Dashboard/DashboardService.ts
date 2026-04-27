@@ -404,7 +404,6 @@ export default class DashboardService implements IDashboard {
       if (!res.length) {
         return { data: [], status: 200, message: "No records found" };
       }
-      let candidateCount: number = 0;
 
       const GridResult: DashboardData[] = await Promise.all(
         res.map(async (item: any, index: number) => {

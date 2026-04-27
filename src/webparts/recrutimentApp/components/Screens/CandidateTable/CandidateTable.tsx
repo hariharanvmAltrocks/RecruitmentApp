@@ -324,7 +324,7 @@ export const CandidateTable: React.FC = (props: any) => {
               onClick={() => handleAction(item)}
             >
               <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                {icon}
+                {/* {icon} */}
                 {label}
               </span>
             </motion.button>

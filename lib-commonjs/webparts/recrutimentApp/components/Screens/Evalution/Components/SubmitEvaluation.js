@@ -51,7 +51,7 @@ var SubmitEvaluation = function (_a) {
         React.createElement("div", { className: Evalution_module_scss_1.default.footer },
             submitError && (React.createElement("span", { className: Evalution_module_scss_1.default.inlineError }, submitError)),
             React.createElement("button", { className: Evalution_module_scss_1.default.cancelBtn, onClick: handleCancelClick, disabled: submitting, type: "button" }, "Cancel"),
-            React.createElement("button", { className: Evalution_module_scss_1.default.submitBtn, onClick: handleSubmitClick, disabled: submitting || !acknowledged, type: "button" }, submitting ? 'Submitting…' : '+ Submit Evaluation')),
+            React.createElement("button", { className: Evalution_module_scss_1.default.submitBtn, onClick: handleSubmitClick, disabled: submitting || !acknowledged, type: "button" }, submitting ? "Submitting…" : "Submit Evaluation")),
         React.createElement(Confirmationpopup_1.default, { type: "submit", open: showSubmitConfirm, onConfirm: handleSubmitConfirmed, onClose: function () { return setShowSubmitConfirm(false); } }),
         React.createElement(Confirmationpopup_1.default, { type: "cancel", open: showCancelConfirm, onConfirm: handleLeaveConfirmed, onClose: function () { return setShowCancelConfirm(false); } }),
         React.createElement(Confirmationpopup_1.default, { type: "validation", open: showValidation, validationErrors: validationErrors, onClose: function () { return setShowValidation(false); } }),

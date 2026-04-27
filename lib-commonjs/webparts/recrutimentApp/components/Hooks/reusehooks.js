@@ -31,7 +31,7 @@ var fetchByMetricId = function (matricID, EmailId, condition, roleIDs) { return 
                             case Config_1.ListNames.HRMSNewPositionRequest:
                                 return [2 /*return*/, ServiceExport_1.DashboardServices.GetNPAEPVRRDetails(filter, condition)];
                             case Config_1.ListNames.HRMSRecruitmentDptDetails:
-                                return [2 /*return*/, ServiceExport_1.DashboardServices.GetRecruitmentDetails(filter, condition)];
+                                return [2 /*return*/, ServiceExport_1.DashboardServices.GetRecruitmentDetails(filter, condition, matricID)];
                             case Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails:
                                 return [2 /*return*/, ServiceExport_1.DashboardServices.GetCandidateDetails(filter, condition, matricID, EmailId)];
                             case Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD:

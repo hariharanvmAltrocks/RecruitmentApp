@@ -78,6 +78,10 @@ export const useRecruitmentColumns = ({
     }),
     [actionMode],
   );
+  const shouldShowProfile =
+    matricID === MatricID.ReviewProfileHR ||
+    matricID === MatricID.ReviewProfileLM ||
+    matricID === MatricID.AssignInterviewPanel;
 
   const defaultColumns: DataTableColumn<RecruitmentItem>[] = useMemo(
     () => [
@@ -97,10 +101,22 @@ export const useRecruitmentColumns = ({
           </div>
         ),
       },
+      ...(shouldShowProfile
+        ? [
+            {
+              id: "ProfileCount",
+              header: " Profile Count",
+              render: (item: any) => String(item.ProfileCount).padStart(2, "0"),
+              cellClassName: "data-table__cell--count",
+              // align: "center",
+              hideOnMobile: true,
+            },
+          ]
+        : []),
       {
         id: "count",
-        header: "Count",
-        render: (item) => String(item.count).padStart(2, "0"),
+        header: "headCount",
+        render: (item: any) => String(item.count).padStart(2, "0"),
         cellClassName: "data-table__cell--count",
         align: "center",
         hideOnMobile: true,

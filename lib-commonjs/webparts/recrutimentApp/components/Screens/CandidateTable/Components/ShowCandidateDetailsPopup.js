@@ -17,6 +17,7 @@ var reuseUI_1 = require("./reuseUI");
 var useModalPopup_1 = require("../../../Comman/ModalPopup/useModalPopup");
 var ServiceExport_1 = require("../../../../services/ServiceExport");
 var loading_1 = tslib_1.__importDefault(require("../../../Comman/Loading/loading"));
+var InterviewScheduleInput_1 = require("./InterviewSchedule/InterviewScheduleInput");
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants
 // ─────────────────────────────────────────────────────────────────────────────
@@ -35,7 +36,8 @@ var EMPTY_COI = {
 var EMPTY_SCHEDULE = {
     panelMembers: [],
     startDate: "",
-    endDate: "",
+    startTime: "",
+    endTime: "",
 };
 var FilePreviewModal = function (_a) {
     var file = _a.file, onClose = _a.onClose;
@@ -129,20 +131,27 @@ var ShowCandidateDetailsPopup = function (_a) {
     }, [isOpen]);
     // Load panel members + COI data when popup opens
     (0, react_1.useEffect)(function () {
-        var _a, _b;
         if (!isOpen)
             return;
         if (panelValue && (PanelMember || ReviewHRFlag)) {
             setConsultOptions(panelValue.consultOption);
+            var start = (data === null || data === void 0 ? void 0 : data.InterviewStartDate)
+                ? new Date(data.InterviewStartDate)
+                : null;
+            var end = (data === null || data === void 0 ? void 0 : data.InterviewEndDate)
+                ? new Date(data.InterviewEndDate)
+                : null;
             setLevel1({
                 panelMembers: panelValue.level1Members,
-                startDate: (_a = data === null || data === void 0 ? void 0 : data.InterviewStartDate) !== null && _a !== void 0 ? _a : "",
-                endDate: (_b = data === null || data === void 0 ? void 0 : data.InterviewEndDate) !== null && _b !== void 0 ? _b : "",
+                startDate: start ? start.toISOString().split("T")[0] : "",
+                startTime: start ? start.toTimeString().slice(0, 5) : "",
+                endTime: end ? end.toTimeString().slice(0, 5) : "",
             });
             setLevel2({
                 panelMembers: panelValue.level2Members,
                 startDate: "",
-                endDate: "",
+                startTime: "",
+                endTime: "",
             });
         }
         if (!data)
@@ -197,10 +206,16 @@ var ShowCandidateDetailsPopup = function (_a) {
             return false;
         if (PanelMember) {
             if (statusId === Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview &&
-                (level1.panelMembers.length < 3 || !level1.startDate || !level1.endDate))
+                (level1.panelMembers.length < 3 ||
+                    !level1.startDate ||
+                    !level1.startTime ||
+                    !level1.endTime))
                 return false;
             if (isLevel2Panel &&
-                (level2.panelMembers.length < 3 || !level2.startDate || !level2.endDate))
+                (level2.panelMembers.length < 3 ||
+                    !level2.startDate ||
+                    !level2.startTime ||
+                    !level2.endTime))
                 return false;
         }
         return true;
@@ -244,11 +259,11 @@ var ShowCandidateDetailsPopup = function (_a) {
         if (fileInputRef.current)
             fileInputRef.current.value = "";
     }, []);
-    var handlePanelToggle = (0, react_1.useCallback)(function (setter, val) {
-        setter(function (prev) { return (tslib_1.__assign(tslib_1.__assign({}, prev), { panelMembers: prev.panelMembers.includes(val)
-                ? prev.panelMembers.filter(function (v) { return v !== val; })
-                : tslib_1.__spreadArray(tslib_1.__spreadArray([], prev.panelMembers, true), [val], false) })); });
-    }, []);
+    var handlePanelToggle = function (setter, val) {
+        setter(function (p) { return (tslib_1.__assign(tslib_1.__assign({}, p), { panelMembers: p.panelMembers.includes(val)
+                ? p.panelMembers.filter(function (v) { return v !== val; })
+                : tslib_1.__spreadArray(tslib_1.__spreadArray([], p.panelMembers, true), [val], false) })); });
+    };
     var handleSubmit = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var toPanel;
         return tslib_1.__generator(this, function (_a) {
@@ -467,7 +482,7 @@ var ShowCandidateDetailsPopup = function (_a) {
                                                     .join(" ") }, option)); })))))))),
                             PanelMember && (react_1.default.createElement(framer_motion_1.motion.section, { className: ShowCandidateDetailsPopup_module_scss_1.default.section, custom: 3, variants: reuseUI_1.sectionVariants, initial: "hidden", animate: "visible" },
                                 react_1.default.createElement(reuseUI_1.SectionHeader, { title: "Interview schedule - Level 1", accent: "blue" }),
-                                react_1.default.createElement(reuseUI_1.InterviewScheduleInput, { form: level1, onChange: setLevel1, panelOptions: ((_q = paneloptions === null || paneloptions === void 0 ? void 0 : paneloptions.Level1) !== null && _q !== void 0 ? _q : []).map(function (item) { return ({
+                                react_1.default.createElement(InterviewScheduleInput_1.InterviewScheduleInput, { form: level1, onChange: setLevel1, panelOptions: ((_q = paneloptions === null || paneloptions === void 0 ? void 0 : paneloptions.Level1) !== null && _q !== void 0 ? _q : []).map(function (item) { return ({
                                         value: String(item.value),
                                         label: item.label,
                                     }); }), onToggleMember: function (val) {
@@ -475,7 +490,7 @@ var ShowCandidateDetailsPopup = function (_a) {
                                     }, minPanelCount: 3, Disable: isLevel2Panel }))),
                             isLevel2Panel && (react_1.default.createElement(framer_motion_1.motion.section, { className: ShowCandidateDetailsPopup_module_scss_1.default.section, custom: 4, variants: reuseUI_1.sectionVariants, initial: "hidden", animate: "visible" },
                                 react_1.default.createElement(reuseUI_1.SectionHeader, { title: "Interview schedule - Level 2", accent: "green" }),
-                                react_1.default.createElement(reuseUI_1.InterviewScheduleInput, { form: level2, onChange: setLevel2, panelOptions: ((_r = paneloptions === null || paneloptions === void 0 ? void 0 : paneloptions.Level2) !== null && _r !== void 0 ? _r : []).map(function (item) { return ({
+                                react_1.default.createElement(InterviewScheduleInput_1.InterviewScheduleInput, { form: level2, onChange: setLevel2, panelOptions: ((_r = paneloptions === null || paneloptions === void 0 ? void 0 : paneloptions.Level2) !== null && _r !== void 0 ? _r : []).map(function (item) { return ({
                                         value: String(item.value),
                                         label: item.label,
                                     }); }), onToggleMember: function (val) {

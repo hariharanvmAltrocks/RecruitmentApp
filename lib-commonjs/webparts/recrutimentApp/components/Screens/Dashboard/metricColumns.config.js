@@ -389,11 +389,11 @@ var MatricColums = function (roles) {
                     buildCol(ConditionConfig_1.MatricID.JobAdvert, { showArrow: true }),
                     buildCol(ConditionConfig_1.MatricID.AssignAgencies, { showArrow: true }),
                     buildCol(ConditionConfig_1.MatricID.ReviewProfileHR, {
-                        showArrow: false,
+                        showArrow: true,
                         externalApi: { workflowStatuses: [Config_1.workflowStatusApi.HRPending] },
                     }),
                     buildCol(ConditionConfig_1.MatricID.AssignInterviewPanel, {
-                        showArrow: false,
+                        showArrow: true,
                         externalApi: {
                             workflowStatuses: [
                                 Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview,
@@ -773,7 +773,7 @@ var MetricQueryConfig = function (EmailId) {
         })),
         _a[ConditionConfig_1.MatricID.AssignAgencies] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
             status: [Config_1.StatusId.PendingUploadONEM, Config_1.StatusId.RecruitmentInProgress],
-            columnName: "RecruitmentHR",
+            columnName: "AssignedHR",
             emailId: EmailId,
         })),
         _a[ConditionConfig_1.MatricID.advertExtension] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({

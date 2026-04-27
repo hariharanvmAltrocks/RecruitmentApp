@@ -80,12 +80,18 @@ const mapSelectedCandidate = (item: any): ISelectedCandidate => {
   };
 };
 
-const mapRecruitmentItem = (item: any): RecruitmentItem => ({
+const mapRecruitmentItem = (
+  item: any,
+  shouldShowProfile: boolean,
+): RecruitmentItem => ({
   id: item?.RecordID,
   ItemID: item?.ID,
   jobCode: item?.JobCode,
   title: item?.JobTitleEnglish ?? "",
   department: item?.Department,
+  ...(shouldShowProfile && {
+    ProfileCount: item.CandidateCount,
+  }),
   count: item?.NumberOfPersonNeeded,
   requestType: item?.Type,
   nationality: item?.Nationality,
@@ -124,6 +130,11 @@ export const useRecruitmentDetails = (
           matricID === MatricID.EvalutionHOD ||
           matricID === MatricID.EvalutionLM;
 
+        const shouldShowProfile =
+          matricID === MatricID.ReviewProfileHR ||
+          matricID === MatricID.ReviewProfileLM ||
+          matricID === MatricID.AssignInterviewPanel;
+
         const mappedItems: any[] = data.map((item: any) => {
           if (isEvaluation) return mapEvaluationItem(item);
 
@@ -138,7 +149,7 @@ export const useRecruitmentDetails = (
             return mapSelectedCandidate(item);
           }
 
-          return mapRecruitmentItem(item);
+          return mapRecruitmentItem(item, shouldShowProfile);
         });
 
         setItems(mappedItems);

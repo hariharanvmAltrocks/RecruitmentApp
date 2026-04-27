@@ -433,11 +433,11 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
           buildCol(MatricID.JobAdvert, { showArrow: true }),
           buildCol(MatricID.AssignAgencies, { showArrow: true }),
           buildCol(MatricID.ReviewProfileHR, {
-            showArrow: false,
+            showArrow: true,
             externalApi: { workflowStatuses: [workflowStatusApi.HRPending] },
           }),
           buildCol(MatricID.AssignInterviewPanel, {
-            showArrow: false,
+            showArrow: true,
             externalApi: {
               workflowStatuses: [
                 workflowStatusApi.PendingRecruitmentHRscheduleInterview,
@@ -1012,7 +1012,7 @@ export const MetricQueryConfig = (
     ListNames.HRMSRecruitmentDptDetails,
     StatusFilter({
       status: [StatusId.PendingUploadONEM, StatusId.RecruitmentInProgress],
-      columnName: "RecruitmentHR",
+      columnName: "AssignedHR",
       emailId: EmailId,
     }),
   ),

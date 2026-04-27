@@ -48,7 +48,10 @@ var useRecruitmentColumns = function (_a) {
         cellClassName: "data-table__cell--actions",
         render: function (item) { return (react_2.default.createElement("button", { className: "data-table__action-btn", onClick: function () { return onActionRef.current(item); }, type: "button", "aria-label": actionMode === "Upload" ? "Upload document" : "View vacancy" }, getActionLabel(actionMode, item, matricID))); },
     }); }, [actionMode]);
-    var defaultColumns = (0, react_1.useMemo)(function () { return [
+    var shouldShowProfile = matricID === ConditionConfig_1.MatricID.ReviewProfileHR ||
+        matricID === ConditionConfig_1.MatricID.ReviewProfileLM ||
+        matricID === ConditionConfig_1.MatricID.AssignInterviewPanel;
+    var defaultColumns = (0, react_1.useMemo)(function () { return tslib_1.__spreadArray(tslib_1.__spreadArray([
         {
             id: "jobCode",
             header: "Job Code",
@@ -61,10 +64,22 @@ var useRecruitmentColumns = function (_a) {
             render: function (item) { return (react_2.default.createElement("div", { className: "data-table__job-title" },
                 react_2.default.createElement("span", null, item.title),
                 react_2.default.createElement("span", { className: "data-table__job-dept" }, item.department))); },
-        },
+        }
+    ], (shouldShowProfile
+        ? [
+            {
+                id: "ProfileCount",
+                header: " Profile Count",
+                render: function (item) { return String(item.ProfileCount).padStart(2, "0"); },
+                cellClassName: "data-table__cell--count",
+                // align: "center",
+                hideOnMobile: true,
+            },
+        ]
+        : []), true), [
         {
             id: "count",
-            header: "Count",
+            header: "headCount",
             render: function (item) { return String(item.count).padStart(2, "0"); },
             cellClassName: "data-table__cell--count",
             align: "center",
@@ -90,7 +105,7 @@ var useRecruitmentColumns = function (_a) {
             render: function (item) { return (react_2.default.createElement("span", { className: "data-table__status-badge status-badge" }, item.status)); },
         },
         actionColumn,
-    ]; }, [actionColumn]);
+    ], false); }, [actionColumn]);
     var evaluationColumns = (0, react_1.useMemo)(function () { return [
         {
             id: "applicantName",

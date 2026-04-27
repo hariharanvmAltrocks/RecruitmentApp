@@ -67,21 +67,11 @@ var mapSelectedCandidate = function (item) {
         IsExpat: candi === null || candi === void 0 ? void 0 : candi.isExpat,
     };
 };
-var mapRecruitmentItem = function (item) {
+var mapRecruitmentItem = function (item, shouldShowProfile) {
     var _a;
-    return ({
-        id: item === null || item === void 0 ? void 0 : item.RecordID,
-        ItemID: item === null || item === void 0 ? void 0 : item.ID,
-        jobCode: item === null || item === void 0 ? void 0 : item.JobCode,
-        title: (_a = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) !== null && _a !== void 0 ? _a : "",
-        department: item === null || item === void 0 ? void 0 : item.Department,
-        count: item === null || item === void 0 ? void 0 : item.NumberOfPersonNeeded,
-        requestType: item === null || item === void 0 ? void 0 : item.Type,
-        nationality: item === null || item === void 0 ? void 0 : item.Nationality,
-        status: item === null || item === void 0 ? void 0 : item.Status,
-        statusId: item === null || item === void 0 ? void 0 : item.StatusId,
-        jobCodeID: item === null || item === void 0 ? void 0 : item.JobCodeId,
-    });
+    return (tslib_1.__assign(tslib_1.__assign({ id: item === null || item === void 0 ? void 0 : item.RecordID, ItemID: item === null || item === void 0 ? void 0 : item.ID, jobCode: item === null || item === void 0 ? void 0 : item.JobCode, title: (_a = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) !== null && _a !== void 0 ? _a : "", department: item === null || item === void 0 ? void 0 : item.Department }, (shouldShowProfile && {
+        ProfileCount: item.CandidateCount,
+    })), { count: item === null || item === void 0 ? void 0 : item.NumberOfPersonNeeded, requestType: item === null || item === void 0 ? void 0 : item.Type, nationality: item === null || item === void 0 ? void 0 : item.Nationality, status: item === null || item === void 0 ? void 0 : item.Status, statusId: item === null || item === void 0 ? void 0 : item.StatusId, jobCodeID: item === null || item === void 0 ? void 0 : item.JobCodeId }));
 };
 var useRecruitmentDetails = function (activeTabKey, refreshKey) {
     if (refreshKey === void 0) { refreshKey = 0; }
@@ -93,7 +83,7 @@ var useRecruitmentDetails = function (activeTabKey, refreshKey) {
         var cancelled = false;
         setLoading(true);
         var timer = setTimeout(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-            var data, isEvaluation_1, mappedItems, error_1;
+            var data, isEvaluation_1, shouldShowProfile_1, mappedItems, error_1;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -106,6 +96,9 @@ var useRecruitmentDetails = function (activeTabKey, refreshKey) {
                         isEvaluation_1 = matricID === ConditionConfig_1.MatricID.EvalutionHR ||
                             matricID === ConditionConfig_1.MatricID.EvalutionHOD ||
                             matricID === ConditionConfig_1.MatricID.EvalutionLM;
+                        shouldShowProfile_1 = matricID === ConditionConfig_1.MatricID.ReviewProfileHR ||
+                            matricID === ConditionConfig_1.MatricID.ReviewProfileLM ||
+                            matricID === ConditionConfig_1.MatricID.AssignInterviewPanel;
                         mappedItems = data.map(function (item) {
                             if (isEvaluation_1)
                                 return mapEvaluationItem(item);
@@ -116,7 +109,7 @@ var useRecruitmentDetails = function (activeTabKey, refreshKey) {
                             if (item.__listName === Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD) {
                                 return mapSelectedCandidate(item);
                             }
-                            return mapRecruitmentItem(item);
+                            return mapRecruitmentItem(item, shouldShowProfile_1);
                         });
                         setItems(mappedItems);
                         return [3 /*break*/, 4];

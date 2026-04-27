@@ -1,9 +1,8 @@
 "use strict";
 var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getViewerUrl = exports.buildOfficeViewerUrl = exports.buildWopiUrl = exports.isOfficeUrl = exports.isBlobUrl = exports.isPdfUrl = exports.isSharePointUrl = exports.SP_ORIGIN = exports.InterviewScheduleInput = exports.QuestionCard = exports.InfoItem = exports.SectionHeader = exports.sectionVariants = exports.cardVariants = exports.backdropVariants = void 0;
+exports.getViewerUrl = exports.buildOfficeViewerUrl = exports.buildWopiUrl = exports.isOfficeUrl = exports.isBlobUrl = exports.isPdfUrl = exports.isSharePointUrl = exports.SP_ORIGIN = exports.QuestionCard = exports.InfoItem = exports.SectionHeader = exports.sectionVariants = exports.cardVariants = exports.backdropVariants = void 0;
 var tslib_1 = require("tslib");
-var lucide_react_1 = require("lucide-react");
 var ShowCandidateDetailsPopup_module_scss_1 = tslib_1.__importDefault(require("./ShowCandidateDetailsPopup.module.scss"));
 var react_1 = tslib_1.__importDefault(require("react"));
 exports.backdropVariants = {
@@ -75,83 +74,148 @@ var QuestionCard = function (_a) {
                     react_1.default.createElement("span", { className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.answerBadge, " ").concat(badgeClass) }, answer !== null && answer !== void 0 ? answer : "--"))))));
 };
 exports.QuestionCard = QuestionCard;
-var toDateTimeLocal = function (date) {
-    var pad = function (n) { return String(n).padStart(2, "0"); };
-    return "".concat(date.getFullYear(), "-").concat(pad(date.getMonth() + 1), "-").concat(pad(date.getDate()), "T").concat(pad(date.getHours()), ":").concat(pad(date.getMinutes()));
-};
-var InterviewScheduleInput = function (_a) {
-    var form = _a.form, onChange = _a.onChange, panelOptions = _a.panelOptions, onToggleMember = _a.onToggleMember, _b = _a.minPanelCount, minPanelCount = _b === void 0 ? 3 : _b, Disable = _a.Disable;
-    var needsMore = form.panelMembers.length < minPanelCount;
-    // ✅ Helpers
-    var formatLocalDateTime = function (date) {
-        var pad = function (n) { return n.toString().padStart(2, "0"); };
-        return "".concat(date.getFullYear(), "-").concat(pad(date.getMonth() + 1), "-").concat(pad(date.getDate()), "T").concat(pad(date.getHours()), ":").concat(pad(date.getMinutes()));
-    };
-    // ✅ Today & max range
-    var today = new Date();
-    today.setHours(0, 0, 0, 0);
-    var maxDay = new Date(today);
-    maxDay.setDate(today.getDate() + 5);
-    maxDay.setHours(23, 59, 0, 0);
-    var WORK_START = "09:00";
-    var WORK_END = "18:00";
-    var handleStartDateChange = function (e) {
-        var newStart = e.target.value;
-        if (!newStart)
-            return;
-        var startDateObj = new Date(newStart);
-        onChange(function (p) {
-            var newEndDate = p.endDate;
-            var isSameDay = p.endDate && p.endDate.split("T")[0] === newStart.split("T")[0];
-            var isInvalid = !p.endDate || new Date(p.endDate) <= startDateObj || !isSameDay;
-            if (isInvalid) {
-                var endDateObj = new Date(startDateObj.getTime() + 30 * 60000);
-                newEndDate = formatLocalDateTime(endDateObj);
-            }
-            return tslib_1.__assign(tslib_1.__assign({}, p), { startDate: newStart, endDate: newEndDate });
-        });
-    };
-    // ✅ Same-day restriction for End Date
-    var endDateMin = form.startDate
-        ? "".concat(form.startDate.split("T")[0], "T").concat(WORK_START)
-        : "";
-    var endDateMax = form.startDate
-        ? "".concat(form.startDate.split("T")[0], "T").concat(WORK_END)
-        : "";
-    return (react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.scheduleCard },
-        react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.panelMembersWrap },
-            react_1.default.createElement("label", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldLabel },
-                "Interview panel members",
-                " ",
-                react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldRequired }, "*")),
-            react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.panelTagsWrap }, panelOptions.map(function (opt) {
-                var selected = form.panelMembers.includes(opt.value);
-                return (react_1.default.createElement("button", { key: opt.value, type: "button", className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.panelTag, " ").concat(selected ? ShowCandidateDetailsPopup_module_scss_1.default.panelTagSelected : ShowCandidateDetailsPopup_module_scss_1.default.panelTagUnselected), onClick: function () { return onToggleMember(opt.value); }, disabled: Disable },
-                    selected && (react_1.default.createElement(lucide_react_1.CheckCircle, { size: 16, className: ShowCandidateDetailsPopup_module_scss_1.default.panelTagIcon })),
-                    opt.label));
-            })),
-            needsMore && (react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.panelWarning },
-                "Please select at least ",
-                minPanelCount,
-                " panel members \u2022",
-                " ",
-                form.panelMembers.length,
-                " selected"))),
-        react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.dateRow },
-            react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.dateField },
-                react_1.default.createElement("label", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldLabel },
-                    "Start date & time ",
-                    react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldRequired }, "*")),
-                react_1.default.createElement("input", { type: "datetime-local", placeholder: " dd-mm-yyyy hh:mm", className: ShowCandidateDetailsPopup_module_scss_1.default.dateInput, value: form.startDate, min: "".concat(formatLocalDateTime(maxDay).split("T")[0], "T").concat(WORK_START), max: "T".concat(WORK_END), step: 1800, onChange: handleStartDateChange, disabled: Disable })),
-            react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.dateField },
-                react_1.default.createElement("label", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldLabel },
-                    "End date & time ",
-                    react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldRequired }, "*")),
-                react_1.default.createElement("input", { type: "datetime-local", placeholder: "dd-mm-yyyy hh:mm", className: ShowCandidateDetailsPopup_module_scss_1.default.dateInput, value: form.endDate, min: endDateMin, max: endDateMax, step: 1800, disabled: !form.startDate || Disable, onChange: function (e) {
-                        return onChange(function (p) { return (tslib_1.__assign(tslib_1.__assign({}, p), { endDate: e.target.value })); });
-                    } })))));
-};
-exports.InterviewScheduleInput = InterviewScheduleInput;
+// interface InterviewScheduleInputProps {
+//   form: InterviewScheduleForm;
+//   onChange: React.Dispatch<React.SetStateAction<InterviewScheduleForm>>;
+//   panelOptions: { value: string; label: string }[];
+//   onToggleMember: (val: string) => void;
+//   minPanelCount?: number;
+//   Disable: boolean;
+// }
+// const toDateTimeLocal = (date: Date) => {
+//   const pad = (n: number) => String(n).padStart(2, "0");
+//   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+// };
+// export const InterviewScheduleInput: React.FC<InterviewScheduleInputProps> = ({
+//   form,
+//   onChange,
+//   panelOptions,
+//   onToggleMember,
+//   minPanelCount = 3,
+//   Disable,
+// }) => {
+//   const needsMore = form.panelMembers.length < minPanelCount;
+//   // ✅ Helpers
+//   const formatLocalDateTime = (date: Date) => {
+//     const pad = (n: number) => n.toString().padStart(2, "0");
+//     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+//       date.getDate(),
+//     )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+//   };
+//   // ✅ Today & max range
+//   const today = new Date();
+//   today.setHours(0, 0, 0, 0);
+//   const maxDay = new Date(today);
+//   maxDay.setDate(today.getDate() + 5);
+//   maxDay.setHours(23, 59, 0, 0);
+//   const WORK_START = "09:00";
+//   const WORK_END = "18:00";
+//   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const newStart = e.target.value;
+//     if (!newStart) return;
+//     const startDateObj = new Date(newStart);
+//     onChange((p) => {
+//       let newEndDate = p.endDate;
+//       const isSameDay =
+//         p.endDate && p.endDate.split("T")[0] === newStart.split("T")[0];
+//       const isInvalid =
+//         !p.endDate || new Date(p.endDate) <= startDateObj || !isSameDay;
+//       if (isInvalid) {
+//         const endDateObj = new Date(startDateObj.getTime() + 30 * 60000);
+//         newEndDate = formatLocalDateTime(endDateObj);
+//       }
+//       return {
+//         ...p,
+//         startDate: newStart,
+//         endDate: newEndDate,
+//       };
+//     });
+//   };
+//   // ✅ Same-day restriction for End Date
+//   const endDateMin = form.startDate
+//     ? `${form.startDate.split("T")[0]}T${WORK_START}`
+//     : "";
+//   const endDateMax = form.startDate
+//     ? `${form.startDate.split("T")[0]}T${WORK_END}`
+//     : "";
+//   return (
+//     <div className={styles.scheduleCard}>
+//       {/* ✅ Panel Members */}
+//       <div className={styles.panelMembersWrap}>
+//         <label className={styles.fieldLabel}>
+//           Interview panel members{" "}
+//           <span className={styles.fieldRequired}>*</span>
+//         </label>
+//         <div className={styles.panelTagsWrap}>
+//           {panelOptions.map((opt) => {
+//             const selected = form.panelMembers.includes(opt.value);
+//             return (
+//               <button
+//                 key={opt.value}
+//                 type="button"
+//                 className={`${styles.panelTag} ${
+//                   selected ? styles.panelTagSelected : styles.panelTagUnselected
+//                 }`}
+//                 onClick={() => onToggleMember(opt.value)}
+//                 disabled={Disable}
+//               >
+//                 {selected && (
+//                   <CheckCircle size={16} className={styles.panelTagIcon} />
+//                 )}
+//                 {opt.label}
+//               </button>
+//             );
+//           })}
+//         </div>
+//         {needsMore && (
+//           <span className={styles.panelWarning}>
+//             Please select at least {minPanelCount} panel members •{" "}
+//             {form.panelMembers.length} selected
+//           </span>
+//         )}
+//       </div>
+//       <div className={styles.dateRow}>
+//         <div className={styles.dateField}>
+//           <label className={styles.fieldLabel}>
+//             Start date & time <span className={styles.fieldRequired}>*</span>
+//           </label>
+//           <input
+//             type="datetime-local"
+//             placeholder=" dd-mm-yyyy hh:mm"
+//             className={styles.dateInput}
+//             value={form.startDate}
+//             min={`${formatLocalDateTime(maxDay).split("T")[0]}T${WORK_START}`}
+//             max={`T${WORK_END}`}
+//             step={1800} // ✅ 30 mins
+//             onChange={handleStartDateChange}
+//             disabled={Disable}
+//           />
+//         </div>
+//         <div className={styles.dateField}>
+//           <label className={styles.fieldLabel}>
+//             End date & time <span className={styles.fieldRequired}>*</span>
+//           </label>
+//           <input
+//             type="datetime-local"
+//             placeholder="dd-mm-yyyy hh:mm"
+//             className={styles.dateInput}
+//             value={form.endDate}
+//             min={endDateMin}
+//             max={endDateMax}
+//             step={1800}
+//             disabled={!form.startDate || Disable}
+//             onChange={(e) =>
+//               onChange((p) => ({
+//                 ...p,
+//                 endDate: e.target.value,
+//               }))
+//             }
+//           />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 exports.SP_ORIGIN = (_b = (_a = window.__SP_ORIGIN__) !== null && _a !== void 0 ? _a : process.env.REACT_APP_SP_ORIGIN) !== null && _b !== void 0 ? _b : window.location.origin;
 var isSharePointUrl = function (url) {
     return /\.sharepoint\.com\//i.test(url) || url.startsWith("/sites/");

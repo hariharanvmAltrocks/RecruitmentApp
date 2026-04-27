@@ -30,6 +30,7 @@ export interface RecruitmentItem {
   jobCode: string;
   title: string;
   department: string;
+  ProfileCount?: number;
   count: number;
   requestType: string;
   nationality: string;

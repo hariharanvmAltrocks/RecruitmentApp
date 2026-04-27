@@ -29,6 +29,7 @@ import { useToast } from "../../../Hooks/useToast";
 import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
 import SPServices from "../../../../services/SPService/spservice";
 import { InterviewscheduleL2 } from "../../../../services/CandidateTable/ICandidateService";
+import { ScheduleForm } from "../Components/InterviewSchedule/InterviewScheduleInput";
 
 export type DecisionType = "YES" | "NO" | "HOLD";
 
@@ -54,8 +55,8 @@ export interface SubmitPayload {
   CandidateDetails: CandidateProfile | null;
   decision: DecisionType;
   decisionComments: string;
-  interviewLevel1: InterviewScheduleForm;
-  interviewLevel2: InterviewScheduleForm;
+  interviewLevel1: ScheduleForm;
+  interviewLevel2: ScheduleForm;
   recrutimentData: DataSyncToRecruitmentResponse | null;
   interviewPanelL1: panelmembers[];
   interviewPanelL2: panelmembers[];
@@ -114,8 +115,19 @@ export const useSubmitCandidateReview = (
 
       const dobValue = cp.DOB ? new Date(cp.DOB) : new Date();
       const dobData = splitDateOnly(dobValue);
-      const startDate = interviewLevel1?.startDate;
-      const endDate = interviewLevel1?.endDate;
+      const startDateTime =
+        interviewLevel1?.startDate && interviewLevel1?.startTime
+          ? new Date(
+              `${interviewLevel1.startDate}T${interviewLevel1.startTime}:00`,
+            ).toISOString()
+          : "";
+
+      const endDateTime =
+        interviewLevel1?.startDate && interviewLevel1?.endTime
+          ? new Date(
+              `${interviewLevel1.startDate}T${interviewLevel1.endTime}:00`,
+            ).toISOString()
+          : "";
 
       const candidateDetails: any = {
         RecruitmentIDId: recrutimentData?.ID,
@@ -137,8 +149,8 @@ export const useSubmitCandidateReview = (
         PositionTitle: recrutimentData?.JobTitleEnglish,
         JobGrade: recrutimentData?.DRCGrade,
         ExternalAgentDetails: cp.Agencies,
-        InterviewDate: startDate,
-        InterviewTime: endDate,
+        InterviewDate: startDateTime,
+        InterviewTime: endDateTime,
         CandidateResumeLink: cp.CandidateResumeLink ?? "",
         ActionId: WorkflowAction.Approved,
         ConflictsOfInterest: cp.ConflictsOfInterest,
@@ -214,15 +226,43 @@ export const useSubmitCandidateReview = (
         (i: any) => i.Email,
       ) as string[];
 
+      const startDateL1 =
+        interviewLevel1?.startDate && interviewLevel1?.startTime
+          ? new Date(
+              `${interviewLevel1.startDate}T${interviewLevel1.startTime}:00`,
+            ).toISOString()
+          : "";
+
+      const endDateTimeL1 =
+        interviewLevel1?.startDate && interviewLevel1?.endTime
+          ? new Date(
+              `${interviewLevel1.startDate}T${interviewLevel1.endTime}:00`,
+            ).toISOString()
+          : "";
+
+      const startDateL2 =
+        interviewLevel2?.startDate && interviewLevel2?.startTime
+          ? new Date(
+              `${interviewLevel2.startDate}T${interviewLevel2.startTime}:00`,
+            ).toISOString()
+          : "";
+
+      const endDateTimeL2 =
+        interviewLevel2?.startDate && interviewLevel2?.endTime
+          ? new Date(
+              `${interviewLevel2.startDate}T${interviewLevel2.endTime}:00`,
+            ).toISOString()
+          : "";
+
       const startdate =
         StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview
-          ? interviewLevel1.startDate
-          : interviewLevel2.startDate;
+          ? startDateL1
+          : startDateL2;
 
       const enddate =
         StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview
-          ? interviewLevel1.endDate
-          : interviewLevel2.endDate;
+          ? endDateTimeL1
+          : endDateTimeL2;
 
       const optionalAttendeeL1 = payload.interviewPanelL1.map(
         (i: any) => i.text,
@@ -503,12 +543,28 @@ export const useSubmitCandidateReview = (
             CandidateIDId: Number(payload.candidateId) ?? 0,
           }));
 
+          const startDateTimeL2 =
+            payload.interviewLevel2?.startDate &&
+            payload.interviewLevel2?.startTime
+              ? new Date(
+                  `${payload.interviewLevel2.startDate}T${payload.interviewLevel2.startTime}:00`,
+                ).toISOString()
+              : "";
+
+          const endDateTimeL2 =
+            payload.interviewLevel2?.startDate &&
+            payload.interviewLevel2?.endTime
+              ? new Date(
+                  `${payload.interviewLevel2.startDate}T${payload.interviewLevel2.endTime}:00`,
+                ).toISOString()
+              : "";
+
           const interviewscheduleL2Data: InterviewscheduleL2 = {
             candidateUpdate: {
               ID: Number(payload.candidateId),
               StatusId: StatusId.InterviewScheduledforLevel2,
-              InterviewDateLevel2: payload.interviewLevel2.startDate ?? "",
-              InterviewTimeLevel2: payload.interviewLevel2.endDate ?? "",
+              InterviewDateLevel2: startDateTimeL2,
+              InterviewTimeLevel2: endDateTimeL2,
             },
             interviewPanelL2: panelL2,
           };

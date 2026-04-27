@@ -1,14 +1,13 @@
+import * as React from "react";
 
-import * as React from 'react';
-
-import styles from '../Evalution.module.scss';
-import ConfirmationPopup from '../../ReviewScoreCard/Confirmationpopup';
-import { UseSubmitEvaluationReturn } from '../Hooks/Usesubmitevaluation';
+import styles from "../Evalution.module.scss";
+import ConfirmationPopup from "../../ReviewScoreCard/Confirmationpopup";
+import { UseSubmitEvaluationReturn } from "../Hooks/Usesubmitevaluation";
 
 interface SubmitEvaluationProps {
-  submitHook:   UseSubmitEvaluationReturn;
+  submitHook: UseSubmitEvaluationReturn;
   acknowledged: boolean;
-  onCancel:     () => void;
+  onCancel: () => void;
 }
 
 const SubmitEvaluation: React.FC<SubmitEvaluationProps> = ({
@@ -28,18 +27,18 @@ const SubmitEvaluation: React.FC<SubmitEvaluationProps> = ({
   } = submitHook;
   const [showSubmitConfirm, setShowSubmitConfirm] = React.useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = React.useState(false);
-  const [showValidation,    setShowValidation]    = React.useState(false);
-  const [showSuccess,       setShowSuccess]       = React.useState(false);
+  const [showValidation, setShowValidation] = React.useState(false);
+  const [showSuccess, setShowSuccess] = React.useState(false);
   React.useEffect(() => {
     if (successMessage) setShowSuccess(true);
   }, [successMessage]);
   const handleSubmitClick = React.useCallback(() => {
     const valid = runValidation();
     if (!valid) {
-      setShowValidation(true);   
+      setShowValidation(true);
       return;
     }
-    setShowSubmitConfirm(true); 
+    setShowSubmitConfirm(true);
   }, [runValidation]);
   const handleSubmitConfirmed = React.useCallback(async () => {
     setShowSubmitConfirm(false);
@@ -80,7 +79,7 @@ const SubmitEvaluation: React.FC<SubmitEvaluationProps> = ({
           disabled={submitting || !acknowledged}
           type="button"
         >
-          {submitting ? 'Submitting…' : '+ Submit Evaluation'}
+          {submitting ? "Submitting…" : "Submit Evaluation"}
         </button>
       </div>
       <ConfirmationPopup

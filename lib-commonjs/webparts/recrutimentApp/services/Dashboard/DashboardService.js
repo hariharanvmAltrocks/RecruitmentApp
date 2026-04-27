@@ -336,7 +336,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetRecruitmentDetails = function (filterParam, filterConditions, MatricId) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var res, candidateCount, GridResult, error_3;
+            var res, GridResult, error_3;
             var _this = this;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
@@ -357,7 +357,6 @@ var DashboardService = /** @class */ (function () {
                         if (!res.length) {
                             return [2 /*return*/, { data: [], status: 200, message: "No records found" }];
                         }
-                        candidateCount = 0;
                         return [4 /*yield*/, Promise.all(res.map(function (item, index) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
                                 var candidateCount;
                                 var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;

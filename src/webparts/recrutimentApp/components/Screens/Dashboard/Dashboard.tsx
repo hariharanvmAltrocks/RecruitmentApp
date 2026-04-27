@@ -108,8 +108,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     >
       <AnimatePresence>
         {loading ? (
-          // <DashboardSkeleton key="dashboard-skeleton" />
-          <></>
+          <DashboardSkeleton key="dashboard-skeleton" />
         ) : (
           <motion.div
             key="dashboard-content"

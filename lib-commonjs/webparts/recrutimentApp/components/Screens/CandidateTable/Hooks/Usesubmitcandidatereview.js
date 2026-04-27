@@ -26,7 +26,7 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
     };
     // ─── Upload Candidate Details ────────────────────────────────────────────────
     var uploadCandidateDetails = (0, react_1.useCallback)(function (payload) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var cp, recrutimentData, interviewLevel1, COIDetails, interviewPanelL1, dobValue, dobData, startDate, endDate, candidateDetails, selectedPanel;
+        var cp, recrutimentData, interviewLevel1, COIDetails, interviewPanelL1, dobValue, dobData, startDateTime, endDateTime, candidateDetails, selectedPanel;
         var _a, _b;
         return tslib_1.__generator(this, function (_c) {
             cp = payload.CandidateDetails, recrutimentData = payload.recrutimentData, interviewLevel1 = payload.interviewLevel1, COIDetails = payload.COIDetails, interviewPanelL1 = payload.interviewPanelL1;
@@ -34,8 +34,12 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                 throw new Error("CandidateDetails is null");
             dobValue = cp.DOB ? new Date(cp.DOB) : new Date();
             dobData = splitDateOnly(dobValue);
-            startDate = interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startDate;
-            endDate = interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.endDate;
+            startDateTime = (interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startDate) && (interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startTime)
+                ? new Date("".concat(interviewLevel1.startDate, "T").concat(interviewLevel1.startTime, ":00")).toISOString()
+                : "";
+            endDateTime = (interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startDate) && (interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.endTime)
+                ? new Date("".concat(interviewLevel1.startDate, "T").concat(interviewLevel1.endTime, ":00")).toISOString()
+                : "";
             candidateDetails = {
                 RecruitmentIDId: recrutimentData === null || recrutimentData === void 0 ? void 0 : recrutimentData.ID,
                 JobCodeId: recrutimentData === null || recrutimentData === void 0 ? void 0 : recrutimentData.JobCodeId,
@@ -56,8 +60,8 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                 PositionTitle: recrutimentData === null || recrutimentData === void 0 ? void 0 : recrutimentData.JobTitleEnglish,
                 JobGrade: recrutimentData === null || recrutimentData === void 0 ? void 0 : recrutimentData.DRCGrade,
                 ExternalAgentDetails: cp.Agencies,
-                InterviewDate: startDate,
-                InterviewTime: endDate,
+                InterviewDate: startDateTime,
+                InterviewTime: endDateTime,
                 CandidateResumeLink: (_a = cp.CandidateResumeLink) !== null && _a !== void 0 ? _a : "",
                 ActionId: Config_1.WorkflowAction.Approved,
                 ConflictsOfInterest: cp.ConflictsOfInterest,
@@ -106,7 +110,7 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
     }); }, [ServiceExport_1.CandidateTable]);
     // ─── Schedule Meeting ────────────────────────────────────────────────────────
     var scheduleMeeting = (0, react_1.useCallback)(function (payload) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var cp, recrutimentData, interviewLevel1, interviewLevel2, StatusId, interviewPanelL1, organizer, requiredAttendees, startdate, enddate, optionalAttendeeL1, optionalAttendeeL2, meetingObj;
+        var cp, recrutimentData, interviewLevel1, interviewLevel2, StatusId, interviewPanelL1, organizer, requiredAttendees, startDateL1, endDateTimeL1, startDateL2, endDateTimeL2, startdate, enddate, optionalAttendeeL1, optionalAttendeeL2, meetingObj;
         var _a;
         return tslib_1.__generator(this, function (_b) {
             cp = payload.CandidateDetails, recrutimentData = payload.recrutimentData, interviewLevel1 = payload.interviewLevel1, interviewLevel2 = payload.interviewLevel2, StatusId = payload.StatusId, interviewPanelL1 = payload.interviewPanelL1;
@@ -114,12 +118,24 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                 throw new Error("CandidateDetails is null");
             organizer = interviewPanelL1.find(function (i) { return i.Role === ConditionConfig_1.RoleName.RecruitmentHR; });
             requiredAttendees = interviewPanelL1.map(function (i) { return i.Email; });
+            startDateL1 = (interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startDate) && (interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startTime)
+                ? new Date("".concat(interviewLevel1.startDate, "T").concat(interviewLevel1.startTime, ":00")).toISOString()
+                : "";
+            endDateTimeL1 = (interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startDate) && (interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.endTime)
+                ? new Date("".concat(interviewLevel1.startDate, "T").concat(interviewLevel1.endTime, ":00")).toISOString()
+                : "";
+            startDateL2 = (interviewLevel2 === null || interviewLevel2 === void 0 ? void 0 : interviewLevel2.startDate) && (interviewLevel2 === null || interviewLevel2 === void 0 ? void 0 : interviewLevel2.startTime)
+                ? new Date("".concat(interviewLevel2.startDate, "T").concat(interviewLevel2.startTime, ":00")).toISOString()
+                : "";
+            endDateTimeL2 = (interviewLevel2 === null || interviewLevel2 === void 0 ? void 0 : interviewLevel2.startDate) && (interviewLevel2 === null || interviewLevel2 === void 0 ? void 0 : interviewLevel2.endTime)
+                ? new Date("".concat(interviewLevel2.startDate, "T").concat(interviewLevel2.endTime, ":00")).toISOString()
+                : "";
             startdate = StatusId === Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview
-                ? interviewLevel1.startDate
-                : interviewLevel2.startDate;
+                ? startDateL1
+                : startDateL2;
             enddate = StatusId === Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview
-                ? interviewLevel1.endDate
-                : interviewLevel2.endDate;
+                ? endDateTimeL1
+                : endDateTimeL2;
             optionalAttendeeL1 = payload.interviewPanelL1.map(function (i) { return i.text; });
             optionalAttendeeL2 = payload.interviewPanelL2.map(function (i) { return i.text; });
             meetingObj = {
@@ -325,18 +341,18 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
     // setPageLoading(true)  → top of this function
     // setPageLoading(false) → always in the finally block
     var executeSubmit = (0, react_1.useCallback)(function (payload, COIButtonAction) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var isLevel2Pending, isScheduleInterview, panelL2, interviewscheduleL2Data, response, err_1;
-        var _a, _b, _c;
-        return tslib_1.__generator(this, function (_d) {
-            switch (_d.label) {
+        var isLevel2Pending, isScheduleInterview, panelL2, startDateTimeL2, endDateTimeL2, interviewscheduleL2Data, response, err_1;
+        var _a, _b, _c, _d, _e;
+        return tslib_1.__generator(this, function (_f) {
+            switch (_f.label) {
                 case 0:
                     (_a = abortRef.current) === null || _a === void 0 ? void 0 : _a.abort();
                     abortRef.current = new AbortController();
                     setSubmitting(true);
                     setPageLoading(true); // ✅ Start loader — single entry point
-                    _d.label = 1;
+                    _f.label = 1;
                 case 1:
-                    _d.trys.push([1, 9, 10, 11]);
+                    _f.trys.push([1, 9, 10, 11]);
                     isLevel2Pending = Number(payload.StatusId) ===
                         Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel;
                     isScheduleInterview = payload.StatusId ===
@@ -344,13 +360,13 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                     if (!isScheduleInterview) return [3 /*break*/, 3];
                     return [4 /*yield*/, scheduleMeeting(payload)];
                 case 2:
-                    _d.sent();
-                    _d.label = 3;
+                    _f.sent();
+                    _f.label = 3;
                 case 3:
                     if (!isLevel2Pending) return [3 /*break*/, 6];
                     return [4 /*yield*/, scheduleMeeting(payload)];
                 case 4:
-                    _d.sent();
+                    _f.sent();
                     panelL2 = payload.interviewPanelL2.map(function (item) {
                         var _a, _b, _c, _d;
                         return ({
@@ -360,18 +376,26 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                             CandidateIDId: (_d = Number(payload.candidateId)) !== null && _d !== void 0 ? _d : 0,
                         });
                     });
+                    startDateTimeL2 = ((_b = payload.interviewLevel2) === null || _b === void 0 ? void 0 : _b.startDate) &&
+                        ((_c = payload.interviewLevel2) === null || _c === void 0 ? void 0 : _c.startTime)
+                        ? new Date("".concat(payload.interviewLevel2.startDate, "T").concat(payload.interviewLevel2.startTime, ":00")).toISOString()
+                        : "";
+                    endDateTimeL2 = ((_d = payload.interviewLevel2) === null || _d === void 0 ? void 0 : _d.startDate) &&
+                        ((_e = payload.interviewLevel2) === null || _e === void 0 ? void 0 : _e.endTime)
+                        ? new Date("".concat(payload.interviewLevel2.startDate, "T").concat(payload.interviewLevel2.endTime, ":00")).toISOString()
+                        : "";
                     interviewscheduleL2Data = {
                         candidateUpdate: {
                             ID: Number(payload.candidateId),
                             StatusId: Config_1.StatusId.InterviewScheduledforLevel2,
-                            InterviewDateLevel2: (_b = payload.interviewLevel2.startDate) !== null && _b !== void 0 ? _b : "",
-                            InterviewTimeLevel2: (_c = payload.interviewLevel2.endDate) !== null && _c !== void 0 ? _c : "",
+                            InterviewDateLevel2: startDateTimeL2,
+                            InterviewTimeLevel2: endDateTimeL2,
                         },
                         interviewPanelL2: panelL2,
                     };
                     return [4 /*yield*/, ServiceExport_1.CandidateTable.InterviewScheduleLevel2(interviewscheduleL2Data)];
                 case 5:
-                    response = _d.sent();
+                    response = _f.sent();
                     if (response.status === 200) {
                         showModal({
                             type: "success",
@@ -404,11 +428,11 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                 return [4 /*yield*/, handleWorkflowProcess(payload, COIButtonAction)];
                 case 7:
                     // All other workflow actions
-                    _d.sent();
-                    _d.label = 8;
+                    _f.sent();
+                    _f.label = 8;
                 case 8: return [3 /*break*/, 11];
                 case 9:
-                    err_1 = _d.sent();
+                    err_1 = _f.sent();
                     if ((err_1 === null || err_1 === void 0 ? void 0 : err_1.name) === "AbortError")
                         return [2 /*return*/];
                     console.error("Submit failed:", err_1);
