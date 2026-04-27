@@ -120,9 +120,9 @@ var Drawer = function (_a) {
             cancelLabel: "No",
             onConfirm: function () {
                 onClose();
-                closeModal();
+                closemodel();
             },
-            onCancel: closeModal,
+            onCancel: closemodel,
         });
     }, []);
     return (react_1.default.createElement(framer_motion_1.AnimatePresence, null, isOpen && (react_1.default.createElement("div", { style: {
