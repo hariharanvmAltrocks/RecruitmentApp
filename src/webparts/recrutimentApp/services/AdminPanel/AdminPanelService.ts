@@ -37,6 +37,7 @@ export default class AdminPanelService implements IAdminPanelService {
                 isActive: item.isActive,
                 firstName: item.firstName,
                 lastName: item.lastName,
+                hrUserId: FilterValue.hrUserId,
               };
             },
           );

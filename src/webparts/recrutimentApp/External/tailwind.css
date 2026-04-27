@@ -609,6 +609,10 @@
   text-transform: uppercase !important
 }
 
+.lowercase {
+  text-transform: lowercase !important
+}
+
 .leading-6 {
   line-height: 1.5rem !important
 }

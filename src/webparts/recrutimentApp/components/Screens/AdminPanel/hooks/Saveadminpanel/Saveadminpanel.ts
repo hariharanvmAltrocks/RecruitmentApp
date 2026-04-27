@@ -236,10 +236,20 @@ export const useSaveAdminPanel = (
                 },
               });
             }
+          } else {
+            showModal({
+              type: "error",
+              title: "Error",
+              message: "Something went wrong",
+              confirmLabel: "Ok",
+              onConfirm: () => {
+                closeModal();
+                // navigate("/AdminPanelDashboard");
+              },
+            });
           }
         },
       );
-      await new Promise((r) => setTimeout(r, 800));
       return true;
     } catch (err) {
       console.error("Save admin user failed:", err);

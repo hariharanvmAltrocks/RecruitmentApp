@@ -39,6 +39,7 @@ var AdminPanelService = /** @class */ (function () {
                                         isActive: item.isActive,
                                         firstName: item.firstName,
                                         lastName: item.lastName,
+                                        hrUserId: FilterValue.hrUserId,
                                     };
                                 });
                             })

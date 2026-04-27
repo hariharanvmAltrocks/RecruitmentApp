@@ -12,8 +12,8 @@ import { useNavigate } from "react-router";
 import { DashboardData } from "../../../services/Dashboard/IDashboard";
 import { MetricConfig } from "../../../models/IDashboard";
 import { useUIState } from "../../RecrutimentApp/UIStateContext";
-import { DashboardSkeleton } from "./DashboardSkeleton";
 import MetricDashboard from "../../Comman/MatricBox/matric";
+import Loading from "../../Comman/Loading/loading";
 
 interface DashboardProps {
   props: any;
@@ -108,7 +108,8 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     >
       <AnimatePresence>
         {loading ? (
-          <DashboardSkeleton key="dashboard-skeleton" />
+          // <DashboardSkeleton key="dashboard-skeleton" />
+          <Loading />
         ) : (
           <motion.div
             key="dashboard-content"

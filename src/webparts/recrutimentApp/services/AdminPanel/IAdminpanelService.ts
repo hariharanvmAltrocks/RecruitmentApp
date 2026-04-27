@@ -19,6 +19,7 @@ export interface AdminDashboard {
   isActive: boolean;
   firstName: string;
   lastName: string;
+  hrUserId: string;
 }
 
 export type IAdminPanelService = {

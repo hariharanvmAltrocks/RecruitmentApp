@@ -611,3 +611,17 @@ $space-xl:       32px;
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+.select:disabled {
+  background-color: white !important;
+  color: black;           // optional (keeps text readable)
+  opacity: 1;             // remove faded look
+  cursor: not-allowed;    // optional UX
+}
+
+/* OR if you prefer custom class */
+.disabledWhite {
+  background-color: white !important;
+  color: black;
+  opacity: 1;
+}

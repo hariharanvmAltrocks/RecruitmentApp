@@ -10,9 +10,14 @@ import {
   Nationality,
 } from "../../../../utilities/ConditionConfig";
 import { ListNames } from "../../../../utilities/Config";
-import { CommonServices } from "../../../../services/ServiceExport";
+import {
+  CommonServices,
+  masterService,
+} from "../../../../services/ServiceExport";
 import ModalPopup from "../../../Comman/ModalPopup/ModalPopup";
 import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
+import { formatDate } from "../../../Hooks/dateConfigfn";
+import { userInfo } from "../../../../utilities/hooks/RoleContext";
 
 interface DrawerProps {
   isOpen: boolean;
@@ -85,6 +90,9 @@ export const Drawer: React.FC<DrawerProps> = ({
     closeModal: closemodel,
   } = useModalPopup();
 
+  const { ADGroupData } = userInfo();
+  const emailId = ADGroupData?.EmailId?.[0];
+
   // Derive a human-readable mode label and the read-only flag
   const modeLabel = isView ? "View" : isEdit ? "Edit" : "New";
   const typeLabel = type === "labour-hire" ? "Labour Hire" : "Agency";
@@ -122,10 +130,17 @@ export const Drawer: React.FC<DrawerProps> = ({
           prefix +
           newNum.toString().padStart(lastCode.length - prefix.length, "0");
 
+        const Filter = [
+          { FilterKey: "EmailId", Operator: "eq", FilterValue: emailId },
+        ];
+        const response = await masterService.GetUserDetails(Filter, "and");
+
         setField("userCode", newCode ?? "");
+        setField("hrUserId", response?.data.ID);
       } else {
         reset(type);
         setField("ID", selectedItem.ID ?? 0);
+        setField("hrUserId", Number(selectedItem?.hrUserId));
         setField("userCode", selectedItem.exUserCode ?? "");
         setField("firstName", selectedItem.firstName ?? "");
         setField("lastName", selectedItem.lastName ?? "");
@@ -136,8 +151,8 @@ export const Drawer: React.FC<DrawerProps> = ({
           "nationality",
           selectedItem.isExpat ? Nationality.Expatriate : Nationality.Nationals,
         );
-        setField("contractStart", selectedItem.contractStartDate ?? "");
-        setField("contractEnd", selectedItem.contractStartDate ?? "");
+        setField("contractStart", formatDate(selectedItem.contractStartDate));
+        setField("contractEnd", formatDate(selectedItem.contractStartDate));
         setField("numberOfUsers", selectedItem.noOfUsers);
         setField("isActive", selectedItem.isActive ?? true);
       }
@@ -285,14 +300,13 @@ export const Drawer: React.FC<DrawerProps> = ({
 
                 <Field label="Nationality">
                   <select
-                    className={styles.select}
+                    className={`${isView ? styles.disabledWhite : styles.select}`}
                     value={payload.nationality}
-                    disabled={readOnly}
+                    disabled={isView}
                     onChange={(e) => setField("nationality", e.target.value)}
                   >
-                    <option>Local</option>
-                    <option>Expatriate</option>
-                    <option>Regional</option>
+                    <option>{Nationality.Expatriate}</option>
+                    <option>{Nationality.Nationals}</option>
                   </select>
                 </Field>
 
@@ -431,7 +445,7 @@ export const Drawer: React.FC<DrawerProps> = ({
               <button
                 type="button"
                 className={styles.cancelBtn}
-                onClick={handleCancel}
+                onClick={isView ? onClose : handleCancel}
               >
                 {isView ? "Close" : "Cancel"}
               </button>

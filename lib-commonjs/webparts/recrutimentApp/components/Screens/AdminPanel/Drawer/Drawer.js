@@ -12,6 +12,8 @@ var Config_1 = require("../../../../utilities/Config");
 var ServiceExport_1 = require("../../../../services/ServiceExport");
 var ModalPopup_1 = tslib_1.__importDefault(require("../../../Comman/ModalPopup/ModalPopup"));
 var useModalPopup_1 = require("../../../Comman/ModalPopup/useModalPopup");
+var dateConfigfn_1 = require("../../../Hooks/dateConfigfn");
+var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
 var Field = function (_a) {
     var label = _a.label, error = _a.error, _b = _a.className, className = _b === void 0 ? "" : _b, children = _a.children;
     return (react_1.default.createElement("div", { className: "".concat(drawer_module_scss_1.default.field, " ").concat(className) },
@@ -27,9 +29,12 @@ var Group = function (_a) {
 };
 // ─── Drawer ───────────────────────────────────────────────────────────────────
 var Drawer = function (_a) {
-    var isOpen = _a.isOpen, onClose = _a.onClose, type = _a.type, _b = _a.isNew, isNew = _b === void 0 ? false : _b, _c = _a.isEdit, isEdit = _c === void 0 ? false : _c, _d = _a.isView, isView = _d === void 0 ? false : _d, _e = _a.selectedItem, selectedItem = _e === void 0 ? null : _e, onSuccess = _a.onSuccess;
-    var _f = (0, Saveadminpanel_1.useSaveAdminPanel)(type), payload = _f.payload, setField = _f.setField, toggleActive = _f.toggleActive, isSaving = _f.isSaving, errors = _f.errors, save = _f.save, reset = _f.reset, modalState = _f.modalState, closeModal = _f.closeModal;
-    var _g = (0, useModalPopup_1.useModalPopup)(), modelstate = _g.modalState, showModal = _g.showModal, closemodel = _g.closeModal;
+    var _b;
+    var isOpen = _a.isOpen, onClose = _a.onClose, type = _a.type, _c = _a.isNew, isNew = _c === void 0 ? false : _c, _d = _a.isEdit, isEdit = _d === void 0 ? false : _d, _e = _a.isView, isView = _e === void 0 ? false : _e, _f = _a.selectedItem, selectedItem = _f === void 0 ? null : _f, onSuccess = _a.onSuccess;
+    var _g = (0, Saveadminpanel_1.useSaveAdminPanel)(type), payload = _g.payload, setField = _g.setField, toggleActive = _g.toggleActive, isSaving = _g.isSaving, errors = _g.errors, save = _g.save, reset = _g.reset, modalState = _g.modalState, closeModal = _g.closeModal;
+    var _h = (0, useModalPopup_1.useModalPopup)(), modelstate = _h.modalState, showModal = _h.showModal, closemodel = _h.closeModal;
+    var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
+    var emailId = (_b = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _b === void 0 ? void 0 : _b[0];
     // Derive a human-readable mode label and the read-only flag
     var modeLabel = isView ? "View" : isEdit ? "Edit" : "New";
     var typeLabel = type === "labour-hire" ? "Labour Hire" : "Agency";
@@ -38,16 +43,16 @@ var Drawer = function (_a) {
         if (!isOpen)
             return;
         var loadData = function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-            var res, prefix, externalUsers, lastCode, numPart, newNum, newCode;
-            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-            return tslib_1.__generator(this, function (_l) {
-                switch (_l.label) {
+            var res, prefix, externalUsers, lastCode, numPart, newNum, newCode, Filter, response;
+            var _a, _b, _c, _d, _e, _f, _g, _h;
+            return tslib_1.__generator(this, function (_j) {
+                switch (_j.label) {
                     case 0:
-                        if (!(isNew || !selectedItem)) return [3 /*break*/, 2];
+                        if (!(isNew || !selectedItem)) return [3 /*break*/, 3];
                         reset(type);
                         return [4 /*yield*/, ServiceExport_1.CommonServices.GetMasterData(Config_1.ListNames.HRMSExternalAgents)];
                     case 1:
-                        res = _l.sent();
+                        res = _j.sent();
                         prefix = type === "agency" ? "ANT" : "LHC";
                         externalUsers = res.data.filter(function (item) {
                             return item.UserType ===
@@ -62,11 +67,19 @@ var Drawer = function (_a) {
                         newNum = numPart + 1;
                         newCode = prefix +
                             newNum.toString().padStart(lastCode.length - prefix.length, "0");
-                        setField("userCode", newCode !== null && newCode !== void 0 ? newCode : "");
-                        return [3 /*break*/, 3];
+                        Filter = [
+                            { FilterKey: "EmailId", Operator: "eq", FilterValue: emailId },
+                        ];
+                        return [4 /*yield*/, ServiceExport_1.masterService.GetUserDetails(Filter, "and")];
                     case 2:
+                        response = _j.sent();
+                        setField("userCode", newCode !== null && newCode !== void 0 ? newCode : "");
+                        setField("hrUserId", response === null || response === void 0 ? void 0 : response.data.ID);
+                        return [3 /*break*/, 4];
+                    case 3:
                         reset(type);
                         setField("ID", (_a = selectedItem.ID) !== null && _a !== void 0 ? _a : 0);
+                        setField("hrUserId", Number(selectedItem === null || selectedItem === void 0 ? void 0 : selectedItem.hrUserId));
                         setField("userCode", (_b = selectedItem.exUserCode) !== null && _b !== void 0 ? _b : "");
                         setField("firstName", (_c = selectedItem.firstName) !== null && _c !== void 0 ? _c : "");
                         setField("lastName", (_d = selectedItem.lastName) !== null && _d !== void 0 ? _d : "");
@@ -74,12 +87,12 @@ var Drawer = function (_a) {
                         setField("companyName", (_f = selectedItem.designation) !== null && _f !== void 0 ? _f : "");
                         setField("designation", (_g = selectedItem.designation) !== null && _g !== void 0 ? _g : "");
                         setField("nationality", selectedItem.isExpat ? ConditionConfig_1.Nationality.Expatriate : ConditionConfig_1.Nationality.Nationals);
-                        setField("contractStart", (_h = selectedItem.contractStartDate) !== null && _h !== void 0 ? _h : "");
-                        setField("contractEnd", (_j = selectedItem.contractStartDate) !== null && _j !== void 0 ? _j : "");
+                        setField("contractStart", (0, dateConfigfn_1.formatDate)(selectedItem.contractStartDate));
+                        setField("contractEnd", (0, dateConfigfn_1.formatDate)(selectedItem.contractStartDate));
                         setField("numberOfUsers", selectedItem.noOfUsers);
-                        setField("isActive", (_k = selectedItem.isActive) !== null && _k !== void 0 ? _k : true);
-                        _l.label = 3;
-                    case 3: return [2 /*return*/];
+                        setField("isActive", (_h = selectedItem.isActive) !== null && _h !== void 0 ? _h : true);
+                        _j.label = 4;
+                    case 4: return [2 /*return*/];
                 }
             });
         }); };
@@ -167,10 +180,9 @@ var Drawer = function (_a) {
                     react_1.default.createElement(Field, { label: "User Code" },
                         react_1.default.createElement("input", { readOnly: true, value: payload.userCode, className: drawer_module_scss_1.default.inputReadonly })),
                     react_1.default.createElement(Field, { label: "Nationality" },
-                        react_1.default.createElement("select", { className: drawer_module_scss_1.default.select, value: payload.nationality, disabled: readOnly, onChange: function (e) { return setField("nationality", e.target.value); } },
-                            react_1.default.createElement("option", null, "Local"),
-                            react_1.default.createElement("option", null, "Expatriate"),
-                            react_1.default.createElement("option", null, "Regional"))),
+                        react_1.default.createElement("select", { className: "".concat(isView ? drawer_module_scss_1.default.disabledWhite : drawer_module_scss_1.default.select), value: payload.nationality, disabled: isView, onChange: function (e) { return setField("nationality", e.target.value); } },
+                            react_1.default.createElement("option", null, ConditionConfig_1.Nationality.Expatriate),
+                            react_1.default.createElement("option", null, ConditionConfig_1.Nationality.Nationals))),
                     react_1.default.createElement(Field, { label: "First Name", error: errors.firstName },
                         react_1.default.createElement("input", { className: "".concat(drawer_module_scss_1.default.input, " ").concat(errors.firstName ? drawer_module_scss_1.default.hasError : ""), placeholder: "Enter first name", value: payload.firstName, readOnly: readOnly, onChange: function (e) { return setField("firstName", e.target.value); } })),
                     react_1.default.createElement(Field, { label: "Last Name", error: errors.lastName },
@@ -199,7 +211,7 @@ var Drawer = function (_a) {
                                     return setField("confirmPassword", e.target.value);
                                 } })))))),
             react_1.default.createElement("footer", { className: drawer_module_scss_1.default.footer },
-                react_1.default.createElement("button", { type: "button", className: drawer_module_scss_1.default.cancelBtn, onClick: handleCancel }, isView ? "Close" : "Cancel"),
+                react_1.default.createElement("button", { type: "button", className: drawer_module_scss_1.default.cancelBtn, onClick: isView ? onClose : handleCancel }, isView ? "Close" : "Cancel"),
                 !isView && (react_1.default.createElement("button", { type: "button", className: drawer_module_scss_1.default.submitBtn, onClick: handleSubmit, disabled: isSaving },
                     isSaving ? (react_1.default.createElement("span", { className: drawer_module_scss_1.default.spinner })) : (react_1.default.createElement(lucide_react_1.ShieldCheck, { size: 15 })),
                     isSaving

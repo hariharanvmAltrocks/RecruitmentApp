@@ -92,7 +92,11 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
 }) => {
   const { ADGroupData } = userInfo();
   const user = ADGroupData?.userDetails?.[0];
-  const UserName = [user?.FirstName, user?.MiddleName, user?.LastName];
+
+  const UserName = [user?.FirstName, user?.MiddleName, user?.LastName]
+    .filter(Boolean)
+    .join(" ");
+
   const [oversightOpen, setOversightOpen] = useState(false);
   // const [activeMetricId, setActiveMetricId] = useState<number | string | null>(
   //   () => {

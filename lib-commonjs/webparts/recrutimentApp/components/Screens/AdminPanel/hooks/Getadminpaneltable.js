@@ -41,18 +41,18 @@ var useAdminPanelTable = function (_a) {
                 clearTimeout(timerRef.current);
             setState(function (prev) { return (tslib_1.__assign(tslib_1.__assign({}, prev), { loading: true, error: null })); });
             timerRef.current = setTimeout(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-                var Filter, response, FilterType, FilterValue, res, err_1;
-                var _a;
-                return tslib_1.__generator(this, function (_b) {
-                    switch (_b.label) {
+                var Filter, response, FilterType, FilterValue, res, getTotalItems, totalItems, err_1;
+                var _a, _b;
+                return tslib_1.__generator(this, function (_c) {
+                    switch (_c.label) {
                         case 0:
-                            _b.trys.push([0, 4, , 5]);
+                            _c.trys.push([0, 4, , 5]);
                             Filter = [
                                 { FilterKey: "EmailId", Operator: "eq", FilterValue: emailId },
                             ];
                             return [4 /*yield*/, ServiceExport_1.masterService.GetUserDetails(Filter, "and")];
                         case 1:
-                            response = _b.sent();
+                            response = _c.sent();
                             if (!(response.status === 200 && response.data)) return [3 /*break*/, 3];
                             FilterType = type === "labour-hire"
                                 ? Config_1.ExternalUserType.LabourHire
@@ -71,21 +71,31 @@ var useAdminPanelTable = function (_a) {
                             };
                             return [4 /*yield*/, ServiceExport_1.AdminPanelServices.getAdminPanelDashboard(FilterValue)];
                         case 2:
-                            res = _b.sent();
+                            res = _c.sent();
+                            getTotalItems = function (res) {
+                                var _a;
+                                return (res === null || res === void 0 ? void 0 : res.data) &&
+                                    res.data.length > 0 &&
+                                    ((_a = res.data[0]) === null || _a === void 0 ? void 0 : _a.TotalItems) &&
+                                    res.data[0].TotalItems > 0
+                                    ? res.data[0].TotalItems
+                                    : 0;
+                            };
+                            totalItems = getTotalItems(res) || ((_a = res.data) === null || _a === void 0 ? void 0 : _a.length);
                             setState({
-                                data: (_a = res.data) !== null && _a !== void 0 ? _a : [],
+                                data: (_b = res.data) !== null && _b !== void 0 ? _b : [],
                                 loading: false,
                                 error: null,
                                 pagination: {
                                     currentPage: page,
                                     pageSize: resolvedPageSize,
-                                    totalItems: 0,
+                                    totalItems: totalItems !== null && totalItems !== void 0 ? totalItems : 0,
                                 },
                             });
-                            _b.label = 3;
+                            _c.label = 3;
                         case 3: return [3 /*break*/, 5];
                         case 4:
-                            err_1 = _b.sent();
+                            err_1 = _c.sent();
                             if ((err_1 === null || err_1 === void 0 ? void 0 : err_1.name) === "AbortError")
                                 return [2 /*return*/];
                             console.error("Adminpanel Dashboard: fetch failed", err_1);

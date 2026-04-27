@@ -41,7 +41,9 @@ var MetricDashboard = function (_a) {
     var metrics = _a.metrics, onCardClick = _a.onCardClick, loading = _a.loading, handleRefresh = _a.handleRefresh, active = _a.active;
     var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
     var user = (_b = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.userDetails) === null || _b === void 0 ? void 0 : _b[0];
-    var UserName = [user === null || user === void 0 ? void 0 : user.FirstName, user === null || user === void 0 ? void 0 : user.MiddleName, user === null || user === void 0 ? void 0 : user.LastName];
+    var UserName = [user === null || user === void 0 ? void 0 : user.FirstName, user === null || user === void 0 ? void 0 : user.MiddleName, user === null || user === void 0 ? void 0 : user.LastName]
+        .filter(Boolean)
+        .join(" ");
     var _c = (0, react_1.useState)(false), oversightOpen = _c[0], setOversightOpen = _c[1];
     // const [activeMetricId, setActiveMetricId] = useState<number | string | null>(
     //   () => {

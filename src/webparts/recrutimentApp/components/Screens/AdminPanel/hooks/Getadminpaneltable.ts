@@ -98,6 +98,17 @@ export const useAdminPanelTable = ({
             const res =
               await AdminPanelServices.getAdminPanelDashboard(FilterValue);
 
+            const getTotalItems = (res: any): number => {
+              return res?.data &&
+                res.data.length > 0 &&
+                res.data[0]?.TotalItems &&
+                res.data[0].TotalItems > 0
+                ? res.data[0].TotalItems
+                : 0;
+            };
+
+            const totalItems = getTotalItems(res) || res.data?.length;
+
             setState({
               data: res.data ?? [],
               loading: false,
@@ -105,7 +116,7 @@ export const useAdminPanelTable = ({
               pagination: {
                 currentPage: page,
                 pageSize: resolvedPageSize,
-                totalItems: 0,
+                totalItems: totalItems ?? 0,
               },
             });
           }

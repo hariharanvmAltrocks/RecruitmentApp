@@ -1,5 +1,6 @@
 .metric-dashboard {
   padding: 1.5rem;
+  width: 97%;
 }
 @media (max-width: 768px) {
   .metric-dashboard {

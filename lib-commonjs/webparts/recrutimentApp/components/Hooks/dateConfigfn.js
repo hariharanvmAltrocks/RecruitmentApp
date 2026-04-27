@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.toUTC = exports.toDate = exports.formatToDateTimeLocal = exports.ConvertUtc = exports.AddCalculateDate = exports.SpiltDateOnly = void 0;
+exports.formatDate = exports.toUTC = exports.toDate = exports.formatToDateTimeLocal = exports.ConvertUtc = exports.AddCalculateDate = exports.SpiltDateOnly = void 0;
 exports.toAttachment = toAttachment;
 var tslib_1 = require("tslib");
 var moment_1 = tslib_1.__importDefault(require("moment"));
@@ -65,4 +65,10 @@ var toUTC = function (dateStr) {
     return new Date(dateStr).toISOString();
 };
 exports.toUTC = toUTC;
+var formatDate = function (dateString) {
+    if (!dateString)
+        return "";
+    return new Date(dateString).toISOString().split("T")[0];
+};
+exports.formatDate = formatDate;
 //# sourceMappingURL=dateConfigfn.js.map

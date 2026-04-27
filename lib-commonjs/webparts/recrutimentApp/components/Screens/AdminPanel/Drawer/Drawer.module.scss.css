@@ -539,3 +539,16 @@
     transform: rotate(360deg);
   }
 }
+.select:disabled {
+  background-color: white !important;
+  color: black;
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+/* OR if you prefer custom class */
+.disabledWhite {
+  background-color: white !important;
+  color: black;
+  opacity: 1;
+}

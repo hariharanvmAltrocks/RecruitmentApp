@@ -116,7 +116,7 @@ var useSaveAdminPanel = function (initialType) {
                     setIsSaving(true);
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 4, 5, 6]);
+                    _a.trys.push([1, 3, 4, 5]);
                     SubmitData = {
                         firstname: payload.firstName,
                         lastname: payload.lastName,
@@ -187,25 +187,34 @@ var useSaveAdminPanel = function (initialType) {
                                                 },
                                             });
                                         }
-                                        _a.label = 2;
-                                    case 2: return [2 /*return*/];
+                                        return [3 /*break*/, 3];
+                                    case 2:
+                                        showModal({
+                                            type: "error",
+                                            title: "Error",
+                                            message: "Something went wrong",
+                                            confirmLabel: "Ok",
+                                            onConfirm: function () {
+                                                closeModal();
+                                                // navigate("/AdminPanelDashboard");
+                                            },
+                                        });
+                                        _a.label = 3;
+                                    case 3: return [2 /*return*/];
                                 }
                             });
                         }); })];
                 case 2:
                     _a.sent();
-                    return [4 /*yield*/, new Promise(function (r) { return setTimeout(r, 800); })];
-                case 3:
-                    _a.sent();
                     return [2 /*return*/, true];
-                case 4:
+                case 3:
                     err_1 = _a.sent();
                     console.error("Save admin user failed:", err_1);
                     return [2 /*return*/, false];
-                case 5:
+                case 4:
                     setIsSaving(false);
                     return [7 /*endfinally*/];
-                case 6: return [2 /*return*/];
+                case 5: return [2 /*return*/];
             }
         });
     }); };
