@@ -1,13 +1,11 @@
 @import "../../../styles/theme";
 @import "../../../styles/variables";
 
-// ─── Design tokens ─────────────────────────────────────────────────────────────
-// Override these in your theme file if needed.
+
 $brand-purple:       #7c3aed;
 $brand-purple-hover: #6d28d9;
 $brand-purple-light: rgba(124, 58, 237, 0.08);
 
-// ─── Dashboard wrapper ─────────────────────────────────────────────────────────
 
 .metric-dashboard {
   padding: 1.5rem;
@@ -70,6 +68,15 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
     }
   }
 
+  // ── Oversight anchor wrapper ───────────────────────────────────────────────────
+  // position: relative so the popup is absolutely positioned relative to this.
+
+  &__oversight-anchor {
+    position: relative;
+    flex-shrink: 0;
+    align-self: flex-start;
+  }
+
   // ── Ongoing Oversights button ─────────────────────────────────────────────────
 
   &__oversight-btn {
@@ -87,7 +94,6 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.2s ease;
-    flex-shrink: 0;
 
     &:hover {
       background: #faf5ff;
@@ -99,8 +105,10 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
       outline-offset: 3px;
     }
 
-    // Rotate chevron when panel is open
     &--open {
+      background: #faf5ff;
+      border-color: $brand-purple;
+
       .metric-dashboard__oversight-chevron {
         transform: rotate(180deg);
       }
@@ -123,12 +131,35 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  // ── Oversight panel ───────────────────────────────────────────────────────────
+  // ── Transparent backdrop — closes popup on outside click ──────────────────────
 
-  &__oversight-panel {
-    overflow: hidden; // framer-motion animates height, this hides overflow
-    display: flex;
-    justify-content: end;
+  &__oversight-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    background: transparent;
+  }
+
+  // ── Floating popup card ───────────────────────────────────────────────────────
+  // Absolutely positioned below the button, right-aligned to anchor edge.
+  // Does NOT affect document flow — overlays the content beneath.
+
+  &__oversight-popup {
+    position: absolute;
+    top: calc(100% + 10px); // 10px gap below button
+    right: 0;               // align right edge with button
+    z-index: 100;
+
+    // Let content determine min-width; cap max-width for very wide screens
+    min-width: 560px;
+    max-width: 90vw;
+
+    @media (max-width: 640px) {
+      // On mobile, shift left to stay inside viewport
+      right: auto;
+      left: 0;
+      min-width: calc(100vw - 2rem);
+    }
   }
 
   // ── Section header ────────────────────────────────────────────────────────────
@@ -157,6 +188,7 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
     font-weight: 900;
     letter-spacing: 0.05em;
     color: #111827;
+    margin-bottom: 2px;
   }
 
   &__section-subtitle {
@@ -178,18 +210,35 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
   }
 }
 
-// ─── Oversight panel inner ─────────────────────────────────────────────────────
+// ─── Oversight popup inner card ────────────────────────────────────────────────
 
-.oversight-panel__inner {
+.oversight-popup__inner {
   display: flex;
   justify-content: space-between;
   align-items: stretch;
   background: #fff;
-  border: 1px solid transparent;
+  border: 1px solid #e5e7eb;
   border-radius: 24px;
-  padding: 32px 40px;
-  box-shadow: 0 10px 40px rgba(124, 58, 237, 0.08);
-  width: 50%;
+  padding: 28px 36px;
+  box-shadow:
+    0 20px 60px rgba(124, 58, 237, 0.12),
+    0 4px 16px rgba(0, 0, 0, 0.06);
+  width: 100%;
+
+  // Subtle top accent line
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 24px;
+    right: 24px;
+    height: 2px;
+    background: linear-gradient(90deg, $brand-purple, #9333ea);
+    border-radius: 0 0 2px 2px;
+    opacity: 0.6;
+  }
+
+  position: relative;
 
   @media (max-width: 900px) {
     flex-wrap: wrap;
@@ -204,14 +253,34 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
   }
 }
 
+// ─── Oversight stat ────────────────────────────────────────────────────────────
+
 .oversight-stat {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
   gap: 12px;
-  border-right: none;
   flex: 1;
+
+  &:not(:last-child) {
+    border-right: 1px solid #f3f4f6;
+    padding-right: 28px;
+
+    @media (max-width: 900px) {
+      border-right: none;
+      padding-right: 0;
+    }
+  }
+
+  // Give each stat a bit of left padding (except first)
+  &:not(:first-child) {
+    padding-left: 28px;
+
+    @media (max-width: 900px) {
+      padding-left: 0;
+    }
+  }
 
   @media (max-width: 900px) {
     flex: 1 1 calc(33.333% - 24px);
@@ -233,7 +302,7 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
   &__top {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
 
     @media (max-width: 400px) {
       gap: 12px;
@@ -241,32 +310,32 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
   }
 
   &__icon-wrap {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
-    background: #fff !important;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #fff;
     border: 1px solid #f3f4f6;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
 
     @media (max-width: 560px) {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 10px;
     }
   }
 
   &__num {
-    font-size: 1.85rem;
+    font-size: 1.75rem;
     font-weight: 900;
     color: #111827;
     line-height: 1;
 
     @media (max-width: 560px) {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
     }
   }
 
@@ -276,7 +345,7 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
     letter-spacing: 0.1em;
     color: #9ca3af;
     text-align: left;
-    max-width: 140px;
+    max-width: 120px;
     line-height: 1.5;
     word-wrap: break-word;
 
@@ -309,25 +378,24 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
   position: relative;
   overflow: hidden;
 
-  // Min and Max widths based on screen size
-  min-width: 300px;
-  max-width: 300px;
+  min-width: 236px;
+  max-width: 236px;
 
   @media (min-width: 1440px) {
-    min-width: 300px;
-    max-width: 300px;
+    min-width: 236px;
+    max-width: 236px;
   }
 
   @media (max-width: 1200px) {
-    min-width: 300px;
-    max-width: 300px;
+    min-width: 236px;
+    max-width: 236px;
   }
 
   @media (max-width: 768px) {
     padding: 14px 18px;
     gap: 12px;
-    min-width: 300px;
-    max-width: 300px;
+    min-width: 236px;
+    max-width: 236px;
   }
 
   @media (max-width: 560px) {
@@ -337,14 +405,10 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
     border-radius: 30px;
   }
 
-  // ── Default hover ────────────────────────────────────────────────────────────
-
   &:hover:not(&--active) {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
     transform: translateY(-2px);
   }
-
-  // ── Active / selected state ───────────────────────────────────────────────────
 
   &--active {
     background: linear-gradient(135deg, $brand-purple, #9333ea);
@@ -364,8 +428,6 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
     }
   }
 
-  // ── Icon wrap ─────────────────────────────────────────────────────────────────
-
   &__icon-wrap {
     flex-shrink: 0;
     position: relative;
@@ -382,8 +444,6 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
     transition: background 0.3s ease, box-shadow 0.3s ease;
   }
 
-  // ── Body ──────────────────────────────────────────────────────────────────────
-
   &__body {
     flex: 1;
     min-width: 0;
@@ -395,7 +455,7 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
   }
 
   &__label {
-    font-size: 11px;
+    font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.05em;
     color: #6b7280;
@@ -419,8 +479,6 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
     font-family: inherit;
   }
 
-  // ── Arrow ─────────────────────────────────────────────────────────────────────
-
   &__arrow {
     flex-shrink: 0;
     color: #9ca3af;
@@ -436,12 +494,10 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
     color: $brand-purple;
   }
 
-  // ── Responsive overrides (Icons & Text) ───────────────────────────────────────
-
   @media (max-width: 480px) {
     &__icon {
-      width: 40px;
-      height: 40px;
+      width: 45px;
+      height: 45px;
     }
 
     &__value {
@@ -451,46 +507,46 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
 
   @media (min-width: 1440px) {
     &__icon {
-      width: 54px;
-      height: 54px;
+      width: 45px;
+      height: 45px;
     }
   }
 }
 
-.refresh-btn-container{
+.refresh-btn-container {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   width: 100%;
 }
 
- .refresh-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background: #fff;
-    color: #555;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+  color: #555;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
 
-    &:hover:not(:disabled) {
-      background: #f5f5f5;
-      border-color: #bbb;
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+  &:hover:not(:disabled) {
+    background: #f5f5f5;
+    border-color: #bbb;
   }
 
-  @keyframes spin {
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@keyframes spin {
   from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  to   { transform: rotate(360deg); }
 }
 
 .spin {
@@ -500,12 +556,8 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
 // ─── Skeleton Loader ────────────────────────────────────────────────────────────
 
 @keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
 }
 
 .metric-card--skeleton {

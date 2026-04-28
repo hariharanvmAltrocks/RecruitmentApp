@@ -52,6 +52,11 @@
   color: #7c3aed !important;
   font-weight: 800;
 }
+.metric-dashboard__oversight-anchor {
+  position: relative;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
 .metric-dashboard__oversight-btn {
   display: inline-flex;
   align-items: center;
@@ -67,7 +72,6 @@
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s ease;
-  flex-shrink: 0;
 }
 .metric-dashboard__oversight-btn:hover {
   background: #faf5ff;
@@ -76,6 +80,10 @@
 .metric-dashboard__oversight-btn:focus-visible {
   outline: 2px solid #7c3aed;
   outline-offset: 3px;
+}
+.metric-dashboard__oversight-btn--open {
+  background: #faf5ff;
+  border-color: #7c3aed;
 }
 .metric-dashboard__oversight-btn--open .metric-dashboard__oversight-chevron {
   transform: rotate(180deg);
@@ -94,10 +102,26 @@
   color: #8b5cf6;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.metric-dashboard__oversight-panel {
-  overflow: hidden;
-  display: flex;
-  justify-content: end;
+.metric-dashboard__oversight-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: transparent;
+}
+.metric-dashboard__oversight-popup {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 100;
+  min-width: 560px;
+  max-width: 90vw;
+}
+@media (max-width: 640px) {
+  .metric-dashboard__oversight-popup {
+    right: auto;
+    left: 0;
+    min-width: calc(100vw - 2rem);
+  }
 }
 .metric-dashboard__section-header {
   display: flex;
@@ -121,6 +145,7 @@
   font-weight: 900;
   letter-spacing: 0.05em;
   color: #111827;
+  margin-bottom: 2px;
 }
 .metric-dashboard__section-subtitle {
   font-size: 10px;
@@ -137,26 +162,38 @@
   align-items: stretch;
 }
 
-.oversight-panel__inner {
+.oversight-popup__inner {
   display: flex;
   justify-content: space-between;
   align-items: stretch;
   background: #fff;
-  border: 1px solid transparent;
+  border: 1px solid #e5e7eb;
   border-radius: 24px;
-  padding: 32px 40px;
-  box-shadow: 0 10px 40px rgba(124, 58, 237, 0.08);
-  width: 50%;
+  padding: 28px 36px;
+  box-shadow: 0 20px 60px rgba(124, 58, 237, 0.12), 0 4px 16px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  position: relative;
+}
+.oversight-popup__inner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+  background: linear-gradient(90deg, #7c3aed, #9333ea);
+  border-radius: 0 0 2px 2px;
+  opacity: 0.6;
 }
 @media (max-width: 900px) {
-  .oversight-panel__inner {
+  .oversight-popup__inner {
     flex-wrap: wrap;
     gap: 24px;
     padding: 24px;
   }
 }
 @media (max-width: 560px) {
-  .oversight-panel__inner {
+  .oversight-popup__inner {
     padding: 20px;
     border-radius: 20px;
     gap: 20px;
@@ -169,8 +206,25 @@
   align-items: flex-start;
   justify-content: flex-start;
   gap: 12px;
-  border-right: none;
   flex: 1;
+}
+.oversight-stat:not(:last-child) {
+  border-right: 1px solid #f3f4f6;
+  padding-right: 28px;
+}
+@media (max-width: 900px) {
+  .oversight-stat:not(:last-child) {
+    border-right: none;
+    padding-right: 0;
+  }
+}
+.oversight-stat:not(:first-child) {
+  padding-left: 28px;
+}
+@media (max-width: 900px) {
+  .oversight-stat:not(:first-child) {
+    padding-left: 0;
+  }
 }
 @media (max-width: 900px) {
   .oversight-stat {
@@ -195,7 +249,7 @@
 .oversight-stat__top {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 @media (max-width: 400px) {
   .oversight-stat__top {
@@ -203,33 +257,33 @@
   }
 }
 .oversight-stat__icon-wrap {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: #fff !important;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #fff;
   border: 1px solid #f3f4f6;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
 }
 @media (max-width: 560px) {
   .oversight-stat__icon-wrap {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     border-radius: 10px;
   }
 }
 .oversight-stat__num {
-  font-size: 1.85rem;
+  font-size: 1.75rem;
   font-weight: 900;
   color: #111827;
   line-height: 1;
 }
 @media (max-width: 560px) {
   .oversight-stat__num {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 }
 .oversight-stat__label {
@@ -238,7 +292,7 @@
   letter-spacing: 0.1em;
   color: #9ca3af;
   text-align: left;
-  max-width: 140px;
+  max-width: 120px;
   line-height: 1.5;
   word-wrap: break-word;
 }
@@ -264,27 +318,27 @@
   user-select: none;
   position: relative;
   overflow: hidden;
-  min-width: 300px;
-  max-width: 300px;
+  min-width: 236px;
+  max-width: 236px;
 }
 @media (min-width: 1440px) {
   .metric-card {
-    min-width: 300px;
-    max-width: 300px;
+    min-width: 236px;
+    max-width: 236px;
   }
 }
 @media (max-width: 1200px) {
   .metric-card {
-    min-width: 300px;
-    max-width: 300px;
+    min-width: 236px;
+    max-width: 236px;
   }
 }
 @media (max-width: 768px) {
   .metric-card {
     padding: 14px 18px;
     gap: 12px;
-    min-width: 300px;
-    max-width: 300px;
+    min-width: 236px;
+    max-width: 236px;
   }
 }
 @media (max-width: 560px) {
@@ -337,7 +391,7 @@
   z-index: 2;
 }
 .metric-card__label {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.05em;
   color: #6b7280;
@@ -372,8 +426,8 @@
 }
 @media (max-width: 480px) {
   .metric-card__icon {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
   }
   .metric-card__value {
     font-size: 1.375rem;
@@ -381,8 +435,8 @@
 }
 @media (min-width: 1440px) {
   .metric-card__icon {
-    width: 54px;
-    height: 54px;
+    width: 45px;
+    height: 45px;
   }
 }
 

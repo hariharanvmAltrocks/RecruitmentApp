@@ -1,14 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Activity,
   Calendar,
-  ChevronDown,
-  ChevronRight,
   FileText,
   UserCheck,
   UserPlus,
-  Users,
   XCircle,
   Zap,
 } from "lucide-react";
@@ -26,9 +23,6 @@ interface MetricDashboardProps {
   active: number | string | null;
 }
 
-// Maps oversight-only metrics (showArrow: false) to their display icon + accent.
-// Extend this map to match your actual metric ids / labels.
-
 const OVERSIGHT_ICON_MAP: Record<
   string,
   { icon: React.ElementType; color: string; bg: string }
@@ -40,7 +34,6 @@ const OVERSIGHT_ICON_MAP: Record<
   candidates_onboarded: { icon: UserPlus, color: "#f97316", bg: "#fff7ed" },
 };
 
-// Fallback for unrecognised oversight metrics
 const FALLBACK_OVERSIGHT = { icon: Activity, color: "#6b7280", bg: "#f9fafb" };
 
 // ─── OversightStat ────────────────────────────────────────────────────────────
@@ -51,13 +44,11 @@ interface OversightStatProps {
 }
 
 const OversightStat: React.FC<OversightStatProps> = ({ metric, index }) => {
-  // Try to resolve icon by metric id, then by label slug
   const slug =
     metric.id?.toString() ?? metric.label.toLowerCase().replace(/\s+/g, "_");
   const resolved = OVERSIGHT_ICON_MAP[slug] ?? FALLBACK_OVERSIGHT;
   const Icon = metric.icon ?? resolved.icon;
   const color = metric.color ?? resolved.color;
-  const bg = metric.bgColor ?? resolved.bg;
 
   return (
     <motion.div
@@ -81,7 +72,7 @@ const OversightStat: React.FC<OversightStatProps> = ({ metric, index }) => {
   );
 };
 
-// ─── MetricDashboard (main export) ───────────────────────────────────────────
+// ─── MetricDashboard ──────────────────────────────────────────────────────────
 
 const MetricDashboard: React.FC<MetricDashboardProps> = ({
   metrics,
@@ -98,25 +89,22 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
     .join(" ");
 
   const [oversightOpen, setOversightOpen] = useState(false);
-  // const [activeMetricId, setActiveMetricId] = useState<number | string | null>(
-  //   () => {
-  //     const first = metrics.find((m) => m.showArrow);
-  //     return first?.id ?? null;
-  //   },
-  // );
+  const btnRef = useRef<HTMLButtonElement>(null);
 
   const taskMetrics = metrics.filter((m) => m.showArrow === true);
   const oversightMetrics = metrics.filter((m) => m.showArrow === false);
 
-  const urgentCount = metrics.filter((m) => m.value > 0).length;
+  const urgentCount = metrics.filter(
+    (m) => m.value > 0 && m.showArrow === true,
+  ).length;
 
   const handleCardClick = (metric: Metric) => {
-    // setActiveMetricId(metric.id);
     onCardClick?.(metric);
   };
 
   return (
     <div className="metric-dashboard">
+      {/* ── Top bar: Welcome + Oversight toggle side by side ── */}
       <div className="metric-dashboard__topbar">
         <div className="metric-dashboard__welcome">
           <h1 className="metric-dashboard__welcome-title">
@@ -134,55 +122,80 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
           )}
         </div>
 
-        {/* Ongoing Oversights toggle — only render if there are oversight metrics */}
+        {/* Oversight toggle — button + floating popup anchor */}
         {oversightMetrics.length > 0 && (
-          <button
-            className={cn(
-              "metric-dashboard__oversight-btn",
-              oversightOpen && "metric-dashboard__oversight-btn--open",
-            )}
-            onClick={() => setOversightOpen((prev) => !prev)}
-            aria-expanded={oversightOpen}
-            aria-controls="oversight-panel"
-          >
-            <div className="metric-dashboard__oversight-btn-icon">
-              <Activity size={14} strokeWidth={2.5} />
-            </div>
-            <span>ONGOING OVERSIGHTS</span>
-            <ChevronDown
-              size={14}
-              strokeWidth={2.5}
-              className="metric-dashboard__oversight-chevron"
-            />
-          </button>
+          <div className="metric-dashboard__oversight-anchor">
+            <button
+              ref={btnRef}
+              className={cn(
+                "metric-dashboard__oversight-btn",
+                oversightOpen && "metric-dashboard__oversight-btn--open",
+              )}
+              onClick={() => setOversightOpen((prev) => !prev)}
+              aria-expanded={oversightOpen}
+              aria-controls="oversight-panel"
+            >
+              <div className="metric-dashboard__oversight-btn-icon">
+                <Activity size={14} strokeWidth={2.5} />
+              </div>
+              <span>ONGOING OVERSIGHTS</span>
+              <svg
+                className="metric-dashboard__oversight-chevron"
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+
+            {/* ── Floating popup — overlays content, anchored below button ── */}
+            <AnimatePresence>
+              {oversightOpen && (
+                <>
+                  {/* Backdrop to close on outside click */}
+                  <div
+                    className="metric-dashboard__oversight-backdrop"
+                    onClick={() => setOversightOpen(false)}
+                  />
+
+                  <motion.div
+                    id="oversight-panel"
+                    className="metric-dashboard__oversight-popup"
+                    initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                    transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                  >
+                    <div className="oversight-popup__inner">
+                      {oversightMetrics.map((metric, i) => (
+                        <OversightStat
+                          key={metric.id ?? i}
+                          metric={metric}
+                          index={i}
+                        />
+                      ))}
+                    </div>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
         )}
       </div>
 
-      {/* ── Oversight panel ──────────────────────────────────────────────── */}
-      <AnimatePresence>
-        {oversightOpen && oversightMetrics.length > 0 && (
-          <motion.div
-            id="oversight-panel"
-            className="metric-dashboard__oversight-panel"
-            initial={{ height: 0, opacity: 0, marginBottom: 0 }}
-            animate={{ height: "auto", opacity: 1, marginBottom: 20 }}
-            exit={{ height: 0, opacity: 0, marginBottom: 0 }}
-            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-          >
-            <div className="oversight-panel__inner">
-              {oversightMetrics.map((metric, i) => (
-                <OversightStat key={metric.id ?? i} metric={metric} index={i} />
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+      {/* ── Section header ── */}
       <div className="metric-dashboard__section-header">
         <div className="metric-dashboard__section-icon">
           <Zap size={15} strokeWidth={2.5} color="#fff" />
         </div>
-        <div>
+        <div style={{ width: "100%" }}>
           <p className="metric-dashboard__section-title">TASKS TO FINALIZE</p>
           <p className="metric-dashboard__section-subtitle">
             PROCESS THESE ITEMS TO KEEP MOMENTUM
@@ -216,6 +229,7 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
         </div>
       </div>
 
+      {/* ── Cards grid ── */}
       <div className="metric-dashboard__grid">
         {loading
           ? Array.from({ length: 6 }).map((_, i) => (
