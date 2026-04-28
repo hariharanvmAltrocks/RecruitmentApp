@@ -20,6 +20,7 @@ var initialState = {
     apiUrlsReady: false,
     isLoading: true,
     error: null,
+    apiUrlsError: null,
 };
 function providerReducer(state, action) {
     switch (action.type) {
@@ -33,6 +34,8 @@ function providerReducer(state, action) {
             return tslib_1.__assign(tslib_1.__assign({}, state), { error: action.error, isLoading: false });
         case "SET_LOADING":
             return tslib_1.__assign(tslib_1.__assign({}, state), { isLoading: action.isLoading });
+        case "SET_API_URLS_ERROR":
+            return tslib_1.__assign(tslib_1.__assign({}, state), { apiUrlsError: action.message });
         default:
             return state;
     }
@@ -122,9 +125,9 @@ function initApiUrls() {
                 case 2:
                     signIn = _a.sent();
                     if (signIn.status !== ApiConfig_1.ResponeStatus.SUCCESS) {
-                        ServerDownError;
+                        return [2 /*return*/, false];
                     }
-                    return [2 /*return*/, signIn.status === ApiConfig_1.ResponeStatus.SUCCESS];
+                    return [2 /*return*/, true];
             }
         });
     });
@@ -187,7 +190,7 @@ var ServerDownError = function (_a) {
                             React.createElement("svg", { className: "h-6 w-6 text-amber-600", fill: "none", viewBox: "0 0 24 24", strokeWidth: "1.5", stroke: "currentColor", "aria-hidden": "true" },
                                 React.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" }))),
                         React.createElement("div", { className: "mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left" },
-                            React.createElement("h3", { className: "text-xl font-semibold leading-6 text-gray-900" }, "Error: Initialisation Error"),
+                            React.createElement("h3", { className: "text-xl font-semibold leading-6 text-gray-900" }, "Error: Server Is Not Responding"),
                             React.createElement("div", { className: "mt-3" },
                                 React.createElement("p", { className: "text-sm text-gray-500 mb-2" },
                                     React.createElement("span", { className: "font-semibold text-gray-700" }, message)))))),
@@ -206,9 +209,25 @@ var RoleProvider = function (_a) {
                     dispatch({ type: "SET_LOADING", isLoading: true });
                     return [4 /*yield*/, Promise.allSettled([
                             initApiUrls()
-                                .then(function () { return dispatch({ type: "SET_API_URLS_READY" }); })
+                                .then(function (success) {
+                                if (success) {
+                                    dispatch({ type: "SET_API_URLS_READY" });
+                                }
+                                else {
+                                    dispatch({
+                                        type: "SET_API_URLS_ERROR",
+                                        message: "Server is currently unavailable. Please try again later.",
+                                    });
+                                }
+                            })
                                 .catch(function (err) {
                                 console.error("[RoleProvider] API URL init failed:", err);
+                                dispatch({
+                                    type: "SET_API_URLS_ERROR",
+                                    message: err instanceof Error
+                                        ? err.message
+                                        : "Server is currently unavailable. Please try again later.",
+                                });
                             }),
                             (function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
                                 var _a, displayName, email, allRoles, resolved, Filter, userDetails, resolvedRoles;
@@ -284,8 +303,8 @@ var RoleProvider = function (_a) {
         state.userName !== "" &&
         state.resolvedRoles.length === 0;
     return (React.createElement(RoleContext.Provider, { value: contextValue },
-        React.createElement(CustomLoader_1.default, { isLoading: state.isLoading }, state.error ? (React.createElement(ErrorScreen, { message: state.error.message })) : isFullyReady ? (React.createElement(React.Suspense, { fallback: React.createElement(CustomLoader_1.default, { isLoading: true }) }, children)) : hasNoRoles ? (React.createElement(NoRoleScreen, null)) : // Still initialising — CustomLoader handles the visual
-            null)));
+        React.createElement(CustomLoader_1.default, { isLoading: state.isLoading }, state.apiUrlsError ? ( // ← check this first
+        React.createElement(ServerDownError, { message: state.apiUrlsError })) : state.error ? (React.createElement(ErrorScreen, { message: state.error.message })) : isFullyReady ? (React.createElement(React.Suspense, { fallback: React.createElement(CustomLoader_1.default, { isLoading: true }) }, children)) : hasNoRoles ? (React.createElement(NoRoleScreen, null)) : null)));
 };
 exports.RoleProvider = RoleProvider;
 var useRoleContext = function () {

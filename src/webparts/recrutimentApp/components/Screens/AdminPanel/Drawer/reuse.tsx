@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Check, Eye, EyeOff, Info } from "lucide-react";
-import styles from "./drawer.module.scss";
+import styles from "./Drawer.module.scss";
 
 export interface PasswordRule {
   key: string;
@@ -76,7 +76,6 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({
 
   return (
     <div className={styles.field}>
-      {/* ── Label row with optional tooltip ─────────────────────────────── */}
       <div style={{ display: "flex", alignItems: "center" }}>
         <span className={styles.label}>{label}</span>
 
@@ -89,7 +88,6 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({
           >
             <Info size={14} className={styles.tooltipIcon} />
 
-            {/* ── Tooltip box ────────────────────────────────────────────── */}
             <div className={styles.tooltipBox} role="tooltip">
               <div className={styles.tooltipTitle}>Password requirements</div>
               <div className={styles.tooltipRuleList}>

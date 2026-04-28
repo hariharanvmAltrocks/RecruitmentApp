@@ -99,14 +99,10 @@ var AdminManagement = function (_a) {
                         "Back to Dashboard"))),
             react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: data, loading: loading, pageSize: pagination.pageSize, currentPage: pagination.currentPage, totalCount: pagination.totalItems, onPageChange: handlePageChange, onPageSizeChange: handlePageSizeChange, pageSizeOptions: [10, 20, 50], emptyMessage: "No users found." }))));
 };
-// ─── AdminPanel (root export) ─────────────────────────────────────────────────
 var AdminPanel = function () {
     var activeMenuID = (0, UIStateContext_1.useUIState)().activeMenuID;
-    // Derive panel type from the active sidebar menu entry
     var activeType = activeMenuID === ConditionConfig_1.menuID.LabourHire ? "labour-hire" : "agency";
-    // ── Single drawer state object controls mode + which item is loaded ───────
     var _a = (0, react_1.useState)(CLOSED_DRAWER), drawer = _a[0], setDrawer = _a[1];
-    // ── Openers ───────────────────────────────────────────────────────────────
     var openNew = (0, react_1.useCallback)(function () {
         setDrawer({ open: true, mode: "new", selectedItem: null });
     }, []);

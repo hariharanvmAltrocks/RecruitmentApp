@@ -33,6 +33,7 @@ interface ProviderState {
   apiUrlsReady: boolean;
   isLoading: boolean;
   error: Error | null;
+  apiUrlsError: string | null;
 }
 
 type ProviderAction =
@@ -40,7 +41,8 @@ type ProviderAction =
   | { type: "SET_RESOLVED_ROLES"; roles: ResolvedRole[] }
   | { type: "SET_API_URLS_READY" }
   | { type: "SET_ERROR"; error: Error }
-  | { type: "SET_LOADING"; isLoading: boolean };
+  | { type: "SET_LOADING"; isLoading: boolean }
+  | { type: "SET_API_URLS_ERROR"; message: string };
 
 const initialState: ProviderState = {
   userName: "",
@@ -49,6 +51,7 @@ const initialState: ProviderState = {
   apiUrlsReady: false,
   isLoading: true,
   error: null,
+  apiUrlsError: null,
 };
 
 function providerReducer(
@@ -70,6 +73,8 @@ function providerReducer(
       return { ...state, error: action.error, isLoading: false };
     case "SET_LOADING":
       return { ...state, isLoading: action.isLoading };
+    case "SET_API_URLS_ERROR":
+      return { ...state, apiUrlsError: action.message };
     default:
       return state;
   }
@@ -134,9 +139,9 @@ async function initApiUrls(): Promise<boolean> {
 
   const signIn = await InternalSign.InternalSignIn();
   if (signIn.status !== ResponeStatus.SUCCESS) {
-    ServerDownError;
+    return false;
   }
-  return signIn.status === ResponeStatus.SUCCESS;
+  return true;
 }
 
 function buildADGroupData(
@@ -288,15 +293,12 @@ const ServerDownError = ({ message }: { message: string }): JSX.Element => (
             </div>
             <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
               <h3 className="text-xl font-semibold leading-6 text-gray-900">
-                Error: Initialisation Error
+                Error: Server Is Not Responding
               </h3>
               <div className="mt-3">
                 <p className="text-sm text-gray-500 mb-2">
                   <span className="font-semibold text-gray-700">{message}</span>
                 </p>
-                {/* <p className="text-sm text-gray-500">
-                  Please contact your IT support or system administrator to request access to this application.
-                </p> */}
               </div>
             </div>
           </div>
@@ -328,9 +330,26 @@ export const RoleProvider = ({
 
     const [, userResult] = await Promise.allSettled([
       initApiUrls()
-        .then(() => dispatch({ type: "SET_API_URLS_READY" }))
+        .then((success) => {
+          if (success) {
+            dispatch({ type: "SET_API_URLS_READY" });
+          } else {
+            dispatch({
+              type: "SET_API_URLS_ERROR",
+              message:
+                "Server is currently unavailable. Please try again later.",
+            });
+          }
+        })
         .catch((err: unknown) => {
           console.error("[RoleProvider] API URL init failed:", err);
+          dispatch({
+            type: "SET_API_URLS_ERROR",
+            message:
+              err instanceof Error
+                ? err.message
+                : "Server is currently unavailable. Please try again later.",
+          });
         }),
 
       (async () => {
@@ -401,7 +420,9 @@ export const RoleProvider = ({
   return (
     <RoleContext.Provider value={contextValue}>
       <CustomLoader isLoading={state.isLoading}>
-        {state.error ? (
+        {state.apiUrlsError ? ( // ← check this first
+          <ServerDownError message={state.apiUrlsError} />
+        ) : state.error ? (
           <ErrorScreen message={state.error.message} />
         ) : isFullyReady ? (
           <React.Suspense fallback={<CustomLoader isLoading />}>
@@ -409,8 +430,7 @@ export const RoleProvider = ({
           </React.Suspense>
         ) : hasNoRoles ? (
           <NoRoleScreen />
-        ) : // Still initialising — CustomLoader handles the visual
-        null}
+        ) : null}
       </CustomLoader>
     </RoleContext.Provider>
   );

@@ -5,9 +5,12 @@ import {
   Nationality,
   RecuritmentHRMsg,
 } from "../../../../../utilities/ConditionConfig";
-import { ExternalUserType } from "../../../../../utilities/Config";
+import { ExternalUserType, ListNames } from "../../../../../utilities/Config";
 import { toUTC } from "../../../../Hooks/dateConfigfn";
-import { AdminPanelServices } from "../../../../../services/ServiceExport";
+import {
+  AdminPanelServices,
+  CommonServices,
+} from "../../../../../services/ServiceExport";
 import { ResponeStatus } from "../../../../../utilities/ApiConfig";
 import { AdminCreateUser } from "../../../../../models/adminpanel";
 import { useModalPopup } from "../../../../Comman/ModalPopup/useModalPopup";
@@ -68,6 +71,7 @@ export interface UseSaveAdminPanelReturn {
   errors: Partial<Record<keyof NewAdminUserPayload, string>>;
   save: () => Promise<boolean>;
   reset: (type: AdminPanelType) => void;
+  resetPassword: () => void;
   modalState: any;
   closeModal: () => void;
 }
@@ -91,7 +95,7 @@ function validate(
 
   // In edit mode password is optional — only validate if the user typed something
   const pwEntered = payload.password.length > 0;
-  if (!isEdit || pwEntered) {
+  if (isEdit || pwEntered) {
     if (!payload.password) {
       e.password = "Password is required";
     } else {
@@ -123,6 +127,7 @@ function validate(
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 export const useSaveAdminPanel = (
   initialType: AdminPanelType,
+  onSuccess: () => void,
 ): UseSaveAdminPanelReturn => {
   const [payload, setPayload] = useState<NewAdminUserPayload>(
     EMPTY_PAYLOAD(initialType),
@@ -156,6 +161,28 @@ export const useSaveAdminPanel = (
     setErrors({});
   };
 
+  const resetPassword = () => {
+    AdminPanelServices.ResetPassword(payload.email)
+      .then((res) => {
+        if (res.status === ResponeStatus.SUCCESS) {
+          showModal({
+            type: "success",
+            title: "Submitted Successfully",
+            message: RecuritmentHRMsg.ResetPasswordMsg,
+            confirmLabel: "Ok",
+            onConfirm: () => {
+              closeModal();
+              navigate("/AdminPanelDashboard");
+              onSuccess();
+            },
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error while Resetting Password:", error);
+      });
+  };
+
   const save = async (): Promise<boolean> => {
     const validationErrors = validate(payload);
     if (Object.keys(validationErrors).length > 0) {
@@ -170,9 +197,9 @@ export const useSaveAdminPanel = (
         lastname: payload.lastName,
         contactNumber: "99999999",
         email: payload.email,
-        password: payload.password,
+        password: payload.password === "" ? "1234567890" : payload.password,
         isActive: payload.isActive ? 1 : 0,
-        isEdit: payload.isEdit, // props.stateValue.ButtonAction === ButtonAction.New ? false : true,
+        isEdit: payload.isEdit,
         type:
           payload.type === "agency"
             ? ExternalUserType.Agent
@@ -189,8 +216,27 @@ export const useSaveAdminPanel = (
         externalUserAccounts: [],
       };
 
+      let responseAgent: any;
+      if (payload.isEdit) {
+        const Filter = [
+          {
+            FilterKey: "AgentCode",
+            Operator: "eq",
+            FilterValue: payload.userCode,
+          },
+        ];
+
+        const responseAgent = await CommonServices.GetMasterData(
+          ListNames.HRMSExternalAgents,
+          Filter,
+        );
+      }
+
       let Admindata: AdminCreateUser = {
-        ExternalID: payload.ID,
+        ExternalID:
+          responseAgent && responseAgent.data.length > 0
+            ? responseAgent.data[0]?.ID
+            : 0,
         FirstName: payload.firstName,
         LastName: payload.lastName,
         CompanyName: payload.companyName,
@@ -233,6 +279,7 @@ export const useSaveAdminPanel = (
                 onConfirm: () => {
                   closeModal();
                   navigate("/AdminPanelDashboard");
+                  onSuccess();
                 },
               });
             }
@@ -266,6 +313,7 @@ export const useSaveAdminPanel = (
     isSaving,
     errors,
     save,
+    resetPassword,
     reset,
     modalState,
     closeModal,

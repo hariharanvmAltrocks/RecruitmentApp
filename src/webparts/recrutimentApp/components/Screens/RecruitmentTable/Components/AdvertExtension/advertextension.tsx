@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styles from "./AdvertExtension.module.scss";
+import styles from "./advertextension.module.scss";
 import {
   DataSyncToRecruitmentResponse,
   IDptData,

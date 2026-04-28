@@ -11,11 +11,6 @@ import { menuID } from "../../../utilities/ConditionConfig";
 import { useUIState } from "../../RecrutimentApp/UIStateContext";
 import { AdminDashboard } from "../../../services/AdminPanel/IAdminpanelService";
 
-// ─── Drawer Mode ──────────────────────────────────────────────────────────────
-// Three modes:
-//   "new"  → blank form,   isNew=true,  isEdit=false, isView=false
-//   "edit" → pre-filled,   isNew=false, isEdit=true,  isView=false
-//   "view" → read-only,    isNew=false, isEdit=false, isView=true
 type DrawerMode = "new" | "edit" | "view";
 
 interface DrawerState {
@@ -211,18 +206,14 @@ const AdminManagement: React.FC<AdminManagementProps> = ({
   );
 };
 
-// ─── AdminPanel (root export) ─────────────────────────────────────────────────
 export const AdminPanel: React.FC = () => {
   const { activeMenuID } = useUIState();
 
-  // Derive panel type from the active sidebar menu entry
   const activeType: AdminPanelType =
     activeMenuID === menuID.LabourHire ? "labour-hire" : "agency";
 
-  // ── Single drawer state object controls mode + which item is loaded ───────
   const [drawer, setDrawer] = useState<DrawerState>(CLOSED_DRAWER);
 
-  // ── Openers ───────────────────────────────────────────────────────────────
   const openNew = useCallback(() => {
     setDrawer({ open: true, mode: "new", selectedItem: null });
   }, []);
