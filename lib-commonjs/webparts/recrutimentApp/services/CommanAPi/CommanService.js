@@ -53,7 +53,10 @@ var CommonService = /** @class */ (function () {
                         if (!(AttachFile.length > 0)) return [3 /*break*/, 2];
                         return [4 /*yield*/, spservice_1.default.addDocLibFiles({
                                 FilePath: Listname,
-                                FolderNames: ["".concat(PositionCode.toString()), "".concat(DocumentName.toString()),],
+                                FolderNames: [
+                                    "".concat(PositionCode.toString()),
+                                    "".concat(DocumentName.toString()),
+                                ],
                                 Datas: AttachFile,
                             })];
                     case 1:
@@ -128,13 +131,14 @@ var CommonService = /** @class */ (function () {
                                 FilePath: "".concat(basePath, "/English"),
                             })];
                     case 1:
-                        EnglishFiles = _a.sent();
+                        EnglishFiles = (_a.sent());
                         return [4 /*yield*/, spservice_1.default.getDocLibFiles({
                                 FilePath: "".concat(basePath, "/French"),
                             })];
                     case 2:
-                        FrenchFiles = _a.sent();
-                        if (!((EnglishFiles && EnglishFiles.length > 0) || (FrenchFiles && FrenchFiles.length > 0))) return [3 /*break*/, 3];
+                        FrenchFiles = (_a.sent());
+                        if (!((EnglishFiles && EnglishFiles.length > 0) ||
+                            (FrenchFiles && FrenchFiles.length > 0))) return [3 /*break*/, 3];
                         response = {
                             English: EnglishFiles || [],
                             French: FrenchFiles || [],
@@ -144,7 +148,7 @@ var CommonService = /** @class */ (function () {
                             FilePath: basePath,
                         })];
                     case 4:
-                        RoleProfileFiles = _a.sent();
+                        RoleProfileFiles = (_a.sent());
                         response = {
                             English: RoleProfileFiles,
                             French: [], // or same files if needed
@@ -239,7 +243,7 @@ var CommonService = /** @class */ (function () {
                         user = _a.sent();
                         UserID = {
                             key: user.Id,
-                            text: user.Title //`${UserName?.FirstName || ""} ${UserName?.MiddleName || ""} ${UserName?.LastName || "" }`,
+                            text: user.Title, //`${UserName?.FirstName || ""} ${UserName?.MiddleName || ""} ${UserName?.LastName || "" }`,
                         };
                         return [2 /*return*/, {
                                 data: UserID,
@@ -376,11 +380,13 @@ var CommonService = /** @class */ (function () {
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSSageList,
                                 Select: "*",
-                                Filter: [{
+                                Filter: [
+                                    {
                                         FilterKey: "EmailId",
                                         FilterValue: "eq",
-                                        Operator: email
-                                    }]
+                                        Operator: email,
+                                    },
+                                ],
                             })];
                     case 1:
                         listItems = _a.sent();
@@ -499,11 +505,14 @@ function getUserGuidByEmail(email) {
                     return [4 /*yield*/, spservice_1.default.SPReadItems({
                             Listname: Config_1.ListNames.HRMSSageList,
                             Select: "*",
-                            Filter: [{
+                            Filter: [
+                                {
                                     FilterKey: "EmailId",
-                                    FilterValue: "eq",
-                                    Operator: email
-                                }]
+                                    Operator: "eq",
+                                    FilterValue: email,
+                                },
+                            ],
+                            FilterCondition: "and",
                         })];
                 case 2:
                     listItems = _a.sent();

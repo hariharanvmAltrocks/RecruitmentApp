@@ -7,6 +7,17 @@ import {
   CheckCircle2,
   XCircle,
   UserPlus,
+  Upload,
+  Megaphone,
+  Eye,
+  Users,
+  MessageSquare,
+  BarChart2,
+  ShieldCheck,
+  Send,
+  ClipboardCheck,
+  RefreshCw,
+  Building2,
 } from "lucide-react";
 import {
   ListNames,
@@ -22,10 +33,10 @@ import { userInfo } from "../../../utilities/hooks/RoleContext";
 
 const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   [MatricID.AssignHr]: {
-    label: "Pending HR Assignment",
+    label: "HR Assignment",
     status: "ACTIVE",
     icon: UserCheck,
-    color: "#f97316",
+    color: "#3b82f6",
     bgColor: "#fff7ed",
     statusColor: "#3b82f6",
     statusBg: "#eff6ff",
@@ -37,10 +48,10 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.UploadONEM]: {
-    label: "Pending Upload ONEM",
+    label: "Upload ONEM",
     status: "PENDING",
-    icon: Activity,
-    color: "#f59e0b",
+    icon: Upload,
+    color: "#9e0c0ca2",
     bgColor: "#fffbeb",
     statusColor: "#64748b",
     statusBg: "#f1f5f9",
@@ -51,10 +62,10 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.JobAdvert]: {
-    label: "Pending Advert Upload",
+    label: "Advert Upload",
     status: "ACTIVE",
-    icon: UserCheck,
-    color: "#ea580c",
+    icon: Megaphone,
+    color: "#3b8bb0ea",
     bgColor: "#ffedd5",
     statusColor: "#64748b",
     statusBg: "#f1f5f9",
@@ -68,7 +79,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   [MatricID.ReviewProfileHR]: {
     label: "Review Profile",
     status: "PENDING",
-    icon: Activity,
+    icon: Eye,
     color: "#f59e0b",
     bgColor: "#fffbeb",
     statusColor: "#3b82f6", // Active badge is blue
@@ -81,8 +92,8 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   [MatricID.ReviewProfileLM]: {
     label: "Review Profile",
     status: "PENDING",
-    icon: Activity,
-    color: "#f59e0b",
+    icon: Eye,
+    color: "#ab2483",
     bgColor: "#fffbeb",
     statusColor: "#3b82f6",
     statusBg: "#eff6ff",
@@ -95,8 +106,8 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   [MatricID.AssignInterviewPanel]: {
     label: "Assign Interview Panel",
     status: "PENDING",
-    icon: Activity,
-    color: "#fbbf24",
+    icon: Users,
+    color: "#d975b9ff",
     bgColor: "#fefce8",
     statusColor: "#64748b",
     statusBg: "#f1f5f9",
@@ -107,10 +118,10 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.InterviewQuestionHR]: {
-    label: "Pending InterviewQuestion",
+    label: "InterviewQuestion",
     status: "CRITICAL",
-    icon: ClipboardList,
-    color: "#ef4444",
+    icon: MessageSquare,
+    color: "#9c2020ff",
     bgColor: "#fef2f2",
     statusColor: "#64748b",
     statusBg: "#f1f5f9",
@@ -121,10 +132,10 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.EvalutionHR]: {
-    label: "Pending Evaluation",
+    label: "Evaluation",
     status: "PENDING",
-    icon: Activity,
-    color: "#d97706",
+    icon: BarChart2,
+    color: "#5f10d5ff",
     bgColor: "#fef3c7",
     statusColor: "#ef4444",
     statusBg: "#fee2e2",
@@ -134,10 +145,10 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     TabName: TabNames.Evaluation,
   },
   [MatricID.BackgroundCheck]: {
-    label: "Pending Background Verification",
+    label: "Background Verification",
     status: "PENDING",
-    icon: Activity,
-    color: "#d97706",
+    icon: ShieldCheck,
+    color: "#136067ff",
     bgColor: "#fef3c7",
     statusColor: "#ef4444",
     statusBg: "#fee2e2",
@@ -147,10 +158,10 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     TabName: TabNames.BackgroundVerification,
   },
   [MatricID.LabourHire]: {
-    label: "Pending Offer Letter Release - Labour Hire",
+    label: "Offer Letter Release - Labour Hire",
     status: "PENDING",
-    icon: Activity,
-    color: "#d97706",
+    icon: Send,
+    color: "#7b2c2cff",
     bgColor: "#fef3c7",
     statusColor: "#ef4444",
     statusBg: "#fee2e2",
@@ -160,10 +171,10 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     TabName: TabNames.LabourHire,
   },
   [MatricID.Kcsa]: {
-    label: "Pending Offer Letter Release - KCSA",
+    label: "Offer Letter Release - KCSA",
     status: "PENDING",
-    icon: Activity,
-    color: "#d97706",
+    icon: Send,
+    color: "#3283ceff",
     bgColor: "#fef3c7",
     statusColor: "#ef4444",
     statusBg: "#fee2e2",
@@ -174,10 +185,10 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.AdvertReviewLM]: {
-    label: "Pending Advert Review",
+    label: "Advert Review",
     status: "ACTIVE",
     icon: UserCheck,
-    color: "#fb923c",
+    color: "#552958ff",
     bgColor: "#fff7ed",
     statusColor: "#ef4444",
     statusBg: "#fee2e2",
@@ -188,10 +199,10 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.DisqualifiQuesLM]: {
-    label: "Pending Create Minimum Criteria Question",
+    label: "Create Minimum Criteria Question",
     status: "PENDING",
-    icon: Activity,
-    color: "#10b981",
+    icon: ClipboardList,
+    color: "#046e4bff",
     bgColor: "#ecfdf5",
     statusColor: "#ef4444",
     statusBg: "#fee2e2",
@@ -202,10 +213,10 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.InterviewQuestionLM]: {
-    label: "Pending Interview Question",
+    label: "Interview Question",
     status: "PENDING",
-    icon: Activity,
-    color: "#10b981",
+    icon: MessageSquare,
+    color: "#5f1545ff",
     bgColor: "#ecfdf5",
     statusColor: "#ef4444",
     statusBg: "#fee2e2",
@@ -216,10 +227,10 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.EvalutionLM]: {
-    label: "Pending Evaluation",
+    label: " Evaluation",
     status: "PENDING",
-    icon: Activity,
-    color: "#d97706",
+    icon: BarChart2,
+    color: "#2ae2c3ff",
     bgColor: "#fef3c7",
     statusColor: "#ef4444",
     statusBg: "#fee2e2",
@@ -230,10 +241,10 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.AdvertReviewHOD]: {
-    label: "Pending Advert Review",
+    label: " Advert Review",
     status: "ACTIVE",
     icon: UserCheck,
-    color: "#fdba74",
+    color: "#1a0c65ff",
     bgColor: "#fff7ed",
     statusColor: "#64748b",
     statusBg: "#f1f5f9",
@@ -244,10 +255,10 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.ReviewScoreCard]: {
-    label: "Pending Position ID",
+    label: " Position ID",
     status: "CRITICAL",
-    icon: ClipboardList,
-    color: "#ef4444",
+    icon: ClipboardCheck,
+    color: "#7c0d0dff",
     bgColor: "#fef2f2",
     statusColor: "#64748b",
     statusBg: "#f1f5f9",
@@ -257,10 +268,10 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     TabName: TabNames.ReviewScorecard,
   },
   [MatricID.EvalutionHOD]: {
-    label: "Pending Evaluation",
+    label: " Evaluation",
     status: "PENDING",
-    icon: Activity,
-    color: "#d97706",
+    icon: BarChart2,
+    color: "#12c6eaff",
     bgColor: "#fef3c7",
     statusColor: "#ef4444",
     statusBg: "#fee2e2",
@@ -274,7 +285,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     label: "Interviews Scheduled",
     status: "SCHEDULED",
     icon: Calendar,
-    color: "#3b82f6",
+    color: "#3bf667ff",
     bgColor: "#eff6ff",
     statusColor: "#3b82f6",
     statusBg: "#eff6ff",
@@ -285,10 +296,10 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.EvalutionEXCO]: {
-    label: "Pending Evaluation",
+    label: " Evaluation",
     status: "PENDING",
-    icon: Activity,
-    color: "#d97706",
+    icon: BarChart2,
+    color: "#92724d",
     bgColor: "#fef3c7",
     statusColor: "#ef4444",
     statusBg: "#fee2e2",
@@ -302,7 +313,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     label: "Interview Tracking",
     status: "ON-GOING",
     icon: Activity,
-    color: "#10b981",
+    color: "#1b10b9ff",
     bgColor: "#ecfdf5",
     statusColor: "#ef4444",
     statusBg: "#fee2e2",
@@ -371,7 +382,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   [MatricID.advertExtension]: {
     label: "Advert Extension",
     status: "ON-GOING",
-    icon: Activity,
+    icon: RefreshCw,
     color: "#10b981",
     bgColor: "#ecfdf5",
     statusColor: "#ef4444",
@@ -383,9 +394,9 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.AssignAgencies]: {
-    label: "Pending Assign Agencies",
+    label: "Assign Agencies",
     status: "ON-GOING",
-    icon: Activity,
+    icon: Building2,
     color: "#10b981",
     bgColor: "#ecfdf5",
     statusColor: "#ef4444",
@@ -661,6 +672,14 @@ export const MetricQueryConfig = (
   [MatricID.AssignHr]: [
     createQuery(
       ListNames.HRMSNewPositionRequest,
+      [
+        ...StatusFilter({ status: StatusId.ReadyforRecruitmentProcess }),
+        ...DataSyncFilter,
+      ],
+      ["Id"],
+    ),
+    createQuery(
+      ListNames.HRMSAdditionalHeadCountForExisitingPosition,
       [
         ...StatusFilter({ status: StatusId.ReadyforRecruitmentProcess }),
         ...DataSyncFilter,

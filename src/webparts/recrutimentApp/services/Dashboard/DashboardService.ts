@@ -865,8 +865,17 @@ export default class DashboardService implements IDashboard {
             "Status/StatusDescription",
             "BusinessUnitCode/BusineesUnitCode",
             "Department/DepartmentName",
+            "JobTitleEnglish/JobTitleInEnglish",
+            "JobTitleFrench/JobTitleInFrench",
+            "JobTitleEnglish/JobCode",
           ],
-          expand: ["Status", "BusinessUnitCode", "Department"],
+          expand: [
+            "Status",
+            "BusinessUnitCode",
+            "Department",
+            "JobTitleEnglish",
+            "JobTitleFrench",
+          ],
         },
         {
           StateValue: 2,
@@ -919,7 +928,7 @@ export default class DashboardService implements IDashboard {
 
       const [additionalPositionRes, newPositionRes] = await Promise.all([
         additionalIds.length > 0
-          ? this.GetPositionDetails(
+          ? this.GetAdditionalPosition(
               [
                 {
                   FilterKey: "LookupIDId",
@@ -979,11 +988,12 @@ export default class DashboardService implements IDashboard {
           return {
             ...mapCommonFields(item, index),
             Type: DataFrom.ExistingPosition,
-            JobCode: pos?.jobCode ?? "",
-            JobTitleEnglish: pos?.title ?? "",
-            JobTitleFrench: pos?.JobTitleFrench ?? "",
+            JobCode: item?.JobTitleEnglish?.JobCode ?? "",
+            JobTitleEnglish: item?.JobTitleEnglish?.JobTitleInEnglish ?? "",
+            JobTitleFrench: item?.JobTitleFrench?.JobTitleInFrench ?? "",
             PatersonGrade: pos?.PatersonGrade ?? "",
             DRCGrade: pos?.DRCGrade ?? "",
+            NumberOfPersonNeeded: pos?.NumberOfPersonNeeded,
           } as DashboardData;
         });
 
@@ -1027,6 +1037,44 @@ export default class DashboardService implements IDashboard {
     } catch (error) {
       console.error("Error fetching GetNPAEPVRRDetails:", error);
       return { data: [], status: 500, message: "Error fetching data" };
+    }
+  }
+
+  async GetAdditionalPosition(
+    Filter: any[],
+    filterConditions: any,
+    ListName: string,
+  ): Promise<ApiResponse<any[]>> {
+    try {
+      const resdata = await SPServices.SPReadItems({
+        Listname: ListName,
+        Select: "*,DRCGrade/DRCGrade,PatersonGrade/PatersonGrade",
+        Filter: Filter,
+        FilterCondition: filterConditions,
+        Expand: "DRCGrade,PatersonGrade",
+        Topcount: count.CamelQuery,
+      });
+
+      const result = resdata.map((item: any, index: number) => ({
+        parentId: item?.LookupIDId ?? item?.PositionRequestIDId ?? 0,
+        id: index + 1,
+        DRCGrade: item?.DRCGrade?.DRCGrade ?? "",
+        PatersonGrade: item?.PatersonGrade?.PatersonGrade ?? "",
+        NumberOfPersonNeeded: item?.ActualVacantPosition,
+      }));
+
+      return {
+        data: result,
+        status: 200,
+        message: "GetPositionDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error("GetPositionDetails error:", error);
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching position details",
+      };
     }
   }
 

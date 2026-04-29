@@ -80,7 +80,7 @@ export const callServiceByListName = async (
       return await DashboardServices.GetSelectedCandidate(filter, condition);
 
     default:
-      return await DashboardServices.GetRecruitmentDetails(filter, condition);
+    // return await DashboardServices.GetRecruitmentDetails(filter, condition);
   }
 };
 

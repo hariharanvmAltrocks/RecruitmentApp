@@ -72,8 +72,16 @@ var SideNavigation = function (_a) {
     };
     return (react_1.default.createElement("aside", { className: "".concat(SideNavigation_module_scss_1.default.sidebar, " ").concat(isCollapsed ? SideNavigation_module_scss_1.default.collapsed : "") },
         react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.logoSection },
-            react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.logoIcon },
-                react_1.default.createElement("img", { src: require("../../assets/getsitelogo.png"), alt: "Kamoa Logo", className: SideNavigation_module_scss_1.default.logoImg }))),
+            react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.logoIcon, style: {
+                    width: isCollapsed ? "44px" : "201px",
+                    height: isCollapsed ? "44px" : "69px",
+                } },
+                react_1.default.createElement("img", { src: isCollapsed
+                        ? require("../../assets/komoa-logo.png")
+                        : require("../../assets/getsitelogo.png"), alt: "Kamoa Logo", className: SideNavigation_module_scss_1.default.logoImg, style: {
+                        width: isCollapsed ? "24px" : "150px",
+                        height: isCollapsed ? "24px" : "100px",
+                    } }))),
         react_1.default.createElement("nav", { className: SideNavigation_module_scss_1.default.nav },
             !isCollapsed && react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.sectionLabel }, "Main Menu"),
             sortedMenu.map(function (parent) { return (react_1.default.createElement(SidebarItem, { key: parent.Id, item: parent, activeMenuID: activeMenuID, onSelectCallback: handleSelect, isExpanded: expandedMenus.includes(parent.Id), onToggleExpand: function () { return toggleExpand(parent.Id); }, isCollapsed: isCollapsed })); })),

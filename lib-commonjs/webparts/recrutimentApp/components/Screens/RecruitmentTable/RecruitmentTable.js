@@ -77,7 +77,7 @@ var RecruitmentTable = function () {
     var _s = (0, react_1.useState)(1), currentPage = _s[0], setCurrentPage = _s[1];
     var selectedItems = (0, react_1.useMemo)(function () { return items.filter(function (item) { return selectedIds.includes(item.id); }); }, [items, selectedIds]);
     var selectedJobCode = (0, react_1.useMemo)(function () { var _a; return (selectedItems.length === 1 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.jobCode : ""); }, [selectedItems]);
-    var selectedNationality = (0, react_1.useMemo)(function () { var _a; return (selectedItems.length === 1 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.nationality : ""); }, [selectedItems]);
+    var selectedNationality = (0, react_1.useMemo)(function () { var _a; return (selectedItems.length > 0 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.nationality : null); }, [selectedItems]);
     var _t = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _t.members, membersLoading = _t.loading;
     var selectedMember = (0, react_1.useMemo)(function () { var _a; return (_a = members.find(function (m) { return m.id === selectedMemberId; })) !== null && _a !== void 0 ? _a : null; }, [members, selectedMemberId]);
     var activeTabs = (0, react_1.useMemo)(function () { return tabs.find(function (tab) { return tab.key === activeTabKey; }); }, [activeTabKey, tabs]);
@@ -139,13 +139,27 @@ var RecruitmentTable = function () {
         });
     }, [selectedNationality, items, showModal, closeModal]);
     var handleToggleAll = (0, react_1.useCallback)(function () {
-        var pageIds = paginatedItems.map(function (item) { return item.id; });
-        var allSelected = pageIds.length > 0 && pageIds.every(function (id) { return selectedIds.includes(id); });
         setSelectedIds(function (prev) {
             return allSelected
                 ? prev.filter(function (id) { return !pageIds.includes(id); })
                 : Array.from(new Set(tslib_1.__spreadArray(tslib_1.__spreadArray([], prev, true), pageIds, true)));
         });
+        // const allSameNationality = (items: typeof selectedItems): boolean => {
+        //   if (items.length === 0) return false;
+        //   return items.every((item) => item.nationality === items[0].nationality);
+        // };
+        // if (!allSameNationality(selectedItems)) {
+        //   showModal({
+        //     type: "warning",
+        //     title: "Nationality Mismatch",
+        //     message: "You cannot assign HR for different nationality.",
+        //     confirmLabel: "OK",
+        //     onConfirm: closeModal,
+        //   });
+        //   return;
+        // }
+        var pageIds = paginatedItems.map(function (item) { return item.id; });
+        var allSelected = pageIds.length > 0 && pageIds.every(function (id) { return selectedIds.includes(id); });
     }, [paginatedItems, selectedIds]);
     var processingRef = (0, react_1.useRef)(false);
     var selectedAdvertID = (0, react_1.useRef)(0);

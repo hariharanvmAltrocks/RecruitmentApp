@@ -41,9 +41,14 @@ const FALLBACK_OVERSIGHT = { icon: Activity, color: "#6b7280", bg: "#f9fafb" };
 interface OversightStatProps {
   metric: Metric;
   index: number;
+  onClick: (metric: Metric) => void;
 }
 
-const OversightStat: React.FC<OversightStatProps> = ({ metric, index }) => {
+const OversightStat: React.FC<OversightStatProps> = ({
+  metric,
+  index,
+  onClick,
+}) => {
   const slug =
     metric.id?.toString() ?? metric.label.toLowerCase().replace(/\s+/g, "_");
   const resolved = OVERSIGHT_ICON_MAP[slug] ?? FALLBACK_OVERSIGHT;
@@ -56,6 +61,7 @@ const OversightStat: React.FC<OversightStatProps> = ({ metric, index }) => {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06, duration: 0.2 }}
+      onClick={() => onClick(metric)}
     >
       <div className="oversight-stat__top">
         <div className="oversight-stat__icon-wrap">
@@ -179,6 +185,7 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
                           key={metric.id ?? i}
                           metric={metric}
                           index={i}
+                          onClick={() => handleCardClick(metric)}
                         />
                       ))}
                     </div>

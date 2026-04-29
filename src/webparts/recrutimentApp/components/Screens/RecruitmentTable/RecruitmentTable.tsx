@@ -26,6 +26,7 @@ import {
   InterviewLevel,
   MatricID,
   menuID,
+  Nationality,
 } from "../../../utilities/ConditionConfig";
 import { useNavigate } from "react-router-dom";
 import { useRecruitmentColumns } from "./config";
@@ -153,7 +154,7 @@ export const RecruitmentTable: React.FC = () => {
   );
 
   const selectedNationality = useMemo(
-    () => (selectedItems.length === 1 ? selectedItems[0]?.nationality : ""),
+    () => (selectedItems.length > 0 ? selectedItems[0]?.nationality : null),
     [selectedItems],
   );
 
@@ -237,15 +238,28 @@ export const RecruitmentTable: React.FC = () => {
   );
 
   const handleToggleAll = useCallback(() => {
-    const pageIds = paginatedItems.map((item) => item.id);
-    const allSelected =
-      pageIds.length > 0 && pageIds.every((id) => selectedIds.includes(id));
-
     setSelectedIds((prev) =>
       allSelected
         ? prev.filter((id) => !pageIds.includes(id))
         : Array.from(new Set([...prev, ...pageIds])),
     );
+    // const allSameNationality = (items: typeof selectedItems): boolean => {
+    //   if (items.length === 0) return false;
+    //   return items.every((item) => item.nationality === items[0].nationality);
+    // };
+    // if (!allSameNationality(selectedItems)) {
+    //   showModal({
+    //     type: "warning",
+    //     title: "Nationality Mismatch",
+    //     message: "You cannot assign HR for different nationality.",
+    //     confirmLabel: "OK",
+    //     onConfirm: closeModal,
+    //   });
+    //   return;
+    // }
+    const pageIds = paginatedItems.map((item) => item.id);
+    const allSelected =
+      pageIds.length > 0 && pageIds.every((id) => selectedIds.includes(id));
   }, [paginatedItems, selectedIds]);
 
   const processingRef = useRef(false);
@@ -479,7 +493,7 @@ export const RecruitmentTable: React.FC = () => {
                 onChange={(e) => setSelectedMemberId(Number(e.target.value))}
                 disabled={membersLoading}
               >
-                <option value="">Choose HR member</option>
+                <option value="">{}Choose HR member</option>
                 {members.map((member) => (
                   <option key={member.id} value={member.id}>
                     {member.name} - {member.role}

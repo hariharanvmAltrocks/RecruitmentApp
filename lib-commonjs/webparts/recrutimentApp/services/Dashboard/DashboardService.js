@@ -774,8 +774,17 @@ var DashboardService = /** @class */ (function () {
                                     "Status/StatusDescription",
                                     "BusinessUnitCode/BusineesUnitCode",
                                     "Department/DepartmentName",
+                                    "JobTitleEnglish/JobTitleInEnglish",
+                                    "JobTitleFrench/JobTitleInFrench",
+                                    "JobTitleEnglish/JobCode",
                                 ],
-                                expand: ["Status", "BusinessUnitCode", "Department"],
+                                expand: [
+                                    "Status",
+                                    "BusinessUnitCode",
+                                    "Department",
+                                    "JobTitleEnglish",
+                                    "JobTitleFrench",
+                                ],
                             },
                             {
                                 StateValue: 2,
@@ -824,7 +833,7 @@ var DashboardService = /** @class */ (function () {
                             .filter(Boolean);
                         return [4 /*yield*/, Promise.all([
                                 additionalIds.length > 0
-                                    ? this.GetPositionDetails([
+                                    ? this.GetAdditionalPosition([
                                         {
                                             FilterKey: "LookupIDId",
                                             Operator: "in",
@@ -865,9 +874,9 @@ var DashboardService = /** @class */ (function () {
                             });
                         };
                         additionalExistingResult = additionalExistingItems.map(function (item, index) {
-                            var _a, _b, _c, _d, _e;
+                            var _a, _b, _c, _d, _e, _f, _g, _h;
                             var pos = additionalPositionMap_1.get(item.ID);
-                            return tslib_1.__assign(tslib_1.__assign({}, mapCommonFields_1(item, index)), { Type: Config_1.DataFrom.ExistingPosition, JobCode: (_a = pos === null || pos === void 0 ? void 0 : pos.jobCode) !== null && _a !== void 0 ? _a : "", JobTitleEnglish: (_b = pos === null || pos === void 0 ? void 0 : pos.title) !== null && _b !== void 0 ? _b : "", JobTitleFrench: (_c = pos === null || pos === void 0 ? void 0 : pos.JobTitleFrench) !== null && _c !== void 0 ? _c : "", PatersonGrade: (_d = pos === null || pos === void 0 ? void 0 : pos.PatersonGrade) !== null && _d !== void 0 ? _d : "", DRCGrade: (_e = pos === null || pos === void 0 ? void 0 : pos.DRCGrade) !== null && _e !== void 0 ? _e : "" });
+                            return tslib_1.__assign(tslib_1.__assign({}, mapCommonFields_1(item, index)), { Type: Config_1.DataFrom.ExistingPosition, JobCode: (_b = (_a = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) === null || _a === void 0 ? void 0 : _a.JobCode) !== null && _b !== void 0 ? _b : "", JobTitleEnglish: (_d = (_c = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) === null || _c === void 0 ? void 0 : _c.JobTitleInEnglish) !== null && _d !== void 0 ? _d : "", JobTitleFrench: (_f = (_e = item === null || item === void 0 ? void 0 : item.JobTitleFrench) === null || _e === void 0 ? void 0 : _e.JobTitleInFrench) !== null && _f !== void 0 ? _f : "", PatersonGrade: (_g = pos === null || pos === void 0 ? void 0 : pos.PatersonGrade) !== null && _g !== void 0 ? _g : "", DRCGrade: (_h = pos === null || pos === void 0 ? void 0 : pos.DRCGrade) !== null && _h !== void 0 ? _h : "", NumberOfPersonNeeded: pos === null || pos === void 0 ? void 0 : pos.NumberOfPersonNeeded });
                         });
                         newPositionResult = newPositionItems.map(function (item, index) {
                             var _a, _b, _c, _d, _e;
@@ -893,9 +902,54 @@ var DashboardService = /** @class */ (function () {
             });
         });
     };
-    DashboardService.prototype.GetPositionDetails = function (Filter, filterConditions, ListName) {
+    DashboardService.prototype.GetAdditionalPosition = function (Filter, filterConditions, ListName) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var resdata, result, error_7;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: ListName,
+                                Select: "*,DRCGrade/DRCGrade,PatersonGrade/PatersonGrade",
+                                Filter: Filter,
+                                FilterCondition: filterConditions,
+                                Expand: "DRCGrade,PatersonGrade",
+                                Topcount: ApiConfig_1.count.CamelQuery,
+                            })];
+                    case 1:
+                        resdata = _a.sent();
+                        result = resdata.map(function (item, index) {
+                            var _a, _b, _c, _d, _e, _f;
+                            return ({
+                                parentId: (_b = (_a = item === null || item === void 0 ? void 0 : item.LookupIDId) !== null && _a !== void 0 ? _a : item === null || item === void 0 ? void 0 : item.PositionRequestIDId) !== null && _b !== void 0 ? _b : 0,
+                                id: index + 1,
+                                DRCGrade: (_d = (_c = item === null || item === void 0 ? void 0 : item.DRCGrade) === null || _c === void 0 ? void 0 : _c.DRCGrade) !== null && _d !== void 0 ? _d : "",
+                                PatersonGrade: (_f = (_e = item === null || item === void 0 ? void 0 : item.PatersonGrade) === null || _e === void 0 ? void 0 : _e.PatersonGrade) !== null && _f !== void 0 ? _f : "",
+                                NumberOfPersonNeeded: item === null || item === void 0 ? void 0 : item.ActualVacantPosition,
+                            });
+                        });
+                        return [2 /*return*/, {
+                                data: result,
+                                status: 200,
+                                message: "GetPositionDetails fetched successfully",
+                            }];
+                    case 2:
+                        error_7 = _a.sent();
+                        console.error("GetPositionDetails error:", error_7);
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error fetching position details",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    DashboardService.prototype.GetPositionDetails = function (Filter, filterConditions, ListName) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var resdata, result, error_8;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -928,8 +982,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "GetPositionDetails fetched successfully",
                             }];
                     case 2:
-                        error_7 = _a.sent();
-                        console.error("GetPositionDetails error:", error_7);
+                        error_8 = _a.sent();
+                        console.error("GetPositionDetails error:", error_8);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -942,7 +996,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.EvalutionValidation = function (data) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var getCurrentUserId, levelFilter, resdata, IsSubmitted, error_8;
+            var getCurrentUserId, levelFilter, resdata, IsSubmitted, error_9;
             var _a;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
@@ -985,8 +1039,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "Validation success",
                             }];
                     case 3:
-                        error_8 = _b.sent();
-                        console.error("EvalutionValidation error:", error_8);
+                        error_9 = _b.sent();
+                        console.error("EvalutionValidation error:", error_9);
                         return [2 /*return*/, {
                                 data: false,
                                 status: 500,

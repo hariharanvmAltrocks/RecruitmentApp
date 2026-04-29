@@ -162,11 +162,25 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
     >
       {/* ── Logo Section ── */}
       <div className={styles.logoSection}>
-        <div className={styles.logoIcon}>
+        <div
+          className={styles.logoIcon}
+          style={{
+            width: isCollapsed ? "44px" : "201px",
+            height: isCollapsed ? "44px" : "69px",
+          }}
+        >
           <img
-            src={require("../../assets/getsitelogo.png")}
+            src={
+              isCollapsed
+                ? require("../../assets/komoa-logo.png")
+                : require("../../assets/getsitelogo.png")
+            }
             alt="Kamoa Logo"
             className={styles.logoImg}
+            style={{
+              width: isCollapsed ? "24px" : "150px",
+              height: isCollapsed ? "24px" : "100px",
+            }}
           />
         </div>
         {/* Two-line logo text: bold title + muted subtitle */}

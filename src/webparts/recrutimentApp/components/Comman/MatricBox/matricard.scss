@@ -49,6 +49,7 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
     color: #111827;
     line-height: 1.2;
     letter-spacing: -0.01em;
+    margin-bottom: -2px;
   }
 
   &__welcome-name {
@@ -223,9 +224,9 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
   box-shadow:
     0 20px 60px rgba(124, 58, 237, 0.12),
     0 4px 16px rgba(0, 0, 0, 0.06);
-  width: 100%;
+  width: 90%;
+  position: relative;
 
-  // Subtle top accent line
   &::before {
     content: "";
     position: absolute;
@@ -238,7 +239,7 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
     opacity: 0.6;
   }
 
-  position: relative;
+
 
   @media (max-width: 900px) {
     flex-wrap: wrap;
@@ -255,13 +256,109 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
 
 // ─── Oversight stat ────────────────────────────────────────────────────────────
 
+// ─── Oversight stat ────────────────────────────────────────────────────────────
+
 .oversight-stat {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 12px;
   flex: 1;
+  gap: 12px;
+  padding: 1rem;                          // p-4
+  background: rgba(255, 255, 255, 0.4);  // bg-white/40
+  border: 1px solid transparent;          // border border-transparent
+  border-radius: 1.5rem;                  // rounded-3xl
+  cursor: pointer;
+  transition: all 0.5s ease;             // transition-all duration-500
+
+  // ── Hover state ────────────────────────────────────────────────────────────
+
+  &:hover {
+    background: #fff;                                          // hover:bg-white
+    border-color: #f1f5f9;                                     // hover:border-slate-100
+    box-shadow:
+      0 20px 25px -5px rgba(148, 163, 184, 0.5),              // hover:shadow-xl
+      0 8px 10px -6px rgba(148, 163, 184, 0.5);               // hover:shadow-slate-200/50
+
+    .oversight-stat__icon-wrap {
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);        // group-hover:shadow-violet-100
+    }
+
+    .oversight-stat__label {
+      color: #475569;                                          // group-hover:text-slate-600
+    }
+  }
+
+  // ── Top row (icon + number) ─────────────────────────────────────────────────
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;                            // justify-between
+    width: 100%;
+    margin-bottom: 0.5rem;                                     // mb-2
+
+    @media (max-width: 400px) {
+      gap: 12px;
+    }
+  }
+
+  // ── Icon wrap ───────────────────────────────────────────────────────────────
+
+  &__icon-wrap {
+    padding: 0.625rem;                                         // p-2.5
+    border-radius: 0.75rem;                                    // rounded-xl
+    background: #fff;                                          // bg-white
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);                 // shadow-sm
+    border: 1px solid #f1f5f9;                                 // ring-1 ring-slate-100
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: box-shadow 0.5s ease;                          // transition-all
+
+    @media (max-width: 560px) {
+      padding: 0.5rem;
+      border-radius: 0.625rem;
+    }
+  }
+
+  // ── Number ──────────────────────────────────────────────────────────────────
+
+  &__num {
+    font-size: 1.5rem;                                         // text-2xl
+    font-weight: 900;                                          // font-black
+    color: #0f172a;                                            // text-slate-900
+    line-height: 1;
+    letter-spacing: -0.05em;                                   // tracking-tighter
+
+    @media (max-width: 560px) {
+      font-size: 1.25rem;
+    }
+  }
+
+  // ── Label ───────────────────────────────────────────────────────────────────
+
+  &__label {
+    font-size: 10px;                                           // text-[10px]
+    font-weight: 900;                                          // font-black
+    color: #94a3b8;                                            // text-slate-400
+    text-transform: uppercase;                                 // uppercase
+    letter-spacing: 0.15em;                                    // tracking-[0.15em]
+    line-height: 1.3;                                          // leading-[1.3]
+    text-align: center;                                        // text-center
+    margin-top: 0.25rem;                                       // mt-1
+    word-wrap: break-word;
+    transition: color 0.5s ease;                               // transition-colors
+
+    @media (max-width: 400px) {
+      max-width: 100%;
+      flex: 1;
+    }
+  }
+
+  // ── Dividers between stats ───────────────────────────────────────────────────
 
   &:not(:last-child) {
     border-right: 1px solid #f3f4f6;
@@ -273,7 +370,6 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
     }
   }
 
-  // Give each stat a bit of left padding (except first)
   &:not(:first-child) {
     padding-left: 28px;
 
@@ -281,6 +377,8 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
       padding-left: 0;
     }
   }
+
+  // ── Responsive ──────────────────────────────────────────────────────────────
 
   @media (max-width: 900px) {
     flex: 1 1 calc(33.333% - 24px);
@@ -297,62 +395,6 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
     flex-direction: row;
     align-items: center;
     gap: 16px;
-  }
-
-  &__top {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-
-    @media (max-width: 400px) {
-      gap: 12px;
-    }
-  }
-
-  &__icon-wrap {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: #fff;
-    border: 1px solid #f3f4f6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
-
-    @media (max-width: 560px) {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-    }
-  }
-
-  &__num {
-    font-size: 1.75rem;
-    font-weight: 900;
-    color: #111827;
-    line-height: 1;
-
-    @media (max-width: 560px) {
-      font-size: 1.4rem;
-    }
-  }
-
-  &__label {
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    color: #9ca3af;
-    text-align: left;
-    max-width: 120px;
-    line-height: 1.5;
-    word-wrap: break-word;
-
-    @media (max-width: 400px) {
-      max-width: 100%;
-      flex: 1;
-    }
   }
 }
 

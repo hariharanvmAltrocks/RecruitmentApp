@@ -28,26 +28,17 @@ var Header = function (_a) {
                     react_1.default.createElement(lucide_react_1.Menu, { size: 22 })),
                 react_1.default.createElement("div", { className: "breadcrumb-section" },
                     react_1.default.createElement("h1", { className: "page-title" }, strings.AppTitle),
-                    react_1.default.createElement("nav", { className: "breadcrumbs" },
-                        react_1.default.createElement(react_router_dom_1.Link, { to: "/" }, strings.HomeLabel),
-                        breadcrumbs.map(function (crumb, idx) { return (react_1.default.createElement(react_1.default.Fragment, { key: crumb.Id },
-                            react_1.default.createElement(lucide_react_1.ChevronRight, { size: 10, strokeWidth: 3, className: "crumb-icon" }),
-                            react_1.default.createElement(react_router_dom_1.Link, { to: crumb.Path, className: idx === breadcrumbs.length - 1 ? "active" : "" }, crumb.DisplayName))); })))),
+                    react_1.default.createElement("nav", { className: "breadcrumbs" }, breadcrumbs.map(function (crumb, idx) { return (react_1.default.createElement(react_1.default.Fragment, { key: crumb.Id },
+                        react_1.default.createElement(lucide_react_1.ChevronRight, { size: 10, strokeWidth: 3, className: "crumb-icon" }),
+                        react_1.default.createElement(react_router_dom_1.Link, { to: crumb.Path, className: idx === breadcrumbs.length - 1 ? "active" : "" }, crumb.DisplayName))); })))),
             react_1.default.createElement("div", { className: "header-right" },
-                react_1.default.createElement("button", { className: "notification-btn" },
-                    react_1.default.createElement(lucide_react_1.Bell, { size: 20 }),
-                    react_1.default.createElement("span", { className: "notification-dot" })),
                 react_1.default.createElement("div", { className: "divider" }),
                 react_1.default.createElement("div", { className: "user-profile" },
                     react_1.default.createElement("div", { className: "user-info" },
                         react_1.default.createElement("p", { className: "user-name" }, UserName),
                         react_1.default.createElement("p", { className: "user-role" }, (_c = ADGroupData.userDetails[0]) === null || _c === void 0 ? void 0 : _c.DepartmentName)),
                     react_1.default.createElement("div", { className: "avatar-wrapper" },
-                        react_1.default.createElement("div", { className: "avatar" }, ((_f = (_e = (_d = ADGroupData.userDetails) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e.LastName) === null || _f === void 0 ? void 0 : _f[0]) || "S"),
-                        react_1.default.createElement("button", { onClick: onLogout, className: "logout-btn" },
-                            react_1.default.createElement(lucide_react_1.LogOut, { size: 14 }),
-                            " ",
-                            strings.LogoutLabel)))))));
+                        react_1.default.createElement("div", { className: "avatar" }, ((_f = (_e = (_d = ADGroupData.userDetails) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e.LastName) === null || _f === void 0 ? void 0 : _f[0]) || "S")))))));
 };
 exports.default = Header;
 //# sourceMappingURL=Header.js.map

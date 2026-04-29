@@ -109,8 +109,8 @@ $nav-collapsed-width: 72px;
 }
 
 .logoIcon {
-  width: 201px;
-  height: 69px;
+  // width: 201px;
+  // height: 69px;
   min-width: 44px;
   background: $nav-logo-bg;             // vivid purple square
   border-radius: $radius-sm;            // 8px
@@ -122,8 +122,8 @@ $nav-collapsed-width: 72px;
 }
 
 .logoImg {
-  width: 150px;
-  height: 100px;
+  // width: 150px;
+  // height: 100px;
   object-fit: contain;
   filter: brightness(0) invert(1);      // force white icon
 }

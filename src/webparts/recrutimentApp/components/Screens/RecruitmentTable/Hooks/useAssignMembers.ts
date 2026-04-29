@@ -23,7 +23,7 @@ export const useAssignMembers = (
 
   const { roleIDs } = userInfo();
 
-  const isRecruitmentHR = roleIDs.includes(RoleID.RecruitmentHR);
+  const isRecruitmentHRLead = roleIDs.includes(RoleID.RecruitmentHRLead);
 
   const fetchAgencyOptions = useCallback(async (nationality: string | null) => {
     if (!nationality) {
@@ -62,60 +62,57 @@ export const useAssignMembers = (
     }
   }, []);
 
-  useEffect(() => {
-    if (isRecruitmentHR) return;
+  const fetchRecruitmentHRMembers = async () => {
+    setLoading(true);
+    setError(undefined);
 
-    let isMounted = true;
+    try {
+      const { data: userRoles } = await CommonServices.GetMasterData(
+        ListNames.HRMSRecruitmentUserRole,
+      );
 
-    const loadHRMembers = async () => {
-      setLoading(true);
-      setError(undefined);
+      const recruitmentHRRole = userRoles?.find(
+        (item: any) => item.ID === RoleID.RecruitmentHR,
+      );
 
-      try {
-        const { data: userRoles } = await CommonServices.GetMasterData(
-          ListNames.HRMSRecruitmentUserRole,
+      if (recruitmentHRRole?.ADGroupID) {
+        const { status, data } = await CommonServices.GetADgruopsEmailIDs(
+          recruitmentHRRole.ADGroupID,
         );
 
-        const recruitmentHRRole = userRoles?.find(
-          (item: any) => item.ID === RoleID.RecruitmentHR,
-        );
+        if (status === 200 && data) {
+          const mappedMembers: HrMember[] = data.map((item: any) => ({
+            id: item.key,
+            name: item.text,
+            role: "Recruitment HR",
+            initials:
+              item.text?.split(" ")[0]?.slice(0, 2)?.toUpperCase() || "",
+          }));
 
-        if (recruitmentHRRole?.ADGroupID) {
-          const { status, data } = await CommonServices.GetADgruopsEmailIDs(
-            recruitmentHRRole.ADGroupID,
-          );
-
-          if (status === 200 && data && isMounted) {
-            const mappedMembers: HrMember[] = data.map((item: any) => ({
-              id: item.key,
-              name: item.text,
-              role: "Recruitment HR",
-              initials:
-                item.text?.split(" ")[0]?.slice(0, 2)?.toUpperCase() || "",
-            }));
-
-            setMembers(mappedMembers);
-          }
-        } else {
-          throw new Error("Failed to fetch HR group emails.");
+          setMembers(mappedMembers);
         }
-      } catch (e: any) {
-        console.error(e);
-        if (isMounted) setError(e.message || "Something went wrong");
-      } finally {
-        if (isMounted) setLoading(false);
+      } else {
+        throw new Error("Failed to fetch HR group emails.");
       }
-    };
-
-    void loadHRMembers();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [isRecruitmentHR]);
+    } catch (e: any) {
+      console.error(e);
+      setError(e.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (!isRecruitmentHR) return;
+    if (Nationality === null) {
+      setMembers([]);
+      setLoading(false);
+      return;
+    }
+
+    if (isRecruitmentHRLead) {
+      void fetchRecruitmentHRMembers();
+      return;
+    }
 
     let isMounted = true;
     setLoading(true);
@@ -133,7 +130,7 @@ export const useAssignMembers = (
       isMounted = false;
       clearTimeout(timer);
     };
-  }, [Nationality, isRecruitmentHR, fetchAgencyOptions]);
+  }, [Nationality, isRecruitmentHRLead, fetchAgencyOptions]);
 
   const memoizedMembers = useMemo(() => members, [members]);
 

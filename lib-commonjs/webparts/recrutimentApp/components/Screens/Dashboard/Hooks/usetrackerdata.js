@@ -65,8 +65,7 @@ var callServiceByListName = function (listName, filter, condition, roleIDs, Matr
                 }
                 return [4 /*yield*/, ServiceExport_1.DashboardServices.GetSelectedCandidate(filter, condition)];
             case 8: return [2 /*return*/, _b.sent()];
-            case 9: return [4 /*yield*/, ServiceExport_1.DashboardServices.GetRecruitmentDetails(filter, condition)];
-            case 10: return [2 /*return*/, _b.sent()];
+            case 9: return [2 /*return*/];
         }
     });
 }); };

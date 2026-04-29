@@ -18,12 +18,12 @@ var OVERSIGHT_ICON_MAP = {
 var FALLBACK_OVERSIGHT = { icon: lucide_react_1.Activity, color: "#6b7280", bg: "#f9fafb" };
 var OversightStat = function (_a) {
     var _b, _c, _d, _e, _f;
-    var metric = _a.metric, index = _a.index;
+    var metric = _a.metric, index = _a.index, onClick = _a.onClick;
     var slug = (_c = (_b = metric.id) === null || _b === void 0 ? void 0 : _b.toString()) !== null && _c !== void 0 ? _c : metric.label.toLowerCase().replace(/\s+/g, "_");
     var resolved = (_d = OVERSIGHT_ICON_MAP[slug]) !== null && _d !== void 0 ? _d : FALLBACK_OVERSIGHT;
     var Icon = (_e = metric.icon) !== null && _e !== void 0 ? _e : resolved.icon;
     var color = (_f = metric.color) !== null && _f !== void 0 ? _f : resolved.color;
-    return (react_1.default.createElement(framer_motion_1.motion.div, { className: "oversight-stat", initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0 }, transition: { delay: index * 0.06, duration: 0.2 } },
+    return (react_1.default.createElement(framer_motion_1.motion.div, { className: "oversight-stat", initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0 }, transition: { delay: index * 0.06, duration: 0.2 }, onClick: function () { return onClick(metric); } },
         react_1.default.createElement("div", { className: "oversight-stat__top" },
             react_1.default.createElement("div", { className: "oversight-stat__icon-wrap" },
                 react_1.default.createElement(Icon, { size: 20, style: { color: color }, strokeWidth: 2.5 })),
@@ -75,7 +75,7 @@ var MetricDashboard = function (_a) {
                     react_1.default.createElement(framer_motion_1.motion.div, { id: "oversight-panel", className: "metric-dashboard__oversight-popup", initial: { opacity: 0, y: -8, scale: 0.97 }, animate: { opacity: 1, y: 0, scale: 1 }, exit: { opacity: 0, y: -8, scale: 0.97 }, transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] } },
                         react_1.default.createElement("div", { className: "oversight-popup__inner" }, oversightMetrics.map(function (metric, i) {
                             var _a;
-                            return (react_1.default.createElement(OversightStat, { key: (_a = metric.id) !== null && _a !== void 0 ? _a : i, metric: metric, index: i }));
+                            return (react_1.default.createElement(OversightStat, { key: (_a = metric.id) !== null && _a !== void 0 ? _a : i, metric: metric, index: i, onClick: function () { return handleCardClick(metric); } }));
                         }))))))))),
         react_1.default.createElement("div", { className: "metric-dashboard__section-header" },
             react_1.default.createElement("div", { className: "metric-dashboard__section-icon" },

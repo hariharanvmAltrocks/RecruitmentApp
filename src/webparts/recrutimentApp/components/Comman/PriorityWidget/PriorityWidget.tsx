@@ -4,11 +4,11 @@ import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
 import "./priority-widget.scss";
 
 export interface PriorityData {
-    name: string;
-    value: number;
-    percent: number;
-    color: string;
-    iconType: 'hr' | 'onem'; 
+  name: string;
+  value: number;
+  percent: number;
+  color: string;
+  iconType: "hr" | "onem";
 }
 
 interface PriorityWidgetProps {
@@ -18,11 +18,11 @@ interface PriorityWidgetProps {
 
 const PriorityWidget: React.FC<PriorityWidgetProps> = ({ data, total }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  
-  const filteredData = data.filter(item => item.value > 0);
-  const displayData = isExpanded ? filteredData : filteredData.slice(0, 3);
-  const safeTotal = total || filteredData.reduce((acc, curr) => acc + curr.value, 0);
-  const hasMore = filteredData.length > 3;
+
+  // const filteredData = data.filter(item => item.value > 0);
+  const displayData = isExpanded ? data : data.slice(0, 3);
+  const safeTotal = total || data.reduce((acc, curr) => acc + curr.value, 0);
+  const hasMore = data.length > 3;
 
   return (
     <div className="priority-widget-dark">
@@ -41,7 +41,7 @@ const PriorityWidget: React.FC<PriorityWidgetProps> = ({ data, total }) => {
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={filteredData}
+                data={data}
                 cx="50%"
                 cy="50%"
                 innerRadius={30}
@@ -51,13 +51,22 @@ const PriorityWidget: React.FC<PriorityWidgetProps> = ({ data, total }) => {
                 stroke="none"
                 cornerRadius={2}
               >
-                {filteredData.map((entry, index) => (
+                {data.map((entry, index) => (
                   <Cell key={index} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip 
-                contentStyle={{ backgroundColor: '#131622', borderColor: '#202538', borderRadius: '8px', color: '#fff' }}
-                itemStyle={{ color: '#fff', fontSize: '12px', fontWeight: 'bold' }}
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#131622",
+                  borderColor: "#202538",
+                  borderRadius: "8px",
+                  color: "#fff",
+                }}
+                itemStyle={{
+                  color: "#fff",
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                }}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -68,7 +77,9 @@ const PriorityWidget: React.FC<PriorityWidgetProps> = ({ data, total }) => {
 
         <div className="list-container">
           {displayData.map((item, idx) => {
-            const percentage = item.percent || (safeTotal > 0 ? Math.round((item.value / safeTotal) * 100) : 0);
+            const percentage =
+              item.percent ||
+              (safeTotal > 0 ? Math.round((item.value / safeTotal) * 100) : 0);
             return (
               <div key={idx} className="list-item">
                 <div className="item-header">
@@ -76,22 +87,29 @@ const PriorityWidget: React.FC<PriorityWidgetProps> = ({ data, total }) => {
                   <span className="item-percent">{percentage}%</span>
                 </div>
                 <div className="progress-track">
-                  <div 
-                    className="progress-fill" 
-                    style={{ width: `${percentage}%`, backgroundColor: item.color }} 
+                  <div
+                    className="progress-fill"
+                    style={{
+                      width: `${percentage}%`,
+                      backgroundColor: item.color,
+                    }}
                   />
                 </div>
               </div>
             );
           })}
-          
+
           {hasMore && (
-            <button 
+            <button
               className="view-more-btn"
               onClick={() => setIsExpanded(!isExpanded)}
             >
-              {isExpanded ? 'VIEW LESS' : 'VIEW MORE'}
-              {isExpanded ? <ChevronUp size={12} strokeWidth={3} /> : <ChevronDown size={12} strokeWidth={3} />}
+              {isExpanded ? "VIEW LESS" : "VIEW MORE"}
+              {isExpanded ? (
+                <ChevronUp size={12} strokeWidth={3} />
+              ) : (
+                <ChevronDown size={12} strokeWidth={3} />
+              )}
             </button>
           )}
         </div>

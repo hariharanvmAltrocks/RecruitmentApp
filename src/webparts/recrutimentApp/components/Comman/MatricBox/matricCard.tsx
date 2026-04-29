@@ -17,9 +17,9 @@ const MetricCard: React.FC<MetricCardProps> = ({ metric, active, onClick }) => {
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ scale: 1.02, y: -2 }}
       whileTap={{ scale: 0.96 }}
-      transition={{ 
+      transition={{
         layout: { type: "spring", stiffness: 300, damping: 30 },
-        scale: { type: "spring", stiffness: 400, damping: 25 }
+        scale: { type: "spring", stiffness: 400, damping: 25 },
       }}
       onClick={onClick}
       className={cn("metric-card", active && "metric-card--active")}
@@ -40,7 +40,7 @@ const MetricCard: React.FC<MetricCardProps> = ({ metric, active, onClick }) => {
             inset: 0,
             borderRadius: 999,
             background: "linear-gradient(135deg, #7c3aed, #9333ea)",
-            zIndex: 1
+            zIndex: 1,
           }}
         />
       )}
@@ -50,16 +50,16 @@ const MetricCard: React.FC<MetricCardProps> = ({ metric, active, onClick }) => {
         <motion.div
           className="metric-card__icon"
           style={{
-            background: active
-              ? "rgba(255,255,255,0.2)"
-              : (metric.bgColor ?? "#f3f4f6"),
-            boxShadow: active ? "inset 0 0 0 1px rgba(255,255,255,0.4)" : "none"
+            background: active ? "rgba(255,255,255,0.2)" : "#f3f4f6",
+            boxShadow: active
+              ? "inset 0 0 0 1px rgba(255,255,255,0.4)"
+              : "none",
           }}
         >
           <metric.icon
             size={20}
             strokeWidth={2.5}
-            style={{ color: active ? "#fff" : (metric.color ?? "#6b7280") }}
+            style={{ color: active ? "#fff" : "#6b7280" }}
           />
         </motion.div>
       </div>
@@ -74,10 +74,7 @@ const MetricCard: React.FC<MetricCardProps> = ({ metric, active, onClick }) => {
 
       {/* Arrow — always present because this component is only used for showArrow: true cards */}
       <motion.div className="metric-card__arrow" style={{ zIndex: 2 }}>
-        <ChevronRight
-          size={16}
-          strokeWidth={3}
-        />
+        <ChevronRight size={16} strokeWidth={3} />
       </motion.div>
     </motion.div>
   );
