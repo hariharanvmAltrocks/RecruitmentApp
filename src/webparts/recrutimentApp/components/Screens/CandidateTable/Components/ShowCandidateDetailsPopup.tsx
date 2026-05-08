@@ -251,7 +251,7 @@ export const ShowCandidateDetailsPopup: React.FC<
 
   // ── Data hooks ─────────────────────────────────────────────────────────────
 
-  const { data: paneloptions } = useFetchPanelMembers(
+  const { data: paneloptions, loading: panelLoading } = useFetchPanelMembers(
     positionDetails?.BusinessUnitCodeId ?? 0,
     positionDetails?.AssignEMail ?? "",
     panelParams?.candidateId ?? 0,
@@ -259,7 +259,10 @@ export const ShowCandidateDetailsPopup: React.FC<
     isEnabled,
   );
 
-  const { data, loading } = useFetchCandidateDetails(candidateId, statusId);
+  const { data, loading: recordLoading } = useFetchCandidateDetails(
+    candidateId,
+    statusId,
+  );
 
   const {
     submitting,
@@ -286,6 +289,8 @@ export const ShowCandidateDetailsPopup: React.FC<
   const [coi, setCoi] = useState<ConflictOfInterestForm>(EMPTY_COI);
   const [level1, setLevel1] = useState<ScheduleForm>(EMPTY_SCHEDULE);
   const [level2, setLevel2] = useState<ScheduleForm>(EMPTY_SCHEDULE);
+
+  const loading = recordLoading || panelLoading;
 
   // ── Memoised panel values ──────────────────────────────────────────────────
 
@@ -340,16 +345,11 @@ export const ShowCandidateDetailsPopup: React.FC<
       const start = data?.InterviewStartDate
         ? new Date(data.InterviewStartDate)
         : null;
-
-      const end = data?.InterviewEndDate
-        ? new Date(data.InterviewEndDate)
-        : null;
       setLevel1({
         panelMembers: panelValue.level1Members,
         startDate: start ? start.toISOString().split("T")[0] : "",
-        startTime: start ? start.toTimeString().slice(0, 5) : "",
-
-        endTime: end ? end.toTimeString().slice(0, 5) : "",
+        startTime: data?.InterviewStartTime ?? "",
+        endTime: data?.InterviewEndTime ?? "",
       });
       setLevel2({
         panelMembers: panelValue.level2Members,
@@ -934,88 +934,94 @@ export const ShowCandidateDetailsPopup: React.FC<
                   </motion.section>
                 )}
 
-                {/* HR Review Feedback */}
-                <motion.section
-                  className={styles.section}
-                  custom={4}
-                  variants={sectionVariants}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  <div className={styles.hrFeedbackCard}>
-                    <SectionHeader title="HR Review Feedback" accent="green" />
-                    <div className={styles.hrFeedbackFieldWrap}>
-                      <label className={styles.fieldLabel}>
-                        Review Profile Feedback - HR{" "}
-                        <span className={styles.fieldRequired}>*</span>
-                      </label>
-                      <div className={`${styles.dropdownWrapper} dropdown`}>
-                        <div
-                          className={[
-                            styles.customDropdownTrigger,
-                            dropdownOpen ? styles.dropdownOpen : "",
-                            isReadOnly ? styles.dropdownDisabled : "",
-                          ]
-                            .filter(Boolean)
-                            .join(" ")}
-                          onClick={() =>
-                            !isReadOnly && setDropdownOpen((v) => !v)
-                          }
-                        >
-                          <span
-                            className={
-                              HRReview
-                                ? styles.dropdownSelected
-                                : styles.dropdownPlaceholder
-                            }
-                          >
-                            {HRReview || "Select feedback"}
-                          </span>
-                          <ChevronDown
-                            size={18}
-                            className={[
-                              styles.dropdownChevron,
-                              dropdownOpen ? styles.open : "",
-                            ]
-                              .filter(Boolean)
-                              .join(" ")}
-                          />
-                        </div>
-
-                        <AnimatePresence>
-                          {dropdownOpen && (
-                            <motion.div
-                              initial={{ opacity: 0, y: -10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
-                              className={styles.dropdownMenu}
+                {!isLevel2Panel && (
+                  <>
+                    <motion.section
+                      className={styles.section}
+                      custom={4}
+                      variants={sectionVariants}
+                      initial="hidden"
+                      animate="visible"
+                    >
+                      <div className={styles.hrFeedbackCard}>
+                        <SectionHeader
+                          title="HR Review Feedback"
+                          accent="green"
+                        />
+                        <div className={styles.hrFeedbackFieldWrap}>
+                          <label className={styles.fieldLabel}>
+                            Review Profile Feedback - HR{" "}
+                            <span className={styles.fieldRequired}>*</span>
+                          </label>
+                          <div className={`${styles.dropdownWrapper} dropdown`}>
+                            <div
+                              className={[
+                                styles.customDropdownTrigger,
+                                dropdownOpen ? styles.dropdownOpen : "",
+                                isReadOnly ? styles.dropdownDisabled : "",
+                              ]
+                                .filter(Boolean)
+                                .join(" ")}
+                              onClick={() =>
+                                !isReadOnly && setDropdownOpen((v) => !v)
+                              }
                             >
-                              {FEEDBACK_OPTIONS.map((option) => (
-                                <div
-                                  key={option}
-                                  onClick={() => {
-                                    setHRReview(option);
-                                    setDropdownOpen(false);
-                                  }}
-                                  className={[
-                                    styles.dropdownOption,
-                                    HRReview === option
-                                      ? styles.dropdownOptionActive
-                                      : "",
-                                  ]
-                                    .filter(Boolean)
-                                    .join(" ")}
+                              <span
+                                className={
+                                  HRReview
+                                    ? styles.dropdownSelected
+                                    : styles.dropdownPlaceholder
+                                }
+                              >
+                                {HRReview || "Select feedback"}
+                              </span>
+                              <ChevronDown
+                                size={18}
+                                className={[
+                                  styles.dropdownChevron,
+                                  dropdownOpen ? styles.open : "",
+                                ]
+                                  .filter(Boolean)
+                                  .join(" ")}
+                              />
+                            </div>
+
+                            <AnimatePresence>
+                              {dropdownOpen && (
+                                <motion.div
+                                  initial={{ opacity: 0, y: -10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: -10 }}
+                                  className={styles.dropdownMenu}
                                 >
-                                  {option}
-                                </div>
-                              ))}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                                  {FEEDBACK_OPTIONS.map((option) => (
+                                    <div
+                                      key={option}
+                                      onClick={() => {
+                                        setHRReview(option);
+                                        setDropdownOpen(false);
+                                      }}
+                                      className={[
+                                        styles.dropdownOption,
+                                        HRReview === option
+                                          ? styles.dropdownOptionActive
+                                          : "",
+                                      ]
+                                        .filter(Boolean)
+                                        .join(" ")}
+                                    >
+                                      {option}
+                                    </div>
+                                  ))}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </motion.section>
+                    </motion.section>
+                  </>
+                )}
 
                 {/* Level 1 Interview Schedule */}
                 {PanelMember && (

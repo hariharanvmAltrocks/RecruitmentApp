@@ -108,6 +108,7 @@ export const menuID = {
   AdminPanel: 35,
   Agent: 39,
   LabourHire: 40,
+  InterviewPanel: 29,
 };
 
 export const Nationality = {

@@ -14,7 +14,7 @@ export const fetchByMetricId = async (
   if (matricID === MatricID.ReviewScoreCard) {
     updatedMetricId = MatricID.ReviewScoredHOD;
   }
-  const configMap = MetricQueryConfig(EmailId);
+  const configMap = MetricQueryConfig(EmailId, roleIDs);
   const config = configMap[updatedMetricId];
 
   if (!config) return [];

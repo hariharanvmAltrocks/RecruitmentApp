@@ -585,7 +585,8 @@ var CandidateService = /** @class */ (function () {
                                                 LanguageKnown: [],
                                                 PPEDetails: [],
                                                 InterviewStartDate: (0, dateConfigfn_1.formatToDateTimeLocal)(item === null || item === void 0 ? void 0 : item.InterviewDate),
-                                                InterviewEndDate: (0, dateConfigfn_1.formatToDateTimeLocal)(item === null || item === void 0 ? void 0 : item.InterviewTime),
+                                                InterviewStartTime: item === null || item === void 0 ? void 0 : item.InterviewTime,
+                                                InterviewEndTime: item === null || item === void 0 ? void 0 : item.InterviewLink,
                                                 NationalityShort: (item === null || item === void 0 ? void 0 : item.NationalityCode) === ConditionConfig_1.NationalityCode.Nationals
                                                     ? "DRC"
                                                     : "EXPAT",
@@ -1251,6 +1252,7 @@ var CandidateService = /** @class */ (function () {
                             StatusId: payloads.candidateUpdate.StatusId,
                             InterviewDateLevel2: payloads.candidateUpdate.InterviewDateLevel2,
                             InterviewTimeLevel2: payloads.candidateUpdate.InterviewTimeLevel2,
+                            InterviewLinkLevel2: payloads.candidateUpdate.InterviewLinkLevel2,
                         });
                         return [4 /*yield*/, execute()];
                     case 1:

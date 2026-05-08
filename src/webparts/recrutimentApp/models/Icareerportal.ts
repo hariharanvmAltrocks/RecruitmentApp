@@ -183,7 +183,8 @@ export type CandidateProfile = {
   PPEDetails: PPEDetail[];
 
   InterviewStartDate?: string | undefined;
-  InterviewEndDate?: string | undefined;
+  InterviewStartTime?: string | undefined;
+  InterviewEndTime?: string | undefined;
 
   NationalityShort: string;
 };

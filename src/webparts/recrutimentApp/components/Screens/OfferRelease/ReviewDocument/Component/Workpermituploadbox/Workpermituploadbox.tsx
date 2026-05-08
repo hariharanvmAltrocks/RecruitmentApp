@@ -1,10 +1,11 @@
 // Component/WorkPermitUploadBox.tsx
 import React from "react";
 import { CheckCircle2, FileText, Upload, X } from "lucide-react";
+import { IDocFiles } from "../../../../../../services/SPService/Ispservice";
 
 export interface WorkPermitUploadBoxProps {
   fileInputRef: React.RefObject<HTMLInputElement>;
-  selectedFile: File | null;
+  selectedFile: IDocFiles | null;
   isReading: boolean;
   hasFileError: boolean;
   disabled?: boolean;
@@ -16,7 +17,7 @@ export interface WorkPermitUploadBoxProps {
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 interface FilePreviewProps {
-  file: File;
+  file: IDocFiles;
   isReading: boolean;
   disabled: boolean;
   onClear: () => void;
@@ -35,9 +36,7 @@ const FilePreview: React.FC<FilePreviewProps> = ({
 
     <div className="upload-box__file-details">
       <span className="upload-box__filename">{file.name}</span>
-      <span className="upload-box__filesize">
-        {(file.size / 1024).toFixed(1)} KB
-      </span>
+      <span className="upload-box__filesize">{file.fileSizeMB} MB</span>
     </div>
 
     <div className="upload-box__status">
@@ -61,7 +60,6 @@ const FilePreview: React.FC<FilePreviewProps> = ({
     </button>
   </div>
 );
-
 
 const UploadPlaceholder: React.FC = () => (
   <div className="upload-box__placeholder">
@@ -99,7 +97,6 @@ export const WorkPermitUploadBox: React.FC<WorkPermitUploadBoxProps> = ({
 
   return (
     <div className="upload-workpermit-card">
-
       {/* Card heading */}
       <div className="upload-workpermit-card__header">
         <div className="upload-workpermit-card__header-icon">
@@ -148,5 +145,3 @@ export const WorkPermitUploadBox: React.FC<WorkPermitUploadBoxProps> = ({
     </div>
   );
 };
-
-

@@ -266,7 +266,7 @@ var BASE_METRICS = (_a = {},
         statusColor: "#ef4444",
         statusBg: "#fee2e2",
         path: "/RecruitmentTable",
-        menuId: ConditionConfig_1.menuID.SelectionProcess,
+        menuId: ConditionConfig_1.menuID.InterviewPanel,
         TabValue: "tab1",
         TabName: ConditionConfig_1.TabNames.Evaluation,
     },
@@ -523,7 +523,7 @@ var DataSyncFilter = [
     // }
 ];
 var StatusFilter = function (_a) {
-    var status = _a.status, columnName = _a.columnName, emailId = _a.emailId, labourHire = _a.labourHire, questionBy = _a.questionBy;
+    var status = _a.status, columnName = _a.columnName, emailId = _a.emailId, labourHire = _a.labourHire, questionBy = _a.questionBy, orFilters = _a.orFilters;
     var filters = [
         {
             FilterKey: "ItemCreated",
@@ -559,6 +559,12 @@ var StatusFilter = function (_a) {
             FilterValue: ApiConfig_1.Choices.No,
         });
     }
+    // ✅ Wrap in OR group if orFilters provided
+    if (orFilters && orFilters.length > 0) {
+        if (orFilters && orFilters.length > 0) {
+            filters.push.apply(filters, orFilters);
+        }
+    }
     return filters;
 };
 var createQuery = function (ListName, Filter, select) { return ({
@@ -566,8 +572,9 @@ var createQuery = function (ListName, Filter, select) { return ({
     Filter: Filter !== null && Filter !== void 0 ? Filter : [],
     select: select !== null && select !== void 0 ? select : DEFAULT_SELECT,
 }); };
-var MetricQueryConfig = function (EmailId) {
+var MetricQueryConfig = function (EmailId, roles) {
     var _a;
+    if (roles === void 0) { roles = []; }
     return (_a = {},
         // ✅ Assign HR
         _a[ConditionConfig_1.MatricID.AssignHr] = [
@@ -590,11 +597,59 @@ var MetricQueryConfig = function (EmailId) {
             emailId: EmailId,
         })),
         // ✅ Advert Review LM
-        _a[ConditionConfig_1.MatricID.AdvertReviewLM] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
-            status: Config_1.StatusId.PendingwithLineManagereviewAdv,
-            columnName: "LineManager",
-            emailId: EmailId,
-        })),
+        // ✅ Advert Review HOD + LM Combined (when same person)
+        _a[ConditionConfig_1.MatricID.AdvertReviewLM] = (function () {
+            var isHODandLM = roles.includes(Config_1.RoleID.HOD) && roles.includes(Config_1.RoleID.LineManager);
+            if (isHODandLM) {
+                return createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+                    orFilters: [
+                        {
+                            Operator: "or",
+                            OrFilters: [
+                                [
+                                    {
+                                        FilterKey: "StatusId",
+                                        Operator: "eq",
+                                        FilterValue: 26,
+                                    },
+                                ],
+                                [
+                                    {
+                                        FilterKey: "StatusId",
+                                        Operator: "eq",
+                                        FilterValue: 125,
+                                    },
+                                ],
+                            ],
+                        },
+                        {
+                            Operator: "or",
+                            OrFilters: [
+                                [
+                                    {
+                                        FilterKey: "HOD",
+                                        Operator: "eq",
+                                        FilterValue: EmailId,
+                                    },
+                                ],
+                                [
+                                    {
+                                        FilterKey: "LineManager",
+                                        Operator: "eq",
+                                        FilterValue: EmailId,
+                                    },
+                                ],
+                            ],
+                        },
+                    ],
+                }));
+            }
+            return createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
+                status: Config_1.StatusId.PendingwithLineManagereviewAdv,
+                columnName: "LineManager",
+                emailId: EmailId,
+            }));
+        })(),
         // ✅ Review Score Card (FIXED - only one)
         _a[ConditionConfig_1.MatricID.ReviewScoreCard] = createQuery(Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails, StatusFilter({
             status: [
@@ -801,7 +856,6 @@ var RoleMetricFilters = (_b = {},
         ConditionConfig_1.MatricID.JobAdvert,
         ConditionConfig_1.MatricID.AssignAgencies,
         ConditionConfig_1.MatricID.ReviewProfileHR,
-        ConditionConfig_1.MatricID.AssignAgencies,
         ConditionConfig_1.MatricID.AssignInterviewPanel,
         ConditionConfig_1.MatricID.InterviewQuestionHR,
         ConditionConfig_1.MatricID.EvalutionHR,
@@ -860,16 +914,15 @@ var getRoleBasedFilters = function (roles, EmailId) {
         var metrics = RoleMetricFilters[role] || [];
         metrics.forEach(function (metric) { return metricSet.add(metric); });
     });
-    var configMap = (0, exports.MetricQueryConfig)(EmailId);
+    // ✅ Pass roles into config so it knows about HOD+LM combo
+    var configMap = (0, exports.MetricQueryConfig)(EmailId, roles);
     var result = [];
     metricSet.forEach(function (metricId) {
         var config = configMap[metricId];
         if (!config)
             return;
         if (Array.isArray(config)) {
-            config.forEach(function (cfg) {
-                result.push(tslib_1.__assign({ StateValue: metricId }, cfg));
-            });
+            config.forEach(function (cfg) { return result.push(tslib_1.__assign({ StateValue: metricId }, cfg)); });
         }
         else {
             result.push(tslib_1.__assign({ StateValue: metricId }, config));

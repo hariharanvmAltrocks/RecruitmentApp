@@ -2,6 +2,7 @@ export interface IFilter {
   FilterKey: string;
   Operator: string;
   FilterValue: string | string[] | number | number[] | boolean | boolean[];
+  OrFilters?: IFilter[][];
 }
 
 export interface IListItems {

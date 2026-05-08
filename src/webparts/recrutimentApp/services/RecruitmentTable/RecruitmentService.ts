@@ -70,10 +70,10 @@ export default class RecruitmentService implements IRecruitmentService {
               Filter: filterParam,
               FilterCondition: filterConditions,
               select: [
-                "*,Action/Action,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,BusinessUnitCode/BusineesUnitCode,Status/StatusDescription,Author/EMail",
+                "*,Action/Action,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,BusinessUnitCode/BusineesUnitCode,Status/StatusDescription,Author/EMail,JobTitleEnglish/JobCode,JobTitleEnglish/JobTitleInEnglish,JobTitleFrench/JobTitleInFrench",
               ],
               expand: [
-                "Action,Department,SubDepartment,Section,DepartmentCode,BusinessUnitCode,Status,Author",
+                "Action,Department,SubDepartment,Section,DepartmentCode,BusinessUnitCode,Status,Author,JobTitleEnglish,JobTitleFrench",
               ],
             },
           ];
@@ -118,7 +118,7 @@ export default class RecruitmentService implements IRecruitmentService {
 
       const [additionalPositionRes, newPositionRes] = await Promise.all([
         additionalIds.length > 0
-          ? this.GetPositionDetails(
+          ? this.GetAddtionalPositionDetails(
               [
                 {
                   FilterKey: "LookupIDId",
@@ -181,7 +181,11 @@ export default class RecruitmentService implements IRecruitmentService {
         NumberOfPersonNeeded: item?.NumberOfPersonNeeded,
         EnterNumberOfMonths: item?.EnterNumberOfMonths,
         AreaofWork: item.AreaofWork,
-        DateRequried: item.DateRequried ? item?.DateRequried : null,
+        DateRequried: item.DateRequried
+          ? item?.DateRequried
+          : item?.DatePositionIsRequired
+            ? item?.DatePositionIsRequired
+            : null,
         Type: DataFrom.NewPosition,
         Status: item.Status ? item.Status.StatusDescription : "",
         StatusId: item?.StatusId,
@@ -196,16 +200,17 @@ export default class RecruitmentService implements IRecruitmentService {
           return {
             ...mapCommonFields(item, index),
             Type: DataFrom.ExistingPosition,
-            JobCode: pos?.jobCode ?? "",
-            JobCodeId: pos?.JobCodeId ?? 0,
-            JobTitleEnglish: pos?.title ?? "",
-            JobTitleEnglishId: pos?.titleID ?? 0,
-            JobTitleFrench: pos?.JobTitleFrench ?? "",
-            JobTitleFrenchId: pos?.JobTitleFrenchId ?? 0,
+            JobCode: item?.JobTitleEnglish?.JobCode ?? "",
+            JobCodeId: item?.JobTitleEnglishId ?? 0,
+            JobTitleEnglish: item?.JobTitleEnglish?.JobTitleInEnglish ?? "",
+            JobTitleEnglishId: item?.JobTitleEnglishId ?? 0,
+            JobTitleFrench: item?.JobTitleFrench?.JobTitleInFrench ?? "",
+            JobTitleFrenchId: item?.JobTitleFrenchId ?? 0,
             PatersonGrade: pos?.PatersonGrade ?? "",
             PatersonGradeId: pos?.PatersonGradeId ?? 0,
             DRCGrade: pos?.DRCGrade ?? "",
             DRCGradeId: pos?.DRCGradeId ?? 0,
+            NumberOfPersonNeeded: pos?.ActualVacantPosition ?? 0,
           } as DataSyncToRecruitmentResponse;
         });
 
@@ -233,10 +238,10 @@ export default class RecruitmentService implements IRecruitmentService {
           ({
             ...mapCommonFields(item, index),
             Type: DataFrom.VacancyRecruitmentProcess,
-            JobCodeId: item?.JobCode?.ID ?? 0,
+            JobCodeId: item?.JobCodeId ?? 0,
             JobCode: item?.JobCode?.JobCode ?? "",
             JobTitleEnglish: item?.JobCode?.JobTitleInEnglish ?? "",
-            JobTitleEnglishId: item?.JobCode?.ID ?? 0,
+            JobTitleEnglishId: item?.JobCodeId ?? 0,
             JobTitleFrench: item?.JobTitleFrench?.JobTitleInFrench ?? "",
             JobTitleFrenchId: item?.JobTitleFrenchId ?? 0,
             PatersonGrade: item?.PatersonGrade?.PatersonGrade ?? "",
@@ -453,6 +458,50 @@ export default class RecruitmentService implements IRecruitmentService {
     }
   }
 
+  async GetAddtionalPositionDetails(
+    Filter: any[],
+    filterConditions: any,
+    ListName: string,
+  ): Promise<ApiResponse<any[]>> {
+    try {
+      const resdata = await SPServices.SPReadItems({
+        Listname: ListName,
+        Select: "*,DRCGrade/DRCGrade,PatersonGrade/PatersonGrade",
+        Filter: Filter,
+        FilterCondition: filterConditions,
+        Expand: "DRCGrade,PatersonGrade",
+        Topcount: count.Topcount,
+      });
+
+      const result = resdata.map((item: any, index: number) => ({
+        ID:
+          item?.LookupIDId ??
+          item?.PositionRequestIDId ??
+          item?.RecruitmentIDId ??
+          0,
+        id: index + 1,
+        DRCGrade: item?.DRCGrade?.DRCGrade ?? "",
+        DRCGradeId: item?.DRCGradeId ?? 0,
+        PatersonGrade: item?.PatersonGrade?.PatersonGrade ?? "",
+        PatersonGradeId: item?.PatersonGradeId ?? 0,
+        ActualVacantPosition: item?.ActualVacantPosition ?? 0,
+      }));
+
+      return {
+        data: result,
+        status: 200,
+        message: "GetPositionDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error("GetPositionDetails error:", error);
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching position details",
+      };
+    }
+  }
+
   async InsertRecruitmentDptBatch(
     payloads: PostRecuritmentData[],
   ): Promise<ApiResponse<any[]>> {
@@ -483,7 +532,7 @@ export default class RecruitmentService implements IRecruitmentService {
             .getByTitle(listName)
             .items.getById(payload.updatePreList!.ID)
             .update({
-              ActionId: payload.updatePreList!.ActionId,
+              // ActionId: payload.updatePreList!.ActionId,
               ItemCreated: payload.updatePreList!.ItemCreated,
               IsDataSyncToRecruitment:
                 payload.updatePreList!.IsDataSyncToRecruitment,
@@ -1181,7 +1230,7 @@ export default class RecruitmentService implements IRecruitmentService {
         isActive: IsActive,
         noOfPositions: String(RecuritmentDetails?.NumberOfPersonNeeded),
         validFrom: extendStartDate ? extendStartDate : vaildFrom,
-        validTo: extendEndDate ? extendEndDate : vaildFrom,
+        validTo: extendEndDate ? extendEndDate : VaildTo,
         employmentType: "Full Time",
         departmentId: DepartmentData.data[0]?.Code || "",
         role: null,

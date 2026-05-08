@@ -18,7 +18,7 @@ var CONFIG = {
         icon: React.createElement(lucide_react_1.Send, { size: 26, color: "#fff" }),
         iconBg: "linear-gradient(135deg,#2563eb,#1d4ed8)",
         title: "Confirm Submission",
-        subtitle: "Are you sure you want to submit this HOD decision? This action cannot be undone.",
+        subtitle: "Are you sure you want to submit the scorecard?",
         confirmLabel: "Yes, Submit",
         confirmStyle: "confirm-blue",
         cancelLabel: "Cancel",

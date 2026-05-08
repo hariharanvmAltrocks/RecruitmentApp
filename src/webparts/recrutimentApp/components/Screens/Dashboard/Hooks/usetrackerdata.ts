@@ -145,7 +145,7 @@ export const useTrackerData = (MatricID: number, refreshKey: number) => {
   const fetchtrackerData = useCallback(async () => {
     try {
       setLoading(true);
-      const configMap = MetricQueryConfig(ADGroupData.EmailId[0]);
+      const configMap = MetricQueryConfig(ADGroupData.EmailId[0], roleIDs);
       const config = configMap[MatricID];
 
       if (!config) {

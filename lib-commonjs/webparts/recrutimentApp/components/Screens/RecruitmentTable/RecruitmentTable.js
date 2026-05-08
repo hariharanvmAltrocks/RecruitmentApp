@@ -73,7 +73,7 @@ var RecruitmentTable = function () {
     var _o = (0, useModalPopup_1.useModalPopup)(), modalState = _o.modalState, showModal = _o.showModal, closeModal = _o.closeModal;
     var _p = (0, react_1.useState)([]), selectedIds = _p[0], setSelectedIds = _p[1];
     var _q = (0, react_1.useState)(0), selectedMemberId = _q[0], setSelectedMemberId = _q[1];
-    var _r = (0, react_1.useState)(5), pageSize = _r[0], setPageSize = _r[1];
+    var _r = (0, react_1.useState)(10), pageSize = _r[0], setPageSize = _r[1];
     var _s = (0, react_1.useState)(1), currentPage = _s[0], setCurrentPage = _s[1];
     var selectedItems = (0, react_1.useMemo)(function () { return items.filter(function (item) { return selectedIds.includes(item.id); }); }, [items, selectedIds]);
     var selectedJobCode = (0, react_1.useMemo)(function () { var _a; return (selectedItems.length === 1 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.jobCode : ""); }, [selectedItems]);

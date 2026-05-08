@@ -66,7 +66,7 @@ export interface DrawerStateManager {
 
   // Work permit file
   fileInputRef: React.RefObject<HTMLInputElement>;
-  selectedFile: File | null;
+  selectedFile: IDocFiles | null;
   isReading: boolean;
   hasFileError: boolean;
   setHasFileError: (val: boolean) => void;
@@ -107,7 +107,7 @@ export const useStateOfferRelease = (): DrawerStateManager => {
 
   // ── Work permit file ──
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<IDocFiles | null>(null);
   const [isReading, setIsReading] = useState(false);
   const [hasFileError, setHasFileError] = useState(false);
 
@@ -176,17 +176,50 @@ export const useStateOfferRelease = (): DrawerStateManager => {
   );
 
   const handleFileChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const target = e.target;
+      const file = target.files?.[0];
+
       if (!file) return;
 
-      setIsReading(true);
-      setHasFileError(false);
+      const toBase64 = (file: File): Promise<string> =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
 
-      setTimeout(() => {
-        setSelectedFile(file);
-        setIsReading(false);
-      }, 500);
+          reader.readAsDataURL(file);
+
+          reader.onload = () => {
+            resolve(reader.result as string);
+          };
+
+          reader.onerror = (error) => reject(error);
+        });
+
+      try {
+        const base64 = await toBase64(file);
+
+        const docs: IDocFiles[] = [
+          {
+            name: file.name,
+            content: base64, // ✅ FIXED
+            type: "New", // ✅ FIXED
+          },
+        ];
+
+        if (!file) return;
+
+        setIsReading(true);
+        setHasFileError(false);
+
+        setTimeout(() => {
+          setSelectedFile(docs[0]);
+          setIsReading(false);
+        }, 500);
+      } catch (error) {
+        console.error("File conversion error:", error);
+      }
+
+      target.value = "";
     },
     [],
   );

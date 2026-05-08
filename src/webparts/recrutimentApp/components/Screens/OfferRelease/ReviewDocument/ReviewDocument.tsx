@@ -199,6 +199,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     consentVerification: isConsentVerified,
     reviewerComments,
     uploadDocs,
+    selectedFile: selectedFile,
   };
 
   const {

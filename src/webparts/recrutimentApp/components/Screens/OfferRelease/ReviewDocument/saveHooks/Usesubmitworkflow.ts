@@ -60,6 +60,7 @@ export interface SubmitWorkflowDeps {
   consentVerification: boolean;
   reviewerComments: string;
   uploadDocs: UploadedFile[];
+  selectedFile: IDocFiles | null;
 }
 
 interface SubmitWorkflowResult {
@@ -99,6 +100,7 @@ async function resolveStatus(
   email: string,
   coiState: COIFormState,
   rejectflag: boolean,
+  selectedFile: IDocFiles | null,
 ): Promise<ResolveResult> {
   const pid = data?.ProfileID;
   const rid = data?.JobRequestID;
@@ -306,6 +308,7 @@ async function resolveStatus(
     }
 
     case StatusId.WorkPermitAcknowledgedContractUploaded: {
+      let DocList = selectedFile ? [selectedFile] : [];
       const documentResponse = await OfferServices.UploadCandidateDocument(
         makeDocData(
           pid,
@@ -317,7 +320,7 @@ async function resolveStatus(
       );
       const workPermitDocs = await OfferServices.UploadCandidateDocument(
         makeDocData(pid, rid, DocumentFolderName.WorkPermit),
-        [...documentFile],
+        DocList,
       );
       return {
         workflowStatusValue:
@@ -478,10 +481,10 @@ function buildCandidateData(
     data.StatusID === StatusId.PendingHROfferInitiate &&
     data.EmploymentCategory === EmployeementCategory.KCSAEmployee
   ) {
-    const offerDoc = documentResponse.data?.find((d: any) =>
-      d.name?.includes("OfferLetter"),
-    );
-    base.OfferLatterPath = offerDoc?.content;
+    // const offerDoc = documentResponse.data?.find((d: any) =>
+    //   d.name?.includes("OfferLetter"),
+    // );
+    base.OfferLatterPath = documentResponse.data[0]?.content;
   }
 
   if (data.StatusID === StatusId.WorkPermitAcknowledgedContractUploaded) {
@@ -587,6 +590,7 @@ export function useSubmitWorkflow(
           ADGroupData.EmailId[0],
           data.coiState,
           data.rejectflag,
+          data.selectedFile,
         );
         let Verified = data.consentVerification;
         if (resolved.documentResponse?.status !== ResponeStatus.SUCCESS) {

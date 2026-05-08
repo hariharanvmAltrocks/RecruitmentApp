@@ -47,10 +47,10 @@ var RecruitmentService = /** @class */ (function () {
                                         Filter: filterParam,
                                         FilterCondition: filterConditions,
                                         select: [
-                                            "*,Action/Action,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,BusinessUnitCode/BusineesUnitCode,Status/StatusDescription,Author/EMail",
+                                            "*,Action/Action,Department/DepartmentName,SubDepartment/SubDepTitle,Section/SectionName,DepartmentCode/DptCode,BusinessUnitCode/BusineesUnitCode,Status/StatusDescription,Author/EMail,JobTitleEnglish/JobCode,JobTitleEnglish/JobTitleInEnglish,JobTitleFrench/JobTitleInFrench",
                                         ],
                                         expand: [
-                                            "Action,Department,SubDepartment,Section,DepartmentCode,BusinessUnitCode,Status,Author",
+                                            "Action,Department,SubDepartment,Section,DepartmentCode,BusinessUnitCode,Status,Author,JobTitleEnglish,JobTitleFrench",
                                         ],
                                     },
                                 ];
@@ -91,7 +91,7 @@ var RecruitmentService = /** @class */ (function () {
                             .filter(Boolean);
                         return [4 /*yield*/, Promise.all([
                                 additionalIds.length > 0
-                                    ? this.GetPositionDetails([
+                                    ? this.GetAddtionalPositionDetails([
                                         {
                                             FilterKey: "LookupIDId",
                                             Operator: "in",
@@ -140,7 +140,11 @@ var RecruitmentService = /** @class */ (function () {
                                 NumberOfPersonNeeded: item === null || item === void 0 ? void 0 : item.NumberOfPersonNeeded,
                                 EnterNumberOfMonths: item === null || item === void 0 ? void 0 : item.EnterNumberOfMonths,
                                 AreaofWork: item.AreaofWork,
-                                DateRequried: item.DateRequried ? item === null || item === void 0 ? void 0 : item.DateRequried : null,
+                                DateRequried: item.DateRequried
+                                    ? item === null || item === void 0 ? void 0 : item.DateRequried
+                                    : (item === null || item === void 0 ? void 0 : item.DatePositionIsRequired)
+                                        ? item === null || item === void 0 ? void 0 : item.DatePositionIsRequired
+                                        : null,
                                 Type: Config_1.DataFrom.NewPosition,
                                 Status: item.Status ? item.Status.StatusDescription : "",
                                 StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
@@ -150,9 +154,9 @@ var RecruitmentService = /** @class */ (function () {
                             });
                         };
                         additionalExistingResult = additionalExistingItems.map(function (item, index) {
-                            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+                            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
                             var pos = additionalPositionMap_1.get(item.ID);
-                            return tslib_1.__assign(tslib_1.__assign({}, mapCommonFields_1(item, index)), { Type: Config_1.DataFrom.ExistingPosition, JobCode: (_a = pos === null || pos === void 0 ? void 0 : pos.jobCode) !== null && _a !== void 0 ? _a : "", JobCodeId: (_b = pos === null || pos === void 0 ? void 0 : pos.JobCodeId) !== null && _b !== void 0 ? _b : 0, JobTitleEnglish: (_c = pos === null || pos === void 0 ? void 0 : pos.title) !== null && _c !== void 0 ? _c : "", JobTitleEnglishId: (_d = pos === null || pos === void 0 ? void 0 : pos.titleID) !== null && _d !== void 0 ? _d : 0, JobTitleFrench: (_e = pos === null || pos === void 0 ? void 0 : pos.JobTitleFrench) !== null && _e !== void 0 ? _e : "", JobTitleFrenchId: (_f = pos === null || pos === void 0 ? void 0 : pos.JobTitleFrenchId) !== null && _f !== void 0 ? _f : 0, PatersonGrade: (_g = pos === null || pos === void 0 ? void 0 : pos.PatersonGrade) !== null && _g !== void 0 ? _g : "", PatersonGradeId: (_h = pos === null || pos === void 0 ? void 0 : pos.PatersonGradeId) !== null && _h !== void 0 ? _h : 0, DRCGrade: (_j = pos === null || pos === void 0 ? void 0 : pos.DRCGrade) !== null && _j !== void 0 ? _j : "", DRCGradeId: (_k = pos === null || pos === void 0 ? void 0 : pos.DRCGradeId) !== null && _k !== void 0 ? _k : 0 });
+                            return tslib_1.__assign(tslib_1.__assign({}, mapCommonFields_1(item, index)), { Type: Config_1.DataFrom.ExistingPosition, JobCode: (_b = (_a = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) === null || _a === void 0 ? void 0 : _a.JobCode) !== null && _b !== void 0 ? _b : "", JobCodeId: (_c = item === null || item === void 0 ? void 0 : item.JobTitleEnglishId) !== null && _c !== void 0 ? _c : 0, JobTitleEnglish: (_e = (_d = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) === null || _d === void 0 ? void 0 : _d.JobTitleInEnglish) !== null && _e !== void 0 ? _e : "", JobTitleEnglishId: (_f = item === null || item === void 0 ? void 0 : item.JobTitleEnglishId) !== null && _f !== void 0 ? _f : 0, JobTitleFrench: (_h = (_g = item === null || item === void 0 ? void 0 : item.JobTitleFrench) === null || _g === void 0 ? void 0 : _g.JobTitleInFrench) !== null && _h !== void 0 ? _h : "", JobTitleFrenchId: (_j = item === null || item === void 0 ? void 0 : item.JobTitleFrenchId) !== null && _j !== void 0 ? _j : 0, PatersonGrade: (_k = pos === null || pos === void 0 ? void 0 : pos.PatersonGrade) !== null && _k !== void 0 ? _k : "", PatersonGradeId: (_l = pos === null || pos === void 0 ? void 0 : pos.PatersonGradeId) !== null && _l !== void 0 ? _l : 0, DRCGrade: (_m = pos === null || pos === void 0 ? void 0 : pos.DRCGrade) !== null && _m !== void 0 ? _m : "", DRCGradeId: (_o = pos === null || pos === void 0 ? void 0 : pos.DRCGradeId) !== null && _o !== void 0 ? _o : 0, NumberOfPersonNeeded: (_p = pos === null || pos === void 0 ? void 0 : pos.ActualVacantPosition) !== null && _p !== void 0 ? _p : 0 });
                         });
                         newPositionResult = newPositionItems.map(function (item, index) {
                             var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
@@ -160,8 +164,8 @@ var RecruitmentService = /** @class */ (function () {
                             return tslib_1.__assign(tslib_1.__assign({}, mapCommonFields_1(item, index)), { Type: Config_1.DataFrom.NewPosition, JobCode: (_a = pos === null || pos === void 0 ? void 0 : pos.jobCode) !== null && _a !== void 0 ? _a : "", JobCodeId: (_b = pos === null || pos === void 0 ? void 0 : pos.JobCodeId) !== null && _b !== void 0 ? _b : 0, JobTitleEnglish: (_c = pos === null || pos === void 0 ? void 0 : pos.title) !== null && _c !== void 0 ? _c : "", JobTitleEnglishId: (_d = pos === null || pos === void 0 ? void 0 : pos.titleID) !== null && _d !== void 0 ? _d : 0, JobTitleFrench: (_e = pos === null || pos === void 0 ? void 0 : pos.JobTitleFrench) !== null && _e !== void 0 ? _e : "", JobTitleFrenchId: (_f = pos === null || pos === void 0 ? void 0 : pos.JobTitleFrenchId) !== null && _f !== void 0 ? _f : 0, PatersonGrade: (_g = pos === null || pos === void 0 ? void 0 : pos.PatersonGrade) !== null && _g !== void 0 ? _g : "", PatersonGradeId: (_h = pos === null || pos === void 0 ? void 0 : pos.PatersonGradeId) !== null && _h !== void 0 ? _h : 0, DRCGrade: (_j = pos === null || pos === void 0 ? void 0 : pos.DRCGrade) !== null && _j !== void 0 ? _j : "", DRCGradeId: (_k = pos === null || pos === void 0 ? void 0 : pos.DRCGradeId) !== null && _k !== void 0 ? _k : 0 });
                         });
                         vacancyResult = vacancyItems.map(function (item, index) {
-                            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
-                            return (tslib_1.__assign(tslib_1.__assign({}, mapCommonFields_1(item, index)), { Type: Config_1.DataFrom.VacancyRecruitmentProcess, JobCodeId: (_b = (_a = item === null || item === void 0 ? void 0 : item.JobCode) === null || _a === void 0 ? void 0 : _a.ID) !== null && _b !== void 0 ? _b : 0, JobCode: (_d = (_c = item === null || item === void 0 ? void 0 : item.JobCode) === null || _c === void 0 ? void 0 : _c.JobCode) !== null && _d !== void 0 ? _d : "", JobTitleEnglish: (_f = (_e = item === null || item === void 0 ? void 0 : item.JobCode) === null || _e === void 0 ? void 0 : _e.JobTitleInEnglish) !== null && _f !== void 0 ? _f : "", JobTitleEnglishId: (_h = (_g = item === null || item === void 0 ? void 0 : item.JobCode) === null || _g === void 0 ? void 0 : _g.ID) !== null && _h !== void 0 ? _h : 0, JobTitleFrench: (_k = (_j = item === null || item === void 0 ? void 0 : item.JobTitleFrench) === null || _j === void 0 ? void 0 : _j.JobTitleInFrench) !== null && _k !== void 0 ? _k : "", JobTitleFrenchId: (_l = item === null || item === void 0 ? void 0 : item.JobTitleFrenchId) !== null && _l !== void 0 ? _l : 0, PatersonGrade: (_o = (_m = item === null || item === void 0 ? void 0 : item.PatersonGrade) === null || _m === void 0 ? void 0 : _m.PatersonGrade) !== null && _o !== void 0 ? _o : "", PatersonGradeId: (_p = item === null || item === void 0 ? void 0 : item.PatersonGradeId) !== null && _p !== void 0 ? _p : 0, DRCGrade: (_r = (_q = item === null || item === void 0 ? void 0 : item.PatersonGrade) === null || _q === void 0 ? void 0 : _q.DRCGrade) !== null && _r !== void 0 ? _r : "", DRCGradeId: (_s = item === null || item === void 0 ? void 0 : item.PatersonGradeId) !== null && _s !== void 0 ? _s : 0 }));
+                            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
+                            return (tslib_1.__assign(tslib_1.__assign({}, mapCommonFields_1(item, index)), { Type: Config_1.DataFrom.VacancyRecruitmentProcess, JobCodeId: (_a = item === null || item === void 0 ? void 0 : item.JobCodeId) !== null && _a !== void 0 ? _a : 0, JobCode: (_c = (_b = item === null || item === void 0 ? void 0 : item.JobCode) === null || _b === void 0 ? void 0 : _b.JobCode) !== null && _c !== void 0 ? _c : "", JobTitleEnglish: (_e = (_d = item === null || item === void 0 ? void 0 : item.JobCode) === null || _d === void 0 ? void 0 : _d.JobTitleInEnglish) !== null && _e !== void 0 ? _e : "", JobTitleEnglishId: (_f = item === null || item === void 0 ? void 0 : item.JobCodeId) !== null && _f !== void 0 ? _f : 0, JobTitleFrench: (_h = (_g = item === null || item === void 0 ? void 0 : item.JobTitleFrench) === null || _g === void 0 ? void 0 : _g.JobTitleInFrench) !== null && _h !== void 0 ? _h : "", JobTitleFrenchId: (_j = item === null || item === void 0 ? void 0 : item.JobTitleFrenchId) !== null && _j !== void 0 ? _j : 0, PatersonGrade: (_l = (_k = item === null || item === void 0 ? void 0 : item.PatersonGrade) === null || _k === void 0 ? void 0 : _k.PatersonGrade) !== null && _l !== void 0 ? _l : "", PatersonGradeId: (_m = item === null || item === void 0 ? void 0 : item.PatersonGradeId) !== null && _m !== void 0 ? _m : 0, DRCGrade: (_p = (_o = item === null || item === void 0 ? void 0 : item.PatersonGrade) === null || _o === void 0 ? void 0 : _o.DRCGrade) !== null && _p !== void 0 ? _p : "", DRCGradeId: (_q = item === null || item === void 0 ? void 0 : item.PatersonGradeId) !== null && _q !== void 0 ? _q : 0 }));
                         });
                         GridResult = tslib_1.__spreadArray(tslib_1.__spreadArray(tslib_1.__spreadArray([], additionalExistingResult, true), newPositionResult, true), vacancyResult, true).map(function (item, index) { return (tslib_1.__assign(tslib_1.__assign({}, item), { RecordID: index + 1 })); });
                         return [2 /*return*/, {
@@ -358,9 +362,56 @@ var RecruitmentService = /** @class */ (function () {
             });
         });
     };
+    RecruitmentService.prototype.GetAddtionalPositionDetails = function (Filter, filterConditions, ListName) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var resdata, result, error_5;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: ListName,
+                                Select: "*,DRCGrade/DRCGrade,PatersonGrade/PatersonGrade",
+                                Filter: Filter,
+                                FilterCondition: filterConditions,
+                                Expand: "DRCGrade,PatersonGrade",
+                                Topcount: ApiConfig_1.count.Topcount,
+                            })];
+                    case 1:
+                        resdata = _a.sent();
+                        result = resdata.map(function (item, index) {
+                            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+                            return ({
+                                ID: (_c = (_b = (_a = item === null || item === void 0 ? void 0 : item.LookupIDId) !== null && _a !== void 0 ? _a : item === null || item === void 0 ? void 0 : item.PositionRequestIDId) !== null && _b !== void 0 ? _b : item === null || item === void 0 ? void 0 : item.RecruitmentIDId) !== null && _c !== void 0 ? _c : 0,
+                                id: index + 1,
+                                DRCGrade: (_e = (_d = item === null || item === void 0 ? void 0 : item.DRCGrade) === null || _d === void 0 ? void 0 : _d.DRCGrade) !== null && _e !== void 0 ? _e : "",
+                                DRCGradeId: (_f = item === null || item === void 0 ? void 0 : item.DRCGradeId) !== null && _f !== void 0 ? _f : 0,
+                                PatersonGrade: (_h = (_g = item === null || item === void 0 ? void 0 : item.PatersonGrade) === null || _g === void 0 ? void 0 : _g.PatersonGrade) !== null && _h !== void 0 ? _h : "",
+                                PatersonGradeId: (_j = item === null || item === void 0 ? void 0 : item.PatersonGradeId) !== null && _j !== void 0 ? _j : 0,
+                                ActualVacantPosition: (_k = item === null || item === void 0 ? void 0 : item.ActualVacantPosition) !== null && _k !== void 0 ? _k : 0,
+                            });
+                        });
+                        return [2 /*return*/, {
+                                data: result,
+                                status: 200,
+                                message: "GetPositionDetails fetched successfully",
+                            }];
+                    case 2:
+                        error_5 = _a.sent();
+                        console.error("GetPositionDetails error:", error_5);
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error fetching position details",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
     RecruitmentService.prototype.InsertRecruitmentDptBatch = function (payloads) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var _a, batchedSP1_1, execute1, mainPromises, updatePromises, mainResults, failedIndex, enriched, _b, batchedSP2_1, execute2, positionPromises, commentPromises, RecruitAppCareerPortalIntegration, error_5;
+            var _a, batchedSP1_1, execute1, mainPromises, updatePromises, mainResults, failedIndex, enriched, _b, batchedSP2_1, execute2, positionPromises, commentPromises, RecruitAppCareerPortalIntegration, error_6;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -386,7 +437,7 @@ var RecruitmentService = /** @class */ (function () {
                                 .getByTitle(listName)
                                 .items.getById(payload.updatePreList.ID)
                                 .update({
-                                ActionId: payload.updatePreList.ActionId,
+                                // ActionId: payload.updatePreList!.ActionId,
                                 ItemCreated: payload.updatePreList.ItemCreated,
                                 IsDataSyncToRecruitment: payload.updatePreList.IsDataSyncToRecruitment,
                             });
@@ -465,8 +516,8 @@ var RecruitmentService = /** @class */ (function () {
                                 message: "Batch insert successful for ".concat(payloads.length, " record(s)"),
                             }];
                     case 5:
-                        error_5 = _c.sent();
-                        console.error("InsertRecruitmentDptBatch error:", error_5);
+                        error_6 = _c.sent();
+                        console.error("InsertRecruitmentDptBatch error:", error_6);
                         return [2 /*return*/, { data: [], status: 500, message: "Batch insert failed" }];
                     case 6: return [2 /*return*/];
                 }
@@ -475,7 +526,7 @@ var RecruitmentService = /** @class */ (function () {
     };
     RecruitmentService.prototype.InsertExternalAgencyDetails = function (payloads) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var uniqueJobCodeIds, _a, agentMasterRes, jobCodeResults_1, agentMasterMap_1, jobCodeMap_1, postResults, succeeded, withComments, _b, batchedSP, execute, commentList, _i, withComments_1, item, error_6;
+            var uniqueJobCodeIds, _a, agentMasterRes, jobCodeResults_1, agentMasterMap_1, jobCodeMap_1, postResults, succeeded, withComments, _b, batchedSP, execute, commentList, _i, withComments_1, item, error_7;
             var _this = this;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
@@ -505,7 +556,7 @@ var RecruitmentService = /** @class */ (function () {
                             ];
                         }));
                         return [4 /*yield*/, Promise.all(payloads.map(function (item) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                var agentCode, jobCode, AgentDetails, error_7;
+                                var agentCode, jobCode, AgentDetails, error_8;
                                 return tslib_1.__generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
@@ -527,9 +578,9 @@ var RecruitmentService = /** @class */ (function () {
                                             _a.sent();
                                             return [2 /*return*/, { item: item, success: true }];
                                         case 3:
-                                            error_7 = _a.sent();
-                                            console.error("Failed for AgentId ".concat(item.Data.AgentId, ":"), error_7);
-                                            return [2 /*return*/, { item: item, success: false, error: error_7 }];
+                                            error_8 = _a.sent();
+                                            console.error("Failed for AgentId ".concat(item.Data.AgentId, ":"), error_8);
+                                            return [2 /*return*/, { item: item, success: false, error: error_8 }];
                                         case 4: return [2 /*return*/];
                                     }
                                 });
@@ -558,8 +609,8 @@ var RecruitmentService = /** @class */ (function () {
                             message: "Processed ".concat(succeeded.length, "/").concat(payloads.length, " record(s) successfully"),
                         }];
                     case 6:
-                        error_6 = _c.sent();
-                        console.error("InsertExternalAgencyDetails error:", error_6);
+                        error_7 = _c.sent();
+                        console.error("InsertExternalAgencyDetails error:", error_7);
                         return [2 /*return*/, { data: [], status: 500, message: "Batch insert failed" }];
                     case 7: return [2 /*return*/];
                 }
@@ -568,7 +619,7 @@ var RecruitmentService = /** @class */ (function () {
     };
     RecruitmentService.prototype.GetHRMSRecruitmentRoleProfileDetails = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var BATCH_IDX, masterQueries, _a, batchRes, listItems, roleKnowledgeMaster, levelProficiencyMaster, technicalSkillsMaster, experienceMaster, qualificationMaster, functionTypeMaster, roleKnowledgeMap_1, levelProficiencyMap_1, technicalSkillsMap_1, qualificationMap_1, experienceMap, functionTypeMap_1, formattedItems, error_8;
+            var BATCH_IDX, masterQueries, _a, batchRes, listItems, roleKnowledgeMaster, levelProficiencyMaster, technicalSkillsMaster, experienceMaster, qualificationMaster, functionTypeMaster, roleKnowledgeMap_1, levelProficiencyMap_1, technicalSkillsMap_1, qualificationMap_1, experienceMap, functionTypeMap_1, formattedItems, error_9;
             var _b, _c, _d, _e, _f, _g;
             return tslib_1.__generator(this, function (_h) {
                 switch (_h.label) {
@@ -796,8 +847,8 @@ var RecruitmentService = /** @class */ (function () {
                                 message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
                             }];
                     case 2:
-                        error_8 = _h.sent();
-                        console.error("Error fetching data GetHRMSRecruitmentRoleProfileDetails:", error_8);
+                        error_9 = _h.sent();
+                        console.error("Error fetching data GetHRMSRecruitmentRoleProfileDetails:", error_9);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -810,7 +861,7 @@ var RecruitmentService = /** @class */ (function () {
     };
     RecruitmentService.prototype.GetBGVerificationType = function () {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, error_9;
+            var response, error_10;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -824,8 +875,8 @@ var RecruitmentService = /** @class */ (function () {
                                 message: response.data.message,
                             }];
                     case 2:
-                        error_9 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_9);
+                        error_10 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_10);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -838,7 +889,7 @@ var RecruitmentService = /** @class */ (function () {
     };
     RecruitmentService.prototype.PostCommentsData = function (obj) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var error_10;
+            var error_11;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -855,8 +906,8 @@ var RecruitmentService = /** @class */ (function () {
                                 message: "Data Submitted successfully",
                             }];
                     case 2:
-                        error_10 = _a.sent();
-                        console.error("Error posting user data:", error_10);
+                        error_11 = _a.sent();
+                        console.error("Error posting user data:", error_11);
                         return [2 /*return*/, {
                                 data: null,
                                 status: 400,
@@ -869,7 +920,7 @@ var RecruitmentService = /** @class */ (function () {
     };
     RecruitmentService.prototype.UploadAdvertisementInPortal = function (Filter, Condition, RecuritmentDetails, IsActive, IsExtened, JobBasedBGVVerification, onemDocs, extendStartDate, extendEndDate) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var ROLE_PROFILE, JOB_PORTAL, queries, batchRes, roleProfileList, jobPortalList, data, jobUniqueKey, roleSpecificKnowledge, technicalSkill, roleSpecificSkills, technicalSkills, Roleandtechnical, minQualifications, preferredQualifications, MinAndPreferedQualification, decodeBase64, Description, DescriptionFr, onemdocPath, onamdocpathfile, FilterDept, DepartmentData, NationalityValue, todaydate, vaildFrom, VaildTo, advertisementDetails, response, error_11;
+            var ROLE_PROFILE, JOB_PORTAL, queries, batchRes, roleProfileList, jobPortalList, data, jobUniqueKey, roleSpecificKnowledge, technicalSkill, roleSpecificSkills, technicalSkills, Roleandtechnical, minQualifications, preferredQualifications, MinAndPreferedQualification, decodeBase64, Description, DescriptionFr, onemdocPath, onamdocpathfile, FilterDept, DepartmentData, NationalityValue, todaydate, vaildFrom, VaildTo, advertisementDetails, response, error_12;
             var _a, _b, _c, _d, _e;
             return tslib_1.__generator(this, function (_f) {
                 switch (_f.label) {
@@ -1018,7 +1069,7 @@ var RecruitmentService = /** @class */ (function () {
                             isActive: IsActive,
                             noOfPositions: String(RecuritmentDetails === null || RecuritmentDetails === void 0 ? void 0 : RecuritmentDetails.NumberOfPersonNeeded),
                             validFrom: extendStartDate ? extendStartDate : vaildFrom,
-                            validTo: extendEndDate ? extendEndDate : vaildFrom,
+                            validTo: extendEndDate ? extendEndDate : VaildTo,
                             employmentType: "Full Time",
                             departmentId: ((_c = DepartmentData.data[0]) === null || _c === void 0 ? void 0 : _c.Code) || "",
                             role: null,
@@ -1048,8 +1099,8 @@ var RecruitmentService = /** @class */ (function () {
                                 message: "Error while posting advertisement details",
                             }];
                     case 8:
-                        error_11 = _f.sent();
-                        console.error("Error posting advertisement data:", error_11);
+                        error_12 = _f.sent();
+                        console.error("Error posting advertisement data:", error_12);
                         return [2 /*return*/, { data: null, status: 400, message: "Error On Posting Data" }];
                     case 9: return [2 /*return*/];
                 }
@@ -1058,7 +1109,7 @@ var RecruitmentService = /** @class */ (function () {
     };
     RecruitmentService.prototype.UpsertBGVJobMaster = function (UpsertData) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, error_12;
+            var response, error_13;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1072,8 +1123,8 @@ var RecruitmentService = /** @class */ (function () {
                                 message: response.data.message,
                             }];
                     case 2:
-                        error_12 = _a.sent();
-                        console.error("Error inserting data into AdvertisementDetails:", error_12);
+                        error_13 = _a.sent();
+                        console.error("Error inserting data into AdvertisementDetails:", error_13);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,

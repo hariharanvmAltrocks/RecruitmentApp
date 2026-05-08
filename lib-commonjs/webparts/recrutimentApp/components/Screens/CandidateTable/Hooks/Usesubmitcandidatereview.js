@@ -26,7 +26,7 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
     };
     // ─── Upload Candidate Details ────────────────────────────────────────────────
     var uploadCandidateDetails = (0, react_1.useCallback)(function (payload) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var cp, recrutimentData, interviewLevel1, COIDetails, interviewPanelL1, dobValue, dobData, startDateTime, endDateTime, candidateDetails, selectedPanel;
+        var cp, recrutimentData, interviewLevel1, COIDetails, interviewPanelL1, dobValue, dobData, startDateTime, candidateDetails, selectedPanel;
         var _a, _b;
         return tslib_1.__generator(this, function (_c) {
             cp = payload.CandidateDetails, recrutimentData = payload.recrutimentData, interviewLevel1 = payload.interviewLevel1, COIDetails = payload.COIDetails, interviewPanelL1 = payload.interviewPanelL1;
@@ -34,11 +34,9 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                 throw new Error("CandidateDetails is null");
             dobValue = cp.DOB ? new Date(cp.DOB) : new Date();
             dobData = splitDateOnly(dobValue);
+            console.log();
             startDateTime = (interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startDate) && (interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startTime)
                 ? new Date("".concat(interviewLevel1.startDate, "T").concat(interviewLevel1.startTime, ":00")).toISOString()
-                : "";
-            endDateTime = (interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startDate) && (interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.endTime)
-                ? new Date("".concat(interviewLevel1.startDate, "T").concat(interviewLevel1.endTime, ":00")).toISOString()
                 : "";
             candidateDetails = {
                 RecruitmentIDId: recrutimentData === null || recrutimentData === void 0 ? void 0 : recrutimentData.ID,
@@ -61,7 +59,7 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                 JobGrade: recrutimentData === null || recrutimentData === void 0 ? void 0 : recrutimentData.DRCGrade,
                 ExternalAgentDetails: cp.Agencies,
                 InterviewDate: startDateTime,
-                InterviewTime: endDateTime,
+                InterviewTime: interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startTime,
                 CandidateResumeLink: (_a = cp.CandidateResumeLink) !== null && _a !== void 0 ? _a : "",
                 ActionId: Config_1.WorkflowAction.Approved,
                 ConflictsOfInterest: cp.ConflictsOfInterest,
@@ -97,7 +95,7 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                 OperationRoleRegion: JSON.stringify([(cp === null || cp === void 0 ? void 0 : cp.companyDetails) || {}]),
                 NationalityCode: (cp === null || cp === void 0 ? void 0 : cp.NatioCode) || "",
                 LanguageKnown: JSON.stringify(cp === null || cp === void 0 ? void 0 : cp.LanguageKnown),
-                InterviewLink: "",
+                InterviewLink: interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.endTime,
             };
             selectedPanel = interviewPanelL1.map(function (item) { return ({
                 RecruitmentIDId: recrutimentData === null || recrutimentData === void 0 ? void 0 : recrutimentData.ID,
@@ -341,18 +339,18 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
     // setPageLoading(true)  → top of this function
     // setPageLoading(false) → always in the finally block
     var executeSubmit = (0, react_1.useCallback)(function (payload, COIButtonAction) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var isLevel2Pending, isScheduleInterview, panelL2, startDateTimeL2, endDateTimeL2, interviewscheduleL2Data, response, err_1;
-        var _a, _b, _c, _d, _e;
-        return tslib_1.__generator(this, function (_f) {
-            switch (_f.label) {
+        var isLevel2Pending, isScheduleInterview, panelL2, startDateTimeL2, interviewscheduleL2Data, response, err_1;
+        var _a, _b, _c;
+        return tslib_1.__generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
                     (_a = abortRef.current) === null || _a === void 0 ? void 0 : _a.abort();
                     abortRef.current = new AbortController();
                     setSubmitting(true);
                     setPageLoading(true); // ✅ Start loader — single entry point
-                    _f.label = 1;
+                    _d.label = 1;
                 case 1:
-                    _f.trys.push([1, 9, 10, 11]);
+                    _d.trys.push([1, 9, 10, 11]);
                     isLevel2Pending = Number(payload.StatusId) ===
                         Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel;
                     isScheduleInterview = payload.StatusId ===
@@ -360,13 +358,13 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                     if (!isScheduleInterview) return [3 /*break*/, 3];
                     return [4 /*yield*/, scheduleMeeting(payload)];
                 case 2:
-                    _f.sent();
-                    _f.label = 3;
+                    _d.sent();
+                    _d.label = 3;
                 case 3:
                     if (!isLevel2Pending) return [3 /*break*/, 6];
                     return [4 /*yield*/, scheduleMeeting(payload)];
                 case 4:
-                    _f.sent();
+                    _d.sent();
                     panelL2 = payload.interviewPanelL2.map(function (item) {
                         var _a, _b, _c, _d;
                         return ({
@@ -380,22 +378,19 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                         ((_c = payload.interviewLevel2) === null || _c === void 0 ? void 0 : _c.startTime)
                         ? new Date("".concat(payload.interviewLevel2.startDate, "T").concat(payload.interviewLevel2.startTime, ":00")).toISOString()
                         : "";
-                    endDateTimeL2 = ((_d = payload.interviewLevel2) === null || _d === void 0 ? void 0 : _d.startDate) &&
-                        ((_e = payload.interviewLevel2) === null || _e === void 0 ? void 0 : _e.endTime)
-                        ? new Date("".concat(payload.interviewLevel2.startDate, "T").concat(payload.interviewLevel2.endTime, ":00")).toISOString()
-                        : "";
                     interviewscheduleL2Data = {
                         candidateUpdate: {
                             ID: Number(payload.candidateId),
                             StatusId: Config_1.StatusId.InterviewScheduledforLevel2,
                             InterviewDateLevel2: startDateTimeL2,
-                            InterviewTimeLevel2: endDateTimeL2,
+                            InterviewTimeLevel2: payload.interviewLevel2.startTime,
+                            InterviewLinkLevel2: payload.interviewLevel2.endTime,
                         },
                         interviewPanelL2: panelL2,
                     };
                     return [4 /*yield*/, ServiceExport_1.CandidateTable.InterviewScheduleLevel2(interviewscheduleL2Data)];
                 case 5:
-                    response = _f.sent();
+                    response = _d.sent();
                     if (response.status === 200) {
                         showModal({
                             type: "success",
@@ -428,11 +423,11 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                 return [4 /*yield*/, handleWorkflowProcess(payload, COIButtonAction)];
                 case 7:
                     // All other workflow actions
-                    _f.sent();
-                    _f.label = 8;
+                    _d.sent();
+                    _d.label = 8;
                 case 8: return [3 /*break*/, 11];
                 case 9:
-                    err_1 = _f.sent();
+                    err_1 = _d.sent();
                     if ((err_1 === null || err_1 === void 0 ? void 0 : err_1.name) === "AbortError")
                         return [2 /*return*/];
                     console.error("Submit failed:", err_1);

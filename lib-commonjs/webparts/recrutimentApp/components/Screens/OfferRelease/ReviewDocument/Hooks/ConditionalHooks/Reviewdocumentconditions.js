@@ -53,7 +53,7 @@ var resolveUploadLabel = function (is) {
 };
 var buildVisibilityFlags = function (is, hasDetails, rejectFlag, revertFlag) {
     var showUploadDocument = (is.pendingHROfferInitiate && is.isKCSAEmployee) ||
-        (is.wpAckContractUploaded && is.isVerified) ||
+        is.wpAckContractUploaded ||
         (is.pendingFinancePayment && is.isVerified && is.isLabourHire);
     var uploadDocLabel = resolveUploadLabel(is);
     return {

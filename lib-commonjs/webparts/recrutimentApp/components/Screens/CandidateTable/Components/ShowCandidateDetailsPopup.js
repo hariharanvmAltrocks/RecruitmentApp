@@ -82,21 +82,22 @@ var ShowCandidateDetailsPopup = function (_a) {
         statusId === Config_1.workflowStatusApi.LineManagerLevel1Rejected ||
         statusId === Config_1.workflowStatusApi.LineManagerLevel2Rejected;
     // ── Data hooks ─────────────────────────────────────────────────────────────
-    var paneloptions = (0, fetchPanelMembers_1.useFetchPanelMembers)((_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.BusinessUnitCodeId) !== null && _c !== void 0 ? _c : 0, (_d = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.AssignEMail) !== null && _d !== void 0 ? _d : "", (_e = panelParams === null || panelParams === void 0 ? void 0 : panelParams.candidateId) !== null && _e !== void 0 ? _e : 0, statusId, isEnabled).data;
-    var _s = (0, fetchCandidateDetails_1.useFetchCandidateDetails)(candidateId, statusId), data = _s.data, loading = _s.loading;
-    var _t = (0, Usesubmitcandidatereview_1.useSubmitCandidateReview)(onClose, handleRefresh), submitting = _t.submitting, submit = _t.submit, pageLoading = _t.pageLoading, submitModalState = _t.modalState, submitCloseModal = _t.closeModal;
-    var _u = (0, useModalPopup_1.useModalPopup)(), modalState = _u.modalState, showModal = _u.showModal, closeModal = _u.closeModal;
+    var _s = (0, fetchPanelMembers_1.useFetchPanelMembers)((_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.BusinessUnitCodeId) !== null && _c !== void 0 ? _c : 0, (_d = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.AssignEMail) !== null && _d !== void 0 ? _d : "", (_e = panelParams === null || panelParams === void 0 ? void 0 : panelParams.candidateId) !== null && _e !== void 0 ? _e : 0, statusId, isEnabled), paneloptions = _s.data, panelLoading = _s.loading;
+    var _t = (0, fetchCandidateDetails_1.useFetchCandidateDetails)(candidateId, statusId), data = _t.data, recordLoading = _t.loading;
+    var _u = (0, Usesubmitcandidatereview_1.useSubmitCandidateReview)(onClose, handleRefresh), submitting = _u.submitting, submit = _u.submit, pageLoading = _u.pageLoading, submitModalState = _u.modalState, submitCloseModal = _u.closeModal;
+    var _v = (0, useModalPopup_1.useModalPopup)(), modalState = _v.modalState, showModal = _v.showModal, closeModal = _v.closeModal;
     // ── Local state ────────────────────────────────────────────────────────────
     var fileInputRef = (0, react_1.useRef)(null);
-    var _v = (0, react_1.useState)(null), decision = _v[0], setDecision = _v[1];
-    var _w = (0, react_1.useState)(""), decisionComments = _w[0], setDecisionComments = _w[1];
-    var _x = (0, react_1.useState)([]), consultoptions = _x[0], setConsultOptions = _x[1];
-    var _y = (0, react_1.useState)(null), previewFile = _y[0], setPreviewFile = _y[1];
-    var _z = (0, react_1.useState)(""), HRReview = _z[0], setHRReview = _z[1];
-    var _0 = (0, react_1.useState)(false), dropdownOpen = _0[0], setDropdownOpen = _0[1];
-    var _1 = (0, react_1.useState)(EMPTY_COI), coi = _1[0], setCoi = _1[1];
-    var _2 = (0, react_1.useState)(EMPTY_SCHEDULE), level1 = _2[0], setLevel1 = _2[1];
-    var _3 = (0, react_1.useState)(EMPTY_SCHEDULE), level2 = _3[0], setLevel2 = _3[1];
+    var _w = (0, react_1.useState)(null), decision = _w[0], setDecision = _w[1];
+    var _x = (0, react_1.useState)(""), decisionComments = _x[0], setDecisionComments = _x[1];
+    var _y = (0, react_1.useState)([]), consultoptions = _y[0], setConsultOptions = _y[1];
+    var _z = (0, react_1.useState)(null), previewFile = _z[0], setPreviewFile = _z[1];
+    var _0 = (0, react_1.useState)(""), HRReview = _0[0], setHRReview = _0[1];
+    var _1 = (0, react_1.useState)(false), dropdownOpen = _1[0], setDropdownOpen = _1[1];
+    var _2 = (0, react_1.useState)(EMPTY_COI), coi = _2[0], setCoi = _2[1];
+    var _3 = (0, react_1.useState)(EMPTY_SCHEDULE), level1 = _3[0], setLevel1 = _3[1];
+    var _4 = (0, react_1.useState)(EMPTY_SCHEDULE), level2 = _4[0], setLevel2 = _4[1];
+    var loading = recordLoading || panelLoading;
     // ── Memoised panel values ──────────────────────────────────────────────────
     var panelValue = (0, react_1.useMemo)(function () {
         if (!paneloptions)
@@ -131,6 +132,7 @@ var ShowCandidateDetailsPopup = function (_a) {
     }, [isOpen]);
     // Load panel members + COI data when popup opens
     (0, react_1.useEffect)(function () {
+        var _a, _b;
         if (!isOpen)
             return;
         if (panelValue && (PanelMember || ReviewHRFlag)) {
@@ -138,14 +140,11 @@ var ShowCandidateDetailsPopup = function (_a) {
             var start = (data === null || data === void 0 ? void 0 : data.InterviewStartDate)
                 ? new Date(data.InterviewStartDate)
                 : null;
-            var end = (data === null || data === void 0 ? void 0 : data.InterviewEndDate)
-                ? new Date(data.InterviewEndDate)
-                : null;
             setLevel1({
                 panelMembers: panelValue.level1Members,
                 startDate: start ? start.toISOString().split("T")[0] : "",
-                startTime: start ? start.toTimeString().slice(0, 5) : "",
-                endTime: end ? end.toTimeString().slice(0, 5) : "",
+                startTime: (_a = data === null || data === void 0 ? void 0 : data.InterviewStartTime) !== null && _a !== void 0 ? _a : "",
+                endTime: (_b = data === null || data === void 0 ? void 0 : data.InterviewEndTime) !== null && _b !== void 0 ? _b : "",
             });
             setLevel2({
                 panelMembers: panelValue.level2Members,
@@ -442,44 +441,45 @@ var ShowCandidateDetailsPopup = function (_a) {
                                     (data === null || data === void 0 ? void 0 : data.disability) && (react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.disabilityDivider },
                                         react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.disabilityFieldLabel }, "Comments"),
                                         react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.disabilityReason }, data.disabilityReason)))))),
-                            react_1.default.createElement(framer_motion_1.motion.section, { className: ShowCandidateDetailsPopup_module_scss_1.default.section, custom: 4, variants: reuseUI_1.sectionVariants, initial: "hidden", animate: "visible" },
-                                react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.hrFeedbackCard },
-                                    react_1.default.createElement(reuseUI_1.SectionHeader, { title: "HR Review Feedback", accent: "green" }),
-                                    react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.hrFeedbackFieldWrap },
-                                        react_1.default.createElement("label", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldLabel },
-                                            "Review Profile Feedback - HR",
-                                            " ",
-                                            react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldRequired }, "*")),
-                                        react_1.default.createElement("div", { className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.dropdownWrapper, " dropdown") },
-                                            react_1.default.createElement("div", { className: [
-                                                    ShowCandidateDetailsPopup_module_scss_1.default.customDropdownTrigger,
-                                                    dropdownOpen ? ShowCandidateDetailsPopup_module_scss_1.default.dropdownOpen : "",
-                                                    isReadOnly ? ShowCandidateDetailsPopup_module_scss_1.default.dropdownDisabled : "",
-                                                ]
-                                                    .filter(Boolean)
-                                                    .join(" "), onClick: function () {
-                                                    return !isReadOnly && setDropdownOpen(function (v) { return !v; });
-                                                } },
-                                                react_1.default.createElement("span", { className: HRReview
-                                                        ? ShowCandidateDetailsPopup_module_scss_1.default.dropdownSelected
-                                                        : ShowCandidateDetailsPopup_module_scss_1.default.dropdownPlaceholder }, HRReview || "Select feedback"),
-                                                react_1.default.createElement(lucide_react_1.ChevronDown, { size: 18, className: [
-                                                        ShowCandidateDetailsPopup_module_scss_1.default.dropdownChevron,
-                                                        dropdownOpen ? ShowCandidateDetailsPopup_module_scss_1.default.open : "",
+                            !isLevel2Panel && (react_1.default.createElement(react_1.default.Fragment, null,
+                                react_1.default.createElement(framer_motion_1.motion.section, { className: ShowCandidateDetailsPopup_module_scss_1.default.section, custom: 4, variants: reuseUI_1.sectionVariants, initial: "hidden", animate: "visible" },
+                                    react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.hrFeedbackCard },
+                                        react_1.default.createElement(reuseUI_1.SectionHeader, { title: "HR Review Feedback", accent: "green" }),
+                                        react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.hrFeedbackFieldWrap },
+                                            react_1.default.createElement("label", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldLabel },
+                                                "Review Profile Feedback - HR",
+                                                " ",
+                                                react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.fieldRequired }, "*")),
+                                            react_1.default.createElement("div", { className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.dropdownWrapper, " dropdown") },
+                                                react_1.default.createElement("div", { className: [
+                                                        ShowCandidateDetailsPopup_module_scss_1.default.customDropdownTrigger,
+                                                        dropdownOpen ? ShowCandidateDetailsPopup_module_scss_1.default.dropdownOpen : "",
+                                                        isReadOnly ? ShowCandidateDetailsPopup_module_scss_1.default.dropdownDisabled : "",
                                                     ]
                                                         .filter(Boolean)
-                                                        .join(" ") })),
-                                            react_1.default.createElement(framer_motion_1.AnimatePresence, null, dropdownOpen && (react_1.default.createElement(framer_motion_1.motion.div, { initial: { opacity: 0, y: -10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -10 }, className: ShowCandidateDetailsPopup_module_scss_1.default.dropdownMenu }, FEEDBACK_OPTIONS.map(function (option) { return (react_1.default.createElement("div", { key: option, onClick: function () {
-                                                    setHRReview(option);
-                                                    setDropdownOpen(false);
-                                                }, className: [
-                                                    ShowCandidateDetailsPopup_module_scss_1.default.dropdownOption,
-                                                    HRReview === option
-                                                        ? ShowCandidateDetailsPopup_module_scss_1.default.dropdownOptionActive
-                                                        : "",
-                                                ]
-                                                    .filter(Boolean)
-                                                    .join(" ") }, option)); })))))))),
+                                                        .join(" "), onClick: function () {
+                                                        return !isReadOnly && setDropdownOpen(function (v) { return !v; });
+                                                    } },
+                                                    react_1.default.createElement("span", { className: HRReview
+                                                            ? ShowCandidateDetailsPopup_module_scss_1.default.dropdownSelected
+                                                            : ShowCandidateDetailsPopup_module_scss_1.default.dropdownPlaceholder }, HRReview || "Select feedback"),
+                                                    react_1.default.createElement(lucide_react_1.ChevronDown, { size: 18, className: [
+                                                            ShowCandidateDetailsPopup_module_scss_1.default.dropdownChevron,
+                                                            dropdownOpen ? ShowCandidateDetailsPopup_module_scss_1.default.open : "",
+                                                        ]
+                                                            .filter(Boolean)
+                                                            .join(" ") })),
+                                                react_1.default.createElement(framer_motion_1.AnimatePresence, null, dropdownOpen && (react_1.default.createElement(framer_motion_1.motion.div, { initial: { opacity: 0, y: -10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -10 }, className: ShowCandidateDetailsPopup_module_scss_1.default.dropdownMenu }, FEEDBACK_OPTIONS.map(function (option) { return (react_1.default.createElement("div", { key: option, onClick: function () {
+                                                        setHRReview(option);
+                                                        setDropdownOpen(false);
+                                                    }, className: [
+                                                        ShowCandidateDetailsPopup_module_scss_1.default.dropdownOption,
+                                                        HRReview === option
+                                                            ? ShowCandidateDetailsPopup_module_scss_1.default.dropdownOptionActive
+                                                            : "",
+                                                    ]
+                                                        .filter(Boolean)
+                                                        .join(" ") }, option)); })))))))))),
                             PanelMember && (react_1.default.createElement(framer_motion_1.motion.section, { className: ShowCandidateDetailsPopup_module_scss_1.default.section, custom: 3, variants: reuseUI_1.sectionVariants, initial: "hidden", animate: "visible" },
                                 react_1.default.createElement(reuseUI_1.SectionHeader, { title: "Interview schedule - Level 1", accent: "blue" }),
                                 react_1.default.createElement(InterviewScheduleInput_1.InterviewScheduleInput, { form: level1, onChange: setLevel1, panelOptions: ((_q = paneloptions === null || paneloptions === void 0 ? void 0 : paneloptions.Level1) !== null && _q !== void 0 ? _q : []).map(function (item) { return ({

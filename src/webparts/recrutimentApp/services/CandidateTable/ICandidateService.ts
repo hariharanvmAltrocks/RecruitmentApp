@@ -162,6 +162,7 @@ export type InterviewscheduleL2 = {
     StatusId: number;
     InterviewDateLevel2: string;
     InterviewTimeLevel2: string;
+    InterviewLinkLevel2: string;
   };
   interviewPanelL2: L2Panel[];
 };

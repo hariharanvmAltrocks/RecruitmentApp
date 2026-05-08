@@ -101,7 +101,7 @@ export const buildVisibilityFlags = (
 ): ReviewVisibilityFlags => {
   const showUploadDocument =
     (is.pendingHROfferInitiate && is.isKCSAEmployee) ||
-    (is.wpAckContractUploaded && is.isVerified) ||
+    is.wpAckContractUploaded ||
     (is.pendingFinancePayment && is.isVerified && is.isLabourHire);
 
   const uploadDocLabel = resolveUploadLabel(is);

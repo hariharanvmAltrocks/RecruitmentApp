@@ -95,7 +95,8 @@ var useRecruitmentDetails = function (activeTabKey, refreshKey) {
                             return [2 /*return*/];
                         isEvaluation_1 = matricID === ConditionConfig_1.MatricID.EvalutionHR ||
                             matricID === ConditionConfig_1.MatricID.EvalutionHOD ||
-                            matricID === ConditionConfig_1.MatricID.EvalutionLM;
+                            matricID === ConditionConfig_1.MatricID.EvalutionLM ||
+                            matricID === ConditionConfig_1.MatricID.EvalutionEXCO;
                         shouldShowProfile_1 = matricID === ConditionConfig_1.MatricID.ReviewProfileHR ||
                             matricID === ConditionConfig_1.MatricID.ReviewProfileLM ||
                             matricID === ConditionConfig_1.MatricID.AssignInterviewPanel;

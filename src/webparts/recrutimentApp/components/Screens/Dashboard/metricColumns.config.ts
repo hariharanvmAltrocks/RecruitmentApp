@@ -30,6 +30,7 @@ import { Metric, MetricConfig } from "../../../models/IDashboard";
 import { PriorityData } from "../../Comman/PriorityWidget/PriorityWidget";
 import { MatricID, menuID, TabNames } from "../../../utilities/ConditionConfig";
 import { userInfo } from "../../../utilities/hooks/RoleContext";
+import { IFilter } from "../../../services/SPService/Ispservice";
 
 const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   [MatricID.AssignHr]: {
@@ -304,7 +305,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     statusColor: "#ef4444",
     statusBg: "#fee2e2",
     path: "/RecruitmentTable",
-    menuId: menuID.SelectionProcess,
+    menuId: menuID.InterviewPanel,
     TabValue: "tab1",
     TabName: TabNames.Evaluation,
   },
@@ -597,12 +598,19 @@ const DataSyncFilter = [
 ];
 
 type SingleQuery = Omit<FilterQuery, "StateValue">;
+
+type IOrFilter = {
+  Operator: "or";
+  OrFilters: IFilter[][];
+};
+
 interface StatusFilterOptions {
-  status: number | number[];
+  status?: number | number[];
   columnName?: string;
   emailId?: string;
   labourHire?: string;
   questionBy?: string;
+  orFilters?: IOrFilter[];
 }
 
 const StatusFilter = ({
@@ -611,6 +619,7 @@ const StatusFilter = ({
   emailId,
   labourHire,
   questionBy,
+  orFilters,
 }: StatusFilterOptions) => {
   const filters: any[] = [
     {
@@ -652,6 +661,13 @@ const StatusFilter = ({
     });
   }
 
+  // ✅ Wrap in OR group if orFilters provided
+  if (orFilters && orFilters.length > 0) {
+    if (orFilters && orFilters.length > 0) {
+      filters.push(...orFilters);
+    }
+  }
+
   return filters;
 };
 
@@ -667,6 +683,7 @@ const createQuery = (
 
 export const MetricQueryConfig = (
   EmailId: string,
+  roles: number[] = [],
 ): Record<number, SingleQuery | SingleQuery[]> => ({
   // ✅ Assign HR
   [MatricID.AssignHr]: [
@@ -723,14 +740,68 @@ export const MetricQueryConfig = (
   ),
 
   // ✅ Advert Review LM
-  [MatricID.AdvertReviewLM]: createQuery(
-    ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter({
-      status: StatusId.PendingwithLineManagereviewAdv,
-      columnName: "LineManager",
-      emailId: EmailId,
-    }),
-  ),
+  // ✅ Advert Review HOD + LM Combined (when same person)
+  [MatricID.AdvertReviewLM]: (() => {
+    const isHODandLM =
+      roles.includes(RoleID.HOD) && roles.includes(RoleID.LineManager);
+
+    if (isHODandLM) {
+      return createQuery(
+        ListNames.HRMSRecruitmentDptDetails,
+        StatusFilter({
+          orFilters: [
+            {
+              Operator: "or",
+              OrFilters: [
+                [
+                  {
+                    FilterKey: "StatusId",
+                    Operator: "eq",
+                    FilterValue: 26,
+                  },
+                ],
+                [
+                  {
+                    FilterKey: "StatusId",
+                    Operator: "eq",
+                    FilterValue: 125,
+                  },
+                ],
+              ],
+            },
+            {
+              Operator: "or",
+              OrFilters: [
+                [
+                  {
+                    FilterKey: "HOD",
+                    Operator: "eq",
+                    FilterValue: EmailId,
+                  },
+                ],
+                [
+                  {
+                    FilterKey: "LineManager",
+                    Operator: "eq",
+                    FilterValue: EmailId,
+                  },
+                ],
+              ],
+            },
+          ],
+        }),
+      );
+    }
+
+    return createQuery(
+      ListNames.HRMSRecruitmentDptDetails,
+      StatusFilter({
+        status: StatusId.PendingwithLineManagereviewAdv,
+        columnName: "LineManager",
+        emailId: EmailId,
+      }),
+    );
+  })(),
 
   // ✅ Review Score Card (FIXED - only one)
   [MatricID.ReviewScoreCard]: createQuery(
@@ -1063,7 +1134,6 @@ const RoleMetricFilters: Record<number, number[]> = {
     MatricID.JobAdvert,
     MatricID.AssignAgencies,
     MatricID.ReviewProfileHR,
-    MatricID.AssignAgencies,
     MatricID.AssignInterviewPanel,
     MatricID.InterviewQuestionHR,
     MatricID.EvalutionHR,
@@ -1132,19 +1202,17 @@ export const getRoleBasedFilters = (
     metrics.forEach((metric) => metricSet.add(metric));
   });
 
-  const configMap = MetricQueryConfig(EmailId);
+  // ✅ Pass roles into config so it knows about HOD+LM combo
+  const configMap = MetricQueryConfig(EmailId, roles);
 
   let result: FilterQuery[] = [];
 
   metricSet.forEach((metricId) => {
     const config = configMap[metricId];
-
     if (!config) return;
 
     if (Array.isArray(config)) {
-      config.forEach((cfg) => {
-        result.push({ StateValue: metricId, ...cfg });
-      });
+      config.forEach((cfg) => result.push({ StateValue: metricId, ...cfg }));
     } else {
       result.push({ StateValue: metricId, ...config });
     }
@@ -1152,7 +1220,6 @@ export const getRoleBasedFilters = (
 
   if (roles.includes(RoleID.LineManager) && roles.includes(RoleID.HOD)) {
     const removeStates = [MatricID.AdvertReviewHOD, MatricID.EvalutionHOD];
-
     result = result.filter((item) => !removeStates.includes(item.StateValue));
   }
 

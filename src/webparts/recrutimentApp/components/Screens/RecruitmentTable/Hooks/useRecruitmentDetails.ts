@@ -128,7 +128,8 @@ export const useRecruitmentDetails = (
         const isEvaluation =
           matricID === MatricID.EvalutionHR ||
           matricID === MatricID.EvalutionHOD ||
-          matricID === MatricID.EvalutionLM;
+          matricID === MatricID.EvalutionLM ||
+          matricID === MatricID.EvalutionEXCO;
 
         const shouldShowProfile =
           matricID === MatricID.ReviewProfileHR ||

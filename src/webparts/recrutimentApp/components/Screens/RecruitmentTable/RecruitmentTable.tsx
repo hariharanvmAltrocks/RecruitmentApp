@@ -140,7 +140,7 @@ export const RecruitmentTable: React.FC = () => {
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedMemberId, setSelectedMemberId] = useState<number>(0);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
   const selectedItems = useMemo(

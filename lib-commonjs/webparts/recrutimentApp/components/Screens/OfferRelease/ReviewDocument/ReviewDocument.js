@@ -80,6 +80,7 @@ var ReviewDocument = function (_a) {
         consentVerification: isConsentVerified,
         reviewerComments: reviewerComments,
         uploadDocs: uploadDocs,
+        selectedFile: selectedFile,
     };
     var _p = (0, Usesubmitworkflow_1.useSubmitWorkflow)(submitDeps), SubmitLoading = _p.isLoading, SubmitModalState = _p.modalState, SubmitCloseModal = _p.closeModal, submit = _p.submit;
     var _q = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _q.data, signatureLoading = _q.loading;

@@ -373,8 +373,8 @@ export default class CommonService implements ICommonService {
         Filter: [
           {
             FilterKey: "EmailId",
-            FilterValue: "eq",
-            Operator: email,
+            Operator: "eq",
+            FilterValue: email,
           },
         ],
       });

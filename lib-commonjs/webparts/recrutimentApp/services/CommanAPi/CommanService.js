@@ -383,8 +383,8 @@ var CommonService = /** @class */ (function () {
                                 Filter: [
                                     {
                                         FilterKey: "EmailId",
-                                        FilterValue: "eq",
-                                        Operator: email,
+                                        Operator: "eq",
+                                        FilterValue: email,
                                     },
                                 ],
                             })];

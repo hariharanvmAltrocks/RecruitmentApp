@@ -69,9 +69,73 @@ const _buildODataFilter = (
   const parts: string[] = [];
 
   for (const f of filters) {
+    // NEW LOGIC FOR OrFilters
+    if (f.OrFilters && Array.isArray(f.OrFilters)) {
+      const orParts = f.OrFilters.map((group: IFilter[]) => {
+        const andParts: string[] = [];
+
+        for (const item of group) {
+          if (!item.FilterKey) continue;
+
+          const op = item.Operator.toLowerCase();
+          const values = Array.isArray(item.FilterValue)
+            ? item.FilterValue
+            : [item.FilterValue];
+
+          if (["eq", "ne", "gt", "lt", "ge", "le"].includes(op)) {
+            andParts.push(
+              `${item.FilterKey} ${item.Operator} '${item.FilterValue}'`,
+            );
+          } else if (op === "substringof") {
+            andParts.push(
+              `substringof('${item.FilterValue}','${item.FilterKey}')`,
+            );
+          } else if (op === "in") {
+            const chunks: string[] = [];
+
+            for (let j = 0; j < values.length; j += MAX_BATCH) {
+              const slice = values.slice(j, j + MAX_BATCH);
+
+              chunks.push(
+                "(" +
+                  slice.map((v) => `${item.FilterKey} eq '${v}'`).join(" or ") +
+                  ")",
+              );
+            }
+
+            andParts.push(chunks.join(" or "));
+          } else if (op === "nin") {
+            const chunks: string[] = [];
+
+            for (let j = 0; j < values.length; j += MAX_BATCH) {
+              const slice = values.slice(j, j + MAX_BATCH);
+
+              chunks.push(
+                "(" +
+                  slice
+                    .map((v) => `${item.FilterKey} ne '${v}'`)
+                    .join(" and ") +
+                  ")",
+              );
+            }
+
+            andParts.push(chunks.join(" and "));
+          }
+        }
+
+        return `(${andParts.join(" and ")})`;
+      });
+
+      parts.push(`(${orParts.join(" or ")})`);
+
+      continue;
+    }
+
+    // EXISTING LOGIC
     if (!f.FilterKey) continue;
 
     const op = f.Operator.toLowerCase();
+
     const values = Array.isArray(f.FilterValue)
       ? f.FilterValue
       : [f.FilterValue];
@@ -82,23 +146,29 @@ const _buildODataFilter = (
       parts.push(`substringof('${f.FilterValue}','${f.FilterKey}')`);
     } else if (op === "in") {
       const chunks: string[] = [];
+
       for (let j = 0; j < values.length; j += MAX_BATCH) {
         const slice = values.slice(j, j + MAX_BATCH);
+
         chunks.push(
           "(" + slice.map((v) => `${f.FilterKey} eq '${v}'`).join(" or ") + ")",
         );
       }
+
       parts.push(chunks.join(" or "));
     } else if (op === "nin") {
       const chunks: string[] = [];
+
       for (let j = 0; j < values.length; j += MAX_BATCH) {
         const slice = values.slice(j, j + MAX_BATCH);
+
         chunks.push(
           "(" +
             slice.map((v) => `${f.FilterKey} ne '${v}'`).join(" and ") +
             ")",
         );
       }
+
       parts.push(chunks.join(" and "));
     }
   }
@@ -108,7 +178,7 @@ const _buildODataFilter = (
       ? ` ${filterCondition} `
       : " and ";
 
-  return parts.join(glue);
+  return parts.length > 1 ? `(${parts.join(glue)})` : parts[0];
 };
 
 // ─── Users ────────────────────────────────────────────────────────────────────

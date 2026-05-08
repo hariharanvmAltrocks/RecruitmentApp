@@ -116,7 +116,7 @@ var useTrackerData = function (MatricID, refreshKey) {
                 case 0:
                     _a.trys.push([0, 2, 3, 4]);
                     setLoading(true);
-                    configMap = (0, metricColumns_config_1.MetricQueryConfig)(ADGroupData.EmailId[0]);
+                    configMap = (0, metricColumns_config_1.MetricQueryConfig)(ADGroupData.EmailId[0], roleIDs);
                     config = configMap[MatricID];
                     if (!config) {
                         console.warn("No config found for MatricID:", MatricID);

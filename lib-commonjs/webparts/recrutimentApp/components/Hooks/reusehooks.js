@@ -17,7 +17,7 @@ var fetchByMetricId = function (matricID, EmailId, condition, roleIDs) { return 
                 if (matricID === ConditionConfig_1.MatricID.ReviewScoreCard) {
                     updatedMetricId = ConditionConfig_1.MatricID.ReviewScoredHOD;
                 }
-                configMap = (0, metricColumns_config_1.MetricQueryConfig)(EmailId);
+                configMap = (0, metricColumns_config_1.MetricQueryConfig)(EmailId, roleIDs);
                 config = configMap[updatedMetricId];
                 if (!config)
                     return [2 /*return*/, []];

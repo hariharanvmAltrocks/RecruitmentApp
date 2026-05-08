@@ -63,18 +63,58 @@ var useStateOfferRelease = function () {
     var handleCoiErrors = (0, react_1.useCallback)(function (show) { return setShowCoiErrors(show); }, []);
     // ─── Work permit file handlers ────────────────────────────────────────────
     var handleUploadClick = (0, react_1.useCallback)(function () { var _a; return (_a = fileInputRef.current) === null || _a === void 0 ? void 0 : _a.click(); }, []);
-    var handleFileChange = (0, react_1.useCallback)(function (e) {
+    var handleFileChange = (0, react_1.useCallback)(function (e) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+        var target, file, toBase64, base64, docs_1, error_1;
         var _a;
-        var file = (_a = e.target.files) === null || _a === void 0 ? void 0 : _a[0];
-        if (!file)
-            return;
-        setIsReading(true);
-        setHasFileError(false);
-        setTimeout(function () {
-            setSelectedFile(file);
-            setIsReading(false);
-        }, 500);
-    }, []);
+        return tslib_1.__generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    target = e.target;
+                    file = (_a = target.files) === null || _a === void 0 ? void 0 : _a[0];
+                    if (!file)
+                        return [2 /*return*/];
+                    toBase64 = function (file) {
+                        return new Promise(function (resolve, reject) {
+                            var reader = new FileReader();
+                            reader.readAsDataURL(file);
+                            reader.onload = function () {
+                                resolve(reader.result);
+                            };
+                            reader.onerror = function (error) { return reject(error); };
+                        });
+                    };
+                    _b.label = 1;
+                case 1:
+                    _b.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, toBase64(file)];
+                case 2:
+                    base64 = _b.sent();
+                    docs_1 = [
+                        {
+                            name: file.name,
+                            content: base64, // ✅ FIXED
+                            type: "New", // ✅ FIXED
+                        },
+                    ];
+                    if (!file)
+                        return [2 /*return*/];
+                    setIsReading(true);
+                    setHasFileError(false);
+                    setTimeout(function () {
+                        setSelectedFile(docs_1[0]);
+                        setIsReading(false);
+                    }, 500);
+                    return [3 /*break*/, 4];
+                case 3:
+                    error_1 = _b.sent();
+                    console.error("File conversion error:", error_1);
+                    return [3 /*break*/, 4];
+                case 4:
+                    target.value = "";
+                    return [2 /*return*/];
+            }
+        });
+    }); }, []);
     var clearFile = (0, react_1.useCallback)(function () {
         setSelectedFile(null);
         setHasFileError(false);

@@ -22,9 +22,9 @@ function makeDocData(profileID, requestID, documentName, unsignedDoc) {
         UnsignedDoc: unsignedDoc,
     };
 }
-function resolveStatus(data, consentFile, documents, btnAction, email, coiState, rejectflag) {
+function resolveStatus(data, consentFile, documents, btnAction, email, coiState, rejectflag, selectedFile) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
-        var pid, rid, ok, documentFile, IsRevert, IsExpat, StatusID, _a, isNational, successMsg, documentResponse, doc, isKCSA, documentResponse, initiateLabour, response, isReview, isReview, documentResponse, documentResponse, workPermitDocs, isReview, documentResponse, documentResponse, isReview, bgvDocData, documentResponse;
+        var pid, rid, ok, documentFile, IsRevert, IsExpat, StatusID, _a, isNational, successMsg, documentResponse, doc, isKCSA, documentResponse, initiateLabour, response, isReview, isReview, documentResponse, DocList, documentResponse, workPermitDocs, isReview, documentResponse, documentResponse, isReview, bgvDocData, documentResponse;
         return tslib_1.__generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -220,10 +220,12 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                             }];
                     }
                     _b.label = 16;
-                case 16: return [4 /*yield*/, ServiceExport_1.OfferServices.UploadCandidateDocument(makeDocData(pid, rid, ConditionConfig_1.DocumentFolderName.EmploymentContractForm, ConditionConfig_1.DocumentFolderName.UnsignedDoc), tslib_1.__spreadArray([], documentFile, true))];
+                case 16:
+                    DocList = selectedFile ? [selectedFile] : [];
+                    return [4 /*yield*/, ServiceExport_1.OfferServices.UploadCandidateDocument(makeDocData(pid, rid, ConditionConfig_1.DocumentFolderName.EmploymentContractForm, ConditionConfig_1.DocumentFolderName.UnsignedDoc), tslib_1.__spreadArray([], documentFile, true))];
                 case 17:
                     documentResponse = _b.sent();
-                    return [4 /*yield*/, ServiceExport_1.OfferServices.UploadCandidateDocument(makeDocData(pid, rid, ConditionConfig_1.DocumentFolderName.WorkPermit), tslib_1.__spreadArray([], documentFile, true))];
+                    return [4 /*yield*/, ServiceExport_1.OfferServices.UploadCandidateDocument(makeDocData(pid, rid, ConditionConfig_1.DocumentFolderName.WorkPermit), DocList)];
                 case 18:
                     workPermitDocs = _b.sent();
                     return [2 /*return*/, {
@@ -349,8 +351,10 @@ function buildCandidateData(data, workflowStatusValue, documentResponse, workPer
     };
     if (data.StatusID === EvaluationConfig_1.StatusId.PendingHROfferInitiate &&
         data.EmploymentCategory === ConditionConfig_1.EmployeementCategory.KCSAEmployee) {
-        var offerDoc = (_a = documentResponse.data) === null || _a === void 0 ? void 0 : _a.find(function (d) { var _a; return (_a = d.name) === null || _a === void 0 ? void 0 : _a.includes("OfferLetter"); });
-        base.OfferLatterPath = offerDoc === null || offerDoc === void 0 ? void 0 : offerDoc.content;
+        // const offerDoc = documentResponse.data?.find((d: any) =>
+        //   d.name?.includes("OfferLetter"),
+        // );
+        base.OfferLatterPath = (_a = documentResponse.data[0]) === null || _a === void 0 ? void 0 : _a.content;
     }
     if (data.StatusID === EvaluationConfig_1.StatusId.WorkPermitAcknowledgedContractUploaded) {
         base.EmpContractLatterPath = (_c = (_b = documentResponse.data) === null || _b === void 0 ? void 0 : _b[0]) === null || _c === void 0 ? void 0 : _c.content;
@@ -417,7 +421,7 @@ function useSubmitWorkflow(data) {
                     _d.label = 1;
                 case 1:
                     _d.trys.push([1, 9, 10, 11]);
-                    return [4 /*yield*/, resolveStatus(data.data, data.consentFile, data.uploadDocs, btnAction, ADGroupData.EmailId[0], data.coiState, data.rejectflag)];
+                    return [4 /*yield*/, resolveStatus(data.data, data.consentFile, data.uploadDocs, btnAction, ADGroupData.EmailId[0], data.coiState, data.rejectflag, data.selectedFile)];
                 case 2:
                     resolved = _d.sent();
                     Verified = data.consentVerification;

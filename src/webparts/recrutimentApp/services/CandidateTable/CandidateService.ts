@@ -699,7 +699,8 @@ export default class CandidateService implements ICandidateService {
             PPEDetails: [],
 
             InterviewStartDate: formatToDateTimeLocal(item?.InterviewDate),
-            InterviewEndDate: formatToDateTimeLocal(item?.InterviewTime),
+            InterviewStartTime: item?.InterviewTime,
+            InterviewEndTime: item?.InterviewLink,
 
             NationalityShort:
               item?.NationalityCode === NationalityCode.Nationals
@@ -1314,6 +1315,7 @@ export default class CandidateService implements ICandidateService {
           StatusId: payloads.candidateUpdate.StatusId,
           InterviewDateLevel2: payloads.candidateUpdate.InterviewDateLevel2,
           InterviewTimeLevel2: payloads.candidateUpdate.InterviewTimeLevel2,
+          InterviewLinkLevel2: payloads.candidateUpdate.InterviewLinkLevel2,
         });
 
       await execute();

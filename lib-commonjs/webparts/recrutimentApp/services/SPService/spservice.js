@@ -46,6 +46,56 @@ var _buildODataFilter = function (filters, filterCondition) {
     var MAX_BATCH = 100;
     var parts = [];
     var _loop_1 = function (f) {
+        // NEW LOGIC FOR OrFilters
+        if (f.OrFilters && Array.isArray(f.OrFilters)) {
+            var orParts = f.OrFilters.map(function (group) {
+                var andParts = [];
+                var _loop_2 = function (item) {
+                    if (!item.FilterKey)
+                        return "continue";
+                    var op_1 = item.Operator.toLowerCase();
+                    var values_1 = Array.isArray(item.FilterValue)
+                        ? item.FilterValue
+                        : [item.FilterValue];
+                    if (["eq", "ne", "gt", "lt", "ge", "le"].includes(op_1)) {
+                        andParts.push("".concat(item.FilterKey, " ").concat(item.Operator, " '").concat(item.FilterValue, "'"));
+                    }
+                    else if (op_1 === "substringof") {
+                        andParts.push("substringof('".concat(item.FilterValue, "','").concat(item.FilterKey, "')"));
+                    }
+                    else if (op_1 === "in") {
+                        var chunks = [];
+                        for (var j = 0; j < values_1.length; j += MAX_BATCH) {
+                            var slice = values_1.slice(j, j + MAX_BATCH);
+                            chunks.push("(" +
+                                slice.map(function (v) { return "".concat(item.FilterKey, " eq '").concat(v, "'"); }).join(" or ") +
+                                ")");
+                        }
+                        andParts.push(chunks.join(" or "));
+                    }
+                    else if (op_1 === "nin") {
+                        var chunks = [];
+                        for (var j = 0; j < values_1.length; j += MAX_BATCH) {
+                            var slice = values_1.slice(j, j + MAX_BATCH);
+                            chunks.push("(" +
+                                slice
+                                    .map(function (v) { return "".concat(item.FilterKey, " ne '").concat(v, "'"); })
+                                    .join(" and ") +
+                                ")");
+                        }
+                        andParts.push(chunks.join(" and "));
+                    }
+                };
+                for (var _i = 0, group_1 = group; _i < group_1.length; _i++) {
+                    var item = group_1[_i];
+                    _loop_2(item);
+                }
+                return "(".concat(andParts.join(" and "), ")");
+            });
+            parts.push("(".concat(orParts.join(" or "), ")"));
+            return "continue";
+        }
+        // EXISTING LOGIC
         if (!f.FilterKey)
             return "continue";
         var op = f.Operator.toLowerCase();
@@ -84,7 +134,7 @@ var _buildODataFilter = function (filters, filterCondition) {
     var glue = filterCondition === "and" || filterCondition === "or"
         ? " ".concat(filterCondition, " ")
         : " and ";
-    return parts.join(glue);
+    return parts.length > 1 ? "(".concat(parts.join(glue), ")") : parts[0];
 };
 // ─── Users ────────────────────────────────────────────────────────────────────
 /** Returns all site users. Lazy — fires only when awaited. */

@@ -13,8 +13,8 @@ var FilePreview = function (_a) {
         react_1.default.createElement("div", { className: "upload-box__file-details" },
             react_1.default.createElement("span", { className: "upload-box__filename" }, file.name),
             react_1.default.createElement("span", { className: "upload-box__filesize" },
-                (file.size / 1024).toFixed(1),
-                " KB")),
+                file.fileSizeMB,
+                " MB")),
         react_1.default.createElement("div", { className: "upload-box__status" }, isReading ? (react_1.default.createElement("div", { className: "upload-box__spinner" })) : (react_1.default.createElement(lucide_react_1.CheckCircle2, { size: 20, className: "upload-box__success-icon" }))),
         react_1.default.createElement("button", { type: "button", className: "upload-box__clear", disabled: disabled, onClick: function (e) {
                 e.stopPropagation();
