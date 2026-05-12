@@ -162,7 +162,6 @@ var CareerPortalService = /** @class */ (function () {
         });
     };
     // async getCandidateDetailsInJobCode(FilterValue: FilterItem): Promise<ApiResponse<GetProfileByJobCode[] | null>> {
-    //   debugger
     //   try {
     //     let GetProfileByJobCodeData: GetProfileByJobCode[] = []
     //     await getProfileData.GetProfileByJobCode(FilterValue).then((res) => {

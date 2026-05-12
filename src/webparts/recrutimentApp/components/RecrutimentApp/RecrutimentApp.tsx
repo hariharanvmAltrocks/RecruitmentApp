@@ -10,7 +10,7 @@ export default function RecrutimentApp(props: IRecrutimentAppProps) {
 
   const { activeMenuID, setActiveMenuID } = useUIState();
 
-  console.log("Recruitment App V-1.2 -- 12-05-2026");
+  console.log("Recruitment App V-1.2 -- 13-05-2026");
 
   return (
     <>
