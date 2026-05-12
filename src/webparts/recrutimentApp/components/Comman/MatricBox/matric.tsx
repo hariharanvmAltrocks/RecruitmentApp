@@ -14,12 +14,13 @@ import "./matricard.scss";
 import { Metric } from "../../../models/IDashboard";
 import MetricCard from "./matricCard";
 import { userInfo } from "../../../utilities/hooks/RoleContext";
+import TaskPattern from "./Taskpattern";
 
 interface MetricDashboardProps {
   metrics: Metric[];
-  onCardClick?: (metric: Metric) => void;
-  loading?: boolean;
-  handleRefresh?: () => void;
+  onCardClick: (metric: Metric) => void;
+  loading: boolean;
+  handleRefresh: () => void;
   active: number | string | null;
 }
 
@@ -95,6 +96,7 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
     .join(" ");
 
   const [oversightOpen, setOversightOpen] = useState(false);
+  const [myTasks, setMyTasks] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
 
   const taskMetrics = metrics.filter((m) => m.showArrow === true);
@@ -110,95 +112,155 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
 
   return (
     <div className="metric-dashboard">
-      {/* ── Top bar: Welcome + Oversight toggle side by side ── */}
       <div className="metric-dashboard__topbar">
         <div className="metric-dashboard__welcome">
           <h1 className="metric-dashboard__welcome-title">
             Welcome,{" "}
             <span className="metric-dashboard__welcome-name">{UserName}</span>
           </h1>
-          {urgentCount > 0 && (
-            <p className="metric-dashboard__urgent">
-              YOU HAVE{" "}
-              <strong>
-                {urgentCount} URGENT ACTION{urgentCount !== 1 ? "S" : ""}
-              </strong>{" "}
-              TO PROCESS
-            </p>
+          <p className="metric-dashboard__urgent">
+            YOU HAVE{" "}
+            <strong>
+              {urgentCount} URGENT ACTION{urgentCount !== 1 ? "S" : ""}
+            </strong>{" "}
+            TO PROCESS
+          </p>
+        </div>
+        <div style={{ display: "flex", justifyContent: "end", gap: "10px" }}>
+          {taskMetrics.length > 0 && (
+            <div className="metric-dashboard__oversight-anchor">
+              <button
+                ref={btnRef}
+                className={cn(
+                  "metric-dashboard__oversight-btn",
+                  myTasks && "metric-dashboard__oversight-btn--open",
+                )}
+                onClick={() => setMyTasks((prev) => !prev)}
+                aria-expanded={myTasks}
+                aria-controls="oversight-panel"
+              >
+                <div className="metric-dashboard__oversight-btn-icon">
+                  <Activity size={14} strokeWidth={2.5} />
+                </div>
+                <span>My TASKS</span>
+                <svg
+                  className="metric-dashboard__oversight-chevron"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+
+              {/* ── Floating popup — overlays content, anchored below button ── */}
+              <AnimatePresence>
+                {myTasks && (
+                  <>
+                    {/* Backdrop to close on outside click */}
+                    <div
+                      className="metric-dashboard__oversight-backdrop"
+                      onClick={() => setMyTasks(false)}
+                    />
+
+                    <motion.div
+                      id="oversight-panel"
+                      className="metric-dashboard__oversight-popup"
+                      initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                      transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                    >
+                      {/* <div className="oversight-popup__inner"> */}
+                      <TaskPattern
+                        metrics={taskMetrics}
+                        onStepClick={(m) => onCardClick(m)}
+                        activeId={3}
+                      />
+                      {/* </div> */}
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+
+          {oversightMetrics.length > 0 && (
+            <div className="metric-dashboard__oversight-anchor">
+              <button
+                ref={btnRef}
+                className={cn(
+                  "metric-dashboard__oversight-btn",
+                  oversightOpen && "metric-dashboard__oversight-btn--open",
+                )}
+                onClick={() => setOversightOpen((prev) => !prev)}
+                aria-expanded={oversightOpen}
+                aria-controls="oversight-panel"
+              >
+                <div className="metric-dashboard__oversight-btn-icon">
+                  <Activity size={14} strokeWidth={2.5} />
+                </div>
+                <span>ONGOING OVERSIGHTS</span>
+                <svg
+                  className="metric-dashboard__oversight-chevron"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+
+              {/* ── Floating popup — overlays content, anchored below button ── */}
+              <AnimatePresence>
+                {oversightOpen && (
+                  <>
+                    {/* Backdrop to close on outside click */}
+                    <div
+                      className="metric-dashboard__oversight-backdrop"
+                      onClick={() => setOversightOpen(false)}
+                    />
+
+                    <motion.div
+                      id="oversight-panel"
+                      className="metric-dashboard__oversight-popup"
+                      initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                      transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                    >
+                      <div className="oversight-popup__inner">
+                        {oversightMetrics.map((metric, i) => (
+                          <OversightStat
+                            key={metric.id ?? i}
+                            metric={metric}
+                            index={i}
+                            onClick={() => handleCardClick(metric)}
+                          />
+                        ))}
+                      </div>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
           )}
         </div>
-
-        {/* Oversight toggle — button + floating popup anchor */}
-        {oversightMetrics.length > 0 && (
-          <div className="metric-dashboard__oversight-anchor">
-            <button
-              ref={btnRef}
-              className={cn(
-                "metric-dashboard__oversight-btn",
-                oversightOpen && "metric-dashboard__oversight-btn--open",
-              )}
-              onClick={() => setOversightOpen((prev) => !prev)}
-              aria-expanded={oversightOpen}
-              aria-controls="oversight-panel"
-            >
-              <div className="metric-dashboard__oversight-btn-icon">
-                <Activity size={14} strokeWidth={2.5} />
-              </div>
-              <span>ONGOING OVERSIGHTS</span>
-              <svg
-                className="metric-dashboard__oversight-chevron"
-                xmlns="http://www.w3.org/2000/svg"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </button>
-
-            {/* ── Floating popup — overlays content, anchored below button ── */}
-            <AnimatePresence>
-              {oversightOpen && (
-                <>
-                  {/* Backdrop to close on outside click */}
-                  <div
-                    className="metric-dashboard__oversight-backdrop"
-                    onClick={() => setOversightOpen(false)}
-                  />
-
-                  <motion.div
-                    id="oversight-panel"
-                    className="metric-dashboard__oversight-popup"
-                    initial={{ opacity: 0, y: -8, scale: 0.97 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -8, scale: 0.97 }}
-                    transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-                  >
-                    <div className="oversight-popup__inner">
-                      {oversightMetrics.map((metric, i) => (
-                        <OversightStat
-                          key={metric.id ?? i}
-                          metric={metric}
-                          index={i}
-                          onClick={() => handleCardClick(metric)}
-                        />
-                      ))}
-                    </div>
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
-          </div>
-        )}
       </div>
 
-      {/* ── Section header ── */}
-      <div className="metric-dashboard__section-header">
+      {/* <div className="metric-dashboard__section-header">
         <div className="metric-dashboard__section-icon">
           <Zap size={15} strokeWidth={2.5} color="#fff" />
         </div>
@@ -234,10 +296,9 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
             Refresh
           </button>
         </div>
-      </div>
+      </div> */}
 
-      {/* ── Cards grid ── */}
-      <div className="metric-dashboard__grid">
+      {/* <div className="metric-dashboard__grid">
         {loading
           ? Array.from({ length: 6 }).map((_, i) => (
               <motion.div
@@ -271,7 +332,7 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
                 />
               </motion.div>
             ))}
-      </div>
+      </div> */}
     </div>
   );
 };

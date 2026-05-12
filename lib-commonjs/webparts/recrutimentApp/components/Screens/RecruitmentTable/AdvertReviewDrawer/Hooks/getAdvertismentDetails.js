@@ -114,7 +114,6 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
                             response.data &&
                             response.data.length > 0) {
                             items = response.data[0];
-                            debugger;
                             mappedData = {
                                 jobId: selectedJobCode.toString(),
                                 english: {

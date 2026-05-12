@@ -1,0 +1,267 @@
+// departmentChart.module.scss
+// Matches the exact UI from the reference: white card, violet-to-fuchsia gradient bars,
+// paginated bar chart, uppercase headers, pill pagination controls.
+
+// ─── Card wrapper ─────────────────────────────────────────────────────────────
+.card {
+  background: #ffffff;
+  border-radius: 40px;
+  border: 1px solid #e2e8f0;
+  box-shadow:
+    0 20px 60px rgba(148, 163, 184, 0.15),
+    0 4px 16px rgba(148, 163, 184, 0.08);
+  padding: 32px;
+  height: 480px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+// ─── Header row ──────────────────────────────────────────────────────────────
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-shrink: 0;
+}
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #7c3aed;
+  flex-shrink: 0;
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.5);
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1;
+
+  // Highlighted title band (matches reference screenshot blue-purple bg on text)
+  background: linear-gradient(135deg, #6366f1 0%, #7c3aed 50%, #a21caf 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: 10px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding-left: 18px;
+  margin: 0;
+}
+
+// ─── Pagination controls ──────────────────────────────────────────────────────
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f8fafc;
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+  flex-shrink: 0;
+}
+
+.pageBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+  font-size: 16px;
+  line-height: 1;
+
+  &.active {
+    background: #ffffff;
+    color: #0f172a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      background: #7c3aed;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+    }
+  }
+
+  &.disabled {
+    background: transparent;
+    color: #cbd5e1;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  // SVG icon inside
+  svg {
+    display: block;
+  }
+}
+
+.pageInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 0 8px;
+}
+
+.pageNumbers {
+  font-size: 10px;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.pageLabel {
+  font-size: 8px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+// ─── Chart area ───────────────────────────────────────────────────────────────
+.chartArea {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  margin-top: 8px;
+}
+
+// ─── Recharts overrides (applied via :global) ────────────────────────────────
+// These target recharts-generated class names that can't be SCSS-module-scoped.
+.chartArea {
+  :global {
+    // Grid lines
+    .recharts-cartesian-grid-horizontal line {
+      stroke: #f1f5f9;
+      stroke-dasharray: 3 3;
+    }
+
+    // X axis labels — bold, slate, 10px
+    .recharts-xAxis .recharts-cartesian-axis-tick-value {
+      fill: #64748b;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    // Y axis labels
+    .recharts-yAxis .recharts-cartesian-axis-tick-value {
+      fill: #94a3b8;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    // Axis lines — hide
+    .recharts-cartesian-axis-line {
+      display: none;
+    }
+
+    // Tick marks — hide
+    .recharts-cartesian-axis-tick-line {
+      display: none;
+    }
+
+    // Tooltip container
+    .recharts-tooltip-wrapper {
+      outline: none;
+    }
+
+    // Cursor highlight
+    .recharts-bar-rectangle:focus {
+      outline: none;
+    }
+  }
+}
+
+// ─── Custom tooltip ───────────────────────────────────────────────────────────
+.tooltip {
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.1);
+  padding: 14px 18px;
+  backdrop-filter: blur(10px);
+  min-width: 140px;
+}
+
+.tooltipLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 4px;
+}
+
+.tooltipValue {
+  font-size: 22px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #c026d3 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  line-height: 1;
+}
+
+.tooltipSub {
+  font-size: 9px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 2px 0 0;
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .card {
+    border-radius: 24px;
+    padding: 20px 16px;
+    height: auto;
+    min-height: 420px;
+  }
+
+  .title {
+    font-size: 14px;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .pagination {
+    align-self: flex-end;
+  }
+}

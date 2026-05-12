@@ -98,6 +98,7 @@ exports.menuID = {
     Agent: 39,
     LabourHire: 40,
     InterviewPanel: 29,
+    Mytracker: 41,
 };
 exports.Nationality = {
     Nationals: "Nationals (Congolese)",

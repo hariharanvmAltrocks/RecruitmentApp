@@ -93,7 +93,7 @@ var Tracker = function (_a) {
     return (react_1.default.createElement(framer_motion_1.motion.div, { className: "tracker", key: "tracker", initial: { opacity: 0, x: -20 }, animate: { opacity: 1, x: 0 }, exit: { opacity: 0, x: 20 }, transition: { duration: 0.3 } },
         react_1.default.createElement("div", { className: "tracker__header" },
             react_1.default.createElement("div", null,
-                react_1.default.createElement("h2", null, "My Tracker"),
+                react_1.default.createElement("h2", null, "RECRUITMENT BACKLOG"),
                 react_1.default.createElement("p", null,
                     "Showing ",
                     react_1.default.createElement("b", null, (_b = selectedMetric === null || selectedMetric === void 0 ? void 0 : selectedMetric.value) !== null && _b !== void 0 ? _b : 0),

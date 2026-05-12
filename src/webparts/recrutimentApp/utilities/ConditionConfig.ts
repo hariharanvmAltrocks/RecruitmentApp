@@ -1,4 +1,5 @@
 import AdminPanel from "../components/Screens/AdminPanel/adminpanel";
+import Mytracker from "../components/Screens/Dashboard/MyTracker/Mytracker";
 
 export const MatricID = {
   AssignHr: 1,
@@ -109,6 +110,7 @@ export const menuID = {
   Agent: 39,
   LabourHire: 40,
   InterviewPanel: 29,
+  Mytracker: 41,
 };
 
 export const Nationality = {

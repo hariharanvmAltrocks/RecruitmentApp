@@ -1,0 +1,232 @@
+.roadmapWrapper {
+  width: fit-content;
+  max-width: 100%;
+  background: rgba(248, 250, 252, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  border-radius: 32px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.roadmapWrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.roadmapHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  padding: 0 8px;
+}
+
+.roadmapHeaderLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.roadmapHeaderInner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.roadmapDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #7c3aed;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.6);
+  flex-shrink: 0;
+}
+
+.roadmapTitle {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  color: #0f172a;
+  text-transform: uppercase;
+}
+
+.roadmapSubtitle {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #94a3b8;
+  text-transform: uppercase;
+  padding-left: 28px;
+}
+
+.chevronTrack {
+  display: flex;
+  align-items: stretch;
+  min-width: max-content;
+  padding-bottom: 8px;
+}
+
+.chevronItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  outline: none;
+  z-index: 1;
+}
+.chevronItem + .chevronItem {
+  margin-left: -32px;
+}
+.chevronItem:hover .chevronBody {
+  filter: brightness(1.1);
+}
+.chevronItem:focus-visible .chevronBody {
+  outline: 2px solid #fff;
+  outline-offset: -4px;
+}
+.chevronItem.active .chevronBody {
+  filter: brightness(1.15);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+}
+
+.chevronBody {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 56px 0 48px;
+  background: linear-gradient(to right, var(--step-from, #6366f1), var(--step-to, #8b5cf6));
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: filter 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  clip-path: polygon(0% 0%, 88% 0%, 100% 50%, 88% 100%, 0% 100%, 12% 50%);
+}
+.chevronItem:first-child .chevronBody {
+  border-radius: 16px 0 0 16px;
+  padding-left: 32px;
+  clip-path: polygon(0% 0%, 88% 0%, 100% 50%, 88% 100%, 0% 100%);
+}
+.chevronItem:last-child .chevronBody {
+  border-radius: 0 16px 16px 0;
+  padding-right: 40px;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 12% 50%);
+}
+
+.iconBox {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.15);
+  transition: transform 0.2s ease;
+}
+.chevronItem:hover .iconBox {
+  transform: scale(1.1);
+}
+
+.stepText {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.stepNum {
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+  white-space: nowrap;
+}
+
+.stepLabel {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.statusBadge {
+  position: absolute;
+  top: 6px;
+  right: 36px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.valueBubble {
+  position: absolute;
+  bottom: 6px;
+  right: 36px;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.separator {
+  position: absolute;
+  top: 50%;
+  right: -4px;
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-50%);
+  z-index: 20;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .chevronBody {
+    height: 68px;
+    gap: 10px;
+    padding: 0 44px 0 38px;
+  }
+  .chevronItem:first-child .chevronBody {
+    padding-left: 20px;
+  }
+  .chevronItem:last-child .chevronBody {
+    padding-right: 28px;
+  }
+  .iconBox {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+  }
+  .stepLabel {
+    font-size: 9px;
+  }
+  .stepNum {
+    font-size: 7px;
+  }
+}

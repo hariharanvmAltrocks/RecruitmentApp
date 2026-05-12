@@ -1,37 +1,30 @@
 import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import "./Dashboard.scss";
-import { useDashboardMetrics } from "./Hooks/useDashboardMetrics";
-import { useTrackerData } from "./Hooks/usetrackerdata";
-import Tracker from "../../Comman/Tracker/Tracker";
-import PriorityWidget from "../../Comman/PriorityWidget/PriorityWidget";
-import UrgentWidget from "../../Comman/UrgentWidget/UrgentWidget";
-import { useUrgentTasks } from "./Hooks/useUrgentTasks";
-import { priorityValues, totalPriority } from "./metricColumns.config";
+import "./MyTracker.module.scss";
 import { useNavigate } from "react-router";
-import { DashboardData } from "../../../services/Dashboard/IDashboard";
-import { MetricConfig } from "../../../models/IDashboard";
-import { useUIState } from "../../RecrutimentApp/UIStateContext";
-import MetricDashboard from "../../Comman/MatricBox/matric";
-import Loading from "../../Comman/Loading/loading";
-import { menuID } from "../../../utilities/ConditionConfig";
-import DepartmentChart from "../../Comman/Departmentchart/Departmentchart";
-import { DEPARTMENT_DATA } from "./Hooks/Usedepartmentchart";
+import { useTrackerData } from "../Hooks/usetrackerdata";
+import { useUIState } from "../../../RecrutimentApp/UIStateContext";
+import Loading from "../../../Comman/Loading/loading";
+import MetricDashboard from "../../../Comman/MatricBox/matric";
+import Tracker from "../../../Comman/Tracker/Tracker";
+import { useDashboardMetrics } from "../Hooks/useDashboardMetrics";
+import { DashboardData } from "../../../../services/Dashboard/IDashboard";
+import { MetricConfig } from "../../../../models/IDashboard";
 
 interface DashboardProps {
   props: any;
 }
 
-const Dashboard: React.FC<DashboardProps> = (props) => {
-  const [activeMetric, setActiveMetric] = useState<number>(0);
+const Mytracker: React.FC<DashboardProps> = (props) => {
+  const { MatricID: activeMetric } = useUIState();
   const [refreshKey, setRefreshKey] = useState<number>(0);
 
-  const martics = useDashboardMetrics(refreshKey);
   const { trackerData, loading: trackerLoading } = useTrackerData(
     activeMetric,
     refreshKey,
   );
-  const { urgentTasks, loading: urgentLoading } = useUrgentTasks(refreshKey);
+
+  const martics = useDashboardMetrics(refreshKey);
 
   const navigate = useNavigate();
   const {
@@ -47,7 +40,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
   useEffect(() => {
     if (martics.metrics.length > 0 && !activeMetric) {
-      setActiveMetric(martics.metrics[0].id);
+      // setActiveMetric(martics.metrics[0].id);
       setNavigationPath(martics.metrics[0].path);
       ref.current = martics.metrics[0].menuId;
       // setActiveMenuID(martics.metrics[0].menuId);
@@ -60,28 +53,23 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
   const onMetricChange = (data: MetricConfig) => {
     // setActiveMetric(data.id);
     setNavigationPath(data.path);
-    setActiveMenuID(menuID.Mytracker);
-    // ref.current = data.menuId;
-    // setActiveTab(data.TabValue);
-    // setCurrentTabName(data.TabName);
+    // setActiveMenuID(data.menuId);
+    ref.current = data.menuId;
+    setActiveTab(data.TabValue);
+    setCurrentTabName(data.TabName);
     setMatricID(data.id);
-    navigate("/MyTracker");
   };
 
   const handleRefresh = () => {
     setRefreshKey((prev) => prev + 1);
-    setActiveMetric(0);
+    // setActiveMetric(0);
   };
 
   const selectedMetric =
     martics.metrics.find((m) => m.id === activeMetric) ?? martics.metrics[0];
-  const priorityData = priorityValues(martics.metrics);
-  const total = totalPriority(martics.metrics);
+
   const loading =
-    martics.loading ||
-    trackerLoading ||
-    urgentLoading ||
-    martics.metrics.length === 0;
+    martics.loading || trackerLoading || martics.metrics.length === 0;
   const hasMetrics = martics.metrics && martics.metrics.length > 0;
 
   const onTrackerChange = (row: DashboardData) => {
@@ -96,11 +84,6 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     visible: { transition: { staggerChildren: 0.1 } },
   };
 
-  const metricItem = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.25 } },
-  };
-
   return (
     <motion.div
       className="dashboard"
@@ -112,7 +95,6 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     >
       <AnimatePresence>
         {loading ? (
-          // <DashboardSkeleton key="dashboard-skeleton" />
           <Loading />
         ) : (
           <motion.div
@@ -149,16 +131,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                 </motion.div>
 
                 <div className="dashboard-layout">
-                  <DepartmentChart
-                    data={DEPARTMENT_DATA}
-                    itemsPerPage={7}
-                    title="Departmental Demand"
-                    subtitle="Pending lifecycle"
-                    gradientStart="#c026d3"
-                    gradientEnd="#7c3aed"
-                    tooltipValueLabel="Openings"
-                  />
-                  {/* <div className="tracker-panel">
+                  <div className="tracker-panel">
                     <Tracker
                       rows={trackerData}
                       selectedMetric={selectedMetric}
@@ -166,14 +139,6 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                       onRowClick={(row: any) => onTrackerChange(row)}
                     />
                   </div>
-
-                  <div className="priority-panel">
-                    <PriorityWidget data={priorityData} total={total} />
-                  </div> */}
-
-                  {/* <div className="urgent-panel">
-                    <UrgentWidget tasks={urgentTasks} />
-                  </div> */}
                 </div>
               </>
             )}
@@ -184,4 +149,4 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
   );
 };
 
-export default Dashboard;
+export default Mytracker;

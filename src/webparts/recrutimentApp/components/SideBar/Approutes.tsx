@@ -10,6 +10,7 @@ import ReviewScoreCard from "../Screens/ReviewScoreCard/ReviewScoreCard";
 import { OfferTable } from "../Screens/OfferRelease/OfferTable";
 import EvalutionL2 from "../Screens/Evalution/EvalutionL2/EvalutionL2";
 import AdminPanel from "../Screens/AdminPanel/adminpanel";
+import Mytracker from "../Screens/Dashboard/MyTracker/Mytracker";
 interface AppRoutesProps {
   props: any;
   activeMenuId?: number;
@@ -21,6 +22,8 @@ const AppRoutes: React.FC<AppRoutesProps> = ({ props, activeMenuId }) => (
   (
     <Routes>
       <Route path="/Dashboard" element={<Dashboard {...props} />} />
+      <Route path="/MyTracker" element={<Mytracker {...props} />} />
+
       <Route path="/RecruitmentTable" element={<RecruitmentTable />} />
       <Route
         path="/QuestionCreation"

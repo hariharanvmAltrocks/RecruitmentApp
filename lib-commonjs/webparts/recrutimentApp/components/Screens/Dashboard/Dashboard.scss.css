@@ -73,22 +73,22 @@
 }
 @media (min-width: 480px) {
   .metrics-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1fr);
   }
 }
 @media (min-width: 768px) {
   .metrics-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1fr);
   }
 }
 @media (min-width: 1024px) {
   .metrics-grid {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(1fr);
   }
 }
 @media (min-width: 1440px) {
   .metrics-grid {
-    grid-template-columns: repeat(8, 1fr);
+    grid-template-columns: repeat(1fr);
   }
 }
 
@@ -99,7 +99,6 @@
   display: grid;
   gap: 32px;
   width: 100%;
-  /* Default (Mobile First): Stack everything. Urgent stays at top */
   grid-template-columns: 1fr;
   grid-template-areas: "urgent" "priority" "tracker";
   /* Laptop & Desktop */
@@ -113,7 +112,7 @@
 @media (min-width: 1024px) {
   .dashboard-layout {
     /* Desktop balanced grid: Tracker left, priority and urgent side elements */
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr;
     grid-template-areas: "tracker priority" "tracker urgent";
   }
 }
@@ -174,7 +173,7 @@
 }
 @media (min-width: 1024px) {
   .dashboard-skeleton__layout {
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr;
     grid-template-areas: "tracker priority" "tracker urgent";
   }
 }

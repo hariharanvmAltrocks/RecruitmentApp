@@ -6,8 +6,8 @@ var react_1 = tslib_1.__importStar(require("react"));
 var lucide_react_1 = require("lucide-react");
 var cn_1 = require("../../../utilities/cn");
 require("./matricard.scss");
-var matricCard_1 = tslib_1.__importDefault(require("./matricCard"));
 var RoleContext_1 = require("../../../utilities/hooks/RoleContext");
+var Taskpattern_1 = tslib_1.__importDefault(require("./Taskpattern"));
 var OVERSIGHT_ICON_MAP = {
     interviews_scheduled: { icon: lucide_react_1.Calendar, color: "#3b82f6", bg: "#eff6ff" },
     offer_letters_released: { icon: lucide_react_1.FileText, color: "#10b981", bg: "#f0fdf4" },
@@ -40,6 +40,7 @@ var MetricDashboard = function (_a) {
         .filter(Boolean)
         .join(" ");
     var _c = (0, react_1.useState)(false), oversightOpen = _c[0], setOversightOpen = _c[1];
+    var _d = (0, react_1.useState)(false), myTasks = _d[0], setMyTasks = _d[1];
     var btnRef = (0, react_1.useRef)(null);
     var taskMetrics = metrics.filter(function (m) { return m.showArrow === true; });
     var oversightMetrics = metrics.filter(function (m) { return m.showArrow === false; });
@@ -54,7 +55,7 @@ var MetricDashboard = function (_a) {
                     "Welcome,",
                     " ",
                     react_1.default.createElement("span", { className: "metric-dashboard__welcome-name" }, UserName)),
-                urgentCount > 0 && (react_1.default.createElement("p", { className: "metric-dashboard__urgent" },
+                react_1.default.createElement("p", { className: "metric-dashboard__urgent" },
                     "YOU HAVE",
                     " ",
                     react_1.default.createElement("strong", null,
@@ -62,48 +63,33 @@ var MetricDashboard = function (_a) {
                         " URGENT ACTION",
                         urgentCount !== 1 ? "S" : ""),
                     " ",
-                    "TO PROCESS"))),
-            oversightMetrics.length > 0 && (react_1.default.createElement("div", { className: "metric-dashboard__oversight-anchor" },
-                react_1.default.createElement("button", { ref: btnRef, className: (0, cn_1.cn)("metric-dashboard__oversight-btn", oversightOpen && "metric-dashboard__oversight-btn--open"), onClick: function () { return setOversightOpen(function (prev) { return !prev; }); }, "aria-expanded": oversightOpen, "aria-controls": "oversight-panel" },
-                    react_1.default.createElement("div", { className: "metric-dashboard__oversight-btn-icon" },
-                        react_1.default.createElement(lucide_react_1.Activity, { size: 14, strokeWidth: 2.5 })),
-                    react_1.default.createElement("span", null, "ONGOING OVERSIGHTS"),
-                    react_1.default.createElement("svg", { className: "metric-dashboard__oversight-chevron", xmlns: "http://www.w3.org/2000/svg", width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" },
-                        react_1.default.createElement("polyline", { points: "6 9 12 15 18 9" }))),
-                react_1.default.createElement(framer_motion_1.AnimatePresence, null, oversightOpen && (react_1.default.createElement(react_1.default.Fragment, null,
-                    react_1.default.createElement("div", { className: "metric-dashboard__oversight-backdrop", onClick: function () { return setOversightOpen(false); } }),
-                    react_1.default.createElement(framer_motion_1.motion.div, { id: "oversight-panel", className: "metric-dashboard__oversight-popup", initial: { opacity: 0, y: -8, scale: 0.97 }, animate: { opacity: 1, y: 0, scale: 1 }, exit: { opacity: 0, y: -8, scale: 0.97 }, transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] } },
-                        react_1.default.createElement("div", { className: "oversight-popup__inner" }, oversightMetrics.map(function (metric, i) {
-                            var _a;
-                            return (react_1.default.createElement(OversightStat, { key: (_a = metric.id) !== null && _a !== void 0 ? _a : i, metric: metric, index: i, onClick: function () { return handleCardClick(metric); } }));
-                        }))))))))),
-        react_1.default.createElement("div", { className: "metric-dashboard__section-header" },
-            react_1.default.createElement("div", { className: "metric-dashboard__section-icon" },
-                react_1.default.createElement(lucide_react_1.Zap, { size: 15, strokeWidth: 2.5, color: "#fff" })),
-            react_1.default.createElement("div", { style: { width: "100%" } },
-                react_1.default.createElement("p", { className: "metric-dashboard__section-title" }, "TASKS TO FINALIZE"),
-                react_1.default.createElement("p", { className: "metric-dashboard__section-subtitle" }, "PROCESS THESE ITEMS TO KEEP MOMENTUM")),
-            react_1.default.createElement("div", { className: "refresh-btn-container" },
-                react_1.default.createElement("button", { className: "refresh-btn", onClick: handleRefresh, disabled: loading },
-                    react_1.default.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: loading ? "spin" : "" },
-                        react_1.default.createElement("path", { d: "M21 2v6h-6" }),
-                        react_1.default.createElement("path", { d: "M3 12a9 9 0 0 1 15-6.7L21 8" }),
-                        react_1.default.createElement("path", { d: "M3 22v-6h6" }),
-                        react_1.default.createElement("path", { d: "M21 12a9 9 0 0 1-15 6.7L3 16" })),
-                    "Refresh"))),
-        react_1.default.createElement("div", { className: "metric-dashboard__grid" }, loading
-            ? Array.from({ length: 6 }).map(function (_, i) { return (react_1.default.createElement(framer_motion_1.motion.div, { key: "skeleton-".concat(i), initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, transition: { delay: i * 0.05, duration: 0.2 } },
-                react_1.default.createElement("div", { className: "metric-card metric-card--skeleton" },
-                    react_1.default.createElement("div", { className: "metric-card__icon-wrap" },
-                        react_1.default.createElement("div", { className: "skeleton-icon" })),
-                    react_1.default.createElement("div", { className: "metric-card__body" },
-                        react_1.default.createElement("div", { className: "skeleton-label" }),
-                        react_1.default.createElement("div", { className: "skeleton-value" }))))); })
-            : taskMetrics.map(function (metric, i) {
-                var _a;
-                return (react_1.default.createElement(framer_motion_1.motion.div, { key: (_a = metric.id) !== null && _a !== void 0 ? _a : i, initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, transition: { delay: i * 0.05, duration: 0.22 } },
-                    react_1.default.createElement(matricCard_1.default, { metric: metric, active: active === metric.id, onClick: function () { return handleCardClick(metric); } })));
-            }))));
+                    "TO PROCESS")),
+            react_1.default.createElement("div", { style: { display: "flex", justifyContent: "end", gap: "10px" } },
+                taskMetrics.length > 0 && (react_1.default.createElement("div", { className: "metric-dashboard__oversight-anchor" },
+                    react_1.default.createElement("button", { ref: btnRef, className: (0, cn_1.cn)("metric-dashboard__oversight-btn", myTasks && "metric-dashboard__oversight-btn--open"), onClick: function () { return setMyTasks(function (prev) { return !prev; }); }, "aria-expanded": myTasks, "aria-controls": "oversight-panel" },
+                        react_1.default.createElement("div", { className: "metric-dashboard__oversight-btn-icon" },
+                            react_1.default.createElement(lucide_react_1.Activity, { size: 14, strokeWidth: 2.5 })),
+                        react_1.default.createElement("span", null, "My TASKS"),
+                        react_1.default.createElement("svg", { className: "metric-dashboard__oversight-chevron", xmlns: "http://www.w3.org/2000/svg", width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" },
+                            react_1.default.createElement("polyline", { points: "6 9 12 15 18 9" }))),
+                    react_1.default.createElement(framer_motion_1.AnimatePresence, null, myTasks && (react_1.default.createElement(react_1.default.Fragment, null,
+                        react_1.default.createElement("div", { className: "metric-dashboard__oversight-backdrop", onClick: function () { return setMyTasks(false); } }),
+                        react_1.default.createElement(framer_motion_1.motion.div, { id: "oversight-panel", className: "metric-dashboard__oversight-popup", initial: { opacity: 0, y: -8, scale: 0.97 }, animate: { opacity: 1, y: 0, scale: 1 }, exit: { opacity: 0, y: -8, scale: 0.97 }, transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] } },
+                            react_1.default.createElement(Taskpattern_1.default, { metrics: taskMetrics, onStepClick: function (m) { return onCardClick(m); }, activeId: 3 }))))))),
+                oversightMetrics.length > 0 && (react_1.default.createElement("div", { className: "metric-dashboard__oversight-anchor" },
+                    react_1.default.createElement("button", { ref: btnRef, className: (0, cn_1.cn)("metric-dashboard__oversight-btn", oversightOpen && "metric-dashboard__oversight-btn--open"), onClick: function () { return setOversightOpen(function (prev) { return !prev; }); }, "aria-expanded": oversightOpen, "aria-controls": "oversight-panel" },
+                        react_1.default.createElement("div", { className: "metric-dashboard__oversight-btn-icon" },
+                            react_1.default.createElement(lucide_react_1.Activity, { size: 14, strokeWidth: 2.5 })),
+                        react_1.default.createElement("span", null, "ONGOING OVERSIGHTS"),
+                        react_1.default.createElement("svg", { className: "metric-dashboard__oversight-chevron", xmlns: "http://www.w3.org/2000/svg", width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" },
+                            react_1.default.createElement("polyline", { points: "6 9 12 15 18 9" }))),
+                    react_1.default.createElement(framer_motion_1.AnimatePresence, null, oversightOpen && (react_1.default.createElement(react_1.default.Fragment, null,
+                        react_1.default.createElement("div", { className: "metric-dashboard__oversight-backdrop", onClick: function () { return setOversightOpen(false); } }),
+                        react_1.default.createElement(framer_motion_1.motion.div, { id: "oversight-panel", className: "metric-dashboard__oversight-popup", initial: { opacity: 0, y: -8, scale: 0.97 }, animate: { opacity: 1, y: 0, scale: 1 }, exit: { opacity: 0, y: -8, scale: 0.97 }, transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] } },
+                            react_1.default.createElement("div", { className: "oversight-popup__inner" }, oversightMetrics.map(function (metric, i) {
+                                var _a;
+                                return (react_1.default.createElement(OversightStat, { key: (_a = metric.id) !== null && _a !== void 0 ? _a : i, metric: metric, index: i, onClick: function () { return handleCardClick(metric); } }));
+                            }))))))))))));
 };
 exports.default = MetricDashboard;
 //# sourceMappingURL=matric.js.map
