@@ -156,6 +156,13 @@ var WorkflowHODConfig = function (StatusID, isRevet, IsExpat, EmpCat) {
                 }
             }
         //LabourHire
+        case Config_1.StatusId.PendingHRReviewOfferuploadEmploymentInit:
+            if (EmpCat === ConditionConfig_1.EmployeementCategory.LaborhireContractor) {
+                return Config_1.StatusId.PendingLHECRelease;
+            }
+            else {
+                return Config_1.StatusId.PendingCandidateWorkPermitreleatedDoc;
+            }
         case Config_1.StatusId.PendingLabourHireOfferRelease:
             return Config_1.StatusId.PendingHROfferReview;
         case Config_1.StatusId.PendingHROfferReview:

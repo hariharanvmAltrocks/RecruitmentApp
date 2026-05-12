@@ -20,6 +20,7 @@ export interface ReviewStatusFlags {
   ViewFlag: boolean;
   PreOnboardingChecklist: boolean;
   isExpat: boolean;
+  PendingHRReviewOfferuploadEmploymentInit: boolean;
 }
 
 export interface ReviewVisibilityFlags {
@@ -53,6 +54,8 @@ export const buildStatusFlags = (
     statusID === StatusId.PendingHREmploymentContractVerification,
   pendingDOTAficaVerify: statusID === StatusId.PendingDOTAficaVerification,
   pendingHROfferInitiate: statusID === StatusId.PendingHROfferInitiate,
+  PendingHRReviewOfferuploadEmploymentInit:
+    statusID === StatusId.PendingHRReviewOfferuploadEmploymentInit,
   wpAckContractUploaded:
     statusID === StatusId.WorkPermitAcknowledgedContractUploaded,
   pendingFinancePayment: statusID === StatusId.PendingFinancePaymentReview,
@@ -83,6 +86,7 @@ const resolveVerificationToggle = (is: ReviewStatusFlags): boolean =>
   is.pendingHRReviewWPDocs ||
   is.pendingFinancePayment ||
   is.PendingHREmploymentContractReview ||
+  is.PendingHRReviewOfferuploadEmploymentInit ||
   is.pendingHRECVerification;
 
 const resolveUploadLabel = (is: ReviewStatusFlags): string => {

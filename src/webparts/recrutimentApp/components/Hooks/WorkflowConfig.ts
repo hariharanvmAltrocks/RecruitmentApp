@@ -165,6 +165,14 @@ export const WorkflowHODConfig = (
       }
 
     //LabourHire
+
+    case StatusId.PendingHRReviewOfferuploadEmploymentInit:
+      if (EmpCat === EmployeementCategory.LaborhireContractor) {
+        return StatusId.PendingLHECRelease;
+      } else {
+        return StatusId.PendingCandidateWorkPermitreleatedDoc;
+      }
+
     case StatusId.PendingLabourHireOfferRelease:
       return StatusId.PendingHROfferReview;
 

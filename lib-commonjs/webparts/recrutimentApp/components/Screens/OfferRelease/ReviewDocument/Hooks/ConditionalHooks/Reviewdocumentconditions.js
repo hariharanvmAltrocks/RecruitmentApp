@@ -13,6 +13,7 @@ var buildStatusFlags = function (statusID, empCat, consentVerification, isExpat)
     pendingHRECVerification: statusID === EvaluationConfig_1.StatusId.PendingHREmploymentContractVerification,
     pendingDOTAficaVerify: statusID === EvaluationConfig_1.StatusId.PendingDOTAficaVerification,
     pendingHROfferInitiate: statusID === EvaluationConfig_1.StatusId.PendingHROfferInitiate,
+    PendingHRReviewOfferuploadEmploymentInit: statusID === EvaluationConfig_1.StatusId.PendingHRReviewOfferuploadEmploymentInit,
     wpAckContractUploaded: statusID === EvaluationConfig_1.StatusId.WorkPermitAcknowledgedContractUploaded,
     pendingFinancePayment: statusID === EvaluationConfig_1.StatusId.PendingFinancePaymentReview,
     isKCSAEmployee: empCat === ConditionConfig_1.EmployeementCategory.KCSAEmployee,
@@ -40,6 +41,7 @@ var resolveVerificationToggle = function (is) {
         is.pendingHRReviewWPDocs ||
         is.pendingFinancePayment ||
         is.PendingHREmploymentContractReview ||
+        is.PendingHRReviewOfferuploadEmploymentInit ||
         is.pendingHRECVerification;
 };
 var resolveUploadLabel = function (is) {
