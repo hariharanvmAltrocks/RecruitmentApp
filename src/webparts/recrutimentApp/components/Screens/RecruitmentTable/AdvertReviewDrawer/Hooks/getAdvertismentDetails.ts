@@ -150,8 +150,6 @@ export const useAdvertismentDetails = (
           response.data.length > 0
         ) {
           const items = response.data[0];
-          debugger;
-
           const mappedData: AdvertismentDetails = {
             jobId: selectedJobCode.toString(),
             english: {
