@@ -57,10 +57,6 @@ var Mytracker = function (props) {
         hidden: {},
         visible: { transition: { staggerChildren: 0.1 } },
     };
-    var metricItem = {
-        hidden: { opacity: 0, y: 10 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.25 } },
-    };
     return (react_1.default.createElement(framer_motion_1.motion.div, { className: "dashboard", key: "dashboard", initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 10 }, transition: { duration: 0.3 } },
         react_1.default.createElement(framer_motion_1.AnimatePresence, null, loading ? (react_1.default.createElement(loading_1.default, null)) : (react_1.default.createElement(framer_motion_1.motion.div, { key: "dashboard-content", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 } }, !hasMetrics ? (react_1.default.createElement("div", { className: "dashboard-empty" },
             react_1.default.createElement("div", { className: "dashboard-empty__title" }, "No dashboard metrics available"),

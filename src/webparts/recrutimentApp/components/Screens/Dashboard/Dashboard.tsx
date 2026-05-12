@@ -36,7 +36,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
   const navigate = useNavigate();
   const {
     setActiveMenuID,
-    setNavigationPath,
+    // setNavigationPath,
     setActiveTab,
     navigationPath,
     setMatricID,
@@ -48,7 +48,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
   useEffect(() => {
     if (martics.metrics.length > 0 && !activeMetric) {
       setActiveMetric(martics.metrics[0].id);
-      setNavigationPath(martics.metrics[0].path);
+      // setNavigationPath(martics.metrics[0].path);
       ref.current = martics.metrics[0].menuId;
       // setActiveMenuID(martics.metrics[0].menuId);
       setActiveTab(martics.metrics[0].TabValue);
@@ -59,7 +59,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
   const onMetricChange = (data: MetricConfig) => {
     // setActiveMetric(data.id);
-    setNavigationPath(data.path);
+    // setNavigationPath(data.path);
     setActiveMenuID(menuID.Mytracker);
     // ref.current = data.menuId;
     // setActiveTab(data.TabValue);
