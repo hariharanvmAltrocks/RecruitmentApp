@@ -806,6 +806,10 @@
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
+.ease-out {
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1) !important;
+}
+
 .hover\:bg-amber-500:hover {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(245 158 11/var(--tw-bg-opacity, 1)) !important;
