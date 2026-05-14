@@ -12,12 +12,18 @@ import {
 } from "../../../../services/RecruitmentTable/IRecruitmentService";
 import { userInfo } from "../../../../utilities/hooks/RoleContext";
 import { ResponeStatus } from "../../../../utilities/ApiConfig";
-import { RoleID, StatusId, WorkflowAction } from "../../../../utilities/Config";
+import {
+  ListNames,
+  RoleID,
+  StatusId,
+  WorkflowAction,
+} from "../../../../utilities/Config";
 import { useToast } from "../../../Hooks/useToast";
 import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
 import { RecuritmentHRMsg } from "../../../../utilities/ConditionConfig";
 import { WorkflowConfig } from "../../../Hooks/WorkflowConfig";
 import { useUIState } from "../../../RecrutimentApp/UIStateContext";
+import SPServices from "../../../../services/SPService/spservice";
 
 export const useConfirmAssignment = (
   handleClosePopup: () => void,
@@ -79,7 +85,48 @@ export const useConfirmAssignment = (
               const JDEData = await masterService.fetchJDEEmailIDs(
                 jobDetail!.BusinessUnitCodeId,
               );
-              // let StatusID = WorkflowConfig(MatricID)
+
+              const existingItems = await SPServices.SPReadItems({
+                Listname: ListNames.RecruitAppCareerPortalIntegration,
+                Select: "*",
+                FilterCondition: "and",
+                Filter: [
+                  {
+                    FilterKey: "JobCodeId",
+                    Operator: "eq",
+                    FilterValue: jobDetail!.JobCodeId,
+                  },
+                  {
+                    FilterKey: "IsActive",
+                    Operator: "eq",
+                    FilterValue: 1,
+                  },
+                ],
+              });
+
+              let JobUniqueKey = "";
+
+              if (!existingItems || existingItems.length === 0) {
+                JobUniqueKey = `${jobDetail!.JobCode}_001`;
+              } else {
+                const maxNumber = Math.max(
+                  ...existingItems.map((item: any) => {
+                    const key = item.JobUniqueKey || "";
+                    const parts = key.split("-");
+
+                    return parseInt(parts[1], 10) || 0;
+                  }),
+                );
+
+                const nextNumber = maxNumber + 1;
+
+                const paddedNumber =
+                  nextNumber <= 999
+                    ? String(nextNumber).padStart(3, "0")
+                    : String(nextNumber);
+
+                JobUniqueKey = `${jobDetail!.JobCode}-${paddedNumber}`;
+              }
               return {
                 Data: {
                   BusinessUnitCodeId: jobDetail!.BusinessUnitCodeId,
@@ -124,6 +171,10 @@ export const useConfirmAssignment = (
                   ActionId: WorkflowAction.Approved,
                   ItemCreated: "Yes",
                   IsDataSyncToRecruitment: "No",
+                },
+                CareerPortalIntegration: {
+                  JobCode: jobDetail.JobCode,
+                  JobUniqueKey: JobUniqueKey,
                 },
               };
             }),

@@ -492,16 +492,50 @@ var RecruitmentService = /** @class */ (function () {
                             return payload.Data;
                         })
                             .map(function (_a) {
+                            var _b;
                             var insertedID = _a.insertedID, payload = _a.payload;
                             return batchedSP2_1.web.lists
                                 .getByTitle(Config_1.ListNames.RecruitAppCareerPortalIntegration)
                                 .items.add({
                                 JobCodeId: payload.Data.JobCodeId,
+                                JobUniqueKey: (_b = payload.CareerPortalIntegration) === null || _b === void 0 ? void 0 : _b.JobUniqueKey,
                                 RecruitmentIDId: insertedID,
                             });
                         });
+                        // const RecruitAppCareerPortalIntegration = await Promise.all(
+                        //   enriched
+                        //     .filter(({ payload }) => payload.Data)
+                        //     .map(async ({ insertedID, payload }) => {
+                        //       const jobCodeId = payload.Data.JobCodeId;
+                        //       const jobCode = payload.CareerPortalIntegration?.JobCode;
+                        //       // Insert item
+                        //       return batchedSP2.web.lists
+                        //         .getByTitle(ListNames.RecruitAppCareerPortalIntegration)
+                        //         .items.add({
+                        //           JobCodeId: jobCodeId,
+                        //           JobUniqueKey: JobUniqueKey,
+                        //           RecruitmentIDId: insertedID,
+                        //         });
+                        //     }),
+                        // );
                         return [4 /*yield*/, execute2()];
                     case 3:
+                        // const RecruitAppCareerPortalIntegration = await Promise.all(
+                        //   enriched
+                        //     .filter(({ payload }) => payload.Data)
+                        //     .map(async ({ insertedID, payload }) => {
+                        //       const jobCodeId = payload.Data.JobCodeId;
+                        //       const jobCode = payload.CareerPortalIntegration?.JobCode;
+                        //       // Insert item
+                        //       return batchedSP2.web.lists
+                        //         .getByTitle(ListNames.RecruitAppCareerPortalIntegration)
+                        //         .items.add({
+                        //           JobCodeId: jobCodeId,
+                        //           JobUniqueKey: JobUniqueKey,
+                        //           RecruitmentIDId: insertedID,
+                        //         });
+                        //     }),
+                        // );
                         _c.sent();
                         return [4 /*yield*/, Promise.all([
                                 Promise.all(positionPromises),
