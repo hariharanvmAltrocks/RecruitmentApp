@@ -1020,7 +1020,7 @@ export const MetricQueryConfig = (
   //MySubmission
   [MatricID.MySubmission]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter({ status: [], columnName: "", emailId: "" }),
+    // StatusFilter({ status: [], columnName: "", emailId: "" }),
   ),
 
   // MySubmissionHR: 28,

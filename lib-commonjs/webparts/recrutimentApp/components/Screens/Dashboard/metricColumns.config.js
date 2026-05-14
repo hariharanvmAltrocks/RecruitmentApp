@@ -771,7 +771,7 @@ var MetricQueryConfig = function (EmailId, roles) {
             emailId: EmailId,
         })),
         //MySubmission
-        _a[ConditionConfig_1.MatricID.MySubmission] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({ status: [], columnName: "", emailId: "" })),
+        _a[ConditionConfig_1.MatricID.MySubmission] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails),
         // MySubmissionHR: 28,
         _a[ConditionConfig_1.MatricID.MySubmissionHR] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
             status: [

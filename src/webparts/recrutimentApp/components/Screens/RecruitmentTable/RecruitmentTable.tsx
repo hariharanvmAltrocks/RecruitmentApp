@@ -424,7 +424,6 @@ export const RecruitmentTable: React.FC = () => {
       <div className="recruitment-table__table-card">
         <div className="submission-header">
           <h2 className="submission-header__title">{currentTabName}</h2>
-
           <div className="submission-header__actions">
             <button
               className="submission-header__refresh-btn"
