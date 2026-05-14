@@ -101,7 +101,7 @@ const mapRecruitmentItem = (
 });
 
 export const useRecruitmentDetails = (
-  activeTabKey: RecruitmentTabKey,
+  // matricID: number,
   refreshKey: number = 0,
 ): UseRecruitmentDetailsResult => {
   const [items, setItems] = useState<any[]>([]);

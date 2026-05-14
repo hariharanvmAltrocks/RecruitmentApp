@@ -67,11 +67,6 @@ export const RecruitmentTable: React.FC = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const handleRefresh = useCallback(() => setRefreshKey((k) => k + 1), []);
 
-  const { items, loading: tableLoading } = useRecruitmentDetails(
-    activeTabKey,
-    refreshKey,
-  );
-
   const {
     MatricID: matricID,
     setMatricID,
@@ -80,6 +75,11 @@ export const RecruitmentTable: React.FC = () => {
     currentTabName,
     setActiveMenuID,
   } = useUIState();
+
+  const { items, loading: tableLoading } = useRecruitmentDetails(
+    // matricID,
+    refreshKey,
+  );
 
   const {
     drawerOpen,

@@ -15,7 +15,7 @@ const TaskPattern: React.FC<TaskPatternProps> = ({
 }) => {
   return (
     <div className={styles.roadmapWrapper}>
-      {/* ── Header ─────────────────────────────────────────────────────── */}
+      {/* ── Header — static, never scrolls ──────────────────────────── */}
       <div className={styles.roadmapHeader}>
         <div className={styles.roadmapHeaderLeft}>
           <div className={styles.roadmapHeaderInner}>
@@ -26,7 +26,7 @@ const TaskPattern: React.FC<TaskPatternProps> = ({
         <span className={styles.roadmapSubtitle}>Operational Sequence</span>
       </div>
 
-      {/* ── Chevron track ──────────────────────────────────────────────── */}
+      {/* ── Chevron track — only this scrolls ───────────────────────── */}
       <div className={styles.chevronTrack}>
         {metrics.map((metric, index) => {
           const Icon = metric.icon;
@@ -37,20 +37,20 @@ const TaskPattern: React.FC<TaskPatternProps> = ({
             <div
               key={metric.id}
               className={`${styles.chevronItem}${isActive ? ` ${styles.active}` : ""}`}
-              style={{
-                zIndex: metrics.length - index,
-                "--step-from": metric.bgColor,
-                "--step-to": metric.color,
-              } as React.CSSProperties}
+              style={
+                {
+                  zIndex: metrics.length - index,
+                  "--step-from": metric.bgColor,
+                  "--step-to": metric.color,
+                } as React.CSSProperties
+              }
               onClick={() => onStepClick?.(metric)}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => e.key === "Enter" && onStepClick?.(metric)}
               aria-label={`Step ${String(index + 1).padStart(2, "0")}: ${metric.label}`}
             >
-              {/* ── Chevron body ───────────────────────────────────────── */}
               <div className={styles.chevronBody}>
-
                 {/* Icon */}
                 <div className={styles.iconBox}>
                   <Icon size={16} strokeWidth={1.8} color="#fff" />
@@ -82,7 +82,7 @@ const TaskPattern: React.FC<TaskPatternProps> = ({
                   <span className={styles.valueBubble}>{metric.value}</span>
                 )}
 
-                {/* Subtle separator line (not last item) */}
+                {/* Separator (not on last item) */}
                 {!isLast && <div className={styles.separator} />}
               </div>
             </div>

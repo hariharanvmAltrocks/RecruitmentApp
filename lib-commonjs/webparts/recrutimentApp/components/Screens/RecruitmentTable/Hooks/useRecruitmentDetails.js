@@ -73,7 +73,9 @@ var mapRecruitmentItem = function (item, shouldShowProfile) {
         ProfileCount: item.CandidateCount,
     })), { count: item === null || item === void 0 ? void 0 : item.NumberOfPersonNeeded, requestType: item === null || item === void 0 ? void 0 : item.Type, nationality: item === null || item === void 0 ? void 0 : item.Nationality, status: item === null || item === void 0 ? void 0 : item.Status, statusId: item === null || item === void 0 ? void 0 : item.StatusId, jobCodeID: item === null || item === void 0 ? void 0 : item.JobCodeId }));
 };
-var useRecruitmentDetails = function (activeTabKey, refreshKey) {
+var useRecruitmentDetails = function (
+// matricID: number,
+refreshKey) {
     if (refreshKey === void 0) { refreshKey = 0; }
     var _a = (0, react_1.useState)([]), items = _a[0], setItems = _a[1];
     var _b = (0, react_1.useState)(true), loading = _b[0], setLoading = _b[1];

@@ -91,7 +91,9 @@ var OfferTable = function () {
     var _r = (0, react_1.useState)([]), selectedIds = _r[0], setSelectedIds = _r[1];
     var _s = (0, react_1.useState)(5), pageSize = _s[0], setPageSize = _s[1];
     var _t = (0, react_1.useState)(1), currentPage = _t[0], setCurrentPage = _t[1];
-    var _u = (0, useRecruitmentDetails_1.useRecruitmentDetails)(activeTabKey, refreshKey), items = _u.items, tableLoading = _u.loading;
+    var _u = (0, useRecruitmentDetails_1.useRecruitmentDetails)(
+    // matricID,
+    refreshKey), items = _u.items, tableLoading = _u.loading;
     var updateList = (0, react_1.useMemo)(function () {
         return items.map(function (item) { return ({
             StatusID: item.statusId,

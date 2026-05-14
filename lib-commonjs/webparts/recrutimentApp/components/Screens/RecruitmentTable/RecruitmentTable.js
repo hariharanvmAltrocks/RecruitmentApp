@@ -44,8 +44,10 @@ var RecruitmentTable = function () {
     var _d = (0, react_1.useState)(activeTab), activeTabKey = _d[0], setActiveTabKey = _d[1];
     var _e = (0, react_1.useState)(0), refreshKey = _e[0], setRefreshKey = _e[1];
     var handleRefresh = (0, react_1.useCallback)(function () { return setRefreshKey(function (k) { return k + 1; }); }, []);
-    var _f = (0, useRecruitmentDetails_1.useRecruitmentDetails)(activeTabKey, refreshKey), items = _f.items, tableLoading = _f.loading;
-    var _g = (0, UIStateContext_1.useUIState)(), matricID = _g.MatricID, setMatricID = _g.setMatricID, sideNavflag = _g.sideNavflag, setCurrentTabName = _g.setCurrentTabName, currentTabName = _g.currentTabName, setActiveMenuID = _g.setActiveMenuID;
+    var _f = (0, UIStateContext_1.useUIState)(), matricID = _f.MatricID, setMatricID = _f.setMatricID, sideNavflag = _f.sideNavflag, setCurrentTabName = _f.setCurrentTabName, currentTabName = _f.currentTabName, setActiveMenuID = _f.setActiveMenuID;
+    var _g = (0, useRecruitmentDetails_1.useRecruitmentDetails)(
+    // matricID,
+    refreshKey), items = _g.items, tableLoading = _g.loading;
     var _h = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _h.drawerOpen, selectedJobId = _h.selectedJobId, advertLanguage = _h.advertLanguage, reviewerComments = _h.reviewerComments, acknowledgementCheckbox = _h.acknowledgementCheckbox, loadingState = _h.loadingState, openDrawer = _h.openDrawer, closeDrawer = _h.closeDrawer, setAdvertLanguage = _h.setAdvertLanguage, setComments = _h.setComments, toggleAcknowledgement = _h.toggleAcknowledgement, setLoadingState = _h.setLoadingState;
     var drawerMeta = (0, react_1.useRef)({
         isOpen: false,

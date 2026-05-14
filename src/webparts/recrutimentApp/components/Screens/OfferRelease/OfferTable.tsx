@@ -146,7 +146,7 @@ export const OfferTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const { items, loading: tableLoading } = useRecruitmentDetails(
-    activeTabKey,
+    // matricID,
     refreshKey,
   );
 

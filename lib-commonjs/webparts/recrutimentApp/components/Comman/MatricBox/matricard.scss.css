@@ -114,8 +114,8 @@
   top: calc(100% + 10px);
   right: 0;
   z-index: 100;
-  min-width: 560px;
-  max-width: 90vw;
+  min-width: 51vw;
+  max-width: 89vw;
 }
 @media (max-width: 640px) {
   .metric-dashboard__oversight-popup {

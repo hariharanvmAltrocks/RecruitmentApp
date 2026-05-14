@@ -152,8 +152,8 @@ $brand-purple-light: rgba(124, 58, 237, 0.08);
     z-index: 100;
 
     // Let content determine min-width; cap max-width for very wide screens
-    min-width: 560px;
-    max-width: 90vw;
+    min-width: 51vw;
+    max-width: 89vw;
 
     @media (max-width: 640px) {
       // On mobile, shift left to stay inside viewport
