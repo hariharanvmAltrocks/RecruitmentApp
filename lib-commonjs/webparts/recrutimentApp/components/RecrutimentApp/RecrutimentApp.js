@@ -10,7 +10,7 @@ var UIStateContext_1 = require("./UIStateContext");
 function RecrutimentApp(props) {
     var roleIDs = (0, RoleContext_1.useRoleContext)().roleIDs;
     var _a = (0, UIStateContext_1.useUIState)(), activeMenuID = _a.activeMenuID, setActiveMenuID = _a.setActiveMenuID;
-    console.log("Recruitment App V-1.2 -- 13-05-2026");
+    console.log("Recruitment App V-1.2 -- 15-05-2026");
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(MainLayout_1.default, { RoleID: roleIDs, activeMenuID: activeMenuID, setactiveMenuID: setActiveMenuID },
             react_1.default.createElement(Approutes_1.default, { props: props }))));
