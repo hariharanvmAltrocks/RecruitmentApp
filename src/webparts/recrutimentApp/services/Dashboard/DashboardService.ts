@@ -15,7 +15,10 @@ import {
   IDashboard,
   IEvaluValidate,
   IInterviewPanel,
+  IJDEDataMapping,
   IPortalItem,
+  ITooltipData,
+  tooltipInterviewPanel,
 } from "./IDashboard";
 import { BatchQuery } from "../SPService/Ispservice";
 import { getProfileData } from "../AxiosService/CareerPortalAPI";
@@ -31,6 +34,7 @@ import {
   MatricID,
   Nationality,
   NationalityCode,
+  RoleName,
 } from "../../utilities/ConditionConfig";
 import { CommonServices, masterService } from "../ServiceExport";
 import { EvalQueryConfig } from "../../components/Screens/SelectionProcess/config/EvaluationConfig";
@@ -384,6 +388,86 @@ export default class DashboardService implements IDashboard {
     return 0;
   }
 
+  async GetInterviewPanelTooltiData(
+    data: ITooltipData,
+  ): Promise<ApiResponse<tooltipInterviewPanel[]>> {
+    let GetItem: tooltipInterviewPanel[] = [{} as tooltipInterviewPanel];
+    try {
+      await SPServices.SPReadItems({
+        Listname: ListNames.JDEDataMapping,
+        Select:
+          "*,BUC/BusineesUnitCode,LineManager/EMail,HOD/EMail,HR/EMail,EXCO/EMail",
+        Filter: [
+          {
+            FilterKey: "BUC",
+            Operator: "eq",
+            FilterValue: data.BusinessUnitCodeId,
+          },
+        ],
+        Expand: "BUC,LineManager,HOD,HR,EXCO",
+        Orderby: "ID",
+        Orderbydecorasc: true,
+      }).then(async (res) => {
+        const response = res as IJDEDataMapping[];
+        for (const item of response) {
+          if (item?.LineManagerId && item?.LineManager?.EMail) {
+            let UserName = await CommonServices.GetUserName(
+              item.LineManager.EMail,
+            );
+            GetItem[0].LineManager = {
+              Role: RoleName.LineManager,
+              Name: String(UserName.data),
+            };
+          }
+          if (item?.HODId && item?.HOD?.EMail) {
+            let UserName = await CommonServices.GetUserName(item.HOD.EMail);
+            GetItem[0].HOD = {
+              Role: RoleName.HOD,
+              Name: String(UserName.data),
+            };
+          }
+          if (item?.EXCOId && item?.EXCO?.EMail) {
+            let UserName = await CommonServices.GetUserName(item.EXCO.EMail);
+            GetItem[0].Exco = {
+              Role: RoleName.EXCO,
+              Name: String(UserName.data),
+            };
+          }
+          if (data.AssignEmail) {
+            let UserName = await CommonServices.GetUserName(data.AssignEmail);
+            GetItem[0].HR = {
+              Role: RoleName.RecruitmentHR,
+              Name: String(UserName.data),
+            };
+          }
+          if (data.AssignHRLead) {
+            let UserName = await CommonServices.GetUserName(data.AssignHRLead);
+            GetItem[0].HRLead = {
+              Role: RoleName.RecruitmentHRLead,
+              Name: String(UserName.data),
+            };
+          }
+        }
+      });
+      return {
+        data: GetItem,
+        status: 200,
+        message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
+        error,
+      );
+      return {
+        data: GetItem,
+        status: 500,
+        message:
+          "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
+      };
+    }
+  }
+
   async GetRecruitmentDetails(
     filterParam: any,
     filterConditions: any,
@@ -411,6 +495,14 @@ export default class DashboardService implements IDashboard {
             item.JobCodeId,
             MatricId ?? 0,
           );
+          let StatusTooltip: ITooltipData = {
+            BusinessUnitCodeId: item.BusinessUnitCodeId,
+            AssignEmail: item.AssignedHR,
+            AssignHRLead: item.RecruitmentHRLead,
+          };
+          let StatusTooltipResult =
+            await this.GetInterviewPanelTooltiData(StatusTooltip);
+          console.log("StatusTooltipResult", StatusTooltipResult);
 
           return {
             ID: item.ID,
@@ -433,6 +525,10 @@ export default class DashboardService implements IDashboard {
             Department: item?.Department?.DepartmentName ?? "",
             EmploymentCategory: item?.EmploymentCategory,
             CandidateCount: candidateCount,
+            StatusTooltip:
+              StatusTooltipResult?.data?.length > 0
+                ? StatusTooltipResult.data[0]
+                : undefined,
           };
         }),
       );
@@ -972,6 +1068,7 @@ export default class DashboardService implements IDashboard {
         BusinessUnitCode: item?.BusinessUnitCode?.BusineesUnitCode ?? "",
         NumberOfPersonNeeded: item?.NumberOfPersonNeeded,
         Status: item?.Status?.StatusDescription ?? "",
+        StatusId: item?.StatusId ?? 0,
         Nationality: item?.Nationality,
         ModifiedDate: item?.Modified
           ? moment(item.Modified).format("YYYY-MM-DD")
@@ -988,6 +1085,7 @@ export default class DashboardService implements IDashboard {
           return {
             ...mapCommonFields(item, index),
             Type: DataFrom.ExistingPosition,
+            JobCodeId: item?.JobTitleEnglish?.ID ?? 0,
             JobCode: item?.JobTitleEnglish?.JobCode ?? "",
             JobTitleEnglish: item?.JobTitleEnglish?.JobTitleInEnglish ?? "",
             JobTitleFrench: item?.JobTitleFrench?.JobTitleInFrench ?? "",

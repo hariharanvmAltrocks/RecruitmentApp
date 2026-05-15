@@ -6,6 +6,8 @@ import React from "react";
 import { StatusId } from "../../../utilities/Config";
 import { useUIState } from "../../RecrutimentApp/UIStateContext";
 import { MatricID } from "../../../utilities/ConditionConfig";
+import { StatusTooltip } from "../../Comman/StatusTooltip/StatusTooltip";
+import { tooltipInterviewPanel } from "../../../services/Dashboard/IDashboard";
 
 export type ColumnRole = "default" | "evaluation";
 
@@ -138,11 +140,29 @@ export const useRecruitmentColumns = ({
       {
         id: "status",
         header: "Status",
-        render: (item) => (
-          <span className="data-table__status-badge status-badge">
-            {item.status}
-          </span>
-        ),
+        render: (item) => {
+          let isTooltipStatus: any;
+          isTooltipStatus = [StatusId.ReadyforRecruitmentProcess].includes(
+            item.statusId,
+          );
+          if (!isTooltipStatus) {
+            return (
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <StatusTooltip data={item.StatusTooltip ?? null} />
+                <span className="data-table__status-badge status-badge">
+                  {item.status}
+                </span>
+              </div>
+            );
+          }
+          return (
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span className="data-table__status-badge status-badge">
+                {item.status}
+              </span>
+            </div>
+          );
+        },
       },
       actionColumn,
     ],

@@ -1101,7 +1101,7 @@ export const MetricQueryConfig = (
   [MatricID.AssignAgencies]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
     StatusFilter({
-      status: [StatusId.PendingUploadONEM, StatusId.RecruitmentInProgress],
+      status: [StatusId.RecruitmentInProgress],
       columnName: "AssignedHR",
       emailId: EmailId,
     }),

@@ -828,7 +828,7 @@ var MetricQueryConfig = function (EmailId, roles) {
             emailId: EmailId,
         })),
         _a[ConditionConfig_1.MatricID.AssignAgencies] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({
-            status: [Config_1.StatusId.PendingUploadONEM, Config_1.StatusId.RecruitmentInProgress],
+            status: [Config_1.StatusId.RecruitmentInProgress],
             columnName: "AssignedHR",
             emailId: EmailId,
         })),

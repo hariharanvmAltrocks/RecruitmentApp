@@ -334,9 +334,121 @@ var DashboardService = /** @class */ (function () {
             });
         });
     };
+    DashboardService.prototype.GetInterviewPanelTooltiData = function (data) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var GetItem, error_3;
+            var _this = this;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        GetItem = [{}];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.JDEDataMapping,
+                                Select: "*,BUC/BusineesUnitCode,LineManager/EMail,HOD/EMail,HR/EMail,EXCO/EMail",
+                                Filter: [
+                                    {
+                                        FilterKey: "BUC",
+                                        Operator: "eq",
+                                        FilterValue: data.BusinessUnitCodeId,
+                                    },
+                                ],
+                                Expand: "BUC,LineManager,HOD,HR,EXCO",
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            }).then(function (res) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                var response, _i, response_1, item, UserName, UserName, UserName, UserName, UserName;
+                                var _a, _b, _c;
+                                return tslib_1.__generator(this, function (_d) {
+                                    switch (_d.label) {
+                                        case 0:
+                                            response = res;
+                                            _i = 0, response_1 = response;
+                                            _d.label = 1;
+                                        case 1:
+                                            if (!(_i < response_1.length)) return [3 /*break*/, 12];
+                                            item = response_1[_i];
+                                            if (!((item === null || item === void 0 ? void 0 : item.LineManagerId) && ((_a = item === null || item === void 0 ? void 0 : item.LineManager) === null || _a === void 0 ? void 0 : _a.EMail))) return [3 /*break*/, 3];
+                                            return [4 /*yield*/, ServiceExport_1.CommonServices.GetUserName(item.LineManager.EMail)];
+                                        case 2:
+                                            UserName = _d.sent();
+                                            GetItem[0].LineManager = {
+                                                Role: ConditionConfig_1.RoleName.LineManager,
+                                                Name: String(UserName.data),
+                                            };
+                                            _d.label = 3;
+                                        case 3:
+                                            if (!((item === null || item === void 0 ? void 0 : item.HODId) && ((_b = item === null || item === void 0 ? void 0 : item.HOD) === null || _b === void 0 ? void 0 : _b.EMail))) return [3 /*break*/, 5];
+                                            return [4 /*yield*/, ServiceExport_1.CommonServices.GetUserName(item.HOD.EMail)];
+                                        case 4:
+                                            UserName = _d.sent();
+                                            GetItem[0].HOD = {
+                                                Role: ConditionConfig_1.RoleName.HOD,
+                                                Name: String(UserName.data),
+                                            };
+                                            _d.label = 5;
+                                        case 5:
+                                            if (!((item === null || item === void 0 ? void 0 : item.EXCOId) && ((_c = item === null || item === void 0 ? void 0 : item.EXCO) === null || _c === void 0 ? void 0 : _c.EMail))) return [3 /*break*/, 7];
+                                            return [4 /*yield*/, ServiceExport_1.CommonServices.GetUserName(item.EXCO.EMail)];
+                                        case 6:
+                                            UserName = _d.sent();
+                                            GetItem[0].Exco = {
+                                                Role: ConditionConfig_1.RoleName.EXCO,
+                                                Name: String(UserName.data),
+                                            };
+                                            _d.label = 7;
+                                        case 7:
+                                            if (!data.AssignEmail) return [3 /*break*/, 9];
+                                            return [4 /*yield*/, ServiceExport_1.CommonServices.GetUserName(data.AssignEmail)];
+                                        case 8:
+                                            UserName = _d.sent();
+                                            GetItem[0].HR = {
+                                                Role: ConditionConfig_1.RoleName.RecruitmentHR,
+                                                Name: String(UserName.data),
+                                            };
+                                            _d.label = 9;
+                                        case 9:
+                                            if (!data.AssignHRLead) return [3 /*break*/, 11];
+                                            return [4 /*yield*/, ServiceExport_1.CommonServices.GetUserName(data.AssignHRLead)];
+                                        case 10:
+                                            UserName = _d.sent();
+                                            GetItem[0].HRLead = {
+                                                Role: ConditionConfig_1.RoleName.RecruitmentHRLead,
+                                                Name: String(UserName.data),
+                                            };
+                                            _d.label = 11;
+                                        case 11:
+                                            _i++;
+                                            return [3 /*break*/, 1];
+                                        case 12: return [2 /*return*/];
+                                    }
+                                });
+                            }); })];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/, {
+                                data: GetItem,
+                                status: 200,
+                                message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
+                            }];
+                    case 3:
+                        error_3 = _a.sent();
+                        console.error("Error fetching data GetHRMSRecruitmentRoleProfileDetails:", error_3);
+                        return [2 /*return*/, {
+                                data: GetItem,
+                                status: 500,
+                                message: "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
+                            }];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
     DashboardService.prototype.GetRecruitmentDetails = function (filterParam, filterConditions, MatricId) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var res, GridResult, error_3;
+            var res, GridResult, error_4;
             var _this = this;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
@@ -358,13 +470,22 @@ var DashboardService = /** @class */ (function () {
                             return [2 /*return*/, { data: [], status: 200, message: "No records found" }];
                         }
                         return [4 /*yield*/, Promise.all(res.map(function (item, index) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                var candidateCount;
-                                var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
-                                return tslib_1.__generator(this, function (_p) {
-                                    switch (_p.label) {
+                                var candidateCount, StatusTooltip, StatusTooltipResult;
+                                var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+                                return tslib_1.__generator(this, function (_q) {
+                                    switch (_q.label) {
                                         case 0: return [4 /*yield*/, this._getCandidateCountByMatric(item.JobCodeId, MatricId !== null && MatricId !== void 0 ? MatricId : 0)];
                                         case 1:
-                                            candidateCount = _p.sent();
+                                            candidateCount = _q.sent();
+                                            StatusTooltip = {
+                                                BusinessUnitCodeId: item.BusinessUnitCodeId,
+                                                AssignEmail: item.AssignedHR,
+                                                AssignHRLead: item.RecruitmentHRLead,
+                                            };
+                                            return [4 /*yield*/, this.GetInterviewPanelTooltiData(StatusTooltip)];
+                                        case 2:
+                                            StatusTooltipResult = _q.sent();
+                                            console.log("StatusTooltipResult", StatusTooltipResult);
                                             return [2 /*return*/, {
                                                     ID: item.ID,
                                                     RecordID: index + 1,
@@ -386,6 +507,9 @@ var DashboardService = /** @class */ (function () {
                                                     Department: (_o = (_m = item === null || item === void 0 ? void 0 : item.Department) === null || _m === void 0 ? void 0 : _m.DepartmentName) !== null && _o !== void 0 ? _o : "",
                                                     EmploymentCategory: item === null || item === void 0 ? void 0 : item.EmploymentCategory,
                                                     CandidateCount: candidateCount,
+                                                    StatusTooltip: ((_p = StatusTooltipResult === null || StatusTooltipResult === void 0 ? void 0 : StatusTooltipResult.data) === null || _p === void 0 ? void 0 : _p.length) > 0
+                                                        ? StatusTooltipResult.data[0]
+                                                        : undefined,
                                                 }];
                                     }
                                 });
@@ -398,8 +522,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "GetRecruitmentDetails fetched successfully",
                             }];
                     case 3:
-                        error_3 = _a.sent();
-                        console.error("Error fetching GetRecruitmentDetails:", error_3);
+                        error_4 = _a.sent();
+                        console.error("Error fetching GetRecruitmentDetails:", error_4);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
                     case 4: return [2 /*return*/];
                 }
@@ -534,7 +658,7 @@ var DashboardService = /** @class */ (function () {
     // }
     DashboardService.prototype.GetCandidateDetails = function (filterParam, filterConditions, MatricId, EmailID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var isEvaluationFlow, UserID, listItems, recruitmentIds_1, res, recruitmentIds, uniqueGrades, recruitmentFilter, _a, deptResult, gradeResults_1, gradeLevelMap_1, deptMap_1, _i, _b, dept, existing, GridResult, error_4;
+            var isEvaluationFlow, UserID, listItems, recruitmentIds_1, res, recruitmentIds, uniqueGrades, recruitmentFilter, _a, deptResult, gradeResults_1, gradeLevelMap_1, deptMap_1, _i, _b, dept, existing, GridResult, error_5;
             var _c, _d, _e, _f;
             return tslib_1.__generator(this, function (_g) {
                 switch (_g.label) {
@@ -662,8 +786,8 @@ var DashboardService = /** @class */ (function () {
                         });
                         return [2 /*return*/, { data: GridResult, status: 200, message: "Success" }];
                     case 6:
-                        error_4 = _g.sent();
-                        console.error("Error fetching from Candidate details:", error_4);
+                        error_5 = _g.sent();
+                        console.error("Error fetching from Candidate details:", error_5);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
                     case 7: return [2 /*return*/];
                 }
@@ -672,7 +796,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetSelectedCandidate = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var GridResult, res, ids, candidateIds, recruitmentFilter, candidateFilter, DeptDetails, getCandidateDetails, deptMap_2, candidateMap_1, error_5;
+            var GridResult, res, ids, candidateIds, recruitmentFilter, candidateFilter, DeptDetails, getCandidateDetails, deptMap_2, candidateMap_1, error_6;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -747,8 +871,8 @@ var DashboardService = /** @class */ (function () {
                         });
                         return [2 /*return*/, { data: GridResult, status: 200, message: "Success" }];
                     case 4:
-                        error_5 = _a.sent();
-                        console.error("Error fetching from Candidate details:", error_5);
+                        error_6 = _a.sent();
+                        console.error("Error fetching from Candidate details:", error_6);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
                     case 5: return [2 /*return*/];
                 }
@@ -757,7 +881,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetNPAEPVRRDetails = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var queries, batchRes, additionalExistingItems, newPositionItems, vacancyItems, additionalIds, newPositionIds, _a, additionalPositionRes, newPositionRes, additionalPositionMap_1, newPositionMap_1, mapCommonFields_1, additionalExistingResult, newPositionResult, vacancyResult, GridResult, error_6;
+            var queries, batchRes, additionalExistingItems, newPositionItems, vacancyItems, additionalIds, newPositionIds, _a, additionalPositionRes, newPositionRes, additionalPositionMap_1, newPositionMap_1, mapCommonFields_1, additionalExistingResult, newPositionResult, vacancyResult, GridResult, error_7;
             var _b, _c;
             return tslib_1.__generator(this, function (_d) {
                 switch (_d.label) {
@@ -856,13 +980,14 @@ var DashboardService = /** @class */ (function () {
                         additionalPositionMap_1 = new Map(((_b = additionalPositionRes.data) !== null && _b !== void 0 ? _b : []).map(function (d) { return [d.parentId, d]; }));
                         newPositionMap_1 = new Map(((_c = newPositionRes.data) !== null && _c !== void 0 ? _c : []).map(function (d) { return [d.parentId, d]; }));
                         mapCommonFields_1 = function (item, index) {
-                            var _a, _b, _c, _d, _e, _f;
+                            var _a, _b, _c, _d, _e, _f, _g;
                             return ({
                                 ID: item.ID,
                                 RecordID: index + 1,
                                 BusinessUnitCode: (_b = (_a = item === null || item === void 0 ? void 0 : item.BusinessUnitCode) === null || _a === void 0 ? void 0 : _a.BusineesUnitCode) !== null && _b !== void 0 ? _b : "",
                                 NumberOfPersonNeeded: item === null || item === void 0 ? void 0 : item.NumberOfPersonNeeded,
                                 Status: (_d = (_c = item === null || item === void 0 ? void 0 : item.Status) === null || _c === void 0 ? void 0 : _c.StatusDescription) !== null && _d !== void 0 ? _d : "",
+                                StatusId: (_e = item === null || item === void 0 ? void 0 : item.StatusId) !== null && _e !== void 0 ? _e : 0,
                                 Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
                                 ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
                                     ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
@@ -870,13 +995,13 @@ var DashboardService = /** @class */ (function () {
                                 CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
                                     ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
                                     : undefined,
-                                Department: (_f = (_e = item === null || item === void 0 ? void 0 : item.Department) === null || _e === void 0 ? void 0 : _e.DepartmentName) !== null && _f !== void 0 ? _f : "",
+                                Department: (_g = (_f = item === null || item === void 0 ? void 0 : item.Department) === null || _f === void 0 ? void 0 : _f.DepartmentName) !== null && _g !== void 0 ? _g : "",
                             });
                         };
                         additionalExistingResult = additionalExistingItems.map(function (item, index) {
-                            var _a, _b, _c, _d, _e, _f, _g, _h;
+                            var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
                             var pos = additionalPositionMap_1.get(item.ID);
-                            return tslib_1.__assign(tslib_1.__assign({}, mapCommonFields_1(item, index)), { Type: Config_1.DataFrom.ExistingPosition, JobCode: (_b = (_a = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) === null || _a === void 0 ? void 0 : _a.JobCode) !== null && _b !== void 0 ? _b : "", JobTitleEnglish: (_d = (_c = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) === null || _c === void 0 ? void 0 : _c.JobTitleInEnglish) !== null && _d !== void 0 ? _d : "", JobTitleFrench: (_f = (_e = item === null || item === void 0 ? void 0 : item.JobTitleFrench) === null || _e === void 0 ? void 0 : _e.JobTitleInFrench) !== null && _f !== void 0 ? _f : "", PatersonGrade: (_g = pos === null || pos === void 0 ? void 0 : pos.PatersonGrade) !== null && _g !== void 0 ? _g : "", DRCGrade: (_h = pos === null || pos === void 0 ? void 0 : pos.DRCGrade) !== null && _h !== void 0 ? _h : "", NumberOfPersonNeeded: pos === null || pos === void 0 ? void 0 : pos.NumberOfPersonNeeded });
+                            return tslib_1.__assign(tslib_1.__assign({}, mapCommonFields_1(item, index)), { Type: Config_1.DataFrom.ExistingPosition, JobCodeId: (_b = (_a = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) === null || _a === void 0 ? void 0 : _a.ID) !== null && _b !== void 0 ? _b : 0, JobCode: (_d = (_c = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) === null || _c === void 0 ? void 0 : _c.JobCode) !== null && _d !== void 0 ? _d : "", JobTitleEnglish: (_f = (_e = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) === null || _e === void 0 ? void 0 : _e.JobTitleInEnglish) !== null && _f !== void 0 ? _f : "", JobTitleFrench: (_h = (_g = item === null || item === void 0 ? void 0 : item.JobTitleFrench) === null || _g === void 0 ? void 0 : _g.JobTitleInFrench) !== null && _h !== void 0 ? _h : "", PatersonGrade: (_j = pos === null || pos === void 0 ? void 0 : pos.PatersonGrade) !== null && _j !== void 0 ? _j : "", DRCGrade: (_k = pos === null || pos === void 0 ? void 0 : pos.DRCGrade) !== null && _k !== void 0 ? _k : "", NumberOfPersonNeeded: pos === null || pos === void 0 ? void 0 : pos.NumberOfPersonNeeded });
                         });
                         newPositionResult = newPositionItems.map(function (item, index) {
                             var _a, _b, _c, _d, _e;
@@ -894,8 +1019,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "GetNPAEPVRRDetails fetched successfully",
                             }];
                     case 3:
-                        error_6 = _d.sent();
-                        console.error("Error fetching GetNPAEPVRRDetails:", error_6);
+                        error_7 = _d.sent();
+                        console.error("Error fetching GetNPAEPVRRDetails:", error_7);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
                     case 4: return [2 /*return*/];
                 }
@@ -904,7 +1029,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetAdditionalPosition = function (Filter, filterConditions, ListName) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var resdata, result, error_7;
+            var resdata, result, error_8;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -935,8 +1060,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "GetPositionDetails fetched successfully",
                             }];
                     case 2:
-                        error_7 = _a.sent();
-                        console.error("GetPositionDetails error:", error_7);
+                        error_8 = _a.sent();
+                        console.error("GetPositionDetails error:", error_8);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -949,7 +1074,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetPositionDetails = function (Filter, filterConditions, ListName) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var resdata, result, error_8;
+            var resdata, result, error_9;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -982,8 +1107,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "GetPositionDetails fetched successfully",
                             }];
                     case 2:
-                        error_8 = _a.sent();
-                        console.error("GetPositionDetails error:", error_8);
+                        error_9 = _a.sent();
+                        console.error("GetPositionDetails error:", error_9);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -996,7 +1121,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.EvalutionValidation = function (data) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var getCurrentUserId, levelFilter, resdata, IsSubmitted, error_9;
+            var getCurrentUserId, levelFilter, resdata, IsSubmitted, error_10;
             var _a;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
@@ -1039,8 +1164,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "Validation success",
                             }];
                     case 3:
-                        error_9 = _b.sent();
-                        console.error("EvalutionValidation error:", error_9);
+                        error_10 = _b.sent();
+                        console.error("EvalutionValidation error:", error_10);
                         return [2 /*return*/, {
                                 data: false,
                                 status: 500,

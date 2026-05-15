@@ -71,7 +71,7 @@ var mapRecruitmentItem = function (item, shouldShowProfile) {
     var _a;
     return (tslib_1.__assign(tslib_1.__assign({ id: item === null || item === void 0 ? void 0 : item.RecordID, ItemID: item === null || item === void 0 ? void 0 : item.ID, jobCode: item === null || item === void 0 ? void 0 : item.JobCode, title: (_a = item === null || item === void 0 ? void 0 : item.JobTitleEnglish) !== null && _a !== void 0 ? _a : "", department: item === null || item === void 0 ? void 0 : item.Department }, (shouldShowProfile && {
         ProfileCount: item.CandidateCount,
-    })), { count: item === null || item === void 0 ? void 0 : item.NumberOfPersonNeeded, requestType: item === null || item === void 0 ? void 0 : item.Type, nationality: item === null || item === void 0 ? void 0 : item.Nationality, status: item === null || item === void 0 ? void 0 : item.Status, statusId: item === null || item === void 0 ? void 0 : item.StatusId, jobCodeID: item === null || item === void 0 ? void 0 : item.JobCodeId }));
+    })), { count: item === null || item === void 0 ? void 0 : item.NumberOfPersonNeeded, requestType: item === null || item === void 0 ? void 0 : item.Type, nationality: item === null || item === void 0 ? void 0 : item.Nationality, status: item === null || item === void 0 ? void 0 : item.Status, statusId: item === null || item === void 0 ? void 0 : item.StatusId, jobCodeID: item === null || item === void 0 ? void 0 : item.JobCodeId, StatusTooltip: item === null || item === void 0 ? void 0 : item.StatusTooltip }));
 };
 var useRecruitmentDetails = function (activeTabKey, refreshKey) {
     if (refreshKey === void 0) { refreshKey = 0; }
