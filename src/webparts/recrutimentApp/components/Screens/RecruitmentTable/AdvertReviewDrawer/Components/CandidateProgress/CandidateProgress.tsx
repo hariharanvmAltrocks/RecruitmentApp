@@ -54,16 +54,6 @@ export const CandidateProgress: React.FC = () => {
             Track progress for each candidate through the recruitment process
           </p>
         </div>
-        {/* <div className={styles.candidateProgress__actions}>
-          <div className={styles.candidateProgress__search}>
-            <Search size={16} />
-            <input type="text" placeholder="Search candidate..." />
-          </div>
-          <button className={styles.candidateProgress__filterBtn}>
-            <Filter size={16} />
-            Filter
-          </button>
-        </div> */}
       </div>
 
       <div className={styles.candidateProgress__timelineHeader}>

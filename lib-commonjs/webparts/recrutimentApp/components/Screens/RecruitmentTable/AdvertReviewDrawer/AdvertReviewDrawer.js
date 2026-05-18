@@ -308,7 +308,7 @@ var AdvertReviewDrawer = function (_a) {
                                 react_1.default.createElement("span", { className: "advert-review-drawer__dot" }),
                                 react_1.default.createElement("span", { className: "advert-review-drawer__meta-text" }, headerMeta.department)))))),
                     react_1.default.createElement("div", { className: "advert-review-drawer__header-right", style: { display: "flex", alignItems: "center", gap: "12px" } },
-                        react_1.default.createElement("button", { onClick: function () { return setShowRoadmap(true); }, className: "advert-roadmap__toggle-btn ".concat(showRoadmap ? "advert-roadmap__toggle-btn--active" : "advert-roadmap__toggle-btn--inactive") },
+                        react_1.default.createElement("button", { onClick: function () { return setShowRoadmap(!showRoadmap); }, className: "advert-roadmap__toggle-btn ".concat(showRoadmap ? "advert-roadmap__toggle-btn--active" : "advert-roadmap__toggle-btn--inactive") },
                             react_1.default.createElement(lucide_react_1.Network, { size: 14 }),
                             "Position Status",
                             react_1.default.createElement(lucide_react_1.ChevronRight, { size: 14, className: "advert-roadmap__toggle-icon" })),

@@ -463,7 +463,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                   style={{ display: "flex", alignItems: "center", gap: "12px" }}
                 >
                   <button
-                    onClick={() => setShowRoadmap(true)}
+                    onClick={() => setShowRoadmap(!showRoadmap)}
                     className={`advert-roadmap__toggle-btn ${showRoadmap ? "advert-roadmap__toggle-btn--active" : "advert-roadmap__toggle-btn--inactive"}`}
                   >
                     <Network size={14} />
