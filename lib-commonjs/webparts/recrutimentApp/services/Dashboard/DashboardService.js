@@ -216,10 +216,10 @@ var DashboardService = /** @class */ (function () {
                         portalItems = _a.sent();
                         jobCodeIdToUniqueKey = new Map(portalItems.map(function (item) { return [item.JobCodeId, item.JobUniqueKey]; }));
                         return [4 /*yield*/, Promise.all(externalMetrics.map(function (metric) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                var jobCodeIds, jobUniqueKeys, params, response, total, _a;
-                                var _b, _c, _d, _e, _f, _g, _h;
-                                return tslib_1.__generator(this, function (_j) {
-                                    switch (_j.label) {
+                                var jobCodeIds, jobUniqueKeys, params, response, total, level2Filter, level2, _a;
+                                var _b, _c, _d, _e, _f, _g, _h, _j, _k;
+                                return tslib_1.__generator(this, function (_l) {
+                                    switch (_l.label) {
                                         case 0:
                                             jobCodeIds = ((_b = spCounts[metric.id]) !== null && _b !== void 0 ? _b : [])
                                                 .map(function (item) { return item.JobCodeId; })
@@ -235,23 +235,42 @@ var DashboardService = /** @class */ (function () {
                                                 jobCodes: jobUniqueKeys,
                                                 workflowStatus: metric.externalApi.workflowStatuses,
                                             };
-                                            _j.label = 1;
+                                            _l.label = 1;
                                         case 1:
-                                            _j.trys.push([1, 3, , 4]);
+                                            _l.trys.push([1, 5, , 6]);
                                             return [4 /*yield*/, CareerPortalAPI_1.getProfileData.GetJobAppliedCount(params)];
                                         case 2:
-                                            response = _j.sent();
+                                            response = _l.sent();
                                             total = Array.isArray((_c = response === null || response === void 0 ? void 0 : response.data) === null || _c === void 0 ? void 0 : _c.data)
                                                 ? (_e = (_d = response === null || response === void 0 ? void 0 : response.data) === null || _d === void 0 ? void 0 : _d.data) === null || _e === void 0 ? void 0 : _e.reduce(function (sum, item) { var _a; return sum + ((_a = item.count) !== null && _a !== void 0 ? _a : 0); }, 0)
                                                 : ((_h = (_g = (_f = response === null || response === void 0 ? void 0 : response.data) === null || _f === void 0 ? void 0 : _f.data) === null || _g === void 0 ? void 0 : _g.count) !== null && _h !== void 0 ? _h : 0);
-                                            result.set(String(metric.id), total);
-                                            return [3 /*break*/, 4];
+                                            if (!(metric.id === ConditionConfig_1.MatricID.AssignInterviewPanel)) return [3 /*break*/, 4];
+                                            level2Filter = [
+                                                {
+                                                    FilterKey: "StatusId",
+                                                    Operator: "eq",
+                                                    FilterValue: Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
+                                                },
+                                                {
+                                                    FilterKey: "JobCodeId",
+                                                    Operator: "in",
+                                                    FilterValue: jobCodeIds,
+                                                },
+                                            ];
+                                            return [4 /*yield*/, this.GetCandidateDetails(level2Filter, "and")];
                                         case 3:
-                                            _a = _j.sent();
+                                            level2 = _l.sent();
+                                            total += (_k = (_j = level2 === null || level2 === void 0 ? void 0 : level2.data) === null || _j === void 0 ? void 0 : _j.length) !== null && _k !== void 0 ? _k : 0;
+                                            _l.label = 4;
+                                        case 4:
+                                            result.set(String(metric.id), total);
+                                            return [3 /*break*/, 6];
+                                        case 5:
+                                            _a = _l.sent();
                                             // eslint-disable-line
                                             result.set(String(metric.id), 0);
-                                            return [3 /*break*/, 4];
-                                        case 4: return [2 /*return*/];
+                                            return [3 /*break*/, 6];
+                                        case 6: return [2 /*return*/];
                                     }
                                 });
                             }); }))];
@@ -309,28 +328,51 @@ var DashboardService = /** @class */ (function () {
             });
         });
     };
-    DashboardService.prototype._getCandidateCountByMatric = function (jobCodeId, MatricId) {
+    DashboardService.prototype._getCandidateCountByMatric = function (jobCodeId, MatricId, RecID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            return tslib_1.__generator(this, function (_a) {
-                if (MatricId === ConditionConfig_1.MatricID.ReviewProfileHR) {
-                    return [2 /*return*/, this._fetchCandidateCounts(jobCodeId, [
-                            Config_1.workflowStatusApi.HRPending,
-                        ])];
+            var Level1, level2Filter, level2, total;
+            var _a, _b;
+            return tslib_1.__generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        if (!(MatricId === ConditionConfig_1.MatricID.ReviewProfileHR)) return [3 /*break*/, 1];
+                        return [2 /*return*/, this._fetchCandidateCounts(jobCodeId, [
+                                Config_1.workflowStatusApi.HRPending,
+                            ])];
+                    case 1:
+                        if (!(MatricId === ConditionConfig_1.MatricID.ReviewProfileLM)) return [3 /*break*/, 2];
+                        return [2 /*return*/, this._fetchCandidateCounts(jobCodeId, [
+                                Config_1.workflowStatusApi.LineManagerL1Pending,
+                                Config_1.workflowStatusApi.LineManagerL2Pending,
+                                Config_1.workflowStatusApi.LineManagerLevel1OnHold,
+                                Config_1.workflowStatusApi.LineManagerLevel2OnHold,
+                            ])];
+                    case 2:
+                        if (!(MatricId === ConditionConfig_1.MatricID.AssignInterviewPanel)) return [3 /*break*/, 5];
+                        return [4 /*yield*/, this._fetchCandidateCounts(jobCodeId, [
+                                Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+                            ])];
+                    case 3:
+                        Level1 = _c.sent();
+                        level2Filter = [
+                            {
+                                FilterKey: "StatusId",
+                                Operator: "eq",
+                                FilterValue: Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
+                            },
+                            {
+                                FilterKey: "RecruitmentID/ID",
+                                Operator: "eq",
+                                FilterValue: RecID,
+                            },
+                        ];
+                        return [4 /*yield*/, this.GetCandidateDetails(level2Filter, "and")];
+                    case 4:
+                        level2 = _c.sent();
+                        total = Level1 + ((_b = (_a = level2 === null || level2 === void 0 ? void 0 : level2.data) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0);
+                        return [2 /*return*/, total];
+                    case 5: return [2 /*return*/, 0];
                 }
-                else if (MatricId === ConditionConfig_1.MatricID.ReviewProfileLM) {
-                    return [2 /*return*/, this._fetchCandidateCounts(jobCodeId, [
-                            Config_1.workflowStatusApi.LineManagerL1Pending,
-                            Config_1.workflowStatusApi.LineManagerL2Pending,
-                            Config_1.workflowStatusApi.LineManagerLevel1OnHold,
-                            Config_1.workflowStatusApi.LineManagerLevel2OnHold,
-                        ])];
-                }
-                else if (MatricId === ConditionConfig_1.MatricID.AssignInterviewPanel) {
-                    return [2 /*return*/, this._fetchCandidateCounts(jobCodeId, [
-                            Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview,
-                        ])];
-                }
-                return [2 /*return*/, 0];
             });
         });
     };
@@ -474,7 +516,7 @@ var DashboardService = /** @class */ (function () {
                                 var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
                                 return tslib_1.__generator(this, function (_q) {
                                     switch (_q.label) {
-                                        case 0: return [4 /*yield*/, this._getCandidateCountByMatric(item.JobCodeId, MatricId !== null && MatricId !== void 0 ? MatricId : 0)];
+                                        case 0: return [4 /*yield*/, this._getCandidateCountByMatric(item.JobCodeId, MatricId !== null && MatricId !== void 0 ? MatricId : 0, item.ID)];
                                         case 1:
                                             candidateCount = _q.sent();
                                             StatusTooltip = {

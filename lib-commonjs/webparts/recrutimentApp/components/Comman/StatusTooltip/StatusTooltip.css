@@ -38,8 +38,8 @@
   border: 0.5px solid #d1d1d1;
   border-radius: 8px;
   padding: 10px 14px;
-  min-width: 240px;
-  max-width: 300px;
+  min-width: 300px; /* ← wider so 1fr columns have space to stretch */
+  max-width: 360px;
   z-index: 9999;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
   pointer-events: auto;
@@ -58,36 +58,46 @@
 }
 
 /* ── List wrapper — stacks rows vertically ────────────── */
+/* ── List wrapper ─────────────────────────────────────── */
 .status-tooltip__list {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
-/* ── Each key/value row ───────────────────────────────── */
+/* ── 3-column grid: [role label] [colon] [name] ──────── */
+/* ── 3-column grid: [role label stretched] [colon] [name] ── */
 .status-tooltip__row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: 1fr 16px 1fr; /* ← key stretches, colon fixed, name fills */
+  align-items: baseline;
+  gap: 0;
   padding: 1px 0;
 }
 
-/* ── Role label (left side) ───────────────────────────── */
+/* ── Role label — left column, right-aligned to push toward colon ── */
 .status-tooltip__key {
   font-size: 12px;
   color: #444444;
   white-space: nowrap;
-  flex-shrink: 0;
+  text-align: left; /* ← text stays left but column stretches */
 }
 
-/* ── Name value (right side, red) ────────────────────── */
+/* ── Colon — middle column, centered ─────────────────── */
+.status-tooltip__separator {
+  font-size: 12px;
+  color: #444444;
+  text-align: center;
+}
+
+/* ── Name — right column ──────────────────────────────── */
 .status-tooltip__val {
   font-size: 12px;
   color: #e24b4a;
   font-weight: 500;
-  text-align: right;
+  text-align: left;
   word-break: break-word;
+  padding-left: 4px;
 }
 
 /* ── Loading / empty state ────────────────────────────── */

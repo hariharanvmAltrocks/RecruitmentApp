@@ -102,31 +102,31 @@ export const StatusTooltip: React.FC<StatusTooltipProps> = ({
                   <span className="status-tooltip__key">
                     {data!.LineManager.Role}
                   </span>
+                  <span className="status-tooltip__separator">:</span>
                   <span className="status-tooltip__val">
-                    : {data!.LineManager.Name}
+                    {data!.LineManager.Name}
                   </span>
                 </div>
               )}
               {data!.HOD.Name && (
                 <div className="status-tooltip__row">
                   <span className="status-tooltip__key">{data!.HOD.Role}</span>
-                  <span className="status-tooltip__val">
-                    : {data!.HOD.Name}
-                  </span>
+                  <span className="status-tooltip__separator">:</span>
+                  <span className="status-tooltip__val">{data!.HOD.Name}</span>
                 </div>
               )}
               {data!.HR.Name && (
                 <div className="status-tooltip__row">
                   <span className="status-tooltip__key">{data!.HR.Role}</span>
-                  <span className="status-tooltip__val">: {data!.HR.Name}</span>
+                  <span className="status-tooltip__separator">:</span>
+                  <span className="status-tooltip__val">{data!.HR.Name}</span>
                 </div>
               )}
               {data!.Exco.Name && (
                 <div className="status-tooltip__row">
                   <span className="status-tooltip__key">{data!.Exco.Role}</span>
-                  <span className="status-tooltip__val">
-                    : {data!.Exco.Name}
-                  </span>
+                  <span className="status-tooltip__separator">:</span>
+                  <span className="status-tooltip__val">{data!.Exco.Name}</span>
                 </div>
               )}
               {data!.HRLead.Name && (
@@ -134,8 +134,9 @@ export const StatusTooltip: React.FC<StatusTooltipProps> = ({
                   <span className="status-tooltip__key">
                     {data!.HRLead.Role}
                   </span>
+                  <span className="status-tooltip__separator">:</span>
                   <span className="status-tooltip__val">
-                    : {data!.HRLead.Name}
+                    {data!.HRLead.Name}
                   </span>
                 </div>
               )}

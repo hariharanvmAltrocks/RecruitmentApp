@@ -304,13 +304,31 @@ export default class DashboardService implements IDashboard {
         };
         try {
           const response = await getProfileData.GetJobAppliedCount(params);
-          const total: number = Array.isArray(response?.data?.data)
+          let total: number = Array.isArray(response?.data?.data)
             ? response?.data?.data?.reduce(
                 (sum: number, item: ExternalApiCountItem) =>
                   sum + (item.count ?? 0),
                 0,
               )
             : (response?.data?.data?.count ?? 0);
+
+          if (metric.id === MatricID.AssignInterviewPanel) {
+            const level2Filter = [
+              {
+                FilterKey: "StatusId",
+                Operator: "eq",
+                FilterValue:
+                  StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
+              },
+              {
+                FilterKey: "JobCodeId",
+                Operator: "in",
+                FilterValue: jobCodeIds,
+              },
+            ];
+            const level2 = await this.GetCandidateDetails(level2Filter, "and");
+            total += level2?.data?.length ?? 0;
+          }
 
           result.set(String(metric.id), total);
         } catch {
@@ -368,6 +386,7 @@ export default class DashboardService implements IDashboard {
   private async _getCandidateCountByMatric(
     jobCodeId: number,
     MatricId: number,
+    RecID: number,
   ): Promise<number> {
     if (MatricId === MatricID.ReviewProfileHR) {
       return this._fetchCandidateCounts(jobCodeId, [
@@ -381,9 +400,25 @@ export default class DashboardService implements IDashboard {
         workflowStatusApi.LineManagerLevel2OnHold,
       ]);
     } else if (MatricId === MatricID.AssignInterviewPanel) {
-      return this._fetchCandidateCounts(jobCodeId, [
+      let Level1 = await this._fetchCandidateCounts(jobCodeId, [
         workflowStatusApi.PendingRecruitmentHRscheduleInterview,
       ]);
+      const level2Filter = [
+        {
+          FilterKey: "StatusId",
+          Operator: "eq",
+          FilterValue:
+            StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
+        },
+        {
+          FilterKey: "RecruitmentID/ID",
+          Operator: "eq",
+          FilterValue: RecID,
+        },
+      ];
+      const level2 = await this.GetCandidateDetails(level2Filter, "and");
+      let total = Level1 + (level2?.data?.length ?? 0);
+      return total;
     }
     return 0;
   }
@@ -494,6 +529,7 @@ export default class DashboardService implements IDashboard {
           const candidateCount = await this._getCandidateCountByMatric(
             item.JobCodeId,
             MatricId ?? 0,
+            item.ID,
           );
           let StatusTooltip: ITooltipData = {
             BusinessUnitCodeId: item.BusinessUnitCodeId,
