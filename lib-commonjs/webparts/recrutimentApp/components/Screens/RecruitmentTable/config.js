@@ -7,6 +7,7 @@ var react_2 = tslib_1.__importDefault(require("react"));
 var Config_1 = require("../../../utilities/Config");
 var UIStateContext_1 = require("../../RecrutimentApp/UIStateContext");
 var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
+var StatusTooltip_1 = require("../../Comman/StatusTooltip/StatusTooltip");
 var getActionLabel = function (actionMode, item, matricID) {
     var submissionMatricIds = [
         ConditionConfig_1.MatricID.MySubmission,
@@ -102,7 +103,18 @@ var useRecruitmentColumns = function (_a) {
         {
             id: "status",
             header: "Status",
-            render: function (item) { return (react_2.default.createElement("span", { className: "data-table__status-badge status-badge" }, item.status)); },
+            render: function (item) {
+                var _a;
+                var isTooltipStatus;
+                isTooltipStatus = [Config_1.StatusId.ReadyforRecruitmentProcess].includes(item.statusId);
+                if (!isTooltipStatus) {
+                    return (react_2.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } },
+                        react_2.default.createElement(StatusTooltip_1.StatusTooltip, { data: (_a = item.StatusTooltip) !== null && _a !== void 0 ? _a : null }),
+                        react_2.default.createElement("span", { className: "data-table__status-badge status-badge" }, item.status)));
+                }
+                return (react_2.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } },
+                    react_2.default.createElement("span", { className: "data-table__status-badge status-badge" }, item.status)));
+            },
         },
         actionColumn,
     ], false); }, [actionColumn]);

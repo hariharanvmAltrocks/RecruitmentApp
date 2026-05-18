@@ -42,6 +42,7 @@ exports.RoleName = {
     HOD: "HOD",
     EXCO: "EXCO",
     InterviewPanel: "InterviewPanel",
+    RecruitmentHRLead: "RecruitmentHRLead",
 };
 exports.CategoryID = {
     Department: 1,

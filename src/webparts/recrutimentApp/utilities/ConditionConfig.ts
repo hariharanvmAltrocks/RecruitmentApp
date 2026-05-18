@@ -48,6 +48,7 @@ export const RoleName = {
   HOD: "HOD",
   EXCO: "EXCO",
   InterviewPanel: "InterviewPanel",
+  RecruitmentHRLead: "RecruitmentHRLead",
 };
 
 export const CategoryID = {

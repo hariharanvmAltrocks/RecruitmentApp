@@ -1,3 +1,5 @@
+import { tooltipInterviewPanel } from "../../../services/Dashboard/IDashboard";
+
 export type RecruitmentTabKey =
   | "tab1"
   | "tab2"
@@ -37,6 +39,7 @@ export interface RecruitmentItem {
   status: string;
   statusId: number;
   jobCodeID: number;
+  StatusTooltip?: tooltipInterviewPanel;
 }
 
 export interface ISelectedCandidate {

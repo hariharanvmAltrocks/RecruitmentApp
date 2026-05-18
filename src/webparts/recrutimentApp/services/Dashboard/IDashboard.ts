@@ -84,6 +84,7 @@ export type DashboardData = {
   ModifiedDate: string | undefined;
   CreatedDate: string | undefined;
   CandidateCount?: number;
+  StatusTooltip?: tooltipInterviewPanel;
 };
 
 export type IEvaluValidate = {
@@ -102,6 +103,41 @@ export interface IPortalItem {
     JobCode: string;
   };
   [key: string]: unknown;
+}
+export type tooltipData = {
+  Role: string;
+  Name: string;
+};
+
+export type tooltipInterviewPanel = {
+  LineManager: tooltipData;
+  HOD: tooltipData;
+  HR: tooltipData;
+  Exco: tooltipData;
+  HRLead: tooltipData;
+};
+
+export type ITooltipData = {
+  BusinessUnitCodeId: number;
+  AssignEmail: string;
+  AssignHRLead: string;
+};
+
+export interface IJDEDataMapping {
+  LineManagerId?: number;
+  LineManager?: {
+    EMail?: string;
+  };
+
+  HODId?: number;
+  HOD?: {
+    EMail?: string;
+  };
+
+  EXCOId?: number;
+  EXCO?: {
+    EMail?: string;
+  };
 }
 
 export type IDashboard = {

@@ -1020,7 +1020,7 @@ export const MetricQueryConfig = (
   //MySubmission
   [MatricID.MySubmission]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
-    StatusFilter({ status: [], columnName: "", emailId: "" }),
+    // StatusFilter({ status: [], columnName: "", emailId: "" }),
   ),
 
   // MySubmissionHR: 28,
@@ -1101,7 +1101,7 @@ export const MetricQueryConfig = (
   [MatricID.AssignAgencies]: createQuery(
     ListNames.HRMSRecruitmentDptDetails,
     StatusFilter({
-      status: [StatusId.PendingUploadONEM, StatusId.RecruitmentInProgress],
+      status: [StatusId.RecruitmentInProgress],
       columnName: "AssignedHR",
       emailId: EmailId,
     }),

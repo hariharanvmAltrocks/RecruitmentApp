@@ -591,9 +591,28 @@ export default class RecruitmentService implements IRecruitmentService {
             .getByTitle(ListNames.RecruitAppCareerPortalIntegration)
             .items.add({
               JobCodeId: payload.Data.JobCodeId,
+              JobUniqueKey: payload.CareerPortalIntegration?.JobUniqueKey,
               RecruitmentIDId: insertedID,
             }),
         );
+
+      // const RecruitAppCareerPortalIntegration = await Promise.all(
+      //   enriched
+      //     .filter(({ payload }) => payload.Data)
+      //     .map(async ({ insertedID, payload }) => {
+      //       const jobCodeId = payload.Data.JobCodeId;
+      //       const jobCode = payload.CareerPortalIntegration?.JobCode;
+
+      //       // Insert item
+      //       return batchedSP2.web.lists
+      //         .getByTitle(ListNames.RecruitAppCareerPortalIntegration)
+      //         .items.add({
+      //           JobCodeId: jobCodeId,
+      //           JobUniqueKey: JobUniqueKey,
+      //           RecruitmentIDId: insertedID,
+      //         });
+      //     }),
+      // );
 
       await execute2();
 

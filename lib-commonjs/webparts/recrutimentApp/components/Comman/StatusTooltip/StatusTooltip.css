@@ -1,0 +1,141 @@
+@charset "UTF-8";
+/* ── Anchor ───────────────────────────────────────────── */
+.status-tooltip__anchor {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ── Trigger icon ─────────────────────────────────────── */
+.status-tooltip__icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #e24b4a;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  font-style: italic;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 1;
+  padding: 0;
+  transition: background 0.15s ease;
+}
+
+.status-tooltip__icon:hover {
+  background: #c93b3a;
+}
+
+/* ── Tooltip box ──────────────────────────────────────── */
+.status-tooltip__box {
+  position: fixed;
+  background: #ffffff;
+  border: 0.5px solid #d1d1d1;
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-width: 300px; /* ← wider so 1fr columns have space to stretch */
+  max-width: 360px;
+  z-index: 9999;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  pointer-events: auto;
+}
+
+/* ── Title row ────────────────────────────────────────── */
+.status-tooltip__title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-decoration: underline;
+  border-bottom: 0.5px solid #eeeeee;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+  white-space: nowrap;
+}
+
+/* ── List wrapper — stacks rows vertically ────────────── */
+/* ── List wrapper ─────────────────────────────────────── */
+.status-tooltip__list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* ── 3-column grid: [role label] [colon] [name] ──────── */
+/* ── 3-column grid: [role label stretched] [colon] [name] ── */
+.status-tooltip__row {
+  display: grid;
+  grid-template-columns: 1fr 16px 1fr; /* ← key stretches, colon fixed, name fills */
+  align-items: baseline;
+  gap: 0;
+  padding: 1px 0;
+}
+
+/* ── Role label — left column, right-aligned to push toward colon ── */
+.status-tooltip__key {
+  font-size: 12px;
+  color: #444444;
+  white-space: nowrap;
+  text-align: left; /* ← text stays left but column stretches */
+}
+
+/* ── Colon — middle column, centered ─────────────────── */
+.status-tooltip__separator {
+  font-size: 12px;
+  color: #444444;
+  text-align: center;
+}
+
+/* ── Name — right column ──────────────────────────────── */
+.status-tooltip__val {
+  font-size: 12px;
+  color: #e24b4a;
+  font-weight: 500;
+  text-align: left;
+  word-break: break-word;
+  padding-left: 4px;
+}
+
+/* ── Loading / empty state ────────────────────────────── */
+.status-tooltip__loading {
+  font-size: 12px;
+  color: #999999;
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Spinner ──────────────────────────────────────────── */
+.status-tooltip__spinner {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid #ddd;
+  border-top-color: #e24b4a;
+  border-radius: 50%;
+  animation: tt-spin 0.6s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes tt-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* ── Arrow (points upward toward the icon) ────────────── */
+.status-tooltip__arrow {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 8px;
+  height: 8px;
+  background: #ffffff;
+  border-left: 0.5px solid #d1d1d1;
+  border-top: 0.5px solid #d1d1d1;
+}

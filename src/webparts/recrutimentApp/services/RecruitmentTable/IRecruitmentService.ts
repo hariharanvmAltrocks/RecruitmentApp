@@ -112,6 +112,10 @@ export type PostRecuritmentData = {
     ItemCreated: string;
     IsDataSyncToRecruitment: string;
   };
+  CareerPortalIntegration?: {
+    JobCode: string;
+    JobUniqueKey: string;
+  };
 };
 
 export type PostAgentData = {

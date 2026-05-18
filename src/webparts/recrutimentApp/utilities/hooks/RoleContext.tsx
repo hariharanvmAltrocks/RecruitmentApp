@@ -421,9 +421,11 @@ export const RoleProvider = ({
     <RoleContext.Provider value={contextValue}>
       <CustomLoader isLoading={state.isLoading}>
         {state.apiUrlsError ? ( // ← check this first
-          <ServerDownError message={state.apiUrlsError} />
+          // <ServerDownError message={state.apiUrlsError} />
+          <></>
         ) : state.error ? (
-          <ErrorScreen message={state.error.message} />
+          // <ErrorScreen message={state.error.message} />
+          <></>
         ) : isFullyReady ? (
           <React.Suspense fallback={<CustomLoader isLoading />}>
             {children}

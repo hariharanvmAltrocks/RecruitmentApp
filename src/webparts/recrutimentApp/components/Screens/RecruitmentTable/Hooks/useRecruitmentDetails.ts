@@ -98,6 +98,7 @@ const mapRecruitmentItem = (
   status: item?.Status,
   statusId: item?.StatusId,
   jobCodeID: item?.JobCodeId,
+  StatusTooltip: item?.StatusTooltip,
 });
 
 export const useRecruitmentDetails = (
