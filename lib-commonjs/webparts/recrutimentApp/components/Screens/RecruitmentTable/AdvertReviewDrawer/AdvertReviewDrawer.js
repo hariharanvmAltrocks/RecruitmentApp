@@ -27,6 +27,8 @@ var react_router_dom_1 = require("react-router-dom");
 var ModalPopup_1 = require("../../../Comman/ModalPopup/ModalPopup");
 var useModalPopup_1 = require("../../../Comman/ModalPopup/useModalPopup");
 var loading_1 = tslib_1.__importDefault(require("../../../Comman/Loading/loading"));
+var PositionStatusConfig_1 = require("../../../../utilities/PositionStatusConfig");
+var CandidateProgress_1 = require("./Components/CandidateProgress/CandidateProgress");
 var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
     return (react_1.default.createElement("div", { className: "advert-review-drawer__skeleton", style: { width: width, height: height } }));
@@ -66,14 +68,15 @@ var AdvertReviewDrawer = function (_a) {
     var navigate = (0, react_router_dom_1.useNavigate)();
     var _e = (0, useModalPopup_1.useModalPopup)(), modalState = _e.modalState, showModal = _e.showModal, closeModal = _e.closeModal;
     var _f = (0, react_1.useState)(false), loading = _f[0], setLoading = _f[1];
-    var _g = (0, getPositionDetails_1.usePositionDetails)(selectedJobId, selectedType), positionDetails = _g.data, positionLoading = _g.loading;
-    var _h = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _h.data, signatureLoading = _h.loading;
+    var _g = (0, react_1.useState)(false), showRoadmap = _g[0], setShowRoadmap = _g[1];
+    var _h = (0, getPositionDetails_1.usePositionDetails)(selectedJobId, selectedType), positionDetails = _h.data, positionLoading = _h.loading;
+    var _j = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _j.data, signatureLoading = _j.loading;
     var jobCodeId = (_b = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCodeId) !== null && _b !== void 0 ? _b : 0;
     var jobCode = (_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCode) !== null && _c !== void 0 ? _c : selectedJobCode;
-    var _j = (0, getAdvertismentDetails_1.useAdvertismentDetails)(jobCodeId, { enabled: !!jobCodeId }), advertDetails = _j.data, BGVData = _j.BGVValue, handleBvgToggle = _j.handleBvgToggle, advertLoading = _j.loading;
-    var _k = (0, getAttachmentDetails_1.useAttachmentDetails)(jobCode, { enabled: !!jobCode }), attachments = _k.data, attachmentLoading = _k.loading;
+    var _k = (0, getAdvertismentDetails_1.useAdvertismentDetails)(jobCodeId, { enabled: !!jobCodeId }), advertDetails = _k.data, BGVData = _k.BGVValue, handleBvgToggle = _k.handleBvgToggle, advertLoading = _k.loading;
+    var _l = (0, getAttachmentDetails_1.useAttachmentDetails)(jobCode, { enabled: !!jobCode }), attachments = _l.data, attachmentLoading = _l.loading;
     var isLoading = positionLoading || advertLoading || attachmentLoading || signatureLoading;
-    var _l = (0, react_1.useState)([]), uploadDocument = _l[0], setUploadDocument = _l[1];
+    var _m = (0, react_1.useState)([]), uploadDocument = _m[0], setUploadDocument = _m[1];
     var showValidationRef = (0, react_1.useRef)(false);
     var isSubmittingRef = (0, react_1.useRef)(false);
     (0, react_1.useEffect)(function () {
@@ -170,7 +173,7 @@ var AdvertReviewDrawer = function (_a) {
             onConfirm: function () {
                 closeModal();
                 onClose();
-                navigate("/RecruitmentTable");
+                navigate("/MyTracker");
                 refreshKey();
             },
         });
@@ -284,7 +287,7 @@ var AdvertReviewDrawer = function (_a) {
             onConfirm: function () {
                 onClose();
                 closeModal();
-                navigate("/RecruitmentTable");
+                navigate("/MyTracker");
             },
             onCancel: closeModal,
         });
@@ -304,9 +307,24 @@ var AdvertReviewDrawer = function (_a) {
                                 react_1.default.createElement("span", { className: "advert-review-drawer__badge" }, headerMeta.code),
                                 react_1.default.createElement("span", { className: "advert-review-drawer__dot" }),
                                 react_1.default.createElement("span", { className: "advert-review-drawer__meta-text" }, headerMeta.department)))))),
-                    react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__close", onClick: onClose },
-                        react_1.default.createElement(lucide_react_1.X, { size: 18 }))),
+                    react_1.default.createElement("div", { className: "advert-review-drawer__header-right", style: { display: "flex", alignItems: "center", gap: "12px" } },
+                        react_1.default.createElement("button", { onClick: function () { return setShowRoadmap(true); }, className: "advert-roadmap__toggle-btn ".concat(showRoadmap ? "advert-roadmap__toggle-btn--active" : "advert-roadmap__toggle-btn--inactive") },
+                            react_1.default.createElement(lucide_react_1.Network, { size: 14 }),
+                            "Position Status",
+                            react_1.default.createElement(lucide_react_1.ChevronRight, { size: 14, className: "advert-roadmap__toggle-icon" })),
+                        react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__close", onClick: onClose },
+                            react_1.default.createElement(lucide_react_1.X, { size: 18 })))),
                 react_1.default.createElement("div", { className: "advert-review-drawer__content" },
+                    react_1.default.createElement(framer_motion_1.AnimatePresence, null, showRoadmap && (react_1.default.createElement(framer_motion_1.motion.div, { initial: { height: 0, opacity: 0 }, animate: { height: "auto", opacity: 1 }, exit: { height: 0, opacity: 0 }, transition: { duration: 0.4, ease: "easeInOut" } },
+                        react_1.default.createElement("div", { className: "advert-roadmap-wrapper" },
+                            react_1.default.createElement("div", { className: "advert-roadmap__header-top" },
+                                react_1.default.createElement("h3", { className: "advert-roadmap__header-title" },
+                                    react_1.default.createElement("div", { className: "advert-roadmap__header-title-bar" }),
+                                    "Recruitment Lifecycle Roadmap"),
+                                react_1.default.createElement("div", { className: "advert-roadmap__header-status" },
+                                    react_1.default.createElement("div", { className: "advert-roadmap__header-status-dot" }),
+                                    react_1.default.createElement("span", { className: "advert-roadmap__header-status-text" }, "Active Status: Advert Review"))),
+                            react_1.default.createElement(PositionRoadmap, { statusId: (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusId) || 0 }))))),
                     react_1.default.createElement(PositionFramework_1.PositionFramework, { positionDetails: mappedData, isLoading: isLoading, headerCode: headerMeta.code }),
                     react_1.default.createElement(AdvertLanguageToggle_1.AdvertLanguageToggle, { advertLanguage: advertLanguage, advertContent: advertContent, isLoading: isLoading, onLanguageChange: onLanguageChange }),
                     react_1.default.createElement(RequiredAttachments_1.RequiredAttachments, { attachments: attachments, isLoading: isLoading }),
@@ -332,4 +350,33 @@ var AdvertReviewDrawer = function (_a) {
         react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal }))))));
 };
 exports.AdvertReviewDrawer = AdvertReviewDrawer;
+var PositionRoadmap = function (_a) {
+    var statusId = _a.statusId;
+    var currentStage = (0, PositionStatusConfig_1.getStageIndex)(statusId);
+    return (react_1.default.createElement("div", { className: "advert-roadmap" },
+        react_1.default.createElement("div", { className: "advert-roadmap__container" }, PositionStatusConfig_1.stages.map(function (stage, index) {
+            var Icon = stage.icon;
+            var isCompleted = index < currentStage;
+            var isCurrent = index === currentStage;
+            return (react_1.default.createElement(framer_motion_1.motion.div, { key: index, initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { delay: index * 0.05 }, className: "advert-roadmap__stage" },
+                index < PositionStatusConfig_1.stages.length - 1 && (react_1.default.createElement("div", { className: "advert-roadmap__connector" },
+                    react_1.default.createElement(framer_motion_1.motion.div, { initial: { width: 0 }, animate: { width: isCompleted ? "100%" : "0%" }, className: "advert-roadmap__connector-fill", transition: { duration: 0.8, delay: index * 0.1 } }))),
+                react_1.default.createElement("div", { className: "advert-roadmap__node-wrapper" },
+                    react_1.default.createElement(framer_motion_1.motion.div, { whileHover: { scale: 1.15 }, className: "advert-roadmap__node ".concat(isCompleted
+                            ? "advert-roadmap__node--completed"
+                            : isCurrent
+                                ? "advert-roadmap__node--current"
+                                : "advert-roadmap__node--pending") }, isCompleted ? (react_1.default.createElement(lucide_react_1.Check, { size: 18, strokeWidth: 3 })) : (react_1.default.createElement(Icon, { size: 18, strokeWidth: 2 }))),
+                    isCurrent && (react_1.default.createElement("div", { className: "advert-roadmap__ping-wrapper" },
+                        react_1.default.createElement("span", { className: "advert-roadmap__ping" })))),
+                react_1.default.createElement("div", { className: "advert-roadmap__label-wrapper" },
+                    react_1.default.createElement("span", { className: "advert-roadmap__label ".concat(isCompleted
+                            ? "advert-roadmap__label--completed"
+                            : isCurrent
+                                ? "advert-roadmap__label--current"
+                                : "advert-roadmap__label--pending") }, stage.label),
+                    isCompleted && (react_1.default.createElement("span", { className: "advert-roadmap__status-done" }, "Done")))));
+        })),
+        react_1.default.createElement(CandidateProgress_1.CandidateProgress, null)));
+};
 //# sourceMappingURL=AdvertReviewDrawer.js.map

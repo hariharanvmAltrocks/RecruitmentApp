@@ -583,6 +583,217 @@
   animation: shimmer 1.4s infinite;
 }
 
+.advert-roadmap {
+  width: 100%;
+  position: relative;
+  padding: 48px 0;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px);
+  border-top: 1px solid rgba(226, 232, 240, 0.5);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+  padding-left: 16px;
+  padding-right: 16px;
+  overflow: hidden;
+}
+.advert-roadmap__container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+}
+.advert-roadmap__stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.advert-roadmap__connector {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  width: 100%;
+  height: 3px;
+  background: #f1f5f9;
+  z-index: 0;
+}
+.advert-roadmap__connector-fill {
+  height: 100%;
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+}
+.advert-roadmap__node-wrapper {
+  position: relative;
+  z-index: 10;
+}
+.advert-roadmap__node {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+  transition: all 0.5s ease;
+}
+.advert-roadmap__node--completed {
+  background: #10b981;
+  border-color: #10b981;
+  color: white;
+  box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.1), 0 4px 6px -4px rgba(16, 185, 129, 0.1);
+}
+.advert-roadmap__node--current {
+  background: #f97316;
+  border-color: #f97316;
+  color: white;
+  box-shadow: 0 20px 25px -5px rgba(249, 115, 22, 0.1), 0 8px 10px -6px rgba(249, 115, 22, 0.1);
+  transform: scale(1.1);
+  box-shadow: 0 0 0 4px #fff7ed;
+}
+.advert-roadmap__node--pending {
+  background: white;
+  border-color: #e2e8f0;
+  color: #cbd5e1;
+}
+.advert-roadmap__ping-wrapper {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: flex;
+  gap: 2px;
+}
+.advert-roadmap__ping {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fdba74;
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+.advert-roadmap__label-wrapper {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 85px;
+}
+.advert-roadmap__label {
+  font-size: 8px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  line-height: 1.2;
+  transition: color 0.3s ease;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.advert-roadmap__label--completed {
+  color: #059669;
+}
+.advert-roadmap__label--current {
+  color: #0f172a;
+}
+.advert-roadmap__label--pending {
+  color: #94a3b8;
+}
+.advert-roadmap__status-done {
+  margin-top: 4px;
+  font-size: 7px;
+  font-weight: 700;
+  color: #34d399;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+}
+.advert-roadmap__header {
+  padding: 32px 32px 0;
+  background: rgba(248, 250, 252, 0.3);
+  border-bottom: 1px solid #f1f5f9;
+  overflow: hidden;
+}
+.advert-roadmap__header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.advert-roadmap__header-title {
+  font-size: 12px;
+  font-weight: 900;
+  color: #1e293b;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+.advert-roadmap__header-title-bar {
+  width: 6px;
+  height: 24px;
+  background: #2563eb;
+  border-radius: 999px;
+}
+.advert-roadmap__header-status {
+  padding: 4px 12px;
+  background: #eff6ff;
+  border-radius: 8px;
+  border: 1px solid #dbeafe;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.advert-roadmap__header-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3b82f6;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.advert-roadmap__header-status-text {
+  font-size: 10px;
+  font-weight: 900;
+  color: #2563eb;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.advert-roadmap__toggle-btn {
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+.advert-roadmap__toggle-btn--active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+  box-shadow: 0 4px 6px -1px rgb(191, 219, 254), 0 2px 4px -1px rgb(191, 219, 254);
+}
+.advert-roadmap__toggle-btn--active .advert-roadmap__toggle-icon {
+  transform: rotate(90deg);
+}
+.advert-roadmap__toggle-btn--inactive {
+  background: white;
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+.advert-roadmap__toggle-btn--inactive:hover {
+  background: #eff6ff;
+}
+.advert-roadmap__toggle-icon {
+  transition: transform 0.3s ease;
+}
+
 @keyframes shimmer {
   0% {
     background-position: -200px 0;
@@ -861,4 +1072,54 @@
   margin-top: 4px;
   font-size: 12px;
   color: #e53e3e;
+}
+.advert-review-drawer__field-error__toggle-btn {
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+.advert-review-drawer__field-error__toggle-btn--active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+  box-shadow: 0 4px 6px -1px rgb(191, 219, 254), 0 2px 4px -1px rgb(191, 219, 254);
+}
+.advert-review-drawer__field-error__toggle-btn--active .advert-roadmap__toggle-icon {
+  transform: rotate(90deg);
+}
+.advert-review-drawer__field-error__toggle-btn--inactive {
+  background: white;
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+.advert-review-drawer__field-error__toggle-btn--inactive:hover {
+  background: #eff6ff;
+}
+.advert-review-drawer__field-error__toggle-icon {
+  transition: transform 0.3s ease;
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }

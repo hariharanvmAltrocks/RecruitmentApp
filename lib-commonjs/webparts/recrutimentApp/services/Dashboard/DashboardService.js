@@ -330,31 +330,30 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype._getCandidateCountByMatric = function (jobCodeId, MatricId, RecID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var Level1, level2Filter, level2, total;
-            var _a, _b;
-            return tslib_1.__generator(this, function (_c) {
-                switch (_c.label) {
+            var level1Promise, level2Promise, _a, level1, level2, error_3;
+            var _b, _c;
+            return tslib_1.__generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
-                        if (!(MatricId === ConditionConfig_1.MatricID.ReviewProfileHR)) return [3 /*break*/, 1];
-                        return [2 /*return*/, this._fetchCandidateCounts(jobCodeId, [
-                                Config_1.workflowStatusApi.HRPending,
-                            ])];
-                    case 1:
-                        if (!(MatricId === ConditionConfig_1.MatricID.ReviewProfileLM)) return [3 /*break*/, 2];
-                        return [2 /*return*/, this._fetchCandidateCounts(jobCodeId, [
-                                Config_1.workflowStatusApi.LineManagerL1Pending,
-                                Config_1.workflowStatusApi.LineManagerL2Pending,
-                                Config_1.workflowStatusApi.LineManagerLevel1OnHold,
-                                Config_1.workflowStatusApi.LineManagerLevel2OnHold,
-                            ])];
-                    case 2:
-                        if (!(MatricId === ConditionConfig_1.MatricID.AssignInterviewPanel)) return [3 /*break*/, 5];
-                        return [4 /*yield*/, this._fetchCandidateCounts(jobCodeId, [
-                                Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview,
-                            ])];
-                    case 3:
-                        Level1 = _c.sent();
-                        level2Filter = [
+                        _d.trys.push([0, 3, , 4]);
+                        if (MatricId === ConditionConfig_1.MatricID.ReviewProfileHR) {
+                            return [2 /*return*/, this._fetchCandidateCounts(jobCodeId, [
+                                    Config_1.workflowStatusApi.HRPending,
+                                ])];
+                        }
+                        if (MatricId === ConditionConfig_1.MatricID.ReviewProfileLM) {
+                            return [2 /*return*/, this._fetchCandidateCounts(jobCodeId, [
+                                    Config_1.workflowStatusApi.LineManagerL1Pending,
+                                    Config_1.workflowStatusApi.LineManagerL2Pending,
+                                    Config_1.workflowStatusApi.LineManagerLevel1OnHold,
+                                    Config_1.workflowStatusApi.LineManagerLevel2OnHold,
+                                ])];
+                        }
+                        if (!(MatricId === ConditionConfig_1.MatricID.AssignInterviewPanel)) return [3 /*break*/, 2];
+                        level1Promise = this._fetchCandidateCounts(jobCodeId, [
+                            Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+                        ]);
+                        level2Promise = this.GetCandidateDetails([
                             {
                                 FilterKey: "StatusId",
                                 Operator: "eq",
@@ -365,124 +364,19 @@ var DashboardService = /** @class */ (function () {
                                 Operator: "eq",
                                 FilterValue: RecID,
                             },
-                        ];
-                        return [4 /*yield*/, this.GetCandidateDetails(level2Filter, "and")];
-                    case 4:
-                        level2 = _c.sent();
-                        total = Level1 + ((_b = (_a = level2 === null || level2 === void 0 ? void 0 : level2.data) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0);
-                        return [2 /*return*/, total];
-                    case 5: return [2 /*return*/, 0];
-                }
-            });
-        });
-    };
-    DashboardService.prototype.GetInterviewPanelTooltiData = function (data) {
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var GetItem, error_3;
-            var _this = this;
-            return tslib_1.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        GetItem = [{}];
-                        _a.label = 1;
+                        ], "and");
+                        return [4 /*yield*/, Promise.all([
+                                level1Promise,
+                                level2Promise,
+                            ])];
                     case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, spservice_1.default.SPReadItems({
-                                Listname: Config_1.ListNames.JDEDataMapping,
-                                Select: "*,BUC/BusineesUnitCode,LineManager/EMail,HOD/EMail,HR/EMail,EXCO/EMail",
-                                Filter: [
-                                    {
-                                        FilterKey: "BUC",
-                                        Operator: "eq",
-                                        FilterValue: data.BusinessUnitCodeId,
-                                    },
-                                ],
-                                Expand: "BUC,LineManager,HOD,HR,EXCO",
-                                Orderby: "ID",
-                                Orderbydecorasc: true,
-                            }).then(function (res) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                var response, _i, response_1, item, UserName, UserName, UserName, UserName, UserName;
-                                var _a, _b, _c;
-                                return tslib_1.__generator(this, function (_d) {
-                                    switch (_d.label) {
-                                        case 0:
-                                            response = res;
-                                            _i = 0, response_1 = response;
-                                            _d.label = 1;
-                                        case 1:
-                                            if (!(_i < response_1.length)) return [3 /*break*/, 12];
-                                            item = response_1[_i];
-                                            if (!((item === null || item === void 0 ? void 0 : item.LineManagerId) && ((_a = item === null || item === void 0 ? void 0 : item.LineManager) === null || _a === void 0 ? void 0 : _a.EMail))) return [3 /*break*/, 3];
-                                            return [4 /*yield*/, ServiceExport_1.CommonServices.GetUserName(item.LineManager.EMail)];
-                                        case 2:
-                                            UserName = _d.sent();
-                                            GetItem[0].LineManager = {
-                                                Role: ConditionConfig_1.RoleName.LineManager,
-                                                Name: String(UserName.data),
-                                            };
-                                            _d.label = 3;
-                                        case 3:
-                                            if (!((item === null || item === void 0 ? void 0 : item.HODId) && ((_b = item === null || item === void 0 ? void 0 : item.HOD) === null || _b === void 0 ? void 0 : _b.EMail))) return [3 /*break*/, 5];
-                                            return [4 /*yield*/, ServiceExport_1.CommonServices.GetUserName(item.HOD.EMail)];
-                                        case 4:
-                                            UserName = _d.sent();
-                                            GetItem[0].HOD = {
-                                                Role: ConditionConfig_1.RoleName.HOD,
-                                                Name: String(UserName.data),
-                                            };
-                                            _d.label = 5;
-                                        case 5:
-                                            if (!((item === null || item === void 0 ? void 0 : item.EXCOId) && ((_c = item === null || item === void 0 ? void 0 : item.EXCO) === null || _c === void 0 ? void 0 : _c.EMail))) return [3 /*break*/, 7];
-                                            return [4 /*yield*/, ServiceExport_1.CommonServices.GetUserName(item.EXCO.EMail)];
-                                        case 6:
-                                            UserName = _d.sent();
-                                            GetItem[0].Exco = {
-                                                Role: ConditionConfig_1.RoleName.EXCO,
-                                                Name: String(UserName.data),
-                                            };
-                                            _d.label = 7;
-                                        case 7:
-                                            if (!data.AssignEmail) return [3 /*break*/, 9];
-                                            return [4 /*yield*/, ServiceExport_1.CommonServices.GetUserName(data.AssignEmail)];
-                                        case 8:
-                                            UserName = _d.sent();
-                                            GetItem[0].HR = {
-                                                Role: ConditionConfig_1.RoleName.RecruitmentHR,
-                                                Name: String(UserName.data),
-                                            };
-                                            _d.label = 9;
-                                        case 9:
-                                            if (!data.AssignHRLead) return [3 /*break*/, 11];
-                                            return [4 /*yield*/, ServiceExport_1.CommonServices.GetUserName(data.AssignHRLead)];
-                                        case 10:
-                                            UserName = _d.sent();
-                                            GetItem[0].HRLead = {
-                                                Role: ConditionConfig_1.RoleName.RecruitmentHRLead,
-                                                Name: String(UserName.data),
-                                            };
-                                            _d.label = 11;
-                                        case 11:
-                                            _i++;
-                                            return [3 /*break*/, 1];
-                                        case 12: return [2 /*return*/];
-                                    }
-                                });
-                            }); })];
-                    case 2:
-                        _a.sent();
-                        return [2 /*return*/, {
-                                data: GetItem,
-                                status: 200,
-                                message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
-                            }];
+                        _a = _d.sent(), level1 = _a[0], level2 = _a[1];
+                        return [2 /*return*/, level1 + ((_c = (_b = level2 === null || level2 === void 0 ? void 0 : level2.data) === null || _b === void 0 ? void 0 : _b.length) !== null && _c !== void 0 ? _c : 0)];
+                    case 2: return [2 /*return*/, 0];
                     case 3:
-                        error_3 = _a.sent();
-                        console.error("Error fetching data GetHRMSRecruitmentRoleProfileDetails:", error_3);
-                        return [2 /*return*/, {
-                                data: GetItem,
-                                status: 500,
-                                message: "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
-                            }];
+                        error_3 = _d.sent();
+                        console.error("_getCandidateCountByMatric Error:", error_3);
+                        return [2 /*return*/, 0];
                     case 4: return [2 /*return*/];
                 }
             });
@@ -490,15 +384,15 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetRecruitmentDetails = function (filterParam, filterConditions, MatricId) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var res, GridResult, error_4;
+            var recruitmentResponse, uniqueBusinessUnitIds, jdeResponse, jdeMap_1, userCache_1, getCachedUserName_1, GridResult, error_4;
             var _this = this;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 3, , 4]);
+                        _a.trys.push([0, 4, , 5]);
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,
-                                Select: "*,Status/StatusDescription,JobCode/JobCode,JobCode/ID,JobCode/JobTitleInEnglish,BusinessUnitCode/BusineesUnitCode,Department/DepartmentName",
+                                Select: "\n        *,\n        Status/StatusDescription,\n        JobCode/JobCode,\n        JobCode/ID,\n        JobCode/JobTitleInEnglish,\n        BusinessUnitCode/BusineesUnitCode,\n        Department/DepartmentName\n      ",
                                 Filter: filterParam,
                                 FilterCondition: filterConditions,
                                 Expand: "Status,JobCode,BusinessUnitCode,Department",
@@ -507,67 +401,161 @@ var DashboardService = /** @class */ (function () {
                                 Orderbydecorasc: true,
                             })];
                     case 1:
-                        res = _a.sent();
-                        if (!res.length) {
-                            return [2 /*return*/, { data: [], status: 200, message: "No records found" }];
+                        recruitmentResponse = _a.sent();
+                        if (!recruitmentResponse.length) {
+                            return [2 /*return*/, {
+                                    data: [],
+                                    status: 200,
+                                    message: "No records found",
+                                }];
                         }
-                        return [4 /*yield*/, Promise.all(res.map(function (item, index) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                var candidateCount, StatusTooltip, StatusTooltipResult;
-                                var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
-                                return tslib_1.__generator(this, function (_q) {
-                                    switch (_q.label) {
+                        uniqueBusinessUnitIds = Array.from(new Set(recruitmentResponse
+                            .map(function (item) { return item.BusinessUnitCodeId; })
+                            .filter(Boolean)));
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.JDEDataMapping,
+                                Select: "\n        *,\n        BUC/BusineesUnitCode,\n        LineManager/Title,\n        LineManager/EMail,\n        HOD/Title,\n        HOD/EMail,\n        HR/Title,\n        HR/EMail,\n        EXCO/Title,\n        EXCO/EMail\n      ",
+                                Filter: uniqueBusinessUnitIds.map(function (id) { return ({
+                                    FilterKey: "BUC",
+                                    Operator: "eq",
+                                    FilterValue: id,
+                                }); }),
+                                FilterCondition: "or",
+                                Expand: "BUC,LineManager,HOD,HR,EXCO",
+                                Topcount: 5000,
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            })];
+                    case 2:
+                        jdeResponse = _a.sent();
+                        jdeMap_1 = new Map();
+                        jdeResponse.forEach(function (item) {
+                            if (item === null || item === void 0 ? void 0 : item.BUCId) {
+                                jdeMap_1.set(item.BUCId, item);
+                            }
+                        });
+                        userCache_1 = new Map();
+                        getCachedUserName_1 = function (email, title) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                            var response, userName, error_5;
+                            return tslib_1.__generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        _a.trys.push([0, 2, , 3]);
+                                        if (title) {
+                                            return [2 /*return*/, title];
+                                        }
+                                        if (!email) {
+                                            return [2 /*return*/, ""];
+                                        }
+                                        if (userCache_1.has(email)) {
+                                            return [2 /*return*/, userCache_1.get(email) || ""];
+                                        }
+                                        return [4 /*yield*/, ServiceExport_1.CommonServices.GetUserName(email)];
+                                    case 1:
+                                        response = _a.sent();
+                                        userName = String((response === null || response === void 0 ? void 0 : response.data) || "");
+                                        userCache_1.set(email, userName);
+                                        return [2 /*return*/, userName];
+                                    case 2:
+                                        error_5 = _a.sent();
+                                        console.error("getCachedUserName Error:", error_5);
+                                        return [2 /*return*/, ""];
+                                    case 3: return [2 /*return*/];
+                                }
+                            });
+                        }); };
+                        return [4 /*yield*/, Promise.all(recruitmentResponse.map(function (item, index) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                var candidateCount, jdeData, _a, LineManager, HOD, Exco, HR, HRLead, StatusTooltip;
+                                var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
+                                return tslib_1.__generator(this, function (_w) {
+                                    switch (_w.label) {
                                         case 0: return [4 /*yield*/, this._getCandidateCountByMatric(item.JobCodeId, MatricId !== null && MatricId !== void 0 ? MatricId : 0, item.ID)];
                                         case 1:
-                                            candidateCount = _q.sent();
-                                            StatusTooltip = {
-                                                BusinessUnitCodeId: item.BusinessUnitCodeId,
-                                                AssignEmail: item.AssignedHR,
-                                                AssignHRLead: item.RecruitmentHRLead,
-                                            };
-                                            return [4 /*yield*/, this.GetInterviewPanelTooltiData(StatusTooltip)];
+                                            candidateCount = _w.sent();
+                                            jdeData = jdeMap_1.get(item.BusinessUnitCodeId);
+                                            return [4 /*yield*/, Promise.all([
+                                                    getCachedUserName_1((_b = jdeData === null || jdeData === void 0 ? void 0 : jdeData.LineManager) === null || _b === void 0 ? void 0 : _b.EMail, (_c = jdeData === null || jdeData === void 0 ? void 0 : jdeData.LineManager) === null || _c === void 0 ? void 0 : _c.Title),
+                                                    getCachedUserName_1((_d = jdeData === null || jdeData === void 0 ? void 0 : jdeData.HOD) === null || _d === void 0 ? void 0 : _d.EMail, (_e = jdeData === null || jdeData === void 0 ? void 0 : jdeData.HOD) === null || _e === void 0 ? void 0 : _e.Title),
+                                                    getCachedUserName_1((_f = jdeData === null || jdeData === void 0 ? void 0 : jdeData.EXCO) === null || _f === void 0 ? void 0 : _f.EMail, (_g = jdeData === null || jdeData === void 0 ? void 0 : jdeData.EXCO) === null || _g === void 0 ? void 0 : _g.Title),
+                                                    getCachedUserName_1(item === null || item === void 0 ? void 0 : item.AssignedHR),
+                                                    getCachedUserName_1(item === null || item === void 0 ? void 0 : item.RecruitmentHRLead),
+                                                ])];
                                         case 2:
-                                            StatusTooltipResult = _q.sent();
-                                            console.log("StatusTooltipResult", StatusTooltipResult);
+                                            _a = _w.sent(), LineManager = _a[0], HOD = _a[1], Exco = _a[2], HR = _a[3], HRLead = _a[4];
+                                            StatusTooltip = {
+                                                LineManager: LineManager
+                                                    ? {
+                                                        Role: ConditionConfig_1.RoleName.LineManager,
+                                                        Name: LineManager,
+                                                    }
+                                                    : {},
+                                                HOD: HOD
+                                                    ? {
+                                                        Role: ConditionConfig_1.RoleName.HOD,
+                                                        Name: HOD,
+                                                    }
+                                                    : {},
+                                                Exco: Exco
+                                                    ? {
+                                                        Role: ConditionConfig_1.RoleName.EXCO,
+                                                        Name: Exco,
+                                                    }
+                                                    : {},
+                                                HR: HR
+                                                    ? {
+                                                        Role: ConditionConfig_1.RoleName.RecruitmentHR,
+                                                        Name: HR,
+                                                    }
+                                                    : {},
+                                                HRLead: HRLead
+                                                    ? {
+                                                        Role: ConditionConfig_1.RoleName.RecruitmentHRLead,
+                                                        Name: HRLead,
+                                                    }
+                                                    : {},
+                                            };
                                             return [2 /*return*/, {
                                                     ID: item.ID,
                                                     RecordID: index + 1,
-                                                    BusinessUnitCode: (_b = (_a = item === null || item === void 0 ? void 0 : item.BusinessUnitCode) === null || _a === void 0 ? void 0 : _a.BusineesUnitCode) !== null && _b !== void 0 ? _b : "",
+                                                    BusinessUnitCode: (_j = (_h = item === null || item === void 0 ? void 0 : item.BusinessUnitCode) === null || _h === void 0 ? void 0 : _h.BusineesUnitCode) !== null && _j !== void 0 ? _j : "",
                                                     Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
                                                     NumberOfPersonNeeded: item === null || item === void 0 ? void 0 : item.NumberOfPersonNeeded,
-                                                    Type: (_c = item === null || item === void 0 ? void 0 : item.DataFrom) !== null && _c !== void 0 ? _c : "",
-                                                    Status: (_e = (_d = item === null || item === void 0 ? void 0 : item.Status) === null || _d === void 0 ? void 0 : _d.StatusDescription) !== null && _e !== void 0 ? _e : "",
+                                                    Type: (_k = item === null || item === void 0 ? void 0 : item.DataFrom) !== null && _k !== void 0 ? _k : "",
+                                                    Status: (_m = (_l = item === null || item === void 0 ? void 0 : item.Status) === null || _l === void 0 ? void 0 : _l.StatusDescription) !== null && _m !== void 0 ? _m : "",
                                                     StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
-                                                    JobCodeId: (_g = (_f = item === null || item === void 0 ? void 0 : item.JobCode) === null || _f === void 0 ? void 0 : _f.ID) !== null && _g !== void 0 ? _g : 0,
-                                                    JobCode: (_j = (_h = item === null || item === void 0 ? void 0 : item.JobCode) === null || _h === void 0 ? void 0 : _h.JobCode) !== null && _j !== void 0 ? _j : "",
-                                                    JobTitleEnglish: (_l = (_k = item === null || item === void 0 ? void 0 : item.JobCode) === null || _k === void 0 ? void 0 : _k.JobTitleInEnglish) !== null && _l !== void 0 ? _l : "",
+                                                    JobCodeId: (_p = (_o = item === null || item === void 0 ? void 0 : item.JobCode) === null || _o === void 0 ? void 0 : _o.ID) !== null && _p !== void 0 ? _p : 0,
+                                                    JobCode: (_r = (_q = item === null || item === void 0 ? void 0 : item.JobCode) === null || _q === void 0 ? void 0 : _q.JobCode) !== null && _r !== void 0 ? _r : "",
+                                                    JobTitleEnglish: (_t = (_s = item === null || item === void 0 ? void 0 : item.JobCode) === null || _s === void 0 ? void 0 : _s.JobTitleInEnglish) !== null && _t !== void 0 ? _t : "",
                                                     ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
                                                         ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
                                                         : undefined,
                                                     CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
                                                         ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
                                                         : undefined,
-                                                    Department: (_o = (_m = item === null || item === void 0 ? void 0 : item.Department) === null || _m === void 0 ? void 0 : _m.DepartmentName) !== null && _o !== void 0 ? _o : "",
+                                                    Department: (_v = (_u = item === null || item === void 0 ? void 0 : item.Department) === null || _u === void 0 ? void 0 : _u.DepartmentName) !== null && _v !== void 0 ? _v : "",
                                                     EmploymentCategory: item === null || item === void 0 ? void 0 : item.EmploymentCategory,
                                                     CandidateCount: candidateCount,
-                                                    StatusTooltip: ((_p = StatusTooltipResult === null || StatusTooltipResult === void 0 ? void 0 : StatusTooltipResult.data) === null || _p === void 0 ? void 0 : _p.length) > 0
-                                                        ? StatusTooltipResult.data[0]
-                                                        : undefined,
+                                                    StatusTooltip: StatusTooltip,
                                                 }];
                                     }
                                 });
                             }); }))];
-                    case 2:
+                    case 3:
                         GridResult = _a.sent();
                         return [2 /*return*/, {
                                 data: GridResult,
                                 status: 200,
                                 message: "GetRecruitmentDetails fetched successfully",
                             }];
-                    case 3:
+                    case 4:
                         error_4 = _a.sent();
                         console.error("Error fetching GetRecruitmentDetails:", error_4);
-                        return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
-                    case 4: return [2 /*return*/];
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error fetching data",
+                            }];
+                    case 5: return [2 /*return*/];
                 }
             });
         });
@@ -700,7 +688,7 @@ var DashboardService = /** @class */ (function () {
     // }
     DashboardService.prototype.GetCandidateDetails = function (filterParam, filterConditions, MatricId, EmailID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var isEvaluationFlow, UserID, listItems, recruitmentIds_1, res, recruitmentIds, uniqueGrades, recruitmentFilter, _a, deptResult, gradeResults_1, gradeLevelMap_1, deptMap_1, _i, _b, dept, existing, GridResult, error_5;
+            var isEvaluationFlow, UserID, listItems, recruitmentIds_1, res, recruitmentIds, uniqueGrades, recruitmentFilter, _a, deptResult, gradeResults_1, gradeLevelMap_1, deptMap_1, _i, _b, dept, existing, GridResult, error_6;
             var _c, _d, _e, _f;
             return tslib_1.__generator(this, function (_g) {
                 switch (_g.label) {
@@ -828,8 +816,8 @@ var DashboardService = /** @class */ (function () {
                         });
                         return [2 /*return*/, { data: GridResult, status: 200, message: "Success" }];
                     case 6:
-                        error_5 = _g.sent();
-                        console.error("Error fetching from Candidate details:", error_5);
+                        error_6 = _g.sent();
+                        console.error("Error fetching from Candidate details:", error_6);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
                     case 7: return [2 /*return*/];
                 }
@@ -838,7 +826,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetSelectedCandidate = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var GridResult, res, ids, candidateIds, recruitmentFilter, candidateFilter, DeptDetails, getCandidateDetails, deptMap_2, candidateMap_1, error_6;
+            var GridResult, res, ids, candidateIds, recruitmentFilter, candidateFilter, DeptDetails, getCandidateDetails, deptMap_2, candidateMap_1, error_7;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -913,8 +901,8 @@ var DashboardService = /** @class */ (function () {
                         });
                         return [2 /*return*/, { data: GridResult, status: 200, message: "Success" }];
                     case 4:
-                        error_6 = _a.sent();
-                        console.error("Error fetching from Candidate details:", error_6);
+                        error_7 = _a.sent();
+                        console.error("Error fetching from Candidate details:", error_7);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
                     case 5: return [2 /*return*/];
                 }
@@ -923,7 +911,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetNPAEPVRRDetails = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var queries, batchRes, additionalExistingItems, newPositionItems, vacancyItems, additionalIds, newPositionIds, _a, additionalPositionRes, newPositionRes, additionalPositionMap_1, newPositionMap_1, mapCommonFields_1, additionalExistingResult, newPositionResult, vacancyResult, GridResult, error_7;
+            var queries, batchRes, additionalExistingItems, newPositionItems, vacancyItems, additionalIds, newPositionIds, _a, additionalPositionRes, newPositionRes, additionalPositionMap_1, newPositionMap_1, mapCommonFields_1, additionalExistingResult, newPositionResult, vacancyResult, GridResult, error_8;
             var _b, _c;
             return tslib_1.__generator(this, function (_d) {
                 switch (_d.label) {
@@ -1061,8 +1049,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "GetNPAEPVRRDetails fetched successfully",
                             }];
                     case 3:
-                        error_7 = _d.sent();
-                        console.error("Error fetching GetNPAEPVRRDetails:", error_7);
+                        error_8 = _d.sent();
+                        console.error("Error fetching GetNPAEPVRRDetails:", error_8);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
                     case 4: return [2 /*return*/];
                 }
@@ -1071,7 +1059,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetAdditionalPosition = function (Filter, filterConditions, ListName) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var resdata, result, error_8;
+            var resdata, result, error_9;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1102,8 +1090,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "GetPositionDetails fetched successfully",
                             }];
                     case 2:
-                        error_8 = _a.sent();
-                        console.error("GetPositionDetails error:", error_8);
+                        error_9 = _a.sent();
+                        console.error("GetPositionDetails error:", error_9);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -1116,7 +1104,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetPositionDetails = function (Filter, filterConditions, ListName) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var resdata, result, error_9;
+            var resdata, result, error_10;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1149,8 +1137,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "GetPositionDetails fetched successfully",
                             }];
                     case 2:
-                        error_9 = _a.sent();
-                        console.error("GetPositionDetails error:", error_9);
+                        error_10 = _a.sent();
+                        console.error("GetPositionDetails error:", error_10);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -1163,7 +1151,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.EvalutionValidation = function (data) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var getCurrentUserId, levelFilter, resdata, IsSubmitted, error_10;
+            var getCurrentUserId, levelFilter, resdata, IsSubmitted, error_11;
             var _a;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
@@ -1206,8 +1194,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "Validation success",
                             }];
                     case 3:
-                        error_10 = _b.sent();
-                        console.error("EvalutionValidation error:", error_10);
+                        error_11 = _b.sent();
+                        console.error("EvalutionValidation error:", error_11);
                         return [2 /*return*/, {
                                 data: false,
                                 status: 500,

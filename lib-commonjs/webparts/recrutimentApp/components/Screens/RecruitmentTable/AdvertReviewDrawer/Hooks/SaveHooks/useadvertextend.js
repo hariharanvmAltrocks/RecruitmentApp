@@ -52,7 +52,7 @@ var useAdvertExtends = function (handleClosePopup, handleRefresh, setAdvertPopup
                             onConfirm: function () {
                                 closeModal();
                                 handleClosePopup();
-                                navigate("/RecruitmentTable");
+                                navigate("/MyTracker");
                                 handleRefresh();
                                 setAdvertPopupOpen(false);
                             },
@@ -81,7 +81,7 @@ var useAdvertExtends = function (handleClosePopup, handleRefresh, setAdvertPopup
                         onConfirm: function () {
                             closeModal();
                             handleClosePopup();
-                            navigate("/RecruitmentTable");
+                            navigate("/MyTracker");
                             handleRefresh();
                             setAdvertPopupOpen(false);
                         },
@@ -100,7 +100,7 @@ var useAdvertExtends = function (handleClosePopup, handleRefresh, setAdvertPopup
                         onConfirm: function () {
                             closeModal();
                             handleClosePopup();
-                            navigate("/RecruitmentTable");
+                            navigate("/MyTracker");
                             handleRefresh();
                         },
                     });

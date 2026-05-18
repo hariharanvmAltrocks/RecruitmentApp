@@ -33,7 +33,7 @@ function EvalutionContent(_a) {
             onBack();
         }
         else {
-            navigate("/RecruitmentTable");
+            navigate("/MyTracker");
         }
     }, [navigate, onBack]);
     var _b = (0, fetchCandidateDetails_1.useCandidateDetails)({ candidateId: candidateId, InterviewLevels: InterviewLevels }), candidate = _b.candidate, questions = _b.questions, candidateLoading = _b.loading, candidateError = _b.error, reloadCandidate = _b.reload;

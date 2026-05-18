@@ -132,7 +132,7 @@ var QuestionCreation = function (props) {
                             confirmLabel: "OK",
                             onConfirm: function () {
                                 closeModal();
-                                navigate("/RecruitmentTable");
+                                navigate("/MyTracker");
                             },
                         });
                     }
@@ -151,7 +151,7 @@ var QuestionCreation = function (props) {
             }
         });
     }); };
-    var onBack = function () { return navigate("/RecruitmentTable"); };
+    var onBack = function () { return navigate("/MyTracker"); };
     var preparedIds = preparedQuestions
         .filter(function (q) { return q.fromBank; })
         .map(function (q) { return q.id; });

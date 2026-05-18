@@ -84,7 +84,7 @@ const CandidateDrawer: React.FC<Props> = ({
   const navigate = useNavigate();
 
   const handleClose = () => {
-    navigate("/RecruitmentTable");
+    navigate("/MyTracker");
   };
 
   const headerMeta = useMemo(() => {

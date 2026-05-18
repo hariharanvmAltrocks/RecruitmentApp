@@ -73,10 +73,7 @@ const EvalutionL2: React.FC<any> = (props) => {
     useSignatureDetails();
 
   // ── navigation callback ──────────────────────────────────────────────────────
-  const onClose = React.useCallback(
-    () => navigate("/RecruitmentTable"),
-    [navigate],
-  );
+  const onClose = React.useCallback(() => navigate("/MyTracker"), [navigate]);
 
   const successModel = () => {
     showModal({

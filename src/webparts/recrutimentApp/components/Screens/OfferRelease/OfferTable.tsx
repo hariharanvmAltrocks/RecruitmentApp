@@ -30,7 +30,7 @@ import {
   useUpdateListPortal,
 } from "./ReviewDocument/Hooks/Useupdatelistportal";
 
-type ActionMode = "Initiate" | "Review" | "View" | "Edit";
+export type ActionMode = "Initiate" | "Review" | "View" | "Edit";
 
 function resolveActionMode(statusID: number): ActionMode {
   if (Initiate_STAUES.has(statusID)) return "Initiate";

@@ -52,7 +52,7 @@ var EvalutionL2 = function (props) {
     // ── signature ────────────────────────────────────────────────────────────────
     var _v = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _v.data, signatureLoading = _v.loading;
     // ── navigation callback ──────────────────────────────────────────────────────
-    var onClose = React.useCallback(function () { return navigate("/RecruitmentTable"); }, [navigate]);
+    var onClose = React.useCallback(function () { return navigate("/MyTracker"); }, [navigate]);
     var successModel = function () {
         showModal({
             type: "success",

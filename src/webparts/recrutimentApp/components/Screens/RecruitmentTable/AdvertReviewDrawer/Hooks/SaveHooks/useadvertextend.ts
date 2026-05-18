@@ -61,7 +61,7 @@ export const useAdvertExtends = (
             onConfirm: () => {
               closeModal();
               handleClosePopup();
-              navigate("/RecruitmentTable");
+              navigate("/MyTracker");
               handleRefresh();
               setAdvertPopupOpen(false);
             },
@@ -90,7 +90,7 @@ export const useAdvertExtends = (
           onConfirm: () => {
             closeModal();
             handleClosePopup();
-            navigate("/RecruitmentTable");
+            navigate("/MyTracker");
             handleRefresh();
             setAdvertPopupOpen(false);
           },
@@ -108,7 +108,7 @@ export const useAdvertExtends = (
           onConfirm: () => {
             closeModal();
             handleClosePopup();
-            navigate("/RecruitmentTable");
+            navigate("/MyTracker");
             handleRefresh();
           },
         });

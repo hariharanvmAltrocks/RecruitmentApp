@@ -178,7 +178,7 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                             onConfirm: function () {
                                 closeModal();
                                 handleClosePopup();
-                                navigate("/RecruitmentTable");
+                                navigate("/MyTracker");
                                 handleRefresh();
                             },
                         });
@@ -194,7 +194,7 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                             onConfirm: function () {
                                 closeModal();
                                 handleClosePopup();
-                                navigate("/RecruitmentTable");
+                                navigate("/MyTracker");
                                 handleRefresh();
                             },
                         });
@@ -238,7 +238,7 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                             onConfirm: function () {
                                 closeModal();
                                 handleClosePopup();
-                                navigate("/RecruitmentTable");
+                                navigate("/MyTracker");
                                 handleRefresh();
                             },
                         });
@@ -254,7 +254,7 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                             onConfirm: function () {
                                 closeModal();
                                 handleClosePopup();
-                                navigate("/RecruitmentTable");
+                                navigate("/MyTracker");
                                 handleRefresh();
                             },
                         });

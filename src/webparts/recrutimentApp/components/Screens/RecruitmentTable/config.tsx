@@ -1,20 +1,30 @@
 import { useEffect, useMemo, useRef } from "react";
-import { Eye, Upload } from "lucide-react";
+import { Eye, Pencil, Play, Upload } from "lucide-react";
 import { DataTableColumn } from "../../Comman/DataTable/DataTable";
-import { EvalutionItem, RecruitmentItem } from "./RecruitmentTable.types";
+import {
+  EvalutionItem,
+  ISelectedCandidate,
+  RecruitmentItem,
+} from "./RecruitmentTable.types";
 import React from "react";
 import { StatusId } from "../../../utilities/Config";
 import { useUIState } from "../../RecrutimentApp/UIStateContext";
 import { MatricID } from "../../../utilities/ConditionConfig";
 import { StatusTooltip } from "../../Comman/StatusTooltip/StatusTooltip";
 import { tooltipInterviewPanel } from "../../../services/Dashboard/IDashboard";
+import { ActionMode } from "../OfferRelease/OfferTable";
+import {
+  EDIT_STATUSES,
+  Initiate_STAUES,
+  REVIEW_STATUSES,
+} from "../OfferRelease/Config";
 
-export type ColumnRole = "default" | "evaluation";
+export type ColumnRole = "default" | "evaluation" | "OfferRelease";
 
 interface UseRecruitmentColumnsOptions {
   role: ColumnRole;
   actionMode: "Upload" | "View";
-  onAction: (item: RecruitmentItem) => void;
+  onAction: (item: any) => void;
 }
 
 const getActionLabel = (
@@ -224,9 +234,102 @@ export const useRecruitmentColumns = ({
     [actionColumn],
   );
 
+  function resolveActionMode(statusID: number): ActionMode {
+    if (Initiate_STAUES.has(statusID)) return "Initiate";
+    if (REVIEW_STATUSES.has(statusID)) return "Review";
+    if (EDIT_STATUSES.has(statusID)) return "Edit";
+    return "View";
+  }
+
+  const ActionCell: React.FC<{
+    item: ISelectedCandidate;
+    StatusId: number;
+    onAction: (item: ISelectedCandidate) => void;
+  }> = React.memo(({ item, StatusId, onAction }) => {
+    const actionMode = useMemo(() => resolveActionMode(StatusId), [StatusId]);
+
+    const isInitiate = actionMode === "Initiate";
+    const isReview = actionMode === "Review";
+    const ActionIcon = isInitiate ? Play : isReview ? Pencil : Eye;
+    const actionLabel = isInitiate ? "INITIATE" : isReview ? "REVIEW" : "VIEW";
+
+    return (
+      <button
+        className="data-table__action-btn"
+        onClick={() => onAction(item)}
+        type="button"
+        aria-label={`${actionLabel} action`}
+      >
+        {/* <ActionIcon size={16} style={{ marginRight: 8 }} /> */}
+        {actionLabel}
+      </button>
+    );
+  });
+
+  const offerReleaseColumns: DataTableColumn<any>[] = useMemo(
+    () => [
+      {
+        id: "PositionID",
+        header: "Position ID",
+        accessor: "positionId",
+        cellClassName: "data-table__job-code",
+        hideOnMobile: true,
+      },
+      {
+        id: "title",
+        header: "Job Title & Dept",
+        render: (item: any) => (
+          <div className="data-table__job-title">
+            <span>{item.title}</span>
+            <span className="data-table__job-dept">{item.department}</span>
+          </div>
+        ),
+      },
+      {
+        id: "buCode",
+        header: "Business Unit",
+        render: (item: any) => String(item.buCode || "").padStart(2, "0"),
+        cellClassName: "data-table__cell--muted",
+        align: "center",
+        hideOnMobile: true,
+      },
+      {
+        id: "applicantName",
+        header: "Applicant Name",
+        accessor: "applicantName",
+        cellClassName: "data-table__cell--count",
+        hideOnMobile: true,
+      },
+      {
+        id: "status",
+        header: "Status",
+        render: (item) => (
+          <span className="data-table__status-badge status-badge">
+            {item.status}
+          </span>
+        ),
+      },
+      {
+        id: "actions",
+        header: "Actions",
+        align: "right",
+        cellClassName: "data-table__cell--actions",
+        render: (item: any) => (
+          <ActionCell
+            item={item}
+            StatusId={item.statusId}
+            onAction={() => onActionRef.current(item)}
+          />
+        ),
+      },
+    ],
+    [onActionRef],
+  );
+
   const columnMap: Record<ColumnRole, DataTableColumn<any>[]> = {
     default: defaultColumns,
     evaluation: evaluationColumns,
+    OfferRelease: offerReleaseColumns,
   };
 
   return columnMap[role] ?? defaultColumns;

@@ -48,6 +48,8 @@ import { checkIsAlreadySubmitted } from "../../Evalution/Evaluationservice/Evalu
 
 import { userInfo } from "../../../../utilities/hooks/RoleContext";
 import { useRecruitmentDetails } from "../../RecruitmentTable/Hooks/useRecruitmentDetails";
+import { ISelectedCandidate } from "../../RecruitmentTable/RecruitmentTable.types";
+import { ReviewDocument } from "../../OfferRelease/ReviewDocument/ReviewDocument";
 
 const AssignHRPopup = React.lazy(() =>
   import("../../RecruitmentTable/Components/AssignHRPopup/AssignHRPopup").then(
@@ -92,6 +94,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
   const [isadvertPopupOpen, setAdvertPopupOpen] = useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState<number>(0);
   const [selectedmatricId, setselectedmatricId] = useState<string>("");
+  const [drawerOfferOpen, setDrawerOfferOpen] = useState<boolean>(false);
 
   const processingRef = useRef(false);
   const selectedAdvertID = useRef<number>(0);
@@ -224,6 +227,28 @@ const Mytracker: React.FC<DashboardProps> = () => {
     closeModal: advertCloseModal,
   } = useAdvertExtends(handleClosePopup, handleRefresh, setAdvertPopupOpen);
 
+  const selectedItemRef = useRef<{
+    jobId: number;
+    candidateID: number;
+    selectedcandidateID: number;
+    jobrequestID: string;
+    IsExpat: boolean;
+  } | null>(null);
+
+  const handleActionOffer = useCallback(
+    (item: ISelectedCandidate) => {
+      selectedItemRef.current = {
+        jobId: item.RecID,
+        candidateID: item.CandidateID,
+        selectedcandidateID: item.ItemID,
+        jobrequestID: item.jobrequestID,
+        IsExpat: item.IsExpat,
+      };
+      setDrawerOfferOpen(true);
+    },
+    [drawerOfferOpen],
+  );
+
   const handleAction = useCallback(
     async (item: any) => {
       if (processingRef.current) return;
@@ -354,9 +379,18 @@ const Mytracker: React.FC<DashboardProps> = () => {
       activeMetric === MatricID.EvalutionHOD ||
       activeMetric === MatricID.EvalutionEXCO
         ? "evaluation"
-        : "default",
+        : activeMetric === MatricID.LabourHire ||
+            activeMetric === MatricID.Kcsa ||
+            activeMetric === MatricID.BackgroundCheck
+          ? "OfferRelease"
+          : "default",
     actionMode: "View",
-    onAction: handleAction,
+    onAction:
+      activeMetric === MatricID.LabourHire ||
+      activeMetric === MatricID.Kcsa ||
+      activeMetric === MatricID.BackgroundCheck
+        ? handleActionOffer
+        : handleAction,
   });
 
   const loading =
@@ -585,6 +619,27 @@ const Mytracker: React.FC<DashboardProps> = () => {
                     loadingState={loadingState}
                     onClose={closeDrawer}
                     onLanguageChange={setAdvertLanguage}
+                    onCommentsChange={setComments}
+                    onToggleAcknowledgement={toggleAcknowledgement}
+                    setLoadingState={setLoadingState}
+                    refreshKey={handleRefresh}
+                  />
+                )}
+
+                {drawerOfferOpen && (
+                  <ReviewDocument
+                    drawerOpen={drawerOfferOpen}
+                    selectedJobId={selectedItemRef?.current?.jobId ?? 0}
+                    CandidateID={selectedItemRef?.current?.candidateID ?? 0}
+                    selectedcandidateID={
+                      selectedItemRef?.current?.selectedcandidateID ?? 0
+                    }
+                    IsExpat={selectedItemRef?.current?.IsExpat ?? false}
+                    jobrequestID={selectedItemRef?.current?.jobrequestID ?? ""}
+                    reviewerComments={reviewerComments}
+                    acknowledgementCheckbox={acknowledgementCheckbox}
+                    loadingState={loadingState}
+                    onClose={() => setDrawerOfferOpen(false)}
                     onCommentsChange={setComments}
                     onToggleAcknowledgement={toggleAcknowledgement}
                     setLoadingState={setLoadingState}

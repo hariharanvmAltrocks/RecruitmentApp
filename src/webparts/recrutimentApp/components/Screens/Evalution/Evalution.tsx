@@ -61,7 +61,7 @@ function EvalutionContent({
     if (onBack) {
       onBack();
     } else {
-      navigate("/RecruitmentTable");
+      navigate("/MyTracker");
     }
   }, [navigate, onBack]);
 

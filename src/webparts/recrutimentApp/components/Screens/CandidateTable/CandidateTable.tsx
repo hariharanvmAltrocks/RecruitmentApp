@@ -97,10 +97,7 @@ export const CandidateTable: React.FC = (props: any) => {
 
   const { modalState, showModal, closeModal } = useModalPopup();
 
-  const handleClose = useCallback(
-    () => navigate("/RecruitmentTable"),
-    [navigate],
-  );
+  const handleClose = useCallback(() => navigate("/MyTracker"), [navigate]);
 
   const handlePageChange = useCallback(
     (page: number) => fetchPage(page),

@@ -1,0 +1,348 @@
+@import "../../../../../../styles/variables";
+@import "../../../../../../styles/_theme";
+
+.candidateProgress {
+  background: $white;
+  border-radius: $radius-xl;
+  border: 1px solid $border-light;
+  overflow: hidden;
+  margin-top: $space-xl;
+  font-family: "Inter", sans-serif;
+
+  &__header {
+    padding: $space-xl;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid $border-light;
+  }
+
+  &__title {
+    h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: $text-primary;
+      margin: 0 0 4px 0;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    p {
+      margin: 0;
+      font-size: 12px;
+      color: $text-secondary;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: $space-md;
+    align-items: center;
+  }
+
+  &__search {
+    position: relative;
+    
+    input {
+      height: 36px;
+      padding: 0 16px 0 36px;
+      border: 1px solid $border-light;
+      border-radius: $radius-md;
+      font-size: 13px;
+      width: 250px;
+      transition: all 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+      }
+    }
+
+    svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: $text-muted;
+    }
+  }
+
+  &__filterBtn {
+    height: 36px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: $white;
+    border: 1px solid $border-light;
+    border-radius: $radius-md;
+    font-size: 13px;
+    font-weight: 500;
+    color: $text-primary;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: $secondary-color;
+      border-color: $border-color;
+    }
+  }
+
+  &__timelineHeader {
+    padding: $space-xl;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    border-bottom: 1px solid $border-light;
+    position: relative;
+
+    &::before {
+      content: "RECRUITMENT IN PROCESS STEPS";
+      position: absolute;
+      top: 12px;
+      left: 24px;
+      font-size: 10px;
+      font-weight: 700;
+      color: $text-primary;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  &__stepHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    margin-top: 24px;
+
+    &:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: $success-color;
+      z-index: -1;
+    }
+
+    .stepNum {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: $success-color;
+      color: $white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .stepLabel {
+      font-size: 11px;
+      font-weight: 600;
+      color: $text-primary;
+      text-align: center;
+      line-height: 1.2;
+    }
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th {
+      text-align: left;
+      padding: 16px 24px;
+      font-size: 11px;
+      font-weight: 600;
+      color: $text-muted;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid $border-light;
+    }
+
+    td {
+      padding: 20px 24px;
+      border-bottom: 1px solid $border-light;
+      vertical-align: middle;
+    }
+
+    tr {
+      transition: background 0.2s;
+      &:hover {
+        background: rgba($secondary-color, 0.3);
+      }
+    }
+  }
+
+  &__candidateInfo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    .avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.avatarBlue {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+
+.avatarPurple {
+  background: #f3e8ff;
+  color: #9333ea;
+}
+
+.avatarYellow {
+  background: #fef9c3;
+  color: #ca8a04;
+}
+
+    .details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .name {
+        font-size: 14px;
+        font-weight: 600;
+        color: $text-primary;
+      }
+      .role {
+        font-size: 12px;
+        color: $text-secondary;
+      }
+      .date {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        color: $text-muted;
+      }
+    }
+  }
+
+  &__currentStepBox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .stepBadge {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: $success-color;
+      color: $white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .stepInfo {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      .stepName {
+        font-size: 13px;
+        font-weight: 600;
+        color: $text-primary;
+      }
+      .stepStatus {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        color: $text-secondary;
+
+        .dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: $primary-color;
+        }
+      }
+    }
+  }
+
+  &__progressRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    width: 100%;
+    
+    // Line connector base
+    &::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      right: 12px;
+      height: 2px;
+      background: $border-light;
+      z-index: 0;
+      transform: translateY(-50%);
+    }
+
+    .node {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+      background: $white;
+      
+      &--completed {
+        background: $success-color;
+        color: $white;
+        border: 2px solid $success-color;
+        
+        // Green line behind completed nodes
+        &::after {
+          content: "";
+          position: absolute;
+          top: 50%;
+          left: 100%;
+          width: 100vw;
+          max-width: 45px; // Approximate spacing between nodes
+          height: 2px;
+          background: $success-color;
+          transform: translateY(-50%);
+          z-index: -1;
+        }
+      }
+
+      &--active {
+        background: $white;
+        color: $success-color;
+        border: 2px solid $success-color;
+      }
+
+      &--pending {
+        background: $white;
+        color: $text-muted;
+        border: 2px solid $border-light;
+      }
+      
+      // Hide the after line on the last completed node before an active one
+      &.hide-line::after {
+        display: none;
+      }
+    }
+  }
+}

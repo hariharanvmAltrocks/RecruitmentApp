@@ -25,6 +25,7 @@ var Config_1 = require("../../../../utilities/Config");
 var Evaluationformservice_1 = require("../../Evalution/Evaluationservice/Evaluationformservice");
 var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
 var useRecruitmentDetails_1 = require("../../RecruitmentTable/Hooks/useRecruitmentDetails");
+var ReviewDocument_1 = require("../../OfferRelease/ReviewDocument/ReviewDocument");
 var AssignHRPopup = react_1.default.lazy(function () {
     return Promise.resolve().then(function () { return tslib_1.__importStar(require("../../RecruitmentTable/Components/AssignHRPopup/AssignHRPopup")); }).then(function (module) { return ({
         default: module.AssignHRPopup,
@@ -36,18 +37,19 @@ var AdvertExtension = react_1.default.lazy(function () {
     }); });
 });
 var Mytracker = function () {
-    var _a;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
     var navigate = (0, react_router_dom_1.useNavigate)();
     var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
-    var _b = (0, UIStateContext_1.useUIState)(), activeMetric = _b.MatricID, setNavigationPath = _b.setNavigationPath, setActiveMenuID = _b.setActiveMenuID, setActiveTab = _b.setActiveTab, setMatricID = _b.setMatricID, setCurrentTabName = _b.setCurrentTabName, navigationPath = _b.navigationPath;
-    var _c = (0, react_1.useState)(0), refreshKey = _c[0], setRefreshKey = _c[1];
-    var _d = (0, react_1.useState)([]), selectedIds = _d[0], setSelectedIds = _d[1];
-    var _e = (0, react_1.useState)(10), pageSize = _e[0], setPageSize = _e[1];
-    var _f = (0, react_1.useState)(1), currentPage = _f[0], setCurrentPage = _f[1];
-    var _g = (0, react_1.useState)(false), isPopupOpen = _g[0], setIsPopupOpen = _g[1];
-    var _h = (0, react_1.useState)(false), isadvertPopupOpen = _h[0], setAdvertPopupOpen = _h[1];
-    var _j = (0, react_1.useState)(0), selectedMemberId = _j[0], setSelectedMemberId = _j[1];
-    var _k = (0, react_1.useState)(""), selectedmatricId = _k[0], setselectedmatricId = _k[1];
+    var _m = (0, UIStateContext_1.useUIState)(), activeMetric = _m.MatricID, setNavigationPath = _m.setNavigationPath, setActiveMenuID = _m.setActiveMenuID, setActiveTab = _m.setActiveTab, setMatricID = _m.setMatricID, setCurrentTabName = _m.setCurrentTabName, navigationPath = _m.navigationPath;
+    var _o = (0, react_1.useState)(0), refreshKey = _o[0], setRefreshKey = _o[1];
+    var _p = (0, react_1.useState)([]), selectedIds = _p[0], setSelectedIds = _p[1];
+    var _q = (0, react_1.useState)(10), pageSize = _q[0], setPageSize = _q[1];
+    var _r = (0, react_1.useState)(1), currentPage = _r[0], setCurrentPage = _r[1];
+    var _s = (0, react_1.useState)(false), isPopupOpen = _s[0], setIsPopupOpen = _s[1];
+    var _t = (0, react_1.useState)(false), isadvertPopupOpen = _t[0], setAdvertPopupOpen = _t[1];
+    var _u = (0, react_1.useState)(0), selectedMemberId = _u[0], setSelectedMemberId = _u[1];
+    var _v = (0, react_1.useState)(""), selectedmatricId = _v[0], setselectedmatricId = _v[1];
+    var _w = (0, react_1.useState)(false), drawerOfferOpen = _w[0], setDrawerOfferOpen = _w[1];
     var processingRef = (0, react_1.useRef)(false);
     var selectedAdvertID = (0, react_1.useRef)(0);
     var ref = (0, react_1.useRef)(0);
@@ -55,11 +57,11 @@ var Mytracker = function () {
         isOpen: false,
         selectedType: "",
     });
-    var _l = (0, useRecruitmentDetails_1.useRecruitmentDetails)(refreshKey), trackerData = _l.items, trackerLoading = _l.loading;
+    var _x = (0, useRecruitmentDetails_1.useRecruitmentDetails)(refreshKey), trackerData = _x.items, trackerLoading = _x.loading;
     var martics = (0, useDashboardMetrics_1.useDashboardMetrics)(refreshKey);
     var items = trackerData || [];
-    var _m = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _m.drawerOpen, selectedJobId = _m.selectedJobId, advertLanguage = _m.advertLanguage, reviewerComments = _m.reviewerComments, acknowledgementCheckbox = _m.acknowledgementCheckbox, loadingState = _m.loadingState, openDrawer = _m.openDrawer, closeDrawer = _m.closeDrawer, setAdvertLanguage = _m.setAdvertLanguage, setComments = _m.setComments, toggleAcknowledgement = _m.toggleAcknowledgement, setLoadingState = _m.setLoadingState;
-    var _o = (0, useModalPopup_1.useModalPopup)(), modalState = _o.modalState, showModal = _o.showModal, closeModal = _o.closeModal;
+    var _y = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _y.drawerOpen, selectedJobId = _y.selectedJobId, advertLanguage = _y.advertLanguage, reviewerComments = _y.reviewerComments, acknowledgementCheckbox = _y.acknowledgementCheckbox, loadingState = _y.loadingState, openDrawer = _y.openDrawer, closeDrawer = _y.closeDrawer, setAdvertLanguage = _y.setAdvertLanguage, setComments = _y.setComments, toggleAcknowledgement = _y.toggleAcknowledgement, setLoadingState = _y.setLoadingState;
+    var _z = (0, useModalPopup_1.useModalPopup)(), modalState = _z.modalState, showModal = _z.showModal, closeModal = _z.closeModal;
     (0, react_1.useEffect)(function () {
         if (martics.metrics.length > 0 && !activeMetric) {
             setNavigationPath(martics.metrics[0].path);
@@ -92,7 +94,7 @@ var Mytracker = function () {
     var selectedItems = (0, react_1.useMemo)(function () { return items.filter(function (item) { return selectedIds.includes(item.id); }); }, [items, selectedIds]);
     var selectedJobCode = (0, react_1.useMemo)(function () { var _a; return (selectedItems.length === 1 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.jobCode : ""); }, [selectedItems]);
     var selectedNationality = (0, react_1.useMemo)(function () { var _a; return (selectedItems.length > 0 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.nationality : null); }, [selectedItems]);
-    var _p = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _p.members, membersLoading = _p.loading;
+    var _0 = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _0.members, membersLoading = _0.loading;
     var selectedMember = (0, react_1.useMemo)(function () { var _a; return (_a = members.find(function (m) { return m.id === selectedMemberId; })) !== null && _a !== void 0 ? _a : null; }, [members, selectedMemberId]);
     var handleToggleRow = (0, react_1.useCallback)(function (id) {
         setSelectedIds(function (prev) {
@@ -113,8 +115,19 @@ var Mytracker = function () {
     var handleClosePopup = (0, react_1.useCallback)(function () {
         setIsPopupOpen(false);
     }, []);
-    var _q = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh), handleConfirmAssignment = _q.handleConfirmAssignment, assignmentModalState = _q.modalState, assignmentCloseModal = _q.closeModal;
-    var _r = (0, useadvertextend_1.useAdvertExtends)(handleClosePopup, handleRefresh, setAdvertPopupOpen), handleAdvertExtend = _r.handleAdvertExtend, advertModalState = _r.modalState, advertCloseModal = _r.closeModal;
+    var _1 = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh), handleConfirmAssignment = _1.handleConfirmAssignment, assignmentModalState = _1.modalState, assignmentCloseModal = _1.closeModal;
+    var _2 = (0, useadvertextend_1.useAdvertExtends)(handleClosePopup, handleRefresh, setAdvertPopupOpen), handleAdvertExtend = _2.handleAdvertExtend, advertModalState = _2.modalState, advertCloseModal = _2.closeModal;
+    var selectedItemRef = (0, react_1.useRef)(null);
+    var handleActionOffer = (0, react_1.useCallback)(function (item) {
+        selectedItemRef.current = {
+            jobId: item.RecID,
+            candidateID: item.CandidateID,
+            selectedcandidateID: item.ItemID,
+            jobrequestID: item.jobrequestID,
+            IsExpat: item.IsExpat,
+        };
+        setDrawerOfferOpen(true);
+    }, [drawerOfferOpen]);
     var handleAction = (0, react_1.useCallback)(function (item) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var ItemID, isEvaluationFlow, today, interviewDate, Validation, interviewLevel, alreadySubmitted, evalutionIDs, routeMap, route;
         var _a;
@@ -223,9 +236,17 @@ var Mytracker = function () {
             activeMetric === ConditionConfig_1.MatricID.EvalutionHOD ||
             activeMetric === ConditionConfig_1.MatricID.EvalutionEXCO
             ? "evaluation"
-            : "default",
+            : activeMetric === ConditionConfig_1.MatricID.LabourHire ||
+                activeMetric === ConditionConfig_1.MatricID.Kcsa ||
+                activeMetric === ConditionConfig_1.MatricID.BackgroundCheck
+                ? "OfferRelease"
+                : "default",
         actionMode: "View",
-        onAction: handleAction,
+        onAction: activeMetric === ConditionConfig_1.MatricID.LabourHire ||
+            activeMetric === ConditionConfig_1.MatricID.Kcsa ||
+            activeMetric === ConditionConfig_1.MatricID.BackgroundCheck
+            ? handleActionOffer
+            : handleAction,
     });
     var loading = martics.loading || trackerLoading || martics.metrics.length === 0;
     var hasMetrics = martics.metrics.length > 0;
@@ -301,6 +322,7 @@ var Mytracker = function () {
                         },
                     }); } }))),
             drawerMeta.current.isOpen && (react_1.default.createElement(AdvertReviewDrawer_1.AdvertReviewDrawer, { drawerOpen: drawerOpen, selectedJobId: selectedJobId, selectedJobCode: selectedJobCode, selectedType: drawerMeta.current.selectedType, advertLanguage: advertLanguage, reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, loadingState: loadingState, onClose: closeDrawer, onLanguageChange: setAdvertLanguage, onCommentsChange: setComments, onToggleAcknowledgement: toggleAcknowledgement, setLoadingState: setLoadingState, refreshKey: handleRefresh })),
+            drawerOfferOpen && (react_1.default.createElement(ReviewDocument_1.ReviewDocument, { drawerOpen: drawerOfferOpen, selectedJobId: (_c = (_b = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _b === void 0 ? void 0 : _b.jobId) !== null && _c !== void 0 ? _c : 0, CandidateID: (_e = (_d = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _d === void 0 ? void 0 : _d.candidateID) !== null && _e !== void 0 ? _e : 0, selectedcandidateID: (_g = (_f = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _f === void 0 ? void 0 : _f.selectedcandidateID) !== null && _g !== void 0 ? _g : 0, IsExpat: (_j = (_h = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _h === void 0 ? void 0 : _h.IsExpat) !== null && _j !== void 0 ? _j : false, jobrequestID: (_l = (_k = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _k === void 0 ? void 0 : _k.jobrequestID) !== null && _l !== void 0 ? _l : "", reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, loadingState: loadingState, onClose: function () { return setDrawerOfferOpen(false); }, onCommentsChange: setComments, onToggleAcknowledgement: toggleAcknowledgement, setLoadingState: setLoadingState, refreshKey: handleRefresh })),
             react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, assignmentModalState, { onClose: assignmentCloseModal })),
             react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal })),
             react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, advertModalState, { onClose: advertCloseModal })))))))));

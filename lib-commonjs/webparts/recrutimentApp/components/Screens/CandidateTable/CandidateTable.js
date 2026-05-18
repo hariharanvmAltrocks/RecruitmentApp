@@ -66,7 +66,7 @@ var CandidateTable = function (props) {
         };
     }, [positionDetails]);
     var _g = (0, useModalPopup_1.useModalPopup)(), modalState = _g.modalState, showModal = _g.showModal, closeModal = _g.closeModal;
-    var handleClose = (0, react_1.useCallback)(function () { return navigate("/RecruitmentTable"); }, [navigate]);
+    var handleClose = (0, react_1.useCallback)(function () { return navigate("/MyTracker"); }, [navigate]);
     var handlePageChange = (0, react_1.useCallback)(function (page) { return fetchPage(page); }, [fetchPage]);
     var handlePageSizeChange = (0, react_1.useCallback)(function (size) { return setPageSize(size); }, [setPageSize]);
     var handleAction = (0, react_1.useCallback)(function (item) {

@@ -3,11 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useRecruitmentColumns = void 0;
 var tslib_1 = require("tslib");
 var react_1 = require("react");
+var lucide_react_1 = require("lucide-react");
 var react_2 = tslib_1.__importDefault(require("react"));
 var Config_1 = require("../../../utilities/Config");
 var UIStateContext_1 = require("../../RecrutimentApp/UIStateContext");
 var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
 var StatusTooltip_1 = require("../../Comman/StatusTooltip/StatusTooltip");
+var Config_2 = require("../OfferRelease/Config");
 var getActionLabel = function (actionMode, item, matricID) {
     var submissionMatricIds = [
         ConditionConfig_1.MatricID.MySubmission,
@@ -162,9 +164,71 @@ var useRecruitmentColumns = function (_a) {
         },
         actionColumn,
     ]; }, [actionColumn]);
+    function resolveActionMode(statusID) {
+        if (Config_2.Initiate_STAUES.has(statusID))
+            return "Initiate";
+        if (Config_2.REVIEW_STATUSES.has(statusID))
+            return "Review";
+        if (Config_2.EDIT_STATUSES.has(statusID))
+            return "Edit";
+        return "View";
+    }
+    var ActionCell = react_2.default.memo(function (_a) {
+        var item = _a.item, StatusId = _a.StatusId, onAction = _a.onAction;
+        var actionMode = (0, react_1.useMemo)(function () { return resolveActionMode(StatusId); }, [StatusId]);
+        var isInitiate = actionMode === "Initiate";
+        var isReview = actionMode === "Review";
+        var ActionIcon = isInitiate ? lucide_react_1.Play : isReview ? lucide_react_1.Pencil : lucide_react_1.Eye;
+        var actionLabel = isInitiate ? "INITIATE" : isReview ? "REVIEW" : "VIEW";
+        return (react_2.default.createElement("button", { className: "data-table__action-btn", onClick: function () { return onAction(item); }, type: "button", "aria-label": "".concat(actionLabel, " action") }, actionLabel));
+    });
+    var offerReleaseColumns = (0, react_1.useMemo)(function () { return [
+        {
+            id: "PositionID",
+            header: "Position ID",
+            accessor: "positionId",
+            cellClassName: "data-table__job-code",
+            hideOnMobile: true,
+        },
+        {
+            id: "title",
+            header: "Job Title & Dept",
+            render: function (item) { return (react_2.default.createElement("div", { className: "data-table__job-title" },
+                react_2.default.createElement("span", null, item.title),
+                react_2.default.createElement("span", { className: "data-table__job-dept" }, item.department))); },
+        },
+        {
+            id: "buCode",
+            header: "Business Unit",
+            render: function (item) { return String(item.buCode || "").padStart(2, "0"); },
+            cellClassName: "data-table__cell--muted",
+            align: "center",
+            hideOnMobile: true,
+        },
+        {
+            id: "applicantName",
+            header: "Applicant Name",
+            accessor: "applicantName",
+            cellClassName: "data-table__cell--count",
+            hideOnMobile: true,
+        },
+        {
+            id: "status",
+            header: "Status",
+            render: function (item) { return (react_2.default.createElement("span", { className: "data-table__status-badge status-badge" }, item.status)); },
+        },
+        {
+            id: "actions",
+            header: "Actions",
+            align: "right",
+            cellClassName: "data-table__cell--actions",
+            render: function (item) { return (react_2.default.createElement(ActionCell, { item: item, StatusId: item.statusId, onAction: function () { return onActionRef.current(item); } })); },
+        },
+    ]; }, [onActionRef]);
     var columnMap = {
         default: defaultColumns,
         evaluation: evaluationColumns,
+        OfferRelease: offerReleaseColumns,
     };
     return (_b = columnMap[role]) !== null && _b !== void 0 ? _b : defaultColumns;
 };

@@ -195,7 +195,7 @@ export const useConfirmAssignment = (
               onConfirm: () => {
                 closeModal();
                 handleClosePopup();
-                navigate("/RecruitmentTable");
+                navigate("/MyTracker");
                 handleRefresh();
               },
             });
@@ -211,7 +211,7 @@ export const useConfirmAssignment = (
               onConfirm: () => {
                 closeModal();
                 handleClosePopup();
-                navigate("/RecruitmentTable");
+                navigate("/MyTracker");
                 handleRefresh();
               },
             });
@@ -257,7 +257,7 @@ export const useConfirmAssignment = (
               onConfirm: () => {
                 closeModal();
                 handleClosePopup();
-                navigate("/RecruitmentTable");
+                navigate("/MyTracker");
                 handleRefresh();
               },
             });
@@ -273,7 +273,7 @@ export const useConfirmAssignment = (
               onConfirm: () => {
                 closeModal();
                 handleClosePopup();
-                navigate("/RecruitmentTable");
+                navigate("/MyTracker");
                 handleRefresh();
               },
             });

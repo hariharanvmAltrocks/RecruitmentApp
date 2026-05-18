@@ -18,6 +18,7 @@ import {
   IJDEDataMapping,
   IPortalItem,
   ITooltipData,
+  tooltipData,
   tooltipInterviewPanel,
 } from "./IDashboard";
 import { BatchQuery } from "../SPService/Ispservice";
@@ -388,118 +389,56 @@ export default class DashboardService implements IDashboard {
     MatricId: number,
     RecID: number,
   ): Promise<number> {
-    if (MatricId === MatricID.ReviewProfileHR) {
-      return this._fetchCandidateCounts(jobCodeId, [
-        workflowStatusApi.HRPending,
-      ]);
-    } else if (MatricId === MatricID.ReviewProfileLM) {
-      return this._fetchCandidateCounts(jobCodeId, [
-        workflowStatusApi.LineManagerL1Pending,
-        workflowStatusApi.LineManagerL2Pending,
-        workflowStatusApi.LineManagerLevel1OnHold,
-        workflowStatusApi.LineManagerLevel2OnHold,
-      ]);
-    } else if (MatricId === MatricID.AssignInterviewPanel) {
-      let Level1 = await this._fetchCandidateCounts(jobCodeId, [
-        workflowStatusApi.PendingRecruitmentHRscheduleInterview,
-      ]);
-      const level2Filter = [
-        {
-          FilterKey: "StatusId",
-          Operator: "eq",
-          FilterValue:
-            StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
-        },
-        {
-          FilterKey: "RecruitmentID/ID",
-          Operator: "eq",
-          FilterValue: RecID,
-        },
-      ];
-      const level2 = await this.GetCandidateDetails(level2Filter, "and");
-      let total = Level1 + (level2?.data?.length ?? 0);
-      return total;
-    }
-    return 0;
-  }
-
-  async GetInterviewPanelTooltiData(
-    data: ITooltipData,
-  ): Promise<ApiResponse<tooltipInterviewPanel[]>> {
-    let GetItem: tooltipInterviewPanel[] = [{} as tooltipInterviewPanel];
     try {
-      await SPServices.SPReadItems({
-        Listname: ListNames.JDEDataMapping,
-        Select:
-          "*,BUC/BusineesUnitCode,LineManager/EMail,HOD/EMail,HR/EMail,EXCO/EMail",
-        Filter: [
-          {
-            FilterKey: "BUC",
-            Operator: "eq",
-            FilterValue: data.BusinessUnitCodeId,
-          },
-        ],
-        Expand: "BUC,LineManager,HOD,HR,EXCO",
-        Orderby: "ID",
-        Orderbydecorasc: true,
-      }).then(async (res) => {
-        const response = res as IJDEDataMapping[];
-        for (const item of response) {
-          if (item?.LineManagerId && item?.LineManager?.EMail) {
-            let UserName = await CommonServices.GetUserName(
-              item.LineManager.EMail,
-            );
-            GetItem[0].LineManager = {
-              Role: RoleName.LineManager,
-              Name: String(UserName.data),
-            };
-          }
-          if (item?.HODId && item?.HOD?.EMail) {
-            let UserName = await CommonServices.GetUserName(item.HOD.EMail);
-            GetItem[0].HOD = {
-              Role: RoleName.HOD,
-              Name: String(UserName.data),
-            };
-          }
-          if (item?.EXCOId && item?.EXCO?.EMail) {
-            let UserName = await CommonServices.GetUserName(item.EXCO.EMail);
-            GetItem[0].Exco = {
-              Role: RoleName.EXCO,
-              Name: String(UserName.data),
-            };
-          }
-          if (data.AssignEmail) {
-            let UserName = await CommonServices.GetUserName(data.AssignEmail);
-            GetItem[0].HR = {
-              Role: RoleName.RecruitmentHR,
-              Name: String(UserName.data),
-            };
-          }
-          if (data.AssignHRLead) {
-            let UserName = await CommonServices.GetUserName(data.AssignHRLead);
-            GetItem[0].HRLead = {
-              Role: RoleName.RecruitmentHRLead,
-              Name: String(UserName.data),
-            };
-          }
-        }
-      });
-      return {
-        data: GetItem,
-        status: 200,
-        message: "GetHRMSRecruitmentRoleProfileDetails fetched successfully",
-      };
+      if (MatricId === MatricID.ReviewProfileHR) {
+        return this._fetchCandidateCounts(jobCodeId, [
+          workflowStatusApi.HRPending,
+        ]);
+      }
+
+      if (MatricId === MatricID.ReviewProfileLM) {
+        return this._fetchCandidateCounts(jobCodeId, [
+          workflowStatusApi.LineManagerL1Pending,
+          workflowStatusApi.LineManagerL2Pending,
+          workflowStatusApi.LineManagerLevel1OnHold,
+          workflowStatusApi.LineManagerLevel2OnHold,
+        ]);
+      }
+
+      if (MatricId === MatricID.AssignInterviewPanel) {
+        const level1Promise = this._fetchCandidateCounts(jobCodeId, [
+          workflowStatusApi.PendingRecruitmentHRscheduleInterview,
+        ]);
+
+        const level2Promise = this.GetCandidateDetails(
+          [
+            {
+              FilterKey: "StatusId",
+              Operator: "eq",
+              FilterValue:
+                StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
+            },
+            {
+              FilterKey: "RecruitmentID/ID",
+              Operator: "eq",
+              FilterValue: RecID,
+            },
+          ],
+          "and",
+        );
+
+        const [level1, level2] = await Promise.all([
+          level1Promise,
+          level2Promise,
+        ]);
+
+        return level1 + (level2?.data?.length ?? 0);
+      }
+
+      return 0;
     } catch (error) {
-      console.error(
-        "Error fetching data GetHRMSRecruitmentRoleProfileDetails:",
-        error,
-      );
-      return {
-        data: GetItem,
-        status: 500,
-        message:
-          "Error fetching data from GetHRMSRecruitmentRoleProfileDetails",
-      };
+      console.error("_getCandidateCountByMatric Error:", error);
+      return 0;
     }
   }
 
@@ -509,9 +448,17 @@ export default class DashboardService implements IDashboard {
     MatricId?: number,
   ): Promise<ApiResponse<DashboardData[]>> {
     try {
-      const res: any[] = await SPServices.SPReadItems({
+      const recruitmentResponse: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentDptDetails,
-        Select: `*,Status/StatusDescription,JobCode/JobCode,JobCode/ID,JobCode/JobTitleInEnglish,BusinessUnitCode/BusineesUnitCode,Department/DepartmentName`,
+        Select: `
+        *,
+        Status/StatusDescription,
+        JobCode/JobCode,
+        JobCode/ID,
+        JobCode/JobTitleInEnglish,
+        BusinessUnitCode/BusineesUnitCode,
+        Department/DepartmentName
+      `,
         Filter: filterParam,
         FilterCondition: filterConditions,
         Expand: `Status,JobCode,BusinessUnitCode,Department`,
@@ -520,51 +467,182 @@ export default class DashboardService implements IDashboard {
         Orderbydecorasc: true,
       });
 
-      if (!res.length) {
-        return { data: [], status: 200, message: "No records found" };
+      if (!recruitmentResponse.length) {
+        return {
+          data: [],
+          status: 200,
+          message: "No records found",
+        };
       }
 
+      const uniqueBusinessUnitIds = Array.from(
+        new Set(
+          recruitmentResponse
+            .map((item) => item.BusinessUnitCodeId)
+            .filter(Boolean),
+        ),
+      );
+
+      const jdeResponse: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.JDEDataMapping,
+        Select: `
+        *,
+        BUC/BusineesUnitCode,
+        LineManager/Title,
+        LineManager/EMail,
+        HOD/Title,
+        HOD/EMail,
+        HR/Title,
+        HR/EMail,
+        EXCO/Title,
+        EXCO/EMail
+      `,
+        Filter: uniqueBusinessUnitIds.map((id) => ({
+          FilterKey: "BUC",
+          Operator: "eq",
+          FilterValue: id,
+        })),
+        FilterCondition: "or",
+        Expand: "BUC,LineManager,HOD,HR,EXCO",
+        Topcount: 5000,
+        Orderby: "ID",
+        Orderbydecorasc: true,
+      });
+
+      const jdeMap = new Map<number, any>();
+
+      jdeResponse.forEach((item: any) => {
+        if (item?.BUCId) {
+          jdeMap.set(item.BUCId, item);
+        }
+      });
+
+      const userCache = new Map<string, string>();
+
+      const getCachedUserName = async (
+        email?: string,
+        title?: string,
+      ): Promise<string> => {
+        try {
+          if (title) {
+            return title;
+          }
+
+          if (!email) {
+            return "";
+          }
+
+          if (userCache.has(email)) {
+            return userCache.get(email) || "";
+          }
+          const response = await CommonServices.GetUserName(email);
+          const userName = String(response?.data || "");
+          userCache.set(email, userName);
+          return userName;
+        } catch (error) {
+          console.error("getCachedUserName Error:", error);
+          return "";
+        }
+      };
+
       const GridResult: DashboardData[] = await Promise.all(
-        res.map(async (item: any, index: number) => {
+        recruitmentResponse.map(async (item: any, index: number) => {
           const candidateCount = await this._getCandidateCountByMatric(
             item.JobCodeId,
             MatricId ?? 0,
             item.ID,
           );
-          let StatusTooltip: ITooltipData = {
-            BusinessUnitCodeId: item.BusinessUnitCodeId,
-            AssignEmail: item.AssignedHR,
-            AssignHRLead: item.RecruitmentHRLead,
-          };
-          let StatusTooltipResult =
-            await this.GetInterviewPanelTooltiData(StatusTooltip);
-          console.log("StatusTooltipResult", StatusTooltipResult);
+          const jdeData = jdeMap.get(item.BusinessUnitCodeId);
 
+          const [LineManager, HOD, Exco, HR, HRLead] = await Promise.all([
+            getCachedUserName(
+              jdeData?.LineManager?.EMail,
+              jdeData?.LineManager?.Title,
+            ),
+
+            getCachedUserName(jdeData?.HOD?.EMail, jdeData?.HOD?.Title),
+
+            getCachedUserName(jdeData?.EXCO?.EMail, jdeData?.EXCO?.Title),
+
+            getCachedUserName(item?.AssignedHR),
+
+            getCachedUserName(item?.RecruitmentHRLead),
+          ]);
+
+          const StatusTooltip: tooltipInterviewPanel = {
+            LineManager: LineManager
+              ? {
+                  Role: RoleName.LineManager,
+                  Name: LineManager,
+                }
+              : ({} as tooltipData),
+
+            HOD: HOD
+              ? {
+                  Role: RoleName.HOD,
+                  Name: HOD,
+                }
+              : ({} as tooltipData),
+
+            Exco: Exco
+              ? {
+                  Role: RoleName.EXCO,
+                  Name: Exco,
+                }
+              : ({} as tooltipData),
+
+            HR: HR
+              ? {
+                  Role: RoleName.RecruitmentHR,
+                  Name: HR,
+                }
+              : ({} as tooltipData),
+
+            HRLead: HRLead
+              ? {
+                  Role: RoleName.RecruitmentHRLead,
+                  Name: HRLead,
+                }
+              : ({} as tooltipData),
+          };
           return {
             ID: item.ID,
+
             RecordID: index + 1,
+
             BusinessUnitCode: item?.BusinessUnitCode?.BusineesUnitCode ?? "",
+
             Nationality: item?.Nationality,
+
             NumberOfPersonNeeded: item?.NumberOfPersonNeeded,
+
             Type: item?.DataFrom ?? "",
+
             Status: item?.Status?.StatusDescription ?? "",
+
             StatusId: item?.StatusId,
+
             JobCodeId: item?.JobCode?.ID ?? 0,
+
             JobCode: item?.JobCode?.JobCode ?? "",
+
             JobTitleEnglish: item?.JobCode?.JobTitleInEnglish ?? "",
+
             ModifiedDate: item?.Modified
               ? moment(item.Modified).format("YYYY-MM-DD")
               : undefined,
+
             CreatedDate: item?.Created
               ? moment(item.Created).format("YYYY-MM-DD")
               : undefined,
+
             Department: item?.Department?.DepartmentName ?? "",
+
             EmploymentCategory: item?.EmploymentCategory,
+
             CandidateCount: candidateCount,
-            StatusTooltip:
-              StatusTooltipResult?.data?.length > 0
-                ? StatusTooltipResult.data[0]
-                : undefined,
+
+            StatusTooltip,
           };
         }),
       );
@@ -576,7 +654,12 @@ export default class DashboardService implements IDashboard {
       };
     } catch (error) {
       console.error("Error fetching GetRecruitmentDetails:", error);
-      return { data: [], status: 500, message: "Error fetching data" };
+
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching data",
+      };
     }
   }
 

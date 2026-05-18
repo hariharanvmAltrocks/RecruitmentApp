@@ -150,7 +150,7 @@ const QuestionCreation: React.FC = (props: any) => {
         confirmLabel: "OK",
         onConfirm: () => {
           closeModal();
-          navigate("/RecruitmentTable");
+          navigate("/MyTracker");
         },
       });
     } else {
@@ -166,7 +166,7 @@ const QuestionCreation: React.FC = (props: any) => {
     }
   };
 
-  const onBack = () => navigate("/RecruitmentTable");
+  const onBack = () => navigate("/MyTracker");
 
   const preparedIds = preparedQuestions
     .filter((q) => q.fromBank)

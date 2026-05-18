@@ -42,7 +42,7 @@ var CandidateDrawer = function (_a) {
     var candidates = _a.candidates, loading = _a.loading, onClose = _a.onClose, onReview = _a.onReview, recruitmentId = _a.recruitmentId, hook = _a.hook, currentRoleId = _a.currentRoleId;
     var navigate = (0, react_router_dom_1.useNavigate)();
     var handleClose = function () {
-        navigate("/RecruitmentTable");
+        navigate("/MyTracker");
     };
     var headerMeta = (0, react_1.useMemo)(function () {
         var _a, _b;
