@@ -10,6 +10,7 @@ var CareerPortalAPI_1 = require("../AxiosService/CareerPortalAPI");
 var ServiceExport_1 = require("../ServiceExport");
 var ConditionConfig_1 = require("../../utilities/ConditionConfig");
 var dateConfigfn_1 = require("../../components/Hooks/dateConfigfn");
+var PositionStatusConfig_1 = require("../../utilities/PositionStatusConfig");
 var RecruitmentService = /** @class */ (function () {
     function RecruitmentService() {
     }
@@ -1165,6 +1166,97 @@ var RecruitmentService = /** @class */ (function () {
                                 message: "Error inserting data into AdvertisementDetails",
                             }];
                     case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    RecruitmentService.prototype.GetRoadMapStatusDetails = function (filterParam, filterConditions) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var res, selectedCandidateIds, recruitmentMap_1, positionFilter, recruitmentGrid, GridResult, error_14;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 4, , 5]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                                Select: "*,Status/StatusDescription",
+                                Filter: filterParam,
+                                FilterCondition: filterConditions,
+                                Expand: "Status",
+                                Topcount: ApiConfig_1.count.Topcount,
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            })];
+                    case 1:
+                        res = _a.sent();
+                        if (!res.length) {
+                            return [2 /*return*/, {
+                                    data: [],
+                                    status: 200,
+                                    message: "No records found",
+                                }];
+                        }
+                        selectedCandidateIds = res
+                            .filter(function (item) { var _a; return ((_a = item === null || item === void 0 ? void 0 : item.Status) === null || _a === void 0 ? void 0 : _a.ID) === Config_1.StatusId.Selected; })
+                            .map(function (item) { return item.ID; });
+                        recruitmentMap_1 = new Map();
+                        if (!(selectedCandidateIds.length > 0)) return [3 /*break*/, 3];
+                        positionFilter = [
+                            {
+                                FilterKey: "CandidateIDId",
+                                Operator: "in",
+                                FilterValue: selectedCandidateIds,
+                            },
+                        ];
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD,
+                                Select: "*,Status/StatusDescription,Status/ID,Action/Action,RecruitmentID/ID",
+                                Filter: positionFilter,
+                                FilterCondition: "and",
+                                Expand: "Status,Action,RecruitmentID",
+                                Topcount: ApiConfig_1.count.Topcount,
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            })];
+                    case 2:
+                        recruitmentGrid = _a.sent();
+                        recruitmentMap_1 = new Map(recruitmentGrid.map(function (gridItem) { return [gridItem.CandidateId, gridItem]; }));
+                        _a.label = 3;
+                    case 3:
+                        GridResult = res.map(function (item, index) {
+                            var _a, _b, _c;
+                            var recruitmentData = recruitmentMap_1.get(item.ID);
+                            var StatusID = (item === null || item === void 0 ? void 0 : item.StatusId) === Config_1.StatusId.Selected
+                                ? recruitmentData === null || recruitmentData === void 0 ? void 0 : recruitmentData.StatusId
+                                : item === null || item === void 0 ? void 0 : item.StatusId;
+                            var currentStepIndex = (0, PositionStatusConfig_1.getStageCandidateindex)(StatusID);
+                            return {
+                                id: index + 1,
+                                CandidateId: item.ID,
+                                RecruitmentID: item.RecruitmentID,
+                                StatusId: StatusID,
+                                name: "\n          ".concat((_a = item === null || item === void 0 ? void 0 : item.FristName) !== null && _a !== void 0 ? _a : "", "\n          ").concat((_b = item === null || item === void 0 ? void 0 : item.MiddleName) !== null && _b !== void 0 ? _b : "", "\n          ").concat((_c = item === null || item === void 0 ? void 0 : item.LastName) !== null && _c !== void 0 ? _c : "", "\n        ").trim(),
+                                role: item === null || item === void 0 ? void 0 : item.PositionTitle,
+                                initials: item === null || item === void 0 ? void 0 : item.LastName,
+                                appliedDate: item === null || item === void 0 ? void 0 : item.CreatedDate,
+                                avatarClass: "",
+                                currentStepIndex: currentStepIndex,
+                            };
+                        });
+                        return [2 /*return*/, {
+                                data: GridResult,
+                                status: 200,
+                                message: "GetRecruitmentDetails fetched successfully",
+                            }];
+                    case 4:
+                        error_14 = _a.sent();
+                        console.error("Error fetching GetRecruitmentDetails:", error_14);
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error fetching data",
+                            }];
+                    case 5: return [2 /*return*/];
                 }
             });
         });

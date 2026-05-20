@@ -1,7 +1,12 @@
 import moment from "moment";
 import { ApiResponse } from "../../models/apimodels";
 import { count, InOperator, ResponeStatus } from "../../utilities/ApiConfig";
-import { DataFrom, DocumentLibraray, ListNames } from "../../utilities/Config";
+import {
+  DataFrom,
+  DocumentLibraray,
+  ListNames,
+  StatusId,
+} from "../../utilities/Config";
 import SPServices, { getSP } from "../SPService/spservice";
 import { BatchQuery, IDocFiles } from "../SPService/Ispservice";
 import { _mapRecruitmentItems } from "./mapItems";
@@ -13,6 +18,7 @@ import {
   PostAgentData,
   PostRecuritmentData,
   QualificationValue,
+  RoadMapStatus,
   RoleSpecKnowledge,
   stripHtml,
 } from "./IRecruitmentService";
@@ -36,6 +42,7 @@ import {
 } from "../ServiceExport";
 import { Nationality } from "../../utilities/ConditionConfig";
 import { AddCalculateDate } from "../../components/Hooks/dateConfigfn";
+import { getStageCandidateindex } from "../../utilities/PositionStatusConfig";
 
 export default class RecruitmentService implements IRecruitmentService {
   async GetNPAEPVRRDetails(
@@ -1304,6 +1311,94 @@ export default class RecruitmentService implements IRecruitmentService {
         data: [],
         status: 500,
         message: "Error inserting data into AdvertisementDetails",
+      };
+    }
+  }
+
+  async GetRoadMapStatusDetails(
+    filterParam: any,
+    filterConditions: any,
+  ): Promise<ApiResponse<RoadMapStatus[]>> {
+    try {
+      const res: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
+        Select: `*,Status/StatusDescription`,
+        Filter: filterParam,
+        FilterCondition: filterConditions,
+        Expand: `Status`,
+        Topcount: count.Topcount,
+        Orderby: "ID",
+        Orderbydecorasc: true,
+      });
+      if (!res.length) {
+        return {
+          data: [],
+          status: 200,
+          message: "No records found",
+        };
+      }
+      const selectedCandidateIds = res
+        .filter((item) => item?.Status?.ID === StatusId.Selected)
+        .map((item) => item.ID);
+      let recruitmentMap = new Map();
+      if (selectedCandidateIds.length > 0) {
+        const positionFilter = [
+          {
+            FilterKey: "CandidateIDId",
+            Operator: "in",
+            FilterValue: selectedCandidateIds,
+          },
+        ];
+        const recruitmentGrid: any[] = await SPServices.SPReadItems({
+          Listname: ListNames.HRMSSelectedCandidateDetailsByHOD,
+          Select: `*,Status/StatusDescription,Status/ID,Action/Action,RecruitmentID/ID`,
+          Filter: positionFilter,
+          FilterCondition: "and",
+          Expand: `Status,Action,RecruitmentID`,
+          Topcount: count.Topcount,
+          Orderby: "ID",
+          Orderbydecorasc: true,
+        });
+        recruitmentMap = new Map(
+          recruitmentGrid.map((gridItem) => [gridItem.CandidateId, gridItem]),
+        );
+      }
+      const GridResult: RoadMapStatus[] = res.map((item, index) => {
+        const recruitmentData = recruitmentMap.get(item.ID);
+        let StatusID =
+          item?.StatusId === StatusId.Selected
+            ? recruitmentData?.StatusId
+            : item?.StatusId;
+        const currentStepIndex = getStageCandidateindex(StatusID);
+        return {
+          id: index + 1,
+          CandidateId: item.ID,
+          RecruitmentID: item.RecruitmentID,
+          StatusId: StatusID,
+          name: `
+          ${item?.FristName ?? ""}
+          ${item?.MiddleName ?? ""}
+          ${item?.LastName ?? ""}
+        `.trim(),
+          role: item?.PositionTitle,
+          initials: item?.LastName,
+          appliedDate: item?.CreatedDate,
+          avatarClass: "",
+          currentStepIndex: currentStepIndex,
+        };
+      });
+      return {
+        data: GridResult,
+        status: 200,
+        message: "GetRecruitmentDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching GetRecruitmentDetails:", error);
+
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching data",
       };
     }
   }

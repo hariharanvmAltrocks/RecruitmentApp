@@ -508,6 +508,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                         </div>
                         <PositionRoadmap
                           statusId={positionDetails?.StatusId || 0}
+                          recId={positionDetails?.ID || selectedJobId || 0}
                         />
                       </div>
                     </motion.div>
@@ -629,7 +630,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   );
 };
 
-const PositionRoadmap = ({ statusId }: { statusId: number }) => {
+const PositionRoadmap = ({ statusId, recId }: { statusId: number; recId: number }) => {
   const currentStage = getStageIndex(statusId);
 
   return (
@@ -708,7 +709,7 @@ const PositionRoadmap = ({ statusId }: { statusId: number }) => {
           );
         })}
       </div>
-      <CandidateProgress />
+      <CandidateProgress RecID={recId} />
     </div>
   );
 };

@@ -324,7 +324,7 @@ var AdvertReviewDrawer = function (_a) {
                                 react_1.default.createElement("div", { className: "advert-roadmap__header-status" },
                                     react_1.default.createElement("div", { className: "advert-roadmap__header-status-dot" }),
                                     react_1.default.createElement("span", { className: "advert-roadmap__header-status-text" }, "Active Status: Advert Review"))),
-                            react_1.default.createElement(PositionRoadmap, { statusId: (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusId) || 0 }))))),
+                            react_1.default.createElement(PositionRoadmap, { statusId: (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusId) || 0, recId: (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.ID) || selectedJobId || 0 }))))),
                     react_1.default.createElement(PositionFramework_1.PositionFramework, { positionDetails: mappedData, isLoading: isLoading, headerCode: headerMeta.code }),
                     react_1.default.createElement(AdvertLanguageToggle_1.AdvertLanguageToggle, { advertLanguage: advertLanguage, advertContent: advertContent, isLoading: isLoading, onLanguageChange: onLanguageChange }),
                     react_1.default.createElement(RequiredAttachments_1.RequiredAttachments, { attachments: attachments, isLoading: isLoading }),
@@ -351,7 +351,7 @@ var AdvertReviewDrawer = function (_a) {
 };
 exports.AdvertReviewDrawer = AdvertReviewDrawer;
 var PositionRoadmap = function (_a) {
-    var statusId = _a.statusId;
+    var statusId = _a.statusId, recId = _a.recId;
     var currentStage = (0, PositionStatusConfig_1.getStageIndex)(statusId);
     return (react_1.default.createElement("div", { className: "advert-roadmap" },
         react_1.default.createElement("div", { className: "advert-roadmap__container" }, PositionStatusConfig_1.stages.map(function (stage, index) {
@@ -377,6 +377,6 @@ var PositionRoadmap = function (_a) {
                                 : "advert-roadmap__label--pending") }, stage.label),
                     isCompleted && (react_1.default.createElement("span", { className: "advert-roadmap__status-done" }, "Done")))));
         })),
-        react_1.default.createElement(CandidateProgress_1.CandidateProgress, null)));
+        react_1.default.createElement(CandidateProgress_1.CandidateProgress, { RecID: recId })));
 };
 //# sourceMappingURL=AdvertReviewDrawer.js.map

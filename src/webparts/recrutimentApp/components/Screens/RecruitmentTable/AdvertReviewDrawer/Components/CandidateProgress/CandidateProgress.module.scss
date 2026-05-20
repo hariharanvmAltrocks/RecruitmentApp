@@ -33,6 +33,15 @@
     }
   }
 
+  .totalCountBadge {
+    background: rgba($primary-color, 0.1);
+    color: $primary-color;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
   &__actions {
     display: flex;
     gap: $space-md;
@@ -343,6 +352,42 @@
       &.hide-line::after {
         display: none;
       }
+    }
+  }
+
+  &__pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 16px 24px; 
+    gap: 16px;
+    border-top: 1px solid $border-light;
+
+    .paginationBtn {
+      padding: 6px 12px;
+      background: $white;
+      border: 1px solid $border-light;
+      border-radius: $radius-md;
+      font-size: 13px;
+      font-weight: 500;
+      color: $text-primary;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover:not(:disabled) {
+        background: rgba($secondary-color, 0.5);
+        border-color: $border-color;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .paginationText {
+      font-size: 13px;
+      color: $text-secondary;
     }
   }
 }

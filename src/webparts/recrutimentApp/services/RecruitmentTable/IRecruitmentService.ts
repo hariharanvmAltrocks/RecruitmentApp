@@ -69,6 +69,16 @@ export type DataSyncToRecruitmentResponse = {
   CreatedDate: string | undefined;
 };
 
+export type RoadMapStatus = {
+  id: number;
+  initials: string;
+  name: string;
+  role: string;
+  appliedDate: string;
+  avatarClass: string;
+  currentStepIndex: number;
+};
+
 export type InsertComments = {
   RoleId: number | null;
   RecruitmentIDId: number;
@@ -208,6 +218,10 @@ export type IRecruitmentService = {
   InsertExternalAgencyDetails(
     payloads: PostAgentData[],
   ): Promise<ApiResponse<any[]>>;
+  GetRoadMapStatusDetails(
+    filterParam: any,
+    filterConditions: any,
+  ): Promise<ApiResponse<RoadMapStatus[]>>;
 };
 
 export const stripHtml = (html: string | null | undefined): string => {

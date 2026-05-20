@@ -466,7 +466,6 @@ export default class DashboardService implements IDashboard {
         Orderby: "ID",
         Orderbydecorasc: true,
       });
-
       if (!recruitmentResponse.length) {
         return {
           data: [],
@@ -474,7 +473,6 @@ export default class DashboardService implements IDashboard {
           message: "No records found",
         };
       }
-
       const uniqueBusinessUnitIds = Array.from(
         new Set(
           recruitmentResponse
@@ -482,7 +480,6 @@ export default class DashboardService implements IDashboard {
             .filter(Boolean),
         ),
       );
-
       const jdeResponse: any[] = await SPServices.SPReadItems({
         Listname: ListNames.JDEDataMapping,
         Select: `
@@ -508,17 +505,13 @@ export default class DashboardService implements IDashboard {
         Orderby: "ID",
         Orderbydecorasc: true,
       });
-
       const jdeMap = new Map<number, any>();
-
       jdeResponse.forEach((item: any) => {
         if (item?.BUCId) {
           jdeMap.set(item.BUCId, item);
         }
       });
-
       const userCache = new Map<string, string>();
-
       const getCachedUserName = async (
         email?: string,
         title?: string,
@@ -527,11 +520,9 @@ export default class DashboardService implements IDashboard {
           if (title) {
             return title;
           }
-
           if (!email) {
             return "";
           }
-
           if (userCache.has(email)) {
             return userCache.get(email) || "";
           }
@@ -544,7 +535,6 @@ export default class DashboardService implements IDashboard {
           return "";
         }
       };
-
       const GridResult: DashboardData[] = await Promise.all(
         recruitmentResponse.map(async (item: any, index: number) => {
           const candidateCount = await this._getCandidateCountByMatric(
@@ -553,19 +543,14 @@ export default class DashboardService implements IDashboard {
             item.ID,
           );
           const jdeData = jdeMap.get(item.BusinessUnitCodeId);
-
           const [LineManager, HOD, Exco, HR, HRLead] = await Promise.all([
             getCachedUserName(
               jdeData?.LineManager?.EMail,
               jdeData?.LineManager?.Title,
             ),
-
             getCachedUserName(jdeData?.HOD?.EMail, jdeData?.HOD?.Title),
-
             getCachedUserName(jdeData?.EXCO?.EMail, jdeData?.EXCO?.Title),
-
             getCachedUserName(item?.AssignedHR),
-
             getCachedUserName(item?.RecruitmentHRLead),
           ]);
 
@@ -576,28 +561,24 @@ export default class DashboardService implements IDashboard {
                   Name: LineManager,
                 }
               : ({} as tooltipData),
-
             HOD: HOD
               ? {
                   Role: RoleName.HOD,
                   Name: HOD,
                 }
               : ({} as tooltipData),
-
             Exco: Exco
               ? {
                   Role: RoleName.EXCO,
                   Name: Exco,
                 }
               : ({} as tooltipData),
-
             HR: HR
               ? {
                   Role: RoleName.RecruitmentHR,
                   Name: HR,
                 }
               : ({} as tooltipData),
-
             HRLead: HRLead
               ? {
                   Role: RoleName.RecruitmentHRLead,
@@ -607,46 +588,29 @@ export default class DashboardService implements IDashboard {
           };
           return {
             ID: item.ID,
-
             RecordID: index + 1,
-
             BusinessUnitCode: item?.BusinessUnitCode?.BusineesUnitCode ?? "",
-
             Nationality: item?.Nationality,
-
             NumberOfPersonNeeded: item?.NumberOfPersonNeeded,
-
             Type: item?.DataFrom ?? "",
-
             Status: item?.Status?.StatusDescription ?? "",
-
             StatusId: item?.StatusId,
-
             JobCodeId: item?.JobCode?.ID ?? 0,
-
             JobCode: item?.JobCode?.JobCode ?? "",
-
             JobTitleEnglish: item?.JobCode?.JobTitleInEnglish ?? "",
-
             ModifiedDate: item?.Modified
               ? moment(item.Modified).format("YYYY-MM-DD")
               : undefined,
-
             CreatedDate: item?.Created
               ? moment(item.Created).format("YYYY-MM-DD")
               : undefined,
-
             Department: item?.Department?.DepartmentName ?? "",
-
             EmploymentCategory: item?.EmploymentCategory,
-
             CandidateCount: candidateCount,
-
             StatusTooltip,
           };
         }),
       );
-
       return {
         data: GridResult,
         status: 200,
@@ -654,7 +618,6 @@ export default class DashboardService implements IDashboard {
       };
     } catch (error) {
       console.error("Error fetching GetRecruitmentDetails:", error);
-
       return {
         data: [],
         status: 500,

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getStageIndex = exports.stages = void 0;
+exports.getStageCandidateindex = exports.PROGRESS_STEPS = exports.getStageIndex = exports.stages = void 0;
 var lucide_react_1 = require("lucide-react");
 var Config_1 = require("./Config");
 exports.stages = [
@@ -37,6 +37,64 @@ var getStageIndex = function (statusId) {
     return 0;
 };
 exports.getStageIndex = getStageIndex;
+exports.PROGRESS_STEPS = [
+    "Interview Schedules",
+    "Assign Position ID",
+    "Background Check",
+    "Resi Process",
+    "Offer Release",
+    "Workpermit Process",
+    "Employment Contract",
+    "Onboarding",
+];
+var getStageCandidateindex = function (statusId) {
+    if (!statusId)
+        return 0;
+    if (statusId == Config_1.StatusId.InterviewScheduled ||
+        statusId == Config_1.StatusId.InterviewLevel1InProgress ||
+        statusId == Config_1.StatusId.InterviewLevel2InProgress ||
+        statusId == Config_1.StatusId.InterviewScheduledforLevel2)
+        return 0;
+    if (statusId == Config_1.StatusId.PendingwithpositionIDAssignmentWithHOD ||
+        statusId == Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel ||
+        statusId == Config_1.StatusId.OnHoldbyHOD ||
+        statusId == Config_1.StatusId.RejectedbyHOD ||
+        statusId == Config_1.StatusId.CandidateOnHoldbyHODLevel1 ||
+        statusId == Config_1.StatusId.CandidateOnHoldbyHODLevel2 ||
+        statusId == Config_1.StatusId.CandidateRejectedbyHODLevel1 ||
+        statusId == Config_1.StatusId.CandidateRejectedbyHODLevel2)
+        return 1;
+    if (statusId == Config_1.StatusId.PendingHRBGVInitiation ||
+        statusId == Config_1.StatusId.PendingBGdocuploadedbycandidate ||
+        statusId == Config_1.StatusId.PendingHRReviewBGCheck ||
+        statusId == Config_1.StatusId.PendingDOTAficaVerification)
+        return 2;
+    if (statusId == Config_1.StatusId.RESIProcessInitiatedforDRC ||
+        statusId == Config_1.StatusId.RESIProcessInitiatedforExpatriate ||
+        statusId == Config_1.StatusId.RESProcessInitiated)
+        return 3;
+    if (statusId == Config_1.StatusId.PendingHROfferInitiate ||
+        statusId == Config_1.StatusId.PendingCandidateOfferLetterUpload ||
+        statusId == Config_1.StatusId.PendingHRReviewOfferWorkPermitInit ||
+        statusId == Config_1.StatusId.PendingLabourHireOfferRelease ||
+        statusId == Config_1.StatusId.PendingHROfferReview)
+        return 4;
+    if (statusId == Config_1.StatusId.PendingCandidateWorkPermitreleatedDoc ||
+        statusId == Config_1.StatusId.PendingHRReviewWorkpermitDocs ||
+        statusId == Config_1.StatusId.WorkPermitAcknowledgedContractUploaded ||
+        statusId == Config_1.StatusId.PendingLabourhireWPPayment ||
+        statusId == Config_1.StatusId.PendingFinancePaymentReview ||
+        statusId == Config_1.StatusId.PendingLHWorkPermitProcess ||
+        statusId ==
+            Config_1.StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract)
+        return 5;
+    if (statusId == Config_1.StatusId.OnboardingProcessinitiatedforDRC ||
+        statusId == Config_1.StatusId.OnboardingProcessinitiatedforExpat ||
+        statusId == Config_1.StatusId.onboardingInProcess)
+        return 6;
+    return 0;
+};
+exports.getStageCandidateindex = getStageCandidateindex;
 // export const getCandidateStatus = (statusId: number) => {
 //   if (!statusId) return "Unknown";
 //   if (statusId == StatusId.) return "Candidate Shortlisted";

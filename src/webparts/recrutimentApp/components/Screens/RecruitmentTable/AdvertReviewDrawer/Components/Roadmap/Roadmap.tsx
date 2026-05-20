@@ -78,7 +78,7 @@ export const Roadmap: React.FC<RoadmapProps> = ({ statusId }) => {
       </div>
 
       {/* 2. Candidate Progress Table (Bottom Section) */}
-      <CandidateProgress />
+      {/* <CandidateProgress /> */}
     </div>
   );
 };

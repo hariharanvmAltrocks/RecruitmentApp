@@ -5,7 +5,6 @@ var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importDefault(require("react"));
 var lucide_react_1 = require("lucide-react");
 var Roadmap_module_scss_1 = tslib_1.__importDefault(require("./Roadmap.module.scss"));
-var CandidateProgress_1 = require("../CandidateProgress/CandidateProgress");
 var PositionStatusConfig_1 = require("../../../../../../utilities/PositionStatusConfig");
 var Roadmap = function (_a) {
     var _b;
@@ -48,8 +47,7 @@ var Roadmap = function (_a) {
                     react_1.default.createElement("div", { className: Roadmap_module_scss_1.default.labelContainer },
                         react_1.default.createElement("span", { className: nameClass }, stage.label),
                         isCompleted && (react_1.default.createElement("span", { className: Roadmap_module_scss_1.default.statusText }, "Done")))));
-            }))),
-        react_1.default.createElement(CandidateProgress_1.CandidateProgress, null)));
+            })))));
 };
 exports.Roadmap = Roadmap;
 //# sourceMappingURL=Roadmap.js.map
