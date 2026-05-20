@@ -744,7 +744,7 @@ $error-bg    : rgba(229, 62, 62, 0.05);
       transition: background $transition-base, box-shadow $transition-base;
 
       &:hover {
-        background: darken($primary-color, 6%);
+        background: color-mix(in srgb, $primary-color, #000000 6%);
         box-shadow: 0 14px 24px rgba(37, 99, 235, 0.32);
       }
 

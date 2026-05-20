@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Palette } from "lucide-react";
 import styles from "./SideNavigation.module.scss";
 import { useUIState } from "../RecrutimentApp/UIStateContext";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 type MenuItem = {
   Id: number;
@@ -119,6 +120,7 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
   const navigate = useNavigate();
   const { setSideNavflag } = useUIState();
   const [expandedMenus, setExpandedMenus] = useState<number[]>([]);
+  const [isSwitcherOpen, setSwitcherOpen] = useState(false);
 
   const sortedMenu: MenuItem[] = [...menuData].sort((a, b) => a.Id - b.Id);
 
@@ -206,6 +208,20 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
             isCollapsed={isCollapsed}
           />
         ))}
+
+        <div
+          onClick={() => setSwitcherOpen(true)}
+          className={styles.sidebarItem}
+          title={isCollapsed ? "Custom Theme" : undefined}
+        >
+          <Palette className={styles.icon} />
+          <span className={styles.labelWrap}>
+            <span className={styles.label}>Custom Theme</span>
+            <span className={styles.labelTooltip} role="tooltip">
+              Custom Theme
+            </span>
+          </span>
+        </div>
       </nav>
 
       {/* ── Footer ── */}
@@ -215,6 +231,11 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
           <div className={styles.footerLabel}>Kamoa Copper SA</div>
         </div>
       </div>
+
+      <ThemeSwitcher
+        isOpen={isSwitcherOpen}
+        onClose={() => setSwitcherOpen(false)}
+      />
     </aside>
   );
 };

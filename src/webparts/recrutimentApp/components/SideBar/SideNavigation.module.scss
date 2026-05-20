@@ -5,22 +5,22 @@
 // Dark purple theme tokens — matching the screenshot exactly
 // Override your light theme variables locally here
 // ─────────────────────────────────────────────────────────────
-$nav-bg:              #1e1b4b;   // dark navy-purple sidebar background
-$nav-bg-hover:        #2d2a6e;   // slightly lighter purple on hover
-$nav-active-bg:       #7c3aed;   // vivid purple for active item fill
-$nav-active-left:     #a78bfa;   // soft purple left-border accent
-$nav-text:            #a5b4fc;   // muted lavender for inactive labels
-$nav-text-active:     #ffffff;   // white for active label
-$nav-text-hover:      #ffffff;   // white on hover
-$nav-icon-muted:      #6d6a9c;   // dim purple for inactive icons
-$nav-section-label:   #ffffff;   // very dim label for "MAIN MENU"
-$nav-border:          #2a2760;   // subtle border / divider
-$nav-logo-bg:         #7c3aed;   // logo icon background
-$nav-logo-text:       #ffffff;
-$nav-logo-subtitle:   #a78bfa;
-$nav-footer-bg:       #16133d;   // slightly darker footer strip
-$nav-tooltip-bg:      #0f0e2e;
-$nav-chevron:         #6d6a9c;
+$nav-bg:              var(--app-sidenav-color, #1e1b4b);   // dark navy-purple sidebar background
+$nav-bg-hover:        var(--app-sidenav-bg-hover, #2d2a6e);   // slightly lighter purple on hover
+$nav-active-bg:       var(--app-button-color, #7c3aed);   // active button color
+$nav-active-left:     var(--app-primary-color, #a78bfa);   // primary accent
+$nav-text:            var(--app-sidenav-text, #a5b4fc);   // muted text
+$nav-text-active:     var(--app-sidenav-text-active, #ffffff);   // active text
+$nav-text-hover:      var(--app-sidenav-text-hover, #ffffff);   // hover text
+$nav-icon-muted:      var(--app-sidenav-icon-muted, #6d6a9c);   // inactive icons
+$nav-section-label:   var(--app-sidenav-section-label, #ffffff);   // section header text
+$nav-border:          var(--app-sidenav-border, #2a2760);   // border
+$nav-logo-bg:         var(--app-button-color, #7c3aed);   // logo bg (uses button/primary color)
+$nav-logo-text:       var(--app-sidenav-text-active, #ffffff);
+$nav-logo-subtitle:   var(--app-sidenav-text, #a78bfa);
+$nav-footer-bg:       var(--app-sidenav-footer-bg, #16133d);   // footer bg
+$nav-tooltip-bg:      var(--app-sidenav-tooltip-bg, #0f0e2e);   // tooltip bg
+$nav-chevron:         var(--app-sidenav-chevron, #6d6a9c);   // chevron color
 $nav-width:           240px;
 $nav-collapsed-width: 72px;
 

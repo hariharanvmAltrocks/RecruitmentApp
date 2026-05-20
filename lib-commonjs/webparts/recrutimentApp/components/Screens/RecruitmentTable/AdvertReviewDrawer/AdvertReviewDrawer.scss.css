@@ -26,7 +26,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 24px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
   background: #ffffff;
 }
 .advert-review-drawer__header-left {
@@ -39,7 +39,7 @@
   height: 48px;
   border-radius: 12px;
   background: rgba(37, 99, 235, 0.12);
-  color: #7c3aed;
+  color: var(--app-primary-color, #7c3aed);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,7 +47,7 @@
 .advert-review-drawer__title {
   font-size: 20px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
   margin: 0;
 }
 .advert-review-drawer__meta {
@@ -61,7 +61,7 @@
   padding: 4px 8px;
   border-radius: 999px;
   background: rgba(37, 99, 235, 0.1);
-  color: #7c3aed;
+  color: var(--app-primary-color, #7c3aed);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -71,16 +71,16 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #e2e8f0;
+  background: var(--app-sidenav-border, #e2e8f0);
 }
 .advert-review-drawer__meta-text {
-  color: #94a3b8;
+  color: var(--app-text-color, #94a3b8);
   font-weight: 600;
 }
 .advert-review-drawer__close {
   border: none;
   background: transparent;
-  color: #94a3b8;
+  color: var(--app-text-color, #94a3b8);
   border-radius: 999px;
   width: 36px;
   height: 36px;
@@ -91,8 +91,8 @@
   transition: background 0.2s ease, color 0.2s ease;
 }
 .advert-review-drawer__close:hover {
-  background: #f8fafc;
-  color: #0f172a;
+  background: var(--app-secondary-color, #f8fafc);
+  color: var(--app-text-color, #0f172a);
 }
 .advert-review-drawer__content {
   flex: 1;
@@ -110,7 +110,7 @@
 .advert-review-drawer__section--frame {
   padding: 24px;
   border-radius: 20px;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
   background: rgba(248, 250, 252, 0.5);
 }
 .advert-review-drawer__section--toggle {
@@ -119,8 +119,8 @@
   justify-content: space-between;
   padding: 12px 16px;
   border-radius: 12px;
-  border: 1px solid #f1f5f9;
-  background: #f8fafc;
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
+  background: var(--app-secondary-color, #f8fafc);
 }
 .advert-review-drawer__section--comments {
   gap: 20px;
@@ -138,18 +138,18 @@
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
   margin: 0;
 }
 .advert-review-drawer__section-header--plain h3 {
   letter-spacing: 0.12em;
-  color: #334155;
+  color: var(--app-text-color, #334155);
 }
 .advert-review-drawer__section-indicator {
   width: 6px;
   height: 24px;
   border-radius: 999px;
-  background: #7c3aed;
+  background: var(--app-primary-color, #7c3aed);
 }
 .advert-review-drawer__ref {
   font-size: 10px;
@@ -157,9 +157,9 @@
   letter-spacing: 0.12em;
   padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
   background: #ffffff;
-  color: #94a3b8;
+  color: var(--app-text-color, #94a3b8);
   font-weight: 700;
 }
 .advert-review-drawer__group {
@@ -173,7 +173,7 @@
   gap: 12px;
   font-size: 10px;
   font-weight: 700;
-  color: #7c3aed;
+  color: var(--app-primary-color, #7c3aed);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   margin: 0;
@@ -199,13 +199,13 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #94a3b8;
+  color: var(--app-text-color, #94a3b8);
   font-weight: 700;
 }
 .advert-review-drawer__info-value {
   font-size: 13px;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
   border: 1px solid #ede7e7;
   background-color: white;
   padding: 6%;
@@ -216,7 +216,7 @@
 }
 .advert-review-drawer__divider {
   height: 1px;
-  background: #f1f5f9;
+  background: var(--app-sidenav-border, #f1f5f9);
 }
 .advert-review-drawer__toggle-label {
   display: flex;
@@ -226,7 +226,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #94a3b8;
+  color: var(--app-text-color, #94a3b8);
 }
 .advert-review-drawer__toggle {
   display: flex;
@@ -239,14 +239,14 @@
   font-weight: 700;
   padding: 6px 16px;
   border-radius: 8px;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 .advert-review-drawer__toggle-button.is-active {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  color: #7c3aed;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  color: var(--app-primary-color, #7c3aed);
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
 }
 .advert-review-drawer__section-title {
@@ -257,17 +257,17 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #94a3b8;
+  color: var(--app-text-color, #94a3b8);
   margin: 0;
 }
 .advert-review-drawer__description {
-  background: #f8fafc;
-  border: 1px solid #f1f5f9;
+  background: var(--app-secondary-color, #f8fafc);
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
   border-radius: 12px;
   padding: 16px;
   font-size: 14px;
   line-height: 1.6;
-  color: #334155;
+  color: var(--app-text-color, #334155);
   margin: 0;
 }
 .advert-review-drawer__list {
@@ -282,21 +282,21 @@
   display: flex;
   gap: 10px;
   font-size: 13px;
-  color: #334155;
+  color: var(--app-text-color, #334155);
   line-height: 1.5;
 }
 .advert-review-drawer__list-item--muted {
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
 }
 .advert-review-drawer__list-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #7c3aed;
+  background: var(--app-primary-color, #7c3aed);
   margin-top: 6px;
 }
 .advert-review-drawer__list-dot--muted {
-  background: #e2e8f0;
+  background: var(--app-sidenav-border, #e2e8f0);
 }
 .advert-review-drawer__attachments {
   display: grid;
@@ -304,7 +304,7 @@
   gap: 20px;
 }
 .advert-review-drawer__attachment-card {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 16px;
   background: #ffffff;
   overflow: hidden;
@@ -314,7 +314,7 @@
   transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 .advert-review-drawer__attachment-card:hover {
-  border-color: #7c3aed;
+  border-color: var(--app-primary-color, #7c3aed);
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
 }
 .advert-review-drawer__attachment-header {
@@ -322,8 +322,8 @@
   display: flex;
   gap: 12px;
   align-items: center;
-  background: #f8fafc;
-  border-bottom: 1px solid #f1f5f9;
+  background: var(--app-secondary-color, #f8fafc);
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
 }
 .advert-review-drawer__attachment-type {
   width: 40px;
@@ -359,7 +359,7 @@
 .advert-review-drawer__attachment-title {
   font-size: 13px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -369,7 +369,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #94a3b8;
+  color: var(--app-text-color, #94a3b8);
 }
 .advert-review-drawer__attachment-body {
   padding: 16px;
@@ -384,13 +384,13 @@
   align-items: center;
   padding: 8px;
   border-radius: 8px;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
   background: rgba(248, 250, 252, 0.7);
   font-size: 11px;
-  color: #334155;
+  color: var(--app-text-color, #334155);
 }
 .advert-review-drawer__attachment-version:hover {
-  border-color: #7c3aed;
+  border-color: var(--app-primary-color, #7c3aed);
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
   color: #2563eb;
 }
@@ -406,7 +406,7 @@
   color: #ffffff;
 }
 .advert-review-drawer__attachment-lang--en {
-  background: #7c3aed;
+  background: var(--app-primary-color, #7c3aed);
 }
 .advert-review-drawer__attachment-lang--fr {
   background: #f97316;
@@ -426,12 +426,12 @@
 }
 .advert-review-drawer__attachment-size {
   font-size: 9px;
-  color: #94a3b8;
+  color: var(--app-text-color, #94a3b8);
   font-weight: 600;
 }
 .advert-review-drawer__textarea {
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   padding: 16px;
   font-size: 13px;
   min-height: 120px;
@@ -441,7 +441,7 @@
 }
 .advert-review-drawer__textarea:focus {
   outline: none;
-  border-color: #7c3aed;
+  border-color: var(--app-primary-color, #7c3aed);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 .advert-review-drawer__signature {
@@ -457,7 +457,7 @@
   display: flex;
   gap: 16px;
   font-size: 13px;
-  color: #334155;
+  color: var(--app-text-color, #334155);
   line-height: 1.6;
   cursor: pointer;
 }
@@ -465,7 +465,7 @@
   width: 29px;
   height: 23px;
   border-radius: 6px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -484,8 +484,8 @@
   transition: opacity 0.2s ease;
 }
 .advert-review-drawer__checkbox.is-checked {
-  background: #7c3aed;
-  border-color: #7c3aed;
+  background: var(--app-primary-color, #7c3aed);
+  border-color: var(--app-primary-color, #7c3aed);
 }
 .advert-review-drawer__checkbox.is-checked svg {
   opacity: 1;
@@ -502,7 +502,7 @@
   height: 48px;
   border-radius: 50%;
   background: rgba(37, 99, 235, 0.18);
-  color: #7c3aed;
+  color: var(--app-primary-color, #7c3aed);
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -520,18 +520,18 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: #94a3b8;
+  color: var(--app-text-color, #94a3b8);
   font-weight: 700;
 }
 .advert-review-drawer__signature-value {
   font-size: 13px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
   margin-top: 4px;
 }
 .advert-review-drawer__footer {
   padding: 20px 24px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--app-sidenav-border, #f1f5f9);
   background: rgba(248, 250, 252, 0.6);
   display: flex;
   align-items: center;
@@ -541,9 +541,9 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
   background: #ffffff;
-  color: #94a3b8;
+  color: var(--app-text-color, #94a3b8);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -558,13 +558,13 @@
   background: rgba(65, 55, 55, 0.1882352941);
   font-size: 13px;
   font-weight: 700;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   padding: 10px 18px;
   border-radius: 12px;
   cursor: pointer;
 }
 .advert-review-drawer__button--primary {
-  background: #7c3aed;
+  background: var(--app-primary-color, #7c3aed);
   color: #ffffff;
   display: inline-flex;
   align-items: center;
@@ -572,8 +572,8 @@
   box-shadow: 0 12px 20px rgba(37, 99, 235, 0.25);
 }
 .advert-review-drawer__button--primary.is-disabled {
-  background: #e2e8f0;
-  color: #94a3b8;
+  background: var(--app-sidenav-border, #e2e8f0);
+  color: var(--app-text-color, #94a3b8);
   box-shadow: none;
   cursor: not-allowed;
 }
@@ -957,8 +957,8 @@
   max-width: "180px";
 }
 .advert-review-drawer__attachment-label--link:hover {
-  color: #7c3aed;
-  border-color: #7c3aed;
+  color: var(--app-primary-color, #7c3aed);
+  border-color: var(--app-primary-color, #7c3aed);
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
 }
 

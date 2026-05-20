@@ -1,7 +1,7 @@
 .candidateProgress {
   background: #ffffff;
   border-radius: 20px;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
   overflow: hidden;
   margin-top: 24px;
   font-family: "Inter", sans-serif;
@@ -11,12 +11,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
 }
 .candidateProgress__title h3 {
   font-size: 14px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
   margin: 0 0 4px 0;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -24,11 +24,11 @@
 .candidateProgress__title p {
   margin: 0;
   font-size: 12px;
-  color: #334155;
+  color: var(--app-text-color, #334155);
 }
 .candidateProgress .totalCountBadge {
-  background: rgba(124, 58, 237, 0.1);
-  color: #7c3aed;
+  background: rgba(var(--app-primary-color, #7c3aed), 0.1);
+  color: var(--app-primary-color, #7c3aed);
   padding: 2px 8px;
   border-radius: 12px;
   font-size: 11px;
@@ -45,7 +45,7 @@
 .candidateProgress__search input {
   height: 36px;
   padding: 0 16px 0 36px;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
   border-radius: 12px;
   font-size: 13px;
   width: 250px;
@@ -53,15 +53,15 @@
 }
 .candidateProgress__search input:focus {
   outline: none;
-  border-color: #7c3aed;
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+  border-color: var(--app-primary-color, #7c3aed);
+  box-shadow: 0 0 0 3px rgba(var(--app-primary-color, #7c3aed), 0.1);
 }
 .candidateProgress__search svg {
   position: absolute;
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
 }
 .candidateProgress__filterBtn {
   height: 36px;
@@ -70,24 +70,24 @@
   align-items: center;
   gap: 8px;
   background: #ffffff;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
   border-radius: 12px;
   font-size: 13px;
   font-weight: 500;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
   cursor: pointer;
   transition: all 0.2s;
 }
 .candidateProgress__filterBtn:hover {
-  background: #f8fafc;
-  border-color: #e2e8f0;
+  background: var(--app-secondary-color, #f8fafc);
+  border-color: var(--app-sidenav-border, #e2e8f0);
 }
 .candidateProgress__timelineHeader {
   padding: 24px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
   position: relative;
 }
 .candidateProgress__timelineHeader::before {
@@ -97,7 +97,7 @@
   left: 24px;
   font-size: 10px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
   letter-spacing: 0.5px;
 }
 .candidateProgress__stepHeader {
@@ -135,7 +135,7 @@
 .candidateProgress__stepHeader .stepLabel {
   font-size: 11px;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
   text-align: center;
   line-height: 1.2;
 }
@@ -148,21 +148,21 @@
   padding: 16px 24px;
   font-size: 11px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
 }
 .candidateProgress__table td {
   padding: 20px 24px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
   vertical-align: middle;
 }
 .candidateProgress__table tr {
   transition: background 0.2s;
 }
 .candidateProgress__table tr:hover {
-  background: rgba(248, 250, 252, 0.3);
+  background: rgba(var(--app-secondary-color, #f8fafc), 0.3);
 }
 .candidateProgress__candidateInfo {
   display: flex;
@@ -193,18 +193,18 @@
 .candidateProgress__candidateInfo .details .name {
   font-size: 14px;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
 }
 .candidateProgress__candidateInfo .details .role {
   font-size: 12px;
-  color: #334155;
+  color: var(--app-text-color, #334155);
 }
 .candidateProgress__candidateInfo .details .date {
   display: flex;
   align-items: center;
   gap: 4px;
   font-size: 11px;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
 }
 .candidateProgress__currentStepBox {
   display: flex;
@@ -231,20 +231,20 @@
 .candidateProgress__currentStepBox .stepInfo .stepName {
   font-size: 13px;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
 }
 .candidateProgress__currentStepBox .stepInfo .stepStatus {
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: 11px;
-  color: #334155;
+  color: var(--app-text-color, #334155);
 }
 .candidateProgress__currentStepBox .stepInfo .stepStatus .dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #7c3aed;
+  background: var(--app-primary-color, #7c3aed);
 }
 .candidateProgress__progressRow {
   display: flex;
@@ -260,7 +260,7 @@
   left: 12px;
   right: 12px;
   height: 2px;
-  background: #f1f5f9;
+  background: var(--app-sidenav-border, #f1f5f9);
   z-index: 0;
   transform: translateY(-50%);
 }
@@ -301,8 +301,8 @@
 }
 .candidateProgress__progressRow .node--pending {
   background: #ffffff;
-  color: #64748b;
-  border: 2px solid #f1f5f9;
+  color: var(--app-text-color, #64748b);
+  border: 2px solid var(--app-sidenav-border, #f1f5f9);
 }
 .candidateProgress__progressRow .node.hide-line::after {
   display: none;
@@ -313,22 +313,22 @@
   align-items: center;
   padding: 16px 24px;
   gap: 16px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--app-sidenav-border, #f1f5f9);
 }
 .candidateProgress__pagination .paginationBtn {
   padding: 6px 12px;
   background: #ffffff;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
   border-radius: 12px;
   font-size: 13px;
   font-weight: 500;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
   cursor: pointer;
   transition: all 0.2s;
 }
 .candidateProgress__pagination .paginationBtn:hover:not(:disabled) {
-  background: rgba(248, 250, 252, 0.5);
-  border-color: #e2e8f0;
+  background: rgba(var(--app-secondary-color, #f8fafc), 0.5);
+  border-color: var(--app-sidenav-border, #e2e8f0);
 }
 .candidateProgress__pagination .paginationBtn:disabled {
   opacity: 0.5;
@@ -336,5 +336,5 @@
 }
 .candidateProgress__pagination .paginationText {
   font-size: 13px;
-  color: #334155;
+  color: var(--app-text-color, #334155);
 }

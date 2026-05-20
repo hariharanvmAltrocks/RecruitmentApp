@@ -186,7 +186,7 @@ $coi-transition:    0.16s cubic-bezier(0.4, 0, 0.2, 1);
   transition: border-color $coi-transition, box-shadow $coi-transition;
 
   &:hover:not(:disabled) {
-    border-color: darken($border-base, 10%);
+    border-color: color-mix(in srgb, $border-base, #000000 10%);
   }
 
   &:focus {

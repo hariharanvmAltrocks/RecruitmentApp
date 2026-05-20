@@ -1,40 +1,40 @@
-﻿@import "variables";
+@import "variables";
 
-$primary-color: #7c3aed;
-$secondary-color: #f8fafc;
-$side-nav-color: #ffffff;
-$header-text-color: #0f172a;
-$header-breadcrumb-color: #64748b;
-$header-bg-color: #ffffff;
-$button-color: #0f172a;
-$dashboard-card-bg: #ffffff;
-$dashboard-card-border: #e2e8f0;
-$dashboard-card-hover: #bfdbfe;
-$dashboard-card-active: #7c3aed;
+$primary-color: var(--app-primary-color, #7c3aed);
+$secondary-color: var(--app-secondary-color, #f8fafc);
+$side-nav-color: var(--app-sidenav-color, #ffffff);
+$header-text-color: var(--app-text-color, #0f172a);
+$header-breadcrumb-color: var(--app-text-color, #64748b);
+$header-bg-color: var(--app-header-color, #ffffff);
+$button-color: var(--app-button-color, #2563eb);
+$dashboard-card-bg: var(--app-card-color, #ffffff);
+$dashboard-card-border: var(--app-sidenav-border, #e2e8f0);
+$dashboard-card-hover: var(--app-primary-color, #bfdbfe);
+$dashboard-card-active: var(--app-primary-color, #7c3aed);
 $white: #ffffff;
-$surface-muted: #fdfdfd;
+$surface-muted: var(--app-secondary-color, #fdfdfd);
 $danger-border: #fecaca;
 $warning-border: #fde68a;
 $warning-bg: #fffbeb;
-$primary-shadow: rgba(37, 99, 235, 0.3);
+$primary-shadow: var(--app-primary-shadow, rgba(37, 99, 235, 0.3));
 $danger-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.05), 0 2px 4px -1px rgba(239, 68, 68, 0.03);
 
-$text-primary: #0f172a;
-$text-secondary: #334155;
-$text-muted: #64748b;
-$text-subtle: #94a3b8;
+$text-primary: var(--app-text-color, #0f172a);
+$text-secondary: var(--app-text-color, #334155);
+$text-muted: var(--app-text-color, #64748b);
+$text-subtle: var(--app-text-color, #94a3b8);
 
-$border-light: #f1f5f9;
-$border-base: #e2e8f0;
+$border-light: var(--app-sidenav-border, #f1f5f9);
+$border-base: var(--app-sidenav-border, #e2e8f0);
 
 $danger: #ef4444;
 $warning: #f59e0b;
 $success: #22c55e;
 
-$status-active-bg: #dbeafe;
-$status-active-text: #7c3aed;
-$status-default-bg: #f1f5f9;
-$status-default-text: #64748b;
+$status-active-bg: var(--app-primary-color, #dbeafe);
+$status-active-text: var(--app-button-color, #7c3aed);
+$status-default-bg: var(--app-secondary-color, #f1f5f9);
+$status-default-text: var(--app-text-color, #64748b);
 $status-critical-bg: #fee2e2;
 $status-critical-text: #dc2626;
 
@@ -43,4 +43,4 @@ $font-family: var(--app-font-family, "Plus Jakarta Sans", "Inter", ui-sans-serif
 $success-color: #22c55e;
 $success-color-bg: #eff6ff;
 
-$border-color: #e2e8f0;
+$border-color: var(--app-sidenav-border, #e2e8f0);
