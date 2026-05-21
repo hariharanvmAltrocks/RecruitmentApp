@@ -1,5 +1,4 @@
-// AdvertExtension.module.scss
-// Theme: white modal with purple (#7c3aed) accents — matches "Finalize Assignment" UI
+@import "../../../../../styles/theme";
 
 .overlay {
   position: fixed;
@@ -19,7 +18,7 @@
 }
 
 .modal {
-  background: #ffffff;
+  background: $dashboard-card-bg;
   border-radius: 20px;
   width: 520px;
   max-width: calc(100vw - 32px);
@@ -28,7 +27,7 @@
   flex-direction: column;
   box-shadow:
     0 4px 6px rgba(0,0,0,0.05),
-    0 24px 60px rgba(100, 60, 200, 0.18);
+    0 24px 60px $primary-shadow;
   animation: slideUp 0.22s cubic-bezier(0.34, 1.3, 0.64, 1);
   overflow: hidden;
 }
@@ -44,7 +43,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 22px 24px 16px;
-  border-bottom: 1px solid #f0edf8;
+  border-bottom: 1px solid $border-light;
 }
 
 .headerLeft {
@@ -56,7 +55,7 @@
 .iconWrap {
   width: 42px;
   height: 42px;
-  background: #ede9fe;
+  background: $secondary-color;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -68,7 +67,7 @@
   font-family: 'Segoe UI', system-ui, sans-serif;
   font-size: 1.15rem;
   font-weight: 700;
-  color: #1e1b2e;
+  color: $text-primary;
   margin: 0;
   letter-spacing: -0.01em;
 }
@@ -77,19 +76,19 @@
   width: 34px;
   height: 34px;
   border: none;
-  background: #f5f3ff;
+  background: $secondary-color;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6b7280;
+  color: $text-muted;
   transition: background 0.15s, color 0.15s, transform 0.15s;
   flex-shrink: 0;
 
   &:hover {
-    background: #ede9fe;
-    color: #7c3aed;
+    background: $secondary-color;
+    color: $primary-color;
     transform: scale(1.08);
   }
 }
@@ -100,8 +99,8 @@
   align-items: center;
   gap: 10px;
   padding: 12px 24px;
-  background: #faf8ff;
-  border-bottom: 1px solid #f0edf8;
+  background: $secondary-color;
+  border-bottom: 1px solid $border-light;
 }
 
 .jobLabel {
@@ -109,8 +108,8 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #7c3aed;
-  background: #ede9fe;
+  color: $primary-color;
+  background: $secondary-color;
   padding: 3px 8px;
   border-radius: 6px;
   flex-shrink: 0;
@@ -119,7 +118,7 @@
 .jobName {
   font-size: 0.88rem;
   font-weight: 600;
-  color: #1e1b2e;
+  color: $text-primary;
 }
 
 // ── Scrollable body ──────────────────────────────────
@@ -135,7 +134,7 @@
     background: transparent;
   }
   &::-webkit-scrollbar-thumb {
-    background: #ddd6fe;
+    background: $border-color;
     border-radius: 10px;
   }
 }
@@ -155,7 +154,7 @@
 .extensionIndex {
   width: 22px;
   height: 22px;
-  background: #7c3aed;
+  background: $primary-color;
   color: #fff;
   border-radius: 50%;
   font-size: 0.7rem;
@@ -171,7 +170,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #7c3aed;
+  color: $primary-color;
 }
 
 // ── Date row ─────────────────────────────────────────
@@ -191,7 +190,7 @@
 .fieldLabel {
   font-size: 0.72rem;
   font-weight: 600;
-  color: #9ca3af;
+  color: $text-muted;
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -205,12 +204,12 @@
 .dateInput {
   width: 100%;
   padding: 10px 36px 10px 14px;
-  border: 1.5px solid #e5e7eb;
+  border: 1.5px solid $border-color;
   border-radius: 10px;
   font-size: 0.875rem;
   font-family: inherit;
-  color: #1e1b2e;
-  background: #fafafa;
+  color: $text-primary;
+  background: $secondary-color;
   outline: none;
   transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
   appearance: none;
@@ -227,34 +226,34 @@
   }
 
   &:focus {
-    border-color: #7c3aed;
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+    border-color: $primary-color;
+    background: $dashboard-card-bg;
+    box-shadow: 0 0 0 3px $primary-shadow;
   }
 
   &:hover:not(:focus) {
-    border-color: #c4b5fd;
-    background: #fff;
+    border-color: $primary-color;
+    background: $dashboard-card-bg;
   }
 }
 
 .calIcon {
   position: absolute;
   right: 11px;
-  color: #9ca3af;
+  color: $text-muted;
   display: flex;
   align-items: center;
   pointer-events: none;
   transition: color 0.15s;
 
   .inputWrap:focus-within & {
-    color: #7c3aed;
+    color: $primary-color;
   }
 }
 
 .displayDate {
   font-size: 0.72rem;
-  color: #a78bfa;
+  color: $primary-color;
   font-weight: 500;
   padding-left: 2px;
   min-height: 16px;
@@ -273,7 +272,7 @@
     display: block;
     width: 20px;
     height: 2px;
-    background: linear-gradient(90deg, #c4b5fd, #7c3aed);
+    background: linear-gradient(90deg, $primary-color, $button-color);
     border-radius: 2px;
     position: relative;
 
@@ -284,7 +283,7 @@
       top: -3px;
       width: 0;
       height: 0;
-      border-left: 5px solid #7c3aed;
+      border-left: 5px solid $button-color;
       border-top: 4px solid transparent;
       border-bottom: 4px solid transparent;
     }
@@ -295,7 +294,7 @@
 .divider {
   margin: 18px 0 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #ede9fe 30%, #ede9fe 70%, transparent);
+  background: linear-gradient(90deg, transparent, $border-light 30%, $border-light 70%, transparent);
 }
 
 // ── Footer ───────────────────────────────────────────
@@ -305,15 +304,15 @@
   justify-content: flex-end;
   gap: 12px;
   padding: 16px 24px 22px;
-  border-top: 1px solid #f0edf8;
-  background: #fff;
+  border-top: 1px solid $border-light;
+  background: $dashboard-card-bg;
 }
 
 .cancelBtn {
   padding: 10px 22px;
   border: none;
   background: transparent;
-  color: #6b7280;
+  color: $text-muted;
   font-size: 0.875rem;
   font-weight: 600;
   border-radius: 10px;
@@ -322,8 +321,8 @@
   font-family: inherit;
 
   &:hover {
-    background: #f5f3ff;
-    color: #4b5563;
+    background: $secondary-color;
+    color: $text-secondary;
   }
 }
 
@@ -332,7 +331,7 @@
   align-items: center;
   gap: 8px;
   padding: 10px 26px;
-  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  background: linear-gradient(135deg, $button-color 0%, $primary-color 100%);
   color: #fff;
   border: none;
   border-radius: 50px;
@@ -341,17 +340,17 @@
   cursor: pointer;
   font-family: inherit;
   letter-spacing: 0.01em;
-  box-shadow: 0 4px 14px rgba(109, 40, 217, 0.35);
+  box-shadow: 0 4px 14px $primary-shadow;
   transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
 
   &:hover {
-    background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
-    box-shadow: 0 6px 20px rgba(109, 40, 217, 0.45);
+    background: linear-gradient(135deg, $primary-color 0%, $button-color 100%);
+    box-shadow: 0 6px 20px $primary-shadow;
     transform: translateY(-1px);
   }
 
   &:active {
     transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(109, 40, 217, 0.3);
+    box-shadow: 0 2px 8px $primary-shadow;
   }
 }

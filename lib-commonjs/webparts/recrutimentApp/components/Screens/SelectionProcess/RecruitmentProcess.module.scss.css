@@ -21,12 +21,12 @@
 }
 
 .crumb {
-  color: #9ca3af;
+  color: var(--app-text-color, #64748b);
   cursor: pointer;
   transition: color 0.12s;
 }
 .crumb:hover {
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .sep {
@@ -59,28 +59,28 @@
   background: transparent;
   font-size: 14px;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--app-text-color, #64748b);
   cursor: pointer;
   transition: all 0.15s;
 }
 .tabBtn:hover {
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   border-color: #bfdbfe;
 }
 
 .active {
-  border-color: #2563eb !important;
-  color: #2563eb !important;
+  border-color: var(--app-primary-color, #7c3aed) !important;
+  color: var(--app-primary-color, #7c3aed) !important;
   font-weight: 600;
-  background: #fff;
+  background: var(--app-card-color, #ffffff);
 }
 
 .placeholder {
-  background: #fff;
+  background: var(--app-card-color, #ffffff);
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   padding: 56px;
   text-align: center;
-  color: #9ca3af;
+  color: var(--app-text-color, #64748b);
   font-size: 14px;
 }

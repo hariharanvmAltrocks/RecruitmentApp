@@ -1188,6 +1188,7 @@ const RoleMetricFilters: Record<number, number[]> = {
     MatricID.OfferAccepted,
     MatricID.OfferRejected,
     MatricID.Onbording,
+    MatricID.MySubmission
   ],
 
   [RoleID.RecruitmentHR]: [
@@ -1205,6 +1206,7 @@ const RoleMetricFilters: Record<number, number[]> = {
     MatricID.OfferAccepted,
     MatricID.OfferRejected,
     MatricID.Onbording,
+    MatricID.MySubmissionHR,
   ],
 
   [RoleID.LineManager]: [
@@ -1218,6 +1220,7 @@ const RoleMetricFilters: Record<number, number[]> = {
     MatricID.OfferAccepted,
     MatricID.OfferRejected,
     MatricID.Onbording,
+    MatricID.MySubmissionLM,
   ],
 
   [RoleID.HOD]: [
@@ -1230,6 +1233,7 @@ const RoleMetricFilters: Record<number, number[]> = {
     MatricID.OfferAccepted,
     MatricID.OfferRejected,
     MatricID.Onbording,
+    MatricID.MySubmissionHOD,
   ],
 
   [RoleID.RecruitmentAppExternalAgency]: [
@@ -1239,6 +1243,7 @@ const RoleMetricFilters: Record<number, number[]> = {
     MatricID.OfferAccepted,
     MatricID.OfferRejected,
     MatricID.Onbording,
+    // MatricID.MySubmissionEXCO,
   ],
 
   [RoleID.FinanceDepartment]: [

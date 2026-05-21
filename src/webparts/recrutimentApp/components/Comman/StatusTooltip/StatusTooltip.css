@@ -10,7 +10,7 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #e24b4a;
+  background: var(--app-primary-color, #e24b4a);
   color: #fff;
   font-size: 11px;
   font-weight: 700;
@@ -27,14 +27,14 @@
 }
 
 .status-tooltip__icon:hover {
-  background: #c93b3a;
+  background: var(--app-button-color, #c93b3a);
 }
 
 /* ── Tooltip box ──────────────────────────────────────── */
 .status-tooltip__box {
   position: fixed;
-  background: #ffffff;
-  border: 0.5px solid #d1d1d1;
+  background: var(--app-card-color, #ffffff);
+  border: 0.5px solid var(--app-sidenav-border, #d1d1d1);
   border-radius: 8px;
   padding: 10px 14px;
   min-width: 300px;      /* ← wider so 1fr columns have space to stretch */
@@ -48,9 +48,9 @@
 .status-tooltip__title {
   font-size: 12px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--app-text-color, #1a1a1a);
   text-decoration: underline;
-  border-bottom: 0.5px solid #eeeeee;
+  border-bottom: 0.5px solid var(--app-sidenav-border, #eeeeee);
   padding-bottom: 6px;
   margin-bottom: 8px;
   white-space: nowrap;
@@ -77,7 +77,7 @@
 /* ── Role label — left column, right-aligned to push toward colon ── */
 .status-tooltip__key {
   font-size: 12px;
-  color: #444444;
+  color: var(--app-text-color, #444444);
   white-space: nowrap;
   text-align: left;      /* ← text stays left but column stretches */
 }
@@ -85,14 +85,14 @@
 /* ── Colon — middle column, centered ─────────────────── */
 .status-tooltip__separator {
   font-size: 12px;
-  color: #444444;
+  color: var(--app-text-color, #444444);
   text-align: center;
 }
 
 /* ── Name — right column ──────────────────────────────── */
 .status-tooltip__val {
   font-size: 12px;
-  color: #e24b4a;
+  color: var(--app-primary-color, #e24b4a);
   font-weight: 500;
   text-align: left;
   word-break: break-word;
@@ -102,7 +102,8 @@
 /* ── Loading / empty state ────────────────────────────── */
 .status-tooltip__loading {
   font-size: 12px;
-  color: #999999;
+  color: var(--app-text-color, #999999);
+  opacity: 0.7;
   padding: 4px 0;
   display: flex;
   align-items: center;
@@ -114,8 +115,8 @@
   display: inline-block;
   width: 10px;
   height: 10px;
-  border: 1.5px solid #ddd;
-  border-top-color: #e24b4a;
+  border: 1.5px solid var(--app-sidenav-border, #ddd);
+  border-top-color: var(--app-primary-color, #e24b4a);
   border-radius: 50%;
   animation: tt-spin 0.6s linear infinite;
   flex-shrink: 0;
@@ -135,7 +136,7 @@
   transform: translateX(-50%) rotate(45deg);
   width: 8px;
   height: 8px;
-  background: #ffffff;
-  border-left: 0.5px solid #d1d1d1;
-  border-top: 0.5px solid #d1d1d1;
+  background: var(--app-card-color, #ffffff);
+  border-left: 0.5px solid var(--app-sidenav-border, #d1d1d1);
+  border-top: 0.5px solid var(--app-sidenav-border, #d1d1d1);
 }

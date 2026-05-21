@@ -1,9 +1,10 @@
 .priority-widget-dark {
-  background: linear-gradient(135deg, #181c2e, #0f121d);
+  background: var(--app-card-color, #ffffff);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 30px;
   padding: 35px 35px 40px 35px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  color: #fff;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  color: var(--app-text-color, #0f172a);
   width: 80%;
   min-width: 380px;
 }
@@ -17,7 +18,7 @@
   font-family: "Segoe UI Black", "Arial Black", Impact, sans-serif;
   font-size: 24px;
   font-weight: 900;
-  color: #ffffff;
+  color: var(--app-text-color, #0f172a);
   margin: 0 0 6px 0;
   letter-spacing: -0.5px;
   line-height: 1;
@@ -26,7 +27,7 @@
   font-family: "Segoe UI", "Inter", sans-serif;
   font-size: 11px;
   font-weight: 700;
-  color: #5c6b8b;
+  color: var(--app-text-color, #64748b);
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 1.5px;
@@ -34,16 +35,16 @@
 .priority-widget-dark__header .icon-wrapper {
   width: 48px;
   height: 48px;
-  background: rgba(36, 40, 65, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  background: var(--app-secondary-color, #f8fafc);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 .priority-widget-dark__header .icon-wrapper .activity-icon {
-  color: #9275f6;
+  color: var(--app-primary-color, #7c3aed);
   stroke-width: 2.5;
 }
 .priority-widget-dark__body {
@@ -66,7 +67,7 @@
   flex-shrink: 0;
 }
 .priority-widget-dark .chart-container .recharts-wrapper {
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.08));
 }
 .priority-widget-dark .chart-container .chart-center {
   position: absolute;
@@ -80,7 +81,7 @@
   font-family: "Segoe UI Black", "Arial Black", Impact, sans-serif;
   font-size: 22px;
   font-weight: 900;
-  color: #ffffff;
+  color: var(--app-text-color, #0f172a);
 }
 .priority-widget-dark .list-container {
   flex-grow: 1;
@@ -104,7 +105,7 @@
   font-family: "Segoe UI", "Inter", sans-serif;
   font-size: 10px;
   font-weight: 800;
-  color: #899ec2;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.8px;
 }
@@ -112,19 +113,19 @@
   font-family: "Segoe UI Black", "Arial Black", Impact, sans-serif;
   font-size: 12px;
   font-weight: 900;
-  color: #ffffff;
+  color: var(--app-text-color, #0f172a);
 }
 .priority-widget-dark .list-container .list-item .progress-track {
   width: 100%;
   height: 6px;
-  background: #202636;
+  background: var(--app-sidenav-border, #e2e8f0);
   border-radius: 6px;
   overflow: hidden;
 }
 .priority-widget-dark .list-container .list-item .progress-track .progress-fill {
   height: 100%;
   border-radius: 6px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
   transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .priority-widget-dark .list-container .view-more-btn {
@@ -135,7 +136,7 @@
   gap: 6px;
   background: none;
   border: none;
-  color: #7265f0;
+  color: var(--app-button-color, #2563eb);
   font-family: "Segoe UI", "Inter", sans-serif;
   font-size: 10px;
   font-weight: 800;
@@ -146,7 +147,7 @@
   transition: color 0.2s, opacity 0.2s;
 }
 .priority-widget-dark .list-container .view-more-btn:hover {
-  color: #9287fa;
+  color: var(--app-primary-color, #7c3aed);
 }
 .priority-widget-dark .list-container .view-more-btn:active {
   opacity: 0.7;

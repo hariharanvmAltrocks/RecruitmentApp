@@ -18,7 +18,7 @@
   width: 4px;
   height: 20px;
   border-radius: 3px;
-  background: #3B82F6;
+  background: var(--app-primary-color, #7c3aed);
 }
 
 .title {
@@ -27,15 +27,15 @@
   font-size: 12.5px;
   font-weight: 700;
   letter-spacing: 0.13em;
-  color: #0B1120;
+  color: var(--app-text-color, #0f172a);
   text-transform: uppercase;
 }
 
 .totalBadge {
   font-size: 12px;
   font-weight: 500;
-  color: #7C8BAA;
-  background: #E3E8F0;
+  color: var(--app-text-color, #64748b);
+  background: var(--app-sidenav-border, #e2e8f0);
   padding: 4px 14px;
   border-radius: 20px;
   white-space: nowrap;
@@ -48,8 +48,8 @@
 }
 
 .categoryCard {
-  background: #FFFFFF;
-  border: 1px solid #E3E8F0;
+  background: var(--app-card-color, #ffffff);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 16px;
   box-shadow: 0 1px 4px rgba(11, 17, 32, 0.06), 0 4px 16px rgba(11, 17, 32, 0.04);
   overflow: hidden;
@@ -75,7 +75,7 @@
   background: rgba(0, 0, 0, 0.018);
 }
 .categoryHeader:focus-visible {
-  outline: 2px solid var(--accent, #3B82F6);
+  outline: 2px solid var(--accent, var(--app-primary-color, #7c3aed));
   outline-offset: -2px;
 }
 
@@ -87,7 +87,7 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background-color: color-mix(in srgb, var(--accent, #3B82F6) 12%, white);
+  background-color: color-mix(in srgb, var(--accent, var(--app-primary-color, #7c3aed)) 12%, white);
 }
 .categoryIconWrap svg {
   width: 22px;
@@ -104,7 +104,7 @@
 .categoryName {
   font-size: 15px;
   font-weight: 600;
-  color: #2D3A52;
+  color: var(--app-text-color, #334155);
   line-height: 1.2;
 }
 
@@ -112,7 +112,7 @@
   font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 0.07em;
-  color: #7C8BAA;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
 }
 
@@ -124,8 +124,8 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: #E8EDF5;
-  color: #7C8BAA;
+  background: var(--app-sidenav-border, #e2e8f0);
+  color: var(--app-text-color, #64748b);
   transition: background 0.22s cubic-bezier(0.4, 0, 0.2, 1), color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .chevronBtn svg {
@@ -134,15 +134,15 @@
   transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .chevronBtn.chevronOpen {
-  background: var(--accent, #3B82F6);
-  color: #fff;
+  background: var(--accent, var(--app-primary-color, #7c3aed));
+  color: var(--app-card-color, #ffffff);
 }
 .chevronBtn.chevronOpen svg {
   transform: rotate(180deg);
 }
 
 .groupBody {
-  border-top: 1px solid #E3E8F0;
+  border-top: 1px solid var(--app-sidenav-border, #e2e8f0);
   animation: fadeDown 0.2s ease both;
 }
 
@@ -170,8 +170,8 @@
   align-items: center;
   gap: 12px;
   padding: 11px 14px;
-  background: #F7F9FC;
-  border: 1px solid #E3E8F0;
+  background: var(--app-secondary-color, #f8fafc);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 10px;
   transition: background 0.22s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -198,7 +198,7 @@
   height: 34px;
   border-radius: 8px;
   background: #DDE4F0;
-  color: #5A6E94;
+  color: var(--app-text-color, #334155);
 }
 .docRowIcon svg {
   width: 17px;
@@ -216,7 +216,7 @@
 .docRowName {
   font-size: 13px;
   font-weight: 600;
-  color: #2D3A52;
+  color: var(--app-text-color, #334155);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -224,7 +224,7 @@
 
 .docRowMeta {
   font-size: 11.5px;
-  color: #7C8BAA;
+  color: var(--app-text-color, #64748b);
   font-weight: 400;
 }
 
@@ -245,9 +245,9 @@
   width: 30px;
   height: 30px;
   border-radius: 7px;
-  border: 1px solid #D4DCE9;
-  background: #FFFFFF;
-  color: #5A6E94;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  background: var(--app-card-color, #ffffff);
+  color: var(--app-text-color, #334155);
   cursor: pointer;
   text-decoration: none;
   transition: background 0.22s cubic-bezier(0.4, 0, 0.2, 1), color 0.22s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
@@ -257,9 +257,9 @@
   height: 15px;
 }
 .docActionBtn:hover {
-  background: #3B82F6;
-  border-color: #3B82F6;
-  color: #fff;
+  background: var(--app-primary-color, #7c3aed);
+  border-color: var(--app-primary-color, #7c3aed);
+  color: var(--app-card-color, #ffffff);
   transform: scale(1.05);
 }
 .docActionBtn:active {
@@ -273,7 +273,7 @@
 
 .subDivider {
   height: 1px;
-  background: #E3E8F0;
+  background: var(--app-sidenav-border, #e2e8f0);
   margin: 0 20px;
 }
 
@@ -302,7 +302,7 @@
   width: 3px;
   height: 28px;
   border-radius: 999px;
-  background: var(--sub-accent, #94A3B8);
+  background: var(--sub-accent, var(--app-text-color, #64748b));
 }
 
 .subCategoryIconWrap {
@@ -313,7 +313,7 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background-color: color-mix(in srgb, var(--sub-accent, #94A3B8) 12%, white);
+  background-color: color-mix(in srgb, var(--sub-accent, var(--app-text-color, #64748b)) 12%, white);
 }
 .subCategoryIconWrap svg {
   width: 16px;
@@ -331,7 +331,7 @@
 .subCategoryName {
   font-size: 13px;
   font-weight: 600;
-  color: #2D3A52;
+  color: var(--app-text-color, #334155);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -342,7 +342,7 @@
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: #7C8BAA;
+  color: var(--app-text-color, #64748b);
 }
 
 .subChevron {
@@ -352,7 +352,7 @@
   justify-content: center;
   width: 18px;
   height: 18px;
-  color: #7C8BAA;
+  color: var(--app-text-color, #64748b);
   transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .subChevron svg {
@@ -396,7 +396,7 @@
 .modalBox {
   display: flex;
   flex-direction: column;
-  background: #FFFFFF;
+  background: var(--app-card-color, #ffffff);
   border-radius: 18px;
   width: 100%;
   max-width: 900px;
@@ -422,8 +422,8 @@
   align-items: center;
   gap: 10px;
   padding: 14px 16px;
-  border-bottom: 1px solid #E3E8F0;
-  background: #F7F9FC;
+  border-bottom: 1px solid var(--app-sidenav-border, #e2e8f0);
+  background: var(--app-secondary-color, #f8fafc);
   flex-shrink: 0;
 }
 
@@ -435,7 +435,7 @@
   height: 32px;
   border-radius: 8px;
   background: #DDE4F0;
-  color: #5A6E94;
+  color: var(--app-text-color, #334155);
   flex-shrink: 0;
 }
 .modalFileIcon svg {
@@ -447,7 +447,7 @@
   flex: 1;
   font-size: 13.5px;
   font-weight: 600;
-  color: #2D3A52;
+  color: var(--app-text-color, #334155);
   font-family: "DM Sans", sans-serif;
   white-space: nowrap;
   overflow: hidden;
@@ -467,9 +467,9 @@
   gap: 6px;
   padding: 6px 14px 6px 10px;
   border-radius: 8px;
-  border: 1px solid #D4DCE9;
-  background: #FFFFFF;
-  color: #2D3A52;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  background: var(--app-card-color, #ffffff);
+  color: var(--app-text-color, #334155);
   font-size: 12.5px;
   font-weight: 600;
   font-family: "DM Sans", sans-serif;
@@ -482,9 +482,9 @@
   height: 14px;
 }
 .modalDownloadBtn:hover {
-  background: #3B82F6;
-  border-color: #3B82F6;
-  color: #fff;
+  background: var(--app-primary-color, #7c3aed);
+  border-color: var(--app-primary-color, #7c3aed);
+  color: var(--app-card-color, #ffffff);
 }
 
 .modalCloseBtn {
@@ -494,9 +494,9 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  border: 1px solid #D4DCE9;
-  background: #FFFFFF;
-  color: #7C8BAA;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  background: var(--app-card-color, #ffffff);
+  color: var(--app-text-color, #64748b);
   cursor: pointer;
   transition: background 0.22s cubic-bezier(0.4, 0, 0.2, 1), color 0.22s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -513,7 +513,7 @@
 .modalIframeWrap {
   flex: 1;
   overflow: hidden;
-  background: #F1F4F9;
+  background: var(--app-secondary-color, #f8fafc);
 }
 
 .modalIframe {

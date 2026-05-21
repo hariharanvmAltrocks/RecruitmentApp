@@ -25,12 +25,12 @@ var PriorityWidget = function (_a) {
                     react_1.default.createElement(recharts_1.PieChart, null,
                         react_1.default.createElement(recharts_1.Pie, { data: data, cx: "50%", cy: "50%", innerRadius: 30, outerRadius: 45, paddingAngle: 4, dataKey: "value", stroke: "none", cornerRadius: 2 }, data.map(function (entry, index) { return (react_1.default.createElement(recharts_1.Cell, { key: index, fill: entry.color })); })),
                         react_1.default.createElement(recharts_1.Tooltip, { contentStyle: {
-                                backgroundColor: "#131622",
-                                borderColor: "#202538",
+                                backgroundColor: "var(--app-card-color, #131622)",
+                                borderColor: "var(--app-sidenav-border, #202538)",
                                 borderRadius: "8px",
-                                color: "#fff",
+                                color: "var(--app-text-color, #fff)",
                             }, itemStyle: {
-                                color: "#fff",
+                                color: "var(--app-text-color, #fff)",
                                 fontSize: "12px",
                                 fontWeight: "bold",
                             } }))),

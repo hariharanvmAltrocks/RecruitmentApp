@@ -57,13 +57,13 @@ const PriorityWidget: React.FC<PriorityWidgetProps> = ({ data, total }) => {
               </Pie>
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#131622",
-                  borderColor: "#202538",
+                  backgroundColor: "var(--app-card-color, #131622)",
+                  borderColor: "var(--app-sidenav-border, #202538)",
                   borderRadius: "8px",
-                  color: "#fff",
+                  color: "var(--app-text-color, #fff)",
                 }}
                 itemStyle={{
-                  color: "#fff",
+                  color: "var(--app-text-color, #fff)",
                   fontSize: "12px",
                   fontWeight: "bold",
                 }}

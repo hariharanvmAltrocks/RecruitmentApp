@@ -6,6 +6,7 @@ var recharts_1 = require("recharts");
 var lucide_react_1 = require("lucide-react");
 var departmentChart_module_scss_1 = tslib_1.__importDefault(require("./departmentChart.module.scss"));
 var Usedepartmentchart_1 = tslib_1.__importDefault(require("../../Screens/Dashboard/Hooks/Usedepartmentchart"));
+var ThemeContext_1 = require("../../../theme/ThemeContext");
 var CustomTooltip = function (_a) {
     var active = _a.active, payload = _a.payload, _b = _a.tooltipValueLabel, tooltipValueLabel = _b === void 0 ? "Openings" : _b;
     if (!active || !(payload === null || payload === void 0 ? void 0 : payload.length))
@@ -17,8 +18,11 @@ var CustomTooltip = function (_a) {
         react_1.default.createElement("p", { className: departmentChart_module_scss_1.default.tooltipSub }, tooltipValueLabel)));
 };
 var DepartmentChart = function (_a) {
-    var data = _a.data, _b = _a.itemsPerPage, itemsPerPage = _b === void 0 ? 7 : _b, _c = _a.title, title = _c === void 0 ? "Departmental Demand" : _c, _d = _a.subtitle, subtitle = _d === void 0 ? "Pending recruitment lifecycle status" : _d, _e = _a.gradientStart, gradientStart = _e === void 0 ? "#c026d3" : _e, _f = _a.gradientEnd, gradientEnd = _f === void 0 ? "#7c3aed" : _f, _g = _a.tooltipValueLabel, tooltipValueLabel = _g === void 0 ? "Openings" : _g;
-    var _h = (0, Usedepartmentchart_1.default)({ data: data, itemsPerPage: itemsPerPage }), visibleData = _h.visibleData, currentPage = _h.currentPage, totalPages = _h.totalPages, hasPrev = _h.hasPrev, hasNext = _h.hasNext, handleNext = _h.handleNext, handlePrev = _h.handlePrev;
+    var data = _a.data, _b = _a.itemsPerPage, itemsPerPage = _b === void 0 ? 7 : _b, _c = _a.title, title = _c === void 0 ? "Departmental Demand" : _c, _d = _a.subtitle, subtitle = _d === void 0 ? "Pending recruitment lifecycle status" : _d, gradientStart = _a.gradientStart, gradientEnd = _a.gradientEnd, _e = _a.tooltipValueLabel, tooltipValueLabel = _e === void 0 ? "Openings" : _e;
+    var theme = (0, ThemeContext_1.useTheme)();
+    var resolvedGradientStart = gradientStart || theme.primaryColor;
+    var resolvedGradientEnd = gradientEnd || theme.secondaryColor;
+    var _f = (0, Usedepartmentchart_1.default)({ data: data, itemsPerPage: itemsPerPage }), visibleData = _f.visibleData, currentPage = _f.currentPage, totalPages = _f.totalPages, hasPrev = _f.hasPrev, hasNext = _f.hasNext, handleNext = _f.handleNext, handlePrev = _f.handlePrev;
     var gradientId = "deptBarGradient";
     return (react_1.default.createElement("div", { className: departmentChart_module_scss_1.default.card },
         react_1.default.createElement("div", { className: departmentChart_module_scss_1.default.header },
@@ -43,12 +47,12 @@ var DepartmentChart = function (_a) {
                 react_1.default.createElement(recharts_1.BarChart, { data: visibleData, margin: { top: 10, right: 20, left: 0, bottom: 20 } },
                     react_1.default.createElement("defs", null,
                         react_1.default.createElement("linearGradient", { id: gradientId, x1: "0", y1: "0", x2: "0", y2: "1" },
-                            react_1.default.createElement("stop", { offset: "0%", stopColor: gradientStart, stopOpacity: 1 }),
-                            react_1.default.createElement("stop", { offset: "100%", stopColor: gradientEnd, stopOpacity: 0.9 }))),
-                    react_1.default.createElement(recharts_1.CartesianGrid, { strokeDasharray: "3 3", vertical: false, stroke: "#f1f5f9" }),
-                    react_1.default.createElement(recharts_1.XAxis, { dataKey: "name", axisLine: false, tickLine: false, tick: { fill: "#64748b", fontSize: 10, fontWeight: 900 }, interval: 0, height: 50, padding: { left: 20, right: 20 } }),
-                    react_1.default.createElement(recharts_1.YAxis, { axisLine: false, tickLine: false, tick: { fill: "#94a3b8", fontSize: 10, fontWeight: 900 } }),
-                    react_1.default.createElement(recharts_1.Tooltip, { cursor: { fill: "#f8fafc", radius: [12, 12, 0, 0] }, content: react_1.default.createElement(CustomTooltip, { tooltipValueLabel: tooltipValueLabel }) }),
+                            react_1.default.createElement("stop", { offset: "0%", stopColor: resolvedGradientStart, stopOpacity: 1 }),
+                            react_1.default.createElement("stop", { offset: "100%", stopColor: resolvedGradientEnd, stopOpacity: 0.9 }))),
+                    react_1.default.createElement(recharts_1.CartesianGrid, { strokeDasharray: "3 3", vertical: false, stroke: "var(--app-sidenav-border, #f1f5f9)" }),
+                    react_1.default.createElement(recharts_1.XAxis, { dataKey: "name", axisLine: false, tickLine: false, tick: { fill: "var(--app-text-color, #64748b)", fontSize: 10, fontWeight: 900 }, interval: 0, height: 50, padding: { left: 20, right: 20 } }),
+                    react_1.default.createElement(recharts_1.YAxis, { axisLine: false, tickLine: false, tick: { fill: "var(--app-text-color, #94a3b8)", fontSize: 10, fontWeight: 900 } }),
+                    react_1.default.createElement(recharts_1.Tooltip, { cursor: { fill: "var(--app-secondary-color, #f8fafc)", radius: [12, 12, 0, 0] }, content: react_1.default.createElement(CustomTooltip, { tooltipValueLabel: tooltipValueLabel }) }),
                     react_1.default.createElement(recharts_1.Bar, { dataKey: "value", fill: "url(#".concat(gradientId, ")"), radius: [12, 12, 4, 4], maxBarSize: 45, animationDuration: 800, animationEasing: "ease-out" }, visibleData.map(function (_, index) { return (react_1.default.createElement(recharts_1.Cell, { key: "cell-".concat(index), fillOpacity: 1 - index * 0.05 })); })))))));
 };
 exports.default = DepartmentChart;

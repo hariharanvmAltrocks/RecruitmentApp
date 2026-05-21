@@ -1,3 +1,5 @@
+@import "../../../../styles/theme";
+
 // ScorecardDetails.module.scss
 
 .sectionTitle {
@@ -20,7 +22,7 @@
 .sectionH2 {
   font-size: 18px;
   font-weight: 800;
-  color: #1e3a5f;
+  color: $text-primary;
   margin: 0 0 4px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -28,7 +30,7 @@
 
 .sectionSub {
   font-size: 12px;
-  color: #94a3b8;
+  color: $text-muted;
   margin: 0;
 }
 
@@ -43,11 +45,11 @@
 
 .scaleLegendItem {
   font-size: 11px;
-  color: #64748b;
+  color: $text-muted;
   white-space: nowrap;
 
   b {
-    color: #3b82f6;
+    color: $primary-color;
     font-weight: 700;
     margin-right: 3px;
   }
@@ -56,8 +58,8 @@
 // ── Card ──────────────────────────────────────────────────────────────────────
 
 .scorecardCard {
-  background: #fff;
-  border: 1px solid #e2e8f0;
+  background: $dashboard-card-bg;
+  border: 1px solid $border-color;
   border-radius: 12px;
   padding: 32px;
   margin-bottom: 32px;
@@ -82,7 +84,7 @@
 .fieldLabel {
   font-size: 11px;
   font-weight: 700;
-  color: #64748b;
+  color: $text-muted;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   margin: 0;
@@ -114,26 +116,26 @@
   flex: 1;
   height: 44px;
   max-width: 60px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid $border-color;
   border-radius: 8px;
   background: #fdfdfd;
   font-size: 15px;
   font-weight: 600;
-  color: #64748b;
+  color: $text-muted;
   cursor: pointer;
   transition: all 0.15s;
 
   &:hover {
     border-color: #93c5fd;
-    color: #2563eb;
+    color: $primary-color;
     background: #eff6ff;
   }
 }
 
 .scoreBtnActive {
-  border-color: #3b82f6;
+  border-color: $primary-color;
   background: #eff6ff;
-  color: #2563eb;
+  color: $primary-color;
   box-shadow: 0 0 0 3px #dbeafe;
 }
 
@@ -181,17 +183,17 @@
   align-items: center;
   gap: 8px;
   padding: 12px 28px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid $border-color;
   border-radius: 8px;
-  background: #fff;
+  background: $dashboard-card-bg;
   font-size: 14px;
   font-weight: 600;
-  color: #64748b;
+  color: $text-muted;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    border-color: #cbd5e1;
+    border-color: $border-color;
   }
 }
 
@@ -213,17 +215,17 @@
   width: 100%;
   margin-top: 12px;
   padding: 14px 16px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid $border-color;
   border-radius: 8px;
   font-size: 14px;
-  color: #1e293b;
+  color: $text-primary;
   resize: vertical;
   outline: none;
   box-sizing: border-box;
   font-family: inherit;
 
   &:focus {
-    border-color: #3b82f6;
+    border-color: $primary-color;
     box-shadow: 0 0 0 3px #eff6ff;
   }
 }
@@ -236,8 +238,8 @@
 // ── Acknowledgement box ───────────────────────────────────────────────────────
 
 .ackBox {
-  background: #f8fafc;
-  border: 1px solid #f1f5f9;
+  background: $secondary-color;
+  border: 1px solid $border-light;
   border-radius: 12px;
   padding: 24px 32px;
 }
@@ -252,12 +254,12 @@
   align-items: flex-start;
   gap: 14px;
   font-size: 14px;
-  color: #334155;
+  color: $text-secondary;
   line-height: 1.6;
   cursor: pointer;
   margin-bottom: 24px;
   padding-bottom: 24px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid $border-color;
 }
 
 .ackChk {
@@ -266,7 +268,7 @@
   height: 18px;
   flex-shrink: 0;
   cursor: pointer;
-  accent-color: #3b82f6;
+  accent-color: $primary-color;
 }
 
 .ackText {
@@ -309,7 +311,7 @@
 .reviewerMeta {
   font-size: 10px;
   font-weight: 700;
-  color: #94a3b8;
+  color: $text-muted;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   margin: 0 0 4px;
@@ -318,6 +320,6 @@
 .reviewerVal {
   font-size: 15px;
   font-weight: 700;
-  color: #1e293b;
+  color: $text-primary;
   margin: 0;
 }

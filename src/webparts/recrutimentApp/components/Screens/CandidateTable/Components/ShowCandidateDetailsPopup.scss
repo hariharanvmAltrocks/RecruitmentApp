@@ -3,8 +3,8 @@
 
 // ─── Tokens ──────────────────────────────────────────────────────────────────
 .cm-backdrop {
-  --cm-primary: #2f5bff;
-  --cm-primary-s: #e9efff;
+  --cm-primary: var(--app-primary-color, #2f5bff);
+  --cm-primary-s: var(--app-secondary-color, #e9efff);
   --cm-success: #16a34a;
   --cm-success-s: #f0fdf4;
   --cm-danger: #dc2626;
@@ -14,13 +14,13 @@
   --cm-orange: #ea580c;
   --cm-blue: #1d4ed8;
   --cm-blue-s: #eff6ff;
-  --cm-surface: #ffffff;
-  --cm-bg: #f8fafc;
-  --cm-border: #e8edf5;
-  --cm-border-s: #d0d9e8;
-  --cm-text: #0f172a;
-  --cm-muted: #64748b;
-  --cm-faint: #94a3b8;
+  --cm-surface: var(--app-card-color, #ffffff);
+  --cm-bg: var(--app-secondary-color, #f8fafc);
+  --cm-border: var(--app-sidenav-border, #e8edf5);
+  --cm-border-s: var(--app-sidenav-border, #d0d9e8);
+  --cm-text: var(--app-text-color, #0f172a);
+  --cm-muted: var(--app-text-color, #64748b);
+  --cm-faint: var(--app-text-color, #94a3b8);
   --cm-radius-sm: 10px;
   --cm-radius: 16px;
   --cm-radius-lg: 24px;
@@ -198,7 +198,7 @@
   border-right: 0.5px solid var(--cm-border);
   padding: 22px 18px;
   overflow-y: auto;
-  background: #f6f8fc;
+  background: var(--cm-bg);
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -238,7 +238,7 @@
     font-weight: 700;
     color: var(--cm-primary);
     background: var(--cm-primary-s);
-    border: 0.5px solid #c7d7ff;
+    border: 0.5px solid var(--cm-border);
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }

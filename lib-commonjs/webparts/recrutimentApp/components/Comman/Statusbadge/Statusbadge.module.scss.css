@@ -3,7 +3,7 @@
   display: inline-flex;
   flex-direction: column;
   align-items: flex-end;
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--app-font-family, "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif);
 }
 
 .triggerBtn {
@@ -11,8 +11,8 @@
   align-items: center;
   gap: 10px;
   padding: 8px 14px 8px 8px;
-  background: #fff;
-  border: 1px solid #E3E8F0;
+  background: var(--app-card-color, #ffffff);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 999px;
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(11, 17, 32, 0.07);
@@ -50,7 +50,7 @@
 
 .ringFill {
   fill: none;
-  stroke: #1D9E75;
+  stroke: #22c55e;
   stroke-width: 3.5;
   stroke-linecap: round;
   stroke-dasharray: 113;
@@ -70,7 +70,7 @@
   justify-content: center;
   font-size: 11px;
   font-weight: 700;
-  color: #0F6E56;
+  color: var(--app-primary-color, #0F6E56);
   letter-spacing: -0.3px;
 }
 
@@ -83,19 +83,19 @@
 .triggerLabel {
   font-size: 13px;
   font-weight: 600;
-  color: #2D3A52;
+  color: var(--app-text-color, #334155);
 }
 
 .triggerSub {
   font-size: 10.5px;
   font-weight: 500;
-  color: #7C8BAA;
+  color: var(--app-text-color, #64748b);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .chevron {
-  color: #7C8BAA;
+  color: var(--app-text-color, #64748b);
   transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -108,8 +108,8 @@
   top: calc(100% + 10px);
   right: 0;
   width: 288px;
-  background: #fff;
-  border: 1px solid #E3E8F0;
+  background: var(--app-card-color, #ffffff);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(11, 17, 32, 0.07), 0 8px 32px rgba(11, 17, 32, 0.08);
   overflow: hidden;
@@ -131,7 +131,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 13px 16px 10px;
-  border-bottom: 1px solid #F1F5F9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
 }
 
 .panelTitle {
@@ -139,14 +139,14 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #7C8BAA;
+  color: var(--app-text-color, #64748b);
 }
 
 .panelCountPill {
   font-size: 11px;
   font-weight: 700;
-  color: #0F6E56;
-  background: #E1F5EE;
+  color: var(--app-primary-color, #0F6E56);
+  background: var(--app-secondary-color, #E1F5EE);
   padding: 2px 10px;
   border-radius: 999px;
 }
@@ -163,20 +163,20 @@
   transition: background 0.15s;
 }
 .stepItem:hover {
-  background: #F7F9FC;
+  background: var(--app-secondary-color, #f8fafc);
 }
 
 .connector {
   width: 2px;
   height: 12px;
   border-radius: 1px;
-  background: #E3E8F0;
+  background: var(--app-sidenav-border, #e2e8f0);
   margin-left: 29px;
   transition: background 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .connectorDone {
-  background: #1D9E75;
+  background: #22c55e;
 }
 
 .stepIcon {
@@ -190,11 +190,11 @@
 }
 
 .stepIcon_done {
-  background: #E1F5EE;
+  background: var(--app-secondary-color, #E1F5EE);
 }
 
 .stepIcon_pending {
-  background: #F1F5F9;
+  background: var(--app-secondary-color, #f8fafc);
 }
 
 .stepIcon_warning {
@@ -226,7 +226,7 @@
 .stepName {
   font-size: 13px;
   font-weight: 600;
-  color: #2D3A52;
+  color: var(--app-text-color, #334155);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -234,7 +234,7 @@
 
 .stepSub {
   font-size: 11px;
-  color: #7C8BAA;
+  color: var(--app-text-color, #64748b);
   margin-top: 1px;
 }
 
@@ -250,13 +250,13 @@
 }
 
 .badge_done {
-  background: #E1F5EE;
-  color: #0F6E56;
+  background: var(--app-secondary-color, #E1F5EE);
+  color: var(--app-primary-color, #0F6E56);
 }
 
 .badge_pending {
-  background: #F1F5F9;
-  color: #7C8BAA;
+  background: var(--app-secondary-color, #f8fafc);
+  color: var(--app-text-color, #64748b);
 }
 
 .badge_warning {
@@ -269,8 +269,8 @@
   align-items: center;
   gap: 6px;
   padding: 10px 16px 12px;
-  border-top: 1px solid #F1F5F9;
+  border-top: 1px solid var(--app-sidenav-border, #f1f5f9);
   font-size: 11px;
-  color: #7C8BAA;
+  color: var(--app-text-color, #64748b);
   line-height: 1.4;
 }

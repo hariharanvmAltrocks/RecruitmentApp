@@ -286,7 +286,7 @@ $error-bg    : rgba(229, 62, 62, 0.05);
     font-size: 13px;
     font-weight: 600;
     color: $text-primary;
-    border: 1px solid #efecec;
+    border: 1px solid $border-color;
     background-color: $white;
     padding: 6%;
     border-radius: 9px;
@@ -513,7 +513,7 @@ $error-bg    : rgba(229, 62, 62, 0.05);
     &:hover {
       border-color: $primary-color;
       box-shadow: $shadow-md;
-      color: #2563eb;
+      color: $primary-color;
     }
   }
 

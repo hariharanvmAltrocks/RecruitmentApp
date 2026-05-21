@@ -1,3 +1,5 @@
+@import "../../../styles/theme";
+
 .tabs {
   display: flex;
   align-items: center;
@@ -10,7 +12,7 @@
     padding: 8px 20px;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #6b7280;
+    color: $text-muted;
     background: transparent;
     border: 2px solid transparent;
     border-radius: 999px;
@@ -19,13 +21,13 @@
     transition: color 0.2s, border-color 0.2s, font-weight 0.2s;
 
     &:hover:not(&--disabled) {
-      color: #2563eb;
+      color: $primary-color;
     }
 
     &--active {
-      color: #2563eb;
+      color: $button-color;
       font-weight: 700;
-      border-color: #2563eb;
+      border-color: $button-color;
       background: transparent;
     }
 
@@ -41,7 +43,7 @@
     width: 100px;
     height: 36px;
     border-radius: 999px;
-    background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+    background: linear-gradient(90deg, $secondary-color 25%, $border-light 50%, $secondary-color 75%);
     background-size: 200% 100%;
     animation: tabs-shimmer 1.4s infinite;
   }

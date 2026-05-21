@@ -1,14 +1,14 @@
 .candidate-table {
-  --ct-primary: #2f5bff;
-  --ct-primary-soft: #e9efff;
+  --ct-primary: var(--app-primary-color, #2f5bff);
+  --ct-primary-soft: var(--app-secondary-color, #e9efff);
   --ct-success: #10b981;
   --ct-warning: #f59e0b;
   --ct-danger: #ef4444;
-  --ct-text: #0f172a;
-  --ct-muted: #64748b;
-  --ct-border: #e2e8f0;
-  --ct-surface: #ffffff;
-  --ct-shadow: 0 8px 32px rgba(15, 23, 42, 0.06);
+  --ct-text: var(--app-text-color, #0f172a);
+  --ct-muted: var(--app-text-color, #64748b);
+  --ct-border: var(--app-sidenav-border, #e2e8f0);
+  --ct-surface: var(--app-card-color, #ffffff);
+  --ct-shadow: var(--app-primary-shadow, rgba(15, 23, 42, 0.06));
   --ct-radius: 16px;
   position: fixed;
   inset: 0;
@@ -59,17 +59,17 @@
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--ct-muted);
   background: transparent;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--ct-border);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 .candidate-table__refresh:hover:not(:disabled) {
   color: #fff;
-  background: #3b82f6;
-  border-color: #3b82f6;
+  background: var(--ct-primary);
+  border-color: var(--ct-primary);
 }
 .candidate-table__refresh:hover:not(:disabled) svg {
   color: #fff;
@@ -152,8 +152,8 @@
 }
 .candidate-table__code {
   display: inline-block;
-  background: #eef2ff;
-  color: #2f5bff;
+  background: var(--ct-primary-soft);
+  color: var(--ct-primary);
   font-weight: 700;
   font-size: 12px;
   padding: 4px 10px;
@@ -227,13 +227,13 @@
   cursor: pointer;
   white-space: nowrap;
   line-height: 1;
-  background: #2f5bff;
+  background: var(--ct-primary);
   color: #fff;
 }
 .candidate-table__review--view {
-  background: #f8fafc;
-  color: #374151;
-  border: 1px solid #e2e8f0;
+  background: var(--ct-primary-soft);
+  color: var(--ct-text);
+  border: 1px solid var(--ct-border);
 }
 
 @keyframes spin {

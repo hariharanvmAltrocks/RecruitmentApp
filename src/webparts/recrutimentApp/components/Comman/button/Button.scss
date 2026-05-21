@@ -1,4 +1,4 @@
-
+@import "../../../styles/theme";
 
 .btn {
   display: inline-flex;
@@ -43,54 +43,54 @@
 
   &--default {
     background: transparent;
-    color: #4b5563;
+    color: $text-secondary;
     border: none;
 
     &:hover:not(.btn--disabled) {
-      color: #111827;
-      background: #f3f4f6;
+      color: $text-primary;
+      background: $secondary-color;
       border-radius: 10px;
     }
   }
 
   &--primary {
-    background: #e2e5ea;        
-    color: #374151;
+    background: $secondary-color;        
+    color: $text-secondary;
     border-radius: 10px;
     font-weight: 600;
 
     &:hover:not(.btn--disabled) {
-      background: #d1d5db;
-      color: #111827;
+      background: $border-color;
+      color: $text-primary;
     }
 
     // when action is available (canApprove = true), switch to blue
     &.is-active {
-      background: #2563eb;
-      color: #ffffff;
+      background: $button-color;
+      color: $white;
 
       &:hover {
-        background: #1d4ed8;
+        background: var(--app-primary-color, #1d4ed8);
       }
     }
   }
 
   &--ghost {
     background: transparent;
-    color: #6b7280;
-    border: 1.5px solid #d1d5db;
+    color: $text-secondary;
+    border: 1.5px solid $border-color;
     border-radius: 10px;
 
     &:hover:not(.btn--disabled) {
-      border-color: #9ca3af;
-      color: #111827;
+      border-color: $text-muted;
+      color: $text-primary;
     }
   }
 
   // ── variant: danger ──────────────────────────────────────────────────
   &--danger {
-    background: #fee2e2;
-    color: #dc2626;
+    background: $danger-border;
+    color: $danger;
     border-radius: 10px;
 
     &:hover:not(.btn--disabled) {
@@ -138,14 +138,14 @@
   border: none;
   border-radius: 50%;
   background: transparent;
-  color: #6b7280;
+  color: $text-secondary;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
   flex-shrink: 0;
 
   &:hover {
-    background: #f3f4f6;
-    color: #111827;
+    background: $secondary-color;
+    color: $text-primary;
   }
 
   &:disabled {

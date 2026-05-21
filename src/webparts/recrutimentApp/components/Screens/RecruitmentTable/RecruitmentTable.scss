@@ -36,7 +36,7 @@
 
   &__tab {
     border: 1px solid $border-light;
-    background: $white;
+    background: $dashboard-card-bg;
     color: $text-muted;
     border-radius: 999px;
     padding: 10px 18px;
@@ -54,7 +54,7 @@
   &__tab--active {
     border-color: $primary-color;
     color: $primary-color;
-    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 8px 18px $primary-shadow;
   }
 
   &__tabs-loading {
@@ -64,7 +64,7 @@
   }
 
   &__table-card {
-    background: $white;
+    background: $dashboard-card-bg;
     border-radius: $radius-lg;
     border: 1px solid $border-light;
     box-shadow: $shadow-sm;
@@ -81,8 +81,8 @@
     position: sticky;
     bottom: 16px;
     margin-top: 24px;
-    background: #0f172a;
-    color: $white;
+    background: var(--app-sidenav-color, #0f172a);
+    color: var(--app-sidenav-text, $white);
     border-radius: 16px;
     padding: 14px 18px;
     display: flex;
@@ -90,6 +90,7 @@
     justify-content: space-between;
     gap: 16px;
     box-shadow: 0 20px 40px rgba(15, 23, 42, 0.4);
+    border: 1px solid var(--app-sidenav-border, #e2e8f0);
 
     &__left {
       display: flex;
@@ -101,7 +102,7 @@
       width: 36px;
       height: 36px;
       border-radius: 12px;
-      background: rgba(37, 99, 235, 0.25);
+      background: $primary-shadow;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -114,11 +115,11 @@
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: #cbd5f5;
+      color: var(--app-sidenav-text, #cbd5f5);
 
       strong {
         font-size: 20px;
-        color: $white;
+        color: var(--app-sidenav-text-active, $white);
         letter-spacing: 0;
       }
 
@@ -137,7 +138,7 @@
     &__select {
       background: rgba(255, 255, 255, 0.12);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      color: $white;
+      color: var(--app-sidenav-text, $white);
       padding: 8px 12px;
       border-radius: 999px;
       font-size: 12px;
@@ -145,12 +146,12 @@
     }
 
     &__select option {
-      color: $white;
-      background-color: $text-primary;
+      color: $text-primary;
+      background-color: $dashboard-card-bg;
     }
 
     &__button {
-      background: $primary-color;
+      background: $button-color;
       color: $white;
       border: none;
       border-radius: 999px;
@@ -177,7 +178,7 @@
 
 .submission-header {
   padding: 1.5rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid $border-light;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -185,7 +186,7 @@
   &__title {
     font-size: 1.125rem;
     font-weight: 700;
-    color: #1e293b;
+    color: $text-primary;
   }
 
   &__actions {
@@ -202,7 +203,7 @@
     padding: 0;
     background: transparent;
     border: 0;
-    color: #64748b;
+    color: $text-muted;
     font-weight: 700;
     font-size: 0.75rem;
     text-transform: uppercase;
@@ -217,7 +218,7 @@
     }
 
     &:hover {
-      color: #2563eb;
+      color: $primary-color;
     }
   }
 
@@ -227,7 +228,7 @@
       cursor: not-allowed;
 
       &:hover {
-        color: #64748b; // prevent hover colour change when disabled
+        color: $text-muted; // prevent hover colour change when disabled
       }
     }
 

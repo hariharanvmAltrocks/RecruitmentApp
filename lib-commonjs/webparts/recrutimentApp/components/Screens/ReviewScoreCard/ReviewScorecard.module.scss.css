@@ -1,6 +1,6 @@
 .lmDecisionCard {
-  background: #ffffff;
-  border: 1px solid #e8edf5;
+  background: var(--app-card-color, #ffffff);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 20px;
   padding: 28px;
   display: flex;
@@ -21,7 +21,7 @@
   gap: 14px;
   margin-bottom: 24px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
 }
 
 .lmDecisionZap {
@@ -39,7 +39,7 @@
 .lmDecisionTitle {
   font-size: 17px;
   font-weight: 700;
-  color: #1b264e;
+  color: var(--app-text-color, #0f172a);
   line-height: 1.3;
   margin: 0 0 4px;
 }
@@ -47,7 +47,7 @@
 .lmDecisionSubtitle {
   font-size: 13px;
   font-weight: 400;
-  color: #8e9bba;
+  color: var(--app-text-color, #64748b);
 }
 
 .decisionBtnsRow {
@@ -67,7 +67,7 @@
   border: 1.5px solid;
   transition: all 0.2s ease;
   cursor: pointer;
-  background: #ffffff;
+  background: var(--app-card-color, #ffffff);
   text-align: left;
 }
 
@@ -119,10 +119,10 @@
 }
 .decisionBtnYesActive .decisionBtnIconWrap {
   background: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  color: var(--app-card-color, #ffffff);
 }
 .decisionBtnYesActive .decisionBtnLabel, .decisionBtnYesActive .decisionBtnDesc {
-  color: #fff;
+  color: var(--app-card-color, #ffffff);
 }
 
 .decisionBtnNoInactive {
@@ -149,10 +149,10 @@
 }
 .decisionBtnNoActive .decisionBtnIconWrap {
   background: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  color: var(--app-card-color, #ffffff);
 }
 .decisionBtnNoActive .decisionBtnLabel, .decisionBtnNoActive .decisionBtnDesc {
-  color: #fff;
+  color: var(--app-card-color, #ffffff);
 }
 
 .decisionBtnHoldInactive {
@@ -179,14 +179,14 @@
 }
 .decisionBtnHoldActive .decisionBtnIconWrap {
   background: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  color: var(--app-card-color, #ffffff);
 }
 .decisionBtnHoldActive .decisionBtnLabel, .decisionBtnHoldActive .decisionBtnDesc {
-  color: #fff;
+  color: var(--app-card-color, #ffffff);
 }
 
 .iconWhite {
-  color: #ffffff;
+  color: var(--app-card-color, #ffffff);
 }
 
 .iconGreen {
@@ -202,7 +202,7 @@
 }
 
 .sectionDivider {
-  border-top: 2px solid #f1f5f9;
+  border-top: 2px solid var(--app-sidenav-border, #f1f5f9);
   margin: 1.5rem 0;
 }
 
@@ -235,7 +235,7 @@
 }
 
 .lmCommentsLabelText {
-  color: #8e9bba;
+  color: var(--app-text-color, #64748b);
 }
 
 .lmCommentsRequired {
@@ -245,20 +245,20 @@
 .lmCommentsTextarea {
   width: 100%;
   box-sizing: border-box;
-  background-color: #fcfdfe;
-  border: 2px solid #e2e8f0;
+  background-color: var(--app-secondary-color, #f8fafc);
+  border: 2px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 0.75rem;
   padding: 1.25rem 1.5rem;
   font-size: 14px;
   font-weight: 500;
-  color: #1b264e;
+  color: var(--app-text-color, #0f172a);
   resize: none;
   min-height: 140px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 .lmCommentsTextarea::placeholder {
-  color: #8e9bba;
+  color: var(--app-text-color, #64748b);
 }
 .lmCommentsTextarea:focus {
   outline: none;
@@ -271,9 +271,9 @@
   align-items: flex-start;
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #e4e8f1;
+  border-bottom: 1px solid var(--app-sidenav-border, #e2e8f0);
   flex-shrink: 0;
-  background: #ffffff;
+  background: var(--app-card-color, #ffffff);
   z-index: 10;
 }
 
@@ -286,8 +286,8 @@
 .headerIcon {
   width: 48px;
   height: 48px;
-  background-color: #f0f4ff;
-  color: #3f62ed;
+  background-color: var(--app-secondary-color, #f8fafc);
+  color: var(--app-primary-color, #7c3aed);
   border-radius: 1rem;
   display: flex;
   align-items: center;
@@ -308,22 +308,22 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #8e9bba;
+  color: var(--app-text-color, #64748b);
   margin-bottom: 0.25rem;
 }
 
 .breadcrumbActive {
-  color: #1b264e;
+  color: var(--app-text-color, #0f172a);
 }
 
 .breadcrumbChevron {
-  color: #e4e8f1;
+  color: var(--app-sidenav-border, #e2e8f0);
 }
 
 .headerTitle {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1b264e;
+  color: var(--app-text-color, #0f172a);
   line-height: 1.25;
   margin: 0;
 }
@@ -333,14 +333,14 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: #8e9bba;
+  color: var(--app-text-color, #64748b);
   margin-top: 0.25rem;
 }
 
 .jobCodeBadge {
   font-weight: 700;
-  color: #3f62ed;
-  background-color: #f0f4ff;
+  color: var(--app-primary-color, #7c3aed);
+  background-color: var(--app-secondary-color, #f8fafc);
   padding: 2px 8px;
   border-radius: 6px;
   font-size: 11px;
@@ -351,7 +351,7 @@
 .headerDot {
   width: 4px;
   height: 4px;
-  background-color: #e4e8f1;
+  background-color: var(--app-sidenav-border, #e2e8f0);
   border-radius: 9999px;
 }
 
@@ -362,9 +362,9 @@
 
 .closeBtn {
   padding: 10px;
-  color: #3f62ed;
-  background-color: #f0f4ff;
-  border: 1px solid #ffffff;
+  color: var(--app-primary-color, #7c3aed);
+  background-color: var(--app-secondary-color, #f8fafc);
+  border: 1px solid var(--app-card-color, #ffffff);
   border-radius: 9999px;
   transition: background-color 0.2s ease, border-color 0.2s ease;
   display: flex;
@@ -383,19 +383,19 @@
   flex: 1;
   overflow: hidden;
   position: relative;
-  background: #ffffff;
+  background: var(--app-card-color, #ffffff);
 }
 
 .sidebar {
   width: 280px;
   flex-shrink: 0;
-  background: #ffffff;
-  border-right: 1px solid #e4e8f1;
+  background: var(--app-card-color, #ffffff);
+  border-right: 1px solid var(--app-sidenav-border, #e2e8f0);
   overflow-y: auto;
   overflow-x: hidden;
   padding: 1.5rem;
   scrollbar-width: thin;
-  scrollbar-color: #e5e7eb transparent;
+  scrollbar-color: var(--app-sidenav-border, #e2e8f0) transparent;
 }
 
 .avatarSection {
@@ -410,8 +410,8 @@
 .avatar {
   width: 72px;
   height: 72px;
-  background-color: #f0f4ff;
-  color: #3f62ed;
+  background-color: var(--app-secondary-color, #f8fafc);
+  color: var(--app-primary-color, #7c3aed);
   border-radius: 9999px;
   display: flex;
   align-items: center;
@@ -425,7 +425,7 @@
 .avatarName {
   font-size: 22px;
   font-weight: 800;
-  color: #1b264e;
+  color: var(--app-text-color, #0f172a);
   line-height: 1.25;
   letter-spacing: -0.01em;
   margin: 0;
@@ -434,7 +434,7 @@
 .avatarNationality {
   font-size: 11px;
   font-weight: 700;
-  color: #3f62ed;
+  color: var(--app-primary-color, #7c3aed);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-top: 0.25rem;
@@ -471,34 +471,34 @@
   gap: 6px;
   font-size: 11px;
   font-weight: 700;
-  color: #8e9bba;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
 
 .infoLabelIcon {
-  color: #3f62ed;
+  color: var(--app-primary-color, #7c3aed);
   display: flex;
   align-items: center;
 }
 
 .infoValue {
   padding: 0.75rem 1rem;
-  background: #ffffff;
-  border: 1px solid #e4e8f1;
+  background: var(--app-card-color, #ffffff);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 14px;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #1b264e;
+  color: var(--app-text-color, #0f172a);
   overflow-wrap: break-word;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
 }
 
 .pageBtnActive {
-  background-color: #2563eb !important;
-  color: #fff !important;
+  background-color: var(--app-primary-color, #7c3aed) !important;
+  color: var(--app-card-color, #ffffff) !important;
   font-weight: 700 !important;
-  border-color: #2563eb !important;
+  border-color: var(--app-primary-color, #7c3aed) !important;
 }
 
 .container {
@@ -510,14 +510,14 @@
 .card {
   background-color: white;
   border-radius: 1rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
 
 .cardHeader {
   padding: 1.5rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -525,14 +525,14 @@
 .cardHeader h2 {
   font-size: 1.125rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin: 0;
 }
 .cardHeader .backButton {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   font-weight: 700;
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -542,7 +542,7 @@
   cursor: pointer;
 }
 .cardHeader .backButton:hover {
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .tableContainer {
@@ -562,7 +562,7 @@
   padding: 1rem 1.5rem;
   font-size: 0.625rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -570,7 +570,7 @@
   text-align: center;
 }
 .styledTable tbody tr {
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--app-sidenav-border, #f1f5f9);
   cursor: pointer;
   transition: background-color 0.2s;
 }
@@ -583,15 +583,15 @@
 }
 .styledTable tbody tr td.jobCode {
   font-weight: 700;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 .styledTable tbody tr td.jobTitle {
   font-weight: 700;
-  color: #334155;
+  color: var(--app-text-color, #334155);
 }
 .styledTable tbody tr td.textMuted {
   font-weight: 500;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
 }
 .styledTable tbody tr td.center {
   text-align: center;
@@ -602,17 +602,17 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: #334155;
+  color: var(--app-text-color, #334155);
 }
 .statusBadge .dot {
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 50%;
-  background-color: #3b82f6;
+  background-color: var(--app-primary-color, #7c3aed);
 }
 
 .actionButton {
-  background-color: #2563eb;
+  background-color: var(--app-primary-color, #7c3aed);
   color: white;
   padding: 0.375rem 1.5rem;
   border-radius: 0.5rem;
@@ -652,7 +652,7 @@
 
 .drawerHeader {
   padding: 2rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -671,37 +671,37 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   border: 1px solid #dbeafe;
 }
 .drawerHeader .headerContent h2 {
   font-size: 1.5rem;
   font-weight: 900;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin: 0;
 }
 .drawerHeader .headerContent p {
   font-size: 0.875rem;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin: 0.25rem 0 0 0;
 }
 .drawerHeader .headerContent p span {
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   font-weight: 500;
 }
 .drawerHeader .closeButton {
   padding: 0.75rem;
   border-radius: 1rem;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   background: transparent;
   border: none;
   cursor: pointer;
 }
 .drawerHeader .closeButton:hover {
-  background-color: #f1f5f9;
+  background-color: var(--app-sidenav-border, #f1f5f9);
 }
 
 .drawerBody {
@@ -713,7 +713,7 @@
 .drawerBody .innerCard {
   background-color: white;
   border-radius: 2rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
@@ -737,13 +737,13 @@
   gap: 0.75rem;
   flex-wrap: wrap;
   padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid #f1f5f9;
-  background: #f8fafc;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
+  background: var(--app-secondary-color, #f8fafc);
 }
 
 .filterInput,
 .searchInput {
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 0.375rem;
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
@@ -755,22 +755,22 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.5rem;
-  border-top: 1px solid #f1f5f9;
-  background: #f8fafc;
+  border-top: 1px solid var(--app-sidenav-border, #f1f5f9);
+  background: var(--app-secondary-color, #f8fafc);
   flex-wrap: wrap;
   gap: 0.75rem;
 }
 
 .paginationInfo {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   display: flex;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
 }
 .paginationInfo strong {
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   font-weight: 700;
 }
 
@@ -780,23 +780,23 @@
   gap: 0.4rem;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 .showEntries select {
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 0.375rem;
   padding: 0.25rem 0.5rem;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   background: white;
   cursor: pointer;
   outline: none;
 }
 .showEntries select:focus {
-  border-color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
 }
 
 .paginationControls {
@@ -810,9 +810,9 @@
   height: 2.25rem;
   padding: 0 0.5rem;
   border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   background: white;
-  color: #475569;
+  color: var(--app-text-color, #334155);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
@@ -822,13 +822,13 @@
   justify-content: center;
 }
 .pageBtn:hover:not(:disabled) {
-  border-color: #2563eb;
-  color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
+  color: var(--app-primary-color, #7c3aed);
   background: #eff6ff;
 }
 .pageBtn.activePage {
-  background-color: #2563eb;
-  border-color: #2563eb;
+  background-color: var(--app-primary-color, #7c3aed);
+  border-color: var(--app-primary-color, #7c3aed);
   color: white;
   font-weight: 700;
 }
@@ -838,13 +838,13 @@
 .pageBtn.disabled, .pageBtn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-  background: #f8fafc;
+  background: var(--app-secondary-color, #f8fafc);
 }
 
 .noData {
   text-align: center;
   padding: 1rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
 }
 
 .badge {
@@ -857,7 +857,7 @@
   border-radius: 9999px;
   font-size: 0.6875rem;
   font-weight: 900;
-  background-color: #2563eb;
+  background-color: var(--app-primary-color, #7c3aed);
   color: white;
   margin-left: 0.5rem;
   vertical-align: middle;
@@ -892,7 +892,7 @@
 
 .drawerFooter {
   flex-shrink: 0;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--app-sidenav-border, #f1f5f9);
   padding: 1rem 2rem;
   display: flex;
   align-items: center;
@@ -904,7 +904,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8125rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   font-style: italic;
 }
 .drawerFooter .footerActions {
@@ -916,14 +916,14 @@
   padding: 0.6rem 1.5rem;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   background: transparent;
   border: none;
   cursor: pointer;
   letter-spacing: 0.05em;
 }
 .drawerFooter .footerActions .cancelBtn:hover {
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
 }
 .drawerFooter .footerActions .confirmBtn {
   padding: 0.6rem 1.75rem;
@@ -933,7 +933,7 @@
   border-radius: 0.5rem;
   border: none;
   cursor: pointer;
-  background-color: #2563eb;
+  background-color: var(--app-primary-color, #7c3aed);
   color: white;
   transition: background 0.15s;
 }
@@ -941,8 +941,8 @@
   background-color: #1d4ed8;
 }
 .drawerFooter .footerActions .confirmBtn:disabled {
-  background-color: #e2e8f0;
-  color: #94a3b8;
+  background-color: var(--app-sidenav-border, #e2e8f0);
+  color: var(--app-text-color, #64748b);
   cursor: not-allowed;
 }
 
@@ -959,15 +959,15 @@
 .iconButton {
   padding: 0.5rem;
   border-radius: 0.75rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   background: transparent;
   cursor: pointer;
   transition: all 0.2s;
   color: inherit;
 }
 .iconButton:hover {
-  border-color: #2563eb;
-  color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .modalOverlay {
@@ -996,7 +996,7 @@
 
 .modalHeader {
   padding: 1.5rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1014,17 +1014,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 .modalHeader .headerContent h2 {
   font-size: 1.25rem;
   font-weight: 700;
   margin: 0;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
 }
 .modalHeader .headerContent p {
   font-size: 0.75rem;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -1041,14 +1041,14 @@
 .modalHeader .headerRight .gpaInfo p:first-child {
   font-size: 0.625rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   margin: 0;
 }
 .modalHeader .headerRight .gpaInfo p:last-child {
   font-size: 1.125rem;
   font-weight: 900;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   margin: 0;
 }
 
@@ -1060,7 +1060,7 @@
 
 .modalSidebar {
   width: 300px;
-  border-right: 1px solid #f1f5f9;
+  border-right: 1px solid var(--app-sidenav-border, #f1f5f9);
   background-color: rgba(248, 250, 252, 0.3);
   padding: 1.5rem;
   overflow-y: auto;
@@ -1072,13 +1072,13 @@
 .modalSidebar .candidateInfo h3 {
   font-size: 1.25rem;
   font-weight: 900;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin: 0 0 0.25rem 0;
 }
 .modalSidebar .candidateInfo p {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   text-transform: uppercase;
   margin: 0;
 }
@@ -1096,7 +1096,7 @@
 .modalField label {
   font-size: 0.625rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   display: flex;
   align-items: center;
@@ -1105,11 +1105,11 @@
 .modalField .value {
   font-size: 0.6875rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--app-text-color, #334155);
   background-color: white;
   padding: 0.5rem 0.75rem;
   border-radius: 0.75rem;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   white-space: nowrap;
   overflow: hidden;
@@ -1125,7 +1125,7 @@
 .modalMain .sectionTitle {
   font-size: 0.875rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   text-transform: uppercase;
   display: flex;
   align-items: center;
@@ -1146,14 +1146,14 @@
 .modalMain .questionBox {
   background-color: rgba(248, 250, 252, 0.5);
   border-radius: 1rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   padding: 1.5rem;
   margin-bottom: 2rem;
 }
 .modalMain .questionBox p {
   font-size: 0.875rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin: 0;
 }
 .modalMain .questionBox .scoreRow {
@@ -1173,7 +1173,7 @@
 .modalMain .questionBox .scoreRow .score {
   font-size: 1.25rem;
   font-weight: 900;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
 }
 .modalMain .scoreGrid {
   display: grid;
@@ -1186,39 +1186,39 @@
   justify-content: space-between;
   font-size: 0.625rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   margin-bottom: 0.5rem;
 }
 .modalMain .scoreGrid .scoreItem .progressBar {
   width: 100%;
   height: 0.375rem;
-  background-color: #f1f5f9;
+  background-color: var(--app-sidenav-border, #f1f5f9);
   border-radius: 9999px;
 }
 .modalMain .scoreGrid .scoreItem .progressBar .progressFill {
   width: 100%;
   height: 100%;
-  background-color: #2563eb;
+  background-color: var(--app-primary-color, #7c3aed);
   border-radius: 9999px;
 }
 .modalMain .feedbackBox {
   background-color: rgba(248, 250, 252, 0.5);
   border-radius: 1rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   padding: 1.5rem;
   margin-bottom: 2rem;
 }
 .modalMain .feedbackBox h4 {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin: 0 0 0.5rem 0;
 }
 .modalMain .feedbackBox p {
   font-size: 0.875rem;
-  color: #334155;
+  color: var(--app-text-color, #334155);
   margin: 0;
   line-height: 1.6;
 }
@@ -1230,7 +1230,7 @@
 }
 .modalMain .footerActions .cancelBtn {
   padding: 0.75rem 2rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   font-weight: 700;
   background: transparent;
   border: none;
@@ -1238,7 +1238,7 @@
 }
 .modalMain .footerActions .submitBtn {
   padding: 0.75rem 3rem;
-  background-color: #2563eb;
+  background-color: var(--app-primary-color, #7c3aed);
   color: white;
   border-radius: 0.75rem;
   font-weight: 700;
@@ -1259,7 +1259,7 @@
 .modalMain .decisionBox h4 {
   font-size: 1.25rem;
   font-weight: 900;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin: 0 0 1.5rem 0;
   display: flex;
   align-items: center;
@@ -1305,8 +1305,8 @@
 .modalMain .decisionBox textarea {
   width: 100%;
   height: 8rem;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background-color: var(--app-secondary-color, #f8fafc);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 1.5rem;
   padding: 1.25rem;
   font-size: 0.875rem;
@@ -1322,7 +1322,7 @@
 }
 .modalMain .decisionBox .footerActions .cancelBtn {
   padding: 0.75rem 2rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   font-weight: 700;
   background: transparent;
   border: none;
@@ -1330,7 +1330,7 @@
 }
 .modalMain .decisionBox .footerActions .submitBtn {
   padding: 0.75rem 3rem;
-  background-color: #2563eb;
+  background-color: var(--app-primary-color, #7c3aed);
   color: white;
   border-radius: 0.75rem;
   font-weight: 700;
@@ -1342,14 +1342,14 @@
 }
 
 .accordion {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 1rem;
   margin-bottom: 1.5rem;
   overflow: hidden;
 }
 
 .accordionHeader {
-  background-color: #f8fafc;
+  background-color: var(--app-secondary-color, #f8fafc);
   padding: 1.5rem;
   border: none;
   width: 100%;
@@ -1360,13 +1360,13 @@
   justify-content: space-between;
   font-size: 1rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
 }
 .accordionHeader span {
   font-size: 1.125rem;
 }
 .accordionHeader:hover {
-  background-color: #f1f5f9;
+  background-color: var(--app-sidenav-border, #f1f5f9);
 }
 
 .rotated {
@@ -1376,7 +1376,7 @@
 .accordionBody {
   padding: 1.5rem;
   background-color: white;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--app-sidenav-border, #e2e8f0);
 }
 
 .tableScroll {
@@ -1390,20 +1390,20 @@
 }
 .scoreTable thead th {
   padding: 1rem;
-  background-color: #f8fafc;
+  background-color: var(--app-secondary-color, #f8fafc);
   font-weight: 700;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   text-align: left;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--app-sidenav-border, #e2e8f0);
 }
 .scoreTable tbody td {
   padding: 1rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
 }
 
 .interviewerName {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   font-weight: 500;
 }
 
@@ -1412,14 +1412,14 @@
 }
 
 .totalRow {
-  background-color: #f1f5f9;
+  background-color: var(--app-sidenav-border, #f1f5f9);
   font-weight: 700;
 }
 
 .statusText {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   text-transform: uppercase;
 }
 
@@ -1435,21 +1435,21 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 1rem;
   background-color: white;
   cursor: pointer;
   transition: all 0.2s;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
 }
 .radioLabel input {
   display: none;
 }
 .radioLabel:hover {
-  border-color: #2563eb;
-  color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .reviewerCard {
@@ -1457,9 +1457,9 @@
   align-items: center;
   gap: 1rem;
   padding: 1.5rem;
-  background-color: #f8fafc;
+  background-color: var(--app-secondary-color, #f8fafc);
   border-radius: 1rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
@@ -1467,7 +1467,7 @@
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
-  background-color: #2563eb;
+  background-color: var(--app-primary-color, #7c3aed);
   color: white;
   display: flex;
   align-items: center;
@@ -1493,7 +1493,7 @@
 .reviewerMeta {
   font-size: 0.625rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin: 0;
@@ -1502,14 +1502,14 @@
 .reviewerVal {
   font-size: 0.875rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin: 0;
 }
 
 .radioActive {
-  border-color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
   background-color: #eff6ff;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .formGroup {
@@ -1521,14 +1521,14 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin-bottom: 0.5rem;
 }
 
 .commentArea {
   width: 100%;
   padding: 1rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 0.75rem;
   font-size: 0.875rem;
   resize: vertical;
@@ -1536,7 +1536,7 @@
   outline: none;
 }
 .commentArea:focus {
-  border-color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
 }
 
 .inputError {
@@ -1548,7 +1548,7 @@
   align-items: flex-start;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   cursor: pointer;
   margin-bottom: 1rem;
 }
@@ -1615,7 +1615,7 @@
 
 .mHeader {
   padding: 1.5rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1632,7 +1632,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1641,7 +1641,7 @@
 .breadcrumbLink {
   border: none;
   background: none;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   cursor: pointer;
   font-weight: 700;
   text-transform: uppercase;
@@ -1654,11 +1654,11 @@
 }
 
 .mBreadcrumbActive {
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .mDot {
-  color: #cbd5e1;
+  color: var(--app-sidenav-border, #e2e8f0);
 }
 
 .mTitleRow {
@@ -1675,19 +1675,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .mTitle {
   font-size: 1.25rem;
   font-weight: 700;
   margin: 0;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
 }
 
 .mSubtitle {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -1698,7 +1698,7 @@
 }
 
 .mJobCode {
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .mHeaderRight {
@@ -1714,7 +1714,7 @@
 .mGpaLabel {
   font-size: 0.625rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   margin: 0;
 }
@@ -1722,25 +1722,25 @@
 .mGpaValue {
   font-size: 1.125rem;
   font-weight: 900;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   margin: 0;
 }
 
 .mCloseBtn {
   padding: 0.75rem;
   border-radius: 1rem;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   background: transparent;
   border: none;
   cursor: pointer;
 }
 .mCloseBtn:hover {
-  background-color: #f1f5f9;
+  background-color: var(--app-sidenav-border, #f1f5f9);
 }
 
 .mTabBar {
   display: flex;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
 }
 
 .mTabBtn {
@@ -1749,17 +1749,17 @@
   border: none;
   font-size: 0.875rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   cursor: pointer;
   border-bottom: 2px solid transparent;
 }
 .mTabBtn:hover {
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .mTabActive {
-  color: #2563eb;
-  border-bottom-color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
+  border-bottom-color: var(--app-primary-color, #7c3aed);
 }
 
 .mBody {
@@ -1770,7 +1770,7 @@
 
 .mLeft {
   width: 300px;
-  border-right: 1px solid #f1f5f9;
+  border-right: 1px solid var(--app-sidenav-border, #f1f5f9);
   background-color: rgba(248, 250, 252, 0.3);
   padding: 1.5rem;
   overflow: hidden;
@@ -1778,7 +1778,7 @@
 
 .mLeftCard {
   background-color: white;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 1rem;
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
   padding: 1.25rem;
@@ -1789,14 +1789,14 @@
 .mCandidateName {
   font-size: 1.25rem;
   font-weight: 900;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin-bottom: 0.25rem;
 }
 
 .mCandidateType {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   text-transform: uppercase;
   margin-bottom: 2rem;
 }
@@ -1816,18 +1816,18 @@
 .mfLabel {
   font-size: 0.625rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
 }
 
 .mfValue {
   font-size: 0.6875rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--app-text-color, #334155);
   background-color: white;
   padding: 0.5rem 0.75rem;
   border-radius: 0.75rem;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
@@ -1853,7 +1853,7 @@
   gap: 0.5rem;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   margin-bottom: 1rem;
 }
@@ -1870,7 +1870,7 @@
   height: 1.5rem;
   border-radius: 50%;
   background-color: #eff6ff;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1880,7 +1880,7 @@
 
 .mPanelName {
   font-size: 0.75rem;
-  color: #334155;
+  color: var(--app-text-color, #334155);
   font-weight: 500;
 }
 
@@ -1894,7 +1894,7 @@
 .mSection {
   background-color: rgba(248, 250, 252, 0.5);
   border-radius: 1rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   padding: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -1915,7 +1915,7 @@
 .mSectionTitle {
   font-size: 0.875rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   text-transform: uppercase;
   display: flex;
   align-items: center;
@@ -1924,14 +1924,14 @@
 
 .mSectionSub {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   font-weight: 500;
 }
 
 .mQCard {
   background-color: white;
   border-radius: 1rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   padding: 1.5rem;
   margin-bottom: 1rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -1948,7 +1948,7 @@
   height: 2rem;
   border-radius: 0.5rem;
   background-color: #eff6ff;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1958,14 +1958,14 @@
 
 .mQText {
   font-size: 0.875rem;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin: 0;
   flex: 1;
 }
 
 .mQAnswer {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   margin: 0.5rem 0 0 0;
 }
 
@@ -1978,7 +1978,7 @@
 .mRatingLabel {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
 }
 
@@ -1998,32 +1998,32 @@
 .mScoreLabel {
   font-size: 0.625rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
 }
 
 .mScoreNum {
   font-size: 1.25rem;
   font-weight: 900;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
 }
 
 .mScoreMax {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   font-weight: 500;
 }
 
 .mNoData {
   text-align: center;
   padding: 1rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
 }
 
 .mGpaHeader {
   font-size: 1rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin-bottom: 2rem;
   text-align: center;
 }
@@ -2047,13 +2047,13 @@
 .mDecisionTitle {
   font-size: 1.25rem;
   font-weight: 900;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin: 0;
 }
 
 .mDecisionSub {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   margin: 0.5rem 0 0 0;
 }
 
@@ -2104,7 +2104,7 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin-bottom: 0.5rem;
 }
 
@@ -2120,13 +2120,13 @@
 .mSelect {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 0.75rem;
   font-size: 0.875rem;
   outline: none;
 }
 .mSelect:focus {
-  border-color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
 }
 
 .mInputErr {
@@ -2136,7 +2136,7 @@
 .mTextarea {
   width: 100%;
   padding: 1rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 0.75rem;
   font-size: 0.875rem;
   resize: vertical;
@@ -2144,7 +2144,7 @@
   outline: none;
 }
 .mTextarea:focus {
-  border-color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
 }
 
 .mCheckLabel {
@@ -2152,7 +2152,7 @@
   align-items: flex-start;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   cursor: pointer;
   margin-bottom: 1rem;
 }
@@ -2176,7 +2176,7 @@
 
 .mCancelBtn {
   padding: 0.75rem 2rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   font-weight: 700;
   background: transparent;
   border: none;
@@ -2185,7 +2185,7 @@
 
 .mSubmitBtn {
   padding: 0.75rem 3rem;
-  background-color: #2563eb;
+  background-color: var(--app-primary-color, #7c3aed);
   color: white;
   border-radius: 0.75rem;
   font-weight: 700;
@@ -2199,8 +2199,8 @@
   background-color: #1d4ed8;
 }
 .mSubmitBtn:disabled {
-  background-color: #e2e8f0;
-  color: #94a3b8;
+  background-color: var(--app-sidenav-border, #e2e8f0);
+  color: var(--app-text-color, #64748b);
   cursor: not-allowed;
 }
 
@@ -2213,14 +2213,14 @@
 .card {
   background-color: white;
   border-radius: 1rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
 
 .cardHeader {
   padding: 1.5rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2228,14 +2228,14 @@
 .cardHeader h2 {
   font-size: 1.125rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin: 0;
 }
 .cardHeader .backButton {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   font-weight: 700;
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -2245,7 +2245,7 @@
   cursor: pointer;
 }
 .cardHeader .backButton:hover {
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .tableContainer {
@@ -2265,7 +2265,7 @@
   padding: 1rem 1.5rem;
   font-size: 0.625rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -2273,7 +2273,7 @@
   text-align: center;
 }
 .styledTable tbody tr {
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--app-sidenav-border, #f1f5f9);
   cursor: pointer;
   transition: background-color 0.2s;
 }
@@ -2286,15 +2286,15 @@
 }
 .styledTable tbody tr td.jobCode {
   font-weight: 700;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 .styledTable tbody tr td.jobTitle {
   font-weight: 700;
-  color: #334155;
+  color: var(--app-text-color, #334155);
 }
 .styledTable tbody tr td.textMuted {
   font-weight: 500;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
 }
 .styledTable tbody tr td.center {
   text-align: center;
@@ -2305,17 +2305,17 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: #334155;
+  color: var(--app-text-color, #334155);
 }
 .statusBadge .dot {
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 50%;
-  background-color: #3b82f6;
+  background-color: var(--app-primary-color, #7c3aed);
 }
 
 .actionButton {
-  background-color: #2563eb;
+  background-color: var(--app-primary-color, #7c3aed);
   color: white;
   padding: 0.375rem 1.5rem;
   border-radius: 0.5rem;
@@ -2355,7 +2355,7 @@
 
 .drawerHeader {
   padding: 2rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -2374,37 +2374,37 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   border: 1px solid #dbeafe;
 }
 .drawerHeader .headerContent h2 {
   font-size: 1.5rem;
   font-weight: 900;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin: 0;
 }
 .drawerHeader .headerContent p {
   font-size: 0.875rem;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin: 0.25rem 0 0 0;
 }
 .drawerHeader .headerContent p span {
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   font-weight: 500;
 }
 .drawerHeader .closeButton {
   padding: 0.75rem;
   border-radius: 1rem;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   background: transparent;
   border: none;
   cursor: pointer;
 }
 .drawerHeader .closeButton:hover {
-  background-color: #f1f5f9;
+  background-color: var(--app-sidenav-border, #f1f5f9);
 }
 
 .drawerBody {
@@ -2416,7 +2416,7 @@
 .drawerBody .innerCard {
   background-color: white;
   border-radius: 2rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
@@ -2440,13 +2440,13 @@
   gap: 0.75rem;
   flex-wrap: wrap;
   padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid #f1f5f9;
-  background: #f8fafc;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
+  background: var(--app-secondary-color, #f8fafc);
 }
 
 .filterInput,
 .searchInput {
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 0.375rem;
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
@@ -2458,22 +2458,22 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.5rem;
-  border-top: 1px solid #f1f5f9;
-  background: #f8fafc;
+  border-top: 1px solid var(--app-sidenav-border, #f1f5f9);
+  background: var(--app-secondary-color, #f8fafc);
   flex-wrap: wrap;
   gap: 0.75rem;
 }
 
 .paginationInfo {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   display: flex;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
 }
 .paginationInfo strong {
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   font-weight: 700;
 }
 
@@ -2483,23 +2483,23 @@
   gap: 0.4rem;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 .showEntries select {
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 0.375rem;
   padding: 0.25rem 0.5rem;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   background: white;
   cursor: pointer;
   outline: none;
 }
 .showEntries select:focus {
-  border-color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
 }
 
 .paginationControls {
@@ -2513,9 +2513,9 @@
   height: 2.25rem;
   padding: 0 0.5rem;
   border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   background: white;
-  color: #475569;
+  color: var(--app-text-color, #334155);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
@@ -2525,13 +2525,13 @@
   justify-content: center;
 }
 .pageBtn:hover:not(:disabled) {
-  border-color: #2563eb;
-  color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
+  color: var(--app-primary-color, #7c3aed);
   background: #eff6ff;
 }
 .pageBtn.activePage {
-  background-color: #2563eb;
-  border-color: #2563eb;
+  background-color: var(--app-primary-color, #7c3aed);
+  border-color: var(--app-primary-color, #7c3aed);
   color: white;
   font-weight: 700;
 }
@@ -2541,13 +2541,13 @@
 .pageBtn.disabled, .pageBtn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-  background: #f8fafc;
+  background: var(--app-secondary-color, #f8fafc);
 }
 
 .noData {
   text-align: center;
   padding: 1rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
 }
 
 .badge {
@@ -2560,7 +2560,7 @@
   border-radius: 9999px;
   font-size: 0.6875rem;
   font-weight: 900;
-  background-color: #2563eb;
+  background-color: var(--app-primary-color, #7c3aed);
   color: white;
   margin-left: 0.5rem;
   vertical-align: middle;
@@ -2595,7 +2595,7 @@
 
 .drawerFooter {
   flex-shrink: 0;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--app-sidenav-border, #f1f5f9);
   padding: 1rem 2rem;
   display: flex;
   align-items: center;
@@ -2607,7 +2607,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8125rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   font-style: italic;
 }
 .drawerFooter .footerActions {
@@ -2619,14 +2619,14 @@
   padding: 0.6rem 1.5rem;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   background: transparent;
   border: none;
   cursor: pointer;
   letter-spacing: 0.05em;
 }
 .drawerFooter .footerActions .cancelBtn:hover {
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
 }
 .drawerFooter .footerActions .confirmBtn {
   padding: 0.6rem 1.75rem;
@@ -2636,7 +2636,7 @@
   border-radius: 0.5rem;
   border: none;
   cursor: pointer;
-  background-color: #2563eb;
+  background-color: var(--app-primary-color, #7c3aed);
   color: white;
   transition: background 0.15s;
 }
@@ -2644,8 +2644,8 @@
   background-color: #1d4ed8;
 }
 .drawerFooter .footerActions .confirmBtn:disabled {
-  background-color: #e2e8f0;
-  color: #94a3b8;
+  background-color: var(--app-sidenav-border, #e2e8f0);
+  color: var(--app-text-color, #64748b);
   cursor: not-allowed;
 }
 
@@ -2662,15 +2662,15 @@
 .iconButton {
   padding: 0.5rem;
   border-radius: 0.75rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   background: transparent;
   cursor: pointer;
   transition: all 0.2s;
   color: inherit;
 }
 .iconButton:hover {
-  border-color: #2563eb;
-  color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .modalOverlay {
@@ -2699,7 +2699,7 @@
 
 .modalHeader {
   padding: 1.5rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2717,17 +2717,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 .modalHeader .headerContent h2 {
   font-size: 1.25rem;
   font-weight: 700;
   margin: 0;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
 }
 .modalHeader .headerContent p {
   font-size: 0.75rem;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -2744,14 +2744,14 @@
 .modalHeader .headerRight .gpaInfo p:first-child {
   font-size: 0.625rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   margin: 0;
 }
 .modalHeader .headerRight .gpaInfo p:last-child {
   font-size: 1.125rem;
   font-weight: 900;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   margin: 0;
 }
 
@@ -2763,7 +2763,7 @@
 
 .modalSidebar {
   width: 300px;
-  border-right: 1px solid #f1f5f9;
+  border-right: 1px solid var(--app-sidenav-border, #f1f5f9);
   background-color: rgba(248, 250, 252, 0.3);
   padding: 1.5rem;
   overflow-y: auto;
@@ -2775,13 +2775,13 @@
 .modalSidebar .candidateInfo h3 {
   font-size: 1.25rem;
   font-weight: 900;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin: 0 0 0.25rem 0;
 }
 .modalSidebar .candidateInfo p {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   text-transform: uppercase;
   margin: 0;
 }
@@ -2799,7 +2799,7 @@
 .modalField label {
   font-size: 0.625rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   display: flex;
   align-items: center;
@@ -2808,11 +2808,11 @@
 .modalField .value {
   font-size: 0.6875rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--app-text-color, #334155);
   background-color: white;
   padding: 0.5rem 0.75rem;
   border-radius: 0.75rem;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   white-space: nowrap;
   overflow: hidden;
@@ -2828,7 +2828,7 @@
 .modalMain .sectionTitle {
   font-size: 0.875rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   text-transform: uppercase;
   display: flex;
   align-items: center;
@@ -2849,14 +2849,14 @@
 .modalMain .questionBox {
   background-color: rgba(248, 250, 252, 0.5);
   border-radius: 1rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   padding: 1.5rem;
   margin-bottom: 2rem;
 }
 .modalMain .questionBox p {
   font-size: 0.875rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin: 0;
 }
 .modalMain .questionBox .scoreRow {
@@ -2876,7 +2876,7 @@
 .modalMain .questionBox .scoreRow .score {
   font-size: 1.25rem;
   font-weight: 900;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
 }
 .modalMain .scoreGrid {
   display: grid;
@@ -2889,39 +2889,39 @@
   justify-content: space-between;
   font-size: 0.625rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   margin-bottom: 0.5rem;
 }
 .modalMain .scoreGrid .scoreItem .progressBar {
   width: 100%;
   height: 0.375rem;
-  background-color: #f1f5f9;
+  background-color: var(--app-sidenav-border, #f1f5f9);
   border-radius: 9999px;
 }
 .modalMain .scoreGrid .scoreItem .progressBar .progressFill {
   width: 100%;
   height: 100%;
-  background-color: #2563eb;
+  background-color: var(--app-primary-color, #7c3aed);
   border-radius: 9999px;
 }
 .modalMain .feedbackBox {
   background-color: rgba(248, 250, 252, 0.5);
   border-radius: 1rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   padding: 1.5rem;
   margin-bottom: 2rem;
 }
 .modalMain .feedbackBox h4 {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin: 0 0 0.5rem 0;
 }
 .modalMain .feedbackBox p {
   font-size: 0.875rem;
-  color: #334155;
+  color: var(--app-text-color, #334155);
   margin: 0;
   line-height: 1.6;
 }
@@ -2933,7 +2933,7 @@
 }
 .modalMain .footerActions .cancelBtn {
   padding: 0.75rem 2rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   font-weight: 700;
   background: transparent;
   border: none;
@@ -2941,7 +2941,7 @@
 }
 .modalMain .footerActions .submitBtn {
   padding: 0.75rem 3rem;
-  background-color: #2563eb;
+  background-color: var(--app-primary-color, #7c3aed);
   color: white;
   border-radius: 0.75rem;
   font-weight: 700;
@@ -2962,7 +2962,7 @@
 .modalMain .decisionBox h4 {
   font-size: 1.25rem;
   font-weight: 900;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin: 0 0 1.5rem 0;
   display: flex;
   align-items: center;
@@ -3008,8 +3008,8 @@
 .modalMain .decisionBox textarea {
   width: 100%;
   height: 8rem;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background-color: var(--app-secondary-color, #f8fafc);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 1.5rem;
   padding: 1.25rem;
   font-size: 0.875rem;
@@ -3025,7 +3025,7 @@
 }
 .modalMain .decisionBox .footerActions .cancelBtn {
   padding: 0.75rem 2rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   font-weight: 700;
   background: transparent;
   border: none;
@@ -3033,7 +3033,7 @@
 }
 .modalMain .decisionBox .footerActions .submitBtn {
   padding: 0.75rem 3rem;
-  background-color: #2563eb;
+  background-color: var(--app-primary-color, #7c3aed);
   color: white;
   border-radius: 0.75rem;
   font-weight: 700;
@@ -3066,7 +3066,7 @@
   text-align: left;
 }
 .accordionHeader:hover {
-  background-color: #f8fafc;
+  background-color: var(--app-secondary-color, #f8fafc);
 }
 
 .rotated {
@@ -3087,28 +3087,28 @@
   font-size: 0.8125rem;
 }
 .scoreTable th {
-  background: #f8fafc;
+  background: var(--app-secondary-color, #f8fafc);
   padding: 0.625rem 1rem;
   text-align: left;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #475569;
-  border-bottom: 1px solid #e2e8f0;
+  color: var(--app-text-color, #334155);
+  border-bottom: 1px solid var(--app-sidenav-border, #e2e8f0);
 }
 .scoreTable td {
   padding: 0.5rem 1rem;
-  color: #334155;
-  border-bottom: 1px solid #f1f5f9;
+  color: var(--app-text-color, #334155);
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
 }
 
 .interviewerName {
   font-size: 0.6875rem;
   font-weight: 500;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
 }
 
 .stripedRow {
-  background-color: #f8fafc;
+  background-color: var(--app-secondary-color, #f8fafc);
 }
 
 .totalRow {
@@ -3116,7 +3116,7 @@
 }
 .totalRow td {
   font-weight: 700;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
 }
 
 .radioGroup {
@@ -3132,26 +3132,26 @@
   gap: 0.5rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--app-text-color, #334155);
   cursor: pointer;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--app-sidenav-border, #e2e8f0);
   transition: all 0.15s;
 }
 .radioLabel input[type=radio] {
-  accent-color: #2563eb;
+  accent-color: var(--app-primary-color, #7c3aed);
   width: 16px;
   height: 16px;
 }
 .radioLabel:hover {
-  border-color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
 }
 
 .radioActive {
-  border-color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
   background-color: #eff6ff;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .formGroup {
@@ -3162,14 +3162,14 @@
   display: block;
   font-size: 0.8125rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--app-text-color, #334155);
   margin-bottom: 0.375rem;
 }
 
 .commentArea {
   width: 100%;
   min-height: 5rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 0.5rem;
   padding: 0.75rem;
   font-size: 0.875rem;
@@ -3179,7 +3179,7 @@
   box-sizing: border-box;
 }
 .commentArea:focus {
-  border-color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
 }
 
 .inputError {
@@ -3191,13 +3191,13 @@
   align-items: flex-start;
   gap: 0.625rem;
   font-size: 0.8125rem;
-  color: #334155;
+  color: var(--app-text-color, #334155);
   cursor: pointer;
   margin-bottom: 1rem;
 }
 .checkboxLabel input[type=checkbox] {
   margin-top: 2px;
-  accent-color: #2563eb;
+  accent-color: var(--app-primary-color, #7c3aed);
   width: 16px;
   height: 16px;
   flex-shrink: 0;
@@ -3223,7 +3223,7 @@
 .statusText {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   text-transform: uppercase;
   margin: 0.25rem 0 0 0;
 }
@@ -3231,14 +3231,14 @@
 .questionSection {
   margin-top: 24px;
   padding-top: 20px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--app-sidenav-border, #f1f5f9);
 }
 .questionSection .sectionTitle {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 0.95rem;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin-bottom: 16px;
   font-weight: 700;
 }
@@ -3250,22 +3250,22 @@
 }
 
 .questionBox {
-  background: #f8fafc;
+  background: var(--app-secondary-color, #f8fafc);
   padding: 16px;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
 }
 .questionBox .qText {
   font-size: 0.9rem;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin-bottom: 8px;
   line-height: 1.4;
 }
 .questionBox .aText {
   font-size: 0.85rem;
-  color: #475569;
+  color: var(--app-text-color, #334155);
   padding-left: 12px;
-  border-left: 3px solid #3b82f6;
+  border-left: 3px solid var(--app-primary-color, #7c3aed);
 }
 
 .inlineLoader {
@@ -3274,7 +3274,7 @@
   justify-content: center;
   gap: 10px;
   padding: 20px;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
 }
 
 .spin {
@@ -3291,16 +3291,16 @@
 }
 .noDataText {
   text-align: center;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   padding: 20px;
   font-style: italic;
 }
 
 .questionBox {
-  background: #ffffff;
+  background: var(--app-card-color, #ffffff);
   padding: 16px;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   margin-bottom: 12px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
@@ -3342,7 +3342,7 @@
 }
 
 .modalWindow {
-  background: #fff;
+  background: var(--app-card-color, #ffffff);
   border-radius: 1.5rem;
   box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.25);
   width: 100%;
@@ -3358,7 +3358,7 @@
   align-items: flex-start;
   justify-content: space-between;
   padding: 1.25rem 1.75rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
   flex-shrink: 0;
 }
 
@@ -3374,13 +3374,13 @@
   gap: 0.4rem;
   font-size: 0.6875rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
 .mBreadcrumbActive {
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .mTitleRow {
@@ -3397,20 +3397,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   flex-shrink: 0;
 }
 
 .mTitle {
   font-size: 1.375rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin: 0 0 0.2rem;
 }
 
 .mSubtitle {
   font-size: 0.8125rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   margin: 0;
   display: flex;
   align-items: center;
@@ -3419,11 +3419,11 @@
 
 .mJobCode {
   font-weight: 700;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .mDot {
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
 }
 
 .mHeaderRight {
@@ -3440,7 +3440,7 @@
   display: block;
   font-size: 0.625rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-bottom: 2px;
@@ -3450,7 +3450,7 @@
   display: block;
   font-size: 1.75rem;
   font-weight: 900;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   line-height: 1;
 }
 
@@ -3458,14 +3458,14 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   padding: 0.375rem;
   border-radius: 0.5rem;
   display: flex;
 }
 .mCloseBtn:hover {
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--app-sidenav-border, #f1f5f9);
+  color: var(--app-text-color, #334155);
 }
 
 .mBody {
@@ -3477,7 +3477,7 @@
 .mLeft {
   width: 270px;
   min-width: 270px;
-  border-right: 1px solid #f1f5f9;
+  border-right: 1px solid var(--app-sidenav-border, #f1f5f9);
   overflow-y: auto;
   padding: 1.5rem 1.25rem;
   display: flex;
@@ -3488,7 +3488,7 @@
 .mCandidateName {
   font-size: 1.125rem;
   font-weight: 900;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   text-align: center;
   margin-bottom: 0.1rem;
 }
@@ -3496,7 +3496,7 @@
 .mCandidateType {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -3518,7 +3518,7 @@
 .mfLabel {
   font-size: 0.6rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   display: flex;
@@ -3527,13 +3527,13 @@
 }
 
 .mfValue {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 0.5rem;
   padding: 0.5rem 0.75rem;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #1e293b;
-  background: #fff;
+  color: var(--app-text-color, #0f172a);
+  background: var(--app-card-color, #ffffff);
   min-height: 1.5rem;
 }
 
@@ -3557,7 +3557,7 @@
   margin-bottom: 0.6rem;
   font-size: 0.6875rem;
   font-weight: 700;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -3567,10 +3567,10 @@
   align-items: center;
   gap: 0.625rem;
   padding: 0.5rem 0.75rem;
-  background: #f8fafc;
+  background: var(--app-secondary-color, #f8fafc);
   border-radius: 0.5rem;
   margin-bottom: 0.375rem;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
 }
 
 .mPanelBadge {
@@ -3590,7 +3590,7 @@
 .mPanelName {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
 }
 
 .mRight {
@@ -3600,7 +3600,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  background: #fff;
+  background: var(--app-card-color, #ffffff);
 }
 
 .mSection {
@@ -3627,7 +3627,7 @@
 .mSectionTitle {
   font-size: 1rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin: 0 0 2px;
@@ -3635,28 +3635,28 @@
 
 .mSectionSub {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   margin: 0;
 }
 
 .mNoData {
   font-size: 0.875rem;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   font-style: italic;
   padding: 0.5rem 0;
 }
 
 .mLoading {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   padding: 0.5rem 0;
 }
 
 .mQCard {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 0.875rem;
   padding: 1.25rem 1.5rem;
-  background: #fff;
+  background: var(--app-card-color, #ffffff);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
   margin-bottom: 0.75rem;
 }
@@ -3672,7 +3672,7 @@
   min-width: 36px;
   height: 36px;
   background: #eff6ff;
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
   border-radius: 0.625rem;
   font-size: 0.8125rem;
   font-weight: 700;
@@ -3685,7 +3685,7 @@
 .mQText {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin: 0;
   padding-top: 6px;
   line-height: 1.5;
@@ -3694,7 +3694,7 @@
 .mQAnswer {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--app-text-color, #334155);
   margin: 0.75rem 0 0 0;
   padding: 0.75rem;
   background: #f0fdf4;
@@ -3707,14 +3707,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--app-sidenav-border, #f1f5f9);
   padding-top: 0.875rem;
 }
 
 .mRatingLabel {
   font-size: 0.6875rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-right: 0.5rem;
@@ -3736,7 +3736,7 @@
   display: block;
   font-size: 0.6rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-bottom: 2px;
@@ -3745,21 +3745,21 @@
 .mScoreNum {
   font-size: 2rem;
   font-weight: 900;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   line-height: 1;
 }
 
 .mScoreMax {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
 }
 
 .mScoreCard {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 0.875rem;
   padding: 1.25rem 1.5rem;
-  background: #fff;
+  background: var(--app-card-color, #ffffff);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
 }
 
@@ -3785,7 +3785,7 @@
 .mScoreFieldLabel {
   font-size: 0.6875rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -3793,19 +3793,19 @@
 .mScoreFieldVal {
   font-size: 0.8125rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
 }
 
 .mProgressBar {
   height: 0.3125rem;
-  background: #f1f5f9;
+  background: var(--app-sidenav-border, #f1f5f9);
   border-radius: 9999px;
   overflow: hidden;
 }
 
 .mProgressFill {
   height: 100%;
-  background: #2563eb;
+  background: var(--app-primary-color, #7c3aed);
   border-radius: 9999px;
   transition: width 0.4s ease;
 }
@@ -3814,7 +3814,7 @@
   display: flex;
   gap: 2rem;
   flex-wrap: wrap;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--app-sidenav-border, #f1f5f9);
   padding-top: 1rem;
 }
 
@@ -3831,7 +3831,7 @@
 .mRecLabel {
   font-size: 0.6875rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-bottom: 0.5rem;
@@ -3865,13 +3865,13 @@
 
 .mFeedbackText {
   font-size: 0.875rem;
-  color: #475569;
+  color: var(--app-text-color, #334155);
   font-style: italic;
   line-height: 1.6;
-  background: #f8fafc;
+  background: var(--app-secondary-color, #f8fafc);
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
 }
 
 .mDecisionCard {
@@ -3891,13 +3891,13 @@
 .mDecisionTitle {
   font-size: 1.125rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   margin: 0 0 0.25rem;
 }
 
 .mDecisionSub {
   font-size: 0.8125rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   margin: 0;
 }
 
@@ -3915,17 +3915,17 @@
   gap: 0.5rem;
   padding: 1.125rem 0.5rem;
   border-radius: 0.875rem;
-  border: 2px solid #e2e8f0;
-  background: #fff;
+  border: 2px solid var(--app-sidenav-border, #e2e8f0);
+  background: var(--app-card-color, #ffffff);
   cursor: pointer;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   transition: all 0.15s;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
 }
 .mDCard:hover {
-  border-color: #cbd5e1;
+  border-color: var(--app-sidenav-border, #e2e8f0);
 }
 
 .mDCardYes {
@@ -3954,7 +3954,7 @@
   display: block;
   font-size: 0.6875rem;
   font-weight: 700;
-  color: #475569;
+  color: var(--app-text-color, #334155);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.4rem;
@@ -3974,16 +3974,16 @@
 .mSelect {
   width: 100%;
   padding: 0.625rem 0.875rem;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 0.5rem;
   font-size: 0.875rem;
-  color: #1e293b;
-  background: #fff;
+  color: var(--app-text-color, #0f172a);
+  background: var(--app-card-color, #ffffff);
   outline: none;
   cursor: pointer;
 }
 .mSelect:focus {
-  border-color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
   box-shadow: 0 0 0 3px #eff6ff;
 }
 
@@ -3991,17 +3991,17 @@
   width: 100%;
   min-height: 5.5rem;
   padding: 0.75rem;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 0.5rem;
   font-size: 0.875rem;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
   font-family: inherit;
   resize: vertical;
   outline: none;
   box-sizing: border-box;
 }
 .mTextarea:focus {
-  border-color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
   box-shadow: 0 0 0 3px #eff6ff;
 }
 
@@ -4030,9 +4030,9 @@
 
 .mCancelBtn {
   padding: 0.625rem 1.5rem;
-  border: 1.5px solid #e2e8f0;
-  background: #fff;
-  color: #64748b;
+  border: 1.5px solid var(--app-sidenav-border, #e2e8f0);
+  background: var(--app-card-color, #ffffff);
+  color: var(--app-text-color, #64748b);
   border-radius: 0.5rem;
   font-size: 0.8125rem;
   font-weight: 700;
@@ -4041,8 +4041,8 @@
   transition: all 0.15s;
 }
 .mCancelBtn:hover:not(:disabled) {
-  border-color: #cbd5e1;
-  background: #f8fafc;
+  border-color: var(--app-sidenav-border, #e2e8f0);
+  background: var(--app-secondary-color, #f8fafc);
 }
 .mCancelBtn:disabled {
   opacity: 0.5;
@@ -4054,8 +4054,8 @@
   align-items: center;
   gap: 0.375rem;
   padding: 0.625rem 1.75rem;
-  background: #64748b;
-  color: #fff;
+  background: var(--app-text-color, #64748b);
+  color: var(--app-card-color, #ffffff);
   border: none;
   border-radius: 0.5rem;
   font-size: 0.8125rem;
@@ -4065,7 +4065,7 @@
   transition: background 0.15s;
 }
 .mSubmitBtn:not(:disabled) {
-  background: #2563eb;
+  background: var(--app-primary-color, #7c3aed);
 }
 .mSubmitBtn:not(:disabled):hover {
   background: #1d4ed8;
@@ -4076,7 +4076,7 @@
 }
 
 .mActionBtn {
-  background: #0f172a;
+  background: var(--app-text-color, #0f172a);
   color: white;
   padding: 8px 16px;
   border-radius: 4px;
@@ -4090,7 +4090,7 @@
   transition: background-color 0.2s;
 }
 .mActionBtn:hover {
-  background: #1e293b;
+  background: var(--app-text-color, #0f172a);
 }
 
 .mCheckboxRow {
@@ -4099,12 +4099,12 @@
   gap: 10px;
   cursor: pointer;
   font-size: 14px;
-  color: #334155;
+  color: var(--app-text-color, #334155);
 }
 .mCheckboxRow input[type=checkbox] {
   width: 18px;
   height: 18px;
-  accent-color: #2563eb;
+  accent-color: var(--app-primary-color, #7c3aed);
   cursor: pointer;
 }
 
@@ -4120,23 +4120,23 @@
 .mSignatureBlock {
   margin-top: 16px;
   padding: 16px;
-  background-color: #f8fafc;
+  background-color: var(--app-secondary-color, #f8fafc);
   border-radius: 8px;
-  border: 1px dashed #cbd5e1;
+  border: 1px dashed var(--app-sidenav-border, #e2e8f0);
 }
 .mSignatureBlock .mSigName {
   font-weight: 600;
   font-size: 15px;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
 }
 .mSignatureBlock .mSigRole {
   font-size: 13px;
-  color: #475569;
+  color: var(--app-text-color, #334155);
   margin-top: 4px;
 }
 .mSignatureBlock .mSigDate {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   margin-top: 6px;
 }
 
@@ -4164,16 +4164,16 @@
 
 .mCommentsHeader {
   padding: 20px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--app-sidenav-border, #e2e8f0);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f8fafc;
+  background: var(--app-secondary-color, #f8fafc);
 }
 .mCommentsHeader h3 {
   margin: 0;
   font-size: 18px;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -4182,12 +4182,12 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   padding: 0;
   display: flex;
 }
 .mCommentsHeader button:hover {
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
 }
 
 .mCommentsBody {
@@ -4199,39 +4199,39 @@
 .mCommentsLoading {
   padding: 40px;
   text-align: center;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
 }
 
 .mCommentsNoData {
   padding: 40px;
   text-align: center;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
 }
 
 .mCommentItemL1 {
   margin-bottom: 20px;
   padding: 16px;
-  background: #f1f5f9;
+  background: var(--app-sidenav-border, #f1f5f9);
   border-radius: 8px;
 }
 .mCommentItemL1 .mCommentRole {
   font-weight: 600;
-  color: #334155;
+  color: var(--app-text-color, #334155);
   margin-bottom: 8px;
 }
 .mCommentItemL1 .mCommentText {
   font-size: 14px;
-  color: #475569;
+  color: var(--app-text-color, #334155);
   margin-bottom: 8px;
 }
 .mCommentItemL1 .mCommentDate {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   margin-top: 8px;
 }
 .mCommentItemL1 .mCommentAuthor {
   font-size: 13px;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
   margin-top: 8px;
   font-weight: 500;
 }
@@ -4267,13 +4267,13 @@
 
 .mCommentsFooter {
   padding: 16px 20px;
-  border-top: 1px solid #e2e8f0;
-  background: #f8fafc;
+  border-top: 1px solid var(--app-sidenav-border, #e2e8f0);
+  background: var(--app-secondary-color, #f8fafc);
   text-align: right;
 }
 .mCommentsFooter .closeBtn {
-  background: #e2e8f0;
-  color: #0f172a;
+  background: var(--app-sidenav-border, #e2e8f0);
+  color: var(--app-text-color, #0f172a);
   border: none;
   padding: 8px 24px;
   border-radius: 6px;
@@ -4282,7 +4282,7 @@
   transition: background 0.2s;
 }
 .mCommentsFooter .closeBtn:hover {
-  background: #cbd5e1;
+  background: var(--app-sidenav-border, #e2e8f0);
 }
 
 .panelTabBar {
@@ -4290,7 +4290,7 @@
   gap: 0.5rem;
   flex-wrap: wrap;
   padding: 0 0 1rem 0;
-  border-bottom: 2px solid #f1f5f9;
+  border-bottom: 2px solid var(--app-sidenav-border, #f1f5f9);
   margin-bottom: 1rem;
 }
 
@@ -4300,28 +4300,28 @@
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   border-radius: 0.625rem;
-  border: 1.5px solid #e2e8f0;
-  background: #fff;
+  border: 1.5px solid var(--app-sidenav-border, #e2e8f0);
+  background: var(--app-card-color, #ffffff);
   cursor: pointer;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   transition: all 0.15s;
 }
 .panelTab:hover {
-  border-color: #2563eb;
-  color: #2563eb;
+  border-color: var(--app-primary-color, #7c3aed);
+  color: var(--app-primary-color, #7c3aed);
   background: #eff6ff;
 }
 
 .panelTabActive {
-  background: #2563eb !important;
-  border-color: #2563eb !important;
-  color: #fff !important;
+  background: var(--app-primary-color, #7c3aed) !important;
+  border-color: var(--app-primary-color, #7c3aed) !important;
+  color: var(--app-card-color, #ffffff) !important;
 }
 .panelTabActive .panelTabNum {
   background: rgba(255, 255, 255, 0.25) !important;
-  color: #fff !important;
+  color: var(--app-card-color, #ffffff) !important;
 }
 
 .panelTabNum {
@@ -4348,7 +4348,7 @@
 .scorecardTabBar {
   display: flex;
   gap: 0;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--app-sidenav-border, #e2e8f0);
   margin-bottom: 1.25rem;
   overflow-x: auto;
 }
@@ -4365,25 +4365,25 @@
   cursor: pointer;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   white-space: nowrap;
   transition: all 0.15s;
 }
 .scorecardTab:hover {
-  color: #2563eb;
-  background: #f8fafc;
+  color: var(--app-primary-color, #7c3aed);
+  background: var(--app-secondary-color, #f8fafc);
 }
 
 .scorecardTabActive {
-  color: #2563eb !important;
-  border-bottom-color: #2563eb !important;
+  color: var(--app-primary-color, #7c3aed) !important;
+  border-bottom-color: var(--app-primary-color, #7c3aed) !important;
   background: transparent !important;
   font-weight: 700 !important;
 }
 
 .hrFeedbackCard {
-  background: #ffffff;
-  border: 2px solid #e2e8f0;
+  background: var(--app-card-color, #ffffff);
+  border: 2px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 1rem;
   padding: 1.5rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -4407,8 +4407,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #f5f7fa;
-  border: 1px solid #e4e8f1;
+  background-color: var(--app-secondary-color, #f8fafc);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 1rem;
   padding: 14px 20px;
   font-size: 14px;
@@ -4418,20 +4418,20 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 .customDropdownTrigger.dropdownOpen {
-  border-color: #3f62ed;
+  border-color: var(--app-primary-color, #7c3aed);
   box-shadow: 0 0 0 2px rgba(63, 98, 237, 0.1);
 }
 
 .dropdownPlaceholder {
-  color: #8e9bba;
+  color: var(--app-text-color, #64748b);
 }
 
 .dropdownSelected {
-  color: #1b264e;
+  color: var(--app-text-color, #0f172a);
 }
 
 .dropdownChevron {
-  color: #8e9bba;
+  color: var(--app-text-color, #64748b);
   transition: transform 0.2s ease;
 }
 .dropdownChevron.open {
@@ -4443,8 +4443,8 @@
   z-index: 20;
   width: 100%;
   margin-top: 0.5rem;
-  background: #ffffff;
-  border: 1px solid #e4e8f1;
+  background: var(--app-card-color, #ffffff);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 1rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -4457,15 +4457,15 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.15s ease;
-  color: #1b264e;
+  color: var(--app-text-color, #0f172a);
 }
 .dropdownOption:hover {
-  background-color: #f5f7fa;
+  background-color: var(--app-secondary-color, #f8fafc);
 }
 
 .dropdownOptionActive {
-  background-color: #f0f4ff;
-  color: #3f62ed;
+  background-color: var(--app-secondary-color, #f8fafc);
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .dropdownWrapper {
@@ -4479,7 +4479,7 @@
 .fieldLabel {
   font-size: 12px;
   font-weight: 700;
-  color: #8e9bba;
+  color: var(--app-text-color, #64748b);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -4491,7 +4491,7 @@
 .dropdownDisabled {
   pointer-events: none;
   opacity: 0.6;
-  background: #f8fafc;
+  background: var(--app-secondary-color, #f8fafc);
   cursor: not-allowed;
 }
 
@@ -4512,8 +4512,8 @@
 .spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid #e4e8f1;
-  border-top-color: #3f62ed;
+  border: 4px solid var(--app-sidenav-border, #e2e8f0);
+  border-top-color: var(--app-primary-color, #7c3aed);
   border-radius: 9999px;
   animation: spin 1s linear infinite;
 }
@@ -4521,7 +4521,7 @@
 .loadingText {
   font-size: 14px;
   font-weight: 700;
-  color: #1b264e;
+  color: var(--app-text-color, #0f172a);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }

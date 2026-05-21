@@ -20,12 +20,12 @@
 .timeSelect {
   width: 100%;
   padding: 12px 16px;
-  border: 1.5px solid #e4e8f1;
+  border: 1.5px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 12px;
   font-size: 14px;
   font-weight: 600;
-  color: #1b264e;
-  background-color: #f8fafc;
+  color: var(--app-text-color, #0f172a);
+  background-color: var(--app-secondary-color, #f8fafc);
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 6 5-6' stroke='%238E9BBA' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -38,8 +38,8 @@
 }
 .timeSelect:focus {
   outline: none;
-  border-color: #3f62ed;
-  background-color: #ffffff;
+  border-color: var(--app-primary-color, #7c3aed);
+  background-color: var(--app-card-color, #ffffff);
   box-shadow: 0 0 0 3px rgba(63, 98, 237, 0.12);
 }
 .timeSelect:disabled {
@@ -50,7 +50,7 @@
 .timeFieldLabel {
   font-size: 11px;
   font-weight: 700;
-  color: #8e9bba;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 0.5rem;
@@ -58,8 +58,8 @@
 }
 
 .scheduleCard {
-  background-color: #ffffff;
-  border: 1px solid #E4E8F1;
+  background-color: var(--app-card-color, #ffffff);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 20px;
   padding: 1.5rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
@@ -76,7 +76,7 @@
 .fieldLabel {
   font-size: 11px;
   font-weight: 700;
-  color: #8E9BBA;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 0.75rem;
@@ -109,27 +109,27 @@
 }
 
 .panelTagUnselected {
-  background-color: #F8FAFC;
-  color: #1B264E;
-  border-color: #E2E8F0;
+  background-color: var(--app-secondary-color, #f8fafc);
+  color: var(--app-text-color, #0f172a);
+  border-color: var(--app-sidenav-border, #e2e8f0);
 }
 .panelTagUnselected:hover {
-  background-color: #F0F4FF;
+  background-color: var(--app-secondary-color, #f8fafc);
   border-color: rgba(63, 98, 237, 0.3);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(63, 98, 237, 0.08);
 }
 
 .panelTagSelected {
-  background-color: #F0F4FF;
-  color: #3f62ed;
-  border-color: #3f62ed;
+  background-color: var(--app-secondary-color, #f8fafc);
+  color: var(--app-primary-color, #7c3aed);
+  border-color: var(--app-primary-color, #7c3aed);
   box-shadow: 0 4px 12px rgba(63, 98, 237, 0.15);
   transform: translateY(-1px);
 }
 
 .panelTagIcon {
-  color: #3f62ed;
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .panelWarning {
@@ -162,20 +162,20 @@
 .dateInput {
   width: 100%;
   padding: 12px 16px;
-  border: 1.5px solid #E4E8F1;
+  border: 1.5px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 12px;
   font-size: 14px;
   font-weight: 600;
-  color: #1B264E;
-  background-color: #F8FAFC;
+  color: var(--app-text-color, #0f172a);
+  background-color: var(--app-secondary-color, #f8fafc);
   transition: all 0.2s ease;
   box-sizing: border-box;
   font-family: inherit;
 }
 .dateInput:focus {
   outline: none;
-  border-color: #3f62ed;
-  background-color: #ffffff;
+  border-color: var(--app-primary-color, #7c3aed);
+  background-color: var(--app-card-color, #ffffff);
   box-shadow: 0 0 0 3px rgba(63, 98, 237, 0.15);
 }
 .dateInput::-webkit-calendar-picker-indicator {

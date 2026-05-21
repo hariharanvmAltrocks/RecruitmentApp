@@ -209,7 +209,16 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
           />
         ))}
 
-        <div
+        
+      </nav>
+
+      {/* ── Footer ── */}
+      <div className={styles.sidebarFooter}>
+        <div className={styles.footerContent}>
+          <div className={styles.footerVersion}>v-1.2</div>
+          <div className={styles.footerLabel}>Kamoa Copper SA</div>
+
+           <div
           onClick={() => setSwitcherOpen(true)}
           className={styles.sidebarItem}
           title={isCollapsed ? "Custom Theme" : undefined}
@@ -222,13 +231,7 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
             </span>
           </span>
         </div>
-      </nav>
-
-      {/* ── Footer ── */}
-      <div className={styles.sidebarFooter}>
-        <div className={styles.footerContent}>
-          <div className={styles.footerVersion}>v-1.2</div>
-          <div className={styles.footerLabel}>Kamoa Copper SA</div>
+        
         </div>
       </div>
 

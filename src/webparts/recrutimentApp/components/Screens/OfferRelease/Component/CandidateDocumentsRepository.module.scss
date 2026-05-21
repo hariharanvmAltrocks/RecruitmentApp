@@ -1,12 +1,14 @@
+@import "../../../../styles/theme";
+
 $font:            'DM Sans', sans-serif;
-$bg-page:         #F1F4F9;
-$bg-card:         #FFFFFF;
-$bg-doc:          #F7F9FC;
+$bg-page:         $secondary-color;
+$bg-card:         $dashboard-card-bg;
+$bg-doc:          $secondary-color;
 $bg-doc-hover:    #EDF1F9;
-$border:          #E3E8F0;
-$text-heading:    #0B1120;
-$text-body:       #2D3A52;
-$text-muted:      #7C8BAA;
+$border:          $border-color;
+$text-heading:    $text-primary;
+$text-body:       $text-secondary;
+$text-muted:      $text-muted;
 $radius-card:     16px;
 $radius-doc:      10px;
 $shadow-card:     0 1px 4px rgba(11,17,32,.06), 0 4px 16px rgba(11,17,32,.04);
@@ -35,7 +37,7 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   width: 4px;
   height: 20px;
   border-radius: 3px;
-  background: #3B82F6;
+  background: $primary-color;
 }
 
 .title {
@@ -52,7 +54,7 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   font-size: 12px;
   font-weight: 500;
   color: $text-muted;
-  background: #E3E8F0;
+  background: $border-color;
   padding: 4px 14px;
   border-radius: 20px;
   white-space: nowrap;
@@ -95,7 +97,7 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   &:hover { background: rgba(0,0,0,.018); }
 
   &:focus-visible {
-    outline: 2px solid var(--accent, #3B82F6);
+    outline: 2px solid var(--accent, $primary-color);
     outline-offset: -2px;
   }
 }
@@ -109,7 +111,7 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background-color: color-mix(in srgb, var(--accent, #3B82F6) 12%, white);
+  background-color: color-mix(in srgb, var(--accent, $primary-color) 12%, white);
 
   svg { width: 22px; height: 22px; }
 }
@@ -146,7 +148,7 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: #E8EDF5;
+  background: $border-color;
   color: $text-muted;
   transition: background $transition, color $transition;
 
@@ -157,8 +159,8 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   }
 
   &.chevronOpen {
-    background: var(--accent, #3B82F6);
-    color: #fff;
+    background: var(--accent, $primary-color);
+    color: $dashboard-card-bg;
     svg { transform: rotate(180deg); }
   }
 }
@@ -219,7 +221,7 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   height: 34px;
   border-radius: 8px;
   background: #DDE4F0;
-  color: #5A6E94;
+  color: $text-secondary;
   svg { width: 17px; height: 17px; }
 }
 
@@ -264,9 +266,9 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   width: 30px;
   height: 30px;
   border-radius: 7px;
-  border: 1px solid #D4DCE9;
-  background: #FFFFFF;
-  color: #5A6E94;
+  border: 1px solid $border-color;
+  background: $dashboard-card-bg;
+  color: $text-secondary;
   cursor: pointer;
   text-decoration: none;
   transition: background $transition, color $transition, border-color $transition, transform $transition;
@@ -274,9 +276,9 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   svg { width: 15px; height: 15px; }
 
   &:hover {
-    background: #3B82F6;
-    border-color: #3B82F6;
-    color: #fff;
+    background: $primary-color;
+    border-color: $primary-color;
+    color: $dashboard-card-bg;
     transform: scale(1.05);
   }
 
@@ -319,7 +321,7 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   width: 3px;
   height: 28px;
   border-radius: 999px;
-  background: var(--sub-accent, #94A3B8);
+  background: var(--sub-accent, $text-muted);
 }
 
 .subCategoryIconWrap {
@@ -330,7 +332,7 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background-color: color-mix(in srgb, var(--sub-accent, #94A3B8) 12%, white);
+  background-color: color-mix(in srgb, var(--sub-accent, $text-muted) 12%, white);
   svg { width: 16px; height: 16px; }
 }
 
@@ -405,7 +407,7 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
 .modalBox {
   display: flex;
   flex-direction: column;
-  background: #FFFFFF;
+  background: $dashboard-card-bg;
   border-radius: 18px;
   width: 100%;
   max-width: 900px;
@@ -430,7 +432,7 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   gap: 10px;
   padding: 14px 16px;
   border-bottom: 1px solid $border;
-  background: #F7F9FC;
+  background: $secondary-color;
   flex-shrink: 0;
 }
 
@@ -442,7 +444,7 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   height: 32px;
   border-radius: 8px;
   background: #DDE4F0;
-  color: #5A6E94;
+  color: $text-secondary;
   flex-shrink: 0;
 
   svg { width: 16px; height: 16px; }
@@ -473,8 +475,8 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   gap: 6px;
   padding: 6px 14px 6px 10px;
   border-radius: 8px;
-  border: 1px solid #D4DCE9;
-  background: #FFFFFF;
+  border: 1px solid $border-color;
+  background: $dashboard-card-bg;
   color: $text-body;
   font-size: 12.5px;
   font-weight: 600;
@@ -486,9 +488,9 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   svg { width: 14px; height: 14px; }
 
   &:hover {
-    background: #3B82F6;
-    border-color: #3B82F6;
-    color: #fff;
+    background: $primary-color;
+    border-color: $primary-color;
+    color: $dashboard-card-bg;
   }
 }
 
@@ -500,8 +502,8 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  border: 1px solid #D4DCE9;
-  background: #FFFFFF;
+  border: 1px solid $border-color;
+  background: $dashboard-card-bg;
   color: $text-muted;
   cursor: pointer;
   transition: background $transition, color $transition, border-color $transition;
@@ -519,7 +521,7 @@ $transition:      0.22s cubic-bezier(.4,0,.2,1);
 .modalIframeWrap {
   flex: 1;
   overflow: hidden;
-  background: #F1F4F9;
+  background: $secondary-color;
 }
 
 .modalIframe {

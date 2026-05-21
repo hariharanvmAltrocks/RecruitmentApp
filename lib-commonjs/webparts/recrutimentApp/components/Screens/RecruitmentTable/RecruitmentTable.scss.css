@@ -27,7 +27,7 @@
 }
 .recruitment-table__tab {
   border: 1px solid var(--app-sidenav-border, #f1f5f9);
-  background: #ffffff;
+  background: var(--app-card-color, #ffffff);
   color: var(--app-text-color, #64748b);
   border-radius: 999px;
   padding: 10px 18px;
@@ -43,7 +43,7 @@
 .recruitment-table__tab--active {
   border-color: var(--app-primary-color, #7c3aed);
   color: var(--app-primary-color, #7c3aed);
-  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 8px 18px var(--app-primary-shadow, rgba(37, 99, 235, 0.3));
 }
 .recruitment-table__tabs-loading {
   font-size: 12px;
@@ -51,7 +51,7 @@
   padding: 10px 0;
 }
 .recruitment-table__table-card {
-  background: #ffffff;
+  background: var(--app-card-color, #ffffff);
   border-radius: 16px;
   border: 1px solid var(--app-sidenav-border, #f1f5f9);
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
@@ -66,8 +66,8 @@
   position: sticky;
   bottom: 16px;
   margin-top: 24px;
-  background: #0f172a;
-  color: #ffffff;
+  background: var(--app-sidenav-color, #0f172a);
+  color: var(--app-sidenav-text, #ffffff);
   border-radius: 16px;
   padding: 14px 18px;
   display: flex;
@@ -75,6 +75,7 @@
   justify-content: space-between;
   gap: 16px;
   box-shadow: 0 20px 40px rgba(15, 23, 42, 0.4);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
 }
 .assignment .assignment-bar__left {
   display: flex;
@@ -85,7 +86,7 @@
   width: 36px;
   height: 36px;
   border-radius: 12px;
-  background: rgba(37, 99, 235, 0.25);
+  background: var(--app-primary-shadow, rgba(37, 99, 235, 0.3));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -97,11 +98,11 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #cbd5f5;
+  color: var(--app-sidenav-text, #cbd5f5);
 }
 .assignment .assignment-bar__count strong {
   font-size: 20px;
-  color: #ffffff;
+  color: var(--app-sidenav-text-active, #ffffff);
   letter-spacing: 0;
 }
 .assignment .assignment-bar__count span {
@@ -116,18 +117,18 @@
 .assignment .assignment-bar__select {
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  color: var(--app-sidenav-text, #ffffff);
   padding: 8px 12px;
   border-radius: 999px;
   font-size: 12px;
   min-width: 200px;
 }
 .assignment .assignment-bar__select option {
-  color: #ffffff;
-  background-color: var(--app-text-color, #0f172a);
+  color: var(--app-text-color, #0f172a);
+  background-color: var(--app-card-color, #ffffff);
 }
 .assignment .assignment-bar__button {
-  background: var(--app-primary-color, #7c3aed);
+  background: var(--app-button-color, #2563eb);
   color: #ffffff;
   border: none;
   border-radius: 999px;
@@ -150,7 +151,7 @@
 
 .submission-header {
   padding: 1.5rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -158,7 +159,7 @@
 .submission-header__title {
   font-size: 1.125rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
 }
 .submission-header__actions {
   display: flex;
@@ -172,7 +173,7 @@
   padding: 0;
   background: transparent;
   border: 0;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   font-weight: 700;
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -186,14 +187,14 @@
   flex-shrink: 0;
 }
 .submission-header__button:hover, .submission-header__refresh-btn:hover {
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 .submission-header__refresh-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 .submission-header__refresh-btn:disabled:hover {
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
 }
 .submission-header__refresh-btn svg.spin {
   animation: refresh-spin 0.8s linear infinite;

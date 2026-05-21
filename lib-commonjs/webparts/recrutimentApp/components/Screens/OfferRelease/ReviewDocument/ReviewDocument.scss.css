@@ -234,7 +234,7 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--app-text-color, #0f172a);
-  border: 1px solid #efecec;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   background-color: #ffffff;
   padding: 6%;
   border-radius: 9px;
@@ -432,7 +432,7 @@
 .review-document__attachment-version:hover {
   border-color: var(--app-primary-color, #7c3aed);
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 .review-document__attachment-lang {
   width: 26px;

@@ -20,7 +20,7 @@
     right: 0;
     height: 100%;
     width: 1032px;
-    background: $white;
+    background: $dashboard-card-bg;
     box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
     display: flex;
     flex-direction: column;
@@ -32,7 +32,7 @@
     justify-content: space-between;
     padding: $space-xl;
     border-bottom: 1px solid $border-light;
-    background: $white;
+    background: $dashboard-card-bg;
   }
 
   &__header-left {
@@ -45,7 +45,7 @@
     width: 48px;
     height: 48px;
     border-radius: $radius-md;
-    background: rgba(37, 99, 235, 0.12);
+    background: $primary-shadow;
     color: $primary-color;
     display: flex;
     align-items: center;
@@ -70,7 +70,7 @@
   &__badge {
     padding: 4px 8px;
     border-radius: 999px;
-    background: rgba(37, 99, 235, 0.1);
+    background: $primary-shadow;
     color: $primary-color;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -128,7 +128,7 @@
     padding: $space-xl;
     border-radius: $radius-xl;
     border: 1px solid $border-light;
-    background: rgba(248, 250, 252, 0.5);
+    background: $secondary-color;
   }
 
   &__section--toggle {
@@ -182,7 +182,7 @@
     padding: 4px 10px;
     border-radius: 999px;
     border: 1px solid $border-light;
-    background: $white;
+    background: $dashboard-card-bg;
     color: $text-subtle;
     font-weight: 700;
   }
@@ -237,8 +237,8 @@
     font-size: 13px;
     font-weight: 600;
     color: $text-primary;
-    border: 1px solid #ede7e7;
-    background-color: white;
+    border: 1px solid $border-color;
+    background-color: $dashboard-card-bg;
     padding: 6%;
     border-radius: 9px;
 
@@ -280,7 +280,7 @@
     transition: all $transition-base;
 
     &.is-active {
-      background: $white;
+      background: $dashboard-card-bg;
       border: 1px solid $border-base;
       color: $primary-color;
       box-shadow: $shadow-sm;
@@ -352,7 +352,7 @@
   &__attachment-card {
     border: 1px solid $border-base;
     border-radius: $radius-lg;
-    background: $white;
+    background: $dashboard-card-bg;
     overflow: hidden;
     box-shadow: $shadow-sm;
     display: flex;
@@ -539,7 +539,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: $white;
+    background: $dashboard-card-bg;
     color: $white;
     position: relative;
 
@@ -577,13 +577,13 @@
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: rgba(37, 99, 235, 0.18);
+    background: $primary-shadow;
     color: $primary-color;
     font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid $white;
+    border: 2px solid $border-color;
     box-shadow: $shadow-sm;
   }
 
@@ -612,7 +612,7 @@
   &__footer {
     padding: $space-lg $space-xl;
     border-top: 1px solid $border-light;
-    background: rgba(248, 250, 252, 0.6);
+    background: $secondary-color;
     display: flex;
     align-items: center;
     justify-content: end;
@@ -623,7 +623,7 @@
     height: 40px;
     border-radius: $radius-md;
     border: 1px solid $border-light;
-    background: $white;
+    background: $dashboard-card-bg;
     color: $text-subtle;
     cursor: pointer;
     display: flex;
@@ -638,7 +638,7 @@
 
   &__button {
     border: none;
-    background: #41373730;
+    background: $secondary-color;
     font-size: 13px;
     font-weight: 700;
     color: $text-muted;
@@ -648,12 +648,12 @@
   }
 
   &__button--primary {
-    background: $primary-color;
+    background: $button-color;
     color: $white;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 12px 20px rgba(37, 99, 235, 0.25);
+    box-shadow: 0 12px 20px $primary-shadow;
 
     &.is-disabled {
       background: $border-base;
@@ -674,10 +674,10 @@
   width: 100%;
   position: relative;
   padding: 48px 0;
-  background: rgba(255, 255, 255, 0.4);
+  background: $secondary-color;
   backdrop-filter: blur(4px);
-  border-top: 1px solid rgba(226, 232, 240, 0.5);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+  border-top: 1px solid $border-light;
+  border-bottom: 1px solid $border-light;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
   padding-left: 16px;
   padding-right: 16px;
@@ -704,12 +704,12 @@
     left: 50%;
     width: 100%;
     height: 3px;
-    background: #f1f5f9;
+    background: $border-light;
     z-index: 0;
 
     &-fill {
       height: 100%;
-      background: #10b981;
+      background: $success;
       box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
     }
   }
@@ -730,25 +730,25 @@
     transition: all 0.5s ease;
 
     &--completed {
-      background: #10b981;
-      border-color: #10b981;
+      background: $success;
+      border-color: $success;
       color: white;
       box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.1), 0 4px 6px -4px rgba(16, 185, 129, 0.1);
     }
 
     &--current {
-      background: #f97316;
-      border-color: #f97316;
+      background: $warning;
+      border-color: $warning;
       color: white;
       box-shadow: 0 20px 25px -5px rgba(249, 115, 22, 0.1), 0 8px 10px -6px rgba(249, 115, 22, 0.1);
       transform: scale(1.1);
-      box-shadow: 0 0 0 4px #fff7ed;
+      box-shadow: 0 0 0 4px $warning-bg;
     }
 
     &--pending {
-      background: white;
-      border-color: #e2e8f0;
-      color: #cbd5e1;
+      background: $dashboard-card-bg;
+      border-color: $border-color;
+      color: $text-subtle;
     }
   }
 
@@ -794,11 +794,11 @@
     }
 
     &--current {
-      color: #0f172a;
+      color: $text-primary;
     }
 
     &--pending {
-      color: #94a3b8;
+      color: $text-muted;
     }
   }
 
@@ -813,8 +813,8 @@
 
   &__header {
     padding: 32px 32px 0;
-    background: rgba(248, 250, 252, 0.3);
-    border-bottom: 1px solid #f1f5f9;
+    background: $secondary-color;
+    border-bottom: 1px solid $border-light;
     overflow: hidden;
 
     &-top {
@@ -827,7 +827,7 @@
     &-title {
       font-size: 12px;
       font-weight: 900;
-      color: #1e293b;
+      color: $text-primary;
       text-transform: uppercase;
       letter-spacing: 0.2em;
       display: flex;
@@ -839,15 +839,15 @@
     &-title-bar {
       width: 6px;
       height: 24px;
-      background: #2563eb;
+      background: $button-color;
       border-radius: 999px;
     }
 
     &-status {
       padding: 4px 12px;
-      background: #eff6ff;
+      background: $secondary-color;
       border-radius: 8px;
-      border: 1px solid #dbeafe;
+      border: 1px solid $border-color;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -856,14 +856,14 @@
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background: #3b82f6;
+        background: $primary-color;
         animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       }
 
       &-text {
         font-size: 10px;
         font-weight: 900;
-        color: #2563eb;
+        color: $primary-color;
         text-transform: uppercase;
         letter-spacing: 0.1em;
       }
@@ -886,10 +886,10 @@
     cursor: pointer;
 
     &--active {
-      background: #2563eb;
+      background: $button-color;
       color: white;
-      border-color: #2563eb;
-      box-shadow: 0 4px 6px -1px rgba(191, 219, 254, 1), 0 2px 4px -1px rgba(191, 219, 254, 1);
+      border-color: $button-color;
+      box-shadow: 0 4px 6px -1px $primary-shadow, 0 2px 4px -1px $primary-shadow;
       
       .advert-roadmap__toggle-icon {
         transform: rotate(90deg);
@@ -897,12 +897,12 @@
     }
 
     &--inactive {
-      background: white;
-      color: #2563eb;
-      border-color: #bfdbfe;
+      background: $dashboard-card-bg;
+      color: $primary-color;
+      border-color: $primary-color;
 
       &:hover {
-        background: #eff6ff;
+        background: $secondary-color;
       }
     }
   }
@@ -985,8 +985,8 @@
   margin: 4vh auto;
   width: min(998px, 55vw);
   height: min(760px, 88vh);
-  background: #0f172a;
-  color: #f8fafc;
+  background: var(--app-sidenav-color, #0f172a);
+  color: var(--app-sidenav-text, #f8fafc);
   border-radius: 16px;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
   display: flex;
@@ -1001,7 +1001,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 16px 20px;
-  background: linear-gradient(120deg, rgba(59, 130, 246, 0.15), rgba(14, 165, 233, 0.08));
+  background: linear-gradient(120deg, $primary-shadow, rgba(var(--app-primary-color-rgb, 59, 130, 246), 0.08));
   border-bottom: 1px solid rgba(148, 163, 184, 0.15);
 }
 
@@ -1034,8 +1034,8 @@
   border-radius: 10px;
   font-size: 12px;
   font-weight: 600;
-  color: #0f172a;
-  background: #e2e8f0;
+  color: $text-primary;
+  background: $border-color;
   border: none;
   text-decoration: none;
   cursor: pointer;
@@ -1043,14 +1043,14 @@
 
 .attachment-viewer__button--ghost {
   background: transparent;
-  color: #e2e8f0;
+  color: $text-primary;
   border: 1px solid rgba(226, 232, 240, 0.4);
 }
 
 .attachment-viewer__body {
   position: relative;
   flex: 1;
-  background: #0b1120;
+  background: var(--app-sidenav-footer-bg, #0b1120);
 }
 
 .attachment-viewer__iframe {

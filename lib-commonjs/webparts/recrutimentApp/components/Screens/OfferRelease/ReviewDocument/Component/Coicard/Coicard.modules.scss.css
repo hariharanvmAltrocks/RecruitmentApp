@@ -420,7 +420,7 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  border: 2px solid #a0aec0;
+  border: 2px solid var(--app-text-color, #64748b);
   position: relative;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   background-color: #ffffff;
@@ -434,19 +434,19 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #3c3b3b;
+  background-color: var(--app-text-color, #0f172a);
   transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .coi-card__radio-label input:checked ~ .coi-card__radio-custom {
-  border-color: #3e3939;
+  border-color: var(--app-primary-color, #7c3aed);
 }
 .coi-card__radio-label input:checked ~ .coi-card__radio-custom::after {
   transform: translate(-50%, -50%) scale(1);
 }
 
 .coi-card__radio-label:hover input:not(:disabled) ~ .coi-card__radio-custom {
-  border-color: #3e3939;
+  border-color: var(--app-primary-color, #7c3aed);
   box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
 }
 

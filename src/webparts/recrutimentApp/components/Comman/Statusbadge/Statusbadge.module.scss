@@ -1,10 +1,12 @@
-$font:          'DM Sans', sans-serif;
-$border:        #E3E8F0;
-$text-body:     #2D3A52;
-$text-muted:    #7C8BAA;
-$green:         #1D9E75;
-$green-light:   #E1F5EE;
-$green-text:    #0F6E56;
+@import "../../../styles/theme";
+
+$font:          $font-family;
+$border:        $border-color;
+$text-body:     $text-secondary;
+$text-muted:    $text-muted;
+$green:         $success;
+$green-light:   var(--app-secondary-color, #E1F5EE);
+$green-text:    var(--app-primary-color, #0F6E56);
 $transition:    0.22s cubic-bezier(.4,0,.2,1);
 
 // ── Root ─────────────────────────────────────────────────────────────────────
@@ -22,7 +24,7 @@ $transition:    0.22s cubic-bezier(.4,0,.2,1);
   align-items: center;
   gap: 10px;
   padding: 8px 14px 8px 8px;
-  background: #fff;
+  background: $dashboard-card-bg;
   border: 1px solid $border;
   border-radius: 999px;
   cursor: pointer;
@@ -119,7 +121,7 @@ $transition:    0.22s cubic-bezier(.4,0,.2,1);
   top: calc(100% + 10px);
   right: 0;
   width: 288px;
-  background: #fff;
+  background: $dashboard-card-bg;
   border: 1px solid $border;
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(11,17,32,.07), 0 8px 32px rgba(11,17,32,.08);
@@ -145,7 +147,7 @@ $transition:    0.22s cubic-bezier(.4,0,.2,1);
   align-items: center;
   justify-content: space-between;
   padding: 13px 16px 10px;
-  border-bottom: 1px solid #F1F5F9;
+  border-bottom: 1px solid $border-light;
 }
 
 .panelTitle {
@@ -177,7 +179,7 @@ $transition:    0.22s cubic-bezier(.4,0,.2,1);
   padding: 9px 16px;
   transition: background .15s;
 
-  &:hover { background: #F7F9FC; }
+  &:hover { background: $secondary-color; }
 }
 
 // ── Connector ─────────────────────────────────────────────────────────────────
@@ -206,7 +208,7 @@ $transition:    0.22s cubic-bezier(.4,0,.2,1);
 }
 
 .stepIcon_done    { background: $green-light; }
-.stepIcon_pending { background: #F1F5F9; }
+.stepIcon_pending { background: $secondary-color; }
 .stepIcon_warning { background: #FAEEDA; }
 
 @keyframes popIn {
@@ -253,7 +255,7 @@ $transition:    0.22s cubic-bezier(.4,0,.2,1);
 }
 
 .badge_done    { background: $green-light; color: $green-text; }
-.badge_pending { background: #F1F5F9; color: $text-muted; }
+.badge_pending { background: $secondary-color; color: $text-muted; }
 .badge_warning { background: #FAEEDA; color: #854F0B; }
 
 // ── Footer ────────────────────────────────────────────────────────────────────
@@ -262,7 +264,7 @@ $transition:    0.22s cubic-bezier(.4,0,.2,1);
   align-items: center;
   gap: 6px;
   padding: 10px 16px 12px;
-  border-top: 1px solid #F1F5F9;
+  border-top: 1px solid $border-light;
   font-size: 11px;
   color: $text-muted;
   line-height: 1.4;

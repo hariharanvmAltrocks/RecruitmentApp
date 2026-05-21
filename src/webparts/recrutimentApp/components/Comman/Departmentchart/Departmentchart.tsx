@@ -15,6 +15,7 @@ import styles from "./departmentChart.module.scss";
 import useDepartmentChart, {
   DepartmentDataItem,
 } from "../../Screens/Dashboard/Hooks/Usedepartmentchart";
+import { useTheme } from "../../../theme/ThemeContext";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 export interface DepartmentChartProps {
@@ -48,10 +49,14 @@ const DepartmentChart: React.FC<DepartmentChartProps> = ({
   itemsPerPage = 7,
   title = "Departmental Demand",
   subtitle = "Pending recruitment lifecycle status",
-  gradientStart = "#c026d3",
-  gradientEnd = "#7c3aed",
+  gradientStart,
+  gradientEnd,
   tooltipValueLabel = "Openings",
 }) => {
+  const theme = useTheme();
+  const resolvedGradientStart = gradientStart || theme.primaryColor;
+  const resolvedGradientEnd = gradientEnd || theme.secondaryColor;
+
   const {
     visibleData,
     currentPage,
@@ -118,22 +123,22 @@ const DepartmentChart: React.FC<DepartmentChartProps> = ({
           >
             <defs>
               <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={gradientStart} stopOpacity={1} />
-                <stop offset="100%" stopColor={gradientEnd} stopOpacity={0.9} />
+                <stop offset="0%" stopColor={resolvedGradientStart} stopOpacity={1} />
+                <stop offset="100%" stopColor={resolvedGradientEnd} stopOpacity={0.9} />
               </linearGradient>
             </defs>
 
             <CartesianGrid
               strokeDasharray="3 3"
               vertical={false}
-              stroke="#f1f5f9"
+              stroke="var(--app-sidenav-border, #f1f5f9)"
             />
 
             <XAxis
               dataKey="name"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "#64748b", fontSize: 10, fontWeight: 900 }}
+              tick={{ fill: "var(--app-text-color, #64748b)", fontSize: 10, fontWeight: 900 }}
               interval={0}
               height={50}
               padding={{ left: 20, right: 20 }}
@@ -142,11 +147,11 @@ const DepartmentChart: React.FC<DepartmentChartProps> = ({
             <YAxis
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "#94a3b8", fontSize: 10, fontWeight: 900 }}
+              tick={{ fill: "var(--app-text-color, #94a3b8)", fontSize: 10, fontWeight: 900 }}
             />
 
             <Tooltip
-              cursor={{ fill: "#f8fafc", radius: [12, 12, 0, 0] } as object}
+              cursor={{ fill: "var(--app-secondary-color, #f8fafc)", radius: [12, 12, 0, 0] } as object}
               content={<CustomTooltip tooltipValueLabel={tooltipValueLabel} />}
             />
 

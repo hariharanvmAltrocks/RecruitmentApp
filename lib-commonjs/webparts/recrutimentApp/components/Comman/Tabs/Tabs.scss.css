@@ -9,7 +9,7 @@
   padding: 8px 20px;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--app-text-color, #64748b);
   background: transparent;
   border: 2px solid transparent;
   border-radius: 999px;
@@ -18,12 +18,12 @@
   transition: color 0.2s, border-color 0.2s, font-weight 0.2s;
 }
 .tabs__tab:hover:not(.tabs__tab--disabled) {
-  color: #2563eb;
+  color: var(--app-primary-color, #7c3aed);
 }
 .tabs__tab--active {
-  color: #2563eb;
+  color: var(--app-button-color, #2563eb);
   font-weight: 700;
-  border-color: #2563eb;
+  border-color: var(--app-button-color, #2563eb);
   background: transparent;
 }
 .tabs__tab--disabled {
@@ -36,7 +36,7 @@
   width: 100px;
   height: 36px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background: linear-gradient(90deg, var(--app-secondary-color, #f8fafc) 25%, var(--app-sidenav-border, #f1f5f9) 50%, var(--app-secondary-color, #f8fafc) 75%);
   background-size: 200% 100%;
   animation: tabs-shimmer 1.4s infinite;
 }

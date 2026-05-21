@@ -17,7 +17,7 @@
 }
 
 .modal {
-  background: #ffffff;
+  background: var(--app-card-color, #ffffff);
   border-radius: 12px;
   width: 100%;
   max-width: 650px;
@@ -38,7 +38,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-sidenav-border, #e2e8f0);
 }
 .header .headerTitle {
   display: flex;
@@ -46,16 +46,16 @@
   gap: 12px;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--app-text-color, #0f172a);
 }
 .header .headerTitle svg {
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
 }
 .header .closeBtn {
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,8 +64,8 @@
   transition: all 0.2s ease;
 }
 .header .closeBtn:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--app-secondary-color, #f8fafc);
+  color: var(--app-text-color, #0f172a);
 }
 
 .body {
@@ -81,39 +81,39 @@
   background: transparent;
 }
 .body::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--app-sidenav-border, #e2e8f0);
   border-radius: 10px;
 }
 .body::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--app-text-color, #64748b);
 }
 
 .footer {
   padding: 16px 24px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--app-sidenav-border, #e2e8f0);
   display: flex;
   justify-content: flex-end;
 }
 .footer .closeOutlinedBtn {
   background: transparent;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 6px;
   padding: 10px 20px;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--app-text-color, #334155);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 .footer .closeOutlinedBtn:hover {
-  background: #f8fafc;
-  border-color: #94a3b8;
-  color: #0f172a;
+  background: var(--app-secondary-color, #f8fafc);
+  border-color: var(--app-text-color, #64748b);
+  color: var(--app-text-color, #0f172a);
 }
 
 .commentCard {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--app-card-color, #ffffff);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 16px;
@@ -124,7 +124,7 @@
   margin-bottom: 0;
 }
 .commentCard:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px var(--app-primary-shadow, rgba(0, 0, 0, 0.05));
   transform: translateY(-2px);
 }
 .commentCard::before {
@@ -163,13 +163,13 @@
   font-weight: 600;
   padding: 6px 12px;
   border-radius: 20px;
-  background: #f1f5f9;
-  color: #334155;
+  background: var(--app-secondary-color, #f8fafc);
+  color: var(--app-text-color, #334155);
 }
 
 .date {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--app-text-color, #64748b);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -183,13 +183,13 @@
 }
 .content .label {
   font-weight: 600;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
   margin-bottom: 8px;
   font-size: 0.95rem;
 }
 .content .text {
   font-size: 0.875rem;
-  color: #475569;
+  color: var(--app-text-color, #334155);
   line-height: 1.6;
   white-space: pre-wrap;
 }
@@ -199,20 +199,20 @@
   align-items: center;
   justify-content: space-between;
   padding-top: 16px;
-  border-top: 1px dashed #e2e8f0;
+  border-top: 1px dashed var(--app-sidenav-border, #e2e8f0);
 }
 .meta .candidateInfo {
   font-size: 0.85rem;
-  color: #334155;
+  color: var(--app-text-color, #334155);
   font-weight: 500;
 }
 .meta .departmentBadge {
   font-size: 0.75rem;
   font-weight: 500;
   padding: 4px 10px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #475569;
+  background: var(--app-secondary-color, #f8fafc);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  color: var(--app-text-color, #334155);
   border-radius: 12px;
 }
 
@@ -222,10 +222,10 @@
   align-items: center;
   justify-content: center;
   padding: 60px 0;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
 }
 .emptyState svg {
-  color: #cbd5e1;
+  color: var(--app-sidenav-border, #e2e8f0);
   margin-bottom: 16px;
 }
 .emptyState p {
@@ -235,15 +235,15 @@
 
 /* Skeleton Loading State */
 .skeletonCard {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--app-card-color, #ffffff);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 16px;
 }
 .skeletonCard .shimmer {
-  background: #f1f5f9;
-  background-image: linear-gradient(to right, #f1f5f9 0%, #e2e8f0 20%, #f1f5f9 40%, #f1f5f9 100%);
+  background: var(--app-secondary-color, #f8fafc);
+  background-image: linear-gradient(to right, var(--app-secondary-color, #f8fafc) 0%, var(--app-sidenav-border, #e2e8f0) 20%, var(--app-secondary-color, #f8fafc) 40%, var(--app-secondary-color, #f8fafc) 100%);
   background-repeat: no-repeat;
   background-size: 800px 100%;
   animation: shimmer 1.5s infinite linear forwards;
@@ -273,7 +273,7 @@
 .skeletonCard .skMeta {
   display: flex;
   justify-content: space-between;
-  border-top: 1px dashed #e2e8f0;
+  border-top: 1px dashed var(--app-sidenav-border, #e2e8f0);
   padding-top: 16px;
 }
 .skeletonCard .skName {

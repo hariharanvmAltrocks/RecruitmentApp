@@ -86,16 +86,16 @@ var SideNavigation = function (_a) {
                     } }))),
         react_1.default.createElement("nav", { className: SideNavigation_module_scss_1.default.nav },
             !isCollapsed && react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.sectionLabel }, "Main Menu"),
-            sortedMenu.map(function (parent) { return (react_1.default.createElement(SidebarItem, { key: parent.Id, item: parent, activeMenuID: activeMenuID, onSelectCallback: handleSelect, isExpanded: expandedMenus.includes(parent.Id), onToggleExpand: function () { return toggleExpand(parent.Id); }, isCollapsed: isCollapsed })); }),
-            react_1.default.createElement("div", { onClick: function () { return setSwitcherOpen(true); }, className: SideNavigation_module_scss_1.default.sidebarItem, title: isCollapsed ? "Custom Theme" : undefined },
-                react_1.default.createElement(lucide_react_1.Palette, { className: SideNavigation_module_scss_1.default.icon }),
-                react_1.default.createElement("span", { className: SideNavigation_module_scss_1.default.labelWrap },
-                    react_1.default.createElement("span", { className: SideNavigation_module_scss_1.default.label }, "Custom Theme"),
-                    react_1.default.createElement("span", { className: SideNavigation_module_scss_1.default.labelTooltip, role: "tooltip" }, "Custom Theme")))),
+            sortedMenu.map(function (parent) { return (react_1.default.createElement(SidebarItem, { key: parent.Id, item: parent, activeMenuID: activeMenuID, onSelectCallback: handleSelect, isExpanded: expandedMenus.includes(parent.Id), onToggleExpand: function () { return toggleExpand(parent.Id); }, isCollapsed: isCollapsed })); })),
         react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.sidebarFooter },
             react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerContent },
                 react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerVersion }, "v-1.2"),
-                react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerLabel }, "Kamoa Copper SA"))),
+                react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerLabel }, "Kamoa Copper SA"),
+                react_1.default.createElement("div", { onClick: function () { return setSwitcherOpen(true); }, className: SideNavigation_module_scss_1.default.sidebarItem, title: isCollapsed ? "Custom Theme" : undefined },
+                    react_1.default.createElement(lucide_react_1.Palette, { className: SideNavigation_module_scss_1.default.icon }),
+                    react_1.default.createElement("span", { className: SideNavigation_module_scss_1.default.labelWrap },
+                        react_1.default.createElement("span", { className: SideNavigation_module_scss_1.default.label }, "Custom Theme"),
+                        react_1.default.createElement("span", { className: SideNavigation_module_scss_1.default.labelTooltip, role: "tooltip" }, "Custom Theme"))))),
         react_1.default.createElement(ThemeSwitcher_1.ThemeSwitcher, { isOpen: isSwitcherOpen, onClose: function () { return setSwitcherOpen(false); } })));
 };
 exports.default = SideNavigation;

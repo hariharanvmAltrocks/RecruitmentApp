@@ -2,10 +2,10 @@
 .roadmapWrapper {
   width: fit-content;
   max-width: 85%;
-  background: rgba(248, 250, 252, 0.5);
+  background: var(--app-header-color, #ffffff);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.6);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
   border-radius: 32px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
@@ -40,8 +40,8 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #7c3aed;
-  box-shadow: 0 0 10px rgba(139, 92, 246, 0.6);
+  background: var(--app-primary-color, #7c3aed);
+  box-shadow: 0 0 10px var(--app-primary-shadow, rgba(37, 99, 235, 0.3));
   flex-shrink: 0;
 }
 
@@ -49,7 +49,7 @@
   font-size: 10px;
   font-weight: 900;
   letter-spacing: 0.3em;
-  color: #0f172a;
+  color: var(--app-text-color, #0f172a);
   text-transform: uppercase;
 }
 
@@ -57,7 +57,7 @@
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.1em;
-  color: #94a3b8;
+  color: var(--app-text-color, #64748b);
   text-transform: uppercase;
   padding-left: 28px;
 }
@@ -110,7 +110,7 @@
   align-items: center;
   gap: 16px;
   padding: 0 56px 0 48px;
-  background: linear-gradient(to right, var(--step-from, #6366f1), var(--step-to, #8b5cf6));
+  background: linear-gradient(to right, var(--step-from, var(--app-button-color, #2563eb)), var(--step-to, var(--app-primary-color, #7c3aed)));
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   transition: filter 0.2s ease, box-shadow 0.2s ease;
   position: relative;

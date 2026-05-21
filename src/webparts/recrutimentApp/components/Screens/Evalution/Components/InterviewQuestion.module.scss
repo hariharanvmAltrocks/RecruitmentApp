@@ -1,3 +1,5 @@
+@import "../../../../styles/theme";
+
 // InterviewQuestion.module.scss
 
 .sectionTitle {
@@ -20,7 +22,7 @@
 .sectionH2 {
   font-size: 18px;
   font-weight: 800;
-  color: #1e3a5f;
+  color: $text-primary;
   margin: 0 0 4px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -28,7 +30,7 @@
 
 .sectionSub {
   font-size: 12px;
-  color: #94a3b8;
+  color: $text-muted;
   margin: 0;
 }
 
@@ -37,14 +39,14 @@
   align-items: center;
   gap: 10px;
   margin-left: auto;
-  background: #f8fafc;
+  background: $secondary-color;
   padding: 8px 16px;
   border-radius: 20px;
 }
 
 .ratingGuideLabel {
   font-weight: 700;
-  color: #94a3b8;
+  color: $text-muted;
   font-size: 10px;
   letter-spacing: 0.5px;
 }
@@ -57,17 +59,17 @@
 }
 
 .dotGreen { background: #22c55e; }
-.dotBlue { background: #3b82f6; }
+.dotBlue { background: $primary-color; }
 .dotRed { background: #ef4444; }
 
 .guideItem {
   font-size: 12px;
-  color: #334155;
+  color: $text-secondary;
 }
 
 .qCard {
-  background: #fff;
-  border: 1px solid #e2e8f0;
+  background: $dashboard-card-bg;
+  border: 1px solid $border-color;
   border-radius: 12px;
   padding: 24px 32px;
   margin-bottom: 20px;
@@ -93,7 +95,7 @@
 
 // Subtle state: not-yet-touched (no error shown until submit)
 .qCardTouched {
-  border-color: #e2e8f0;
+  border-color: $border-color;
 }
 
 .qTop {
@@ -107,7 +109,7 @@
   min-width: 40px;
   height: 40px;
   background: #eff6ff;
-  color: #3b82f6;
+  color: $primary-color;
   border-radius: 50%;
   font-size: 14px;
   font-weight: 700;
@@ -120,15 +122,15 @@
 .qText {
   font-size: 16px;
   font-weight: 600;
-  color: #1e293b;
+  color: $text-primary;
   margin: 0;
   padding-top: 8px;
   line-height: 1.5;
 }
 
 .guideBox {
-  background: #f8fafc;
-  border: 1px solid #f1f5f9;
+  background: $secondary-color;
+  border: 1px solid $border-light;
   border-radius: 8px;
   padding: 16px 20px;
   margin-bottom: 20px;
@@ -161,7 +163,7 @@
 
 .guideBoxText {
   font-size: 13px;
-  color: #475569;
+  color: $text-secondary;
   margin: 0;
   line-height: 1.65;
 }
@@ -171,14 +173,14 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 16px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid $border-light;
   padding-top: 20px;
 }
 
 .panelRatingLabel {
   font-size: 11px;
   font-weight: 700;
-  color: #64748b;
+  color: $text-muted;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   margin: 0 0 12px;
@@ -196,18 +198,18 @@
 
 .ratingBtn {
   padding: 10px 24px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid $border-color;
   border-radius: 8px;
-  background: #fff;
+  background: $dashboard-card-bg;
   font-size: 13px;
   font-weight: 600;
-  color: #64748b;
+  color: $text-muted;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    border-color: #cbd5e1;
-    background: #f8fafc;
+    border-color: $border-color;
+    background: $secondary-color;
   }
 }
 
@@ -218,9 +220,9 @@
 }
 
 .ratingAcceptable {
-  border-color: #3b82f6;
+  border-color: $primary-color;
   background: #eff6ff;
-  color: #3b82f6;
+  color: $primary-color;
 }
 
 .ratingExcellent {
@@ -239,7 +241,7 @@
   display: block;
   font-size: 10px;
   font-weight: 700;
-  color: #94a3b8;
+  color: $text-muted;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   margin-bottom: 4px;
@@ -248,12 +250,12 @@
 .scoreNum {
   font-size: 36px;
   font-weight: 800;
-  color: #1e293b;
+  color: $text-primary;
   line-height: 1;
 }
 
 .scoreMax {
   font-size: 16px;
   font-weight: 500;
-  color: #94a3b8;
+  color: $text-muted;
 }

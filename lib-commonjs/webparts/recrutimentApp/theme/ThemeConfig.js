@@ -13,6 +13,17 @@ exports.predefinedThemes = {
         cardColor: "#ffffff",
         fontFamily: "'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif"
     },
+    Kamoa_Theme: {
+        name: "Kamoa Theme",
+        primaryColor: "#000000",
+        secondaryColor: "#f8fafc",
+        buttonColor: "#f00b0b",
+        sideNavColor: "#f20404", // dark navy-purple sidebar background
+        headerColor: "#ffffff",
+        textColor: "#0f172a",
+        cardColor: "#ffffff",
+        fontFamily: "'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif"
+    },
     dark: {
         name: "Dark",
         primaryColor: "#3b82f6",

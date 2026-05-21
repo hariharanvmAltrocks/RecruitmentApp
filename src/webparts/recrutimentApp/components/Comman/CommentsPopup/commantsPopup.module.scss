@@ -1,3 +1,5 @@
+@import "../../../styles/theme";
+
 /* commantsPopup.modules.scss */
 
 .backdrop {
@@ -18,7 +20,7 @@
 }
 
 .modal {
-  background: #ffffff;
+  background: $dashboard-card-bg;
   border-radius: 12px;
   width: 100%;
   max-width: 650px;
@@ -39,7 +41,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid $border-color;
 
   .headerTitle {
     display: flex;
@@ -47,10 +49,10 @@
     gap: 12px;
     font-size: 1.25rem;
     font-weight: 600;
-    color: #1e293b;
+    color: $text-primary;
     
     svg {
-      color: #64748b;
+      color: $text-muted;
     }
   }
 
@@ -58,7 +60,7 @@
     background: transparent;
     border: none;
     cursor: pointer;
-    color: #94a3b8;
+    color: $text-muted;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -67,8 +69,8 @@
     transition: all 0.2s ease;
 
     &:hover {
-      background: #f1f5f9;
-      color: #0f172a;
+      background: $secondary-color;
+      color: $text-primary;
     }
   }
 }
@@ -86,42 +88,42 @@
     background: transparent;
   }
   &::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: $border-color;
     border-radius: 10px;
   }
   &::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: $text-muted;
   }
 }
 
 .footer {
   padding: 16px 24px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid $border-color;
   display: flex;
   justify-content: flex-end;
 
   .closeOutlinedBtn {
     background: transparent;
-    border: 1px solid #cbd5e1;
+    border: 1px solid $border-color;
     border-radius: 6px;
     padding: 10px 20px;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #475569;
+    color: $text-secondary;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-      background: #f8fafc;
-      border-color: #94a3b8;
-      color: #0f172a;
+      background: $secondary-color;
+      border-color: $text-muted;
+      color: $text-primary;
     }
   }
 }
 
 .commentCard {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: $dashboard-card-bg;
+  border: 1px solid $border-color;
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 16px;
@@ -133,7 +135,7 @@
   }
 
   &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px var(--app-primary-shadow, rgba(0, 0, 0, 0.05));
     transform: translateY(-2px);
   }
 
@@ -167,13 +169,13 @@
   font-weight: 600;
   padding: 6px 12px;
   border-radius: 20px;
-  background: #f1f5f9;
-  color: #334155;
+  background: $secondary-color;
+  color: $text-secondary;
 }
 
 .date {
   font-size: 0.75rem;
-  color: #64748b;
+  color: $text-muted;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -188,13 +190,13 @@
 
   .label {
     font-weight: 600;
-    color: #0f172a;
+    color: $text-primary;
     margin-bottom: 8px;
     font-size: 0.95rem;
   }
   .text {
     font-size: 0.875rem;
-    color: #475569;
+    color: $text-secondary;
     line-height: 1.6;
     white-space: pre-wrap;
   }
@@ -205,20 +207,20 @@
   align-items: center;
   justify-content: space-between;
   padding-top: 16px;
-  border-top: 1px dashed #e2e8f0;
+  border-top: 1px dashed $border-color;
 
   .candidateInfo {
     font-size: 0.85rem;
-    color: #334155;
+    color: $text-secondary;
     font-weight: 500;
   }
   .departmentBadge {
     font-size: 0.75rem;
     font-weight: 500;
     padding: 4px 10px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    color: #475569;
+    background: $secondary-color;
+    border: 1px solid $border-color;
+    color: $text-secondary;
     border-radius: 12px;
   }
 }
@@ -229,10 +231,10 @@
   align-items: center;
   justify-content: center;
   padding: 60px 0;
-  color: #94a3b8;
+  color: $text-muted;
 
   svg {
-    color: #cbd5e1;
+    color: $border-color;
     margin-bottom: 16px;
   }
   p {
@@ -243,15 +245,15 @@
 
 /* Skeleton Loading State */
 .skeletonCard {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: $dashboard-card-bg;
+  border: 1px solid $border-color;
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 16px;
 
   .shimmer {
-    background: #f1f5f9;
-    background-image: linear-gradient(to right, #f1f5f9 0%, #e2e8f0 20%, #f1f5f9 40%, #f1f5f9 100%);
+    background: $secondary-color;
+    background-image: linear-gradient(to right, $secondary-color 0%, $border-color 20%, $secondary-color 40%, $secondary-color 100%);
     background-repeat: no-repeat;
     background-size: 800px 100%; 
     animation: shimmer 1.5s infinite linear forwards;
@@ -266,7 +268,7 @@
   .skMeta { 
     display: flex; 
     justify-content: space-between; 
-    border-top: 1px dashed #e2e8f0; 
+    border-top: 1px dashed $border-color; 
     padding-top: 16px; 
   }
   
