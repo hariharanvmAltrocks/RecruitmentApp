@@ -123,7 +123,7 @@ export const CareerPortalQuestionBank: React.FC<CareerPortalBankProps> = ({
                       </p>
                     </div>
 
-                    <div className="qc-bank__options">
+                    {/* <div className="qc-bank__options">
                       {q.options.map((opt) => (
                         <span
                           key={opt.id}
@@ -133,7 +133,7 @@ export const CareerPortalQuestionBank: React.FC<CareerPortalBankProps> = ({
                           {opt.textEn}
                         </span>
                       ))}
-                    </div>
+                    </div> */}
                   </div>
                 </motion.div>
               );

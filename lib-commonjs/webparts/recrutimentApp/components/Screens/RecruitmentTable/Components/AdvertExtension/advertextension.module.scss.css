@@ -1,3 +1,5 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 .overlay {
   position: fixed;
   inset: 0;
@@ -85,7 +87,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   transition: background 0.15s, color 0.15s, transform 0.15s;
   flex-shrink: 0;
 }
@@ -134,7 +136,7 @@
   background: transparent;
 }
 .body::-webkit-scrollbar-thumb {
-  background: var(--app-sidenav-border, #e2e8f0);
+  background: #e4e8f1;
   border-radius: 10px;
 }
 
@@ -187,7 +189,7 @@
 .fieldLabel {
   font-size: 0.72rem;
   font-weight: 600;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -201,7 +203,7 @@
 .dateInput {
   width: 100%;
   padding: 10px 36px 10px 14px;
-  border: 1.5px solid var(--app-sidenav-border, #e2e8f0);
+  border: 1.5px solid #e4e8f1;
   border-radius: 10px;
   font-size: 0.875rem;
   font-family: inherit;
@@ -233,7 +235,7 @@
 .calIcon {
   position: absolute;
   right: 11px;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   display: flex;
   align-items: center;
   pointer-events: none;
@@ -299,7 +301,7 @@
   padding: 10px 22px;
   border: none;
   background: transparent;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   font-size: 0.875rem;
   font-weight: 600;
   border-radius: 10px;

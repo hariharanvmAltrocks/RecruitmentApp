@@ -802,13 +802,13 @@ var DashboardService = /** @class */ (function () {
                                 Status: (_h = (_g = item === null || item === void 0 ? void 0 : item.Status) === null || _g === void 0 ? void 0 : _g.StatusDescription) !== null && _h !== void 0 ? _h : "",
                                 StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
                                 InterviewDate: InterviewDate
-                                    ? (0, moment_1.default)(InterviewDate).format("YYYY-MM-DD")
+                                    ? (0, moment_1.default)(InterviewDate).format("DD-MM-YYYY")
                                     : undefined,
                                 ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
-                                    ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
+                                    ? (0, moment_1.default)(item.Modified).format("DD-MM-YYYY")
                                     : undefined,
                                 CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
-                                    ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
+                                    ? (0, moment_1.default)(item.Created).format("DD-MM-YYYY")
                                     : undefined,
                                 isExpat: (item === null || item === void 0 ? void 0 : item.NationalityCode) !== ConditionConfig_1.NationalityCode.Nationals,
                                 DeptDetails: (_k = deptMap_1.get((_j = item.RecruitmentID) === null || _j === void 0 ? void 0 : _j.Id)) !== null && _k !== void 0 ? _k : [],
@@ -890,10 +890,10 @@ var DashboardService = /** @class */ (function () {
                                 StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
                                 PositionID: (_f = item === null || item === void 0 ? void 0 : item.PositionID) === null || _f === void 0 ? void 0 : _f.PositionID,
                                 ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
-                                    ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
+                                    ? (0, moment_1.default)(item.Modified).format("DD-MM-YYYY")
                                     : undefined,
                                 CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
-                                    ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
+                                    ? (0, moment_1.default)(item.Created).format("DD-MM-YYYY")
                                     : undefined,
                                 DeptDetails: deptDetails !== null && deptDetails !== void 0 ? deptDetails : null,
                                 candiDetails: candidate !== null && candidate !== void 0 ? candidate : null,

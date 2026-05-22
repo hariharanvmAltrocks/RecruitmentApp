@@ -117,7 +117,7 @@ var useSaveQuestions = function () {
                     }
                     updatePayload = {};
                     if (payload.mode === "careerPortal") {
-                        StatusID = (0, WorkflowConfig_1.WorkflowConfig)(Config_1.StatusId.CareerPortalQuestions);
+                        StatusID = (0, WorkflowConfig_1.WorkflowConfig)(payload.StatusId);
                         updatePayload = {
                             StatusId: StatusID,
                             // ItemCreated: "Yes",

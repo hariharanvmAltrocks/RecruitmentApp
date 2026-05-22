@@ -1,3 +1,5 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 .root {
   position: relative;
   display: inline-flex;
@@ -12,7 +14,7 @@
   gap: 10px;
   padding: 8px 14px 8px 8px;
   background: var(--app-card-color, #ffffff);
-  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border: 1px solid #e4e8f1;
   border-radius: 999px;
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(11, 17, 32, 0.07);
@@ -89,13 +91,13 @@
 .triggerSub {
   font-size: 10.5px;
   font-weight: 500;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .chevron {
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -109,7 +111,7 @@
   right: 0;
   width: 288px;
   background: var(--app-card-color, #ffffff);
-  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border: 1px solid #e4e8f1;
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(11, 17, 32, 0.07), 0 8px 32px rgba(11, 17, 32, 0.08);
   overflow: hidden;
@@ -139,7 +141,7 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
 }
 
 .panelCountPill {
@@ -170,7 +172,7 @@
   width: 2px;
   height: 12px;
   border-radius: 1px;
-  background: var(--app-sidenav-border, #e2e8f0);
+  background: #e4e8f1;
   margin-left: 29px;
   transition: background 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -234,7 +236,7 @@
 
 .stepSub {
   font-size: 11px;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   margin-top: 1px;
 }
 
@@ -256,7 +258,7 @@
 
 .badge_pending {
   background: var(--app-secondary-color, #f8fafc);
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
 }
 
 .badge_warning {
@@ -271,6 +273,6 @@
   padding: 10px 16px 12px;
   border-top: 1px solid var(--app-sidenav-border, #f1f5f9);
   font-size: 11px;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   line-height: 1.4;
 }

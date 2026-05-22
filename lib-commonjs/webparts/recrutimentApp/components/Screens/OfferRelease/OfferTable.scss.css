@@ -1,3 +1,5 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 .offer-table {
   font-family: var(--app-font-family, "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif);
   color: var(--app-text-color, #0f172a);
@@ -16,7 +18,7 @@
 }
 .offer-table__header-text p {
   margin: 0;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   font-size: 14px;
 }
 .offer-table__tabs {
@@ -28,7 +30,7 @@
 .offer-table__tab {
   border: 1px solid var(--app-sidenav-border, #f1f5f9);
   background: #ffffff;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   border-radius: 999px;
   padding: 10px 18px;
   font-size: 13px;
@@ -47,7 +49,7 @@
 }
 .offer-table__tabs-loading {
   font-size: 12px;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   padding: 10px 0;
 }
 .offer-table__table-card {
@@ -173,7 +175,7 @@
   padding: 0;
   background: transparent;
   border: 0;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   font-weight: 700;
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -194,7 +196,7 @@
   cursor: not-allowed;
 }
 .submission-header__refresh-btn:disabled:hover {
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
 }
 .submission-header__refresh-btn svg.spin {
   animation: refresh-spin 0.8s linear infinite;

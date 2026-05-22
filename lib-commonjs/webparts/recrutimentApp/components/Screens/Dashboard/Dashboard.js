@@ -44,7 +44,7 @@ var Dashboard = function (props) {
         setActiveMenuID(ConditionConfig_1.menuID.Mytracker);
         // ref.current = data.menuId;
         // setActiveTab(data.TabValue);
-        // setCurrentTabName(data.TabName);
+        setCurrentTabName(data.TabName);
         setMatricID(data.id);
         navigate("/MyTracker");
     };
@@ -83,7 +83,7 @@ var Dashboard = function (props) {
             react_1.default.createElement(framer_motion_1.motion.div, { className: "metrics-grid", variants: metricsContainer, initial: "hidden", animate: "visible" },
                 react_1.default.createElement(matric_1.default, { metrics: martics.metrics, onCardClick: function (metric) { return onMetricChange(metric); }, loading: loading, handleRefresh: handleRefresh, active: activeMetric })),
             react_1.default.createElement("div", { className: "dashboard-layout" },
-                react_1.default.createElement(Departmentchart_1.default, { data: Usedepartmentchart_1.DEPARTMENT_DATA, itemsPerPage: 7, title: "Departmental Demand", subtitle: "Pending lifecycle", gradientStart: "#c026d3", gradientEnd: "#7c3aed", tooltipValueLabel: "Openings" })))))))));
+                react_1.default.createElement(Departmentchart_1.default, { data: Usedepartmentchart_1.DEPARTMENT_DATA, itemsPerPage: 7, title: "Departmental Demand", subtitle: "Pending lifecycle", tooltipValueLabel: "Openings" })))))))));
 };
 exports.default = Dashboard;
 //# sourceMappingURL=Dashboard.js.map

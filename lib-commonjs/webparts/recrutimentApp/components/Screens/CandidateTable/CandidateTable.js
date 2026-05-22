@@ -16,6 +16,7 @@ var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
 var useModalPopup_1 = require("../../Comman/ModalPopup/useModalPopup");
 var moment_1 = tslib_1.__importDefault(require("moment"));
 var ModalPopup_1 = require("../../Comman/ModalPopup/ModalPopup");
+var loading_1 = tslib_1.__importDefault(require("../../Comman/Loading/loading"));
 exports.panelVariants = {
     hidden: { x: "100%" },
     visible: {
@@ -225,6 +226,7 @@ var CandidateTable = function (props) {
     ]; }, []);
     return (react_1.default.createElement(framer_motion_1.AnimatePresence, null,
         react_1.default.createElement("div", { className: "candidate-table" },
+            loading || positionLoading ? react_1.default.createElement(loading_1.default, null) : react_1.default.createElement(react_1.default.Fragment, null),
             react_1.default.createElement(framer_motion_1.motion.div, { className: "candidate-table__backdrop", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, onClick: handleClose }),
             react_1.default.createElement(framer_motion_1.motion.div, { className: "candidate-table__panel", variants: exports.panelVariants, initial: "hidden", animate: "visible", exit: "exit" },
                 react_1.default.createElement("div", { className: "candidate-table__header" },
@@ -245,7 +247,7 @@ var CandidateTable = function (props) {
                             react_1.default.createElement(lucide_react_1.X, { size: 18 })))),
                 react_1.default.createElement("div", { className: "candidate-table__content" },
                     react_1.default.createElement("div", { className: "candidate-table__card" },
-                        react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: data, loading: loading !== null && loading !== void 0 ? loading : positionLoading, 
+                        react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: data, loading: loading || positionLoading, 
                             // error={error ?? undefined}
                             pageSize: pagination.pageSize, currentPage: pagination.currentPage, totalCount: pagination.totalItems, onPageChange: handlePageChange, onPageSizeChange: handlePageSizeChange, pageSizeOptions: [10, 20, 50], emptyMessage: "No candidates found for this job." }))))),
         react_1.default.createElement(framer_motion_1.AnimatePresence, null, activeCandidateId && (react_1.default.createElement(ShowCandidateDetailsPopup_1.ShowCandidateDetailsPopup, { isOpen: true, candidateId: activeCandidateId, onClose: function () { return setActiveCandidateId(null); }, panelParams: paneldata !== null && paneldata !== void 0 ? paneldata : null, positionDetails: positionDetails !== null && positionDetails !== void 0 ? positionDetails : null, handleRefresh: handleRefresh }))),

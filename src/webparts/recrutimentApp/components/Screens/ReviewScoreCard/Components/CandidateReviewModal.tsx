@@ -27,6 +27,7 @@ import CommentsModal from "./Commentsmodal";
 import { canEdit } from "../Hooks/useReviewScorecard";
 import { SubmitHookDeps } from "./useSubmitReviewScoreCard";
 import { InfoItem } from "../../CandidateTable/Components/reuseUI";
+import Loading from "../../../Comman/Loading/loading";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -240,28 +241,17 @@ const CandidateReviewModal: React.FC<Props> = ({
 
   const loading =
     !candidate ||
-    reviewLoading || // covers reviewData?.questions + candidateData
-    scoreLoading || // covers scoreData
-    !scoreData;
+    reviewLoading || 
+    scoreLoading || 
+    !scoreData ;
+    // || !submitting; 
 
   return (
     <div
       style={{ display: "flex", flexDirection: "column", height: "100%" }}
       onClick={(e) => e.stopPropagation()}
     >
-      {loading && (
-        <div
-          className={styles.loadingOverlay}
-          style={{
-            width: "1095px",
-            height: "92vh",
-            marginLeft: "14%",
-            marginTop: "2%",
-          }}
-        >
-          <div className={styles.spinner} />
-          <div className={styles.loadingText}>Loading details...</div>
-        </div>
+      {loading && (<Loading />
       )}
       <header className={styles.header}>
         <div className={styles.headerLeft}>

@@ -1,7 +1,9 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 .card {
   background: var(--app-card-color, #ffffff);
   border-radius: 40px;
-  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border: 1px solid #e4e8f1;
   box-shadow: 0 20px 60px rgba(148, 163, 184, 0.15), 0 4px 16px rgba(148, 163, 184, 0.08);
   padding: 32px;
   height: 480px;
@@ -57,7 +59,7 @@
 .subtitle {
   font-size: 10px;
   font-weight: 700;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   padding-left: 18px;
@@ -100,7 +102,7 @@
 }
 .pageBtn.disabled {
   background: transparent;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   cursor: not-allowed;
   pointer-events: none;
 }
@@ -127,7 +129,7 @@
 .pageLabel {
   font-size: 8px;
   font-weight: 700;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -149,7 +151,7 @@
   font-weight: 900;
 }
 .chartArea :global .recharts-yAxis .recharts-cartesian-axis-tick-value {
-  fill: var(--app-text-color, #64748b);
+  fill: #64748b;
   font-size: 10px;
   font-weight: 900;
 }
@@ -199,7 +201,7 @@
 .tooltipSub {
   font-size: 9px;
   font-weight: 700;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin: 2px 0 0;

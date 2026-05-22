@@ -1,4 +1,6 @@
 @charset "UTF-8";
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 .loadingOverlay {
   position: fixed; /* ✅ CHANGE THIS */
   top: 0;

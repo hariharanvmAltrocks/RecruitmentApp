@@ -1,3 +1,5 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 .sectionTitle {
   display: flex;
   align-items: flex-start;
@@ -26,7 +28,7 @@
 
 .sectionSub {
   font-size: 12px;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   margin: 0;
 }
 
@@ -40,7 +42,7 @@
 
 .scaleLegendItem {
   font-size: 11px;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   white-space: nowrap;
 }
 .scaleLegendItem b {
@@ -51,7 +53,7 @@
 
 .scorecardCard {
   background: var(--app-card-color, #ffffff);
-  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border: 1px solid #e4e8f1;
   border-radius: 12px;
   padding: 32px;
   margin-bottom: 32px;
@@ -74,7 +76,7 @@
 .fieldLabel {
   font-size: 11px;
   font-weight: 700;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   margin: 0;
@@ -105,12 +107,12 @@
   flex: 1;
   height: 44px;
   max-width: 60px;
-  border: 1.5px solid var(--app-sidenav-border, #e2e8f0);
+  border: 1.5px solid #e4e8f1;
   border-radius: 8px;
   background: #fdfdfd;
   font-size: 15px;
   font-weight: 600;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   cursor: pointer;
   transition: all 0.15s;
 }
@@ -167,17 +169,17 @@
   align-items: center;
   gap: 8px;
   padding: 12px 28px;
-  border: 1.5px solid var(--app-sidenav-border, #e2e8f0);
+  border: 1.5px solid #e4e8f1;
   border-radius: 8px;
   background: var(--app-card-color, #ffffff);
   font-size: 14px;
   font-weight: 600;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   cursor: pointer;
   transition: all 0.2s;
 }
 .recBtn:hover {
-  border-color: var(--app-sidenav-border, #e2e8f0);
+  border-color: #e4e8f1;
 }
 
 .recBtnYes {
@@ -196,7 +198,7 @@
   width: 100%;
   margin-top: 12px;
   padding: 14px 16px;
-  border: 1.5px solid var(--app-sidenav-border, #e2e8f0);
+  border: 1.5px solid #e4e8f1;
   border-radius: 8px;
   font-size: 14px;
   color: var(--app-text-color, #0f172a);
@@ -237,7 +239,7 @@
   cursor: pointer;
   margin-bottom: 24px;
   padding-bottom: 24px;
-  border-bottom: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border-bottom: 1px solid #e4e8f1;
 }
 
 .ackChk {
@@ -287,7 +289,7 @@
 .reviewerMeta {
   font-size: 10px;
   font-weight: 700;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   margin: 0 0 4px;

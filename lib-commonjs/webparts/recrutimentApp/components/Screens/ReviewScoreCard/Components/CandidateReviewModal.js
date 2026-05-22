@@ -10,6 +10,7 @@ var HODDecisionPanel_1 = tslib_1.__importDefault(require("./HODDecisionPanel"));
 var Commentsmodal_1 = tslib_1.__importDefault(require("./Commentsmodal"));
 var useReviewScorecard_1 = require("../Hooks/useReviewScorecard");
 var reuseUI_1 = require("../../CandidateTable/Components/reuseUI");
+var loading_1 = tslib_1.__importDefault(require("../../../Comman/Loading/loading"));
 // ─── Constants ───────────────────────────────────────────────────────────────
 var SCORE_CRITERIA = [
     { field: "RelevantQualification", label: "Qualification (Relevant)" },
@@ -125,18 +126,12 @@ var CandidateReviewModal = function (_a) {
     var safeLevel2 = Array.isArray(level2Comments) ? level2Comments : [];
     // ── Render ─────────────────────────────────────────────────────────────────
     var loading = !candidate ||
-        reviewLoading || // covers reviewData?.questions + candidateData
-        scoreLoading || // covers scoreData
+        reviewLoading ||
+        scoreLoading ||
         !scoreData;
+    // || !submitting; 
     return (React.createElement("div", { style: { display: "flex", flexDirection: "column", height: "100%" }, onClick: function (e) { return e.stopPropagation(); } },
-        loading && (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.loadingOverlay, style: {
-                width: "1095px",
-                height: "92vh",
-                marginLeft: "14%",
-                marginTop: "2%",
-            } },
-            React.createElement("div", { className: ReviewScorecard_module_scss_1.default.spinner }),
-            React.createElement("div", { className: ReviewScorecard_module_scss_1.default.loadingText }, "Loading details..."))),
+        loading && (React.createElement(loading_1.default, null)),
         React.createElement("header", { className: ReviewScorecard_module_scss_1.default.header },
             React.createElement("div", { className: ReviewScorecard_module_scss_1.default.headerLeft },
                 React.createElement("div", { className: ReviewScorecard_module_scss_1.default.headerIcon },

@@ -1,3 +1,5 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 /* commantsPopup.modules.scss */
 .backdrop {
   position: fixed;
@@ -38,7 +40,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px;
-  border-bottom: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border-bottom: 1px solid #e4e8f1;
 }
 .header .headerTitle {
   display: flex;
@@ -49,13 +51,13 @@
   color: var(--app-text-color, #0f172a);
 }
 .header .headerTitle svg {
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
 }
 .header .closeBtn {
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -81,22 +83,22 @@
   background: transparent;
 }
 .body::-webkit-scrollbar-thumb {
-  background: var(--app-sidenav-border, #e2e8f0);
+  background: #e4e8f1;
   border-radius: 10px;
 }
 .body::-webkit-scrollbar-thumb:hover {
-  background: var(--app-text-color, #64748b);
+  background: #64748b;
 }
 
 .footer {
   padding: 16px 24px;
-  border-top: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border-top: 1px solid #e4e8f1;
   display: flex;
   justify-content: flex-end;
 }
 .footer .closeOutlinedBtn {
   background: transparent;
-  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border: 1px solid #e4e8f1;
   border-radius: 6px;
   padding: 10px 20px;
   font-size: 0.875rem;
@@ -107,13 +109,13 @@
 }
 .footer .closeOutlinedBtn:hover {
   background: var(--app-secondary-color, #f8fafc);
-  border-color: var(--app-text-color, #64748b);
+  border-color: #64748b;
   color: var(--app-text-color, #0f172a);
 }
 
 .commentCard {
   background: var(--app-card-color, #ffffff);
-  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border: 1px solid #e4e8f1;
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 16px;
@@ -169,7 +171,7 @@
 
 .date {
   font-size: 0.75rem;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -199,7 +201,7 @@
   align-items: center;
   justify-content: space-between;
   padding-top: 16px;
-  border-top: 1px dashed var(--app-sidenav-border, #e2e8f0);
+  border-top: 1px dashed #e4e8f1;
 }
 .meta .candidateInfo {
   font-size: 0.85rem;
@@ -211,7 +213,7 @@
   font-weight: 500;
   padding: 4px 10px;
   background: var(--app-secondary-color, #f8fafc);
-  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border: 1px solid #e4e8f1;
   color: var(--app-text-color, #334155);
   border-radius: 12px;
 }
@@ -222,10 +224,10 @@
   align-items: center;
   justify-content: center;
   padding: 60px 0;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
 }
 .emptyState svg {
-  color: var(--app-sidenav-border, #e2e8f0);
+  color: #e4e8f1;
   margin-bottom: 16px;
 }
 .emptyState p {
@@ -236,14 +238,14 @@
 /* Skeleton Loading State */
 .skeletonCard {
   background: var(--app-card-color, #ffffff);
-  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border: 1px solid #e4e8f1;
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 16px;
 }
 .skeletonCard .shimmer {
   background: var(--app-secondary-color, #f8fafc);
-  background-image: linear-gradient(to right, var(--app-secondary-color, #f8fafc) 0%, var(--app-sidenav-border, #e2e8f0) 20%, var(--app-secondary-color, #f8fafc) 40%, var(--app-secondary-color, #f8fafc) 100%);
+  background-image: linear-gradient(to right, var(--app-secondary-color, #f8fafc) 0%, #e4e8f1 20%, var(--app-secondary-color, #f8fafc) 40%, var(--app-secondary-color, #f8fafc) 100%);
   background-repeat: no-repeat;
   background-size: 800px 100%;
   animation: shimmer 1.5s infinite linear forwards;
@@ -273,7 +275,7 @@
 .skeletonCard .skMeta {
   display: flex;
   justify-content: space-between;
-  border-top: 1px dashed var(--app-sidenav-border, #e2e8f0);
+  border-top: 1px dashed #e4e8f1;
   padding-top: 16px;
 }
 .skeletonCard .skName {

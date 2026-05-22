@@ -741,7 +741,7 @@
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--qc-slate-400);
+    color: #c5cad4;
   }
 
   &__question-text {
@@ -753,7 +753,7 @@
 
     &--italic {
       font-style: italic;
-      color: var(--qc-slate-400);
+      color: var(--qc-white);
     }
   }
 
@@ -785,7 +785,7 @@
   &__answer-text {
     font-size: 11px;
     font-weight: 500;
-    color: var(--qc-slate-400);
+    color: #c4c7cc;
     line-height: 1.6;
     margin: 0;
 

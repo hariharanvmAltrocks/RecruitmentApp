@@ -1,3 +1,5 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -10,7 +12,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   padding: 16px 20px;
   text-align: left;
 }
@@ -18,7 +20,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   padding: 16px 20px;
   text-align: left;
   font-weight: 700;
@@ -54,7 +56,7 @@
   white-space: nowrap;
 }
 .data-table__cell--muted {
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   font-weight: 600;
 }
 .data-table__cell--count {
@@ -83,7 +85,7 @@
 }
 .data-table__job-dept {
   font-size: 12px;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   font-weight: 500;
 }
 .data-table__status-badge, .data-table .status-badge {
@@ -117,7 +119,7 @@
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
 }
 .data-table__action-icon {
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
 }
 .data-table__checkbox-cell {
   width: 48px;
@@ -141,7 +143,7 @@
 }
 .data-table__empty {
   text-align: center;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   padding: 32px 20px;
   font-size: 13px;
 }
@@ -178,12 +180,12 @@
   flex-wrap: wrap;
   gap: 12px;
   font-size: 13px;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
 }
 
 .data-table__pagination-summary {
   font-size: 13px;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   font-weight: 400;
 }
 .data-table__pagination-summary strong {
@@ -223,7 +225,7 @@
 .data-table__page-arrow {
   border-color: var(--app-sidenav-border, #e2e8f0);
   font-size: 18px;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
 }
 .data-table__page-arrow:hover:not(:disabled) {
   border-color: var(--app-primary-color, #7c3aed);
@@ -266,7 +268,7 @@
 .data-table__page-size-label {
   font-size: 12px;
   font-weight: 500;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   white-space: nowrap;
 }
 

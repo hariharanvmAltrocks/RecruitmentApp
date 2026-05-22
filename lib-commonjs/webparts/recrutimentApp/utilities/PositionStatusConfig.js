@@ -62,7 +62,8 @@ var getStageCandidateindex = function (statusId) {
         statusId == Config_1.StatusId.CandidateOnHoldbyHODLevel1 ||
         statusId == Config_1.StatusId.CandidateOnHoldbyHODLevel2 ||
         statusId == Config_1.StatusId.CandidateRejectedbyHODLevel1 ||
-        statusId == Config_1.StatusId.CandidateRejectedbyHODLevel2)
+        statusId == Config_1.StatusId.CandidateRejectedbyHODLevel2 ||
+        statusId == Config_1.StatusId.Selected)
         return 1;
     if (statusId == Config_1.StatusId.PendingHRBGVInitiation ||
         statusId == Config_1.StatusId.PendingBGdocuploadedbycandidate ||

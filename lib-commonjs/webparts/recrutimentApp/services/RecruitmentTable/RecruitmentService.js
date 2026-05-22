@@ -1197,7 +1197,7 @@ var RecruitmentService = /** @class */ (function () {
                                 }];
                         }
                         selectedCandidateIds = res
-                            .filter(function (item) { var _a; return ((_a = item === null || item === void 0 ? void 0 : item.Status) === null || _a === void 0 ? void 0 : _a.ID) === Config_1.StatusId.Selected; })
+                            .filter(function (item) { return (item === null || item === void 0 ? void 0 : item.StatusId) === Config_1.StatusId.Selected; })
                             .map(function (item) { return item.ID; });
                         recruitmentMap_1 = new Map();
                         if (!(selectedCandidateIds.length > 0)) return [3 /*break*/, 3];
@@ -1220,7 +1220,7 @@ var RecruitmentService = /** @class */ (function () {
                             })];
                     case 2:
                         recruitmentGrid = _a.sent();
-                        recruitmentMap_1 = new Map(recruitmentGrid.map(function (gridItem) { return [gridItem.CandidateId, gridItem]; }));
+                        recruitmentMap_1 = new Map(recruitmentGrid.map(function (gridItem) { return [gridItem.CandidateIDId, gridItem]; }));
                         _a.label = 3;
                     case 3:
                         GridResult = res.map(function (item, index) {

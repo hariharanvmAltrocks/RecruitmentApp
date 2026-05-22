@@ -135,7 +135,8 @@ export const useSaveQuestions = (): UseSaveQuestionsResult => {
         let updatePayload: any = {};
 
         if (payload.mode === "careerPortal") {
-          let StatusID = WorkflowConfig(StatusId.CareerPortalQuestions);
+
+          let StatusID = WorkflowConfig(payload.StatusId);
 
           updatePayload = {
             StatusId: StatusID,

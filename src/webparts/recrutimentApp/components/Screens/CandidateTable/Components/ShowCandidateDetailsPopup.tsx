@@ -367,16 +367,16 @@ export const ShowCandidateDetailsPopup: React.FC<
         DocumentName: DocumentFolderName.COIAttach,
       });
 
-      setConsultOptions([
-        { value: String(data.COIAppreve), label: data.COIAppreve },
-      ]);
-
       if (statusId !== workflowStatusApi.HRPending) {
         setCoi({
           consultedWith: data.COIAppreve ?? "",
           attachment: COIAttachRes.data,
           comments: data.COIComments ?? "",
         });
+
+         setConsultOptions([
+        { value: String(data.COIAppreve), label: data.COIAppreve },
+      ]);
       }
 
       setHRReview(data.hrComments ?? "");

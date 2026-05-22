@@ -969,30 +969,30 @@ export default class CandidateService implements ICandidateService {
       } else {
         basePanelLevel1.push(...existingLevel1);
         basePanelLevel2.push(...existingLevel2);
-        // if (jdeItem.LineManagerId && nameMap[String(jdeItem.LineManagerId)]) {
-        //   basePanelLevel1.push({
-        //     value: jdeItem.LineManagerId,
-        //     label: nameMap[String(jdeItem.LineManagerId)],
-        //     Email: jdeItem.LineManager.EMail,
-        //     Role: RoleName.LineManager,
-        //   });
-        // }
-        // if (jdeItem.HODId && nameMap[String(jdeItem.HODId)]) {
-        //   basePanelLevel1.push({
-        //     value: jdeItem.HODId,
-        //     label: nameMap[String(jdeItem.HODId)],
-        //     Email: jdeItem.HOD.EMail,
-        //     Role: RoleName.HOD,
-        //   });
-        // }
-        // if (assignHRId?.data?.key && nameMap[String(assignHRId.data.key)]) {
-        //   basePanelLevel1.push({
-        //     value: assignHRId.data.key,
-        //     label: nameMap[String(assignHRId.data.key)],
-        //     Email: assignHREmail,
-        //     Role: RoleName.RecruitmentHR,
-        //   });
-        // }
+        if (jdeItem.LineManagerId && nameMap[String(jdeItem.LineManagerId)]) {
+          basePanelLevel1.push({
+            value: jdeItem.LineManagerId,
+            label: nameMap[String(jdeItem.LineManagerId)],
+            Email: jdeItem.LineManager.EMail,
+            Role: RoleName.LineManager,
+          });
+        }
+        if (jdeItem.HODId && nameMap[String(jdeItem.HODId)]) {
+          basePanelLevel1.push({
+            value: jdeItem.HODId,
+            label: nameMap[String(jdeItem.HODId)],
+            Email: jdeItem.HOD.EMail,
+            Role: RoleName.HOD,
+          });
+        }
+        if (assignHRId?.data?.key && nameMap[String(assignHRId.data.key)]) {
+          basePanelLevel1.push({
+            value: assignHRId.data.key,
+            label: nameMap[String(assignHRId.data.key)],
+            Email: assignHREmail,
+            Role: RoleName.RecruitmentHR,
+          });
+        }
       }
 
       const adOptions: PanelEntry[] = Array.isArray(adGroupOptions)

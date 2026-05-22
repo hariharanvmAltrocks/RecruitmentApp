@@ -499,12 +499,12 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                             <div className="advert-roadmap__header-title-bar"></div>
                             Recruitment Lifecycle Roadmap
                           </h3>
-                          <div className="advert-roadmap__header-status">
+                          {/* <div className="advert-roadmap__header-status">
                             <div className="advert-roadmap__header-status-dot" />
                             <span className="advert-roadmap__header-status-text">
                               Active Status: Advert Review
                             </span>
-                          </div>
+                          </div> */}
                         </div>
                         <PositionRoadmap
                           statusId={positionDetails?.StatusId || 0}

@@ -1,3 +1,5 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 .backdrop {
   position: fixed;
   inset: 0;
@@ -62,7 +64,7 @@
 .headerText p {
   font-size: 10px;
   font-weight: 700;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   margin: 0;
@@ -84,7 +86,7 @@
 .toggleGroupLabel {
   font-size: 8px;
   font-weight: 900;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.2em;
 }
@@ -110,7 +112,7 @@
   color: #10b981;
 }
 .toggleLabel--inactive {
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
 }
 
 .toggleTrack {
@@ -160,7 +162,7 @@
   border: 1px solid transparent;
   border-radius: 20px;
   background: transparent;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -245,7 +247,7 @@
 .label {
   font-size: 10px;
   font-weight: 900;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   padding-left: 2px;
@@ -274,7 +276,7 @@
   box-sizing: border-box;
 }
 .passwordInput::placeholder, .inputReadonly::placeholder, .select::placeholder, .input::placeholder {
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   font-weight: 500;
 }
 .passwordInput:hover:not(:read-only):not(:disabled), .inputReadonly:hover:not(:read-only):not(:disabled), .select:hover:not(:read-only):not(:disabled), .input:hover:not(:read-only):not(:disabled) {
@@ -287,7 +289,7 @@
 }
 .passwordInput:read-only, .inputReadonly:read-only, .select:read-only, .input:read-only, .passwordInput:disabled, .inputReadonly:disabled, .select:disabled, .input:disabled {
   background: var(--app-sidenav-border, #f1f5f9);
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   cursor: not-allowed;
   opacity: 0.7;
 }
@@ -321,7 +323,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -346,7 +348,7 @@
   display: inline-flex;
   align-items: center;
   cursor: pointer;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   z-index: 10;
 }
 .tooltipAnchor:hover .tooltipBox, .tooltipAnchor:focus-within .tooltipBox {
@@ -358,7 +360,7 @@
 .tooltipIcon {
   width: 14px;
   height: 14px;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   transition: color 0.15s ease;
 }
 .tooltipAnchor:hover .tooltipIcon {

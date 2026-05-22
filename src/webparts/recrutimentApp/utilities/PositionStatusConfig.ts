@@ -15,7 +15,7 @@ export const stages = [
   { label: "Assign HR", icon: FileSearch },
   { label: "Upload Advert", icon: ClipboardCheck },
   { label: "Review Advert LM", icon: Send },
-  { label: "Create Disqualification Questions", icon: Play },
+  { label: "Create Minimum Criteria Question", icon: Play },
   { label: "Review Advert HOD", icon: Filter },
   { label: "Upload ONEM Signed and Stamped", icon: ShieldCheck },
   { label: "Recruitment In Process", icon: Network },
@@ -64,7 +64,8 @@ export const getStageCandidateindex = (statusId: number) => {
     statusId == StatusId.CandidateOnHoldbyHODLevel1 ||
     statusId == StatusId.CandidateOnHoldbyHODLevel2 ||
     statusId == StatusId.CandidateRejectedbyHODLevel1 ||
-    statusId == StatusId.CandidateRejectedbyHODLevel2
+    statusId == StatusId.CandidateRejectedbyHODLevel2 ||
+    statusId == StatusId.Selected
   )
     return 1;
   if (

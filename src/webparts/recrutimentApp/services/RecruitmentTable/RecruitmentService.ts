@@ -1338,7 +1338,7 @@ export default class RecruitmentService implements IRecruitmentService {
         };
       }
       const selectedCandidateIds = res
-        .filter((item) => item?.Status?.ID === StatusId.Selected)
+        .filter((item) => item?.StatusId === StatusId.Selected)
         .map((item) => item.ID);
       let recruitmentMap = new Map();
       if (selectedCandidateIds.length > 0) {
@@ -1360,7 +1360,7 @@ export default class RecruitmentService implements IRecruitmentService {
           Orderbydecorasc: true,
         });
         recruitmentMap = new Map(
-          recruitmentGrid.map((gridItem) => [gridItem.CandidateId, gridItem]),
+          recruitmentGrid.map((gridItem) => [gridItem.CandidateIDId, gridItem]),
         );
       }
       const GridResult: RoadMapStatus[] = res.map((item, index) => {

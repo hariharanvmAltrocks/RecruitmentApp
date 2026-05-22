@@ -1,3 +1,5 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 .verificationToggle {
   display: flex;
   flex-direction: column;
@@ -5,7 +7,7 @@
   padding: 16px;
   margin: 16px 0;
   background-color: var(--app-card-color, #ffffff);
-  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border: 1px solid #e4e8f1;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
@@ -14,7 +16,7 @@
 .label {
   font-size: 13px;
   font-weight: 600;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
@@ -46,8 +48,8 @@
 
 /* Hover state */
 .option:hover {
-  background: var(--app-sidenav-border, #e2e8f0);
-  border-color: var(--app-text-color, #64748b);
+  background: #e4e8f1;
+  border-color: #64748b;
 }
 
 /* VERIFIED STATE */

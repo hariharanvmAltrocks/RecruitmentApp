@@ -26,7 +26,7 @@ var CandidateProgress = function (_a) {
     var handleNextPage = function () {
         setCurrentPage(function (prev) { return Math.min(prev + 1, totalPages); });
     };
-    return (react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.candidateProgress },
+    return (react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.candidateProgress }, data && data.length > 0 && (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.candidateProgress__header },
             react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.candidateProgress__title },
                 react_1.default.createElement("div", { style: {
@@ -107,7 +107,7 @@ var CandidateProgress = function (_a) {
                 currentPage,
                 " of ",
                 totalPages),
-            react_1.default.createElement("button", { onClick: handleNextPage, disabled: currentPage === totalPages, className: CandidateProgress_module_scss_1.default.paginationBtn }, "Next")))));
+            react_1.default.createElement("button", { onClick: handleNextPage, disabled: currentPage === totalPages, className: CandidateProgress_module_scss_1.default.paginationBtn }, "Next")))))));
 };
 exports.CandidateProgress = CandidateProgress;
 //# sourceMappingURL=CandidateProgress.js.map

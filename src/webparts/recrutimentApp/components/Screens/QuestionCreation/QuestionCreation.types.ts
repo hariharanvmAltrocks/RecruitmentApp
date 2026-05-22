@@ -38,4 +38,5 @@ export interface SaveQuestionsPayload {
   JobCodeId: number | undefined;
   DptCode: string | undefined;
   questions: Question[];
+  StatusId: number;
 }

@@ -166,15 +166,15 @@ var ShowCandidateDetailsPopup = function (_a) {
                         })];
                     case 1:
                         COIAttachRes = _d.sent();
-                        setConsultOptions([
-                            { value: String(data.COIAppreve), label: data.COIAppreve },
-                        ]);
                         if (statusId !== Config_1.workflowStatusApi.HRPending) {
                             setCoi({
                                 consultedWith: (_a = data.COIAppreve) !== null && _a !== void 0 ? _a : "",
                                 attachment: COIAttachRes.data,
                                 comments: (_b = data.COIComments) !== null && _b !== void 0 ? _b : "",
                             });
+                            setConsultOptions([
+                                { value: String(data.COIAppreve), label: data.COIAppreve },
+                            ]);
                         }
                         setHRReview((_c = data.hrComments) !== null && _c !== void 0 ? _c : "");
                         return [2 /*return*/];

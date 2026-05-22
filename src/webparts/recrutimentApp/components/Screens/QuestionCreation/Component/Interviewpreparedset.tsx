@@ -116,7 +116,7 @@ export const InterviewPreparedSet: React.FC<InterviewPreparedProps> = ({
               </div>
 
               <button
-                className="qc-prepared__remove"
+                 className="iq-prepared__remove"
                 onClick={() => onEdit(q.id)}
                 title="Edit"
               >

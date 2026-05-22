@@ -643,7 +643,7 @@
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--qc-slate-400);
+  color: #c5cad4;
 }
 .iq-prepared__question-text {
   font-size: 13px;
@@ -654,7 +654,7 @@
 }
 .iq-prepared__question-text--italic {
   font-style: italic;
-  color: var(--qc-slate-400);
+  color: var(--qc-white);
 }
 .iq-prepared__answer-block {
   margin-top: 4px;
@@ -680,7 +680,7 @@
 .iq-prepared__answer-text {
   font-size: 11px;
   font-weight: 500;
-  color: var(--qc-slate-400);
+  color: #c4c7cc;
   line-height: 1.6;
   margin: 0;
 }

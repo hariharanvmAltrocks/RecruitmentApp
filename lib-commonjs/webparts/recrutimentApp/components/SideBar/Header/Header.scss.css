@@ -1,3 +1,5 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 .header {
   background: var(--app-header-color, #ffffff);
   border-bottom: 1px solid var(--app-sidenav-border, #e2e8f0);
@@ -52,7 +54,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   margin-top: 2px;
 }
 .breadcrumbs a {
@@ -67,7 +69,7 @@
   color: var(--app-primary-color, #7c3aed);
 }
 .breadcrumbs .crumb-icon {
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
 }
 
 .header-right {
@@ -81,7 +83,7 @@
   padding: 8px;
   border: none;
   background: transparent;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   cursor: pointer;
 }
 .notification-btn:hover {
@@ -124,7 +126,7 @@
 .user-role {
   font-size: 10px;
   text-transform: uppercase;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   font-weight: 700;
   margin-top: 2px;
 }

@@ -1,3 +1,5 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 .cm-backdrop {
   --cm-primary: var(--app-primary-color, #2f5bff);
   --cm-primary-s: var(--app-secondary-color, #e9efff);

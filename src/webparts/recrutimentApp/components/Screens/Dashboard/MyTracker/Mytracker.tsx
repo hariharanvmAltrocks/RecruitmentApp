@@ -18,38 +18,27 @@ import MetricDashboard from "../../../Comman/MatricBox/matric";
 import { DataTable } from "../../../Comman/DataTable/DataTable";
 import { ModalPopup } from "../../../Comman/ModalPopup/ModalPopup";
 import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
-
 import { useTrackerData } from "../Hooks/usetrackerdata";
 import { useDashboardMetrics } from "../Hooks/useDashboardMetrics";
-
 import { useRecruitmentColumns } from "../../RecruitmentTable/config";
-
 import { useAssignMembers } from "../../RecruitmentTable/Hooks/useAssignMembers";
-
 import { useConfirmAssignment } from "../../RecruitmentTable/Hooks/Useconfirmassignment";
-
 import { useAdvertExtends } from "../../RecruitmentTable/AdvertReviewDrawer/Hooks/SaveHooks/useadvertextend";
-
 import { useStateFromManage } from "../../RecruitmentTable/AdvertReviewDrawer/StateManage/useStateFromManage";
-
 import { AdvertReviewDrawer } from "../../RecruitmentTable/AdvertReviewDrawer/AdvertReviewDrawer";
-
 import { useUIState } from "../../../RecrutimentApp/UIStateContext";
-
 import {
   InterviewLevel,
   MatricID,
   menuID,
 } from "../../../../utilities/ConditionConfig";
-
 import { StatusId } from "../../../../utilities/Config";
-
 import { checkIsAlreadySubmitted } from "../../Evalution/Evaluationservice/Evaluationformservice";
-
 import { userInfo } from "../../../../utilities/hooks/RoleContext";
 import { useRecruitmentDetails } from "../../RecruitmentTable/Hooks/useRecruitmentDetails";
 import { ISelectedCandidate } from "../../RecruitmentTable/RecruitmentTable.types";
 import { ReviewDocument } from "../../OfferRelease/ReviewDocument/ReviewDocument";
+import { PortalItem, useUpdateListPortal } from "../../OfferRelease/ReviewDocument/Hooks/Useupdatelistportal";
 
 const AssignHRPopup = React.lazy(() =>
   import("../../RecruitmentTable/Components/AssignHRPopup/AssignHRPopup").then(
@@ -115,6 +104,21 @@ const Mytracker: React.FC<DashboardProps> = () => {
 
   const items = trackerData || [];
 
+    const updateList: PortalItem[] = useMemo(() => {
+      return items.map((item) => ({
+        StatusID: item.statusId,
+        ID: item.ItemID,
+        JobRequestID: item.jobrequestID,
+        EmploymentCategory: item.EmploymentCategory,
+        IsExpat: item.IsExpat,
+      }));
+    }, [items]);
+  
+    const { updateListPortal } = useUpdateListPortal({
+      items: updateList,
+      refreshKey,
+    });
+
   const {
     drawerOpen,
     selectedJobId,
@@ -142,6 +146,12 @@ const Mytracker: React.FC<DashboardProps> = () => {
       setselectedmatricId(martics.metrics[0].label);
     }
   }, [martics.metrics]);
+
+    useEffect(() => {
+      if (activeMetric === MatricID.BackgroundCheck || activeMetric === MatricID.LabourHire || activeMetric === MatricID.Kcsa) {
+        void updateListPortal();
+      }
+    }, [activeMetric, refreshKey]);
 
   const onMetricChange = useCallback(
     (data: any) => {
@@ -219,12 +229,14 @@ const Mytracker: React.FC<DashboardProps> = () => {
     handleConfirmAssignment,
     modalState: assignmentModalState,
     closeModal: assignmentCloseModal,
+    loading: assignmentLoading,
   } = useConfirmAssignment(handleClosePopup, handleRefresh);
 
   const {
     handleAdvertExtend,
     modalState: advertModalState,
     closeModal: advertCloseModal,
+    loading: advertLoading,
   } = useAdvertExtends(handleClosePopup, handleRefresh, setAdvertPopupOpen);
 
   const selectedItemRef = useRef<{
@@ -394,7 +406,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
   });
 
   const loading =
-    martics.loading || trackerLoading || martics.metrics.length === 0;
+    martics.loading || trackerLoading || martics.metrics.length === 0 || assignmentLoading || advertLoading;
   const hasMetrics = martics.metrics.length > 0;
   const showAssignmentBar =
     activeMetric === MatricID.AssignHr && selectedIds.length > 0;

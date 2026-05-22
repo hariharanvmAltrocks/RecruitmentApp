@@ -1,3 +1,5 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -8,12 +10,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--app-sidenav-border, #e2e8f0);
+  background: #e4e8f1;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--app-text-color, #64748b);
+  background: #64748b;
 }
 
 .loadingPage {
@@ -42,7 +44,7 @@
 }
 .loadingText {
   font-size: 14px;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
 }
 
 .alert {
@@ -142,9 +144,9 @@
 
 .cancelBtn {
   padding: 12px 36px;
-  border: 1.5px solid var(--app-sidenav-border, #e2e8f0);
+  border: 1.5px solid #e4e8f1;
   background: var(--app-card-color, #ffffff);
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
@@ -153,7 +155,7 @@
 }
 .cancelBtn:hover {
   background: var(--app-secondary-color, #f8fafc);
-  border-color: var(--app-sidenav-border, #e2e8f0);
+  border-color: #e4e8f1;
 }
 .cancelBtn:disabled {
   opacity: 0.5;

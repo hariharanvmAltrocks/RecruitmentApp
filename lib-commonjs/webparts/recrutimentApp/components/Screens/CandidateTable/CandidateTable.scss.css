@@ -1,3 +1,5 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 .candidate-table {
   --ct-primary: var(--app-primary-color, #2f5bff);
   --ct-primary-soft: var(--app-secondary-color, #e9efff);
@@ -118,13 +120,13 @@
   background: var(--app-sidenav-border, #e2e8f0);
 }
 .candidate-table__meta-text {
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   font-weight: 600;
 }
 .candidate-table__close {
   border: none;
   background: transparent;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   border-radius: 999px;
   width: 36px;
   height: 36px;

@@ -87,7 +87,7 @@ var QuestionCreation = function (props) {
         setPreparedQuestions(function (prev) { return prev.filter(function (q) { return q.id !== id; }); });
     };
     var handleSave = function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var minQuestions, remaining, success;
+        var minQuestions, remaining, StatusIDs, success;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -114,12 +114,15 @@ var QuestionCreation = function (props) {
                         return [2 /*return*/];
                     }
                     setLoading(true);
+                    debugger;
+                    StatusIDs = (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.AssignHOD.toLowerCase()) === (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.AssignLineManager.toLowerCase()) ? Config_1.StatusId.PendingReviewAdvertHOD : Config_1.StatusId.CareerPortalQuestions;
                     return [4 /*yield*/, save({
                             positionId: props.ID,
                             mode: mode,
                             questions: preparedQuestions,
                             JobCodeId: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCodeId,
                             DptCode: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.DeptCode,
+                            StatusId: StatusIDs,
                         })];
                 case 1:
                     success = _a.sent();

@@ -1,3 +1,5 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 .coi-card {
   background: #ffffff;
   border: 1px solid #fecdd3;
@@ -105,7 +107,7 @@
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
 }
 
 .coi-card__fields {
@@ -136,7 +138,7 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
 }
 
 .coi-card__required {
@@ -174,7 +176,7 @@
 .coi-card__select:disabled {
   background: var(--app-secondary-color, #f8fafc);
   cursor: not-allowed;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
 }
 
 .coi-card__select-chevron {
@@ -182,7 +184,7 @@
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   pointer-events: none;
 }
 
@@ -218,7 +220,7 @@
   height: 32px;
   border-radius: 8px;
   background: var(--app-sidenav-border, #f1f5f9);
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -239,7 +241,7 @@
 
 .coi-card__upload-hint {
   font-size: 11px;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
 }
 
 .coi-card__file-preview {
@@ -325,7 +327,7 @@
 
 .coi-card__empty {
   font-size: 13px;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   font-style: italic;
 }
 
@@ -355,7 +357,7 @@
   box-sizing: border-box;
 }
 .coi-card__textarea::placeholder {
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
 }
 .coi-card__textarea:focus {
   outline: none;
@@ -380,7 +382,7 @@
   bottom: 8px;
   right: 10px;
   font-size: 11px;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   font-weight: 500;
   pointer-events: none;
 }
@@ -420,7 +422,7 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  border: 2px solid var(--app-text-color, #64748b);
+  border: 2px solid #64748b;
   position: relative;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   background-color: #ffffff;
@@ -457,7 +459,7 @@
 }
 
 .coi-card__radio-label input:disabled ~ span {
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   cursor: not-allowed;
 }
 

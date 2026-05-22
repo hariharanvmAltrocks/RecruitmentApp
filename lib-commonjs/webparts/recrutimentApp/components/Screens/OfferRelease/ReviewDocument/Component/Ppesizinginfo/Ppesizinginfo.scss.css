@@ -1,3 +1,5 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 .ppe-trigger-wrap {
   position: relative;
   display: inline-block;
@@ -84,7 +86,7 @@
   border: none;
   font-size: 18px;
   line-height: 1;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   cursor: pointer;
   padding: 0 2px;
   transition: color 0.15s ease;
@@ -104,7 +106,7 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   text-align: left;
   border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
   background: rgba(248, 250, 252, 0.7);
@@ -219,13 +221,13 @@
 
 .ppe-strip__icon {
   flex-shrink: 0;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
 }
 
 .ppe-strip__label {
   font-size: 12px;
   font-weight: 700;
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -246,7 +248,7 @@
 }
 
 .ppe-strip__tag-name {
-  color: var(--app-text-color, #94a3b8);
+  color: #94a3b8;
 }
 
 .ppe-strip__tag-sep {

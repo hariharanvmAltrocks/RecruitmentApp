@@ -1,3 +1,5 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 .page {
   padding: 24px 32px;
   box-sizing: border-box;
@@ -21,7 +23,7 @@
 }
 
 .crumb {
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   cursor: pointer;
   transition: color 0.12s;
 }
@@ -59,7 +61,7 @@
   background: transparent;
   font-size: 14px;
   font-weight: 500;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   cursor: pointer;
   transition: all 0.15s;
 }
@@ -78,9 +80,9 @@
 .placeholder {
   background: var(--app-card-color, #ffffff);
   border-radius: 12px;
-  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border: 1px solid #e4e8f1;
   padding: 56px;
   text-align: center;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   font-size: 14px;
 }

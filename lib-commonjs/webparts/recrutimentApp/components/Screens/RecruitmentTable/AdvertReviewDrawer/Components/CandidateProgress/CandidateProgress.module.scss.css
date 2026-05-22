@@ -1,3 +1,5 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
 .candidateProgress {
   background: #ffffff;
   border-radius: 20px;
@@ -61,7 +63,7 @@
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
 }
 .candidateProgress__filterBtn {
   height: 36px;
@@ -80,7 +82,7 @@
 }
 .candidateProgress__filterBtn:hover {
   background: var(--app-secondary-color, #f8fafc);
-  border-color: var(--app-sidenav-border, #e2e8f0);
+  border-color: #e4e8f1;
 }
 .candidateProgress__timelineHeader {
   padding: 24px;
@@ -148,7 +150,7 @@
   padding: 16px 24px;
   font-size: 11px;
   font-weight: 600;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
@@ -204,7 +206,7 @@
   align-items: center;
   gap: 4px;
   font-size: 11px;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
 }
 .candidateProgress__currentStepBox {
   display: flex;
@@ -301,7 +303,7 @@
 }
 .candidateProgress__progressRow .node--pending {
   background: #ffffff;
-  color: var(--app-text-color, #64748b);
+  color: #64748b;
   border: 2px solid var(--app-sidenav-border, #f1f5f9);
 }
 .candidateProgress__progressRow .node.hide-line::after {
@@ -328,7 +330,7 @@
 }
 .candidateProgress__pagination .paginationBtn:hover:not(:disabled) {
   background: rgba(var(--app-secondary-color, #f8fafc), 0.5);
-  border-color: var(--app-sidenav-border, #e2e8f0);
+  border-color: #e4e8f1;
 }
 .candidateProgress__pagination .paginationBtn:disabled {
   opacity: 0.5;

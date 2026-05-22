@@ -37,6 +37,7 @@ import { ActionID } from "../../../utilities/ConditionConfig";
 import { useModalPopup } from "../../Comman/ModalPopup/useModalPopup";
 import moment from "moment";
 import { ModalPopup } from "../../Comman/ModalPopup/ModalPopup";
+import Loading from "../../Comman/Loading/loading";
 
 export const panelVariants = {
   hidden: { x: "100%" },
@@ -335,6 +336,7 @@ export const CandidateTable: React.FC = (props: any) => {
   return (
     <AnimatePresence>
       <div className="candidate-table">
+        {loading || positionLoading ? <Loading /> : <></>}
         <motion.div
           className="candidate-table__backdrop"
           initial={{ opacity: 0 }}
@@ -342,7 +344,6 @@ export const CandidateTable: React.FC = (props: any) => {
           exit={{ opacity: 0 }}
           onClick={handleClose}
         />
-
         <motion.div
           className="candidate-table__panel"
           variants={panelVariants}
@@ -397,7 +398,7 @@ export const CandidateTable: React.FC = (props: any) => {
               <DataTable<CandidateDashboardItem>
                 columns={columns}
                 data={data}
-                loading={loading ?? positionLoading}
+                loading={loading || positionLoading}
                 // error={error ?? undefined}
                 pageSize={pagination.pageSize}
                 currentPage={pagination.currentPage}

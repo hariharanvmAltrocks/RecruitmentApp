@@ -904,15 +904,15 @@ export default class DashboardService implements IDashboard {
           StatusId: item?.StatusId,
 
           InterviewDate: InterviewDate
-            ? moment(InterviewDate).format("YYYY-MM-DD")
+            ? moment(InterviewDate).format("DD-MM-YYYY")
             : undefined,
 
           ModifiedDate: item?.Modified
-            ? moment(item.Modified).format("YYYY-MM-DD")
+            ? moment(item.Modified).format("DD-MM-YYYY")
             : undefined,
 
           CreatedDate: item?.Created
-            ? moment(item.Created).format("YYYY-MM-DD")
+            ? moment(item.Created).format("DD-MM-YYYY")
             : undefined,
 
           isExpat: item?.NationalityCode !== NationalityCode.Nationals,
@@ -1008,11 +1008,11 @@ export default class DashboardService implements IDashboard {
           PositionID: item?.PositionID?.PositionID,
 
           ModifiedDate: item?.Modified
-            ? moment(item.Modified).format("YYYY-MM-DD")
+            ? moment(item.Modified).format("DD-MM-YYYY")
             : undefined,
 
           CreatedDate: item?.Created
-            ? moment(item.Created).format("YYYY-MM-DD")
+            ? moment(item.Created).format("DD-MM-YYYY")
             : undefined,
 
           DeptDetails: deptDetails ?? null,

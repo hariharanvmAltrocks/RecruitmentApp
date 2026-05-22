@@ -63,7 +63,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     setActiveMenuID(menuID.Mytracker);
     // ref.current = data.menuId;
     // setActiveTab(data.TabValue);
-    // setCurrentTabName(data.TabName);
+    setCurrentTabName(data.TabName);
     setMatricID(data.id);
     navigate("/MyTracker");
   };
@@ -154,8 +154,6 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                     itemsPerPage={7}
                     title="Departmental Demand"
                     subtitle="Pending lifecycle"
-                    gradientStart="#c026d3"
-                    gradientEnd="#7c3aed"
                     tooltipValueLabel="Openings"
                   />
                   {/* <div className="tracker-panel">

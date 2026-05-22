@@ -23,8 +23,6 @@ export interface DepartmentChartProps {
   itemsPerPage?: number;
   title?: string;
   subtitle?: string;
-  gradientStart?: string;
-  gradientEnd?: string;
   tooltipValueLabel?: string;
 }
 
@@ -49,13 +47,11 @@ const DepartmentChart: React.FC<DepartmentChartProps> = ({
   itemsPerPage = 7,
   title = "Departmental Demand",
   subtitle = "Pending recruitment lifecycle status",
-  gradientStart,
-  gradientEnd,
   tooltipValueLabel = "Openings",
 }) => {
   const theme = useTheme();
-  const resolvedGradientStart = gradientStart || theme.primaryColor;
-  const resolvedGradientEnd = gradientEnd || theme.secondaryColor;
+  const resolvedGradientStart =  theme.primaryColor;
+  const resolvedGradientEnd =  theme.secondaryColor;
 
   const {
     visibleData,

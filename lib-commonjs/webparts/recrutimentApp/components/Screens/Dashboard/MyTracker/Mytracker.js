@@ -115,8 +115,8 @@ var Mytracker = function () {
     var handleClosePopup = (0, react_1.useCallback)(function () {
         setIsPopupOpen(false);
     }, []);
-    var _1 = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh), handleConfirmAssignment = _1.handleConfirmAssignment, assignmentModalState = _1.modalState, assignmentCloseModal = _1.closeModal;
-    var _2 = (0, useadvertextend_1.useAdvertExtends)(handleClosePopup, handleRefresh, setAdvertPopupOpen), handleAdvertExtend = _2.handleAdvertExtend, advertModalState = _2.modalState, advertCloseModal = _2.closeModal;
+    var _1 = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh), handleConfirmAssignment = _1.handleConfirmAssignment, assignmentModalState = _1.modalState, assignmentCloseModal = _1.closeModal, assignmentLoading = _1.loading;
+    var _2 = (0, useadvertextend_1.useAdvertExtends)(handleClosePopup, handleRefresh, setAdvertPopupOpen), handleAdvertExtend = _2.handleAdvertExtend, advertModalState = _2.modalState, advertCloseModal = _2.closeModal, advertLoading = _2.loading;
     var selectedItemRef = (0, react_1.useRef)(null);
     var handleActionOffer = (0, react_1.useCallback)(function (item) {
         selectedItemRef.current = {
@@ -248,7 +248,8 @@ var Mytracker = function () {
             ? handleActionOffer
             : handleAction,
     });
-    var loading = martics.loading || trackerLoading || martics.metrics.length === 0;
+    var loading = martics.loading || trackerLoading || martics.metrics.length === 0 || assignmentLoading || advertLoading;
+    ;
     var hasMetrics = martics.metrics.length > 0;
     var showAssignmentBar = activeMetric === ConditionConfig_1.MatricID.AssignHr && selectedIds.length > 0;
     var metricsContainer = {

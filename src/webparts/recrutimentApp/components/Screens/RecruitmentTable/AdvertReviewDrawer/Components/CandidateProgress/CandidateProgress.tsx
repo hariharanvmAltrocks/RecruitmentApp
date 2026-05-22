@@ -40,7 +40,9 @@ export const CandidateProgress: React.FC<ICandidateProgressProps> = ({
 
   return (
     <div className={styles.candidateProgress}>
-      <div className={styles.candidateProgress__header}>
+      {data && data.length > 0 && ( 
+        <>
+         <div className={styles.candidateProgress__header}>
         <div className={styles.candidateProgress__title}>
           <div
             style={{
@@ -225,6 +227,8 @@ export const CandidateProgress: React.FC<ICandidateProgressProps> = ({
             Next
           </button>
         </div>
+      )}
+        </>
       )}
     </div>
   );

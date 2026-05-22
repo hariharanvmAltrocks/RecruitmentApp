@@ -111,7 +111,7 @@
   align-items: center;
   gap: 16px;
   padding: 0 56px 0 48px;
-  background: linear-gradient(to right, var(--step-from, $button-color), var(--step-to, $primary-color));
+  background: linear-gradient(to right, var(--step-from, $primary-color), var(--step-to, $secondary-color));
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   transition: filter 0.2s ease, box-shadow 0.2s ease;
   position: relative;
