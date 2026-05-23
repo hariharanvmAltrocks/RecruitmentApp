@@ -176,7 +176,7 @@
   box-shadow: 0 20px 60px rgba(124, 58, 237, 0.12), 0 4px 16px rgba(0, 0, 0, 0.06);
   width: 100%;
   position: relative;
-  gap: 2%;
+  gap: 1%;
   margin-left: -8%;
 }
 .oversight-popup__inner::before {

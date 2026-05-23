@@ -26,6 +26,7 @@ var Evaluationformservice_1 = require("../../Evalution/Evaluationservice/Evaluat
 var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
 var useRecruitmentDetails_1 = require("../../RecruitmentTable/Hooks/useRecruitmentDetails");
 var ReviewDocument_1 = require("../../OfferRelease/ReviewDocument/ReviewDocument");
+var Useupdatelistportal_1 = require("../../OfferRelease/ReviewDocument/Hooks/Useupdatelistportal");
 var AssignHRPopup = react_1.default.lazy(function () {
     return Promise.resolve().then(function () { return tslib_1.__importStar(require("../../RecruitmentTable/Components/AssignHRPopup/AssignHRPopup")); }).then(function (module) { return ({
         default: module.AssignHRPopup,
@@ -60,6 +61,19 @@ var Mytracker = function () {
     var _x = (0, useRecruitmentDetails_1.useRecruitmentDetails)(refreshKey), trackerData = _x.items, trackerLoading = _x.loading;
     var martics = (0, useDashboardMetrics_1.useDashboardMetrics)(refreshKey);
     var items = trackerData || [];
+    var updateList = (0, react_1.useMemo)(function () {
+        return items.map(function (item) { return ({
+            StatusID: item.statusId,
+            ID: item.ItemID,
+            JobRequestID: item.jobrequestID,
+            EmploymentCategory: item.EmploymentCategory,
+            IsExpat: item.IsExpat,
+        }); });
+    }, [items]);
+    var updateListPortal = (0, Useupdatelistportal_1.useUpdateListPortal)({
+        items: updateList,
+        refreshKey: refreshKey,
+    }).updateListPortal;
     var _y = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _y.drawerOpen, selectedJobId = _y.selectedJobId, advertLanguage = _y.advertLanguage, reviewerComments = _y.reviewerComments, acknowledgementCheckbox = _y.acknowledgementCheckbox, loadingState = _y.loadingState, openDrawer = _y.openDrawer, closeDrawer = _y.closeDrawer, setAdvertLanguage = _y.setAdvertLanguage, setComments = _y.setComments, toggleAcknowledgement = _y.toggleAcknowledgement, setLoadingState = _y.setLoadingState;
     var _z = (0, useModalPopup_1.useModalPopup)(), modalState = _z.modalState, showModal = _z.showModal, closeModal = _z.closeModal;
     (0, react_1.useEffect)(function () {
@@ -72,6 +86,11 @@ var Mytracker = function () {
             setselectedmatricId(martics.metrics[0].label);
         }
     }, [martics.metrics]);
+    (0, react_1.useEffect)(function () {
+        if (activeMetric === ConditionConfig_1.MatricID.BackgroundCheck || activeMetric === ConditionConfig_1.MatricID.LabourHire || activeMetric === ConditionConfig_1.MatricID.Kcsa) {
+            void updateListPortal();
+        }
+    }, [activeMetric, refreshKey]);
     var onMetricChange = (0, react_1.useCallback)(function (data) {
         setNavigationPath(data.path);
         ref.current = data.menuId;
@@ -238,18 +257,19 @@ var Mytracker = function () {
             ? "evaluation"
             : activeMetric === ConditionConfig_1.MatricID.LabourHire ||
                 activeMetric === ConditionConfig_1.MatricID.Kcsa ||
-                activeMetric === ConditionConfig_1.MatricID.BackgroundCheck
+                activeMetric === ConditionConfig_1.MatricID.BackgroundCheck ||
+                activeMetric === ConditionConfig_1.MatricID.MySubmissionBGV
                 ? "OfferRelease"
                 : "default",
         actionMode: "View",
         onAction: activeMetric === ConditionConfig_1.MatricID.LabourHire ||
             activeMetric === ConditionConfig_1.MatricID.Kcsa ||
-            activeMetric === ConditionConfig_1.MatricID.BackgroundCheck
+            activeMetric === ConditionConfig_1.MatricID.BackgroundCheck ||
+            activeMetric === ConditionConfig_1.MatricID.MySubmissionBGV
             ? handleActionOffer
             : handleAction,
     });
     var loading = martics.loading || trackerLoading || martics.metrics.length === 0 || assignmentLoading || advertLoading;
-    ;
     var hasMetrics = martics.metrics.length > 0;
     var showAssignmentBar = activeMetric === ConditionConfig_1.MatricID.AssignHr && selectedIds.length > 0;
     var metricsContainer = {

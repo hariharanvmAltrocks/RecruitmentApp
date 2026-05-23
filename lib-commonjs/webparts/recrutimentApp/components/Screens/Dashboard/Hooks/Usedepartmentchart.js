@@ -1,41 +1,39 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DEPARTMENT_DATA = void 0;
 var tslib_1 = require("tslib");
 var react_1 = require("react");
-exports.DEPARTMENT_DATA = [
-    { name: "Construction", value: 85 },
-    { name: "Mining", value: 78 },
-    { name: "Management Accounting", value: 72 },
-    { name: "Human Resource", value: 68 },
-    { name: "Technology", value: 65 },
-    { name: "Camp and Facilities", value: 62 },
-    { name: "HSE", value: 58 },
-    { name: "Risk Control", value: 54 },
-    { name: "Engineering", value: 48 },
-    { name: "Processing", value: 42 },
-    { name: "Procurement", value: 38 },
-    { name: "Supply Chain", value: 35 },
-    { name: "Sales and Logistics", value: 31 },
-    { name: "Security", value: 28 },
-    { name: "Asset Management", value: 25 },
-    { name: "Concentrator", value: 22 },
-    { name: "Smelter", value: 20 },
-    { name: "Finance", value: 18 },
-    { name: "Compliance", value: 16 },
-    { name: "Community Relations", value: 14 },
-    { name: "Environment", value: 12 },
-    { name: "Sustainability", value: 11 },
-    { name: "Quality Control", value: 10 },
-    { name: "Internal Audit", value: 8 },
-    { name: "Corporate Affairs", value: 6 },
-    { name: "Legal", value: 5 },
-    { name: "Strategy", value: 4 },
-    { name: "Training", value: 3 },
-];
+var ServiceExport_1 = require("../../../../services/ServiceExport");
+var ApiConfig_1 = require("../../../../utilities/ApiConfig");
 var useDepartmentChart = function (_a) {
-    var data = _a.data, _b = _a.itemsPerPage, itemsPerPage = _b === void 0 ? 7 : _b;
-    var _c = (0, react_1.useState)(0), startIndex = _c[0], setStartIndex = _c[1];
+    var itemsPerPage = _a.itemsPerPage, refreshKey = _a.refreshKey;
+    var _b = (0, react_1.useState)(0), startIndex = _b[0], setStartIndex = _b[1];
+    var _c = (0, react_1.useState)([]), data = _c[0], setData = _c[1];
+    var fetchDepartmentPosition = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+        var res, data_1, error_1;
+        return tslib_1.__generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, 3, 4]);
+                    return [4 /*yield*/, ServiceExport_1.DashboardServices.GetDepartmentDetails()];
+                case 1:
+                    res = _a.sent();
+                    data_1 = res.data || [];
+                    if (res.status === ApiConfig_1.ResponeStatus.SUCCESS) {
+                        setData(data_1);
+                    }
+                    return [3 /*break*/, 4];
+                case 2:
+                    error_1 = _a.sent();
+                    console.error("Dashboard urgent tasks error", error_1);
+                    return [3 /*break*/, 4];
+                case 3: return [7 /*endfinally*/];
+                case 4: return [2 /*return*/];
+            }
+        });
+    }); }, [refreshKey]);
+    (0, react_1.useEffect)(function () {
+        void fetchDepartmentPosition();
+    }, [fetchDepartmentPosition, refreshKey]);
     var sortedData = (0, react_1.useMemo)(function () { return tslib_1.__spreadArray([], data, true).sort(function (a, b) { return b.value - a.value; }); }, [data]);
     var totalPages = Math.ceil(sortedData.length / itemsPerPage);
     var currentPage = Math.floor(startIndex / itemsPerPage) + 1;

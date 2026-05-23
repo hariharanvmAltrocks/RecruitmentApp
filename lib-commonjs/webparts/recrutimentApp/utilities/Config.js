@@ -65,6 +65,7 @@ exports.ListNames = {
     HRMSRESIDRCDetails: "HRMSRESIDRCDetails",
     HRMSRESIExpatDetails: "HRMSRESIExpatDetails",
     HRMSRecruitmentTabMaster: "HRMSRecruitmentTabMaster",
+    HRMSRecruitmentDeptOpenings: "HRMSRecruitmentDeptOpenings",
 };
 exports.DocumentLibraray = {
     InterviewPanelCandidateCV: "HRMSRecruitmentCandidateCV",

@@ -16,7 +16,7 @@ import MetricDashboard from "../../Comman/MatricBox/matric";
 import Loading from "../../Comman/Loading/loading";
 import { menuID } from "../../../utilities/ConditionConfig";
 import DepartmentChart from "../../Comman/Departmentchart/Departmentchart";
-import { DEPARTMENT_DATA } from "./Hooks/Usedepartmentchart";
+import useDepartmentChart from "./Hooks/Usedepartmentchart";
 
 interface DashboardProps {
   props: any;
@@ -150,7 +150,6 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
                 <div className="dashboard-layout">
                   <DepartmentChart
-                    data={DEPARTMENT_DATA}
                     itemsPerPage={7}
                     title="Departmental Demand"
                     subtitle="Pending lifecycle"

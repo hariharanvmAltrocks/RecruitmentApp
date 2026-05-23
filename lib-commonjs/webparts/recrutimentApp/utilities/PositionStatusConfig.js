@@ -7,7 +7,7 @@ exports.stages = [
     { label: "Assign HR", icon: lucide_react_1.FileSearch },
     { label: "Upload Advert", icon: lucide_react_1.ClipboardCheck },
     { label: "Review Advert LM", icon: lucide_react_1.Send },
-    { label: "Create Disqualification Questions", icon: lucide_react_1.Play },
+    { label: "Create Minimum Criteria Question", icon: lucide_react_1.Play },
     { label: "Review Advert HOD", icon: lucide_react_1.Filter },
     { label: "Upload ONEM Signed and Stamped", icon: lucide_react_1.ShieldCheck },
     { label: "Recruitment In Process", icon: lucide_react_1.Network },

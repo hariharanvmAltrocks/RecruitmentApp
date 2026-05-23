@@ -13,6 +13,7 @@ import {
   DashboardData,
   DataSyncToRecruitmentResponse,
   IDashboard,
+  IDashboardDepartment,
   IEvaluValidate,
   IInterviewPanel,
   IJDEDataMapping,
@@ -611,6 +612,52 @@ export default class DashboardService implements IDashboard {
           };
         }),
       );
+      return {
+        data: GridResult,
+        status: 200,
+        message: "GetRecruitmentDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching GetRecruitmentDetails:", error);
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching data",
+      };
+    }
+  }
+
+    async GetDepartmentDetails(): Promise<ApiResponse<IDashboardDepartment[]>> {
+    try {
+      const recruitmentResponse: any[] = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentDeptOpenings,
+        Select: `
+        *,
+        Department/DepartmentName
+      `,
+        Expand: `Department`,
+        Topcount: count.Topcount,
+        Orderby: "ID",
+        Orderbydecorasc: true,
+      });
+      if (!recruitmentResponse.length) {
+        return {
+          data: [],
+          status: 200,
+          message: "No records found",
+        };
+      }
+      const departmentCountMap: Record<string, number> = {};
+      recruitmentResponse.forEach((item: any) => {
+        const departmentName = item?.Department?.DepartmentName ?? "Unknown";
+        departmentCountMap[departmentName] = (departmentCountMap[departmentName] || 0) + 1;
+      });
+      const GridResult: IDashboardDepartment[] = Object.entries(departmentCountMap).map(([name, value]) => ({
+        name,
+        value,
+      }));
+      
+      
       return {
         data: GridResult,
         status: 200,

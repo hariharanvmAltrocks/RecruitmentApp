@@ -560,6 +560,61 @@ var DashboardService = /** @class */ (function () {
             });
         });
     };
+    DashboardService.prototype.GetDepartmentDetails = function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var recruitmentResponse, departmentCountMap_1, GridResult, error_6;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSRecruitmentDeptOpenings,
+                                Select: "\n        *,\n        Department/DepartmentName\n      ",
+                                Expand: "Department",
+                                Topcount: ApiConfig_1.count.Topcount,
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            })];
+                    case 1:
+                        recruitmentResponse = _a.sent();
+                        if (!recruitmentResponse.length) {
+                            return [2 /*return*/, {
+                                    data: [],
+                                    status: 200,
+                                    message: "No records found",
+                                }];
+                        }
+                        departmentCountMap_1 = {};
+                        recruitmentResponse.forEach(function (item) {
+                            var _a, _b;
+                            var departmentName = (_b = (_a = item === null || item === void 0 ? void 0 : item.Department) === null || _a === void 0 ? void 0 : _a.DepartmentName) !== null && _b !== void 0 ? _b : "Unknown";
+                            departmentCountMap_1[departmentName] = (departmentCountMap_1[departmentName] || 0) + 1;
+                        });
+                        GridResult = Object.entries(departmentCountMap_1).map(function (_a) {
+                            var name = _a[0], value = _a[1];
+                            return ({
+                                name: name,
+                                value: value,
+                            });
+                        });
+                        return [2 /*return*/, {
+                                data: GridResult,
+                                status: 200,
+                                message: "GetRecruitmentDetails fetched successfully",
+                            }];
+                    case 2:
+                        error_6 = _a.sent();
+                        console.error("Error fetching GetRecruitmentDetails:", error_6);
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 500,
+                                message: "Error fetching data",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
     // async GetCareerPortalCandidate(
     //   JobCodeID: number,
     //   WorkflowStatusID: string[];
@@ -688,7 +743,7 @@ var DashboardService = /** @class */ (function () {
     // }
     DashboardService.prototype.GetCandidateDetails = function (filterParam, filterConditions, MatricId, EmailID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var isEvaluationFlow, UserID, listItems, recruitmentIds_1, res, recruitmentIds, uniqueGrades, recruitmentFilter, _a, deptResult, gradeResults_1, gradeLevelMap_1, deptMap_1, _i, _b, dept, existing, GridResult, error_6;
+            var isEvaluationFlow, UserID, listItems, recruitmentIds_1, res, recruitmentIds, uniqueGrades, recruitmentFilter, _a, deptResult, gradeResults_1, gradeLevelMap_1, deptMap_1, _i, _b, dept, existing, GridResult, error_7;
             var _c, _d, _e, _f;
             return tslib_1.__generator(this, function (_g) {
                 switch (_g.label) {
@@ -816,8 +871,8 @@ var DashboardService = /** @class */ (function () {
                         });
                         return [2 /*return*/, { data: GridResult, status: 200, message: "Success" }];
                     case 6:
-                        error_6 = _g.sent();
-                        console.error("Error fetching from Candidate details:", error_6);
+                        error_7 = _g.sent();
+                        console.error("Error fetching from Candidate details:", error_7);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
                     case 7: return [2 /*return*/];
                 }
@@ -826,7 +881,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetSelectedCandidate = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var GridResult, res, ids, candidateIds, recruitmentFilter, candidateFilter, DeptDetails, getCandidateDetails, deptMap_2, candidateMap_1, error_7;
+            var GridResult, res, ids, candidateIds, recruitmentFilter, candidateFilter, DeptDetails, getCandidateDetails, deptMap_2, candidateMap_1, error_8;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -901,8 +956,8 @@ var DashboardService = /** @class */ (function () {
                         });
                         return [2 /*return*/, { data: GridResult, status: 200, message: "Success" }];
                     case 4:
-                        error_7 = _a.sent();
-                        console.error("Error fetching from Candidate details:", error_7);
+                        error_8 = _a.sent();
+                        console.error("Error fetching from Candidate details:", error_8);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
                     case 5: return [2 /*return*/];
                 }
@@ -911,7 +966,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetNPAEPVRRDetails = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var queries, batchRes, additionalExistingItems, newPositionItems, vacancyItems, additionalIds, newPositionIds, _a, additionalPositionRes, newPositionRes, additionalPositionMap_1, newPositionMap_1, mapCommonFields_1, additionalExistingResult, newPositionResult, vacancyResult, GridResult, error_8;
+            var queries, batchRes, additionalExistingItems, newPositionItems, vacancyItems, additionalIds, newPositionIds, _a, additionalPositionRes, newPositionRes, additionalPositionMap_1, newPositionMap_1, mapCommonFields_1, additionalExistingResult, newPositionResult, vacancyResult, GridResult, error_9;
             var _b, _c;
             return tslib_1.__generator(this, function (_d) {
                 switch (_d.label) {
@@ -1049,8 +1104,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "GetNPAEPVRRDetails fetched successfully",
                             }];
                     case 3:
-                        error_8 = _d.sent();
-                        console.error("Error fetching GetNPAEPVRRDetails:", error_8);
+                        error_9 = _d.sent();
+                        console.error("Error fetching GetNPAEPVRRDetails:", error_9);
                         return [2 /*return*/, { data: [], status: 500, message: "Error fetching data" }];
                     case 4: return [2 /*return*/];
                 }
@@ -1059,7 +1114,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetAdditionalPosition = function (Filter, filterConditions, ListName) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var resdata, result, error_9;
+            var resdata, result, error_10;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1090,8 +1145,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "GetPositionDetails fetched successfully",
                             }];
                     case 2:
-                        error_9 = _a.sent();
-                        console.error("GetPositionDetails error:", error_9);
+                        error_10 = _a.sent();
+                        console.error("GetPositionDetails error:", error_10);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -1104,7 +1159,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetPositionDetails = function (Filter, filterConditions, ListName) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var resdata, result, error_10;
+            var resdata, result, error_11;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1137,8 +1192,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "GetPositionDetails fetched successfully",
                             }];
                     case 2:
-                        error_10 = _a.sent();
-                        console.error("GetPositionDetails error:", error_10);
+                        error_11 = _a.sent();
+                        console.error("GetPositionDetails error:", error_11);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -1151,7 +1206,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.EvalutionValidation = function (data) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var getCurrentUserId, levelFilter, resdata, IsSubmitted, error_11;
+            var getCurrentUserId, levelFilter, resdata, IsSubmitted, error_12;
             var _a;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
@@ -1194,8 +1249,8 @@ var DashboardService = /** @class */ (function () {
                                 message: "Validation success",
                             }];
                     case 3:
-                        error_11 = _b.sent();
-                        console.error("EvalutionValidation error:", error_11);
+                        error_12 = _b.sent();
+                        console.error("EvalutionValidation error:", error_12);
                         return [2 /*return*/, {
                                 data: false,
                                 status: 500,

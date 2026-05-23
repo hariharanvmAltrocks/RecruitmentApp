@@ -140,6 +140,11 @@ export interface IJDEDataMapping {
   };
 }
 
+export type IDashboardDepartment = {
+  name: string;
+  value: number;
+}
+
 export type IDashboard = {
   GetRecruitmentDetails(
     filterParam: any,
@@ -165,5 +170,6 @@ export type IDashboard = {
     filterParam: any,
     filterConditions: any,
   ): Promise<ApiResponse<DashboardData[]>>;
+  GetDepartmentDetails(): Promise<ApiResponse<IDashboardDepartment[]>>;
   EvalutionValidation(data: IEvaluValidate): Promise<ApiResponse<boolean>>;
 };

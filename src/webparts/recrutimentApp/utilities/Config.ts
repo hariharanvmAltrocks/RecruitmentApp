@@ -77,6 +77,7 @@ export const ListNames = {
   HRMSRESIExpatDetails: "HRMSRESIExpatDetails",
 
   HRMSRecruitmentTabMaster: "HRMSRecruitmentTabMaster",
+  HRMSRecruitmentDeptOpenings: "HRMSRecruitmentDeptOpenings",
 };
 
 export const DocumentLibraray = {

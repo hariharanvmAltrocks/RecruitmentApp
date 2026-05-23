@@ -19,11 +19,12 @@ import { useTheme } from "../../../theme/ThemeContext";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 export interface DepartmentChartProps {
-  data: DepartmentDataItem[];
+  data?: DepartmentDataItem[];
   itemsPerPage?: number;
   title?: string;
   subtitle?: string;
   tooltipValueLabel?: string;
+  refreshKey?: number;
 }
 
 const CustomTooltip: React.FC<
@@ -48,6 +49,7 @@ const DepartmentChart: React.FC<DepartmentChartProps> = ({
   title = "Departmental Demand",
   subtitle = "Pending recruitment lifecycle status",
   tooltipValueLabel = "Openings",
+  refreshKey = 0,
 }) => {
   const theme = useTheme();
   const resolvedGradientStart =  theme.primaryColor;
@@ -61,7 +63,7 @@ const DepartmentChart: React.FC<DepartmentChartProps> = ({
     hasNext,
     handleNext,
     handlePrev,
-  } = useDepartmentChart({ data, itemsPerPage });
+  } = useDepartmentChart({ itemsPerPage, refreshKey });
 
   const gradientId = "deptBarGradient";
 

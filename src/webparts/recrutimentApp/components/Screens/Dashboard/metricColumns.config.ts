@@ -436,6 +436,20 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     TabName: TabNames.MySubmission,
   },
 
+  [MatricID.MySubmissionBGV]: {
+    label: "My Submission - BGV",
+    status: "ON-GOING",
+    icon: Building2,
+    color: "#bcc3eb",
+    bgColor: "#0ba394ff",
+    statusColor: "#ef4444",
+    statusBg: "#fee2e2",
+    path: "/MyTracker",
+    menuId: menuID.PreSelectionProcess,
+    TabValue: "tab2",
+    TabName: TabNames.MySubmission,
+  },
+
   [MatricID.MySubmissionHOD]: {
     label: "My Submission",
     status: "ON-GOING",
@@ -526,6 +540,7 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
           buildCol(MatricID.OfferRejected, { showArrow: false }),
           buildCol(MatricID.Onbording, { showArrow: false }),
           buildCol(MatricID.MySubmissionHR, { showArrow: false }),
+          buildCol(MatricID.MySubmissionBGV, { showArrow: false })
         ];
         break;
 
@@ -1207,6 +1222,7 @@ const RoleMetricFilters: Record<number, number[]> = {
     MatricID.OfferRejected,
     MatricID.Onbording,
     MatricID.MySubmissionHR,
+    MatricID.MySubmissionBGV,
   ],
 
   [RoleID.LineManager]: [

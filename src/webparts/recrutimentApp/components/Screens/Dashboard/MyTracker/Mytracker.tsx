@@ -393,14 +393,16 @@ const Mytracker: React.FC<DashboardProps> = () => {
         ? "evaluation"
         : activeMetric === MatricID.LabourHire ||
             activeMetric === MatricID.Kcsa ||
-            activeMetric === MatricID.BackgroundCheck
+            activeMetric === MatricID.BackgroundCheck ||
+            activeMetric === MatricID.MySubmissionBGV
           ? "OfferRelease"
           : "default",
     actionMode: "View",
     onAction:
       activeMetric === MatricID.LabourHire ||
       activeMetric === MatricID.Kcsa ||
-      activeMetric === MatricID.BackgroundCheck
+      activeMetric === MatricID.BackgroundCheck ||
+      activeMetric === MatricID.MySubmissionBGV
         ? handleActionOffer
         : handleAction,
   });

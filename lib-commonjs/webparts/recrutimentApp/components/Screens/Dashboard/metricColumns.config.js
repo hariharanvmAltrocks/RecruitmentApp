@@ -387,6 +387,19 @@ var BASE_METRICS = (_a = {},
         TabValue: "tab2",
         TabName: ConditionConfig_1.TabNames.MySubmission,
     },
+    _a[ConditionConfig_1.MatricID.MySubmissionBGV] = {
+        label: "My Submission - BGV",
+        status: "ON-GOING",
+        icon: lucide_react_1.Building2,
+        color: "#bcc3eb",
+        bgColor: "#0ba394ff",
+        statusColor: "#ef4444",
+        statusBg: "#fee2e2",
+        path: "/MyTracker",
+        menuId: ConditionConfig_1.menuID.PreSelectionProcess,
+        TabValue: "tab2",
+        TabName: ConditionConfig_1.TabNames.MySubmission,
+    },
     _a[ConditionConfig_1.MatricID.MySubmissionHOD] = {
         label: "My Submission",
         status: "ON-GOING",
@@ -465,6 +478,7 @@ var MatricColums = function (roles) {
                     buildCol(ConditionConfig_1.MatricID.OfferRejected, { showArrow: false }),
                     buildCol(ConditionConfig_1.MatricID.Onbording, { showArrow: false }),
                     buildCol(ConditionConfig_1.MatricID.MySubmissionHR, { showArrow: false }),
+                    buildCol(ConditionConfig_1.MatricID.MySubmissionBGV, { showArrow: false })
                 ];
                 break;
             case Config_1.RoleID.LineManager:
@@ -925,6 +939,7 @@ var RoleMetricFilters = (_b = {},
         ConditionConfig_1.MatricID.OfferRejected,
         ConditionConfig_1.MatricID.Onbording,
         ConditionConfig_1.MatricID.MySubmissionHR,
+        ConditionConfig_1.MatricID.MySubmissionBGV,
     ],
     _b[Config_1.RoleID.LineManager] = [
         ConditionConfig_1.MatricID.AdvertReviewLM,

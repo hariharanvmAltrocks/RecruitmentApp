@@ -14,7 +14,6 @@ var matric_1 = tslib_1.__importDefault(require("../../Comman/MatricBox/matric"))
 var loading_1 = tslib_1.__importDefault(require("../../Comman/Loading/loading"));
 var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
 var Departmentchart_1 = tslib_1.__importDefault(require("../../Comman/Departmentchart/Departmentchart"));
-var Usedepartmentchart_1 = require("./Hooks/Usedepartmentchart");
 var Dashboard = function (props) {
     var _a;
     var _b = (0, react_1.useState)(0), activeMetric = _b[0], setActiveMetric = _b[1];
@@ -83,7 +82,7 @@ var Dashboard = function (props) {
             react_1.default.createElement(framer_motion_1.motion.div, { className: "metrics-grid", variants: metricsContainer, initial: "hidden", animate: "visible" },
                 react_1.default.createElement(matric_1.default, { metrics: martics.metrics, onCardClick: function (metric) { return onMetricChange(metric); }, loading: loading, handleRefresh: handleRefresh, active: activeMetric })),
             react_1.default.createElement("div", { className: "dashboard-layout" },
-                react_1.default.createElement(Departmentchart_1.default, { data: Usedepartmentchart_1.DEPARTMENT_DATA, itemsPerPage: 7, title: "Departmental Demand", subtitle: "Pending lifecycle", tooltipValueLabel: "Openings" })))))))));
+                react_1.default.createElement(Departmentchart_1.default, { itemsPerPage: 7, title: "Departmental Demand", subtitle: "Pending lifecycle", tooltipValueLabel: "Openings" })))))))));
 };
 exports.default = Dashboard;
 //# sourceMappingURL=Dashboard.js.map

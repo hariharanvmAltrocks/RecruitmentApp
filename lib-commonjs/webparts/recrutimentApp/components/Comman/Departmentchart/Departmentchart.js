@@ -18,11 +18,11 @@ var CustomTooltip = function (_a) {
         react_1.default.createElement("p", { className: departmentChart_module_scss_1.default.tooltipSub }, tooltipValueLabel)));
 };
 var DepartmentChart = function (_a) {
-    var data = _a.data, _b = _a.itemsPerPage, itemsPerPage = _b === void 0 ? 7 : _b, _c = _a.title, title = _c === void 0 ? "Departmental Demand" : _c, _d = _a.subtitle, subtitle = _d === void 0 ? "Pending recruitment lifecycle status" : _d, _e = _a.tooltipValueLabel, tooltipValueLabel = _e === void 0 ? "Openings" : _e;
+    var data = _a.data, _b = _a.itemsPerPage, itemsPerPage = _b === void 0 ? 7 : _b, _c = _a.title, title = _c === void 0 ? "Departmental Demand" : _c, _d = _a.subtitle, subtitle = _d === void 0 ? "Pending recruitment lifecycle status" : _d, _e = _a.tooltipValueLabel, tooltipValueLabel = _e === void 0 ? "Openings" : _e, _f = _a.refreshKey, refreshKey = _f === void 0 ? 0 : _f;
     var theme = (0, ThemeContext_1.useTheme)();
     var resolvedGradientStart = theme.primaryColor;
     var resolvedGradientEnd = theme.secondaryColor;
-    var _f = (0, Usedepartmentchart_1.default)({ data: data, itemsPerPage: itemsPerPage }), visibleData = _f.visibleData, currentPage = _f.currentPage, totalPages = _f.totalPages, hasPrev = _f.hasPrev, hasNext = _f.hasNext, handleNext = _f.handleNext, handlePrev = _f.handlePrev;
+    var _g = (0, Usedepartmentchart_1.default)({ itemsPerPage: itemsPerPage, refreshKey: refreshKey }), visibleData = _g.visibleData, currentPage = _g.currentPage, totalPages = _g.totalPages, hasPrev = _g.hasPrev, hasNext = _g.hasNext, handleNext = _g.handleNext, handlePrev = _g.handlePrev;
     var gradientId = "deptBarGradient";
     return (react_1.default.createElement("div", { className: departmentChart_module_scss_1.default.card },
         react_1.default.createElement("div", { className: departmentChart_module_scss_1.default.header },

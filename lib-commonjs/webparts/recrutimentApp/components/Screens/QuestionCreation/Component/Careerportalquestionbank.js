@@ -55,10 +55,7 @@ var CareerPortalQuestionBank = function (_a) {
                     react_1.default.createElement("div", { className: "qc-bank__divider" }),
                     react_1.default.createElement("div", { className: "qc-bank__lang-block" },
                         react_1.default.createElement("span", { className: "qc-bank__lang-label qc-bank__lang-label--fr" }, "Fran\u00E7ais"),
-                        react_1.default.createElement("p", { className: "qc-bank__question-text qc-bank__question-text--italic" }, q.questionFr)),
-                    react_1.default.createElement("div", { className: "qc-bank__options" }, q.options.map(function (opt) { return (react_1.default.createElement("span", { key: opt.id, className: "qc-bank__option ".concat(opt.isCorrect ? "qc-bank__option--correct" : "") },
-                        opt.isCorrect && react_1.default.createElement(lucide_react_1.Check, { size: 9 }),
-                        opt.textEn)); })))));
+                        react_1.default.createElement("p", { className: "qc-bank__question-text qc-bank__question-text--italic" }, q.questionFr)))));
         }))))));
 };
 exports.CareerPortalQuestionBank = CareerPortalQuestionBank;

@@ -1,4 +1,6 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
+import { DashboardServices } from "../../../../services/ServiceExport";
+import { ResponeStatus } from "../../../../utilities/ApiConfig";
 
 export interface DepartmentDataItem {
   name: string;
@@ -6,40 +8,10 @@ export interface DepartmentDataItem {
 }
 
 export interface UseDepartmentChartOptions {
-  data: DepartmentDataItem[];
-  itemsPerPage?: number;
+  itemsPerPage: number;
+  refreshKey: number;
 }
 
-export const DEPARTMENT_DATA: DepartmentDataItem[] = [
-  { name: "Construction", value: 85 },
-  { name: "Mining", value: 78 },
-  { name: "Management Accounting", value: 72 },
-  { name: "Human Resource", value: 68 },
-  { name: "Technology", value: 65 },
-  { name: "Camp and Facilities", value: 62 },
-  { name: "HSE", value: 58 },
-  { name: "Risk Control", value: 54 },
-  { name: "Engineering", value: 48 },
-  { name: "Processing", value: 42 },
-  { name: "Procurement", value: 38 },
-  { name: "Supply Chain", value: 35 },
-  { name: "Sales and Logistics", value: 31 },
-  { name: "Security", value: 28 },
-  { name: "Asset Management", value: 25 },
-  { name: "Concentrator", value: 22 },
-  { name: "Smelter", value: 20 },
-  { name: "Finance", value: 18 },
-  { name: "Compliance", value: 16 },
-  { name: "Community Relations", value: 14 },
-  { name: "Environment", value: 12 },
-  { name: "Sustainability", value: 11 },
-  { name: "Quality Control", value: 10 },
-  { name: "Internal Audit", value: 8 },
-  { name: "Corporate Affairs", value: 6 },
-  { name: "Legal", value: 5 },
-  { name: "Strategy", value: 4 },
-  { name: "Training", value: 3 },
-];
 
 export interface UseDepartmentChartReturn {
   visibleData: DepartmentDataItem[];
@@ -55,10 +27,31 @@ export interface UseDepartmentChartReturn {
 }
 
 const useDepartmentChart = ({
-  data,
-  itemsPerPage = 7,
+  itemsPerPage,
+  refreshKey,
 }: UseDepartmentChartOptions): UseDepartmentChartReturn => {
   const [startIndex, setStartIndex] = useState(0);
+  const [data, setData] = useState<DepartmentDataItem[]>([]);
+
+      const fetchDepartmentPosition = useCallback(async () => {
+      try {
+  
+        const res = await DashboardServices.GetDepartmentDetails();
+        const data = res.data || [];
+  
+        if (res.status === ResponeStatus.SUCCESS) {
+          setData(data);
+        }
+      } catch (error) {
+        console.error("Dashboard urgent tasks error", error);
+      } finally {
+      }
+    }, [refreshKey]);
+  
+    useEffect(() => {
+      void fetchDepartmentPosition();
+    }, [fetchDepartmentPosition, refreshKey]);
+
 
   const sortedData = useMemo(
     () => [...data].sort((a, b) => b.value - a.value),
@@ -90,6 +83,7 @@ const useDepartmentChart = ({
     },
     [totalPages, itemsPerPage],
   );
+
 
   return {
     visibleData,
