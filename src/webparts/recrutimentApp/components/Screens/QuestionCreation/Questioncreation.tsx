@@ -130,7 +130,6 @@ const QuestionCreation: React.FC = (props: any) => {
       return;
     }
     setLoading(true);
-    debugger;
     let StatusIDs = positionDetails?.AssignHOD.toLowerCase() === positionDetails?.AssignLineManager.toLowerCase() ? StatusId.PendingReviewAdvertHOD : StatusId.CareerPortalQuestions
     const success = await save({
       positionId: props.ID,

@@ -29,10 +29,7 @@ export function useEvaluationData(
   const fetchData = useCallback(async () => {
     setRows(makeSkeletons());
 
-    console.log(
-      " STEP 1: Starting fetchData. Current User Email:",
-      currentUserEmail,
-    );
+  
 
     if (!currentUserEmail) {
       console.warn(" No email provided to hook.");
@@ -41,7 +38,6 @@ export function useEvaluationData(
     }
 
     const guid = await evaluationService.getCurrentUserGuid(currentUserEmail);
-    console.log(" STEP 2: Current User GUID from SP:", guid);
 
     if (!guid) {
       setRows([]);
@@ -50,7 +46,6 @@ export function useEvaluationData(
 
     const panels = await evaluationService.getInterviewPanelsByUser(guid);
     panelDataRef.current = panels;
-    console.log(" STEP 3: Panels fetched for User:", panels);
 
     if (!panels.length) {
       console.warn(" No panels found for this user.");
@@ -66,8 +61,7 @@ export function useEvaluationData(
           .filter(Boolean),
       ),
     );
-    console.log(" STEP 4: Extracted Candidate IDs from Panels:", candidateIDs);
-
+ 
     if (!candidateIDs.length) {
       setRows([]);
       return;
@@ -77,7 +71,6 @@ export function useEvaluationData(
       candidateIDs,
       employeeList,
     );
-    console.log(" STEP 5: Raw Candidates fetched from SP:", rawCandidates);
 
     if (!rawCandidates.length) {
       setRows([]);
@@ -106,12 +99,8 @@ export function useEvaluationData(
       }),
     );
 
-    console.log(" STEP 6: Formatted Candidates (Before Filter):", settled);
     const finalRows = (settled.filter(Boolean) as EvaluationCandidate[]).filter(
       (c) => {
-        console.log(
-          ` Evaluating Candidate: ${c.applicantName} (ID: ${c.id}, StatusId: ${c.statusId})`,
-        );
 
         const matchingPanel = panels.find((item: any) => {
           const panelCandidateId =
@@ -120,42 +109,26 @@ export function useEvaluationData(
           if (c.id !== panelCandidateId) return false;
 
           const cStatusId = Number(c.statusId);
-          console.log(
-            `   -> Found matching panel for Candidate ${c.id}. Panel Level: ${item.InterviewLevel}`,
-          );
-
+         
           if (
             cStatusId === StatusId.InterviewScheduled &&
             item.InterviewLevel === InterviewLevels.Level1
           ) {
-            console.log(`  MATCH: Status is InterviewScheduled & Level is 1`);
             return true;
           }
           if (
             cStatusId === StatusId.InterviewScheduledforLevel2 &&
             item.InterviewLevel === InterviewLevels.Level2
           ) {
-            console.log(
-              `   MATCH: Status is InterviewScheduledforLevel2 & Level is 2`,
-            );
             return true;
           }
-
-          console.log(
-            `    NO MATCH: Status (${cStatusId}) and Level (${item.InterviewLevel}) combination didn't match requirements.`,
-          );
           return false;
         });
-
-        if (matchingPanel)
-          console.log(`    Candidate ${c.id} PASSED the filter.`);
-        else console.log(`    Candidate ${c.id} FAILED the filter.`);
 
         return !!matchingPanel;
       },
     );
 
-    console.log("STEP 7: FINAL Filtered Rows applied to UI:", finalRows);
     setRows(finalRows);
   }, [currentUserEmail, employeeList]);
 

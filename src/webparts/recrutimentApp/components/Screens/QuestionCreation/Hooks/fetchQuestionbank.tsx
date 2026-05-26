@@ -41,8 +41,6 @@ export const useFetchQuestionBank = (discipline: string, statusId: number, enabl
             textFr: opt.textFr ?? "",
             isCorrect: opt.isCorrect ?? false,
           }));
-          console.log(item.Type, "Typeee");
-
           return {
             id: item.id,
             type: "single",

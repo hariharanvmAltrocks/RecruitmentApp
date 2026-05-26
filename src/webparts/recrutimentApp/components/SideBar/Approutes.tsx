@@ -17,8 +17,6 @@ interface AppRoutesProps {
 }
 
 const AppRoutes: React.FC<AppRoutesProps> = ({ props, activeMenuId }) => (
-  console.log("Rendering AppRoutes with activeMenuId:", activeMenuId),
-  console.log("Props passed to AppRoutes:", props),
   (
     <Routes>
       <Route path="/Dashboard" element={<Dashboard {...props} />} />

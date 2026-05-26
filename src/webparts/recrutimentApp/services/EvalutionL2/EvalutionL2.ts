@@ -654,16 +654,10 @@ export default class EvalutionL2Service implements IEvalutionL2 {
       (p: any) => p.IsScoreSheetUploaded === "Yes",
     ).length;
 
-    console.log(
-      `[submitEvaluationL2] Level-2 panels — total: ${level2Panels.length} | submitted: ${submittedCount}`,
-    );
 
     let hodWorkflowTriggered = false;
 
     if (level2Panels.length > 0 && submittedCount === level2Panels.length) {
-      console.log(
-        "[submitEvaluationL2] ALL Level-2 panels submitted → triggering HOD workflow",
-      );
 
       await SPServices.SPUpdateItem({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,

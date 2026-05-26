@@ -21,7 +21,6 @@ const Header: React.FC<HeaderProps> = ({
   const { pathname } = useLocation();
   const theme = useTheme();
   const { ADGroupData } = userInfo();
-  console.log(ADGroupData, "ADGroupData");
 
   const breadcrumbs = useMemo(
     () => findBreadcrumbPath(menuData, pathname),

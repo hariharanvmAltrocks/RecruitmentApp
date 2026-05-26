@@ -1241,7 +1241,6 @@ export default class RecruitmentService implements IRecruitmentService {
         ListNames.HRMSDepartment,
         FilterDept,
       );
-      console.log(DepartmentData, "DepartmentData");
 
       const NationalityValue =
         RecuritmentDetails.Nationality === Nationality.Nationals

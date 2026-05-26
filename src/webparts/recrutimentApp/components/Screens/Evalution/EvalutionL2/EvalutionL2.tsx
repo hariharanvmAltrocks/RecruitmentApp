@@ -96,8 +96,6 @@ const EvalutionL2: React.FC<any> = (props) => {
 
   const panelMembers: string[] = React.useMemo(() => {
     const fromReview = hook.reviewData?.panelMembers || [];
-    console.log();
-
     if (fromReview.length > 0) return fromReview;
     return (hook.scoreData || []).map(
       (s: any, i: number) => s.InterviewPersonName || `Interviewer ${i + 1}`,

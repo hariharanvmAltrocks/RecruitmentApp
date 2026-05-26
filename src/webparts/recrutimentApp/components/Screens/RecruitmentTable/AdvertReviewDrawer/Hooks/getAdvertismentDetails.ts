@@ -115,7 +115,6 @@ export const useAdvertismentDetails = (
         checkboxBGV: RoleBGV,
         mantoryChecks: mandatoryChecks,
       }));
-      // console.log(res, "res");
     } catch (error) {
       console.error("Error in OpenComments:", error);
     }

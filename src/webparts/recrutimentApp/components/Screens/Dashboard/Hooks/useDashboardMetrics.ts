@@ -10,7 +10,7 @@ export const useDashboardMetrics = (refreshKey: number) => {
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  console.log(ADGroupData.EmailId, "EmailId");
+  // console.log(ADGroupData.EmailId, "EmailId");
 
   const queries = useMemo(() => {
     return getRoleBasedFilters(roleIDs, ADGroupData.EmailId[0]);

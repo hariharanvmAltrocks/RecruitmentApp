@@ -347,7 +347,6 @@ async function _assignPositionID(p: {
       Filter,
       "",
     );
-    console.log(RecrutimentData, "RecrutimentData");
 
     await SPServices.SPAddItem({
       Listname: ListNames.HRMSSelectedCandidateDetailsByHOD,
@@ -389,7 +388,6 @@ async function _updatePortalWorkflowStatus(
       comments,
       actionBy: RoleName.HOD,
     };
-    console.log("[_updatePortalWorkflowStatus] Sending data:", data);
     await _careerPortal.UpdateCandidateStatus(data);
   } catch (e) {
     console.error("[_updatePortalWorkflowStatus]", e);
@@ -1057,9 +1055,6 @@ class ReviewScoreCardServices {
     department: string,
   ): Promise<PositionOption[]> {
     try {
-      console.log("jobCodeID:", jobCodeID);
-      console.log("department:", department);
-
       const res: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSPositionIDMaster,
         Select: "*,JobCode/JobCode,Department/DepartmentName",
@@ -1085,14 +1080,12 @@ class ReviewScoreCardServices {
         Topcount: 100,
       });
 
-      console.log("Position raw response:", res);
 
       const mapped = (res || []).map((item: any) => ({
         key: item.ID,
         text: item.PositionID || item.Title || `#${item.ID}`,
       }));
 
-      console.log("Mapped position options:", mapped);
 
       return mapped;
     } catch (e) {
@@ -1103,7 +1096,6 @@ class ReviewScoreCardServices {
   async submitHODDecision(
     params: HODSubmitParams,
   ): Promise<{ success: boolean; message: string }> {
-    console.log("[ReviewScoreCardServices] submitHODDecision params:", params);
     try {
       const {
         candidateId,
@@ -1121,19 +1113,15 @@ class ReviewScoreCardServices {
         isExapt,
       } = params;
 
-      console.log(
-        "[ReviewScoreCardServices] submitHODDecision branch: isLevel2 =",
-        lv2,
-      );
+    
       if (lv2) {
-        console.log("Branch 1 Step 1: Saving Level 2 comment");
+      
         await _insertOrUpdateLevel2Comment(
           candidateId,
           currentRoleId,
           comments,
         );
-        console.log("Branch 1 Step 1: Level 2 comment saved");
-        console.log("Branch 1 Step 2: Marking user panel as uploaded");
+        
         const currentUserGuid = await _getUserGuid(currentUserEmail);
         const allPanels: any[] = await SPServices.SPReadItems({
           Listname: ListNames.HRMSInterviewPanelDetails,
@@ -1162,8 +1150,6 @@ class ReviewScoreCardServices {
           });
         }
 
-        console.log("Branch 1 Step 2: User panels marked as uploaded");
-        console.log("Branch 1 Step 3: Checking if all Level 2 panels uploaded");
         const refreshed: any[] = await SPServices.SPReadItems({
           Listname: ListNames.HRMSInterviewPanelDetails,
           Select: "ID,CandidateID/ID,InterviewLevel,IsScoreSheetUploaded",
@@ -1176,25 +1162,14 @@ class ReviewScoreCardServices {
             },
           ],
         });
-        console.log(
-          "Branch 1 Step 3: Refreshed panels details:",
-          refreshed.map((p) => ({
-            id: p.ID,
-            interviewLevel: p.InterviewLevel,
-          })),
-        );
+        
         const level2Panels = refreshed.filter(
           (p: any) => p.InterviewLevel === "Level 2",
         ); // 'Level 2' matches HRMSInterviewPanelDetails.InterviewLevel
         const uploadedCount = level2Panels.filter(
           (p: any) => p.IsScoreSheetUploaded === "Yes",
         ).length;
-        console.log(
-          "Branch 1 Step 3: Level 2 panels found =",
-          level2Panels.length,
-          "uploadedCount =",
-          uploadedCount,
-        );
+       
         if (uploadedCount === level2Panels.length && level2Panels.length > 0) {
           let BtnAction =
             params.hodDecision === "Yes"
@@ -1218,20 +1193,15 @@ class ReviewScoreCardServices {
             ID: candidateId,
           });
         }
-        console.log(
-          "Branch 1 Step 3: Checked panels, uploadedCount =",
-          uploadedCount,
-          "total =",
-          level2Panels.length,
-        );
+       
         return {
           success: true,
           message: "✓ Level 2 scorecard submitted successfully.",
         };
       }
-      console.log("Branch 2 Step 1: Calculating OthersInterviewed");
+     
       const othersInterviewed = await _getOthersInterviewed(jobCodeID);
-      console.log("Branch 2 Step 1: OthersInterviewed =", othersInterviewed);
+     
       const isLevel2StatusId =
         statusId === StatusId.pendingL2shorlistingwithHOD ||
         statusId === StatusId.CandidateOnHoldbyHODLevel1;
@@ -1274,14 +1244,7 @@ class ReviewScoreCardServices {
           return { success: false, message: "Invalid decision." };
       }
 
-      console.log(
-        "Branch 2 Step 2: Mapped decision",
-        hodDecision,
-        "to actionId =",
-        actionId,
-        "workflowStatus =",
-        workflowStatus,
-      );
+     
       await SPServices.SPUpdateItem({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
         RequestJSON: {
@@ -1294,57 +1257,41 @@ class ReviewScoreCardServices {
         ID: candidateId,
       });
 
-      console.log(
-        "Branch 2 Step 3: Candidate updated with actionId =",
-        actionId,
-        "GPA =",
-        gpa,
-        "OthersInterviewed =",
-        othersInterviewed,
-      );
+     
       await _updatePortalWorkflowStatus(
         workflowStatus,
         Number(jobRequestId),
         comments,
       );
-      console.log(
-        "Branch 2 Step 4: Portal workflow updated to",
-        workflowStatus,
-      );
+     
       await _insertOrUpdateLevel1Comment(
         candidateId,
         currentRoleId,
         comments,
         "Level 1",
       );
-      console.log("Branch 2 Step 5: Level 1 comment saved (Level 1)");
+     
       if (hodDecision === "Yes" && positionId) {
-        console.log("Branch 2 Step 6: Assigning position ID", positionId);
+        
         await _assignPositionID({
           positionId,
           candidateId,
           recruitmentID,
           isExpat: params.isExapt,
         });
-        console.log("Branch 2 Step 6: Position assigned");
+       
       }
       if ((hodDecision === "No" || hodDecision === "On Hold") && positionId) {
-        console.log(
-          "Branch 2 Step 7: Reverting position status for ID",
-          positionId,
-        );
+       
         await SPServices.SPUpdateItem({
           Listname: ListNames.HRMSPositionIDMaster,
           RequestJSON: { PositionIDStatus: "Recruitment Initiated" },
           ID: positionId,
         });
-        console.log("Branch 2 Step 7: Position status reverted");
+      
       }
 
-      console.log(
-        "[ReviewScoreCardServices] submitHODDecision success:",
-        successMsg,
-      );
+     
       return { success: true, message: successMsg };
     } catch (e) {
       console.error("[submitHODDecision]", e);

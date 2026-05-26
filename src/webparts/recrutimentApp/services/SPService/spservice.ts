@@ -414,7 +414,7 @@ const batchGet = async (
         .top(5000);
 
       return request().then((r) => {
-        console.log(r, "data");
+        // console.log(r, "data");
 
         if (!results[q.StateValue]) {
           results[q.StateValue] = [];

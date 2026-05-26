@@ -980,17 +980,6 @@ export const evaluationService = {
 
           const candidateGrade =
             item.JobGrade || item.PatersonGrade || defaultGrade || "";
-          console.log(
-            "[fetchScorecardCandidates] candidate",
-            item.ID,
-            "grade resolve",
-            {
-              jobGrade: item.JobGrade,
-              patersonGrade: item.PatersonGrade,
-              defaultGrade,
-              resolvedGrade: candidateGrade,
-            },
-          );
 
           return {
             id: item.ID,
@@ -1054,27 +1043,6 @@ export const evaluationService = {
         });
         if (sc?.length) {
           const s = sc[0];
-          console.log(
-            "[fetchScoreData] candidateID:",
-            candidateID,
-            "panelID:",
-            p.ID,
-            "panelName:",
-            p.InterviewPanel?.Title,
-          );
-          console.log("[fetchScoreData] raw scorecard response:", s);
-          console.log("[fetchScoreData] mapped score values:", {
-            RelevantQualification: s.RelevantQualification || "0",
-            ReleventExperience: s.ReleventExperience || "0",
-            Knowledge: s.Knowledge || "0",
-            EnergyLevel: s.EnergyLevel || "0",
-            MeetJobRequirement: s.MeetJobRequirement || "0",
-            ContributeTowardsCultureRequried:
-              s.ContributeTowardsCultureRequried || "0",
-            Experience: s.Experience || "0",
-            OtherCriteriaScore: s.OtherCriteriaScore || "0",
-          });
-
           results.push({
             InterviewPanelID: p.ID,
             RelevantQualification: s.RelevantQualification || "0",
@@ -1341,19 +1309,6 @@ export const evaluationService = {
         };
       });
 
-      console.log(
-        "[fetchComments] candidateID:",
-        candidateID,
-        "level1 count:",
-        level1.length,
-        "level2 count:",
-        level2.length,
-        "level1:",
-        level1,
-        "level2:",
-        level2,
-      );
-
       return { level1, level2 };
     } catch (e) {
       console.error("[fetchComments] error:", e);
@@ -1366,8 +1321,6 @@ async fetchPositionOptions(
   department: string
 ): Promise<PositionOption[]> {
   try {
-    console.log("jobCodeID:", jobCodeID);
-    console.log("department:", department);
 
     const res: any[] = await SPServices.SPReadItems({
       Listname: ListNames.HRMSPositionIDMaster,
@@ -1394,14 +1347,10 @@ async fetchPositionOptions(
       Topcount: 100,
     });
 
-    console.log("Position raw response:", res);
-
     const mapped = (res || []).map((item: any) => ({
       key: item.ID,
       text: item.PositionID || item.Title || `#${item.ID}`,
     }));
-
-    console.log("Mapped position options:", mapped);
 
     return mapped;
   } catch (e) {

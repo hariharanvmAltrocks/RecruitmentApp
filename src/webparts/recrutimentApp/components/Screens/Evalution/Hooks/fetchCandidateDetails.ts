@@ -95,12 +95,7 @@ export function useCandidateDetails({
           })),
         );
 
-        console.log("[useCandidateDetails] SUCCESS —", {
-          candidateId,
-          currentUserPanelId: result.currentUserPanelId,
-          questionsCount: result.questions.length,
-          jobRequestId,
-        });
+      
       } catch (err) {
         console.error("[useCandidateDetails] error:", err);
         if (isMounted)

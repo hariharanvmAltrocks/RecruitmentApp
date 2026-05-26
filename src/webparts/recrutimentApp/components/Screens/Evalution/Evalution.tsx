@@ -28,14 +28,14 @@ export const Evalution = (props: any) => {
   const stateCandidateId = location.state?.ID;
   const candidateId = Number(stateCandidateId || props.ID || 0);
 
-  console.log(
-    "[Evalution] candidateId:",
-    candidateId,
-    "from state:",
-    stateCandidateId,
-    "props:",
-    props.ID,
-  );
+  // console.log(
+  //   "[Evalution] candidateId:",
+  //   candidateId,
+  //   "from state:",
+  //   stateCandidateId,
+  //   "props:",
+  //   props.ID,
+  // );
 
   return (
     <EvaluationProvider>

@@ -10,11 +10,9 @@ const questionnaireApi = new QuestionnaireApi();
 
 const defaultService: IQuestionBankService = {
   getQuestions: async (jobCode: string) => {
-    console.log("[fetchQuestionBank] getQuestions start", jobCode);
     const response = await questionnaireApi.getQuestionnaire(jobCode);
 
     if (!response.data || response.data.length === 0) {
-      console.log("[fetchQuestionBank] getQuestions empty");
       return [];
     }
 
@@ -30,7 +28,6 @@ export function useQuestionBank(
   jobCode: string,
   service: IQuestionBankService = defaultService,
 ) {
-  console.log("[useQuestionBank] jobCode", jobCode);
   const [data, setData] = React.useState<InterviewQuestion[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<string | null>(null);

@@ -105,12 +105,6 @@ export async function getEvaluationFormData(
   candidateId: number,
   currentUserEmail: string,
 ): Promise<EvaluationFormResult> {
-  console.log(
-    "[getEvaluationFormData] START — candidateId:",
-    candidateId,
-    "email:",
-    currentUserEmail,
-  );
 
   try {
     const [candidateRows, currentUserGuid] = await Promise.all([
@@ -159,19 +153,6 @@ export async function getEvaluationFormData(
       : "";
     const jobRequestId = raw.JobRequestID ?? "";
 
-    console.log("[getEvaluationFormData] candidateRaw:", {
-      ID: raw.ID,
-      fullName,
-      recruitmentId,
-      jobCodeId,
-      jobCodeStr,
-      jobRequestId,
-      NationalityCode: raw.NationalityCode,
-    });
-    console.log(
-      "[getEvaluationFormData] currentUserGuid (SP user Id):",
-      currentUserGuid,
-    );
     const [panelRows, reviewerRes] = await Promise.all([
       SPServices.SPReadItems({
         Listname: ListNames.HRMSInterviewPanelDetails,
@@ -198,24 +179,6 @@ export async function getEvaluationFormData(
       ),
     ]);
 
-    console.log(
-      "[getEvaluationFormData] panelRows count:",
-      (panelRows as any[]).length,
-    );
-    console.log(
-      "[getEvaluationFormData] panelRows detail:",
-      JSON.stringify(
-        (panelRows as any[]).map((p: any) => ({
-          ID: p.ID,
-          InterviewPanelId: p.InterviewPanel?.Id,
-          Email: p.InterviewPanel?.EMail,
-          Level: p.InterviewLevel,
-          Uploaded: p.IsScoreSheetUploaded,
-          CandidateID: p.CandidateID?.ID,
-          RecruitmentID: p.RecruitmentID?.ID,
-        })),
-      ),
-    );
 
     let currentUserPanel: any = null;
 
@@ -223,24 +186,13 @@ export async function getEvaluationFormData(
       currentUserPanel = (panelRows as any[]).find(
         (p: any) => Number(p.InterviewPanel?.Id) === Number(currentUserGuid),
       );
-      console.log(
-        "[getEvaluationFormData] Panel match by Id:",
-        currentUserPanel?.ID ?? "NOT FOUND",
-        "| comparing panelIds:",
-        (panelRows as any[]).map((p: any) => p.InterviewPanel?.Id),
-        "vs currentUserGuid:",
-        currentUserGuid,
-      );
+
     }
     if (!currentUserPanel && currentUserEmail) {
       currentUserPanel = (panelRows as any[]).find(
         (p: any) =>
           (p.InterviewPanel?.EMail || "").toLowerCase() ===
           currentUserEmail.toLowerCase(),
-      );
-      console.log(
-        "[getEvaluationFormData] Panel match by Email fallback:",
-        currentUserPanel?.ID ?? "NOT FOUND",
       );
     }
     if (!currentUserPanel && currentUserGuid && recruitmentId) {
@@ -250,23 +202,7 @@ export async function getEvaluationFormData(
       currentUserPanel = matchingByRecruit.find(
         (p: any) => Number(p.InterviewPanel?.Id) === Number(currentUserGuid),
       );
-      console.log(
-        "[getEvaluationFormData] Panel match with RecruitmentID filter:",
-        currentUserPanel?.ID ?? "NOT FOUND",
-      );
     }
-
-    console.log(
-      "[getEvaluationFormData] FINAL currentUserPanel:",
-      currentUserPanel
-        ? {
-            ID: currentUserPanel.ID,
-            Level: currentUserPanel.InterviewLevel,
-            Email: currentUserPanel.InterviewPanel?.EMail,
-          }
-        : "NULL — current user is NOT in HRMSInterviewPanelDetails for candidateId=" +
-            candidateId,
-    );
 
     if (!currentUserPanel) {
       console.warn(
@@ -291,10 +227,6 @@ export async function getEvaluationFormData(
           .map((p: any) => p.InterviewPanel?.EMail)
           .filter(Boolean),
       ),
-    );
-    console.log(
-      "[getEvaluationFormData] Panel emails to resolve names:",
-      uniqueEmails,
     );
 
     const emailToName: Record<string, string> = {};
@@ -339,8 +271,6 @@ export async function getEvaluationFormData(
     const jobTitleEn = reviewer?.JopTitleEnglish ?? "";
     const jobTitleFr = reviewer?.JopTitleFrench ?? "";
 
-    console.log("[getEvaluationFormData] reviewerName:", reviewerName);
-    console.log("[getEvaluationFormData] panelMembers:", panelMembers);
     let grade = raw.JobGrade ?? "";
     let interviewLevel = raw.InterviewLevel ?? "";
     let questions: EvaluationFormQuestion[] = [];
@@ -354,13 +284,9 @@ export async function getEvaluationFormData(
             .GetJobUniqueDataValue(jobCodeId)
             .then(async (res: any) => {
               const key = res?.data?.JobCode ?? "";
-              console.log("[getEvaluationFormData] JobUniqueKey:", key);
               if (!key) return [];
               const qRes = await _questApi.getQuestionnaire(key);
-              console.log(
-                "[getEvaluationFormData] questions count:",
-                qRes?.data?.length ?? 0,
-              );
+              
               return (qRes?.data ?? []).map((q: any) => ({
                 id: q.id,
                 question: q.question,
@@ -415,16 +341,6 @@ export async function getEvaluationFormData(
       isAlreadySubmitted: currentUserPanel?.IsScoreSheetUploaded === "Yes",
     };
 
-    console.log("[getEvaluationFormData] RESULT:", {
-      success: result.success,
-      candidateId: result.candidateId,
-      currentUserGuid: result.currentUserGuid,
-      currentUserPanelId: result.currentUserPanelId,
-      panelMembersCount: result.panelMembers.length,
-      questionsCount: result.questions.length,
-      recruitmentId: result.recruitmentId,
-      jobRequestId,
-    });
     (result as any)._jobRequestId = jobRequestId;
 
     return result;
@@ -436,29 +352,6 @@ export async function getEvaluationFormData(
 export async function submitScorecard(
   params: SubmitScorecardParams,
 ): Promise<{ success: boolean; message: string }> {
-  console.log("[submitScorecard] START —", {
-    candidateId: params.candidateId,
-    panelId: params.panelId,
-    recruitmentId: params.recruitmentId,
-    roleId: params.roleId,
-    interviewPersonNameId: params.interviewPersonNameId,
-    recommendation: params.recommendation,
-    jobRequestId: params.jobRequestId,
-    qualifications: params.qualifications,
-    experience: params.experience,
-    knowledge: params.knowledge,
-    energyLevel: params.energyLevel,
-    jobRequirements: params.jobRequirements,
-    cultureFit: params.cultureFit,
-    expatLocal: params.expatLocal,
-    otherCriteria: params.otherCriteria,
-    questionScoresCount: params.questionScores.length,
-    questionScores: params.questionScores,
-    hasEvalFeedback: !!params.evaluationFeedback,
-    overallFeedbackLen: params.overallFeedback.length,
-  });
-
-  console.log("params.level", params.level);
 
   try {
     const scorecardObj: Record<string, any> = {
@@ -484,10 +377,7 @@ export async function submitScorecard(
         : null,
       QuestionJson: JSON.stringify(params.questionScores),
     };
-    console.log(
-      "[submitScorecard] Inserting into HRMSCandidateScoreCard:",
-      scorecardObj,
-    );
+   
     const insertResponse: any = await SPServices.SPAddItem({
       Listname: ListNames.HRMSCandidateScoreCard,
       RequestJSON: scorecardObj,
@@ -499,31 +389,19 @@ export async function submitScorecard(
       insertResponse?.data?.ID ??
       insertResponse?.data?.Id;
 
-    console.log(
-      "[submitScorecard] HRMSCandidateScoreCard insert — newId:",
-      newId,
-    );
 
     if (!newId) {
       console.error("[submitScorecard] Insert returned no ID — insert failed");
       return { success: false, message: "Failed to submit scorecard." };
     }
 
-    console.log(
-      "[submitScorecard] Updating HRMSInterviewPanelDetails ID:",
-      params.panelId,
-      "→ IsScoreSheetUploaded: Yes",
-    );
     await SPServices.SPUpdateItem({
       Listname: ListNames.HRMSInterviewPanelDetails,
       RequestJSON: { IsScoreSheetUploaded: "Yes" },
       ID: params.panelId,
     });
 
-    console.log(
-      "[submitScorecard] Re-fetching panels for candidateId:",
-      params.candidateId,
-    );
+   
     const updatedPanelRows: any[] = await SPServices.SPReadItems({
       Listname: ListNames.HRMSInterviewPanelDetails,
       Select: "ID,InterviewLevel,IsScoreSheetUploaded",
@@ -543,17 +421,7 @@ export async function submitScorecard(
       (p: any) => p.IsScoreSheetUploaded === "Yes",
     ).length;
 
-    console.log(
-      "[submitScorecard] Level1 panels total:",
-      level1Panels.length,
-      "| uploaded:",
-      uploadedCount,
-    );
-
     if (level1Panels.length > 0 && uploadedCount === level1Panels.length) {
-      console.log(
-        "[submitScorecard] ALL Level1 submitted → triggering HOD workflow",
-      );
       if (params.jobRequestId) {
         try {
           const portalPayload = {
@@ -562,10 +430,6 @@ export async function submitScorecard(
             comments: "",
             actionBy: RoleName.HOD,
           };
-          console.log(
-            "[submitScorecard] Portal UpdateCandidateStatus payload:",
-            portalPayload,
-          );
           await _questApi.UpdateCandidateStatus(portalPayload);
           console.log("[submitScorecard] Portal UpdateCandidateStatus SUCCESS");
         } catch (apiErr) {
@@ -579,10 +443,7 @@ export async function submitScorecard(
           "[submitScorecard] No jobRequestId — skipping portal API call",
         );
       }
-      console.log(
-        "[submitScorecard] Updating HRMSRecruitmentCandidatePersonalDetails ID:",
-        params.candidateId,
-      );
+      
       await SPServices.SPUpdateItem({
         Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
         RequestJSON: {
@@ -605,7 +466,6 @@ export async function submitScorecard(
       );
     }
 
-    console.log("[submitScorecard] SUCCESS");
     return {
       success: true,
       message:
@@ -625,12 +485,6 @@ export async function checkIsAlreadySubmitted(
   currentUserEmail: string,
   Level: string,
 ): Promise<boolean> {
-  console.log(
-    "[checkIsAlreadySubmitted] candidateId:",
-    candidateId,
-    "email:",
-    currentUserEmail,
-  );
   try {
     const [currentUserGuid, panelRows] = await Promise.all([
       _getUserGuid(currentUserEmail),
@@ -655,12 +509,7 @@ export async function checkIsAlreadySubmitted(
     ]);
 
     const rows = panelRows as any[];
-    console.log(
-      "[checkIsAlreadySubmitted] panelRows count:",
-      rows.length,
-      "| currentUserGuid:",
-      currentUserGuid,
-    );
+   
     let userPanel: any = null;
 
     if (currentUserGuid) {
@@ -684,14 +533,7 @@ export async function checkIsAlreadySubmitted(
     }
 
     const alreadySubmitted = userPanel.IsScoreSheetUploaded === "Yes";
-    console.log(
-      "[checkIsAlreadySubmitted] panelID:",
-      userPanel.ID,
-      "| IsScoreSheetUploaded:",
-      userPanel.IsScoreSheetUploaded,
-      "| result:",
-      alreadySubmitted,
-    );
+   
     return alreadySubmitted;
   } catch (err) {
     console.error("[checkIsAlreadySubmitted] error:", err);
@@ -700,16 +542,9 @@ export async function checkIsAlreadySubmitted(
 }
 
 async function _getUserGuid(email: string): Promise<string | null> {
-  console.log("[_getUserGuid] email:", email);
   try {
     if (!email) return null;
     const res = await _common.getUserGuidByEmail(email);
-    console.log(
-      "[_getUserGuid] result key:",
-      res?.data?.key,
-      "| text:",
-      res?.data?.text,
-    );
     if (res?.status === 200 && res?.data?.key) return String(res.data.key);
     return null;
   } catch (e) {

@@ -115,7 +115,6 @@ export const useSubmitCandidateReview = (
 
       const dobValue = cp.DOB ? new Date(cp.DOB) : new Date();
       const dobData = splitDateOnly(dobValue);
-      console.log();
 
       const startDateTime =
         interviewLevel1?.startDate && interviewLevel1?.startTime
@@ -465,7 +464,7 @@ export const useSubmitCandidateReview = (
           return;
         }
       }
-      console.log("candidateData", candidateData);
+      // console.log("candidateData", candidateData);
 
       const res = await CandidateTable.UpdateCandidateStatus(candidateData);
 

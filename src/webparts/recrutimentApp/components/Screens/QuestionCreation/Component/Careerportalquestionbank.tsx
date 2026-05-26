@@ -37,7 +37,6 @@ export const CareerPortalQuestionBank: React.FC<CareerPortalBankProps> = ({
   onSearchChange,
   onAddFromBank,
 }) => {
-  console.log("questionBank", questionBank);
 
   const filtered = useMemo(
     () =>
