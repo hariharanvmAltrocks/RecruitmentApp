@@ -303,7 +303,7 @@ var DashboardService = /** @class */ (function () {
                                 Expand: "JobCode",
                                 Topcount: ApiConfig_1.count.Topcount,
                                 Orderby: "ID",
-                                Orderbydecorasc: true,
+                                Orderbydecorasc: false,
                             })];
                     case 2:
                         portalItems = (_e.sent());

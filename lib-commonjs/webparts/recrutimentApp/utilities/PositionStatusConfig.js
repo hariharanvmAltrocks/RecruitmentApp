@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getStageCandidateindex = exports.PROGRESS_STEPS = exports.getStageIndex = exports.stages = void 0;
+exports.getStageIndexinCandidate = exports.getStageCandidateindex = exports.PROGRESS_STEPS = exports.getStageIndex = exports.CandidateStages = exports.stages = void 0;
 var lucide_react_1 = require("lucide-react");
 var Config_1 = require("./Config");
 exports.stages = [
@@ -12,6 +12,16 @@ exports.stages = [
     { label: "Upload ONEM Signed and Stamped", icon: lucide_react_1.ShieldCheck },
     { label: "Recruitment In Process", icon: lucide_react_1.Network },
     { label: "Onboarded", icon: lucide_react_1.CheckCircle2 },
+];
+exports.CandidateStages = [
+    { label: "Background Check", icon: lucide_react_1.FileSearch },
+    { label: "Dot's Africa Verification", icon: lucide_react_1.CheckCircle2 },
+    { label: "Resi Process", icon: lucide_react_1.ShieldCheck },
+    { label: "Offer Release", icon: lucide_react_1.Briefcase },
+    { label: "Work Permit Process", icon: lucide_react_1.ClipboardCheck },
+    { label: "Employment Contract", icon: lucide_react_1.Send },
+    { label: "Pre-Onboarding", icon: lucide_react_1.Play },
+    { label: "Onboarding", icon: lucide_react_1.Filter },
 ];
 var getStageIndex = function (statusId) {
     if (!statusId)
@@ -96,6 +106,42 @@ var getStageCandidateindex = function (statusId) {
     return 0;
 };
 exports.getStageCandidateindex = getStageCandidateindex;
+var getStageIndexinCandidate = function (statusId) {
+    if (statusId == Config_1.StatusId.PendingHRBGVInitiation ||
+        statusId == Config_1.StatusId.PendingBGdocuploadedbycandidate ||
+        statusId == Config_1.StatusId.PendingHRReviewBGCheck)
+        return 0;
+    if (statusId == Config_1.StatusId.PendingDOTAficaVerification)
+        return 1;
+    if (statusId == Config_1.StatusId.RESIProcessInitiatedforDRC ||
+        statusId == Config_1.StatusId.RESIProcessInitiatedforExpatriate ||
+        statusId == Config_1.StatusId.RESProcessInitiated)
+        return 2;
+    if (statusId == Config_1.StatusId.PendingHROfferInitiate ||
+        statusId == Config_1.StatusId.PendingCandidateOfferLetterUpload ||
+        statusId == Config_1.StatusId.PendingHRReviewOfferWorkPermitInit ||
+        statusId == Config_1.StatusId.PendingLabourHireOfferRelease ||
+        statusId == Config_1.StatusId.PendingHROfferReview)
+        return 3;
+    if (statusId == Config_1.StatusId.PendingCandidateWorkPermitreleatedDoc ||
+        statusId == Config_1.StatusId.PendingHRReviewWorkpermitDocs ||
+        statusId == Config_1.StatusId.WorkPermitAcknowledgedContractUploaded ||
+        statusId == Config_1.StatusId.PendingLabourhireWPPayment ||
+        statusId == Config_1.StatusId.PendingFinancePaymentReview ||
+        statusId == Config_1.StatusId.PendingLHWorkPermitProcess ||
+        statusId ==
+            Config_1.StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract ||
+        statusId == Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract)
+        return 4;
+    if (statusId == Config_1.StatusId.PendingHRpreonboardingchecklist)
+        return 5;
+    if (statusId == Config_1.StatusId.OnboardingProcessinitiatedforDRC ||
+        statusId == Config_1.StatusId.OnboardingProcessinitiatedforExpat ||
+        statusId == Config_1.StatusId.onboardingInProcess)
+        return 6;
+    return 0;
+};
+exports.getStageIndexinCandidate = getStageIndexinCandidate;
 // export const getCandidateStatus = (statusId: number) => {
 //   if (!statusId) return "Unknown";
 //   if (statusId == StatusId.) return "Candidate Shortlisted";

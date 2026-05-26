@@ -114,7 +114,7 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ isOpen, onClose })
             </div>
           </section>
 
-          <section className={styles.section}>
+          {/* <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <h3>Custom Palette</h3>
               {activeKey === "custom" && (
@@ -209,7 +209,7 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ isOpen, onClose })
                 </div>
               </div>
             </div>
-          </section>
+          </section> */}
         </div>
         
         <div className={styles.footer}>

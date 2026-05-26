@@ -113,8 +113,8 @@ export const CandidateProgress: React.FC<ICandidateProgressProps> = ({
                       <span className={styles.name}>{candidate.name}</span>
                       <span className={styles.role}>{candidate.role}</span>
                       <span className={styles.date}>
-                        <Calendar size={12} /> Applied on{" "}
-                        {candidate.appliedDate}
+                        {/* <Calendar size={12} /> Applied on{" "}
+                        {candidate.appliedDate} */}
                       </span>
                     </div>
                   </div>

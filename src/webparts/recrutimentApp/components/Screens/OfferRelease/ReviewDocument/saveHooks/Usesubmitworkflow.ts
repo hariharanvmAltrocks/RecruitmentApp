@@ -519,8 +519,7 @@ function buildCandidateData(
 
   if (
     data.StatusID ===
-      StatusId.PendingHRReviewOfferanduploadEmployementContract &&
-    data.RadioAction === "Yes"
+      StatusId.PendingHRReviewOfferanduploadEmployementContract
   ) {
     base.EmpContractLatterPath = documentResponse.data?.[0]?.content;
   }

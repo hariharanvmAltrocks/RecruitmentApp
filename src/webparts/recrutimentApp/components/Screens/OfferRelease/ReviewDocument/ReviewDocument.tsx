@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { FileCheck, Loader2, Send, X } from "lucide-react";
+import { Check, ChevronRight, FileCheck, Loader2, Network, Send, X } from "lucide-react";
 import { useSignatureDetails } from "../../RecruitmentTable/AdvertReviewDrawer/Hooks/getSignatureDetails";
 import "./ReviewDocument.scss";
 import { ReviewCommentSignature } from "../../RecruitmentTable/Components/ReviewCommentSignature";
@@ -57,6 +57,7 @@ import { WorkflowHODConfig } from "../../../Hooks/WorkflowConfig";
 import { usePreChecklist } from "./Hooks/fetchPreChecklist";
 import PreChecklist from "./Component/Prechecklist/Prechecklist";
 import Loading from "../../../Comman/Loading/loading";
+import { CandidateStages, getStageIndex, getStageIndexinCandidate, stages } from "../../../../utilities/PositionStatusConfig";
 
 export interface ReviewDocumentProps {
   drawerOpen: boolean;
@@ -125,15 +126,12 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
   const navigate = useNavigate();
   const { modalState, showModal, closeModal } = useModalPopup();
 
-  // ── Full-page loader (blocks entire panel during API call) ──────────────────
   const [pageloading, setPageLoading] = useState(false);
 
-  // ── Which button is currently active (drives per-button spinner icon) ───────
-  // Unlike isSubmittingRef, this IS a state so React re-renders and shows spinner
   const [activeButton, setActiveButton] = useState<ActiveButton>(null);
 
-  // True when ANY button is submitting — used to disable all buttons at once
   const isAnySubmitting = activeButton !== null;
+  const [showRoadmap, setShowRoadmap] = useState(false);
 
   const {
     consentVerification,
@@ -609,13 +607,31 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                   </div>
                 )}
 
-                <button
+                <div
+                  className="review-document__header-right"
+                  style={{ display: "flex", alignItems: "center", gap: "12px" }}
+                >
+                  <button
+                    onClick={() => setShowRoadmap(!showRoadmap)}
+                    className={`review-document__toggle-btn ${showRoadmap ? "review-document__toggle-btn--active" : "review-document__toggle-btn--inactive"}`}
+                  >
+                    <Network size={14} />
+                    Candidate Status
+                    <ChevronRight
+                      size={14}
+                      className="review-document__toggle-icon"
+                    />
+                  </button>
+                  <button
                   type="button"
                   className="review-document__close"
                   onClick={onClose}
                 >
                   <X size={18} />
                 </button>
+                </div>
+
+                
               </div>
 
               <div className="review-document__content">
@@ -623,6 +639,36 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                   <PositionSkeleton />
                 ) : (
                   <>
+                  <AnimatePresence>
+                                    {showRoadmap && (
+                                      <motion.div
+                                        initial={{ height: 0, opacity: 0 }}
+                                        animate={{ height: "auto", opacity: 1 }}
+                                        exit={{ height: 0, opacity: 0 }}
+                                        transition={{ duration: 0.4, ease: "easeInOut" }}
+                                        // style={{ overflow: "hidden" }}
+                                      >
+                                        <div className="advert-roadmap-wrapper">
+                                          <div className="advert-roadmap__header-top">
+                                            <h3 className="advert-roadmap__header-title">
+                                              <div className="advert-roadmap__header-title-bar"></div>
+                                              Candidate Lifecycle Roadmap
+                                            </h3>
+                                            {/* <div className="advert-roadmap__header-status">
+                                              <div className="advert-roadmap__header-status-dot" />
+                                              <span className="advert-roadmap__header-status-text">
+                                                Active Status: Advert Review
+                                              </span>
+                                            </div> */}
+                                          </div>
+                                          <CandidateRoadmap
+                                            statusId={positionDetails?.StatusID || 0}
+                                          />
+                                        </div>
+                                      </motion.div>
+                                    )}
+                                  </AnimatePresence>
+
                     <PositionFrame
                       positionDetails={positionDetails}
                       isLoading={positionLoading}
@@ -877,5 +923,88 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
         </>
       )}
     </AnimatePresence>
+  );
+};
+
+const CandidateRoadmap = ({ statusId }: { statusId: number }) => {
+  const currentStage = getStageIndexinCandidate(statusId);
+
+  return (
+    <div className="advert-roadmap">
+      <div className="advert-roadmap__container">
+        {CandidateStages.map((stage, index) => {
+          const Icon = stage.icon;
+          const isCompleted = index < currentStage;   
+          const isCurrent = index === currentStage;
+
+          return (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="advert-roadmap__stage"
+            >
+              {/* Connector line */}
+              {index < stages.length - 1 && (
+                <div className="advert-roadmap__connector">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: isCompleted ? "100%" : "0%" }}
+                    className="advert-roadmap__connector-fill"
+                    transition={{ duration: 0.8, delay: index * 0.1 }}
+                  />
+                </div>
+              )}
+
+              {/* Node */}
+              <div className="advert-roadmap__node-wrapper">
+                <motion.div
+                  whileHover={{ scale: 1.15 }}
+                  className={`advert-roadmap__node ${
+                    isCompleted
+                      ? "advert-roadmap__node--completed"
+                      : isCurrent
+                        ? "advert-roadmap__node--current"
+                        : "advert-roadmap__node--pending"
+                  }`}
+                >
+                  {isCompleted ? (
+                    <Check size={18} strokeWidth={3} />
+                  ) : (
+                    <Icon size={18} strokeWidth={2} />
+                  )}
+                </motion.div>
+
+                {isCurrent && (
+                  <div className="advert-roadmap__ping-wrapper">
+                    <span className="advert-roadmap__ping" />
+                  </div>
+                )}
+              </div>
+
+              {/* Label */}
+              <div className="advert-roadmap__label-wrapper">
+                <span
+                  className={`advert-roadmap__label ${
+                    isCompleted
+                      ? "advert-roadmap__label--completed"
+                      : isCurrent
+                        ? "advert-roadmap__label--current"
+                        : "advert-roadmap__label--pending"
+                  }`}
+                >
+                  {stage.label}
+                </span>
+
+                {isCompleted && (
+                  <span className="advert-roadmap__status-done">Done</span>
+                )}
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+    </div>
   );
 };

@@ -31,6 +31,7 @@ var buildStatusFlags = function (statusID, empCat, consentVerification, isExpat)
     PendingHREmploymentContractReview: statusID === EvaluationConfig_1.StatusId.PendingHREmploymentContractReview,
     PreOnboardingChecklist: statusID === EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist,
     isExpat: isExpat === true,
+    PendingHRReviewOfferanduploadEmployementContract: statusID === EvaluationConfig_1.StatusId.PendingHRReviewOfferanduploadEmployementContract,
 }); };
 exports.buildStatusFlags = buildStatusFlags;
 var resolveVerificationToggle = function (is) {
@@ -42,6 +43,7 @@ var resolveVerificationToggle = function (is) {
         is.pendingFinancePayment ||
         is.PendingHREmploymentContractReview ||
         is.PendingHRReviewOfferuploadEmploymentInit ||
+        is.PendingHRReviewOfferanduploadEmployementContract ||
         is.pendingHRECVerification;
 };
 var resolveUploadLabel = function (is) {
@@ -51,12 +53,15 @@ var resolveUploadLabel = function (is) {
         return "Upload Employment Contract";
     if (is.pendingFinancePayment && is.isLabourHire)
         return "Proof Of Document";
+    if (is.PendingHRReviewOfferanduploadEmployementContract && is.isVerified)
+        return "Upload Employment Contract";
     return "";
 };
 var buildVisibilityFlags = function (is, hasDetails, rejectFlag, revertFlag) {
     var showUploadDocument = (is.pendingHROfferInitiate && is.isKCSAEmployee) ||
         is.wpAckContractUploaded ||
-        (is.pendingFinancePayment && is.isVerified && is.isLabourHire);
+        (is.pendingFinancePayment && is.isVerified && is.isLabourHire) ||
+        (is.PendingHRReviewOfferanduploadEmployementContract && is.isVerified);
     var uploadDocLabel = resolveUploadLabel(is);
     return {
         showCandidateDocs: hasDetails && !is.pendingHRBGVInit,

@@ -35,6 +35,7 @@ var WorkflowConfig_1 = require("../../../Hooks/WorkflowConfig");
 var fetchPreChecklist_1 = require("./Hooks/fetchPreChecklist");
 var Prechecklist_1 = tslib_1.__importDefault(require("./Component/Prechecklist/Prechecklist"));
 var loading_1 = tslib_1.__importDefault(require("../../../Comman/Loading/loading"));
+var PositionStatusConfig_1 = require("../../../../utilities/PositionStatusConfig");
 var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
     return react_1.default.createElement("div", { className: "review-document__skeleton", style: { width: width, height: height } });
@@ -57,18 +58,15 @@ var ReviewDocument = function (_a) {
     var drawerOpen = _a.drawerOpen, selectedJobId = _a.selectedJobId, CandidateID = _a.CandidateID, selectedcandidateID = _a.selectedcandidateID, jobrequestID = _a.jobrequestID, IsExpat = _a.IsExpat, loadingState = _a.loadingState, onClose = _a.onClose, setLoadingState = _a.setLoadingState, refreshKey = _a.refreshKey;
     var navigate = (0, react_router_dom_1.useNavigate)();
     var _g = (0, useModalPopup_1.useModalPopup)(), modalState = _g.modalState, showModal = _g.showModal, closeModal = _g.closeModal;
-    // ── Full-page loader (blocks entire panel during API call) ──────────────────
     var _h = (0, react_1.useState)(false), pageloading = _h[0], setPageLoading = _h[1];
-    // ── Which button is currently active (drives per-button spinner icon) ───────
-    // Unlike isSubmittingRef, this IS a state so React re-renders and shows spinner
     var _j = (0, react_1.useState)(null), activeButton = _j[0], setActiveButton = _j[1];
-    // True when ANY button is submitting — used to disable all buttons at once
     var isAnySubmitting = activeButton !== null;
-    var _k = (0, useReviewDocumentManage_1.useStateOfferRelease)(), consentVerification = _k.consentVerification, consentFile = _k.consentFile, showConsentErrors = _k.showConsentErrors, handleConsentVerification = _k.handleConsentVerification, handleConsentFile = _k.handleConsentFile, coiState = _k.coiState, handleCoiChange = _k.handleCoiChange, fileInputRef = _k.fileInputRef, selectedFile = _k.selectedFile, isReading = _k.isReading, handleUploadClick = _k.handleUploadClick, handleFileChange = _k.handleFileChange, clearFile = _k.clearFile, uploadDocs = _k.uploadDocs, handleDocumnetUpload = _k.handleDocumnetUpload, reviewerComments = _k.reviewerComments, acknowledgementCheckbox = _k.acknowledgementCheckbox, onCommentsChange = _k.onCommentsChange, onToggleAcknowledgement = _k.onToggleAcknowledgement, validateAll = _k.validateAll, validationError = _k.validationError;
-    var _l = (0, react_1.useState)(false), showComments = _l[0], setshowComments = _l[1];
-    var _m = (0, getCandidateDetails_1.useCandidatDetails)(selectedJobId, CandidateID, selectedcandidateID, jobrequestID, IsExpat), positionDetails = _m.data, positionLoading = _m.loading;
+    var _k = (0, react_1.useState)(false), showRoadmap = _k[0], setShowRoadmap = _k[1];
+    var _l = (0, useReviewDocumentManage_1.useStateOfferRelease)(), consentVerification = _l.consentVerification, consentFile = _l.consentFile, showConsentErrors = _l.showConsentErrors, handleConsentVerification = _l.handleConsentVerification, handleConsentFile = _l.handleConsentFile, coiState = _l.coiState, handleCoiChange = _l.handleCoiChange, fileInputRef = _l.fileInputRef, selectedFile = _l.selectedFile, isReading = _l.isReading, handleUploadClick = _l.handleUploadClick, handleFileChange = _l.handleFileChange, clearFile = _l.clearFile, uploadDocs = _l.uploadDocs, handleDocumnetUpload = _l.handleDocumnetUpload, reviewerComments = _l.reviewerComments, acknowledgementCheckbox = _l.acknowledgementCheckbox, onCommentsChange = _l.onCommentsChange, onToggleAcknowledgement = _l.onToggleAcknowledgement, validateAll = _l.validateAll, validationError = _l.validationError;
+    var _m = (0, react_1.useState)(false), showComments = _m[0], setshowComments = _m[1];
+    var _o = (0, getCandidateDetails_1.useCandidatDetails)(selectedJobId, CandidateID, selectedcandidateID, jobrequestID, IsExpat), positionDetails = _o.data, positionLoading = _o.loading;
     var isPendingDOTAfrica = (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) === Config_1.StatusId.PendingDOTAficaVerification;
-    var _o = (0, useStatusDetails_1.useBGVStatusDetails)(jobrequestID, isPendingDOTAfrica), bgvStatusDetails = _o.data, bgvStatus = _o.bgvStatus, bgvStatusLoading = _o.loading, bgvComments = _o.bgvComments, allCompleted = _o.allCompleted, rejectFlag = _o.rejectFlag, revertFLag = _o.revertFLag;
+    var _p = (0, useStatusDetails_1.useBGVStatusDetails)(jobrequestID, isPendingDOTAfrica), bgvStatusDetails = _p.data, bgvStatus = _p.bgvStatus, bgvStatusLoading = _p.loading, bgvComments = _p.bgvComments, allCompleted = _p.allCompleted, rejectFlag = _p.rejectFlag, revertFLag = _p.revertFLag;
     var isConsentVerified = consentVerification === "verified";
     var docData = (0, Userequireddocuments_1.useRequiredDocuments)((_b = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.ProfileID) !== null && _b !== void 0 ? _b : "", (_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobRequestID) !== null && _c !== void 0 ? _c : "").data;
     var submitDeps = {
@@ -82,18 +80,18 @@ var ReviewDocument = function (_a) {
         uploadDocs: uploadDocs,
         selectedFile: selectedFile,
     };
-    var _p = (0, Usesubmitworkflow_1.useSubmitWorkflow)(submitDeps), SubmitLoading = _p.isLoading, SubmitModalState = _p.modalState, SubmitCloseModal = _p.closeModal, submit = _p.submit;
-    var _q = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _q.data, signatureLoading = _q.loading;
+    var _q = (0, Usesubmitworkflow_1.useSubmitWorkflow)(submitDeps), SubmitLoading = _q.isLoading, SubmitModalState = _q.modalState, SubmitCloseModal = _q.closeModal, submit = _q.submit;
+    var _r = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _r.data, signatureLoading = _r.loading;
     var isExpat = (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.NationalityCode) !== ConditionConfig_1.NationalityCode.Nationals;
     var isPreOnboarding = (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) === Config_1.StatusId.PendingHRpreonboardingchecklist;
-    var _r = (0, fetchPreChecklist_1.usePreChecklist)(isExpat, (_e = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.PreChecklist) !== null && _e !== void 0 ? _e : undefined, isPreOnboarding), checklist = _r.checklist, allChecked = _r.allChecked, loading = _r.loading, updateCheckItem = _r.updateCheckItem;
+    var _s = (0, fetchPreChecklist_1.usePreChecklist)(isExpat, (_e = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.PreChecklist) !== null && _e !== void 0 ? _e : undefined, isPreOnboarding), checklist = _s.checklist, allChecked = _s.allChecked, loading = _s.loading, updateCheckItem = _s.updateCheckItem;
     var isLoading = signatureLoading;
     var isPageLoading = positionLoading || signatureLoading || bgvStatusLoading;
     (0, react_1.useEffect)(function () {
         if (loadingState !== isLoading)
             setLoadingState(isLoading);
     }, [isLoading, loadingState, setLoadingState]);
-    var _s = (0, Usereviewconditions_1.useReviewConditions)({
+    var _t = (0, Usereviewconditions_1.useReviewConditions)({
         statusID: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID,
         empCat: positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.EmploymentCategory,
         consentVerification: consentVerification,
@@ -101,7 +99,7 @@ var ReviewDocument = function (_a) {
         rejectFlag: !!rejectFlag,
         revertFlag: !!revertFLag,
         isExpat: isExpat,
-    }), is = _s.is, vis = _s.vis;
+    }), is = _t.is, vis = _t.vis;
     var headerMeta = (0, react_1.useMemo)(function () {
         var _a, _b, _c;
         return ({
@@ -443,9 +441,21 @@ var ReviewDocument = function (_a) {
                                 react_1.default.createElement("span", { className: "review-document__meta-text" }, headerMeta.department)))))),
                     vis.showDOTAficaBadge && (react_1.default.createElement("div", { className: "review-document__header-right" },
                         react_1.default.createElement(Statusbadge_1.default, { steps: bgvStatus !== null && bgvStatus !== void 0 ? bgvStatus : [] }))),
-                    react_1.default.createElement("button", { type: "button", className: "review-document__close", onClick: onClose },
-                        react_1.default.createElement(lucide_react_1.X, { size: 18 }))),
+                    react_1.default.createElement("div", { className: "review-document__header-right", style: { display: "flex", alignItems: "center", gap: "12px" } },
+                        react_1.default.createElement("button", { onClick: function () { return setShowRoadmap(!showRoadmap); }, className: "review-document__toggle-btn ".concat(showRoadmap ? "review-document__toggle-btn--active" : "review-document__toggle-btn--inactive") },
+                            react_1.default.createElement(lucide_react_1.Network, { size: 14 }),
+                            "Candidate Status",
+                            react_1.default.createElement(lucide_react_1.ChevronRight, { size: 14, className: "review-document__toggle-icon" })),
+                        react_1.default.createElement("button", { type: "button", className: "review-document__close", onClick: onClose },
+                            react_1.default.createElement(lucide_react_1.X, { size: 18 })))),
                 react_1.default.createElement("div", { className: "review-document__content" }, isPageLoading ? (react_1.default.createElement(PositionSkeleton, null)) : (react_1.default.createElement(react_1.default.Fragment, null,
+                    react_1.default.createElement(framer_motion_1.AnimatePresence, null, showRoadmap && (react_1.default.createElement(framer_motion_1.motion.div, { initial: { height: 0, opacity: 0 }, animate: { height: "auto", opacity: 1 }, exit: { height: 0, opacity: 0 }, transition: { duration: 0.4, ease: "easeInOut" } },
+                        react_1.default.createElement("div", { className: "advert-roadmap-wrapper" },
+                            react_1.default.createElement("div", { className: "advert-roadmap__header-top" },
+                                react_1.default.createElement("h3", { className: "advert-roadmap__header-title" },
+                                    react_1.default.createElement("div", { className: "advert-roadmap__header-title-bar" }),
+                                    "Candidate Lifecycle Roadmap")),
+                            react_1.default.createElement(CandidateRoadmap, { statusId: (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) || 0 }))))),
                     react_1.default.createElement(PositionFrame_1.PositionFrame, { positionDetails: positionDetails, isLoading: positionLoading, headerCode: headerMeta.code }),
                     vis.showCandidateDocs && (react_1.default.createElement(CandidateDocumentsRepository_1.default, { data: docData !== null && docData !== void 0 ? docData : null })),
                     vis.showVerificationToggle && (react_1.default.createElement(ResueComponent_1.VerificationToggle, { value: consentVerification, onChange: handleConsentVerification, hasError: validationError.verification })),
@@ -505,4 +515,32 @@ var ReviewDocument = function (_a) {
         react_1.default.createElement(commentsPopup_1.ViewCommentsModal, { isOpen: showComments, onClose: function () { return setshowComments(false); }, comments: bgvComments, title: "View BGV Comments", isLoading: false })))));
 };
 exports.ReviewDocument = ReviewDocument;
+var CandidateRoadmap = function (_a) {
+    var statusId = _a.statusId;
+    var currentStage = (0, PositionStatusConfig_1.getStageIndexinCandidate)(statusId);
+    return (react_1.default.createElement("div", { className: "advert-roadmap" },
+        react_1.default.createElement("div", { className: "advert-roadmap__container" }, PositionStatusConfig_1.CandidateStages.map(function (stage, index) {
+            var Icon = stage.icon;
+            var isCompleted = index < currentStage;
+            var isCurrent = index === currentStage;
+            return (react_1.default.createElement(framer_motion_1.motion.div, { key: index, initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { delay: index * 0.05 }, className: "advert-roadmap__stage" },
+                index < PositionStatusConfig_1.stages.length - 1 && (react_1.default.createElement("div", { className: "advert-roadmap__connector" },
+                    react_1.default.createElement(framer_motion_1.motion.div, { initial: { width: 0 }, animate: { width: isCompleted ? "100%" : "0%" }, className: "advert-roadmap__connector-fill", transition: { duration: 0.8, delay: index * 0.1 } }))),
+                react_1.default.createElement("div", { className: "advert-roadmap__node-wrapper" },
+                    react_1.default.createElement(framer_motion_1.motion.div, { whileHover: { scale: 1.15 }, className: "advert-roadmap__node ".concat(isCompleted
+                            ? "advert-roadmap__node--completed"
+                            : isCurrent
+                                ? "advert-roadmap__node--current"
+                                : "advert-roadmap__node--pending") }, isCompleted ? (react_1.default.createElement(lucide_react_1.Check, { size: 18, strokeWidth: 3 })) : (react_1.default.createElement(Icon, { size: 18, strokeWidth: 2 }))),
+                    isCurrent && (react_1.default.createElement("div", { className: "advert-roadmap__ping-wrapper" },
+                        react_1.default.createElement("span", { className: "advert-roadmap__ping" })))),
+                react_1.default.createElement("div", { className: "advert-roadmap__label-wrapper" },
+                    react_1.default.createElement("span", { className: "advert-roadmap__label ".concat(isCompleted
+                            ? "advert-roadmap__label--completed"
+                            : isCurrent
+                                ? "advert-roadmap__label--current"
+                                : "advert-roadmap__label--pending") }, stage.label),
+                    isCompleted && (react_1.default.createElement("span", { className: "advert-roadmap__status-done" }, "Done")))));
+        }))));
+};
 //# sourceMappingURL=ReviewDocument.js.map

@@ -999,7 +999,7 @@ var RecruitmentService = /** @class */ (function () {
                                 FilterCondition: "and",
                                 select: ["*"],
                                 Orderby: "ID",
-                                Orderbydecorasc: true,
+                                Orderbydecorasc: false,
                             },
                         ];
                         return [4 /*yield*/, spservice_1.default.batchGet(queries)];

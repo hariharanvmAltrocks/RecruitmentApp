@@ -360,7 +360,7 @@ export default class DashboardService implements IDashboard {
         Expand: `JobCode`,
         Topcount: count.Topcount,
         Orderby: "ID",
-        Orderbydecorasc: true,
+        Orderbydecorasc: false,
       })) as IPortalItem[];
 
       // Guard: no portal items found

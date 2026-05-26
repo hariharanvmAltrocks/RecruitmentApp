@@ -72,6 +72,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
     setActiveTab,
     setMatricID,
     setCurrentTabName,
+    currentTabName,
     navigationPath,
   } = useUIState();
 
@@ -82,7 +83,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isadvertPopupOpen, setAdvertPopupOpen] = useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState<number>(0);
-  const [selectedmatricId, setselectedmatricId] = useState<string>("");
+  const [selectedmatricId, setselectedmatricId] = useState<string>(currentTabName);
   const [drawerOfferOpen, setDrawerOfferOpen] = useState<boolean>(false);
 
   const processingRef = useRef(false);
@@ -135,17 +136,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
   } = useStateFromManage();
 
   const { modalState, showModal, closeModal } = useModalPopup();
-
-  useEffect(() => {
-    if (martics.metrics.length > 0 && !activeMetric) {
-      setNavigationPath(martics.metrics[0].path);
-      ref.current = martics.metrics[0].menuId;
-      setActiveTab(martics.metrics[0].TabValue);
-      setCurrentTabName(martics.metrics[0].TabName);
-      setMatricID(martics.metrics[0].id);
-      setselectedmatricId(martics.metrics[0].label);
-    }
-  }, [martics.metrics]);
+  
 
     useEffect(() => {
       if (activeMetric === MatricID.BackgroundCheck || activeMetric === MatricID.LabourHire || activeMetric === MatricID.Kcsa) {
@@ -202,23 +193,53 @@ const Mytracker: React.FC<DashboardProps> = () => {
     [members, selectedMemberId],
   );
 
-  const handleToggleRow = useCallback((id: string) => {
-    setSelectedIds((prev) =>
-      prev.includes(id)
-        ? prev.filter((itemId) => itemId !== id)
-        : [...prev, id],
-    );
-  }, []);
+  const handleToggleRow = useCallback(
+    (id: string) => {
+      if (selectedNationality) {
+        const item = items.find((i) => i.id === id);
+        if (item?.nationality !== selectedNationality) {
+          showModal({
+            type: "warning",
+            title: "Nationality Mismatch",
+            message: "You cannot assign HR for different nationality.",
+            confirmLabel: "OK",
+            onConfirm: closeModal,
+          });
+          return;
+        }
+      }
+      setSelectedIds((prev) =>
+        prev.includes(id)
+          ? prev.filter((itemId) => itemId !== id)
+          : [...prev, id],
+      );
+    },
+    [selectedNationality, items, showModal, closeModal],
+  );
 
   const handleToggleAll = useCallback(() => {
-    const pageIds = paginatedItems.map((item) => item.id);
-    const allSelected =
-      pageIds.length > 0 && pageIds.every((id) => selectedIds.includes(id));
     setSelectedIds((prev) =>
       allSelected
         ? prev.filter((id) => !pageIds.includes(id))
         : Array.from(new Set([...prev, ...pageIds])),
     );
+    // const allSameNationality = (items: typeof selectedItems): boolean => {
+    //   if (items.length === 0) return false;
+    //   return items.every((item) => item.nationality === items[0].nationality);
+    // };
+    // if (!allSameNationality(selectedItems)) {
+    //   showModal({
+    //     type: "warning",
+    //     title: "Nationality Mismatch",
+    //     message: "You cannot assign HR for different nationality.",
+    //     confirmLabel: "OK",
+    //     onConfirm: closeModal,
+    //   });
+    //   return;
+    // }
+    const pageIds = paginatedItems.map((item) => item.id);
+    const allSelected =
+      pageIds.length > 0 && pageIds.every((id) => selectedIds.includes(id));
   }, [paginatedItems, selectedIds]);
 
   const handleClosePopup = useCallback(() => {
@@ -411,7 +432,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
     martics.loading || trackerLoading || martics.metrics.length === 0 || assignmentLoading || advertLoading;
   const hasMetrics = martics.metrics.length > 0;
   const showAssignmentBar =
-    activeMetric === MatricID.AssignHr && selectedIds.length > 0;
+    (activeMetric === MatricID.AssignHr || activeMetric === MatricID.AssignAgencies) && selectedIds.length > 0 && members.length > 0;
 
   const metricsContainer = {
     hidden: {},
@@ -529,7 +550,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
                       <DataTable
                         columns={columns}
                         data={paginatedItems}
-                        enableCheckbox={activeMetric === MatricID.AssignHr}
+                        enableCheckbox={activeMetric === MatricID.AssignHr || activeMetric === MatricID.AssignAgencies}
                         selectedRowIds={selectedIds}
                         getRowId={(item) => item.id}
                         onToggleRow={handleToggleRow}

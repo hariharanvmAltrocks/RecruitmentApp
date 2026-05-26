@@ -27,7 +27,14 @@ const TaskPattern: React.FC<TaskPatternProps> = ({
       </div>
 
       {/* ── Chevron track — only this scrolls ───────────────────────── */}
-      <div className={styles.chevronTrack}>
+      <div
+        className={styles.chevronTrack}
+        style={
+          {
+            "--metrics-count": metrics.length,
+          } as React.CSSProperties
+        }
+      >
         {metrics.map((metric, index) => {
           const Icon = metric.icon;
           const isActive = metric.id === activeId;
@@ -54,6 +61,10 @@ const TaskPattern: React.FC<TaskPatternProps> = ({
                 {/* Icon */}
                 <div className={styles.iconBox}>
                   <Icon size={16} strokeWidth={1.8} color="#fff" />
+                  {/* Optional value bubble */}
+                  {metric.value > 0 && (
+                    <span className={styles.valueBubble}>{metric.value}</span>
+                  )}
                 </div>
 
                 {/* Text */}
@@ -65,7 +76,7 @@ const TaskPattern: React.FC<TaskPatternProps> = ({
                 </div>
 
                 {/* Optional status badge */}
-                {metric.status && (
+                {/* {metric.status && (
                   <span
                     className={styles.statusBadge}
                     style={{
@@ -75,12 +86,7 @@ const TaskPattern: React.FC<TaskPatternProps> = ({
                   >
                     {metric.status}
                   </span>
-                )}
-
-                {/* Optional value bubble */}
-                {metric.value > 0 && (
-                  <span className={styles.valueBubble}>{metric.value}</span>
-                )}
+                )} */}
 
                 {/* Separator (not on last item) */}
                 {!isLast && <div className={styles.separator} />}

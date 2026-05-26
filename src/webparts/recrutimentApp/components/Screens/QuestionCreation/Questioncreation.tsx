@@ -200,7 +200,7 @@ const QuestionCreation: React.FC = (props: any) => {
         transition={{ duration: 0.35, ease: "easeOut" }}
       >
         {/* ── Header ── */}
-         {sourceSelection && (
+        
          <>
           <div className="qc__header">
           <div className="qc__header-left">
@@ -247,7 +247,7 @@ const QuestionCreation: React.FC = (props: any) => {
             </div>
         </div>
          </>
-        )}
+        
        
 
         <AnimatePresence exitBeforeEnter>

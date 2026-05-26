@@ -703,7 +703,7 @@ var MasterService = /** @class */ (function () {
                                 Expand: "JobCode",
                                 Topcount: ApiConfig_1.count.Topcount,
                                 Orderby: "ID",
-                                Orderbydecorasc: true,
+                                Orderbydecorasc: false,
                             }).then(function (data) {
                                 GridResult_2 = data && data.length > 0 ? {
                                     JobCode: data[0].JobUniqueKey

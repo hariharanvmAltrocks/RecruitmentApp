@@ -21,6 +21,7 @@ export interface ReviewStatusFlags {
   PreOnboardingChecklist: boolean;
   isExpat: boolean;
   PendingHRReviewOfferuploadEmploymentInit: boolean;
+  PendingHRReviewOfferanduploadEmployementContract: boolean;
 }
 
 export interface ReviewVisibilityFlags {
@@ -76,6 +77,7 @@ export const buildStatusFlags = (
     statusID === StatusId.PendingHREmploymentContractReview,
   PreOnboardingChecklist: statusID === StatusId.PendingHRpreonboardingchecklist,
   isExpat: isExpat === true,
+  PendingHRReviewOfferanduploadEmployementContract: statusID === StatusId.PendingHRReviewOfferanduploadEmployementContract,
 });
 
 const resolveVerificationToggle = (is: ReviewStatusFlags): boolean =>
@@ -87,6 +89,7 @@ const resolveVerificationToggle = (is: ReviewStatusFlags): boolean =>
   is.pendingFinancePayment ||
   is.PendingHREmploymentContractReview ||
   is.PendingHRReviewOfferuploadEmploymentInit ||
+  is.PendingHRReviewOfferanduploadEmployementContract ||
   is.pendingHRECVerification;
 
 const resolveUploadLabel = (is: ReviewStatusFlags): string => {
@@ -94,6 +97,7 @@ const resolveUploadLabel = (is: ReviewStatusFlags): string => {
     return "Upload Offer Letter";
   if (is.wpAckContractUploaded) return "Upload Employment Contract";
   if (is.pendingFinancePayment && is.isLabourHire) return "Proof Of Document";
+  if(is.PendingHRReviewOfferanduploadEmployementContract && is.isVerified) return "Upload Employment Contract";
   return "";
 };
 
@@ -106,7 +110,8 @@ export const buildVisibilityFlags = (
   const showUploadDocument =
     (is.pendingHROfferInitiate && is.isKCSAEmployee) ||
     is.wpAckContractUploaded ||
-    (is.pendingFinancePayment && is.isVerified && is.isLabourHire);
+    (is.pendingFinancePayment && is.isVerified && is.isLabourHire) ||
+    (is.PendingHRReviewOfferanduploadEmployementContract && is.isVerified);
 
   const uploadDocLabel = resolveUploadLabel(is);
 

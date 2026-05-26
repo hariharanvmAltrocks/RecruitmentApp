@@ -234,7 +234,7 @@
   height: 36px;
   border-radius: 10px;
   background: var(--app-primary-color, #dbeafe);
-  color: var(--app-button-color, #7c3aed);
+  color: var(--app-header-color, #ffffff);
   flex-shrink: 0;
 }
 .assignment-bar__count {

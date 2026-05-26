@@ -679,7 +679,7 @@ export default class MasterService implements IMasterService {
           Expand: `JobCode`,
           Topcount: count.Topcount,
           Orderby: "ID",
-          Orderbydecorasc: true,
+          Orderbydecorasc: false,
         }).then((data: any) => {
           GridResult = data && data.length > 0 ? {
             JobCode: data[0].JobUniqueKey

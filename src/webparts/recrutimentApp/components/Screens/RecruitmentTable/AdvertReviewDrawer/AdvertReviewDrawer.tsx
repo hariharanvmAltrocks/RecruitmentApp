@@ -570,8 +570,8 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                       isLoading={isLoading}
                       onCommentsChange={onCommentsChange}
                       onToggleAcknowledgement={onToggleAcknowledgement}
-                      commentError={commentError}
-                      checkboxError={checkboxError}
+                      // commentError={commentError}
+                      // checkboxError={checkboxError}
                       disabled={isSubmittingRef.current}
                       acknowledgementLabel={
                         metricId === MatricID.UploadONEM

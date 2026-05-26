@@ -376,8 +376,7 @@ function buildCandidateData(data, workflowStatusValue, documentResponse, workPer
         base.signedWorkPermitPath = (_k = wpDoc === null || wpDoc === void 0 ? void 0 : wpDoc.documents[0]) === null || _k === void 0 ? void 0 : _k.downloadUrl;
     }
     if (data.StatusID ===
-        EvaluationConfig_1.StatusId.PendingHRReviewOfferanduploadEmployementContract &&
-        data.RadioAction === "Yes") {
+        EvaluationConfig_1.StatusId.PendingHRReviewOfferanduploadEmployementContract) {
         base.EmpContractLatterPath = (_m = (_l = documentResponse.data) === null || _l === void 0 ? void 0 : _l[0]) === null || _m === void 0 ? void 0 : _m.content;
     }
     return base;

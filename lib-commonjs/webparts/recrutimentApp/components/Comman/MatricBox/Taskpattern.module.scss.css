@@ -2,18 +2,21 @@
 /*var(--app-text-color, );*/
 /*var(--app-text-color, #94a3b8);*/
 .roadmapWrapper {
+  --chevron-width: 157px;
+  --chevron-height: 88px;
+  --chevron-overlap: 31px;
   width: fit-content;
-  max-width: 85%;
+  max-width: 100%;
   background: var(--app-header-color, #ffffff);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid #e4e8f1;
   border-radius: 32px;
-  padding: 24px;
+  padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   /* ✅ Remove overflow-x: auto from here — header must NOT scroll */
   overflow: visible;
-  margin-left: 29%;
+  margin: 0 auto 0 23%;
 }
 
 .roadmapHeader {
@@ -64,11 +67,12 @@
   padding-left: 28px;
 }
 
-/* ✅ Only this element scrolls now */
+/* ✅ Clean internal scroll, no scrollbars visible, fits wrapper */
 .chevronTrack {
   display: flex;
   align-items: stretch;
   padding-bottom: 8px;
+  width: 100%;
   overflow-x: auto;
   overflow-y: visible;
   scrollbar-width: none;
@@ -86,10 +90,12 @@
   outline: none;
   z-index: 1;
   flex-shrink: 0;
+  width: var(--chevron-width);
+  height: var(--chevron-height);
 }
 
 .chevronItem + .chevronItem {
-  margin-left: -32px;
+  margin-left: calc(-1 * var(--chevron-overlap));
 }
 
 .chevronItem:hover .chevronBody {
@@ -107,12 +113,14 @@
 }
 
 .chevronBody {
-  height: 80px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 0 56px 0 48px;
-  background: linear-gradient(to right, var(--step-from, var(--app-primary-color, #7c3aed)), var(--step-to, var(--app-secondary-color, #f8fafc)));
+  padding: 0 0px 0 31px; /*  0 56px 0 48px; */
+  background: linear-gradient(to right, var(--step-from, var(--app-primary-color, #7c3aed)), var(--step-to, var(--app-secondary-color, #f8fafc))); /* linear-gradient(  to right,  var(--step-from, var(--app-primary-color, #7c3aed)) 0%,  var(--step-from, var(--app-primary-color, #7c3aed)) 80%,  var(--step-to, var(--app-secondary-color, #f8fafc)) 100%); */
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   transition: filter 0.2s ease, box-shadow 0.2s ease;
   position: relative;
@@ -121,20 +129,21 @@
 
 .chevronItem:first-child .chevronBody {
   border-radius: 16px 0 0 16px;
-  padding-left: 32px;
+  padding-left: 10px;
   clip-path: polygon(0% 0%, 88% 0%, 100% 50%, 88% 100%, 0% 100%);
 }
 
 .chevronItem:last-child .chevronBody {
   border-radius: 4px 16px 16px 4px;
-  padding-right: 40px;
+  padding-right: 10px;
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0% 50%);
 }
 
 .iconBox {
+  position: relative;
   flex-shrink: 0;
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(8px);
@@ -195,21 +204,24 @@
 
 .valueBubble {
   position: absolute;
-  bottom: 6px;
-  right: 36px;
-  min-width: 20px;
-  height: 20px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.25);
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
   color: #fff;
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 9px;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 5px;
+  padding: 0 2px;
   pointer-events: none;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .separator {
@@ -225,8 +237,12 @@
 }
 
 @media (max-width: 768px) {
+  .roadmapWrapper {
+    --chevron-width: 157px;
+    --chevron-height: 68px;
+    --chevron-overlap: 24px;
+  }
   .chevronBody {
-    height: 68px;
     gap: 10px;
     padding: 0 44px 0 38px;
   }

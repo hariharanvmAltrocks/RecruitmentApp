@@ -285,7 +285,7 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--app-text-color, #334155);
-  background: #ffffff;
+  background: #d6dade;
   border: none;
   border-right: 1px solid var(--app-sidenav-border, #e2e8f0);
   cursor: pointer;

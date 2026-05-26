@@ -61,7 +61,7 @@
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--ct-muted);
+  color: #64748b;
   background: transparent;
   border: 1.5px solid var(--ct-border);
   border-radius: 8px;

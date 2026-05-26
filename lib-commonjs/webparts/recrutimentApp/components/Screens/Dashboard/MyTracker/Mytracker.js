@@ -41,7 +41,7 @@ var Mytracker = function () {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
     var navigate = (0, react_router_dom_1.useNavigate)();
     var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
-    var _m = (0, UIStateContext_1.useUIState)(), activeMetric = _m.MatricID, setNavigationPath = _m.setNavigationPath, setActiveMenuID = _m.setActiveMenuID, setActiveTab = _m.setActiveTab, setMatricID = _m.setMatricID, setCurrentTabName = _m.setCurrentTabName, navigationPath = _m.navigationPath;
+    var _m = (0, UIStateContext_1.useUIState)(), activeMetric = _m.MatricID, setNavigationPath = _m.setNavigationPath, setActiveMenuID = _m.setActiveMenuID, setActiveTab = _m.setActiveTab, setMatricID = _m.setMatricID, setCurrentTabName = _m.setCurrentTabName, currentTabName = _m.currentTabName, navigationPath = _m.navigationPath;
     var _o = (0, react_1.useState)(0), refreshKey = _o[0], setRefreshKey = _o[1];
     var _p = (0, react_1.useState)([]), selectedIds = _p[0], setSelectedIds = _p[1];
     var _q = (0, react_1.useState)(10), pageSize = _q[0], setPageSize = _q[1];
@@ -49,7 +49,7 @@ var Mytracker = function () {
     var _s = (0, react_1.useState)(false), isPopupOpen = _s[0], setIsPopupOpen = _s[1];
     var _t = (0, react_1.useState)(false), isadvertPopupOpen = _t[0], setAdvertPopupOpen = _t[1];
     var _u = (0, react_1.useState)(0), selectedMemberId = _u[0], setSelectedMemberId = _u[1];
-    var _v = (0, react_1.useState)(""), selectedmatricId = _v[0], setselectedmatricId = _v[1];
+    var _v = (0, react_1.useState)(currentTabName), selectedmatricId = _v[0], setselectedmatricId = _v[1];
     var _w = (0, react_1.useState)(false), drawerOfferOpen = _w[0], setDrawerOfferOpen = _w[1];
     var processingRef = (0, react_1.useRef)(false);
     var selectedAdvertID = (0, react_1.useRef)(0);
@@ -76,16 +76,6 @@ var Mytracker = function () {
     }).updateListPortal;
     var _y = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _y.drawerOpen, selectedJobId = _y.selectedJobId, advertLanguage = _y.advertLanguage, reviewerComments = _y.reviewerComments, acknowledgementCheckbox = _y.acknowledgementCheckbox, loadingState = _y.loadingState, openDrawer = _y.openDrawer, closeDrawer = _y.closeDrawer, setAdvertLanguage = _y.setAdvertLanguage, setComments = _y.setComments, toggleAcknowledgement = _y.toggleAcknowledgement, setLoadingState = _y.setLoadingState;
     var _z = (0, useModalPopup_1.useModalPopup)(), modalState = _z.modalState, showModal = _z.showModal, closeModal = _z.closeModal;
-    (0, react_1.useEffect)(function () {
-        if (martics.metrics.length > 0 && !activeMetric) {
-            setNavigationPath(martics.metrics[0].path);
-            ref.current = martics.metrics[0].menuId;
-            setActiveTab(martics.metrics[0].TabValue);
-            setCurrentTabName(martics.metrics[0].TabName);
-            setMatricID(martics.metrics[0].id);
-            setselectedmatricId(martics.metrics[0].label);
-        }
-    }, [martics.metrics]);
     (0, react_1.useEffect)(function () {
         if (activeMetric === ConditionConfig_1.MatricID.BackgroundCheck || activeMetric === ConditionConfig_1.MatricID.LabourHire || activeMetric === ConditionConfig_1.MatricID.Kcsa) {
             void updateListPortal();
@@ -116,20 +106,47 @@ var Mytracker = function () {
     var _0 = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _0.members, membersLoading = _0.loading;
     var selectedMember = (0, react_1.useMemo)(function () { var _a; return (_a = members.find(function (m) { return m.id === selectedMemberId; })) !== null && _a !== void 0 ? _a : null; }, [members, selectedMemberId]);
     var handleToggleRow = (0, react_1.useCallback)(function (id) {
+        if (selectedNationality) {
+            var item = items.find(function (i) { return i.id === id; });
+            if ((item === null || item === void 0 ? void 0 : item.nationality) !== selectedNationality) {
+                showModal({
+                    type: "warning",
+                    title: "Nationality Mismatch",
+                    message: "You cannot assign HR for different nationality.",
+                    confirmLabel: "OK",
+                    onConfirm: closeModal,
+                });
+                return;
+            }
+        }
         setSelectedIds(function (prev) {
             return prev.includes(id)
                 ? prev.filter(function (itemId) { return itemId !== id; })
                 : tslib_1.__spreadArray(tslib_1.__spreadArray([], prev, true), [id], false);
         });
-    }, []);
+    }, [selectedNationality, items, showModal, closeModal]);
     var handleToggleAll = (0, react_1.useCallback)(function () {
-        var pageIds = paginatedItems.map(function (item) { return item.id; });
-        var allSelected = pageIds.length > 0 && pageIds.every(function (id) { return selectedIds.includes(id); });
         setSelectedIds(function (prev) {
             return allSelected
                 ? prev.filter(function (id) { return !pageIds.includes(id); })
                 : Array.from(new Set(tslib_1.__spreadArray(tslib_1.__spreadArray([], prev, true), pageIds, true)));
         });
+        // const allSameNationality = (items: typeof selectedItems): boolean => {
+        //   if (items.length === 0) return false;
+        //   return items.every((item) => item.nationality === items[0].nationality);
+        // };
+        // if (!allSameNationality(selectedItems)) {
+        //   showModal({
+        //     type: "warning",
+        //     title: "Nationality Mismatch",
+        //     message: "You cannot assign HR for different nationality.",
+        //     confirmLabel: "OK",
+        //     onConfirm: closeModal,
+        //   });
+        //   return;
+        // }
+        var pageIds = paginatedItems.map(function (item) { return item.id; });
+        var allSelected = pageIds.length > 0 && pageIds.every(function (id) { return selectedIds.includes(id); });
     }, [paginatedItems, selectedIds]);
     var handleClosePopup = (0, react_1.useCallback)(function () {
         setIsPopupOpen(false);
@@ -271,7 +288,7 @@ var Mytracker = function () {
     });
     var loading = martics.loading || trackerLoading || martics.metrics.length === 0 || assignmentLoading || advertLoading;
     var hasMetrics = martics.metrics.length > 0;
-    var showAssignmentBar = activeMetric === ConditionConfig_1.MatricID.AssignHr && selectedIds.length > 0;
+    var showAssignmentBar = (activeMetric === ConditionConfig_1.MatricID.AssignHr || activeMetric === ConditionConfig_1.MatricID.AssignAgencies) && selectedIds.length > 0 && members.length > 0;
     var metricsContainer = {
         hidden: {},
         visible: {
@@ -310,7 +327,7 @@ var Mytracker = function () {
                                 react_1.default.createElement(lucide_react_1.RotateCcw, { size: 13 }),
                                 "Back to Dashboard"))),
                     react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["tracker__table-wrapper"] },
-                        react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: paginatedItems, enableCheckbox: activeMetric === ConditionConfig_1.MatricID.AssignHr, selectedRowIds: selectedIds, getRowId: function (item) { return item.id; }, onToggleRow: handleToggleRow, onToggleAll: handleToggleAll, pageSize: pageSize, currentPage: currentPage, totalCount: totalCount, onPageChange: setCurrentPage, onPageSizeChange: function (size) {
+                        react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: paginatedItems, enableCheckbox: activeMetric === ConditionConfig_1.MatricID.AssignHr || activeMetric === ConditionConfig_1.MatricID.AssignAgencies, selectedRowIds: selectedIds, getRowId: function (item) { return item.id; }, onToggleRow: handleToggleRow, onToggleAll: handleToggleAll, pageSize: pageSize, currentPage: currentPage, totalCount: totalCount, onPageChange: setCurrentPage, onPageSizeChange: function (size) {
                                 setPageSize(size);
                                 setCurrentPage(1);
                             }, loading: trackerLoading })))),

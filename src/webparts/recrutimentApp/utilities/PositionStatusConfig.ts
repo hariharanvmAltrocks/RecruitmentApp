@@ -22,6 +22,17 @@ export const stages = [
   { label: "Onboarded", icon: CheckCircle2 },
 ];
 
+export const CandidateStages = [
+  { label: "Background Check", icon: FileSearch },
+  { label: "Dot's Africa Verification", icon: CheckCircle2 },
+  { label: "Resi Process", icon: ShieldCheck },
+  { label: "Offer Release", icon: Briefcase },
+  { label: "Work Permit Process", icon: ClipboardCheck },
+  { label: "Employment Contract", icon: Send },
+  { label: "Pre-Onboarding", icon: Play },
+  { label: "Onboarding", icon: Filter },
+];
+
 export const getStageIndex = (statusId: number) => {
   if (!statusId) return 0;
   if (statusId == StatusId.PendingAssignHR) return 0;
@@ -35,6 +46,8 @@ export const getStageIndex = (statusId: number) => {
   if (statusId == StatusId.Onboarded) return 8;
   return 0;
 };
+
+
 
 export const PROGRESS_STEPS = [
   "Interview Schedules",
@@ -98,6 +111,56 @@ export const getStageCandidateindex = (statusId: number) => {
     statusId == StatusId.PendingLHWorkPermitProcess ||
     statusId ==
       StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract
+  )
+    return 5;
+  if (
+    statusId == StatusId.OnboardingProcessinitiatedforDRC ||
+    statusId == StatusId.OnboardingProcessinitiatedforExpat ||
+    statusId == StatusId.onboardingInProcess
+  )
+    return 6;
+  return 0;
+};
+
+export const getStageIndexinCandidate = (statusId: number) => {
+   if (
+    statusId == StatusId.PendingHRBGVInitiation ||
+    statusId == StatusId.PendingBGdocuploadedbycandidate ||
+    statusId == StatusId.PendingHRReviewBGCheck
+  )
+    return 0;
+    if (
+    statusId == StatusId.PendingDOTAficaVerification
+  )
+    return 1;
+  if (
+    statusId == StatusId.RESIProcessInitiatedforDRC ||
+    statusId == StatusId.RESIProcessInitiatedforExpatriate ||
+    statusId == StatusId.RESProcessInitiated
+  )
+    return 2;
+  if (
+    statusId == StatusId.PendingHROfferInitiate ||
+    statusId == StatusId.PendingCandidateOfferLetterUpload ||
+    statusId == StatusId.PendingHRReviewOfferWorkPermitInit ||
+    statusId == StatusId.PendingLabourHireOfferRelease ||
+    statusId == StatusId.PendingHROfferReview
+  )
+    return 3;
+  if (
+    statusId == StatusId.PendingCandidateWorkPermitreleatedDoc ||
+    statusId == StatusId.PendingHRReviewWorkpermitDocs ||
+    statusId == StatusId.WorkPermitAcknowledgedContractUploaded ||
+    statusId == StatusId.PendingLabourhireWPPayment ||
+    statusId == StatusId.PendingFinancePaymentReview ||
+    statusId == StatusId.PendingLHWorkPermitProcess ||
+    statusId ==
+      StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract ||
+    statusId == StatusId.PendingHRReviewOfferanduploadEmployementContract
+  )
+    return 4;
+   if (
+    statusId == StatusId.PendingHRpreonboardingchecklist
   )
     return 5;
   if (

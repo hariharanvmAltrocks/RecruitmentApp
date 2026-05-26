@@ -135,7 +135,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: $space-sm $space-md;
+    padding: 12px 0px;
     border-radius: $radius-md;
     border: 1px solid $border-light;
     background: $secondary-color;
@@ -638,7 +638,7 @@
 
   &__button {
     border: none;
-    background: $secondary-color;
+    background: #d6dade; /* $secondary-color;*/
     font-size: 13px;
     font-weight: 700;
     color: $text-muted;
