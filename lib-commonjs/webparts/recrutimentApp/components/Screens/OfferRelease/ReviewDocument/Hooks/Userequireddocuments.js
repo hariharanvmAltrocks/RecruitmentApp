@@ -1,7 +1,7 @@
 "use strict";
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useRequiredDocuments = useRequiredDocuments;
+exports.useRequiredDocuments = void 0;
 var tslib_1 = require("tslib");
 // hooks/useRequiredDocuments.ts
 var react_1 = require("react");
@@ -109,16 +109,16 @@ function buildCategory(titleKey, rawData, isBGV) {
     return tslib_1.__assign(tslib_1.__assign({}, config), { documents: documents });
 }
 function fetchAllDocuments(ProfileID, jobRequestID) {
+    var _a, _b, _c;
     return tslib_1.__awaiter(this, void 0, void 0, function () {
-        var vtRes, existingVT, lastId, verificationTypes, verificationCodes, base, _a, bgvRes, offerSignedRes, offerUnsignedRes, policeRes, covidRes, yellowFeverRes, ecSignedRes, ecUnsignedRes, workPermitRes, paymentBillRes, rawGroups, categories, totalFiles;
-        var _b, _c, _d;
+        var vtRes, existingVT, lastId, verificationTypes, verificationCodes, base, _d, bgvRes, offerSignedRes, offerUnsignedRes, policeRes, covidRes, yellowFeverRes, ecSignedRes, ecUnsignedRes, workPermitRes, paymentBillRes, rawGroups, categories, totalFiles;
         return tslib_1.__generator(this, function (_e) {
             switch (_e.label) {
                 case 0: return [4 /*yield*/, ServiceExport_1.masterService.GetAllMaster(ConditionConfig_1.CategoryID.VerificationType)];
                 case 1:
                     vtRes = _e.sent();
-                    existingVT = (_b = vtRes.data) !== null && _b !== void 0 ? _b : [];
-                    lastId = (_d = (_c = existingVT[existingVT.length - 1]) === null || _c === void 0 ? void 0 : _c.id) !== null && _d !== void 0 ? _d : 0;
+                    existingVT = (_a = vtRes.data) !== null && _a !== void 0 ? _a : [];
+                    lastId = (_c = (_b = existingVT[existingVT.length - 1]) === null || _b === void 0 ? void 0 : _b.id) !== null && _c !== void 0 ? _c : 0;
                     verificationTypes = tslib_1.__spreadArray(tslib_1.__spreadArray([], existingVT, true), [
                         {
                             id: lastId + 1,
@@ -148,7 +148,7 @@ function fetchAllDocuments(ProfileID, jobRequestID) {
                             ServiceExport_1.OfferServices.FetchCandidateDocument(tslib_1.__assign(tslib_1.__assign({}, base), { DocumentType: ConditionConfig_1.DocumentFolderName.PaymentBill })),
                         ])];
                 case 2:
-                    _a = _e.sent(), bgvRes = _a[0], offerSignedRes = _a[1], offerUnsignedRes = _a[2], policeRes = _a[3], covidRes = _a[4], yellowFeverRes = _a[5], ecSignedRes = _a[6], ecUnsignedRes = _a[7], workPermitRes = _a[8], paymentBillRes = _a[9];
+                    _d = _e.sent(), bgvRes = _d[0], offerSignedRes = _d[1], offerUnsignedRes = _d[2], policeRes = _d[3], covidRes = _d[4], yellowFeverRes = _d[5], ecSignedRes = _d[6], ecUnsignedRes = _d[7], workPermitRes = _d[8], paymentBillRes = _d[9];
                     rawGroups = [
                         [ConditionConfig_1.DisplayFolderName.BackgroundVerification, bgvRes.data, true],
                         [ConditionConfig_1.DisplayFolderName.Offerletter, offerSignedRes.data, false],
@@ -215,4 +215,5 @@ function useRequiredDocuments(ProfileID, jobRequestID) {
     }, [fetchData]);
     return { data: data, isLoading: isLoading, error: error, refetch: fetchData };
 }
+exports.useRequiredDocuments = useRequiredDocuments;
 //# sourceMappingURL=Userequireddocuments.js.map

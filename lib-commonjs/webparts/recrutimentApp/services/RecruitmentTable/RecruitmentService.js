@@ -15,9 +15,9 @@ var RecruitmentService = /** @class */ (function () {
     function RecruitmentService() {
     }
     RecruitmentService.prototype.GetNPAEPVRRDetails = function (filterParam, filterConditions, Type) {
+        var _a, _b;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var queries, batchRes, additionalExistingItems, newPositionItems, vacancyItems, additionalIds, newPositionIds, _a, additionalPositionRes, newPositionRes, additionalPositionMap_1, newPositionMap_1, mapCommonFields_1, additionalExistingResult, newPositionResult, vacancyResult, GridResult, error_1;
-            var _b, _c;
+            var queries, batchRes, additionalExistingItems, newPositionItems, vacancyItems, additionalIds, newPositionIds, _c, additionalPositionRes, newPositionRes, additionalPositionMap_1, newPositionMap_1, mapCommonFields_1, additionalExistingResult, newPositionResult, vacancyResult, GridResult, error_1;
             return tslib_1.__generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
@@ -111,9 +111,9 @@ var RecruitmentService = /** @class */ (function () {
                                     : Promise.resolve({ data: [], status: 200, message: "" }),
                             ])];
                     case 2:
-                        _a = _d.sent(), additionalPositionRes = _a[0], newPositionRes = _a[1];
-                        additionalPositionMap_1 = new Map(((_b = additionalPositionRes.data) !== null && _b !== void 0 ? _b : []).map(function (d) { return [d.ID, d]; }));
-                        newPositionMap_1 = new Map(((_c = newPositionRes.data) !== null && _c !== void 0 ? _c : []).map(function (d) { return [d.ID, d]; }));
+                        _c = _d.sent(), additionalPositionRes = _c[0], newPositionRes = _c[1];
+                        additionalPositionMap_1 = new Map(((_a = additionalPositionRes.data) !== null && _a !== void 0 ? _a : []).map(function (d) { return [d.ID, d]; }));
+                        newPositionMap_1 = new Map(((_b = newPositionRes.data) !== null && _b !== void 0 ? _b : []).map(function (d) { return [d.ID, d]; }));
                         mapCommonFields_1 = function (item, index) {
                             var _a, _b, _c, _d, _e, _f;
                             return ({
@@ -184,9 +184,9 @@ var RecruitmentService = /** @class */ (function () {
         });
     };
     RecruitmentService.prototype.GetRecruitmentDetails = function (filterParam, filterConditions) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var res, itemIds, positionFilter, _a, GridResult, positionRes, positionMap, _i, GridResult_1, item, pos, error_2;
-            var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+            var res, itemIds, positionFilter, _m, GridResult, positionRes, positionMap, _i, GridResult_1, item, pos, error_2;
             return tslib_1.__generator(this, function (_o) {
                 switch (_o.label) {
                     case 0:
@@ -215,22 +215,22 @@ var RecruitmentService = /** @class */ (function () {
                                 this.GetPositionDetails(positionFilter, "and", Config_1.ListNames.HRMSRecruitmentPositionDetails),
                             ])];
                     case 2:
-                        _a = _o.sent(), GridResult = _a[0], positionRes = _a[1];
-                        positionMap = new Map(((_b = positionRes.data) !== null && _b !== void 0 ? _b : []).map(function (pos) { return [pos.ID, pos]; }));
+                        _m = _o.sent(), GridResult = _m[0], positionRes = _m[1];
+                        positionMap = new Map(((_a = positionRes.data) !== null && _a !== void 0 ? _a : []).map(function (pos) { return [pos.ID, pos]; }));
                         for (_i = 0, GridResult_1 = GridResult; _i < GridResult_1.length; _i++) {
                             item = GridResult_1[_i];
                             pos = positionMap.get(item.ID);
                             if (pos) {
-                                item.JobTitleEnglish = (_c = pos.title) !== null && _c !== void 0 ? _c : "";
-                                item.JobTitleEnglishId = (_d = pos.titleID) !== null && _d !== void 0 ? _d : 0;
-                                item.JobCode = (_e = pos.jobCode) !== null && _e !== void 0 ? _e : "";
-                                item.JobCodeId = (_f = pos.JobCodeId) !== null && _f !== void 0 ? _f : 0;
-                                item.JobTitleFrench = (_g = pos.JobTitleFrench) !== null && _g !== void 0 ? _g : "";
-                                item.JobTitleFrenchId = (_h = pos.JobTitleFrenchId) !== null && _h !== void 0 ? _h : 0;
-                                item.PatersonGrade = (_j = pos.PatersonGrade) !== null && _j !== void 0 ? _j : "";
-                                item.PatersonGradeId = (_k = pos.PatersonGradeId) !== null && _k !== void 0 ? _k : 0;
-                                item.DRCGrade = (_l = pos.DRCGrade) !== null && _l !== void 0 ? _l : "";
-                                item.DRCGradeId = (_m = pos.DRCGradeId) !== null && _m !== void 0 ? _m : 0;
+                                item.JobTitleEnglish = (_b = pos.title) !== null && _b !== void 0 ? _b : "";
+                                item.JobTitleEnglishId = (_c = pos.titleID) !== null && _c !== void 0 ? _c : 0;
+                                item.JobCode = (_d = pos.jobCode) !== null && _d !== void 0 ? _d : "";
+                                item.JobCodeId = (_e = pos.JobCodeId) !== null && _e !== void 0 ? _e : 0;
+                                item.JobTitleFrench = (_f = pos.JobTitleFrench) !== null && _f !== void 0 ? _f : "";
+                                item.JobTitleFrenchId = (_g = pos.JobTitleFrenchId) !== null && _g !== void 0 ? _g : 0;
+                                item.PatersonGrade = (_h = pos.PatersonGrade) !== null && _h !== void 0 ? _h : "";
+                                item.PatersonGradeId = (_j = pos.PatersonGradeId) !== null && _j !== void 0 ? _j : 0;
+                                item.DRCGrade = (_k = pos.DRCGrade) !== null && _k !== void 0 ? _k : "";
+                                item.DRCGradeId = (_l = pos.DRCGradeId) !== null && _l !== void 0 ? _l : 0;
                             }
                         }
                         return [2 /*return*/, {
@@ -653,9 +653,9 @@ var RecruitmentService = /** @class */ (function () {
         });
     };
     RecruitmentService.prototype.GetHRMSRecruitmentRoleProfileDetails = function (filterParam, filterConditions) {
+        var _a, _b, _c, _d, _e, _f;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var BATCH_IDX, masterQueries, _a, batchRes, listItems, roleKnowledgeMaster, levelProficiencyMaster, technicalSkillsMaster, experienceMaster, qualificationMaster, functionTypeMaster, roleKnowledgeMap_1, levelProficiencyMap_1, technicalSkillsMap_1, qualificationMap_1, experienceMap, functionTypeMap_1, formattedItems, error_9;
-            var _b, _c, _d, _e, _f, _g;
+            var BATCH_IDX, masterQueries, _g, batchRes, listItems, roleKnowledgeMaster, levelProficiencyMaster, technicalSkillsMaster, experienceMaster, qualificationMaster, functionTypeMaster, roleKnowledgeMap_1, levelProficiencyMap_1, technicalSkillsMap_1, qualificationMap_1, experienceMap, functionTypeMap_1, formattedItems, error_9;
             return tslib_1.__generator(this, function (_h) {
                 switch (_h.label) {
                     case 0:
@@ -713,13 +713,13 @@ var RecruitmentService = /** @class */ (function () {
                                 }),
                             ])];
                     case 1:
-                        _a = _h.sent(), batchRes = _a[0], listItems = _a[1];
-                        roleKnowledgeMaster = (_b = batchRes[BATCH_IDX.ROLE_KNOWLEDGE]) !== null && _b !== void 0 ? _b : [];
-                        levelProficiencyMaster = (_c = batchRes[BATCH_IDX.LEVEL_PROFICIENCY]) !== null && _c !== void 0 ? _c : [];
-                        technicalSkillsMaster = (_d = batchRes[BATCH_IDX.TECHNICAL_SKILLS]) !== null && _d !== void 0 ? _d : [];
-                        experienceMaster = (_e = batchRes[BATCH_IDX.EXPERIENCE]) !== null && _e !== void 0 ? _e : [];
-                        qualificationMaster = (_f = batchRes[BATCH_IDX.QUALIFICATION]) !== null && _f !== void 0 ? _f : [];
-                        functionTypeMaster = (_g = batchRes[BATCH_IDX.FUNCTION_TYPE]) !== null && _g !== void 0 ? _g : [];
+                        _g = _h.sent(), batchRes = _g[0], listItems = _g[1];
+                        roleKnowledgeMaster = (_a = batchRes[BATCH_IDX.ROLE_KNOWLEDGE]) !== null && _a !== void 0 ? _a : [];
+                        levelProficiencyMaster = (_b = batchRes[BATCH_IDX.LEVEL_PROFICIENCY]) !== null && _b !== void 0 ? _b : [];
+                        technicalSkillsMaster = (_c = batchRes[BATCH_IDX.TECHNICAL_SKILLS]) !== null && _c !== void 0 ? _c : [];
+                        experienceMaster = (_d = batchRes[BATCH_IDX.EXPERIENCE]) !== null && _d !== void 0 ? _d : [];
+                        qualificationMaster = (_e = batchRes[BATCH_IDX.QUALIFICATION]) !== null && _e !== void 0 ? _e : [];
+                        functionTypeMaster = (_f = batchRes[BATCH_IDX.FUNCTION_TYPE]) !== null && _f !== void 0 ? _f : [];
                         roleKnowledgeMap_1 = roleKnowledgeMaster.reduce(function (acc, item) {
                             acc[item.Code] = {
                                 en: item.RoleSpecificKnowledge,
@@ -954,9 +954,9 @@ var RecruitmentService = /** @class */ (function () {
         });
     };
     RecruitmentService.prototype.UploadAdvertisementInPortal = function (Filter, Condition, RecuritmentDetails, IsActive, IsExtened, JobBasedBGVVerification, onemDocs, extendStartDate, extendEndDate) {
+        var _a, _b, _c, _d, _e;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var ROLE_PROFILE, JOB_PORTAL, queries, batchRes, roleProfileList, jobPortalList, data, jobUniqueKey, roleSpecificKnowledge, technicalSkill, roleSpecificSkills, technicalSkills, Roleandtechnical, minQualifications, preferredQualifications, MinAndPreferedQualification, decodeBase64, Description, DescriptionFr, onemdocPath, onamdocpathfile, FilterDept, DepartmentData, NationalityValue, todaydate, vaildFrom, VaildTo, advertisementDetails, response, error_12;
-            var _a, _b, _c, _d, _e;
             return tslib_1.__generator(this, function (_f) {
                 switch (_f.label) {
                     case 0:
@@ -1092,7 +1092,6 @@ var RecruitmentService = /** @class */ (function () {
                         return [4 /*yield*/, ServiceExport_1.CommonServices.GetMasterData(Config_1.ListNames.HRMSDepartment, FilterDept)];
                     case 6:
                         DepartmentData = _f.sent();
-                        console.log(DepartmentData, "DepartmentData");
                         NationalityValue = RecuritmentDetails.Nationality === ConditionConfig_1.Nationality.Nationals
                             ? "Congolese"
                             : RecuritmentDetails.Nationality;

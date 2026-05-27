@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.makeDocData = makeDocData;
-exports.useSubmitWorkflow = useSubmitWorkflow;
+exports.useSubmitWorkflow = exports.makeDocData = void 0;
 var tslib_1 = require("tslib");
 var react_1 = require("react");
 var EvaluationConfig_1 = require("../../../SelectionProcess/config/EvaluationConfig");
@@ -22,6 +21,7 @@ function makeDocData(profileID, requestID, documentName, unsignedDoc) {
         UnsignedDoc: unsignedDoc,
     };
 }
+exports.makeDocData = makeDocData;
 function resolveStatus(data, consentFile, documents, btnAction, email, coiState, rejectflag, selectedFile) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
         var pid, rid, ok, documentFile, IsRevert, IsExpat, StatusID, _a, isNational, successMsg, documentResponse, doc, isKCSA, documentResponse, initiateLabour, response, isReview, isReview, documentResponse, DocList, documentResponse, workPermitDocs, isReview, documentResponse, documentResponse, isReview, bgvDocData, documentResponse;
@@ -482,4 +482,5 @@ function useSubmitWorkflow(data) {
     var closeAlert = (0, react_1.useCallback)(function () { return closeModal(); }, []);
     return { isLoading: isLoading, modalState: modalState, closeModal: closeModal, submit: submit };
 }
+exports.useSubmitWorkflow = useSubmitWorkflow;
 //# sourceMappingURL=Usesubmitworkflow.js.map

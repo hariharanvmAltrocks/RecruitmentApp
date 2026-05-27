@@ -22,12 +22,9 @@ exports.QuestionnaireService = {
             var response;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        console.log("[QuestionnaireService] PostQuestionnaire request:", params);
-                        return [4 /*yield*/, AxiosService_1.default.post("/hrms/UpsertQuestions", params)];
+                    case 0: return [4 /*yield*/, AxiosService_1.default.post("/hrms/UpsertQuestions", params)];
                     case 1:
                         response = _a.sent();
-                        console.log("[QuestionnaireService] PostQuestionnaire response:", response);
                         return [2 /*return*/, response];
                 }
             });
@@ -38,12 +35,9 @@ exports.QuestionnaireService = {
             var response;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        console.log("[QuestionnaireService] GetQuestionnaire request:", jobCode);
-                        return [4 /*yield*/, AxiosService_1.default.get("/hrms/GetInterviewPanelQuestionsByJobCode?jobCode=".concat(jobCode))];
+                    case 0: return [4 /*yield*/, AxiosService_1.default.get("/hrms/GetInterviewPanelQuestionsByJobCode?jobCode=".concat(jobCode))];
                     case 1:
                         response = _a.sent();
-                        console.log("[QuestionnaireService] GetQuestionnaire response:", response);
                         return [2 /*return*/, response];
                 }
             });
@@ -54,12 +48,9 @@ exports.QuestionnaireService = {
             var response;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        console.log("[QuestionnaireService] GetQuestionaireByScope request:", params);
-                        return [4 /*yield*/, AxiosService_1.default.post("/hrms/GetQuestionsBank", params)];
+                    case 0: return [4 /*yield*/, AxiosService_1.default.post("/hrms/GetQuestionsBank", params)];
                     case 1:
                         response = _a.sent();
-                        console.log("[QuestionnaireService] GetQuestionaireByScope response:", response);
                         return [2 /*return*/, response];
                 }
             });

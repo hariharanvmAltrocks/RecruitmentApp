@@ -25,9 +25,9 @@ var decodeBase64 = function (str) {
 //     }
 // };
 function transformToUpsertPayload(payload, userId) {
+    var _a;
     return tslib_1.__awaiter(this, void 0, void 0, function () {
         var jobCodeKey, isCareerPortal, categoryID;
-        var _a;
         return tslib_1.__generator(this, function (_b) {
             switch (_b.label) {
                 case 0: return [4 /*yield*/, ServiceExport_1.masterService.GetJobUniqueDataValue((_a = payload.JobCodeId) !== null && _a !== void 0 ? _a : 0)];

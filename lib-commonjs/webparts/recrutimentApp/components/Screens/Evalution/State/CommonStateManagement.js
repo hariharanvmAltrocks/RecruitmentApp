@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EvaluationProvider = EvaluationProvider;
-exports.useEvaluationState = useEvaluationState;
+exports.useEvaluationState = exports.EvaluationProvider = void 0;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var initialScorecard = {
@@ -92,10 +91,12 @@ function EvaluationProvider(_a) {
     ]);
     return React.createElement(EvaluationContext.Provider, { value: value }, children);
 }
+exports.EvaluationProvider = EvaluationProvider;
 function useEvaluationState() {
     var ctx = React.useContext(EvaluationContext);
     if (!ctx)
         throw new Error('useEvaluationState must be used within EvaluationProvider');
     return ctx;
 }
+exports.useEvaluationState = useEvaluationState;
 //# sourceMappingURL=CommonStateManagement.js.map

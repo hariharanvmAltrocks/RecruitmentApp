@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isSkeleton = void 0;
-exports.useEvaluationData = useEvaluationData;
+exports.useEvaluationData = exports.isSkeleton = void 0;
 var tslib_1 = require("tslib");
 var react_1 = require("react");
 var EvaluationConfig_1 = require("../config/EvaluationConfig");
@@ -24,7 +23,6 @@ function useEvaluationData(currentUserEmail, employeeList) {
             switch (_a.label) {
                 case 0:
                     setRows(makeSkeletons());
-                    console.log(" STEP 1: Starting fetchData. Current User Email:", currentUserEmail);
                     if (!currentUserEmail) {
                         console.warn(" No email provided to hook.");
                         setRows([]);
@@ -33,7 +31,6 @@ function useEvaluationData(currentUserEmail, employeeList) {
                     return [4 /*yield*/, EvaluationApiService_1.evaluationService.getCurrentUserGuid(currentUserEmail)];
                 case 1:
                     guid = _a.sent();
-                    console.log(" STEP 2: Current User GUID from SP:", guid);
                     if (!guid) {
                         setRows([]);
                         return [2 /*return*/];
@@ -42,7 +39,6 @@ function useEvaluationData(currentUserEmail, employeeList) {
                 case 2:
                     panels = _a.sent();
                     panelDataRef.current = panels;
-                    console.log(" STEP 3: Panels fetched for User:", panels);
                     if (!panels.length) {
                         console.warn(" No panels found for this user.");
                         setRows([]);
@@ -51,7 +47,6 @@ function useEvaluationData(currentUserEmail, employeeList) {
                     candidateIDs = Array.from(new Set(panels
                         .map(function (p) { var _a, _b, _c; return (_c = (_b = (_a = p.CandidateID) === null || _a === void 0 ? void 0 : _a.ID) !== null && _b !== void 0 ? _b : p.CandidateId) !== null && _c !== void 0 ? _c : p.CandidateIDId; })
                         .filter(Boolean)));
-                    console.log(" STEP 4: Extracted Candidate IDs from Panels:", candidateIDs);
                     if (!candidateIDs.length) {
                         setRows([]);
                         return [2 /*return*/];
@@ -59,7 +54,6 @@ function useEvaluationData(currentUserEmail, employeeList) {
                     return [4 /*yield*/, EvaluationApiService_1.evaluationService.getCombinedCandidates(candidateIDs, employeeList)];
                 case 3:
                     rawCandidates = _a.sent();
-                    console.log(" STEP 5: Raw Candidates fetched from SP:", rawCandidates);
                     if (!rawCandidates.length) {
                         setRows([]);
                         return [2 /*return*/];
@@ -83,36 +77,25 @@ function useEvaluationData(currentUserEmail, employeeList) {
                         }); }))];
                 case 4:
                     _a.sent();
-                    console.log(" STEP 6: Formatted Candidates (Before Filter):", settled);
                     finalRows = settled.filter(Boolean).filter(function (c) {
-                        console.log(" Evaluating Candidate: ".concat(c.applicantName, " (ID: ").concat(c.id, ", StatusId: ").concat(c.statusId, ")"));
                         var matchingPanel = panels.find(function (item) {
                             var _a, _b, _c;
                             var panelCandidateId = (_c = (_b = (_a = item.CandidateID) === null || _a === void 0 ? void 0 : _a.ID) !== null && _b !== void 0 ? _b : item.CandidateId) !== null && _c !== void 0 ? _c : item.CandidateIDId;
                             if (c.id !== panelCandidateId)
                                 return false;
                             var cStatusId = Number(c.statusId);
-                            console.log("   -> Found matching panel for Candidate ".concat(c.id, ". Panel Level: ").concat(item.InterviewLevel));
                             if (cStatusId === Config_1.StatusId.InterviewScheduled &&
                                 item.InterviewLevel === EvaluationConfig_1.InterviewLevels.Level1) {
-                                console.log("  MATCH: Status is InterviewScheduled & Level is 1");
                                 return true;
                             }
                             if (cStatusId === Config_1.StatusId.InterviewScheduledforLevel2 &&
                                 item.InterviewLevel === EvaluationConfig_1.InterviewLevels.Level2) {
-                                console.log("   MATCH: Status is InterviewScheduledforLevel2 & Level is 2");
                                 return true;
                             }
-                            console.log("    NO MATCH: Status (".concat(cStatusId, ") and Level (").concat(item.InterviewLevel, ") combination didn't match requirements."));
                             return false;
                         });
-                        if (matchingPanel)
-                            console.log("    Candidate ".concat(c.id, " PASSED the filter."));
-                        else
-                            console.log("    Candidate ".concat(c.id, " FAILED the filter."));
                         return !!matchingPanel;
                     });
-                    console.log("STEP 7: FINAL Filtered Rows applied to UI:", finalRows);
                     setRows(finalRows);
                     return [2 /*return*/];
             }
@@ -139,4 +122,5 @@ function useEvaluationData(currentUserEmail, employeeList) {
     }, [currentUserEmail]);
     return { rows: rows, tooltipData: tooltipData, fetchData: fetchData, fetchTooltip: fetchTooltip, checkScoreSheet: checkScoreSheet };
 }
+exports.useEvaluationData = useEvaluationData;
 //# sourceMappingURL=useEvaluationData.js.map

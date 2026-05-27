@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useSubmitReviewScoreCard = useSubmitReviewScoreCard;
+exports.useSubmitReviewScoreCard = void 0;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var ReviewScoreCardServices_1 = tslib_1.__importDefault(require("../ReviewScoreCardServies/ReviewScoreCardServices"));
@@ -145,4 +145,5 @@ function useSubmitReviewScoreCard(deps) {
         runValidation: runValidation,
     };
 }
+exports.useSubmitReviewScoreCard = useSubmitReviewScoreCard;
 //# sourceMappingURL=useSubmitReviewScoreCard.js.map

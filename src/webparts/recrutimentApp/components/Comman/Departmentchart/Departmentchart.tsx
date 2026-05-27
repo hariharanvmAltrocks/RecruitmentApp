@@ -11,7 +11,7 @@ import {
   TooltipProps,
 } from "recharts";
 import { ChevronLeft, ChevronRight, Building2 } from "lucide-react";
-import styles from "./departmentChart.module.scss";
+import styles from "./Departmentchart.module.scss";
 import useDepartmentChart, {
   DepartmentDataItem,
 } from "../../Screens/Dashboard/Hooks/Usedepartmentchart";

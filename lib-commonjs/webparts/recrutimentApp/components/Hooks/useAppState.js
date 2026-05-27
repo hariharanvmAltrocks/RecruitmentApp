@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useAppState = useAppState;
+exports.useAppState = void 0;
 var react_1 = require("react");
 function useAppState() {
     var _a = (0, react_1.useState)('hod-review'), activeMetric = _a[0], setActiveMetric = _a[1];
@@ -70,4 +70,5 @@ function useAppState() {
         setSelectionComments: setSelectionComments,
     };
 }
+exports.useAppState = useAppState;
 //# sourceMappingURL=useAppState.js.map

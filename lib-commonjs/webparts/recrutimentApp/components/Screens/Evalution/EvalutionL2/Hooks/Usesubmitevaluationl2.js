@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useSubmitEvaluationL2 = useSubmitEvaluationL2;
+exports.useSubmitEvaluationL2 = void 0;
 var tslib_1 = require("tslib");
 var react_1 = require("react");
 var ServiceExport_1 = require("../../../../../services/ServiceExport");
@@ -121,4 +121,5 @@ function useSubmitEvaluationL2(deps) {
         handleCancelClick: handleCancelClick,
     };
 }
+exports.useSubmitEvaluationL2 = useSubmitEvaluationL2;
 //# sourceMappingURL=Usesubmitevaluationl2.js.map

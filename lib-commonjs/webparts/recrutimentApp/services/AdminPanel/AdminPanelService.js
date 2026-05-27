@@ -115,9 +115,9 @@ var AdminPanelService = /** @class */ (function () {
         });
     };
     AdminPanelService.prototype.InsertExternalUser = function (UpsetUserValue, IsEdit) {
+        var _a;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var UpsertUserDetails, response, error_3;
-            var _a;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:

@@ -1,8 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.dedupe = dedupe;
-exports.resolveName = resolveName;
-exports.toPanelEntry = toPanelEntry;
+exports.toPanelEntry = exports.resolveName = exports.dedupe = void 0;
 var tslib_1 = require("tslib");
 var ServiceExport_1 = require("../ServiceExport");
 function dedupe(arr) {
@@ -14,10 +12,11 @@ function dedupe(arr) {
         return true;
     });
 }
+exports.dedupe = dedupe;
 function resolveName(email) {
+    var _a;
     return tslib_1.__awaiter(this, void 0, void 0, function () {
-        var res, _a;
-        var _b;
+        var res, _b;
         return tslib_1.__generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
@@ -25,19 +24,20 @@ function resolveName(email) {
                     return [4 /*yield*/, ServiceExport_1.CommonServices.GetUserName(email)];
                 case 1:
                     res = _c.sent();
-                    return [2 /*return*/, String((_b = res.data) !== null && _b !== void 0 ? _b : email)];
+                    return [2 /*return*/, String((_a = res.data) !== null && _a !== void 0 ? _a : email)];
                 case 2:
-                    _a = _c.sent();
+                    _b = _c.sent();
                     return [2 /*return*/, email];
                 case 3: return [2 /*return*/];
             }
         });
     });
 }
+exports.resolveName = resolveName;
 function toPanelEntry(item, levelFilter) {
+    var _a;
     return tslib_1.__awaiter(this, void 0, void 0, function () {
         var label;
-        var _a;
         return tslib_1.__generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -51,4 +51,5 @@ function toPanelEntry(item, levelFilter) {
         });
     });
 }
+exports.toPanelEntry = toPanelEntry;
 //# sourceMappingURL=ICandidateService.js.map

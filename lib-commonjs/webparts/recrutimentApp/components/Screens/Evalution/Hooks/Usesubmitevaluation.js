@@ -6,7 +6,7 @@
 // submit / reset / validate logic is self-contained.
 // ─────────────────────────────────────────────────────────────────────────────
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useSubmitEvaluation = useSubmitEvaluation;
+exports.useSubmitEvaluation = void 0;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var Evaluationformservice_1 = require("../Evaluationservice/Evaluationformservice");
@@ -215,4 +215,5 @@ function useSubmitEvaluation(deps) {
         onSuccess: onSuccess,
     };
 }
+exports.useSubmitEvaluation = useSubmitEvaluation;
 //# sourceMappingURL=Usesubmitevaluation.js.map

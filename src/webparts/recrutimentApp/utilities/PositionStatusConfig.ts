@@ -57,7 +57,8 @@ export const PROGRESS_STEPS = [
   "Offer Release",
   "Workpermit Process",
   "Employment Contract",
-  "Onboarding",
+  "Onboarding In Progress",
+  "Onboarded",
 ];
 
 export const getStageCandidateindex = (statusId: number) => {
@@ -113,12 +114,28 @@ export const getStageCandidateindex = (statusId: number) => {
       StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract
   )
     return 5;
+   if (
+    statusId == StatusId.WorkPermitAcknowledgedContractUploaded ||
+    statusId == StatusId.PendingCandidateEmploymentContractUpload ||
+    statusId == StatusId.PendingHREmploymentContractVerification ||
+    statusId == StatusId.PendingHRReviewOfferuploadEmploymentInit ||
+    statusId == StatusId.PendingHREmploymentContractInit ||
+    statusId == StatusId.PendingLHECRelease ||
+    statusId == StatusId.PendingHREmploymentContractReview || 
+    statusId ==
+      StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract
+  )
+    return 6;
   if (
     statusId == StatusId.OnboardingProcessinitiatedforDRC ||
     statusId == StatusId.OnboardingProcessinitiatedforExpat ||
+    statusId == StatusId.PendingHRpreonboardingchecklist ||
     statusId == StatusId.onboardingInProcess
   )
-    return 6;
+    return 7;
+    if(statusId == StatusId.Onboarded){
+      return 8;
+    }
   return 0;
 };
 
@@ -169,17 +186,9 @@ export const getStageIndexinCandidate = (statusId: number) => {
     statusId == StatusId.onboardingInProcess
   )
     return 6;
+     if(statusId == StatusId.Onboarded){
+      return 7;
+    }
   return 0;
 };
 
-// export const getCandidateStatus = (statusId: number) => {
-//   if (!statusId) return "Unknown";
-//   if (statusId == StatusId.) return "Candidate Shortlisted";
-//   if (statusId == StatusId.FirstInterviewScheduled) return "First Interview Scheduled";
-//   if (statusId == StatusId.FinalInterviewScheduled) return "Final Interview Scheduled";
-//   if (statusId == StatusId.OfferPending) return "Offer Pending";
-//   if (statusId == StatusId.OfferReleased) return "Offer Released";
-//   if (statusId == StatusId.Joined) return "Joined";
-//   if (statusId == StatusId.Rejected) return "Rejected";
-//   return "Unknown";
-// }

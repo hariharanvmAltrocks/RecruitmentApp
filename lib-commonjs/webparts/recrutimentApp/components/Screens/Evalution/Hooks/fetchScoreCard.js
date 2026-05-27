@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useScoreCard = useScoreCard;
+exports.useScoreCard = void 0;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var defaultService = {
@@ -60,4 +60,5 @@ function useScoreCard(candidateId, service) {
     var reload = React.useCallback(function () { return setRefreshKey(function (k) { return k + 1; }); }, []);
     return { data: data, loading: loading, error: error, reload: reload };
 }
+exports.useScoreCard = useScoreCard;
 //# sourceMappingURL=fetchScoreCard.js.map

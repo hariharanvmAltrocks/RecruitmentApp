@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useQuestionBank = useQuestionBank;
+exports.useQuestionBank = void 0;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var QuestionnaireApi_1 = tslib_1.__importDefault(require("../../SelectionProcess/services/QuestionnaireApi/QuestionnaireApi"));
@@ -10,13 +10,10 @@ var defaultService = {
         var response;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    console.log("[fetchQuestionBank] getQuestions start", jobCode);
-                    return [4 /*yield*/, questionnaireApi.getQuestionnaire(jobCode)];
+                case 0: return [4 /*yield*/, questionnaireApi.getQuestionnaire(jobCode)];
                 case 1:
                     response = _a.sent();
                     if (!response.data || response.data.length === 0) {
-                        console.log("[fetchQuestionBank] getQuestions empty");
                         return [2 /*return*/, []];
                     }
                     return [2 /*return*/, response.data.map(function (item) { return ({
@@ -31,7 +28,6 @@ var defaultService = {
 function useQuestionBank(jobCode, service) {
     var _this = this;
     if (service === void 0) { service = defaultService; }
-    console.log("[useQuestionBank] jobCode", jobCode);
     var _a = React.useState([]), data = _a[0], setData = _a[1];
     var _b = React.useState(true), loading = _b[0], setLoading = _b[1];
     var _c = React.useState(null), error = _c[0], setError = _c[1];
@@ -82,4 +78,5 @@ function useQuestionBank(jobCode, service) {
     var reload = React.useCallback(function () { return setRefreshKey(function (k) { return k + 1; }); }, []);
     return { data: data, loading: loading, error: error, reload: reload };
 }
+exports.useQuestionBank = useQuestionBank;
 //# sourceMappingURL=fetchQuestionBank.js.map

@@ -73,7 +73,6 @@ var EvalutionL2 = function (props) {
     var panelMembers = React.useMemo(function () {
         var _a;
         var fromReview = ((_a = hook.reviewData) === null || _a === void 0 ? void 0 : _a.panelMembers) || [];
-        console.log();
         if (fromReview.length > 0)
             return fromReview;
         return (hook.scoreData || []).map(function (s, i) { return s.InterviewPersonName || "Interviewer ".concat(i + 1); });

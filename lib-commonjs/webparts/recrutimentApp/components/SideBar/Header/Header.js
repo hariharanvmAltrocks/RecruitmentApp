@@ -15,7 +15,6 @@ var Header = function (_a) {
     var pathname = (0, react_router_dom_1.useLocation)().pathname;
     var theme = (0, ThemeContext_1.useTheme)();
     var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
-    console.log(ADGroupData, "ADGroupData");
     var breadcrumbs = (0, react_1.useMemo)(function () { return (0, menuUtils_1.findBreadcrumbPath)(menuData, pathname); }, [menuData, pathname]);
     var user = (_b = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.userDetails) === null || _b === void 0 ? void 0 : _b[0];
     var UserName = [user === null || user === void 0 ? void 0 : user.FirstName, user === null || user === void 0 ? void 0 : user.MiddleName, user === null || user === void 0 ? void 0 : user.LastName]

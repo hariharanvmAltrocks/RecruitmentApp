@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Tabs = Tabs;
+exports.Tabs = void 0;
 var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importDefault(require("react"));
 require("./Tabs.scss");
@@ -21,5 +21,6 @@ function Tabs(_a) {
             tab.label,
             tab.badge !== undefined && (react_1.default.createElement("span", { className: "tabs__badge" }, tab.badge)))); })));
 }
+exports.Tabs = Tabs;
 exports.default = Tabs;
 //# sourceMappingURL=Tabs.js.map

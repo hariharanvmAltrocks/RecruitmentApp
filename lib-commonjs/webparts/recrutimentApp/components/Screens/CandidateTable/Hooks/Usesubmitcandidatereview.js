@@ -34,7 +34,6 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                 throw new Error("CandidateDetails is null");
             dobValue = cp.DOB ? new Date(cp.DOB) : new Date();
             dobData = splitDateOnly(dobValue);
-            console.log();
             startDateTime = (interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startDate) && (interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startTime)
                 ? new Date("".concat(interviewLevel1.startDate, "T").concat(interviewLevel1.startTime, ":00")).toISOString()
                 : "";
@@ -291,9 +290,7 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                         return [2 /*return*/];
                     }
                     _b.label = 3;
-                case 3:
-                    console.log("candidateData", candidateData);
-                    return [4 /*yield*/, ServiceExport_1.CandidateTable.UpdateCandidateStatus(candidateData)];
+                case 3: return [4 /*yield*/, ServiceExport_1.CandidateTable.UpdateCandidateStatus(candidateData)];
                 case 4:
                     res = _b.sent();
                     if (!(res.status === 200)) return [3 /*break*/, 7];
@@ -450,14 +447,10 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
         });
     }); }, [scheduleMeeting, handleWorkflowProcess, ServiceExport_1.CandidateTable]);
     // ─── Submit (Public API) ─────────────────────────────────────────────────────
-    var submit = (0, react_1.useCallback)(function (payload_1) {
-        var args_1 = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args_1[_i - 1] = arguments[_i];
-        }
-        return tslib_1.__awaiter(void 0, tslib_1.__spreadArray([payload_1], args_1, true), void 0, function (payload, COIButtonAction) {
+    var submit = (0, react_1.useCallback)(function (payload, COIButtonAction) {
+        if (COIButtonAction === void 0) { COIButtonAction = ""; }
+        return tslib_1.__awaiter(void 0, void 0, void 0, function () {
             var isRestrictedStatus;
-            if (COIButtonAction === void 0) { COIButtonAction = ""; }
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:

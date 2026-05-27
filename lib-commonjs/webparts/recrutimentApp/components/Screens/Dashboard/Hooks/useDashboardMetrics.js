@@ -11,7 +11,7 @@ var useDashboardMetrics = function (refreshKey) {
     var _a = (0, RoleContext_1.useRoleContext)(), roleIDs = _a.roleIDs, ADGroupData = _a.ADGroupData;
     var _b = (0, react_1.useState)([]), metrics = _b[0], setMetrics = _b[1];
     var _c = (0, react_1.useState)(false), loading = _c[0], setLoading = _c[1];
-    console.log(ADGroupData.EmailId, "EmailId");
+    // console.log(ADGroupData.EmailId, "EmailId");
     var queries = (0, react_1.useMemo)(function () {
         return (0, metricColumns_config_1.getRoleBasedFilters)(roleIDs, ADGroupData.EmailId[0]);
     }, [roleIDs]);

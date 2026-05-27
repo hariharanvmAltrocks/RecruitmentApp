@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.formatDate = exports.toUTC = exports.toDate = exports.formatToDateTimeLocal = exports.ConvertUtc = exports.AddCalculateDate = exports.SpiltDateOnly = void 0;
-exports.toAttachment = toAttachment;
+exports.formatDate = exports.toUTC = exports.toDate = exports.formatToDateTimeLocal = exports.ConvertUtc = exports.toAttachment = exports.AddCalculateDate = exports.SpiltDateOnly = void 0;
 var tslib_1 = require("tslib");
 var moment_1 = tslib_1.__importDefault(require("moment"));
 var SpiltDateOnly = function (date) {
@@ -41,6 +40,7 @@ function toAttachment(title, docs, lang) {
         }); }),
     };
 }
+exports.toAttachment = toAttachment;
 var ConvertUtc = function (date) {
     var startUtc = (0, moment_1.default)(date)
         .hour(date.getHours())

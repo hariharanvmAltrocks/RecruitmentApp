@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = InterviewQuestionList;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var InterviewQuestion_module_scss_1 = tslib_1.__importDefault(require("./InterviewQuestion.module.scss"));
@@ -80,4 +79,5 @@ function InterviewQuestionList(_a) {
                             React.createElement("span", { className: InterviewQuestion_module_scss_1.default.scoreMax }, "/3"))))));
         })));
 }
+exports.default = InterviewQuestionList;
 //# sourceMappingURL=InterviewQuestion.js.map

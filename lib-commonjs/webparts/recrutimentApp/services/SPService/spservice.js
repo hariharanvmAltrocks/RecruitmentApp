@@ -395,7 +395,7 @@ var batchGet = function (queries) { return tslib_1.__awaiter(void 0, void 0, voi
                         .select.apply(_a, ((_c = q.select) !== null && _c !== void 0 ? _c : ["*"])).expand((_d = q.expand) !== null && _d !== void 0 ? _d : [])
                         .top(5000);
                     return request().then(function (r) {
-                        console.log(r, "data");
+                        // console.log(r, "data");
                         if (!results_1[q.StateValue]) {
                             results_1[q.StateValue] = [];
                         }

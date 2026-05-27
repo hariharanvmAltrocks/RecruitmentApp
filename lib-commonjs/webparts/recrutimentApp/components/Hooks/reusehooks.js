@@ -1,8 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildOfficeViewerUrl = exports.buildWopiUrl = exports.isPdfUrl = exports.isSharePointUrl = exports.truncateText = exports.findMatricID = exports.fetchByMetricId = void 0;
-exports.calculateTotalExperienceYears = calculateTotalExperienceYears;
-exports.getcountryCode = getcountryCode;
+exports.buildOfficeViewerUrl = exports.buildWopiUrl = exports.isPdfUrl = exports.isSharePointUrl = exports.truncateText = exports.findMatricID = exports.getcountryCode = exports.calculateTotalExperienceYears = exports.fetchByMetricId = void 0;
 var tslib_1 = require("tslib");
 var ServiceExport_1 = require("../../services/ServiceExport");
 var ConditionConfig_1 = require("../../utilities/ConditionConfig");
@@ -110,6 +108,7 @@ function calculateTotalExperienceYears(experiences) {
     var months = totalMonths % 12;
     return "".concat(years, " years and ").concat(months, " months");
 }
+exports.calculateTotalExperienceYears = calculateTotalExperienceYears;
 function getcountryCode(Code, refMobile) {
     if (!refMobile)
         return null;
@@ -119,6 +118,7 @@ function getcountryCode(Code, refMobile) {
         return null;
     return "".concat(country.id, "-").concat(mobileNumber);
 }
+exports.getcountryCode = getcountryCode;
 var findMatricID = function (roleIDs, statusID, TabName, MenuId) {
     if (TabName === ConditionConfig_1.TabNames.BackgroundVerification) {
         return ConditionConfig_1.MatricID.BackgroundCheck;

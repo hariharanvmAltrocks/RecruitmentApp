@@ -19,7 +19,14 @@ var Evalution = function (props) {
     var location = (0, react_router_dom_1.useLocation)();
     var stateCandidateId = (_a = location.state) === null || _a === void 0 ? void 0 : _a.ID;
     var candidateId = Number(stateCandidateId || props.ID || 0);
-    console.log("[Evalution] candidateId:", candidateId, "from state:", stateCandidateId, "props:", props.ID);
+    // console.log(
+    //   "[Evalution] candidateId:",
+    //   candidateId,
+    //   "from state:",
+    //   stateCandidateId,
+    //   "props:",
+    //   props.ID,
+    // );
     return (React.createElement(CommonStateManagement_1.EvaluationProvider, null,
         React.createElement(EvalutionContent, { candidateId: candidateId, onBack: props.onBack, StatusID: props.StatusID, InterviewLevels: props.InterviewLevels })));
 };

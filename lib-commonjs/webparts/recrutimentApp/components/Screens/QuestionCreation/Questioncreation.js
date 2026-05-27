@@ -114,7 +114,6 @@ var QuestionCreation = function (props) {
                         return [2 /*return*/];
                     }
                     setLoading(true);
-                    debugger;
                     StatusIDs = (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.AssignHOD.toLowerCase()) === (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.AssignLineManager.toLowerCase()) ? Config_1.StatusId.PendingReviewAdvertHOD : Config_1.StatusId.CareerPortalQuestions;
                     return [4 /*yield*/, save({
                             positionId: props.ID,

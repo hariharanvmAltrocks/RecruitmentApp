@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isLevel2 = exports.canView = exports.canEdit = exports.VIEW_ONLY_STATUS_IDS = exports.EDITABLE_STATUS_IDS = void 0;
-exports.useReviewScorecard = useReviewScorecard;
+exports.useReviewScorecard = exports.isLevel2 = exports.canView = exports.canEdit = exports.VIEW_ONLY_STATUS_IDS = exports.EDITABLE_STATUS_IDS = void 0;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var ReviewScoreCardServices_1 = tslib_1.__importDefault(require("../ReviewScoreCardServies/ReviewScoreCardServices"));
@@ -433,4 +432,5 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
         isLevel2: exports.isLevel2,
     };
 }
+exports.useReviewScorecard = useReviewScorecard;
 //# sourceMappingURL=useReviewScorecard.js.map

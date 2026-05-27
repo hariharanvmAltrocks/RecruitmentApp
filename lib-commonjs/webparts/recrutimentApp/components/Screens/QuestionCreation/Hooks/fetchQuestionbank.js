@@ -47,7 +47,6 @@ var useFetchQuestionBank = function (discipline, statusId, enable) {
                                     isCorrect: (_b = opt.isCorrect) !== null && _b !== void 0 ? _b : false,
                                 });
                             });
-                            console.log(item.Type, "Typeee");
                             return {
                                 id: item.id,
                                 type: "single",

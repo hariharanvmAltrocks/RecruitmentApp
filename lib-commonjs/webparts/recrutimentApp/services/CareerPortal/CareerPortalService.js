@@ -207,9 +207,9 @@ var CareerPortalService = /** @class */ (function () {
     //   }
     // }
     CareerPortalService.prototype.getCandidateDetailsInJobCode = function (FilterValue) {
+        var _a, _b;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var res, totalItems_1, mappedData, error_5;
-            var _a, _b;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -611,9 +611,9 @@ var CareerPortalService = /** @class */ (function () {
         });
     };
     CareerPortalService.prototype.InsertCandidateDetailsInList = function (CandidateDetails, InterviewPanel) {
+        var _a, _b;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var response, jobDetailsResponse, error_8;
-            var _a, _b;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -979,9 +979,9 @@ var CareerPortalService = /** @class */ (function () {
     //     }
     // }
     CareerPortalService.prototype.GetStateByCountry = function (code) {
+        var _a, _b;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var response, GetAllMasterData, error_15;
-            var _a, _b;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -1014,9 +1014,9 @@ var CareerPortalService = /** @class */ (function () {
         });
     };
     CareerPortalService.prototype.GetCitiesByState = function (code) {
+        var _a, _b;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var response, GetAllMasterData, error_16;
-            var _a, _b;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -1049,9 +1049,9 @@ var CareerPortalService = /** @class */ (function () {
         });
     };
     CareerPortalService.prototype.UpsertProfile = function (data, Document, jobCode) {
+        var _a, _b, _c;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var response, UpsertProfile, UpsertData_1, CandidateCV, FamilyLink, BusinessLink, JobAppiledData, profileCurrentPosition, profileAttachment, error_17;
-            var _a, _b, _c;
             return tslib_1.__generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:

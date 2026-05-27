@@ -118,25 +118,21 @@
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 5px;
   padding: 0 0px 0 31px; /*  0 56px 0 48px; */
-  background: linear-gradient(to right, var(--step-from, var(--app-primary-color, #7c3aed)), var(--step-to, var(--app-secondary-color, #f8fafc))); /* linear-gradient(  to right,  var(--step-from, var(--app-primary-color, #7c3aed)) 0%,  var(--step-from, var(--app-primary-color, #7c3aed)) 80%,  var(--step-to, var(--app-secondary-color, #f8fafc)) 100%); */
+  background: linear-gradient(to right, var(--step-from, var(--app-primary-color, #7c3aed)), #b2cae3); /* linear-gradient(  to right,  var(--step-from, var(--app-primary-color, #7c3aed)) 0%,  var(--step-from, var(--app-primary-color, #7c3aed)) 80%,  var(--step-to, var(--app-secondary-color, #f8fafc)) 100%); */
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   transition: filter 0.2s ease, box-shadow 0.2s ease;
   position: relative;
-  clip-path: polygon(0 0, 90% 0, 98% 50%, 90% 100%, 0 100%, 5% 52%);
+  border-radius: 46%;
 }
 
 .chevronItem:first-child .chevronBody {
-  border-radius: 16px 0 0 16px;
-  padding-left: 10px;
-  clip-path: polygon(0% 0%, 88% 0%, 100% 50%, 88% 100%, 0% 100%);
+  padding-left: 33px;
 }
 
 .chevronItem:last-child .chevronBody {
-  border-radius: 4px 16px 16px 4px;
   padding-right: 10px;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0% 50%);
 }
 
 .iconBox {
@@ -177,7 +173,7 @@
 }
 
 .stepLabel {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 900;
   letter-spacing: 0.04em;
   color: #ffffff;

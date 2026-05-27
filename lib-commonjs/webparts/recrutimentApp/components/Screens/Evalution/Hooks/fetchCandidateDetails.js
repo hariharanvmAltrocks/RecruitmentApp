@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useCandidateDetails = useCandidateDetails;
+exports.useCandidateDetails = void 0;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
@@ -74,12 +74,6 @@ function useCandidateDetails(_a) {
                             text: q.question,
                             expectedResponse: q.answer,
                         }); }));
-                        console.log("[useCandidateDetails] SUCCESS —", {
-                            candidateId: candidateId,
-                            currentUserPanelId: result.currentUserPanelId,
-                            questionsCount: result.questions.length,
-                            jobRequestId: jobRequestId,
-                        });
                         return [3 /*break*/, 5];
                     case 3:
                         err_1 = _b.sent();
@@ -105,4 +99,5 @@ function useCandidateDetails(_a) {
     var reload = React.useCallback(function () { return setRefreshKey(function (k) { return k + 1; }); }, []);
     return { candidate: candidate, questions: questions, loading: loading, error: error, reload: reload };
 }
+exports.useCandidateDetails = useCandidateDetails;
 //# sourceMappingURL=fetchCandidateDetails.js.map

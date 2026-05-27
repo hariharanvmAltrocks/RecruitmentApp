@@ -1,8 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useThemeVars = exports.useTheme = exports.ThemeProvider = void 0;
-exports.normalizeHex = normalizeHex;
-exports.isDarkColor = isDarkColor;
+exports.useThemeVars = exports.useTheme = exports.ThemeProvider = exports.isDarkColor = exports.normalizeHex = void 0;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var ThemeConfig_1 = require("./ThemeConfig");
@@ -14,6 +12,7 @@ function normalizeHex(hex) {
     }
     return "#" + cleanHex;
 }
+exports.normalizeHex = normalizeHex;
 // Helper to determine if a hex color is dark
 function isDarkColor(hexColor) {
     if (!hexColor)
@@ -30,6 +29,7 @@ function isDarkColor(hexColor) {
     var yiq = (r * 299 + g * 587 + b * 114) / 1000;
     return yiq < 140;
 }
+exports.isDarkColor = isDarkColor;
 var ThemeContext = React.createContext(tslib_1.__assign(tslib_1.__assign({}, ThemeConfig_1.defaultTheme), { setTheme: function () { } }));
 var ThemeProvider = function (_a) {
     var theme = _a.theme, children = _a.children;

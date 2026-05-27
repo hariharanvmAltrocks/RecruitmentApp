@@ -122,7 +122,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.InterviewQuestionHR]: {
-    label: "InterviewQuestion",
+    label: "Interview Question",
     status: "CRITICAL",
     icon: MessageSquare,
     color: resolvedGradientEnd,
@@ -217,7 +217,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.InterviewQuestionLM]: {
-    label: "Interview   Question",
+    label: "Interview Question",
     status: "PENDING",
     icon: MessageSquare,
     color: resolvedGradientEnd,

@@ -13,7 +13,7 @@
     "start": "heft start --clean",
     "clean": "heft clean",
     "eject-webpack": "heft eject-webpack",
-   "serve": "gulp serve-deprecated --nobrowser"
+    "serve": "gulp serve-deprecated --nobrowser"
   },
   "dependencies": {
     "@fluentui/react": "^8.106.4",
@@ -65,7 +65,7 @@
     "postcss-loader": "^8.2.1",
     "tailwindcss": "^3.4.13",
     "ts-node": "^10.9.2",
-    "typescript": "~5.8.0"
+    "typescript": "^5.3.3"
   },
   "overrides": {
     "@rushstack/heft": "1.1.2"

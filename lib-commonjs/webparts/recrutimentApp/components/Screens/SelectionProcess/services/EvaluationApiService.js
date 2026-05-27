@@ -13,9 +13,9 @@ var commonServiceInstance = new CommonServices_1.default();
 var questionnaireService = new QuestionnaireApi_1.default();
 exports.evaluationService = {
     getCurrentUserGuid: function (email) {
+        var _a;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var response, e_1;
-            var _a;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -107,9 +107,9 @@ exports.evaluationService = {
         });
     },
     getGradeAndLevel: function (recruitmentID) {
+        var _a, _b, _c, _d, _e, _f;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var grade, level, jobCodeID, dptRes, posRes, e_4;
-            var _a, _b, _c, _d, _e, _f;
             return tslib_1.__generator(this, function (_g) {
                 switch (_g.label) {
                     case 0:
@@ -270,10 +270,10 @@ exports.evaluationService = {
         });
     },
     getEvaluationFormData: function (candidateId, recruitmentId, currentUserEmail) {
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var candidateRes, candidate, panelRes, currentUserGuid_1, currentUserPanel, panelEmails, uniqueEmails, emailToNameMap_1, err_1, formattedPanelMembers, reviewerName, jobTitleEn, jobTitleFr, sageRes, sageUser, err_2, dptRes, jobCodeId, jobUniqueKey, integrationRes, err_3, questions, qResponse, err_4, error_1;
             var _this = this;
-            var _a, _b, _c, _d, _e, _f, _g, _h;
             return tslib_1.__generator(this, function (_j) {
                 switch (_j.label) {
                     case 0:
@@ -468,9 +468,9 @@ exports.evaluationService = {
         });
     },
     submitScorecard: function (payload, panelId, roleId, interviewPersonNameId) {
+        var _a, _b;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var spPayload, scoreCardResponse, newItemId, error_2;
-            var _a, _b;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -523,10 +523,10 @@ exports.evaluationService = {
             });
         });
     },
-    updateCandidateStatus: function (candidateId_1, statusId_1, positionId_1, hodDecision_1, comments_1, updatedByEmail_1) {
-        return tslib_1.__awaiter(this, arguments, void 0, function (candidateId, statusId, positionId, hodDecision, comments, updatedByEmail, gpa) {
+    updateCandidateStatus: function (candidateId, statusId, positionId, hodDecision, comments, updatedByEmail, gpa) {
+        if (gpa === void 0) { gpa = ""; }
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var actionId, payload, updateResponse, error_3;
-            if (gpa === void 0) { gpa = ""; }
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -592,9 +592,9 @@ exports.evaluationService = {
         });
     },
     fetchExistingHODDecision: function (candidateId, roleId, isLevel2) {
+        var _a, _b;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var listName, filter, items, match, comments, positionId, positionText, posList, posItem, _1, e_7;
-            var _a, _b;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -877,10 +877,10 @@ exports.evaluationService = {
             });
         });
     },
-    fetchScorecardJobList: function () {
-        return tslib_1.__awaiter(this, arguments, void 0, function (currentUserEmail) {
+    fetchScorecardJobList: function (currentUserEmail) {
+        if (currentUserEmail === void 0) { currentUserEmail = ""; }
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var filterOpts, res, e_8;
-            if (currentUserEmail === void 0) { currentUserEmail = ""; }
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -944,12 +944,12 @@ exports.evaluationService = {
             });
         });
     },
-    fetchScorecardCandidates: function (recruitmentID_1, jobCodeID_1) {
-        return tslib_1.__awaiter(this, arguments, void 0, function (recruitmentID, jobCodeID, currentUserEmail, candidateFilter) {
+    fetchScorecardCandidates: function (recruitmentID, jobCodeID, currentUserEmail, candidateFilter) {
+        if (currentUserEmail === void 0) { currentUserEmail = ""; }
+        if (candidateFilter === void 0) { candidateFilter = []; }
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
             var filter, res, filteredRes, defaultGrade_1, enrichedWithGPA, e_9;
             var _this = this;
-            if (currentUserEmail === void 0) { currentUserEmail = ""; }
-            if (candidateFilter === void 0) { candidateFilter = []; }
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1067,12 +1067,6 @@ exports.evaluationService = {
                                             return [3 /*break*/, 8];
                                         case 8:
                                             candidateGrade = item.JobGrade || item.PatersonGrade || defaultGrade_1 || "";
-                                            console.log("[fetchScorecardCandidates] candidate", item.ID, "grade resolve", {
-                                                jobGrade: item.JobGrade,
-                                                patersonGrade: item.PatersonGrade,
-                                                defaultGrade: defaultGrade_1,
-                                                resolvedGrade: candidateGrade,
-                                            });
                                             return [2 /*return*/, {
                                                     id: item.ID,
                                                     recruitmentID: ((_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.ID) || recruitmentID,
@@ -1111,13 +1105,13 @@ exports.evaluationService = {
         });
     },
     fetchScoreData: function (candidateID) {
+        var _a;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var panels, results, _i, _a, p, sc, s, e_11;
-            var _b, _c;
-            return tslib_1.__generator(this, function (_d) {
-                switch (_d.label) {
+            var panels, results, _i, _b, p, sc, s, e_11;
+            return tslib_1.__generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        _d.trys.push([0, 6, , 7]);
+                        _c.trys.push([0, 6, , 7]);
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSInterviewPanelDetails,
                                 Select: "ID,InterviewPanel/Id,InterviewPanel/Title,InterviewLevel",
@@ -1131,13 +1125,13 @@ exports.evaluationService = {
                                 ],
                             })];
                     case 1:
-                        panels = _d.sent();
+                        panels = _c.sent();
                         results = [];
-                        _i = 0, _a = panels || [];
-                        _d.label = 2;
+                        _i = 0, _b = panels || [];
+                        _c.label = 2;
                     case 2:
-                        if (!(_i < _a.length)) return [3 /*break*/, 5];
-                        p = _a[_i];
+                        if (!(_i < _b.length)) return [3 /*break*/, 5];
+                        p = _b[_i];
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSCandidateScoreCard,
                                 Select: "*",
@@ -1150,21 +1144,9 @@ exports.evaluationService = {
                                 ],
                             })];
                     case 3:
-                        sc = _d.sent();
+                        sc = _c.sent();
                         if (sc === null || sc === void 0 ? void 0 : sc.length) {
                             s = sc[0];
-                            console.log("[fetchScoreData] candidateID:", candidateID, "panelID:", p.ID, "panelName:", (_b = p.InterviewPanel) === null || _b === void 0 ? void 0 : _b.Title);
-                            console.log("[fetchScoreData] raw scorecard response:", s);
-                            console.log("[fetchScoreData] mapped score values:", {
-                                RelevantQualification: s.RelevantQualification || "0",
-                                ReleventExperience: s.ReleventExperience || "0",
-                                Knowledge: s.Knowledge || "0",
-                                EnergyLevel: s.EnergyLevel || "0",
-                                MeetJobRequirement: s.MeetJobRequirement || "0",
-                                ContributeTowardsCultureRequried: s.ContributeTowardsCultureRequried || "0",
-                                Experience: s.Experience || "0",
-                                OtherCriteriaScore: s.OtherCriteriaScore || "0",
-                            });
                             results.push({
                                 InterviewPanelID: p.ID,
                                 RelevantQualification: s.RelevantQualification || "0",
@@ -1178,17 +1160,17 @@ exports.evaluationService = {
                                 ConsiderForEmployment: s.ConsiderForEmployment || "",
                                 OverAllEvaluationFeedback: s.OverAllEvaluationFeedback || "",
                                 QuestionJson: _parseJson(s.QuestionJson),
-                                InterviewPersonName: ((_c = p.InterviewPanel) === null || _c === void 0 ? void 0 : _c.Title) || "",
+                                InterviewPersonName: ((_a = p.InterviewPanel) === null || _a === void 0 ? void 0 : _a.Title) || "",
                                 CreatedDate: s.Created || "",
                             });
                         }
-                        _d.label = 4;
+                        _c.label = 4;
                     case 4:
                         _i++;
                         return [3 /*break*/, 2];
                     case 5: return [2 /*return*/, results];
                     case 6:
-                        e_11 = _d.sent();
+                        e_11 = _c.sent();
                         console.error("[fetchScoreData] error", e_11);
                         return [2 /*return*/, []];
                     case 7: return [2 /*return*/];
@@ -1197,10 +1179,10 @@ exports.evaluationService = {
         });
     },
     fetchPanelByLevel: function (candidateID) {
+        var _a, _b, _c;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var panels, uniqueEmails, emailToName_1, grouped, _i, _a, p, lvl, name_1, e_12;
+            var panels, uniqueEmails, emailToName_1, grouped, _i, _d, p, lvl, name_1, e_12;
             var _this = this;
-            var _b, _c, _d;
             return tslib_1.__generator(this, function (_e) {
                 switch (_e.label) {
                     case 0:
@@ -1258,11 +1240,11 @@ exports.evaluationService = {
                     case 2:
                         _e.sent();
                         grouped = {};
-                        for (_i = 0, _a = panels || []; _i < _a.length; _i++) {
-                            p = _a[_i];
+                        for (_i = 0, _d = panels || []; _i < _d.length; _i++) {
+                            p = _d[_i];
                             lvl = p.InterviewLevel || "Level 1";
-                            name_1 = emailToName_1[((_c = (_b = p.InterviewPanel) === null || _b === void 0 ? void 0 : _b.EMail) === null || _c === void 0 ? void 0 : _c.toLowerCase()) || ""] ||
-                                ((_d = p.InterviewPanel) === null || _d === void 0 ? void 0 : _d.Title) ||
+                            name_1 = emailToName_1[((_b = (_a = p.InterviewPanel) === null || _a === void 0 ? void 0 : _a.EMail) === null || _b === void 0 ? void 0 : _b.toLowerCase()) || ""] ||
+                                ((_c = p.InterviewPanel) === null || _c === void 0 ? void 0 : _c.Title) ||
                                 "";
                             if (!grouped[lvl])
                                 grouped[lvl] = [];
@@ -1279,10 +1261,10 @@ exports.evaluationService = {
         });
     },
     fetchComments: function (candidateID) {
+        var _a, _b, _c;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var panelItems, scoreItems, scorecardMap_1, authorEmails, emailToEmployee_1, _4, level1, seen, _i, _a, panel, panelID, scoreCard, authorEmail, employee, firstName, middleName, lastName, fullName, jobTitleEn, jobTitleFr, department, l2Items, l2AuthorEmails, l2EmailToEmployee_1, _5, level2, e_13;
+            var panelItems, scoreItems, scorecardMap_1, authorEmails, emailToEmployee_1, _4, level1, seen, _i, _d, panel, panelID, scoreCard, authorEmail, employee, firstName, middleName, lastName, fullName, jobTitleEn, jobTitleFr, department, l2Items, l2AuthorEmails, l2EmailToEmployee_1, _5, level2, e_13;
             var _this = this;
-            var _b, _c, _d;
             return tslib_1.__generator(this, function (_e) {
                 switch (_e.label) {
                     case 0:
@@ -1357,8 +1339,8 @@ exports.evaluationService = {
                     case 6:
                         level1 = [];
                         seen = new Set();
-                        for (_i = 0, _a = panelItems || []; _i < _a.length; _i++) {
-                            panel = _a[_i];
+                        for (_i = 0, _d = panelItems || []; _i < _d.length; _i++) {
+                            panel = _d[_i];
                             panelID = panel.ID;
                             scoreCard = scorecardMap_1.get(panelID);
                             if (!scoreCard)
@@ -1366,13 +1348,13 @@ exports.evaluationService = {
                             if (seen.has(panelID))
                                 continue;
                             seen.add(panelID);
-                            authorEmail = (((_b = scoreCard.Author) === null || _b === void 0 ? void 0 : _b.EMail) || "").toLowerCase();
+                            authorEmail = (((_a = scoreCard.Author) === null || _a === void 0 ? void 0 : _a.EMail) || "").toLowerCase();
                             employee = emailToEmployee_1[authorEmail];
                             firstName = (employee === null || employee === void 0 ? void 0 : employee.FirstName) || "";
                             middleName = (employee === null || employee === void 0 ? void 0 : employee.MiddleName) || "";
                             lastName = (employee === null || employee === void 0 ? void 0 : employee.LastName) || "";
                             fullName = [firstName, middleName, lastName].filter(Boolean).join(" ").trim() ||
-                                ((_c = scoreCard.Author) === null || _c === void 0 ? void 0 : _c.Title) ||
+                                ((_b = scoreCard.Author) === null || _b === void 0 ? void 0 : _b.Title) ||
                                 "";
                             jobTitleEn = (employee === null || employee === void 0 ? void 0 : employee.JobTitleInEnglish) || (employee === null || employee === void 0 ? void 0 : employee.JobTitle) || "";
                             jobTitleFr = (employee === null || employee === void 0 ? void 0 : employee.JobTitleInFrench) || "";
@@ -1384,7 +1366,7 @@ exports.evaluationService = {
                                 JobTitleInFrench: jobTitleFr,
                                 Department: department,
                                 Date: scoreCard.Created || null,
-                                RoleName: ((_d = scoreCard.Role) === null || _d === void 0 ? void 0 : _d.RoleTitle) || "",
+                                RoleName: ((_c = scoreCard.Role) === null || _c === void 0 ? void 0 : _c.RoleTitle) || "",
                                 comments: scoreCard.Feedback || "",
                                 OverAllEvaluationFeedback: scoreCard.OverAllEvaluationFeedback || "",
                                 Level: "Level 1",
@@ -1465,7 +1447,6 @@ exports.evaluationService = {
                                 Level: "Level 2",
                             };
                         });
-                        console.log("[fetchComments] candidateID:", candidateID, "level1 count:", level1.length, "level2 count:", level2.length, "level1:", level1, "level2:", level2);
                         return [2 /*return*/, { level1: level1, level2: level2 }];
                     case 12:
                         e_13 = _e.sent();
@@ -1483,8 +1464,6 @@ exports.evaluationService = {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        console.log("jobCodeID:", jobCodeID);
-                        console.log("department:", department);
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSPositionIDMaster,
                                 Select: '*,JobCode/JobCode,Department/DepartmentName',
@@ -1511,12 +1490,10 @@ exports.evaluationService = {
                             })];
                     case 1:
                         res = _a.sent();
-                        console.log("Position raw response:", res);
                         mapped = (res || []).map(function (item) { return ({
                             key: item.ID,
                             text: item.PositionID || item.Title || "#".concat(item.ID),
                         }); });
-                        console.log("Mapped position options:", mapped);
                         return [2 /*return*/, mapped];
                     case 2:
                         e_14 = _a.sent();
@@ -1540,10 +1517,10 @@ function _parseJson(raw) {
         return [];
     }
 }
-function _insertOrUpdateLevel1Comment(candidateId_1, roleId_1, comments_1) {
-    return tslib_1.__awaiter(this, arguments, void 0, function (candidateId, roleId, comments, level) {
+function _insertOrUpdateLevel1Comment(candidateId, roleId, comments, level) {
+    if (level === void 0) { level = ""; }
+    return tslib_1.__awaiter(this, void 0, void 0, function () {
         var existing, match, e_15;
-        if (level === void 0) { level = ""; }
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -1599,10 +1576,10 @@ function _insertOrUpdateLevel1Comment(candidateId_1, roleId_1, comments_1) {
         });
     });
 }
-function _insertOrUpdateLevel2Comment(candidateId_1, roleId_1, comments_1) {
-    return tslib_1.__awaiter(this, arguments, void 0, function (candidateId, roleId, comments, level) {
+function _insertOrUpdateLevel2Comment(candidateId, roleId, comments, level) {
+    if (level === void 0) { level = ""; }
+    return tslib_1.__awaiter(this, void 0, void 0, function () {
         var existing, match, e_16;
-        if (level === void 0) { level = ""; }
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:

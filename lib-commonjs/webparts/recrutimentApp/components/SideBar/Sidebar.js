@@ -89,7 +89,7 @@ var SideNavigation = function (_a) {
             sortedMenu.map(function (parent) { return (react_1.default.createElement(SidebarItem, { key: parent.Id, item: parent, activeMenuID: activeMenuID, onSelectCallback: handleSelect, isExpanded: expandedMenus.includes(parent.Id), onToggleExpand: function () { return toggleExpand(parent.Id); }, isCollapsed: isCollapsed })); })),
         react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.sidebarFooter },
             react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerContent },
-                react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerVersion }, "v-1.2"),
+                react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerVersion }, "v-1.0"),
                 react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerLabel }, "Kamoa Copper SA"),
                 react_1.default.createElement("div", { onClick: function () { return setSwitcherOpen(true); }, className: SideNavigation_module_scss_1.default.sidebarItem, title: isCollapsed ? "Custom Theme" : undefined },
                     react_1.default.createElement(lucide_react_1.Palette, { className: SideNavigation_module_scss_1.default.icon }),

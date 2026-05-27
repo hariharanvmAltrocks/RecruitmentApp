@@ -18,7 +18,6 @@ var SkeletonCard = function () { return (react_1.default.createElement("div", { 
     react_1.default.createElement("div", { className: "qc-bank__skeleton-line qc-bank__skeleton-line--medium" }))); };
 var CareerPortalQuestionBank = function (_a) {
     var questionBank = _a.questionBank, loading = _a.loading, preparedQuestionIds = _a.preparedQuestionIds, searchQuery = _a.searchQuery, onSearchChange = _a.onSearchChange, onAddFromBank = _a.onAddFromBank;
-    console.log("questionBank", questionBank);
     var filtered = (0, react_1.useMemo)(function () {
         return questionBank.filter(function (q) {
             return q.questionEn.toLowerCase().includes(searchQuery.toLowerCase()) ||

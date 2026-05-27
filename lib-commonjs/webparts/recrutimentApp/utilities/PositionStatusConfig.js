@@ -55,7 +55,8 @@ exports.PROGRESS_STEPS = [
     "Offer Release",
     "Workpermit Process",
     "Employment Contract",
-    "Onboarding",
+    "Onboarding In Progress",
+    "Onboarded",
 ];
 var getStageCandidateindex = function (statusId) {
     if (!statusId)
@@ -99,10 +100,24 @@ var getStageCandidateindex = function (statusId) {
         statusId ==
             Config_1.StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract)
         return 5;
+    if (statusId == Config_1.StatusId.WorkPermitAcknowledgedContractUploaded ||
+        statusId == Config_1.StatusId.PendingCandidateEmploymentContractUpload ||
+        statusId == Config_1.StatusId.PendingHREmploymentContractVerification ||
+        statusId == Config_1.StatusId.PendingHRReviewOfferuploadEmploymentInit ||
+        statusId == Config_1.StatusId.PendingHREmploymentContractInit ||
+        statusId == Config_1.StatusId.PendingLHECRelease ||
+        statusId == Config_1.StatusId.PendingHREmploymentContractReview ||
+        statusId ==
+            Config_1.StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract)
+        return 6;
     if (statusId == Config_1.StatusId.OnboardingProcessinitiatedforDRC ||
         statusId == Config_1.StatusId.OnboardingProcessinitiatedforExpat ||
+        statusId == Config_1.StatusId.PendingHRpreonboardingchecklist ||
         statusId == Config_1.StatusId.onboardingInProcess)
-        return 6;
+        return 7;
+    if (statusId == Config_1.StatusId.Onboarded) {
+        return 8;
+    }
     return 0;
 };
 exports.getStageCandidateindex = getStageCandidateindex;
@@ -139,18 +154,10 @@ var getStageIndexinCandidate = function (statusId) {
         statusId == Config_1.StatusId.OnboardingProcessinitiatedforExpat ||
         statusId == Config_1.StatusId.onboardingInProcess)
         return 6;
+    if (statusId == Config_1.StatusId.Onboarded) {
+        return 7;
+    }
     return 0;
 };
 exports.getStageIndexinCandidate = getStageIndexinCandidate;
-// export const getCandidateStatus = (statusId: number) => {
-//   if (!statusId) return "Unknown";
-//   if (statusId == StatusId.) return "Candidate Shortlisted";
-//   if (statusId == StatusId.FirstInterviewScheduled) return "First Interview Scheduled";
-//   if (statusId == StatusId.FinalInterviewScheduled) return "Final Interview Scheduled";
-//   if (statusId == StatusId.OfferPending) return "Offer Pending";
-//   if (statusId == StatusId.OfferReleased) return "Offer Released";
-//   if (statusId == StatusId.Joined) return "Joined";
-//   if (statusId == StatusId.Rejected) return "Rejected";
-//   return "Unknown";
-// }
 //# sourceMappingURL=PositionStatusConfig.js.map

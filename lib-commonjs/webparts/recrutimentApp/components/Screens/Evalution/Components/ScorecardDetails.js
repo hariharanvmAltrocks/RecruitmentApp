@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = ScorecardDetails;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var ScorecardDetails_module_scss_1 = tslib_1.__importDefault(require("./ScorecardDetails.module.scss"));
@@ -94,4 +93,5 @@ function ScorecardDetails(_a) {
                             React.createElement("p", { className: ScorecardDetails_module_scss_1.default.reviewerMeta, style: { marginTop: 12 } }, "JOB TITLE (FR)"),
                             React.createElement("p", { className: ScorecardDetails_module_scss_1.default.reviewerVal }, jobTitleFr))))))));
 }
+exports.default = ScorecardDetails;
 //# sourceMappingURL=ScorecardDetails.js.map

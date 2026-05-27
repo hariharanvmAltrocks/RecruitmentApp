@@ -15,9 +15,9 @@ var CandidateService = /** @class */ (function () {
     function CandidateService() {
     }
     CandidateService.prototype.getCandidateDetailsInJobCode = function (FilterValue) {
+        var _a, _b;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var res, totalItems_1, mappedData, error_1;
-            var _a, _b;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -425,10 +425,10 @@ var CandidateService = /** @class */ (function () {
         });
     };
     CandidateService.prototype.getCandidateDetailsL2 = function (CandidateID) {
+        var _a, _b, _c, _d, _e, _f;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var res, defaultGrade, defaultLevel, posRes, gr, _1, enriched, error_4;
             var _this = this;
-            var _a, _b, _c, _d, _e, _f;
             return tslib_1.__generator(this, function (_g) {
                 switch (_g.label) {
                     case 0:
@@ -615,21 +615,21 @@ var CandidateService = /** @class */ (function () {
         });
     };
     CandidateService.prototype.fetchInterviewPanelDetails = function (_a) {
-        return tslib_1.__awaiter(this, arguments, void 0, function (_b) {
-            var empty, jdeQuery, userRoleQuery, batchRes, jdeItems, userRoles, jdeItem, panelRoleEntry, adGroupOptions, _c, existingLevel1, existingLevel2, levels, existingPanelFilter, existingPanelQuery, panelBatch, existingPanelItems, resolvedExistingPanel, nameTasks, assignHRId, nameResults, nameMap, basePanelLevel1, basePanelLevel2, adOptions, level1Panel, level2Panel, panelMember, panelMember2, result, error_5;
+        var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+        var BUCodeID = _a.BUCodeID, assignHREmail = _a.assignHREmail, candidateID = _a.candidateID, statusID = _a.statusID;
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var empty, jdeQuery, userRoleQuery, batchRes, jdeItems, userRoles, jdeItem, panelRoleEntry, adGroupOptions, _o, existingLevel1, existingLevel2, levels, existingPanelFilter, existingPanelQuery, panelBatch, existingPanelItems, resolvedExistingPanel, nameTasks, assignHRId, nameResults, nameMap, basePanelLevel1, basePanelLevel2, adOptions, level1Panel, level2Panel, panelMember, panelMember2, result, error_5;
             var _this = this;
-            var _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
-            var BUCodeID = _b.BUCodeID, assignHREmail = _b.assignHREmail, candidateID = _b.candidateID, statusID = _b.statusID;
-            return tslib_1.__generator(this, function (_q) {
-                switch (_q.label) {
+            return tslib_1.__generator(this, function (_p) {
+                switch (_p.label) {
                     case 0:
                         empty = {
                             Level1: [],
                             Level2: [],
                         };
-                        _q.label = 1;
+                        _p.label = 1;
                     case 1:
-                        _q.trys.push([1, 11, , 12]);
+                        _p.trys.push([1, 11, , 12]);
                         jdeQuery = {
                             StateValue: 1,
                             ListName: Config_1.ListNames.JDEDataMapping,
@@ -664,9 +664,9 @@ var CandidateService = /** @class */ (function () {
                                 userRoleQuery,
                             ])];
                     case 2:
-                        batchRes = _q.sent();
-                        jdeItems = (_d = batchRes[1]) !== null && _d !== void 0 ? _d : [];
-                        userRoles = (_e = batchRes[2]) !== null && _e !== void 0 ? _e : [];
+                        batchRes = _p.sent();
+                        jdeItems = (_b = batchRes[1]) !== null && _b !== void 0 ? _b : [];
+                        userRoles = (_c = batchRes[2]) !== null && _c !== void 0 ? _c : [];
                         jdeItem = jdeItems[0];
                         if (!jdeItem) {
                             return [2 /*return*/, { data: empty, status: 200, message: "No JDE mapping found" }];
@@ -675,14 +675,14 @@ var CandidateService = /** @class */ (function () {
                         if (!(panelRoleEntry === null || panelRoleEntry === void 0 ? void 0 : panelRoleEntry.ADGroupID)) return [3 /*break*/, 4];
                         return [4 /*yield*/, ServiceExport_1.CommonServices.GetADgruopsEmailIDs(panelRoleEntry.ADGroupID)];
                     case 3:
-                        _c = ((_f = (_q.sent())
-                            .data) !== null && _f !== void 0 ? _f : []);
+                        _o = ((_d = (_p.sent())
+                            .data) !== null && _d !== void 0 ? _d : []);
                         return [3 /*break*/, 5];
                     case 4:
-                        _c = [];
-                        _q.label = 5;
+                        _o = [];
+                        _p.label = 5;
                     case 5:
-                        adGroupOptions = _c;
+                        adGroupOptions = _o;
                         existingLevel1 = [];
                         existingLevel2 = [];
                         if (!(Number(statusID) ===
@@ -720,37 +720,37 @@ var CandidateService = /** @class */ (function () {
                                 existingPanelQuery,
                             ])];
                     case 6:
-                        panelBatch = _q.sent();
-                        existingPanelItems = (_g = panelBatch[3]) !== null && _g !== void 0 ? _g : [];
+                        panelBatch = _p.sent();
+                        existingPanelItems = (_e = panelBatch[3]) !== null && _e !== void 0 ? _e : [];
                         return [4 /*yield*/, Promise.all(existingPanelItems.map(function (item) { return (0, ICandidateService_1.toPanelEntry)(item); }))];
                     case 7:
-                        resolvedExistingPanel = (_q.sent()).filter(function (e) { return e !== null; });
+                        resolvedExistingPanel = (_p.sent()).filter(function (e) { return e !== null; });
                         existingLevel1 = resolvedExistingPanel.filter(function (p) { return p.Levels === ConditionConfig_1.InterviewLevels.Level1; });
                         existingLevel2 = resolvedExistingPanel.filter(function (p) { return p.Levels === ConditionConfig_1.InterviewLevels.Level2; });
-                        _q.label = 8;
+                        _p.label = 8;
                     case 8:
                         nameTasks = [];
                         return [4 /*yield*/, ServiceExport_1.CommonServices.getUserGuidByEmail(assignHREmail)];
                     case 9:
-                        assignHRId = _q.sent();
-                        if ((_h = jdeItem.LineManager) === null || _h === void 0 ? void 0 : _h.EMail)
+                        assignHRId = _p.sent();
+                        if ((_f = jdeItem.LineManager) === null || _f === void 0 ? void 0 : _f.EMail)
                             nameTasks.push({
                                 key: String(jdeItem === null || jdeItem === void 0 ? void 0 : jdeItem.LineManagerId),
                                 email: jdeItem.LineManager.EMail,
                             });
-                        if ((_j = jdeItem.HOD) === null || _j === void 0 ? void 0 : _j.EMail)
+                        if ((_g = jdeItem.HOD) === null || _g === void 0 ? void 0 : _g.EMail)
                             nameTasks.push({
                                 key: String(jdeItem === null || jdeItem === void 0 ? void 0 : jdeItem.HODId),
                                 email: jdeItem.HOD.EMail,
                             });
-                        if ((_k = jdeItem.EXCO) === null || _k === void 0 ? void 0 : _k.EMail)
+                        if ((_h = jdeItem.EXCO) === null || _h === void 0 ? void 0 : _h.EMail)
                             nameTasks.push({
                                 key: String(jdeItem === null || jdeItem === void 0 ? void 0 : jdeItem.EXCOId),
                                 email: jdeItem.EXCO.EMail,
                             });
                         if (assignHREmail)
                             nameTasks.push({
-                                key: String((_l = assignHRId.data) === null || _l === void 0 ? void 0 : _l.key),
+                                key: String((_j = assignHRId.data) === null || _j === void 0 ? void 0 : _j.key),
                                 email: assignHREmail,
                             });
                         return [4 /*yield*/, Promise.all(nameTasks.map(function (t) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
@@ -768,7 +768,7 @@ var CandidateService = /** @class */ (function () {
                                 });
                             }); }))];
                     case 10:
-                        nameResults = _q.sent();
+                        nameResults = _p.sent();
                         nameMap = Object.fromEntries(nameResults.map(function (r) { return [r.key, r.label]; }));
                         basePanelLevel1 = [];
                         basePanelLevel2 = [];
@@ -790,7 +790,7 @@ var CandidateService = /** @class */ (function () {
                                     Role: ConditionConfig_1.RoleName.HOD,
                                 });
                             }
-                            if (((_m = assignHRId === null || assignHRId === void 0 ? void 0 : assignHRId.data) === null || _m === void 0 ? void 0 : _m.key) && nameMap[String(assignHRId.data.key)]) {
+                            if (((_k = assignHRId === null || assignHRId === void 0 ? void 0 : assignHRId.data) === null || _k === void 0 ? void 0 : _k.key) && nameMap[String(assignHRId.data.key)]) {
                                 basePanelLevel1.push({
                                     value: assignHRId.data.key,
                                     label: nameMap[String(assignHRId.data.key)],
@@ -834,7 +834,7 @@ var CandidateService = /** @class */ (function () {
                                     Role: ConditionConfig_1.RoleName.EXCO,
                                 });
                             }
-                            if (((_o = assignHRId === null || assignHRId === void 0 ? void 0 : assignHRId.data) === null || _o === void 0 ? void 0 : _o.key) && nameMap[String(assignHRId.data.key)]) {
+                            if (((_l = assignHRId === null || assignHRId === void 0 ? void 0 : assignHRId.data) === null || _l === void 0 ? void 0 : _l.key) && nameMap[String(assignHRId.data.key)]) {
                                 basePanelLevel2.push({
                                     value: assignHRId.data.key,
                                     label: nameMap[String(assignHRId.data.key)],
@@ -871,7 +871,7 @@ var CandidateService = /** @class */ (function () {
                                     Role: ConditionConfig_1.RoleName.HOD,
                                 });
                             }
-                            if (((_p = assignHRId === null || assignHRId === void 0 ? void 0 : assignHRId.data) === null || _p === void 0 ? void 0 : _p.key) && nameMap[String(assignHRId.data.key)]) {
+                            if (((_m = assignHRId === null || assignHRId === void 0 ? void 0 : assignHRId.data) === null || _m === void 0 ? void 0 : _m.key) && nameMap[String(assignHRId.data.key)]) {
                                 basePanelLevel1.push({
                                     value: assignHRId.data.key,
                                     label: nameMap[String(assignHRId.data.key)],
@@ -919,7 +919,7 @@ var CandidateService = /** @class */ (function () {
                                 message: "Interview panel details fetched successfully",
                             }];
                     case 11:
-                        error_5 = _q.sent();
+                        error_5 = _p.sent();
                         console.error("fetchInterviewPanelDetails failed:", error_5);
                         return [2 /*return*/, {
                                 data: empty,
@@ -1222,17 +1222,17 @@ var CandidateService = /** @class */ (function () {
         });
     };
     CandidateService.prototype.InterviewScheduleLevel2 = function (payloads) {
+        var _a;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var _a, batchedSP_1, execute, results_1, error_14;
-            var _b;
+            var _b, batchedSP_1, execute, results_1, error_14;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         _c.trys.push([0, 2, , 3]);
-                        if (!payloads || !((_b = payloads.interviewPanelL2) === null || _b === void 0 ? void 0 : _b.length)) {
+                        if (!payloads || !((_a = payloads.interviewPanelL2) === null || _a === void 0 ? void 0 : _a.length)) {
                             return [2 /*return*/, { data: [], status: 200, message: "No payloads to insert" }];
                         }
-                        _a = (0, spservice_1.getSP)().batched(), batchedSP_1 = _a[0], execute = _a[1];
+                        _b = (0, spservice_1.getSP)().batched(), batchedSP_1 = _b[0], execute = _b[1];
                         results_1 = [];
                         payloads.interviewPanelL2.forEach(function (item) {
                             void batchedSP_1.web.lists

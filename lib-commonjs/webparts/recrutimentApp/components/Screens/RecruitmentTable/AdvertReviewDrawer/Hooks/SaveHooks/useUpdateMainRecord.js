@@ -10,14 +10,10 @@ var UIStateContext_1 = require("../../../../../RecrutimentApp/UIStateContext");
 var WorkflowConfig_1 = require("../../../../../Hooks/WorkflowConfig");
 var useUpdateMainRecord = function (form, currentRoleID) {
     var MatricID = (0, UIStateContext_1.useUIState)().MatricID;
-    var updateMainRecord = (0, react_1.useCallback)(function () {
-        var args_1 = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args_1[_i] = arguments[_i];
-        }
-        return tslib_1.__awaiter(void 0, tslib_1.__spreadArray([], args_1, true), void 0, function (extraData) {
+    var updateMainRecord = (0, react_1.useCallback)(function (extraData) {
+        if (extraData === void 0) { extraData = {}; }
+        return tslib_1.__awaiter(void 0, void 0, void 0, function () {
             var StatusID, payload, tasks;
-            if (extraData === void 0) { extraData = {}; }
             return tslib_1.__generator(this, function (_a) {
                 StatusID = (0, WorkflowConfig_1.WorkflowConfig)(form.StatusId);
                 payload = tslib_1.__assign({ StatusId: StatusID }, extraData);

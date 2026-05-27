@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetchCandidateValue = fetchCandidateValue;
+exports.fetchCandidateValue = void 0;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var ServiceExport_1 = require("../../../../../services/ServiceExport");
@@ -230,4 +230,5 @@ function fetchCandidateValue(CandidateId, recruitmentID) {
         reviewLoading: reviewLoading,
     };
 }
+exports.fetchCandidateValue = fetchCandidateValue;
 //# sourceMappingURL=fetchCandidateValue.js.map

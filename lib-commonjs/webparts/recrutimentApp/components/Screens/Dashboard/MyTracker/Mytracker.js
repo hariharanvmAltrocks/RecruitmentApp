@@ -342,12 +342,10 @@ var Mytracker = function () {
                     react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["assignment-bar__controls"] },
                         react_1.default.createElement("select", { className: MyTracker_module_scss_1.default["assignment-bar__select"], value: selectedMemberId, onChange: function (e) {
                                 return setSelectedMemberId(Number(e.target.value));
-                            }, disabled: membersLoading },
-                            react_1.default.createElement("option", { value: "" }, "Choose HR member"),
-                            members.map(function (member) { return (react_1.default.createElement("option", { key: member.id, value: member.id },
-                                member.name,
-                                " - ",
-                                member.role)); })),
+                            }, disabled: membersLoading, placeholder: activeMetric === ConditionConfig_1.MatricID.AssignHr ? "Choose HR member" : "Choose Agency member" }, members.map(function (member) { return (react_1.default.createElement("option", { key: member.id, value: member.id },
+                            member.name,
+                            " - ",
+                            member.role)); })),
                         react_1.default.createElement("button", { className: MyTracker_module_scss_1.default["assignment-bar__button"], type: "button", onClick: function () { return setIsPopupOpen(true); }, disabled: !selectedMemberId },
                             "Execute Assignment",
                             react_1.default.createElement(lucide_react_1.ChevronRight, { size: 16 })))))),

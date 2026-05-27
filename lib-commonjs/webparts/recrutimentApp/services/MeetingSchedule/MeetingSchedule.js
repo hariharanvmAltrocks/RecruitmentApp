@@ -17,9 +17,9 @@ var MeetingSchdule = /** @class */ (function () {
     function MeetingSchdule() {
     }
     MeetingSchdule.prototype.fetchRooms = function () {
+        var _a;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var data, response, res, availableRoom, error_1;
-            var _a;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:

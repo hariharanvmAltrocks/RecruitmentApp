@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = AppWrapper;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var react_router_dom_1 = require("react-router-dom");
@@ -58,4 +57,5 @@ function AppWrapper(props) {
         React.createElement(ThemeContext_1.ThemeProvider, null,
             React.createElement(App, tslib_1.__assign({}, props)))));
 }
+exports.default = AppWrapper;
 //# sourceMappingURL=App.js.map

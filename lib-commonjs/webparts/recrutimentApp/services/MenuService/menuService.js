@@ -266,9 +266,9 @@ var MenuService = /** @class */ (function () {
         return menuItems;
     };
     MenuService.prototype.getsubmenu = function (items, SubMenuId) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var submenuMap, _loop_1, _i, items_1, item, submenuList, _a, submenuList_1, submenu, _b;
-            var _c, _d, _e, _f, _g, _h, _j, _k, _l;
+            var submenuMap, _loop_1, _i, items_1, item, submenuList, _k, submenuList_1, submenu, _l;
             return tslib_1.__generator(this, function (_m) {
                 switch (_m.label) {
                     case 0:
@@ -281,7 +281,7 @@ var MenuService = /** @class */ (function () {
                                     submenuMap.set(sub.Id, tslib_1.__assign(tslib_1.__assign({}, sub), { TabDetails: [] }));
                                 }
                                 var existingSub = submenuMap.get(sub.Id);
-                                var tabName_1 = (_d = (_c = item.Tab) === null || _c === void 0 ? void 0 : _c.text) === null || _d === void 0 ? void 0 : _d.trim();
+                                var tabName_1 = (_b = (_a = item.Tab) === null || _a === void 0 ? void 0 : _a.text) === null || _b === void 0 ? void 0 : _b.trim();
                                 if (!tabName_1)
                                     return "continue";
                                 if (!existingSub.TabDetails) {
@@ -296,8 +296,8 @@ var MenuService = /** @class */ (function () {
                                     };
                                     existingSub.TabDetails.push(tabDetail);
                                 }
-                                var statusId_1 = (_e = item.Status) === null || _e === void 0 ? void 0 : _e.key;
-                                var statusText = (_g = (_f = item.Status) === null || _f === void 0 ? void 0 : _f.text) === null || _g === void 0 ? void 0 : _g.trim();
+                                var statusId_1 = (_c = item.Status) === null || _c === void 0 ? void 0 : _c.key;
+                                var statusText = (_e = (_d = item.Status) === null || _d === void 0 ? void 0 : _d.text) === null || _e === void 0 ? void 0 : _e.trim();
                                 var statusDetail = void 0;
                                 if (statusText) {
                                     statusDetail = tabDetail.StatusDetails.find(function (sd) {
@@ -335,8 +335,8 @@ var MenuService = /** @class */ (function () {
                                     };
                                     tabDetail.StatusDetails.push(statusDetail);
                                 }
-                                var actionId = (_h = item.Action) === null || _h === void 0 ? void 0 : _h.key;
-                                var actionText = (_k = (_j = item.Action) === null || _j === void 0 ? void 0 : _j.text) === null || _k === void 0 ? void 0 : _k.trim();
+                                var actionId = (_f = item.Action) === null || _f === void 0 ? void 0 : _f.key;
+                                var actionText = (_h = (_g = item.Action) === null || _g === void 0 ? void 0 : _g.text) === null || _h === void 0 ? void 0 : _h.trim();
                                 // if (typeof actionId === 'number' && actionText) {
                                 if (!statusDetail.ActionId.includes(actionId)) {
                                     statusDetail.ActionId.push(actionId);
@@ -352,25 +352,25 @@ var MenuService = /** @class */ (function () {
                             _loop_1(item);
                         }
                         submenuList = Array.from(submenuMap.values());
-                        _a = 0, submenuList_1 = submenuList;
+                        _k = 0, submenuList_1 = submenuList;
                         _m.label = 1;
                     case 1:
-                        if (!(_a < submenuList_1.length)) return [3 /*break*/, 4];
-                        submenu = submenuList_1[_a];
-                        (_l = submenu.TabDetails) === null || _l === void 0 ? void 0 : _l.sort(function (a, b) {
+                        if (!(_k < submenuList_1.length)) return [3 /*break*/, 4];
+                        submenu = submenuList_1[_k];
+                        (_j = submenu.TabDetails) === null || _j === void 0 ? void 0 : _j.sort(function (a, b) {
                             var _a, _b;
                             var aNum = parseInt(((_a = a.Value) === null || _a === void 0 ? void 0 : _a.replace(/\D/g, '')) || '0', 10);
                             var bNum = parseInt(((_b = b.Value) === null || _b === void 0 ? void 0 : _b.replace(/\D/g, '')) || '0', 10);
                             return aNum - bNum;
                         });
                         if (!(submenu === null || submenu === void 0 ? void 0 : submenu.SubMenu)) return [3 /*break*/, 3];
-                        _b = submenu;
+                        _l = submenu;
                         return [4 /*yield*/, this.getsubmenu(items, submenu.Id)];
                     case 2:
-                        _b.Children = _m.sent();
+                        _l.Children = _m.sent();
                         _m.label = 3;
                     case 3:
-                        _a++;
+                        _k++;
                         return [3 /*break*/, 1];
                     case 4: return [2 /*return*/, submenuList];
                 }

@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = CandidateInfo;
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var CandidateInfo_module_scss_1 = tslib_1.__importDefault(require("./CandidateInfo.module.scss"));
@@ -34,6 +33,7 @@ function CandidateInfo(_a) {
                     React.createElement("span", { className: CandidateInfo_module_scss_1.default.panelBadge }, i + 1),
                     React.createElement("span", { className: CandidateInfo_module_scss_1.default.panelName }, name))); }))))));
 }
+exports.default = CandidateInfo;
 function InfoField(_a) {
     var icon = _a.icon, label = _a.label, value = _a.value;
     return (React.createElement("div", { className: CandidateInfo_module_scss_1.default.leftFieldWrapper },

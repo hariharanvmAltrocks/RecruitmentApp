@@ -591,8 +591,8 @@ const Mytracker: React.FC<DashboardProps> = () => {
                             setSelectedMemberId(Number(e.target.value))
                           }
                           disabled={membersLoading}
+                          placeholder={activeMetric === MatricID.AssignHr ? "Choose HR member" : "Choose Agency member"}
                         >
-                          <option value="">Choose HR member</option>
                           {members.map((member) => (
                             <option key={member.id} value={member.id}>
                               {member.name} - {member.role}

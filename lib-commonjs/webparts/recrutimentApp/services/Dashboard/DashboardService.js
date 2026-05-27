@@ -14,9 +14,9 @@ var DashboardService = /** @class */ (function () {
     function DashboardService() {
     }
     DashboardService.prototype.GetDashboardCount = function (queries, currentRoleID, EmailID) {
+        var _a, _b;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var metricConfigs, EvalutionFilter, UserID, listItems, CandidateIds, filterParam_1, filterParam_2, spCounts_1, externalMetrics, externalCountMap_1, metrics, error_1;
-            var _a, _b;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -282,9 +282,9 @@ var DashboardService = /** @class */ (function () {
         });
     };
     DashboardService.prototype._fetchCandidateCounts = function (jobCodeId, workflowStatusId) {
+        var _a, _b, _c, _d;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var portalItems, jobUniqueKey, params, response, error_2;
-            var _a, _b, _c, _d;
             return tslib_1.__generator(this, function (_e) {
                 switch (_e.label) {
                     case 0:
@@ -329,9 +329,9 @@ var DashboardService = /** @class */ (function () {
         });
     };
     DashboardService.prototype._getCandidateCountByMatric = function (jobCodeId, MatricId, RecID) {
+        var _a, _b;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var level1Promise, level2Promise, _a, level1, level2, error_3;
-            var _b, _c;
+            var level1Promise, level2Promise, _c, level1, level2, error_3;
             return tslib_1.__generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
@@ -370,8 +370,8 @@ var DashboardService = /** @class */ (function () {
                                 level2Promise,
                             ])];
                     case 1:
-                        _a = _d.sent(), level1 = _a[0], level2 = _a[1];
-                        return [2 /*return*/, level1 + ((_c = (_b = level2 === null || level2 === void 0 ? void 0 : level2.data) === null || _b === void 0 ? void 0 : _b.length) !== null && _c !== void 0 ? _c : 0)];
+                        _c = _d.sent(), level1 = _c[0], level2 = _c[1];
+                        return [2 /*return*/, level1 + ((_b = (_a = level2 === null || level2 === void 0 ? void 0 : level2.data) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0)];
                     case 2: return [2 /*return*/, 0];
                     case 3:
                         error_3 = _d.sent();
@@ -742,9 +742,9 @@ var DashboardService = /** @class */ (function () {
     //   }
     // }
     DashboardService.prototype.GetCandidateDetails = function (filterParam, filterConditions, MatricId, EmailID) {
+        var _a, _b, _c, _d;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var isEvaluationFlow, UserID, listItems, recruitmentIds_1, res, recruitmentIds, uniqueGrades, recruitmentFilter, _a, deptResult, gradeResults_1, gradeLevelMap_1, deptMap_1, _i, _b, dept, existing, GridResult, error_7;
-            var _c, _d, _e, _f;
+            var isEvaluationFlow, UserID, listItems, recruitmentIds_1, res, recruitmentIds, uniqueGrades, recruitmentFilter, _e, deptResult, gradeResults_1, gradeLevelMap_1, deptMap_1, _i, _f, dept, existing, GridResult, error_7;
             return tslib_1.__generator(this, function (_g) {
                 switch (_g.label) {
                     case 0:
@@ -765,7 +765,7 @@ var DashboardService = /** @class */ (function () {
                                     {
                                         FilterKey: "InterviewPanelId",
                                         Operator: "eq",
-                                        FilterValue: (_d = (_c = UserID.data) === null || _c === void 0 ? void 0 : _c.key) !== null && _d !== void 0 ? _d : "",
+                                        FilterValue: (_b = (_a = UserID.data) === null || _a === void 0 ? void 0 : _a.key) !== null && _b !== void 0 ? _b : "",
                                     },
                                     {
                                         FilterKey: "IsScoreSheetUploaded",
@@ -826,7 +826,7 @@ var DashboardService = /** @class */ (function () {
                                 });
                             }), true))];
                     case 5:
-                        _a = _g.sent(), deptResult = _a[0], gradeResults_1 = _a.slice(1);
+                        _e = _g.sent(), deptResult = _e[0], gradeResults_1 = _e.slice(1);
                         gradeLevelMap_1 = new Map(uniqueGrades.map(function (grade, i) {
                             var _a, _b;
                             return [
@@ -835,9 +835,9 @@ var DashboardService = /** @class */ (function () {
                             ];
                         }));
                         deptMap_1 = new Map();
-                        for (_i = 0, _b = (_e = deptResult.data) !== null && _e !== void 0 ? _e : []; _i < _b.length; _i++) {
-                            dept = _b[_i];
-                            existing = (_f = deptMap_1.get(dept.ID)) !== null && _f !== void 0 ? _f : [];
+                        for (_i = 0, _f = (_c = deptResult.data) !== null && _c !== void 0 ? _c : []; _i < _f.length; _i++) {
+                            dept = _f[_i];
+                            existing = (_d = deptMap_1.get(dept.ID)) !== null && _d !== void 0 ? _d : [];
                             existing.push(dept);
                             deptMap_1.set(dept.ID, existing);
                         }
@@ -965,9 +965,9 @@ var DashboardService = /** @class */ (function () {
         });
     };
     DashboardService.prototype.GetNPAEPVRRDetails = function (filterParam, filterConditions) {
+        var _a, _b;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var queries, batchRes, additionalExistingItems, newPositionItems, vacancyItems, additionalIds, newPositionIds, _a, additionalPositionRes, newPositionRes, additionalPositionMap_1, newPositionMap_1, mapCommonFields_1, additionalExistingResult, newPositionResult, vacancyResult, GridResult, error_9;
-            var _b, _c;
+            var queries, batchRes, additionalExistingItems, newPositionItems, vacancyItems, additionalIds, newPositionIds, _c, additionalPositionRes, newPositionRes, additionalPositionMap_1, newPositionMap_1, mapCommonFields_1, additionalExistingResult, newPositionResult, vacancyResult, GridResult, error_9;
             return tslib_1.__generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
@@ -1061,9 +1061,9 @@ var DashboardService = /** @class */ (function () {
                                     : Promise.resolve({ data: [], status: 200, message: "" }),
                             ])];
                     case 2:
-                        _a = _d.sent(), additionalPositionRes = _a[0], newPositionRes = _a[1];
-                        additionalPositionMap_1 = new Map(((_b = additionalPositionRes.data) !== null && _b !== void 0 ? _b : []).map(function (d) { return [d.parentId, d]; }));
-                        newPositionMap_1 = new Map(((_c = newPositionRes.data) !== null && _c !== void 0 ? _c : []).map(function (d) { return [d.parentId, d]; }));
+                        _c = _d.sent(), additionalPositionRes = _c[0], newPositionRes = _c[1];
+                        additionalPositionMap_1 = new Map(((_a = additionalPositionRes.data) !== null && _a !== void 0 ? _a : []).map(function (d) { return [d.parentId, d]; }));
+                        newPositionMap_1 = new Map(((_b = newPositionRes.data) !== null && _b !== void 0 ? _b : []).map(function (d) { return [d.parentId, d]; }));
                         mapCommonFields_1 = function (item, index) {
                             var _a, _b, _c, _d, _e, _f, _g;
                             return ({
@@ -1205,9 +1205,9 @@ var DashboardService = /** @class */ (function () {
         });
     };
     DashboardService.prototype.EvalutionValidation = function (data) {
+        var _a;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var getCurrentUserId, levelFilter, resdata, IsSubmitted, error_12;
-            var _a;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:

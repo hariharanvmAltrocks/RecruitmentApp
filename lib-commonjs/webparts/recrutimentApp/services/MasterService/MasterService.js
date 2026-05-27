@@ -766,9 +766,9 @@ var MasterService = /** @class */ (function () {
         });
     };
     MasterService.prototype.GetCountryMaster = function () {
+        var _a, _b;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var response, GetAllMasterData, error_8;
-            var _a, _b;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:

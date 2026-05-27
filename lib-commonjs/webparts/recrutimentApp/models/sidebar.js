@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MOCK_MENU = void 0;
-exports.getPageTitle = getPageTitle;
+exports.getPageTitle = exports.MOCK_MENU = void 0;
 exports.MOCK_MENU = [
     {
         Id: 27, DisplayName: "Selection Process", ParentId: 0,
@@ -92,4 +91,5 @@ function getPageTitle(path) {
     var match = Object.keys(PATH_TITLES).find(function (k) { return path.startsWith(k); });
     return match ? PATH_TITLES[match] : "HRMS";
 }
+exports.getPageTitle = getPageTitle;
 //# sourceMappingURL=sidebar.js.map
