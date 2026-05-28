@@ -41,8 +41,8 @@ var CareerPortalPreparedSet = function (_a) {
                     opt.textEn,
                     " / ",
                     opt.textFr)); }))),
-            react_1.default.createElement("button", { className: "qc-prepared__remove", onClick: function () { return onEdit(q.id); }, title: strings.Edit },
-                react_1.default.createElement(lucide_react_1.Pencil, { size: 16 })),
+            !q.fromBank && (react_1.default.createElement("button", { className: "qc-prepared__remove", onClick: function () { return onEdit(q.id); }, title: strings.Edit },
+                react_1.default.createElement(lucide_react_1.Pencil, { size: 16 }))),
             react_1.default.createElement("button", { className: "qc-prepared__remove", onClick: function () { return onRemove(q.id); }, title: strings.Remove },
                 react_1.default.createElement(lucide_react_1.X, { size: 16 })))); }))))));
 };

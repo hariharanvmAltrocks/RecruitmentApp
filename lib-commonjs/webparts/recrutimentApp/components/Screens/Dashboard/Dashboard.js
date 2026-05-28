@@ -23,14 +23,12 @@ var Dashboard = function (props) {
     var _d = (0, usetrackerdata_1.useTrackerData)(activeMetric, refreshKey), trackerData = _d.trackerData, trackerLoading = _d.loading;
     var _e = (0, useUrgentTasks_1.useUrgentTasks)(refreshKey), urgentTasks = _e.urgentTasks, urgentLoading = _e.loading;
     var navigate = (0, react_router_1.useNavigate)();
-    var _f = (0, UIStateContext_1.useUIState)(), setActiveMenuID = _f.setActiveMenuID, 
-    // setNavigationPath,
-    setActiveTab = _f.setActiveTab, navigationPath = _f.navigationPath, setMatricID = _f.setMatricID, setCurrentTabName = _f.setCurrentTabName;
+    var _f = (0, UIStateContext_1.useUIState)(), setActiveMenuID = _f.setActiveMenuID, setNavigationPath = _f.setNavigationPath, setActiveTab = _f.setActiveTab, navigationPath = _f.navigationPath, setMatricID = _f.setMatricID, setCurrentTabName = _f.setCurrentTabName;
     var ref = (0, react_1.useRef)(0);
     (0, react_1.useEffect)(function () {
         if (martics.metrics.length > 0 && !activeMetric) {
             setActiveMetric(martics.metrics[0].id);
-            // setNavigationPath(martics.metrics[0].path);
+            setNavigationPath(martics.metrics[0].path);
             ref.current = martics.metrics[0].menuId;
             // setActiveMenuID(martics.metrics[0].menuId);
             setActiveTab(martics.metrics[0].TabValue);
@@ -39,11 +37,11 @@ var Dashboard = function (props) {
         }
     }, [martics.metrics]);
     var onMetricChange = function (data) {
-        // setActiveMetric(data.id);
-        // setNavigationPath(data.path);
+        setActiveMetric(data.id);
+        setNavigationPath(data.path);
         setActiveMenuID(ConditionConfig_1.menuID.Mytracker);
-        // ref.current = data.menuId;
-        // setActiveTab(data.TabValue);
+        ref.current = data.menuId;
+        setActiveTab(data.TabValue);
         setCurrentTabName(data.TabName);
         setMatricID(data.id);
         navigate("/MyTracker");

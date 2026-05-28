@@ -108,13 +108,15 @@ export const InterviewPreparedSet: React.FC<InterviewPreparedProps> = ({
                 </div>
               </div>
 
+               {!q.fromBank && (
               <button
-                 className="iq-prepared__remove"
+                className="qc-prepared__remove"
                 onClick={() => onEdit(q.id)}
                 title={strings.Edit}
               >
                 <Pencil size={16} />
               </button>
+              )}
 
               <button
                 className="iq-prepared__remove"

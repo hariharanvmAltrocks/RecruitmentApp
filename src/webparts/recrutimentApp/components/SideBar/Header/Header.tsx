@@ -46,7 +46,7 @@ const Header: React.FC<HeaderProps> = ({
             <nav className="breadcrumbs">
               {/* <Link to="/">{strings.HomeLabel}</Link> */}
 
-              {breadcrumbs.map((crumb, idx) => (
+              {/* {breadcrumbs.map((crumb, idx) => (
                 <React.Fragment key={crumb.Id}>
                   <ChevronRight
                     size={10}
@@ -60,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({
                     {crumb.DisplayName}
                   </Link>
                 </React.Fragment>
-              ))}
+              ))} */}
             </nav>
           </div>
         </div>

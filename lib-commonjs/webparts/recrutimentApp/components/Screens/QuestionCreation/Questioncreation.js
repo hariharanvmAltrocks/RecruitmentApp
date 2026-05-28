@@ -194,7 +194,7 @@ var QuestionCreation = function (props) {
                                 react_1.default.createElement("span", { className: "qc__job-meta-item" },
                                     react_1.default.createElement(lucide_react_1.Users, { size: 10 }),
                                     " ", (_b = job.nationality) !== null && _b !== void 0 ? _b : "N/A")))),
-                    react_1.default.createElement("div", { className: "qc__header-right" },
+                    sourceSelection && (react_1.default.createElement("div", { className: "qc__header-right" },
                         react_1.default.createElement("div", { className: "qc__criteria-count" },
                             react_1.default.createElement("span", { className: "qc__criteria-label" }, mode === "careerPortal"
                                 ? strings.PreparedCriteria
@@ -206,7 +206,7 @@ var QuestionCreation = function (props) {
                                     strings.Questions))),
                         react_1.default.createElement("button", { className: "qc__save-btn", onClick: handleSave, disabled: saving },
                             react_1.default.createElement(lucide_react_1.Save, { size: 15 }),
-                            saving ? "Saving..." : strings.FinalizeSave)))),
+                            saving ? "Saving..." : strings.FinalizeSave))))),
             react_1.default.createElement(framer_motion_1.AnimatePresence, { exitBeforeEnter: true }, !sourceSelection ? (react_1.default.createElement(framer_motion_1.motion.div, { key: "selection-screen", initial: { opacity: 0, scale: 0.95 }, animate: { opacity: 1, scale: 1 }, exit: { opacity: 0, scale: 0.95 }, transition: { duration: 0.25 }, className: "qc-selection" },
                 react_1.default.createElement("div", { className: "qc-selection__header" },
                     react_1.default.createElement("div", { className: "qc-selection__icon-box" },

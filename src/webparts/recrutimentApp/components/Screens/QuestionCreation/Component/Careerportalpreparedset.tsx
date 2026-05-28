@@ -88,6 +88,7 @@ export const CareerPortalPreparedSet: React.FC<CareerPortalPreparedProps> = ({
                 </div>
               </div>
 
+              {!q.fromBank && (
               <button
                 className="qc-prepared__remove"
                 onClick={() => onEdit(q.id)}
@@ -95,6 +96,7 @@ export const CareerPortalPreparedSet: React.FC<CareerPortalPreparedProps> = ({
               >
                 <Pencil size={16} />
               </button>
+              )}
 
               <button
                 className="qc-prepared__remove"

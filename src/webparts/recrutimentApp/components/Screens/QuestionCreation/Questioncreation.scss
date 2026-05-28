@@ -1310,15 +1310,18 @@
   }
 
   &__cancel-btn {
-    font-size: 10px;
+     font-size: 12px;
     font-weight: 900;
-    color: var(--qc-slate-400);
+    color:  white;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: color 0.2s ease-in-out;
+    background: var(--app-button-color);
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+      border-radius: 20px;
+    width: 31%;
+    padding: 2%;
 
     &:hover {
       color: var(--qc-slate-600);

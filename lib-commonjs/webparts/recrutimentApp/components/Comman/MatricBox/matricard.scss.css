@@ -1,7 +1,7 @@
 /*var(--app-text-color, );*/
 /*var(--app-text-color, #94a3b8);*/
 .metric-dashboard {
-  padding: 1.5rem;
+  padding: 0px 0px 0px 17px;
   width: 97%;
 }
 @media (max-width: 768px) {

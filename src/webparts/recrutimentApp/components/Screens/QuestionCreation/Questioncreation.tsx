@@ -200,55 +200,56 @@ const QuestionCreation: React.FC = (props: any) => {
         transition={{ duration: 0.35, ease: "easeOut" }}
       >
         {/* ── Header ── */}
-        
-         <>
-          <div className="qc__header">
-          <div className="qc__header-left">
-            <button className="qc__back-btn" onClick={handleBack} title={strings.GoBack}>
-              <ChevronLeft size={20} />
-            </button>
-            <div className="qc__job-info">
-              <div className="qc__job-top">
-                <span className="qc__job-code">{job.jobCode}</span>
-                <h2 className="qc__job-title">{job.jobTitle}</h2>
-              </div>
-              <div className="qc__job-meta">
-                <span className="qc__job-meta-item">
-                  <Globe size={10} /> {job.buCode ?? "N/A"}
-                </span>
-                <span className="qc__job-meta-dot" />
-                <span className="qc__job-meta-item">
-                  <Users size={10} /> {job.nationality ?? "N/A"}
-                </span>
-              </div>
-            </div>
-          </div>
 
-            <div className="qc__header-right">
-              <div className="qc__criteria-count">
-                <span className="qc__criteria-label">
-                  {mode === "careerPortal"
-                    ? strings.PreparedCriteria
-                    : strings.InterviewSet}
-                </span>
-                <span className="qc__criteria-value">
-                  {preparedQuestions.length}
-                  <span className="qc__criteria-unit"> {strings.Questions}</span>
-                </span>
-              </div>
-              <button
-                className="qc__save-btn"
-                onClick={handleSave}
-                disabled={saving}
-              >
-                <Save size={15} />
-                {saving ? "Saving..." : strings.FinalizeSave}
+        <>
+          <div className="qc__header">
+            <div className="qc__header-left">
+              <button className="qc__back-btn" onClick={handleBack} title={strings.GoBack}>
+                <ChevronLeft size={20} />
               </button>
+              <div className="qc__job-info">
+                <div className="qc__job-top">
+                  <span className="qc__job-code">{job.jobCode}</span>
+                  <h2 className="qc__job-title">{job.jobTitle}</h2>
+                </div>
+                <div className="qc__job-meta">
+                  <span className="qc__job-meta-item">
+                    <Globe size={10} /> {job.buCode ?? "N/A"}
+                  </span>
+                  <span className="qc__job-meta-dot" />
+                  <span className="qc__job-meta-item">
+                    <Users size={10} /> {job.nationality ?? "N/A"}
+                  </span>
+                </div>
+              </div>
             </div>
-        </div>
-         </>
-        
-       
+            {sourceSelection && (
+              <div className="qc__header-right">
+                <div className="qc__criteria-count">
+                  <span className="qc__criteria-label">
+                    {mode === "careerPortal"
+                      ? strings.PreparedCriteria
+                      : strings.InterviewSet}
+                  </span>
+                  <span className="qc__criteria-value">
+                    {preparedQuestions.length}
+                    <span className="qc__criteria-unit"> {strings.Questions}</span>
+                  </span>
+                </div>
+                <button
+                  className="qc__save-btn"
+                  onClick={handleSave}
+                  disabled={saving}
+                >
+                  <Save size={15} />
+                  {saving ? "Saving..." : strings.FinalizeSave}
+                </button>
+              </div>
+            )}
+          </div>
+        </>
+
+
 
         <AnimatePresence exitBeforeEnter>
           {!sourceSelection ? (
