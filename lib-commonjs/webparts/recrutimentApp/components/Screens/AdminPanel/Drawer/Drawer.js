@@ -15,6 +15,7 @@ var useModalPopup_1 = require("../../../Comman/ModalPopup/useModalPopup");
 var dateConfigfn_1 = require("../../../Hooks/dateConfigfn");
 var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
 var loading_1 = tslib_1.__importDefault(require("../../../Comman/Loading/loading"));
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var Field = function (_a) {
     var label = _a.label, error = _a.error, _b = _a.className, className = _b === void 0 ? "" : _b, children = _a.children;
     return (react_1.default.createElement("div", { className: "".concat(Drawer_module_scss_1.default.field, " ").concat(className) },
@@ -39,7 +40,7 @@ var Drawer = function (_a) {
     var emailId = (_b = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _b === void 0 ? void 0 : _b[0];
     // Derive a human-readable mode label and the read-only flag
     var modeLabel = isView ? "View" : isEdit ? "Edit" : "New";
-    var typeLabel = type === "labour-hire" ? "Labour Hire" : "Agency";
+    var typeLabel = type === "labour-hire" ? strings.LabourHire : "Agency";
     var readOnly = isView; // all inputs disabled in view mode
     (0, react_1.useEffect)(function () {
         if (!isOpen)
@@ -130,8 +131,8 @@ var Drawer = function (_a) {
         return tslib_1.__generator(this, function (_a) {
             showModal({
                 type: "confirmation",
-                title: "Password Reset",
-                message: "A password reset link has been sent to your email. Please check your inbox.",
+                title: strings.PasswordReset,
+                message: strings.APasswordResetLinkHasBeenSentToYourEmail,
                 confirmLabel: "Ok",
                 onConfirm: function () {
                     resetPassword();
@@ -146,8 +147,8 @@ var Drawer = function (_a) {
     var handleCancel = (0, react_1.useCallback)(function () {
         showModal({
             type: "confirmation",
-            title: "Cancel Assignment",
-            message: "Are you sure you want to cancel the assignment?",
+            title: strings.CancelAssignment,
+            message: strings.AreYouSureYouWantToCancelTheAssignment,
             confirmLabel: "Yes",
             cancelLabel: "No",
             onConfirm: function () {
@@ -179,16 +180,17 @@ var Drawer = function (_a) {
                                 modeLabel,
                                 " ",
                                 typeLabel,
-                                " User"),
+                                " ",
+                                strings.User),
                             react_1.default.createElement("p", null, isView
-                                ? "Viewing user details — read only"
+                                ? strings.ViewingUserDetailsReadOnly
                                 : isEdit
-                                    ? "Update user access and contract details"
-                                    : "Configure user access and contract details"))),
+                                    ? strings.UpdateUserAccessAndContractDetails
+                                    : strings.ConfigureUserAccessAndContractDetails))),
                     react_1.default.createElement("div", { className: Drawer_module_scss_1.default.headerRight },
                         !isView && (react_1.default.createElement(react_1.default.Fragment, null,
                             react_1.default.createElement("div", { className: Drawer_module_scss_1.default.toggleGroup },
-                                react_1.default.createElement("span", { className: Drawer_module_scss_1.default.toggleGroupLabel }, "Account Status"),
+                                react_1.default.createElement("span", { className: Drawer_module_scss_1.default.toggleGroupLabel }, strings.AccountStatus),
                                 react_1.default.createElement("button", { type: "button", className: Drawer_module_scss_1.default.toggleBtn, onClick: toggleActive },
                                     react_1.default.createElement("span", { className: "".concat(Drawer_module_scss_1.default.toggleLabel, " ").concat(payload.isActive ? Drawer_module_scss_1.default["toggleLabel--active"] : Drawer_module_scss_1.default["toggleLabel--inactive"]) }, payload.isActive ? "Active" : "Inactive"),
                                     react_1.default.createElement("div", { className: "".concat(Drawer_module_scss_1.default.toggleTrack, " ").concat(payload.isActive ? Drawer_module_scss_1.default["toggleTrack--on"] : Drawer_module_scss_1.default["toggleTrack--off"]) },
@@ -198,53 +200,53 @@ var Drawer = function (_a) {
                             react_1.default.createElement(lucide_react_1.X, { size: 18 })))),
                 react_1.default.createElement("div", { className: Drawer_module_scss_1.default.body },
                     react_1.default.createElement(Group, { badge: "Identity & Profile" },
-                        react_1.default.createElement(Field, { label: "User Code" },
+                        react_1.default.createElement(Field, { label: strings.UserCode },
                             react_1.default.createElement("input", { readOnly: true, value: payload.userCode, className: Drawer_module_scss_1.default.inputReadonly })),
-                        react_1.default.createElement(Field, { label: "Nationality" },
+                        react_1.default.createElement(Field, { label: strings.Nationality },
                             react_1.default.createElement("select", { className: "".concat(isView ? Drawer_module_scss_1.default.disabledWhite : Drawer_module_scss_1.default.select), value: payload.nationality, disabled: isView, onChange: function (e) { return setField("nationality", e.target.value); } },
                                 react_1.default.createElement("option", null, ConditionConfig_1.Nationality.Expatriate),
                                 react_1.default.createElement("option", null, ConditionConfig_1.Nationality.Nationals))),
-                        react_1.default.createElement(Field, { label: "First Name", error: errors.firstName },
-                            react_1.default.createElement("input", { className: "".concat(Drawer_module_scss_1.default.input, " ").concat(errors.firstName ? Drawer_module_scss_1.default.hasError : ""), placeholder: "Enter first name", value: payload.firstName, readOnly: readOnly, onChange: function (e) { return setField("firstName", e.target.value); } })),
-                        react_1.default.createElement(Field, { label: "Last Name", error: errors.lastName },
-                            react_1.default.createElement("input", { className: "".concat(Drawer_module_scss_1.default.input, " ").concat(errors.lastName ? Drawer_module_scss_1.default.hasError : ""), placeholder: "Enter last name", value: payload.lastName, readOnly: readOnly, onChange: function (e) { return setField("lastName", e.target.value); } })),
-                        react_1.default.createElement(Field, { label: "Company Name", error: errors.companyName },
-                            react_1.default.createElement("input", { className: "".concat(Drawer_module_scss_1.default.input, " ").concat(errors.companyName ? Drawer_module_scss_1.default.hasError : ""), placeholder: "Enter legal company name", value: payload.companyName, readOnly: readOnly, onChange: function (e) { return setField("companyName", e.target.value); } })),
-                        react_1.default.createElement(Field, { label: "Designation" },
-                            react_1.default.createElement("input", { className: Drawer_module_scss_1.default.input, placeholder: "Enter role / title", value: payload.designation, readOnly: readOnly, onChange: function (e) { return setField("designation", e.target.value); } }))),
+                        react_1.default.createElement(Field, { label: strings.FirstName, error: errors.firstName },
+                            react_1.default.createElement("input", { className: "".concat(Drawer_module_scss_1.default.input, " ").concat(errors.firstName ? Drawer_module_scss_1.default.hasError : ""), placeholder: strings.EnterFirstName, value: payload.firstName, readOnly: readOnly, onChange: function (e) { return setField("firstName", e.target.value); } })),
+                        react_1.default.createElement(Field, { label: strings.LastName, error: errors.lastName },
+                            react_1.default.createElement("input", { className: "".concat(Drawer_module_scss_1.default.input, " ").concat(errors.lastName ? Drawer_module_scss_1.default.hasError : ""), placeholder: strings.EnterLastName, value: payload.lastName, readOnly: readOnly, onChange: function (e) { return setField("lastName", e.target.value); } })),
+                        react_1.default.createElement(Field, { label: strings.CompanyName, error: errors.companyName },
+                            react_1.default.createElement("input", { className: "".concat(Drawer_module_scss_1.default.input, " ").concat(errors.companyName ? Drawer_module_scss_1.default.hasError : ""), placeholder: strings.EnterLegalCompanyName, value: payload.companyName, readOnly: readOnly, onChange: function (e) { return setField("companyName", e.target.value); } })),
+                        react_1.default.createElement(Field, { label: strings.Designation },
+                            react_1.default.createElement("input", { className: Drawer_module_scss_1.default.input, placeholder: strings.EnterRoleTitle, value: payload.designation, readOnly: readOnly, onChange: function (e) { return setField("designation", e.target.value); } }))),
                     react_1.default.createElement(Group, { badge: "Contract Details" },
-                        react_1.default.createElement(Field, { label: "No. of Users" },
-                            react_1.default.createElement("input", { type: "number", className: Drawer_module_scss_1.default.input, placeholder: "Total allocated seats", value: payload.numberOfUsers, readOnly: readOnly, onChange: function (e) {
+                        react_1.default.createElement(Field, { label: strings.NoOfUsers },
+                            react_1.default.createElement("input", { type: "number", className: Drawer_module_scss_1.default.input, placeholder: strings.TotalAllocatedSeats, value: payload.numberOfUsers, readOnly: readOnly, onChange: function (e) {
                                     return setField("numberOfUsers", e.target.value);
                                 } })),
                         react_1.default.createElement("div", null),
                         " ",
-                        react_1.default.createElement(Field, { label: "Start Date of Contract", error: errors.contractStart },
+                        react_1.default.createElement(Field, { label: strings.StartDateOfContract, error: errors.contractStart },
                             react_1.default.createElement("input", { type: "date", className: "".concat(Drawer_module_scss_1.default.input, " ").concat(errors.contractStart ? Drawer_module_scss_1.default.hasError : ""), value: payload.contractStart, readOnly: readOnly, onChange: function (e) {
                                     return setField("contractStart", e.target.value);
                                 } })),
-                        react_1.default.createElement(Field, { label: "End Date of Contract", error: errors.contractEnd },
+                        react_1.default.createElement(Field, { label: strings.EndDateOfContract, error: errors.contractEnd },
                             react_1.default.createElement("input", { type: "date", className: "".concat(Drawer_module_scss_1.default.input, " ").concat(errors.contractEnd ? Drawer_module_scss_1.default.hasError : ""), value: payload.contractEnd, min: payload.contractStart || undefined, readOnly: readOnly, onChange: function (e) { return setField("contractEnd", e.target.value); } }))),
                     react_1.default.createElement(Group, { badge: "Access & Security" },
-                        react_1.default.createElement(Field, { label: "Email ID", error: errors.email, className: Drawer_module_scss_1.default.colSpan2 },
+                        react_1.default.createElement(Field, { label: strings.EmailId, error: errors.email, className: Drawer_module_scss_1.default.colSpan2 },
                             react_1.default.createElement("input", { type: "email", className: "".concat(Drawer_module_scss_1.default.input, " ").concat(errors.email ? Drawer_module_scss_1.default.hasError : ""), placeholder: "official.email@domain.com", value: payload.email, readOnly: readOnly, onChange: function (e) { return setField("email", e.target.value); } })),
                         isNew && (react_1.default.createElement(react_1.default.Fragment, null,
-                            react_1.default.createElement(Field, { label: isEdit ? "New Password (optional)" : "Password", error: errors.password },
-                                react_1.default.createElement("input", { type: "password", className: "".concat(Drawer_module_scss_1.default.input, " ").concat(errors.password ? Drawer_module_scss_1.default.hasError : ""), placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022", value: payload.password, onChange: function (e) { return setField("password", e.target.value); } })),
-                            react_1.default.createElement(Field, { label: "Confirm Password", error: errors.confirmPassword },
+                            react_1.default.createElement(Field, { label: isEdit ? strings.NewPasswordOptional : strings.Password, error: errors.password },
+                                react_1.default.createElement("input", { type: "password", className: "".concat(Drawer_module_scss_1.default.input, " ").concat(errors.password ? Drawer_module_scss_1.default.hasError : ""), placeholder: strings.StringKey, value: payload.password, onChange: function (e) { return setField("password", e.target.value); } })),
+                            react_1.default.createElement(Field, { label: strings.ConfirmPassword, error: errors.confirmPassword },
                                 react_1.default.createElement("input", { type: "password", className: "".concat(Drawer_module_scss_1.default.input, " ").concat(errors.confirmPassword ? Drawer_module_scss_1.default.hasError : ""), placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022", value: payload.confirmPassword, onChange: function (e) {
                                         return setField("confirmPassword", e.target.value);
                                     } })))))),
                 react_1.default.createElement("footer", { className: Drawer_module_scss_1.default.footer },
                     react_1.default.createElement("button", { type: "button", className: Drawer_module_scss_1.default.cancelBtn, onClick: isView ? onClose : handleCancel }, isView ? "Close" : "Cancel"),
-                    isEdit && (react_1.default.createElement("button", { type: "button", className: Drawer_module_scss_1.default.submitBtn, onClick: handleReset, disabled: isSaving }, "Reset Password")),
+                    isEdit && (react_1.default.createElement("button", { type: "button", className: Drawer_module_scss_1.default.submitBtn, onClick: handleReset, disabled: isSaving }, strings.ResetPassword)),
                     !isView && (react_1.default.createElement("button", { type: "button", className: Drawer_module_scss_1.default.submitBtn, onClick: handleSubmit, disabled: isSaving },
                         isSaving ? (react_1.default.createElement("span", { className: Drawer_module_scss_1.default.spinner })) : (react_1.default.createElement(lucide_react_1.ShieldCheck, { size: 15 })),
                         isSaving
                             ? "Saving…"
                             : isEdit
-                                ? "Update User"
-                                : "Create Enterprise User")))),
+                                ? strings.UpdateUser
+                                : strings.CreateEnterpriseUser)))),
             react_1.default.createElement(ModalPopup_1.default, tslib_1.__assign({}, modalState, { onClose: closeModal })),
             react_1.default.createElement(ModalPopup_1.default, tslib_1.__assign({}, modelstate, { onClose: closemodel })))))));
 };

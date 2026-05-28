@@ -36,6 +36,7 @@ var fetchPreChecklist_1 = require("./Hooks/fetchPreChecklist");
 var Prechecklist_1 = tslib_1.__importDefault(require("./Component/Prechecklist/Prechecklist"));
 var loading_1 = tslib_1.__importDefault(require("../../../Comman/Loading/loading"));
 var PositionStatusConfig_1 = require("../../../../utilities/PositionStatusConfig");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
     return react_1.default.createElement("div", { className: "review-document__skeleton", style: { width: width, height: height } });
@@ -50,8 +51,8 @@ var PositionSkeleton = function () { return (react_1.default.createElement("div"
     react_1.default.createElement("div", { style: { marginTop: 16 } },
         react_1.default.createElement(SkeletonBlock, { height: "40px" })))); };
 var CONSULT_OPTIONS = [
-    { value: "hr-manager", label: "Louis Barend Van Wyk" },
-    { value: "legal", label: "Evodie Mushiya Kadima" },
+    { value: "hr-manager", label: strings.LouisBarendVanWyk },
+    { value: "legal", label: strings.EvodieMushiyaKadima },
 ];
 var ReviewDocument = function (_a) {
     var _b, _c, _d, _e, _f;
@@ -112,8 +113,8 @@ var ReviewDocument = function (_a) {
     var handleError = (0, react_1.useCallback)(function () {
         showModal({
             type: "error",
-            title: "Something Went Wrong",
-            message: "An unexpected error occurred. Please try again.",
+            title: strings.SomethingWentWrong,
+            message: strings.AnUnexpectedErrorOccurredPleaseTryAgain,
             confirmLabel: "Close",
             onConfirm: closeModal,
         });
@@ -122,8 +123,8 @@ var ReviewDocument = function (_a) {
         if (!validateAll(vis)) {
             showModal({
                 type: "warning",
-                title: "Required Fields Missing",
-                message: "Please complete all highlighted fields before submitting.",
+                title: strings.RequiredFieldsMissing,
+                message: strings.PleaseCompleteAllHighlightedFieldsBefore,
                 confirmLabel: "OK",
                 onConfirm: closeModal,
             });
@@ -140,7 +141,7 @@ var ReviewDocument = function (_a) {
     var showSuccessModal = (0, react_1.useCallback)(function (msg) {
         showModal({
             type: "success",
-            title: "Submitted Successfully",
+            title: strings.SubmittedSuccessfully,
             message: msg,
             confirmLabel: "OK",
             onConfirm: function () {
@@ -168,7 +169,7 @@ var ReviewDocument = function (_a) {
     var handleReinitiate = (0, react_1.useCallback)(function () {
         showModal({
             type: "confirmation",
-            title: "Reinitiate BGV",
+            title: strings.ReinitiateBgv,
             message: ConditionConfig_1.RecuritmentHRMsg.ReinitiateBGVWarningMsg,
             confirmLabel: "Yes",
             cancelLabel: "No",
@@ -258,7 +259,7 @@ var ReviewDocument = function (_a) {
             workflowStatus = (0, WorkflowConfig_1.WorkflowHODConfig)((_a = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) !== null && _a !== void 0 ? _a : 0, false, isExpat, positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.EmploymentCategory);
             isReject = btn === "Reject";
             config = {
-                title: isReject ? "Reject BGV" : "Approve BGV",
+                title: isReject ? strings.RejectBgv : strings.ApproveBgv,
                 message: isReject
                     ? ConditionConfig_1.RecuritmentHRMsg.RejectBGVCheckMsg
                     : ConditionConfig_1.RecuritmentHRMsg.ApprvedBGVCheckMsg,
@@ -308,7 +309,7 @@ var ReviewDocument = function (_a) {
                                     refreshKey();
                                 }
                                 else {
-                                    throw new Error("Unexpected status");
+                                    throw new Error(strings.UnexpectedStatus);
                                 }
                                 return [3 /*break*/, 6];
                             case 4:
@@ -361,15 +362,15 @@ var ReviewDocument = function (_a) {
                 case 1:
                     _b.trys.push([1, 7, 8, 9]);
                     ChecklistValue = {
-                        BackgroundChecks: getCheckStatus("Background Checks"),
-                        SignedOfferLetterVerified: getCheckStatus("Signed Offer Letter"),
-                        SignedEmploymentContract: getCheckStatus("Employment Contract"),
-                        WorkPermitApproved: getCheckStatus("Work Permit Approved"),
-                        VisaProcess: getCheckStatus("Visa Process"),
-                        AccommodationBooked: getCheckStatus("Accommodation Booked"),
-                        TravelProcess: getCheckStatus("Travel Process"),
-                        ReadyforOnboarding: getCheckStatus("Ready for Onboarding"),
-                        MedicalChecks: getCheckStatus("Medical Checks"),
+                        BackgroundChecks: getCheckStatus(strings.BackgroundChecks),
+                        SignedOfferLetterVerified: getCheckStatus(strings.SignedOfferLetter),
+                        SignedEmploymentContract: getCheckStatus(strings.EmploymentContract),
+                        WorkPermitApproved: getCheckStatus(strings.WorkPermitApproved),
+                        VisaProcess: getCheckStatus(strings.VisaProcess),
+                        AccommodationBooked: getCheckStatus(strings.AccommodationBooked),
+                        TravelProcess: getCheckStatus(strings.TravelProcess),
+                        ReadyforOnboarding: getCheckStatus(strings.ReadyForOnboarding),
+                        MedicalChecks: getCheckStatus(strings.MedicalChecks),
                         ID: CandidateID,
                     };
                     return [4 /*yield*/, ServiceExport_1.OfferServices.UpdateStatusCandidatelist(ChecklistValue)];
@@ -444,7 +445,7 @@ var ReviewDocument = function (_a) {
                     react_1.default.createElement("div", { className: "review-document__header-right", style: { display: "flex", alignItems: "center", gap: "12px" } },
                         react_1.default.createElement("button", { onClick: function () { return setShowRoadmap(!showRoadmap); }, className: "review-document__toggle-btn ".concat(showRoadmap ? "review-document__toggle-btn--active" : "review-document__toggle-btn--inactive") },
                             react_1.default.createElement(lucide_react_1.Network, { size: 14 }),
-                            "Candidate Status",
+                            strings.CandidateStatus,
                             react_1.default.createElement(lucide_react_1.ChevronRight, { size: 14, className: "review-document__toggle-icon" })),
                         react_1.default.createElement("button", { type: "button", className: "review-document__close", onClick: onClose },
                             react_1.default.createElement(lucide_react_1.X, { size: 18 })))),
@@ -454,7 +455,7 @@ var ReviewDocument = function (_a) {
                             react_1.default.createElement("div", { className: "advert-roadmap__header-top" },
                                 react_1.default.createElement("h3", { className: "advert-roadmap__header-title" },
                                     react_1.default.createElement("div", { className: "advert-roadmap__header-title-bar" }),
-                                    "Candidate Lifecycle Roadmap")),
+                                    strings.CandidateLifecycleRoadmap)),
                             react_1.default.createElement(CandidateRoadmap, { statusId: (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) || 0 }))))),
                     react_1.default.createElement(PositionFrame_1.PositionFrame, { positionDetails: positionDetails, isLoading: positionLoading, headerCode: headerMeta.code }),
                     vis.showCandidateDocs && (react_1.default.createElement(CandidateDocumentsRepository_1.default, { data: docData !== null && docData !== void 0 ? docData : null })),
@@ -476,7 +477,7 @@ var ReviewDocument = function (_a) {
                     bgvComments.length > 0 &&
                         (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) ===
                             Config_1.StatusId.PendingDOTAficaVerification && (react_1.default.createElement("div", { className: "review-documnet__BGVCommentBtn" },
-                        react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", onClick: function () { return setshowComments(true); } }, "View BGV Comments"))),
+                        react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", onClick: function () { return setshowComments(true); } }, strings.ViewBgvComments))),
                     react_1.default.createElement("div", { className: "review-document__footer" },
                         react_1.default.createElement("div", { className: "review-document__footer-actions" },
                             react_1.default.createElement("button", { type: "button", className: "review-document__button", onClick: onClose }, vis.ViewFlag
@@ -486,7 +487,7 @@ var ReviewDocument = function (_a) {
                                     : "Cancel"),
                             (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) ===
                                 Config_1.StatusId.PendingDOTAficaVerification && (react_1.default.createElement(react_1.default.Fragment, null,
-                                revertFLag && (react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", disabled: isAnySubmitting, onClick: handleReinitiate }, renderBtnContent("Re Initiate", "reinitiate", "Processing..."))),
+                                revertFLag && (react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", disabled: isAnySubmitting, onClick: handleReinitiate }, renderBtnContent(strings.ReInitiate, "reinitiate", "Processing..."))),
                                 rejectFlag && coiState.wishesToProceed && (react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", disabled: isAnySubmitting, onClick: function () {
                                         return handleRejectCheck(coiState.wishesToProceed === "Yes"
                                             ? "Approve"
@@ -497,7 +498,7 @@ var ReviewDocument = function (_a) {
                                     ? "Approving..."
                                     : "Rejecting..."))))),
                             (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) ===
-                                Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", disabled: isAnySubmitting, onClick: handleSaveAsDraft }, renderBtnContent(!allChecked ? "Save As Draft" : "Submit", "saveAsDraft", !allChecked ? "Saving..." : "Submitting..."))),
+                                Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", disabled: isAnySubmitting, onClick: handleSaveAsDraft }, renderBtnContent(!allChecked ? strings.SaveAsDraft : "Submit", "saveAsDraft", !allChecked ? "Saving..." : "Submitting..."))),
                             !vis.ViewFlag &&
                                 (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) !=
                                     Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", disabled: isAnySubmitting, onClick: handleApprove }, renderBtnContent(consentVerification === "verified"
@@ -540,7 +541,7 @@ var CandidateRoadmap = function (_a) {
                             : isCurrent
                                 ? "advert-roadmap__label--current"
                                 : "advert-roadmap__label--pending") }, stage.label),
-                    isCompleted && (react_1.default.createElement("span", { className: "advert-roadmap__status-done" }, "Done")))));
+                    isCompleted && (react_1.default.createElement("span", { className: "advert-roadmap__status-done" }, strings.Done)))));
         }))));
 };
 //# sourceMappingURL=ReviewDocument.js.map

@@ -10,6 +10,7 @@ var UIStateContext_1 = require("../../RecrutimentApp/UIStateContext");
 var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
 var StatusTooltip_1 = require("../../Comman/StatusTooltip/StatusTooltip");
 var Config_2 = require("../OfferRelease/Config");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var getActionLabel = function (actionMode, item, matricID) {
     var submissionMatricIds = [
         ConditionConfig_1.MatricID.MySubmission,
@@ -49,7 +50,7 @@ var useRecruitmentColumns = function (_a) {
         header: "Actions",
         align: "left",
         cellClassName: "data-table__cell--actions",
-        render: function (item) { return (react_2.default.createElement("button", { className: "data-table__action-btn", onClick: function () { return onActionRef.current(item); }, type: "button", "aria-label": actionMode === "Upload" ? "Upload document" : "View vacancy" }, getActionLabel(actionMode, item, matricID))); },
+        render: function (item) { return (react_2.default.createElement("button", { className: "data-table__action-btn", onClick: function () { return onActionRef.current(item); }, type: "button", "aria-label": actionMode === strings.Upload ? strings.UploadDocument : strings.ViewVacancy }, getActionLabel(actionMode, item, matricID))); },
     }); }, [actionMode]);
     var shouldShowProfile = matricID === ConditionConfig_1.MatricID.ReviewProfileHR ||
         matricID === ConditionConfig_1.MatricID.ReviewProfileLM ||
@@ -57,13 +58,13 @@ var useRecruitmentColumns = function (_a) {
     var defaultColumns = (0, react_1.useMemo)(function () { return tslib_1.__spreadArray(tslib_1.__spreadArray([
         {
             id: "jobCode",
-            header: "Job Code",
+            header: strings.JobCode,
             accessor: "jobCode",
             cellClassName: "data-table__job-code",
         },
         {
             id: "title",
-            header: "Job Title & Dept",
+            header: strings.JobTitleDept,
             render: function (item) { return (react_2.default.createElement("div", { className: "data-table__job-title" },
                 react_2.default.createElement("span", null, item.title),
                 react_2.default.createElement("span", { className: "data-table__job-dept" }, item.department))); },
@@ -90,7 +91,7 @@ var useRecruitmentColumns = function (_a) {
         },
         {
             id: "requestType",
-            header: "Request Type",
+            header: strings.RequestType,
             accessor: "requestType",
             cellClassName: "data-table__cell--muted",
             hideOnMobile: true,
@@ -123,21 +124,21 @@ var useRecruitmentColumns = function (_a) {
     var evaluationColumns = (0, react_1.useMemo)(function () { return [
         {
             id: "applicantName",
-            header: "Applicant Name",
+            header: strings.ApplicantName,
             accessor: "applicantName",
             cellClassName: "data-table__job-code",
             hideOnMobile: true,
         },
         {
             id: "title",
-            header: "Position Title",
+            header: strings.PositionTitle,
             render: function (item) { return (react_2.default.createElement("div", { className: "data-table__job-title" },
                 react_2.default.createElement("span", null, item.title),
                 react_2.default.createElement("span", { className: "data-table__job-dept" }, item.department))); },
         },
         {
             id: "interviewDate",
-            header: "Interview Date",
+            header: strings.InterviewDate,
             accessor: "interviewDate",
             align: "center",
             cellClassName: "data-table__cell--count",
@@ -145,7 +146,7 @@ var useRecruitmentColumns = function (_a) {
         },
         {
             id: "interviewLevels",
-            header: "Interview Levels",
+            header: strings.InterviewLevels,
             accessor: "interviewLevels",
             cellClassName: "data-table__cell--muted",
             hideOnMobile: true,
@@ -185,7 +186,7 @@ var useRecruitmentColumns = function (_a) {
     var offerReleaseColumns = (0, react_1.useMemo)(function () { return [
         {
             id: "PositionID",
-            header: "Position ID",
+            header: strings.PositionId,
             accessor: "positionId",
             cellClassName: "data-table__job-code",
             hideOnMobile: true,
@@ -199,7 +200,7 @@ var useRecruitmentColumns = function (_a) {
         },
         {
             id: "buCode",
-            header: "Business Unit",
+            header: strings.BusinessUnit,
             render: function (item) { return String(item.buCode || "").padStart(2, "0"); },
             cellClassName: "data-table__cell--muted",
             align: "center",

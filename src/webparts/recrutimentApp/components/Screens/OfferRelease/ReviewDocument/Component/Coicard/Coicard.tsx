@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import "./Coicard.modules.scss";
 import { IDocFiles } from "../../../../../../services/SPService/Ispservice";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TYPES
@@ -85,7 +86,7 @@ export const COICard: React.FC<COICardProps> = ({
 
       update({ attachment: docs });
     } catch (error) {
-      console.error("File conversion error:", error);
+      console.error(strings.FileConversionError, error);
     }
 
     target.value = "";
@@ -102,14 +103,14 @@ export const COICard: React.FC<COICardProps> = ({
     <div className="coi-card">
       <div className="coi-card__titleRow">
         <span className="coi-card__titleBar" />
-        <h2 className="coi-card__title">Background Verification</h2>
+        <h2 className="coi-card__title">{strings.BackgroundVerification}</h2>
       </div>
       <div className="coi-card__fields">
         <div
           className={`coi-card__field ${consultedWithError ? "coi-card__field--error" : ""}`}
         >
           <label className="coi-card__label">
-            Consulted with <span className="coi-card__required">*</span>
+            {strings.ConsultedWith}<span className="coi-card__required">*</span>
           </label>
           <div className="coi-card__select-wrap">
             <select
@@ -118,7 +119,7 @@ export const COICard: React.FC<COICardProps> = ({
               onChange={(e) => update({ consultedWith: e.target.value })}
               disabled={isReadOnly}
             >
-              <option value="">Select...</option>
+              <option value="">{strings.Select}</option>
               {consultOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}
@@ -128,7 +129,7 @@ export const COICard: React.FC<COICardProps> = ({
             <ChevronDown size={16} className="coi-card__select-chevron" />
           </div>
           {consultedWithError && (
-            <span className="coi-card__error-msg">This field is required.</span>
+            <span className="coi-card__error-msg">{strings.ThisFieldIsRequired}</span>
           )}
         </div>
 
@@ -136,7 +137,7 @@ export const COICard: React.FC<COICardProps> = ({
           className={`coi-card__field ${attachmentError ? "coi-card__field--error" : ""}`}
         >
           <label className="coi-card__label">
-            Proof of discussion <span className="coi-card__required">*</span>
+            {strings.ProofOfDiscussion}<span className="coi-card__required">*</span>
           </label>
 
           {!isReadOnly ? (
@@ -151,11 +152,9 @@ export const COICard: React.FC<COICardProps> = ({
                 </span>
                 <span className="coi-card__upload-text">
                   <span className="coi-card__upload-primary">
-                    Click to upload
-                  </span>
+                    {strings.ClickToUpload}</span>
                   <span className="coi-card__upload-hint">
-                    PDF, DOC, DOCX, PNG, JPG
-                  </span>
+                    {strings.PdfDocDocxPngJpg}</span>
                 </span>
               </button>
             ) : (
@@ -168,14 +167,13 @@ export const COICard: React.FC<COICardProps> = ({
                     {state.attachment[0].name}
                   </span>
                   <span className="coi-card__file-ready">
-                    <CheckCircle size={11} /> Ready to submit
-                  </span>
+                    <CheckCircle size={11} /> {strings.ReadyToSubmit}</span>
                 </div>
                 <button
                   type="button"
                   className="coi-card__file-remove"
                   onClick={handleClearFile}
-                  aria-label="Remove file"
+                  aria-label={strings.RemoveFile}
                 >
                   <Trash2 size={14} />
                 </button>
@@ -192,7 +190,7 @@ export const COICard: React.FC<COICardProps> = ({
               </span>
             </div>
           ) : (
-            <span className="coi-card__empty">No file uploaded</span>
+            <span className="coi-card__empty">{strings.NoFileUploaded}</span>
           )}
 
           <input
@@ -205,8 +203,7 @@ export const COICard: React.FC<COICardProps> = ({
 
           {attachmentError && (
             <span className="coi-card__error-msg">
-              Please upload proof of discussion.
-            </span>
+              {strings.PleaseUploadProofOfDiscussion}</span>
           )}
         </div>
       </div>
@@ -215,13 +212,13 @@ export const COICard: React.FC<COICardProps> = ({
         className={`coi-card__textarea-wrap ${commentsError ? "coi-card__field--error" : ""}`}
       >
         <label className="coi-card__label">
-          Reason / Comments <span className="coi-card__required">*</span>
+          {strings.ReasonComments}<span className="coi-card__required">*</span>
         </label>
         <div className="coi-card__textarea-relative">
           <textarea
             className={`coi-card__textarea ${commentsError ? "coi-card__textarea--error" : ""}`}
             maxLength={MAX_COMMENT_LENGTH}
-            placeholder="Enter your comments (max 256 characters)..."
+            placeholder={strings.EnterYourCommentsMax256Characters}
             value={state.comments}
             onChange={(e) => update({ comments: e.target.value })}
             readOnly={isReadOnly}
@@ -231,7 +228,7 @@ export const COICard: React.FC<COICardProps> = ({
           </span>
         </div>
         {commentsError && (
-          <span className="coi-card__error-msg">Comments are required.</span>
+          <span className="coi-card__error-msg">{strings.CommentsAreRequired}</span>
         )}
       </div>
 
@@ -239,7 +236,7 @@ export const COICard: React.FC<COICardProps> = ({
         className={`coi-card__radio-group ${proceedError ? "coi-card__field--error" : ""}`}
       >
         <label className="coi-card__label">
-          Do you wish to proceed with this action ?{" "}
+          {strings.DoYouWishToProceedWithThisAction}{" "}
           <span className="coi-card__required">*</span>
         </label>
         <div className="coi-card__radio-options">
@@ -253,7 +250,7 @@ export const COICard: React.FC<COICardProps> = ({
               disabled={isReadOnly}
             />
             <span className="coi-card__radio-custom"></span>
-            <span className="coi-card__radio-text">Yes</span>
+            <span className="coi-card__radio-text">{strings.Yes1}</span>
           </label>
           <label className="coi-card__radio-label">
             <input
@@ -265,7 +262,7 @@ export const COICard: React.FC<COICardProps> = ({
               disabled={isReadOnly}
             />
             <span className="coi-card__radio-custom"></span>
-            <span className="coi-card__radio-text">No</span>
+            <span className="coi-card__radio-text">{strings.No1}</span>
           </label>
         </div>
         {proceedError && (

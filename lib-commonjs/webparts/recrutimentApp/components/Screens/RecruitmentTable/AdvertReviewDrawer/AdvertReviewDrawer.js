@@ -29,6 +29,7 @@ var useModalPopup_1 = require("../../../Comman/ModalPopup/useModalPopup");
 var loading_1 = tslib_1.__importDefault(require("../../../Comman/Loading/loading"));
 var PositionStatusConfig_1 = require("../../../../utilities/PositionStatusConfig");
 var CandidateProgress_1 = require("./Components/CandidateProgress/CandidateProgress");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
     return (react_1.default.createElement("div", { className: "advert-review-drawer__skeleton", style: { width: width, height: height } }));
@@ -167,7 +168,7 @@ var AdvertReviewDrawer = function (_a) {
     var showSuccessModal = (0, react_1.useCallback)(function (msg) {
         showModal({
             type: "success",
-            title: "Submitted Successfully",
+            title: strings.SubmittedSuccessfully,
             message: msg,
             confirmLabel: "OK",
             onConfirm: function () {
@@ -187,8 +188,8 @@ var AdvertReviewDrawer = function (_a) {
                     if (!canApprove) {
                         showModal({
                             type: "warning",
-                            title: "Required Fields Missing",
-                            message: "One or more fields are required. Please complete all highlighted fields before submitting.",
+                            title: strings.RequiredFieldsMissing,
+                            message: strings.OneOrMoreFieldsAreRequiredPleaseComplete,
                             confirmLabel: "OK",
                             onConfirm: closeModal,
                         });
@@ -225,7 +226,7 @@ var AdvertReviewDrawer = function (_a) {
                     showSuccessModal(ConditionConfig_1.RecuritmentHRMsg.AdvertisementReveiwMsg);
                     return [3 /*break*/, 8];
                 case 7:
-                    console.warn("No matching role found", roleIDs);
+                    console.warn(strings.NoMatchingRoleFound, roleIDs);
                     _a.label = 8;
                 case 8: return [3 /*break*/, 11];
                 case 9:
@@ -233,8 +234,8 @@ var AdvertReviewDrawer = function (_a) {
                     console.error(error_1);
                     showModal({
                         type: "error",
-                        title: "Something Went Wrong",
-                        message: "An unexpected error occurred. Please try again.",
+                        title: strings.SomethingWentWrong,
+                        message: strings.AnUnexpectedErrorOccurredPleaseTryAgain,
                         confirmLabel: "Close",
                         onConfirm: closeModal,
                     });
@@ -281,7 +282,7 @@ var AdvertReviewDrawer = function (_a) {
         showModal({
             type: "confirmation",
             title: "Cancel",
-            message: "Are you sure you want to cancel?",
+            message: strings.AreYouSureYouWantToCancel,
             confirmLabel: "Yes",
             cancelLabel: "No",
             onConfirm: function () {
@@ -310,7 +311,7 @@ var AdvertReviewDrawer = function (_a) {
                     react_1.default.createElement("div", { className: "advert-review-drawer__header-right", style: { display: "flex", alignItems: "center", gap: "12px" } },
                         react_1.default.createElement("button", { onClick: function () { return setShowRoadmap(!showRoadmap); }, className: "advert-roadmap__toggle-btn ".concat(showRoadmap ? "advert-roadmap__toggle-btn--active" : "advert-roadmap__toggle-btn--inactive") },
                             react_1.default.createElement(lucide_react_1.Network, { size: 14 }),
-                            "Position Status",
+                            strings.PositionStatus,
                             react_1.default.createElement(lucide_react_1.ChevronRight, { size: 14, className: "advert-roadmap__toggle-icon" })),
                         react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__close", onClick: onClose },
                             react_1.default.createElement(lucide_react_1.X, { size: 18 })))),
@@ -320,14 +321,14 @@ var AdvertReviewDrawer = function (_a) {
                             react_1.default.createElement("div", { className: "advert-roadmap__header-top" },
                                 react_1.default.createElement("h3", { className: "advert-roadmap__header-title" },
                                     react_1.default.createElement("div", { className: "advert-roadmap__header-title-bar" }),
-                                    "Recruitment Lifecycle Roadmap")),
+                                    strings.RecruitmentLifecycleRoadmap)),
                             react_1.default.createElement(PositionRoadmap, { statusId: (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusId) || 0, recId: (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.ID) || selectedJobId || 0 }))))),
                     react_1.default.createElement(PositionFramework_1.PositionFramework, { positionDetails: mappedData, isLoading: isLoading, headerCode: headerMeta.code }),
                     react_1.default.createElement(AdvertLanguageToggle_1.AdvertLanguageToggle, { advertLanguage: advertLanguage, advertContent: advertContent, isLoading: isLoading, onLanguageChange: onLanguageChange }),
                     react_1.default.createElement(RequiredAttachments_1.RequiredAttachments, { attachments: attachments, isLoading: isLoading }),
                     showUploadONEMSection && (react_1.default.createElement(UploadDocument_1.UploadDocument, { multiple: false, acceptedFormats: ".pdf", label: metricId === ConditionConfig_1.MatricID.UploadONEM
-                            ? "ONEM Signed and Stamped Document (Only PDF)"
-                            : "Draft ONEM AdvertDoc French (Only PDF)", required: true, onChange: setUploadDocument, hasError: uploadError, disabled: isSubmittingRef.current })),
+                            ? strings.OnemSignedAndStampedDocumentOnlyPdf
+                            : strings.DraftOnemAdvertdocFrenchOnlyPdf, required: true, onChange: setUploadDocument, hasError: uploadError, disabled: isSubmittingRef.current })),
                     showBGVSection && (react_1.default.createElement("div", { style: { marginTop: "20px" } },
                         react_1.default.createElement(BGVerification_1.default, { mandatoryChecks: BGVData.mantoryChecks, VerificationChecks: BGVData.checkboxBGVOption, onToggleOption: handleBvgToggle, hasError: bgvError, disabled: isSubmittingRef.current }))),
                     showReviewFooter && (react_1.default.createElement(react_1.default.Fragment, null,
@@ -339,14 +340,14 @@ var AdvertReviewDrawer = function (_a) {
                                 : ConditionConfig_1.CheckboxContent.ApprovalCheckbox }),
                         react_1.default.createElement("div", { className: "advert-review-drawer__footer" },
                             react_1.default.createElement("div", { className: "advert-review-drawer__footer-actions" },
-                                react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__button", onClick: handleCancel }, "Cancel"),
+                                react_1.default.createElement("button", { type: "button", className: "advert-review-drawer__button", onClick: handleCancel }, strings.Cancel),
                                 react_1.default.createElement("button", { type: "button", className: !canApprove
                                         ? "advert-review-drawer__button advert-review-drawer__button--primary__is-disabled"
                                         : "advert-review-drawer__button advert-review-drawer__button--primary", disabled: !canApprove || isSubmittingRef.current, onClick: handleApprove }, isSubmittingRef.current ? (react_1.default.createElement(react_1.default.Fragment, null,
                                     react_1.default.createElement(lucide_react_1.Loader2, { size: 16, className: "modal-popup__spinner" }),
-                                    "Sending...")) : (react_1.default.createElement(react_1.default.Fragment, null,
+                                    strings.Sending)) : (react_1.default.createElement(react_1.default.Fragment, null,
                                     react_1.default.createElement(lucide_react_1.Send, { size: 16, style: { marginRight: 8 } }),
-                                    "Submit")))))))))),
+                                    strings.Submit)))))))))),
         react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal }))))));
 };
 exports.AdvertReviewDrawer = AdvertReviewDrawer;
@@ -375,7 +376,7 @@ var PositionRoadmap = function (_a) {
                             : isCurrent
                                 ? "advert-roadmap__label--current"
                                 : "advert-roadmap__label--pending") }, stage.label),
-                    isCompleted && (react_1.default.createElement("span", { className: "advert-roadmap__status-done" }, "Done")))));
+                    isCompleted && (react_1.default.createElement("span", { className: "advert-roadmap__status-done" }, strings.Done)))));
         })),
         react_1.default.createElement(CandidateProgress_1.CandidateProgress, { RecID: recId })));
 };

@@ -7,6 +7,7 @@ import type {
 
 import styles from './ScorecardDetails.module.scss';
 import { NationalityCode } from '../../../../utilities/ConditionConfig';
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 const BASE_SCORECARD_FIELDS: {
   key: keyof ScorecardField;
@@ -14,19 +15,19 @@ const BASE_SCORECARD_FIELDS: {
   label: string;
   icon: string;
 }[] = [
-  { key: 'Qualifications',  label: 'QUALIFICATIONS RELEVANT',           icon: '📄' },
-  { key: 'Experience',      label: 'EXPERIENCE RELEVANT',               icon: '📈' },
+  { key: 'Qualifications',  label: strings.QualificationsRelevant,           icon: '📄' },
+  { key: 'Experience',      label: strings.ExperienceRelevant,               icon: '📈' },
   { key: 'Knowledge',       label: 'KNOWLEDGE',                         icon: '🧩' },
-  { key: 'EnergyLevel',     label: 'ENERGY LEVEL',                      icon: '⚡' },
-  { key: 'JobRequirements', label: 'MEETS JOB REQUIREMENTS',            icon: '⏱' },
-  { key: 'CultureFit',      label: 'WILL CONTRIBUTE CULTURE REQUIRED',  icon: '👥' },
-  { key: 'ExpatLocal',      label: 'EXPAT EXPERIENCE', isDynamic: true, icon: '🌐' },
-  { key: 'OtherCriteria',   label: 'OTHER CRITERIA RECOGNISED BY PANEL',icon: '📄' },
+  { key: 'EnergyLevel',     label: strings.EnergyLevel,                      icon: '⚡' },
+  { key: 'JobRequirements', label: strings.MeetsJobRequirements,            icon: '⏱' },
+  { key: 'CultureFit',      label: strings.WillContributeCultureRequired,  icon: '👥' },
+  { key: 'ExpatLocal',      label: strings.ExpatExperience, isDynamic: true, icon: '🌐' },
+  { key: 'OtherCriteria',   label: strings.OtherCriteriaRecognisedByPanel,icon: '📄' },
 ];
 
 const SCORE_OPTIONS = [1, 2, 3, 4, 5];
 const SCORE_LABELS: Record<number, string> = {
-  1: 'Poor', 2: 'Below Avg', 3: 'Average', 4: 'Good', 5: 'Excellent',
+  1: 'Poor', 2: strings.BelowAvg, 3: 'Average', 4: 'Good', 5: 'Excellent',
 };
 
 interface ScorecardDetailsProps {
@@ -68,7 +69,7 @@ export default function ScorecardDetails({
 
   const expatLocalLabel =
     candidate?.nationalityCode === NationalityCode.Nationals
-      ? 'CONGOLESE EXPERIENCE'
+      ? strings.CongoleseExperience
       : 'EXPAT EXPERIENCE';
   const shouldShowEvalFeedback = Object.values(scorecard).some(
     (v) => v !== null && Number(v) <= 2
@@ -79,8 +80,8 @@ export default function ScorecardDetails({
       <div className={styles.sectionTitle}>
         <div className={styles.sectionAccentGreen} />
         <div>
-          <h2 className={styles.sectionH2}>SCORECARD DETAILS</h2>
-          <p className={styles.sectionSub}>Core Competency Assessment (1–5 Scale)</p>
+          <h2 className={styles.sectionH2}>{strings.ScorecardDetails}</h2>
+          <p className={styles.sectionSub}>{strings.CoreCompetencyAssessment15Scale}</p>
         </div>
         <div className={styles.scaleLegend}>
           {SCORE_OPTIONS.map((n) => (
@@ -100,7 +101,7 @@ export default function ScorecardDetails({
               <div key={field.key} className={styles.scorecardField}>
                 <p className={[styles.fieldLabel, hasError ? styles.errLabel : ''].filter(Boolean).join(' ')}>
                   {field.icon} {label} <span className={styles.req}>*</span>
-                  {hasError && <span className={styles.fieldErrMsg}> — Required</span>}
+                  {hasError && <span className={styles.fieldErrMsg}> {strings.Required1}</span>}
                 </p>
                 <div className={styles.btnRow}>
                   {SCORE_OPTIONS.map((n) => (
@@ -124,7 +125,7 @@ export default function ScorecardDetails({
         {shouldShowEvalFeedback && (
           <div className={styles.evalFeedbackBox}>
             <p className={[styles.fieldLabel, evalFeedbackError ? styles.errLabel : ''].filter(Boolean).join(' ')}>
-              📝 FEEDBACK REQUIRED — RATINGS BELOW 3{' '}
+              {strings.FeedbackRequiredRatingsBelow3}{' '}
               <span className={styles.req}>*</span>
               {evalFeedbackError && <span className={styles.fieldErrMsg}> — Required</span>}
             </p>
@@ -133,7 +134,7 @@ export default function ScorecardDetails({
               rows={3}
               value={evaluationFeedback}
               onChange={(e) => onEvalFeedbackChange(e.target.value)}
-              placeholder="Please provide feedback explaining ratings below 3…"
+              placeholder={strings.PleaseProvideFeedbackExplainingRatingsBe}
             />
           </div>
         )}
@@ -142,7 +143,7 @@ export default function ScorecardDetails({
         <div className={styles.recRow}>
           <div className={styles.recLeft}>
             <p className={[styles.fieldLabel, recError ? styles.errLabel : ''].filter(Boolean).join(' ')}>
-              CONSIDER FOR EMPLOYMENT <span className={styles.req}>*</span>
+              {strings.ConsiderForEmployment}<span className={styles.req}>*</span>
               {recError && <span className={styles.fieldErrMsg}> — Required</span>}
             </p>
             <div className={styles.recBtnRow}>
@@ -150,20 +151,20 @@ export default function ScorecardDetails({
                 className={[styles.recBtn, recommendation === 'consider' ? styles.recBtnYes : ''].filter(Boolean).join(' ')}
                 onClick={() => onRecommendationChange('consider')}
               >
-                {recommendation === 'consider' ? '✅ Yes' : 'Yes'}
+                {recommendation === 'consider' ? strings.Yes : 'Yes'}
               </button>
               <button
                 className={[styles.recBtn, recommendation === 'doNotConsider' ? styles.recBtnNo : ''].filter(Boolean).join(' ')}
                 onClick={() => onRecommendationChange('doNotConsider')}
               >
-                {recommendation === 'doNotConsider' ? '✕ No' : 'No'}
+                {recommendation === 'doNotConsider' ? strings.No : 'No'}
               </button>
             </div>
           </div>
 
           <div className={styles.recRight}>
             <p className={[styles.fieldLabel, feedbackError ? styles.errLabel : ''].filter(Boolean).join(' ')}>
-              OVERALL EVALUATION FEEDBACK <span className={styles.req}>*</span>
+              {strings.OverallEvaluationFeedback}<span className={styles.req}>*</span>
               {feedbackError && <span className={styles.fieldErrMsg}> — Required</span>}
             </p>
             <textarea
@@ -171,7 +172,7 @@ export default function ScorecardDetails({
               rows={4}
               value={overallFeedback}
               onChange={(e) => onFeedbackChange(e.target.value)}
-              placeholder="Enter your overall evaluation feedback here…"
+              placeholder={strings.EnterYourOverallEvaluationFeedbackHere}
             />
           </div>
         </div>
@@ -186,22 +187,20 @@ export default function ScorecardDetails({
               className={styles.ackChk}
             />
             <span className={styles.ackText}>
-              I hereby acknowledge that I have completed the candidate evaluation and scorecard
-              entry, and I confirm that the scores and feedback provided are accurate.
-            </span>
+              {strings.IHerebyAcknowledgeThatIHaveCompletedTheC}</span>
           </label>
 
           <div className={styles.reviewerCard}>
             <div className={styles.reviewerAvatar}>{userInitial}</div>
             <div className={styles.reviewerInfo}>
               <div className={styles.reviewerCol}>
-                <p className={styles.reviewerMeta}>REVIEWER NAME</p>
+                <p className={styles.reviewerMeta}>{strings.ReviewerName1}</p>
                 <p className={styles.reviewerVal}>{reviewerName}</p>
               </div>
               <div className={styles.reviewerCol}>
-                <p className={styles.reviewerMeta}>JOB TITLE (EN)</p>
+                <p className={styles.reviewerMeta}>{strings.JobTitleEn1}</p>
                 <p className={styles.reviewerVal}>{jobTitleEn}</p>
-                <p className={styles.reviewerMeta} style={{ marginTop: 12 }}>JOB TITLE (FR)</p>
+                <p className={styles.reviewerMeta} style={{ marginTop: 12 }}>{strings.JobTitleFr1}</p>
                 <p className={styles.reviewerVal}>{jobTitleFr}</p>
               </div>
             </div>

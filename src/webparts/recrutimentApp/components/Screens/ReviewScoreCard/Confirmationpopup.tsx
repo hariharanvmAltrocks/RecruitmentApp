@@ -18,6 +18,7 @@ import {
   X,
   ShieldAlert,
 } from "lucide-react";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export type PopupType = "submit" | "cancel" | "validation" | "success";
 
@@ -51,33 +52,33 @@ const CONFIG: Record<
   submit: {
     icon: <Send size={26} color="#fff" />,
     iconBg: "linear-gradient(135deg,#2563eb,#1d4ed8)",
-    title: "Confirm Submission",
-    subtitle: "Are you sure you want to submit the scorecard?",
-    confirmLabel: "Yes, Submit",
+    title: strings.ConfirmSubmission,
+    subtitle: strings.AreYouSureYouWantToSubmitTheScorecard,
+    confirmLabel: strings.YesSubmit,
     confirmStyle: "confirm-blue",
     cancelLabel: "Cancel",
   },
   cancel: {
     icon: <LogOut size={26} color="#fff" />,
     iconBg: "linear-gradient(135deg,#f59e0b,#d97706)",
-    title: "Are you sure you want to leave?",
-    subtitle: "Any unsaved changes will be lost. Do you wish to continue?",
-    confirmLabel: "Yes, Leave",
+    title: strings.AreYouSureYouWantToLeave,
+    subtitle: strings.AnyUnsavedChangesWillBeLostDoYouWishToCo,
+    confirmLabel: strings.YesLeave,
     confirmStyle: "confirm-amber",
-    cancelLabel: "Stay Here",
+    cancelLabel: strings.StayHere,
   },
   validation: {
     icon: <ShieldAlert size={26} color="#fff" />,
     iconBg: "linear-gradient(135deg,#ef4444,#dc2626)",
-    title: "Please Fill All Mandatory Fields",
-    subtitle: "Complete the following fields before submitting:",
+    title: strings.PleaseFillAllMandatoryFields,
+    subtitle: strings.CompleteTheFollowingFieldsBeforeSubmitti,
     confirmStyle: "confirm-none",
-    cancelLabel: "Got it",
+    cancelLabel: strings.GotIt,
   },
   success: {
     icon: <CheckCircle2 size={26} color="#fff" />,
     iconBg: "linear-gradient(135deg,#22c55e,#16a34a)",
-    title: "Submitted Successfully!",
+    title: strings.SubmittedSuccessfully1,
     subtitle: "",
     confirmStyle: "confirm-none",
     cancelLabel: "Close",

@@ -1,6 +1,8 @@
 import React, { FC } from "react";
 import "./Prechecklist.modules.scss";
 import { IChecklistItem } from "../../Hooks/fetchPreChecklist";
+import * as strings from 'RecrutimentAppWebPartStrings';
+import { Text } from '@microsoft/sp-core-library';
 
 // ── Icons ────────────────────────────────────────────────────────────────────
 
@@ -140,13 +142,7 @@ const ChecklistSection: FC<ChecklistSectionProps> = ({
         {items.map((item) => (
           <div
             key={item.ID}
-            className={`prechecklist__item${
-              item.value === true
-                ? " prechecklist__item--yes"
-                : item.value === false
-                  ? " prechecklist__item--no"
-                  : ""
-            }`}
+            className={Text.format(strings.PrechecklistItem, )}
           >
             {/* Avatar */}
             <div className="prechecklist__avatar">
@@ -156,7 +152,7 @@ const ChecklistSection: FC<ChecklistSectionProps> = ({
             {/* Label */}
             <div className="prechecklist__item-body">
               <span className="prechecklist__item-label">{item.Title}</span>
-              <span className="prechecklist__item-id">ID: {item.ID}</span>
+              <span className="prechecklist__item-id">{strings.Id}{item.ID}</span>
             </div>
 
             {/* Toggle buttons */}
@@ -175,8 +171,7 @@ const ChecklistSection: FC<ChecklistSectionProps> = ({
                 <span className="prechecklist__toggle-icon">
                   <CheckIcon />
                 </span>
-                Yes
-              </button>
+                {strings.Yes1}</button>
 
               <button
                 className={`prechecklist__toggle-btn prechecklist__toggle-btn--no${
@@ -194,8 +189,7 @@ const ChecklistSection: FC<ChecklistSectionProps> = ({
                 <span className="prechecklist__toggle-icon">
                   <XIcon />
                 </span>
-                No
-              </button>
+                {strings.No1}</button>
             </div>
 
             {/* Status dot */}
@@ -232,8 +226,8 @@ const PreChecklist: FC<PreChecklistProps> = ({
     <div className="prechecklist">
       {/* National section — always shown */}
       <ChecklistSection
-        title="Onboarding Prechecklist"
-        subtitle="Mandatory pre-hire checks"
+        title={strings.OnboardingPrechecklist}
+        subtitle={strings.MandatoryPreHireChecks}
         icon={<ShieldIcon />}
         items={nationalItems}
         onToggle={onToggle}
@@ -259,12 +253,12 @@ const PreChecklist: FC<PreChecklistProps> = ({
         </div>
         <div className="prechecklist__summary-text">
           <span className="prechecklist__summary-label">
-            {allChecked ? "All requirements met!" : "Checklist in progress"}
+            {allChecked ? strings.AllRequirementsMet : strings.ChecklistInProgress}
           </span>
           <span className="prechecklist__summary-desc">
             {allChecked
-              ? "You can now submit this candidate for review."
-              : "Complete all items above to enable submission."}
+              ? strings.YouCanNowSubmitThisCandidateForReview
+              : strings.CompleteAllItemsAboveToEnableSubmission}
           </span>
         </div>
         <div

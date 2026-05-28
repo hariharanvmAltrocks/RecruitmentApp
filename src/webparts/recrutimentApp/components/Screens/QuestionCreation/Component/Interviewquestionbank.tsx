@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Question } from "../QuestionCreation.types";
 import "./Interviewmode.scss";
 import "../Questioncreation.scss";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface InterviewBankProps {
   questionBank: Question[];
@@ -43,8 +44,8 @@ export const InterviewQuestionBank: React.FC<InterviewBankProps> = ({
           </svg>
         </div>
         <div>
-          <h3 className="iq-bank__title">Question Bank</h3>
-          <p className="iq-bank__subtitle">Reuse Standard Questions</p>
+          <h3 className="iq-bank__title">{strings.QuestionBank}</h3>
+          <p className="iq-bank__subtitle">{strings.ReuseStandardQuestions}</p>
         </div>
       </div>
 
@@ -57,7 +58,7 @@ export const InterviewQuestionBank: React.FC<InterviewBankProps> = ({
           </>
         ) : questionBank.length === 0 ? (
           <div className="iq-bank__empty">
-            <p className="iq-bank__empty-text">No templates available</p>
+            <p className="iq-bank__empty-text">{strings.NoTemplatesAvailable}</p>
           </div>
         ) : (
           <AnimatePresence>
@@ -79,15 +80,14 @@ export const InterviewQuestionBank: React.FC<InterviewBankProps> = ({
                 >
                   <div className="iq-bank__card-top">
                     <span className="iq-bank__template-label">
-                      {i + 1}&nbsp;&nbsp;Standard Template
-                    </span>
+                      {i + 1}{strings.NbspNbspStandardTemplate}</span>
 
                     <button
                       className={`iq-bank__add-btn ${
                         isAdded ? "iq-bank__add-btn--added" : ""
                       }`}
                       onClick={() => !isAdded && onAddFromBank(q)}
-                      title={isAdded ? "Already added" : "Add to interview set"}
+                      title={isAdded ? strings.AlreadyAdded : strings.AddToInterviewSet1}
                     >
                       {isAdded ? (
                         <CheckCircle2 size={15} />
@@ -100,15 +100,13 @@ export const InterviewQuestionBank: React.FC<InterviewBankProps> = ({
                   <div className="iq-bank__card-body">
                     <div className="iq-bank__lang-row">
                       <span className="iq-bank__lang-pill iq-bank__lang-pill--en">
-                        EN
-                      </span>
+                        {strings.En}</span>
                       <p className="iq-bank__question-text">{q.questionEn}</p>
                     </div>
 
                     <div className="iq-bank__lang-row">
                       <span className="iq-bank__lang-pill iq-bank__lang-pill--fr">
-                        FR
-                      </span>
+                        {strings.Fr}</span>
                       <p className="iq-bank__question-text iq-bank__question-text--italic">
                         {q.questionFr}
                       </p>

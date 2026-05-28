@@ -2,6 +2,7 @@ import React from "react";
 import { Check, X, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./ResueComponent.module.scss";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export type VerificationStatus = "verified" | "rejected" | null;
 
@@ -26,7 +27,7 @@ export const VerificationToggle: React.FC<VerificationToggleProps> = ({
   onChange,
   disabled = false,
   hasError = false,
-  label = "Document Verification Status",
+  label = strings.DocumentVerificationStatus,
 }) => {
   return (
     <div className={`${styles.verificationToggle} ${hasError ? styles.error : ""}`}>
@@ -42,8 +43,7 @@ export const VerificationToggle: React.FC<VerificationToggleProps> = ({
           disabled={disabled}
         >
           <Check size={16} strokeWidth={3} />
-          Verified
-        </motion.button>
+          {strings.Verified}</motion.button>
 
         <motion.button
           whileHover={{ scale: disabled ? 1 : 1.02 }}
@@ -54,8 +54,7 @@ export const VerificationToggle: React.FC<VerificationToggleProps> = ({
           disabled={disabled}
         >
           <X size={16} strokeWidth={3} />
-          Rejected
-        </motion.button>
+          {strings.Rejected}</motion.button>
       </div>
 
       <AnimatePresence>
@@ -67,8 +66,7 @@ export const VerificationToggle: React.FC<VerificationToggleProps> = ({
             className={styles.errorText}
           >
             <AlertCircle size={14} />
-            Please verify the document status before proceeding.
-          </motion.div>
+            {strings.PleaseVerifyTheDocumentStatusBeforeProce}</motion.div>
         )}
       </AnimatePresence>
     </div>

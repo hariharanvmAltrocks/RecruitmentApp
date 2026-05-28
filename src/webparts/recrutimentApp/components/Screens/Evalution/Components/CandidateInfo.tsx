@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type { Candidate } from '../State/CommonStateManagement';
 import styles from './CandidateInfo.module.scss';
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface CandidateInfoProps {
   candidate: Candidate | null;
@@ -13,40 +14,40 @@ export default function CandidateInfo({ candidate, onRefresh }: CandidateInfoPro
       {/* Sticky header */}
       <div className={styles.leftHeader}>
         <div className={styles.leftAccent} />
-        <span className={styles.leftTitle}>CANDIDATE INFO</span>
+        <span className={styles.leftTitle}>{strings.CandidateInfo}</span>
       </div>
 
       <div style={{ paddingTop: 8 }}>
-        <InfoField icon="👤" label="APPLICANT NAME"  value={candidate?.applicantName} />
-        <InfoField icon="🌐" label="NATIONALITY"     value={candidate?.nationality} />
-        <InfoField icon="👤" label="GENDER"          value={candidate?.gender} />
-        <InfoField icon="📄" label="QUALIFICATION"   value={candidate?.qualification} />
+        <InfoField icon="👤" label={strings.ApplicantName1}  value={candidate?.applicantName} />
+        <InfoField icon="🌐" label={strings.Nationality1}     value={candidate?.nationality} />
+        <InfoField icon="👤" label={strings.Gender1}          value={candidate?.gender} />
+        <InfoField icon="📄" label={strings.Qualification1}   value={candidate?.qualification} />
 
         <div className={styles.twoCol}>
-          <InfoField icon="📈" label="MINING EXP."  value={candidate?.miningExp} />
-          <InfoField icon="📈" label="RELATED EXP." value={candidate?.relevantExp} />
+          <InfoField icon="📈" label={strings.MiningExp1}  value={candidate?.miningExp} />
+          <InfoField icon="📈" label={strings.RelatedExp1} value={candidate?.relevantExp} />
         </div>
 
         <div className={styles.twoCol}>
-          <InfoField icon="📅" label="INTERVIEW DATE" value={candidate?.interviewDate} />
+          <InfoField icon="📅" label={strings.InterviewDate1} value={candidate?.interviewDate} />
           {candidate?.interviewLevel && (
-            <InfoField icon="🔲" label="LEVEL" value={candidate?.interviewLevel} />
+            <InfoField icon="🔲" label={strings.Level} value={candidate?.interviewLevel} />
           )}
         </div>
         {candidate?.grade && (
           <div className={styles.twoCol}>
-            <InfoField icon="📈" label="GRADE" value={candidate?.grade} />
-            <InfoField icon="⚠️" label="CONFLICTS" value={candidate?.conflictsOfInterest} />
+            <InfoField icon="📈" label={strings.Grade} value={candidate?.grade} />
+            <InfoField icon="⚠️" label={strings.Conflicts1} value={candidate?.conflictsOfInterest} />
           </div>
         )}
 
-        <InfoField icon="♿" label="DISABILITY" value={candidate?.disability} />
+        <InfoField icon="♿" label={strings.Disability1} value={candidate?.disability} />
 
         {(candidate?.panelMembers?.length ?? 0) > 0 && (
           <div className={styles.panelSection}>
             <div className={styles.panelHeader}>
-              <span className={styles.panelHeaderIcon}>👥</span>
-              <span className={styles.panelHeaderLabel}>INTERVIEW PANEL</span>
+              <span className={styles.panelHeaderIcon}>{strings.StringKey1}</span>
+              <span className={styles.panelHeaderLabel}>{strings.InterviewPanel}</span>
             </div>
             {candidate!.panelMembers!.map((name, i) => (
               <div key={i} className={styles.panelRow}>

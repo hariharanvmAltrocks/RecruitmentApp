@@ -4,6 +4,7 @@ var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importStar(require("react"));
 var CandidateDocumentsRepository_module_scss_1 = tslib_1.__importDefault(require("./CandidateDocumentsRepository.module.scss"));
 var reusehooks_1 = require("../../../Hooks/reusehooks");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 // ─── Icon Registry ────────────────────────────────────────────────────────────
 var ICONS = {
     fingerprint: function (c) { return (react_1.default.createElement("svg", { viewBox: "0 0 24 24", fill: "none", stroke: c, strokeWidth: "1.7", strokeLinecap: "round" },
@@ -73,13 +74,13 @@ var IframeModal = function (_a) {
                         react_1.default.createElement("polyline", { points: "14 2 14 8 20 8" }))),
                 react_1.default.createElement("span", { className: CandidateDocumentsRepository_module_scss_1.default.modalFileName }, fileName),
                 react_1.default.createElement("div", { className: CandidateDocumentsRepository_module_scss_1.default.modalHeaderActions },
-                    react_1.default.createElement("a", { href: url, download: true, className: CandidateDocumentsRepository_module_scss_1.default.modalDownloadBtn, title: "Download file", onClick: function (e) { return e.stopPropagation(); } },
+                    react_1.default.createElement("a", { href: url, download: true, className: CandidateDocumentsRepository_module_scss_1.default.modalDownloadBtn, title: strings.DownloadFile, onClick: function (e) { return e.stopPropagation(); } },
                         react_1.default.createElement("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round" },
                             react_1.default.createElement("path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" }),
                             react_1.default.createElement("polyline", { points: "7 10 12 15 17 10" }),
                             react_1.default.createElement("line", { x1: "12", y1: "15", x2: "12", y2: "3" })),
-                        "Download"),
-                    react_1.default.createElement("button", { className: CandidateDocumentsRepository_module_scss_1.default.modalCloseBtn, onClick: onClose, "aria-label": "Close preview" },
+                        strings.Download),
+                    react_1.default.createElement("button", { className: CandidateDocumentsRepository_module_scss_1.default.modalCloseBtn, onClick: onClose, "aria-label": strings.ClosePreview },
                         react_1.default.createElement("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round" },
                             react_1.default.createElement("line", { x1: "18", y1: "6", x2: "6", y2: "18" }),
                             react_1.default.createElement("line", { x1: "6", y1: "6", x2: "18", y2: "18" }))))),
@@ -99,14 +100,15 @@ var DocumentRow = function (_a) {
             react_1.default.createElement("span", { className: CandidateDocumentsRepository_module_scss_1.default.docRowName }, doc.fileName),
             react_1.default.createElement("span", { className: CandidateDocumentsRepository_module_scss_1.default.docRowMeta },
                 doc.fileSizeMB,
-                " MB \u00A0\u00B7\u00A0 ",
+                " ",
+                strings.MbNbspNbsp,
                 doc.uploadedDate)),
         react_1.default.createElement("span", { className: CandidateDocumentsRepository_module_scss_1.default.docRowActions },
-            react_1.default.createElement("button", { className: CandidateDocumentsRepository_module_scss_1.default.docActionBtn, title: "Preview document", "aria-label": "Preview ".concat(doc.fileName), onClick: function () { return onView(doc.downloadUrl, doc.fileName); } },
+            react_1.default.createElement("button", { className: CandidateDocumentsRepository_module_scss_1.default.docActionBtn, title: strings.PreviewDocument, "aria-label": "Preview ".concat(doc.fileName), onClick: function () { return onView(doc.downloadUrl, doc.fileName); } },
                 react_1.default.createElement("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round" },
                     react_1.default.createElement("path", { d: "M1 12S5 5 12 5s11 7 11 7-4 7-11 7S1 12 1 12z" }),
                     react_1.default.createElement("circle", { cx: "12", cy: "12", r: "3" }))),
-            react_1.default.createElement("a", { href: doc.downloadUrl, download: true, className: CandidateDocumentsRepository_module_scss_1.default.docActionBtn, title: "Download document", "aria-label": "Download ".concat(doc.fileName) },
+            react_1.default.createElement("a", { href: doc.downloadUrl, download: true, className: CandidateDocumentsRepository_module_scss_1.default.docActionBtn, title: strings.DownloadDocument, "aria-label": "Download ".concat(doc.fileName) },
                 react_1.default.createElement("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round" },
                     react_1.default.createElement("path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" }),
                     react_1.default.createElement("polyline", { points: "7 10 12 15 17 10" }),
@@ -124,7 +126,8 @@ var CategoryCard = function (_a) {
                 react_1.default.createElement("span", { className: CandidateDocumentsRepository_module_scss_1.default.categoryName }, category.categoryName),
                 react_1.default.createElement("span", { className: CandidateDocumentsRepository_module_scss_1.default.categoryCount },
                     category.documents.length,
-                    " DOCUMENTS AVAILABLE")),
+                    " ",
+                    strings.DocumentsAvailable)),
             react_1.default.createElement("span", { className: "".concat(CandidateDocumentsRepository_module_scss_1.default.chevronBtn, " ").concat(open ? CandidateDocumentsRepository_module_scss_1.default.chevronOpen : "") },
                 react_1.default.createElement("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round" },
                     react_1.default.createElement("polyline", { points: "18 15 12 9 6 15" })))),
@@ -146,10 +149,11 @@ var CandidateDocumentsRepository = function (_a) {
         react_1.default.createElement("section", { className: CandidateDocumentsRepository_module_scss_1.default.repository },
             react_1.default.createElement("div", { className: CandidateDocumentsRepository_module_scss_1.default.titleRow },
                 react_1.default.createElement("span", { className: CandidateDocumentsRepository_module_scss_1.default.titleBar }),
-                react_1.default.createElement("h2", { className: CandidateDocumentsRepository_module_scss_1.default.title }, "CANDIDATE DOCUMENTS REPOSITORY"),
+                react_1.default.createElement("h2", { className: CandidateDocumentsRepository_module_scss_1.default.title }, strings.CandidateDocumentsRepository),
                 react_1.default.createElement("span", { className: CandidateDocumentsRepository_module_scss_1.default.totalBadge }, data === null || data === void 0 ? void 0 :
                     data.totalFiles,
-                    " Total Files")),
+                    " ",
+                    strings.TotalFiles)),
             react_1.default.createElement("div", { className: CandidateDocumentsRepository_module_scss_1.default.categoryList }, data === null || data === void 0 ? void 0 : data.categories.map(function (cat, idx) { return (react_1.default.createElement(CategoryCard, { key: cat.categoryId, category: cat, defaultOpen: idx === 0, onView: handleView })); })),
             react_1.default.createElement(IframeModal, { url: previewUrl, fileName: previewFileName, onClose: handleClose }))));
 };

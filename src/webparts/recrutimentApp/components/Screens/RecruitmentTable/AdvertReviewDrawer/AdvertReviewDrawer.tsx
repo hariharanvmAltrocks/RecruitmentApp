@@ -62,6 +62,7 @@ import {
   stages,
 } from "../../../../utilities/PositionStatusConfig";
 import { CandidateProgress } from "./Components/CandidateProgress/CandidateProgress";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export interface AdvertReviewDrawerProps {
   drawerOpen: boolean;
@@ -288,7 +289,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
     (msg: string) => {
       showModal({
         type: "success",
-        title: "Submitted Successfully",
+        title: strings.SubmittedSuccessfully,
         message: msg,
         confirmLabel: "OK",
         onConfirm: () => {
@@ -308,9 +309,9 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
     if (!canApprove) {
       showModal({
         type: "warning",
-        title: "Required Fields Missing",
+        title: strings.RequiredFieldsMissing,
         message:
-          "One or more fields are required. Please complete all highlighted fields before submitting.",
+          strings.OneOrMoreFieldsAreRequiredPleaseComplete,
         confirmLabel: "OK",
         onConfirm: closeModal,
       });
@@ -336,14 +337,14 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
         await updateMainRecord();
         showSuccessModal(RecuritmentHRMsg.AdvertisementReveiwMsg);
       } else {
-        console.warn("No matching role found", roleIDs);
+        console.warn(strings.NoMatchingRoleFound, roleIDs);
       }
     } catch (error) {
       console.error(error);
       showModal({
         type: "error",
-        title: "Something Went Wrong",
-        message: "An unexpected error occurred. Please try again.",
+        title: strings.SomethingWentWrong,
+        message: strings.AnUnexpectedErrorOccurredPleaseTryAgain,
         confirmLabel: "Close",
         onConfirm: closeModal,
       });
@@ -393,7 +394,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
     showModal({
       type: "confirmation",
       title: "Cancel",
-      message: "Are you sure you want to cancel?",
+      message: strings.AreYouSureYouWantToCancel,
       confirmLabel: "Yes",
       cancelLabel: "No",
       onConfirm: () => {
@@ -467,8 +468,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                     className={`advert-roadmap__toggle-btn ${showRoadmap ? "advert-roadmap__toggle-btn--active" : "advert-roadmap__toggle-btn--inactive"}`}
                   >
                     <Network size={14} />
-                    Position Status
-                    <ChevronRight
+                    {strings.PositionStatus}<ChevronRight
                       size={14}
                       className="advert-roadmap__toggle-icon"
                     />
@@ -497,8 +497,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                         <div className="advert-roadmap__header-top">
                           <h3 className="advert-roadmap__header-title">
                             <div className="advert-roadmap__header-title-bar"></div>
-                            Recruitment Lifecycle Roadmap
-                          </h3>
+                            {strings.RecruitmentLifecycleRoadmap}</h3>
                           {/* <div className="advert-roadmap__header-status">
                             <div className="advert-roadmap__header-status-dot" />
                             <span className="advert-roadmap__header-status-text">
@@ -539,8 +538,8 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                     acceptedFormats=".pdf"
                     label={
                       metricId === MatricID.UploadONEM
-                        ? "ONEM Signed and Stamped Document (Only PDF)"
-                        : "Draft ONEM AdvertDoc French (Only PDF)"
+                        ? strings.OnemSignedAndStampedDocumentOnlyPdf
+                        : strings.DraftOnemAdvertdocFrenchOnlyPdf
                     }
                     required
                     onChange={setUploadDocument}
@@ -587,8 +586,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                           className="advert-review-drawer__button"
                           onClick={handleCancel}
                         >
-                          Cancel
-                        </button>
+                          {strings.Cancel}</button>
 
                         <button
                           type="button"
@@ -606,13 +604,11 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                                 size={16}
                                 className="modal-popup__spinner"
                               />
-                              Sending...
-                            </>
+                              {strings.Sending}</>
                           ) : (
                             <>
                               <Send size={16} style={{ marginRight: 8 }} />
-                              Submit
-                            </>
+                              {strings.Submit}</>
                           )}
                         </button>
                       </div>
@@ -702,7 +698,7 @@ const PositionRoadmap = ({ statusId, recId }: { statusId: number; recId: number 
                 </span>
 
                 {isCompleted && (
-                  <span className="advert-roadmap__status-done">Done</span>
+                  <span className="advert-roadmap__status-done">{strings.Done}</span>
                 )}
               </div>
             </motion.div>

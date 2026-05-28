@@ -12,6 +12,7 @@ import {
   isPdfUrl,
   isSharePointUrl,
 } from "../../../Hooks/reusehooks";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 // ─── Icon Registry ────────────────────────────────────────────────────────────
 
@@ -202,7 +203,7 @@ const IframeModal: React.FC<IframeModalProps> = ({
               href={url}
               download
               className={styles.modalDownloadBtn}
-              title="Download file"
+              title={strings.DownloadFile}
               onClick={(e) => e.stopPropagation()}
             >
               <svg
@@ -217,12 +218,11 @@ const IframeModal: React.FC<IframeModalProps> = ({
                 <polyline points="7 10 12 15 17 10" />
                 <line x1="12" y1="15" x2="12" y2="3" />
               </svg>
-              Download
-            </a>
+              {strings.Download}</a>
             <button
               className={styles.modalCloseBtn}
               onClick={onClose}
-              aria-label="Close preview"
+              aria-label={strings.ClosePreview}
             >
               <svg
                 viewBox="0 0 24 24"
@@ -278,7 +278,7 @@ const DocumentRow: React.FC<DocumentRowProps> = ({ doc, onView }) => (
     <span className={styles.docRowContent}>
       <span className={styles.docRowName}>{doc.fileName}</span>
       <span className={styles.docRowMeta}>
-        {doc.fileSizeMB} MB &nbsp;·&nbsp; {doc.uploadedDate}
+        {doc.fileSizeMB} {strings.MbNbspNbsp}{doc.uploadedDate}
       </span>
     </span>
 
@@ -287,7 +287,7 @@ const DocumentRow: React.FC<DocumentRowProps> = ({ doc, onView }) => (
       {/* View / Preview */}
       <button
         className={styles.docActionBtn}
-        title="Preview document"
+        title={strings.PreviewDocument}
         aria-label={`Preview ${doc.fileName}`}
         onClick={() => onView(doc.downloadUrl, doc.fileName)}
       >
@@ -309,7 +309,7 @@ const DocumentRow: React.FC<DocumentRowProps> = ({ doc, onView }) => (
         href={doc.downloadUrl}
         download
         className={styles.docActionBtn}
-        title="Download document"
+        title={strings.DownloadDocument}
         aria-label={`Download ${doc.fileName}`}
       >
         <svg
@@ -364,8 +364,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
         <span className={styles.categoryMeta}>
           <span className={styles.categoryName}>{category.categoryName}</span>
           <span className={styles.categoryCount}>
-            {category.documents.length} DOCUMENTS AVAILABLE
-          </span>
+            {category.documents.length} {strings.DocumentsAvailable}</span>
         </span>
 
         <span
@@ -419,10 +418,9 @@ const CandidateDocumentsRepository: React.FC<
       <section className={styles.repository}>
         <div className={styles.titleRow}>
           <span className={styles.titleBar} />
-          <h2 className={styles.title}>CANDIDATE DOCUMENTS REPOSITORY</h2>
+          <h2 className={styles.title}>{strings.CandidateDocumentsRepository}</h2>
           <span className={styles.totalBadge}>
-            {data?.totalFiles} Total Files
-          </span>
+            {data?.totalFiles} {strings.TotalFiles}</span>
         </div>
 
         <div className={styles.categoryList}>

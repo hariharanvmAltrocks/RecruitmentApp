@@ -18,18 +18,20 @@ var useModalPopup_1 = require("../../../Comman/ModalPopup/useModalPopup");
 var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
 var reuseUI_1 = require("../../CandidateTable/Components/reuseUI");
 var loading_1 = tslib_1.__importDefault(require("../../../Comman/Loading/loading"));
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
+var sp_core_library_1 = require("@microsoft/sp-core-library");
 var SCORE_CRITERIA = [
-    { field: "RelevantQualification", label: "Qualification (Relevant)" },
-    { field: "ReleventExperience", label: "Experience (Relevant)" },
+    { field: "RelevantQualification", label: strings.QualificationRelevant },
+    { field: "ReleventExperience", label: strings.ExperienceRelevant1 },
     { field: "Knowledge", label: "Knowledge" },
-    { field: "EnergyLevel", label: "Energy Level" },
-    { field: "MeetJobRequirement", label: "Meets All Job Requirements" },
+    { field: "EnergyLevel", label: strings.EnergyLevel1 },
+    { field: "MeetJobRequirement", label: strings.MeetsAllJobRequirements },
     {
         field: "ContributeTowardsCultureRequried",
-        label: "Will Contribute to Culture Required",
+        label: strings.WillContributeToCultureRequired,
     },
     { field: "Experience", label: "Experience" },
-    { field: "OtherCriteriaScore", label: "Other Criteria Recognized by Panel" },
+    { field: "OtherCriteriaScore", label: strings.OtherCriteriaRecognizedByPanel },
 ];
 var MAX_OVERALL_PER_PANEL = 40;
 var MField = function (_a) {
@@ -38,7 +40,7 @@ var MField = function (_a) {
         React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mfLabel }, label),
         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mfValue }, value || "—")));
 };
-var PageLoader = function () { return React.createElement(loading_1.default, { text: "Loading data" }); };
+var PageLoader = function () { return React.createElement(loading_1.default, { text: strings.LoadingData }); };
 var EvalutionL2 = function (props) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
     var ID = props.ID;
@@ -58,7 +60,7 @@ var EvalutionL2 = function (props) {
             type: "success",
             title: "Success",
             message: ConditionConfig_1.RecuritmentHRMsg.ScoreCardMsgLevel2,
-            confirmLabel: "Go to Dashboard",
+            confirmLabel: strings.GoToDashboard,
             onConfirm: function () {
                 closeModal();
                 navigate("/Dashboard");
@@ -107,7 +109,7 @@ var EvalutionL2 = function (props) {
                 var key = Object.keys(q)[0];
                 if (!qMap[key])
                     qMap[key] = { criteria: key };
-                qMap[key]["panel_".concat(i)] = q[key];
+                qMap[key][sp_core_library_1.Text.format(strings.Panel)] = q[key];
             });
         });
         return Object.values(qMap);
@@ -167,17 +169,17 @@ var EvalutionL2 = function (props) {
     return (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.modalOverlay },
         submitHook.submitting && React.createElement(loading_1.default, null),
         React.createElement(framer_motion_1.motion.div, { initial: { opacity: 0, scale: 0.96 }, animate: { opacity: 1, scale: 1 }, exit: { opacity: 0, scale: 0.96 }, transition: { duration: 0.2 }, className: ReviewScorecard_module_scss_1.default.modalWindow },
-            loading && React.createElement(loading_1.default, { text: "Loading details..." }),
+            loading && React.createElement(loading_1.default, { text: strings.LoadingDetails }),
             React.createElement("header", { className: ReviewScorecard_module_scss_1.default.header },
                 React.createElement("div", { className: ReviewScorecard_module_scss_1.default.headerLeft },
                     React.createElement("div", { className: ReviewScorecard_module_scss_1.default.headerIcon },
                         React.createElement(lucide_react_1.User, { size: 24 })),
                     React.createElement("div", { className: ReviewScorecard_module_scss_1.default.headerMeta },
                         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.breadcrumb },
-                            React.createElement("span", null, "Candidate selection"),
+                            React.createElement("span", null, strings.CandidateSelection),
                             React.createElement(lucide_react_1.ChevronRight, { size: 12, className: ReviewScorecard_module_scss_1.default.breadcrumbChevron }),
-                            React.createElement("span", { className: ReviewScorecard_module_scss_1.default.breadcrumbActive }, "Review Scorecard")),
-                        React.createElement("h2", { className: ReviewScorecard_module_scss_1.default.headerTitle }, "Candidate Scorecard Review"),
+                            React.createElement("span", { className: ReviewScorecard_module_scss_1.default.breadcrumbActive }, strings.ReviewScorecard)),
+                        React.createElement("h2", { className: ReviewScorecard_module_scss_1.default.headerTitle }, strings.CandidateScorecardReview),
                         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.headerSubtitle },
                             React.createElement("span", { className: ReviewScorecard_module_scss_1.default.jobCodeBadge }, ((_e = hook.reviewingCandidate) === null || _e === void 0 ? void 0 : _e.jobCode) || "---"),
                             React.createElement("span", { className: ReviewScorecard_module_scss_1.default.headerDot }),
@@ -185,9 +187,9 @@ var EvalutionL2 = function (props) {
                 React.createElement("div", null,
                     React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mHeaderRight },
                         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mGpa },
-                            React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mGpaLabel }, "OVERALL GPA"),
+                            React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mGpaLabel }, strings.OverallGpa),
                             React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mGpaValue }, ((_g = hook.reviewingCandidate) === null || _g === void 0 ? void 0 : _g.gpa) || "—")),
-                        React.createElement("button", { className: ReviewScorecard_module_scss_1.default.closeBtn, type: "button", onClick: onClose, "aria-label": "Close" },
+                        React.createElement("button", { className: ReviewScorecard_module_scss_1.default.closeBtn, type: "button", onClick: onClose, "aria-label": strings.Close },
                             React.createElement(lucide_react_1.X, { size: 20, strokeWidth: 2.5 }))))),
             React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mBody },
                 React.createElement("aside", { className: ReviewScorecard_module_scss_1.default.sidebar },
@@ -196,29 +198,29 @@ var EvalutionL2 = function (props) {
                         React.createElement("h3", { className: ReviewScorecard_module_scss_1.default.avatarName }, (_l = (_k = hook.reviewingCandidate) === null || _k === void 0 ? void 0 : _k.fullName) !== null && _l !== void 0 ? _l : "--"),
                         React.createElement("span", { className: ReviewScorecard_module_scss_1.default.avatarNationality }, nationLabel !== null && nationLabel !== void 0 ? nationLabel : "--")),
                     React.createElement("div", { className: ReviewScorecard_module_scss_1.default.infoGrid },
-                        React.createElement(reuseUI_1.InfoItem, { icon: React.createElement(lucide_react_1.Globe, { size: 14 }), label: "Nationality", value: raw.Nationality || ((_m = hook.reviewingCandidate) === null || _m === void 0 ? void 0 : _m.nationality) || "" }),
-                        React.createElement(reuseUI_1.InfoItem, { icon: React.createElement(lucide_react_1.Users, { size: 14 }), label: "Gender", value: raw.Gender || ((_o = hook.reviewingCandidate) === null || _o === void 0 ? void 0 : _o.gender) || "" }),
-                        React.createElement(reuseUI_1.InfoItem, { icon: React.createElement(lucide_react_1.FileText, { size: 14 }), label: "Qualification", value: raw.Qualification || "" }),
+                        React.createElement(reuseUI_1.InfoItem, { icon: React.createElement(lucide_react_1.Globe, { size: 14 }), label: strings.Nationality, value: raw.Nationality || ((_m = hook.reviewingCandidate) === null || _m === void 0 ? void 0 : _m.nationality) || "" }),
+                        React.createElement(reuseUI_1.InfoItem, { icon: React.createElement(lucide_react_1.Users, { size: 14 }), label: strings.Gender, value: raw.Gender || ((_o = hook.reviewingCandidate) === null || _o === void 0 ? void 0 : _o.gender) || "" }),
+                        React.createElement(reuseUI_1.InfoItem, { icon: React.createElement(lucide_react_1.FileText, { size: 14 }), label: strings.Qualification, value: raw.Qualification || "" }),
                         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.infoRow },
                             React.createElement("div", { className: ReviewScorecard_module_scss_1.default.infoRowItem },
-                                React.createElement(reuseUI_1.InfoItem, { icon: React.createElement(lucide_react_1.Zap, { size: 14 }), label: "Mining exp.", value: raw.TotalYearOfExperiance || "" })),
+                                React.createElement(reuseUI_1.InfoItem, { icon: React.createElement(lucide_react_1.Zap, { size: 14 }), label: strings.MiningExp, value: raw.TotalYearOfExperiance || "" })),
                             React.createElement("div", { className: ReviewScorecard_module_scss_1.default.infoRowItem },
-                                React.createElement(reuseUI_1.InfoItem, { icon: React.createElement(lucide_react_1.Zap, { size: 14 }), label: "Related exp.", value: raw.ReleventExperience || "" }))),
+                                React.createElement(reuseUI_1.InfoItem, { icon: React.createElement(lucide_react_1.Zap, { size: 14 }), label: strings.RelatedExp, value: raw.ReleventExperience || "" }))),
                         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.infoRow },
                             React.createElement("div", { className: ReviewScorecard_module_scss_1.default.infoRowItem },
-                                React.createElement(reuseUI_1.InfoItem, { icon: React.createElement(lucide_react_1.AlertTriangle, { size: 14 }), label: "Conflicts", value: raw.ConflictsOfInterest || "" })),
+                                React.createElement(reuseUI_1.InfoItem, { icon: React.createElement(lucide_react_1.AlertTriangle, { size: 14 }), label: strings.Conflicts, value: raw.ConflictsOfInterest || "" })),
                             React.createElement("div", { className: ReviewScorecard_module_scss_1.default.infoRowItem },
-                                React.createElement(reuseUI_1.InfoItem, { icon: React.createElement(lucide_react_1.Accessibility, { size: 14 }), label: "Disability", value: raw.Disability || raw.disability || "" }))),
+                                React.createElement(reuseUI_1.InfoItem, { icon: React.createElement(lucide_react_1.Accessibility, { size: 14 }), label: strings.Disability, value: raw.Disability || raw.disability || "" }))),
                         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.infoRow },
                             React.createElement("div", { className: ReviewScorecard_module_scss_1.default.infoRowItem },
-                                React.createElement(reuseUI_1.InfoItem, { label: "Levels", value: ((_p = hook.reviewingCandidate) === null || _p === void 0 ? void 0 : _p.interviewLevel) || "" })),
+                                React.createElement(reuseUI_1.InfoItem, { label: strings.Levels, value: ((_p = hook.reviewingCandidate) === null || _p === void 0 ? void 0 : _p.interviewLevel) || "" })),
                             React.createElement("div", { className: ReviewScorecard_module_scss_1.default.infoRowItem },
-                                React.createElement(reuseUI_1.InfoItem, { label: "Interview Date", value: formattedDate }))),
-                        React.createElement(reuseUI_1.InfoItem, { label: "GRADE", value: ((_q = hook.reviewingCandidate) === null || _q === void 0 ? void 0 : _q.grade) || "" })),
+                                React.createElement(reuseUI_1.InfoItem, { label: strings.InterviewDate, value: formattedDate }))),
+                        React.createElement(reuseUI_1.InfoItem, { label: strings.Grade, value: ((_q = hook.reviewingCandidate) === null || _q === void 0 ? void 0 : _q.grade) || "" })),
                     panelMembers.length > 0 && (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mPanelSection },
                         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mPanelHeader },
                             React.createElement(lucide_react_1.Users, { size: 12, color: "#2563eb" }),
-                            React.createElement("span", null, "INTERVIEW PANEL")),
+                            React.createElement("span", null, strings.InterviewPanel)),
                         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mPanelList }, panelMembers.map(function (name, i) { return (React.createElement("div", { key: i, className: ReviewScorecard_module_scss_1.default.mPanelRow },
                             React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mPanelBadge }, i + 1),
                             React.createElement("span", { className: ReviewScorecard_module_scss_1.default.mPanelName }, name))); }))))),
@@ -229,24 +231,24 @@ var EvalutionL2 = function (props) {
                             s.InterviewPersonName ||
                             "Interviewer ".concat(i + 1)))); }))),
                     activeScorecardTab === "questions" && (React.createElement(QuestionnaireTab_1.default, { questions: ((_r = hook.reviewData) === null || _r === void 0 ? void 0 : _r.questions) || [], activeScore: activeScore, activeQJson: activeQJson, panelMemberName: panelMembers[activePanelTab] || "", fetchingQuestions: hook.reviewLoading })),
-                    activeScorecardTab === "qEval" && (React.createElement(ScoreTable_1.default, { title: "QUESTION EVALUATION SCORECARD", subtitle: "Panel-wise Question Scores \u2014 All Interviewers", accentColor: "#6366f1", rows: questionTableRows, panelMembers: panelMembers, showTotal: false, emptyText: "No question data available." })),
-                    activeScorecardTab === "overall" && (React.createElement(ScoreTable_1.default, { title: "OVERALL EVALUATION SCORECARD", subtitle: "Core Criteria Scores \u2014 All Interviewers (Max 5 per criterion)", accentColor: "#22c55e", rows: overallTableRows, panelMembers: panelMembers, showTotal: true, emptyText: "No scorecard data available." })),
+                    activeScorecardTab === "qEval" && (React.createElement(ScoreTable_1.default, { title: strings.QuestionEvaluationScorecard, subtitle: strings.PanelWiseQuestionScoresAllInterviewers, accentColor: "#6366f1", rows: questionTableRows, panelMembers: panelMembers, showTotal: false, emptyText: "No question data available." })),
+                    activeScorecardTab === "overall" && (React.createElement(ScoreTable_1.default, { title: strings.OverallEvaluationScorecard, subtitle: strings.CoreCriteriaScoresAllInterviewersMax5Per, accentColor: "#22c55e", rows: overallTableRows, panelMembers: panelMembers, showTotal: true, emptyText: "No scorecard data available." })),
                     React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mFormGroup },
                         React.createElement("button", { onClick: hook.openComments, className: ReviewScorecard_module_scss_1.default.mSubmitBtn, type: "button" },
                             React.createElement(lucide_react_1.FileText, { size: 16 }),
-                            "VIEW COMMENTS")),
+                            strings.ViewComments)),
                     React.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: submitHook.comments, acknowledgementCheckbox: submitHook.acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: signatureLoading, onCommentsChange: submitHook.onCommentsChange, onToggleAcknowledgement: submitHook.onToggleAcknowledgement, commentError: submitHook.commentError, checkboxError: submitHook.checkboxError, disabled: submitHook.isSubmittingRef.current }),
                     React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mActionBtn, style: { background: "white", justifyContent: "flex-end" } },
-                        React.createElement("button", { className: ReviewScorecard_module_scss_1.default.mCancelBtn, onClick: onClose, disabled: submitHook.submitting, type: "button" }, "CANCEL"),
+                        React.createElement("button", { className: ReviewScorecard_module_scss_1.default.mCancelBtn, onClick: onClose, disabled: submitHook.submitting, type: "button" }, strings.Cancel1),
                         React.createElement("button", { className: ReviewScorecard_module_scss_1.default.mSubmitBtn, onClick: submitHook.handleSubmitClick, disabled: submitHook.submitting, type: "button" }, submitHook.submitting ? (React.createElement(React.Fragment, null,
                             React.createElement(lucide_react_1.Loader2, { size: 15, style: {
                                     marginRight: 6,
                                     animation: "spin 1s linear infinite",
                                 } }),
-                            "Submitting\u2026")) : (React.createElement(React.Fragment, null,
+                            strings.Submitting)) : (React.createElement(React.Fragment, null,
                             React.createElement(lucide_react_1.CheckCircle2, { size: 15, style: { marginRight: 6 } }),
-                            "SUBMIT ACTION"))))))),
-        React.createElement("style", null, "@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }"),
+                            strings.SubmitAction1))))))),
+        React.createElement("style", null, strings.KeyframesSpinFromTransformRotate0degToTr),
         React.createElement(Commentsmodal_1.default, { open: hook === null || hook === void 0 ? void 0 : hook.showComments, loading: hook.commentsLoading, level1: safeLevel1, level2: safeLevel2, onClose: hook.closeReview }),
         React.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal }))));
 };

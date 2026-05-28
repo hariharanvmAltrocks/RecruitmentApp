@@ -16,6 +16,8 @@ import useDepartmentChart, {
   DepartmentDataItem,
 } from "../../Screens/Dashboard/Hooks/Usedepartmentchart";
 import { useTheme } from "../../../theme/ThemeContext";
+import * as strings from 'RecrutimentAppWebPartStrings';
+import { Text } from '@microsoft/sp-core-library';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 export interface DepartmentChartProps {
@@ -46,8 +48,8 @@ const CustomTooltip: React.FC<
 const DepartmentChart: React.FC<DepartmentChartProps> = ({
   data,
   itemsPerPage = 7,
-  title = "Departmental Demand",
-  subtitle = "Pending recruitment lifecycle status",
+  title = strings.DepartmentalDemand,
+  subtitle = strings.PendingRecruitmentLifecycleStatus,
   tooltipValueLabel = "Openings",
   refreshKey = 0,
 }) => {
@@ -84,13 +86,13 @@ const DepartmentChart: React.FC<DepartmentChartProps> = ({
           <div
             className={styles.pagination}
             role="navigation"
-            aria-label="Chart pages"
+            aria-label={strings.ChartPages}
           >
             <button
               className={`${styles.pageBtn} ${hasPrev ? styles.active : styles.disabled}`}
               onClick={handlePrev}
               disabled={!hasPrev}
-              aria-label="Previous page"
+              aria-label={strings.PreviousPage}
             >
               <ChevronLeft size={20} />
             </button>
@@ -99,14 +101,14 @@ const DepartmentChart: React.FC<DepartmentChartProps> = ({
               <span className={styles.pageNumbers}>
                 {currentPage} / {totalPages}
               </span>
-              <span className={styles.pageLabel}>Pages</span>
+              <span className={styles.pageLabel}>{strings.Pages}</span>
             </div>
 
             <button
               className={`${styles.pageBtn} ${hasNext ? styles.active : styles.disabled}`}
               onClick={handleNext}
               disabled={!hasNext}
-              aria-label="Next page"
+              aria-label={strings.NextPage}
             >
               <ChevronRight size={20} />
             </button>
@@ -121,8 +123,8 @@ const DepartmentChart: React.FC<DepartmentChartProps> = ({
             <div className={styles.emptyIconContainer}>
               <Building2 size={40} className={styles.emptyIcon} />
             </div>
-            <p className={styles.emptyTitle}>No Department in request for position</p>
-            <p className={styles.emptySubtitle}>There are currently no active position requests for any department.</p>
+            <p className={styles.emptyTitle}>{strings.NoDepartmentInRequestForPosition}</p>
+            <p className={styles.emptySubtitle}>{strings.ThereAreCurrentlyNoActivePositionRequest}</p>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">

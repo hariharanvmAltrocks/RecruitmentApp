@@ -19,6 +19,7 @@ import { useModalPopup } from "../../Comman/ModalPopup/useModalPopup";
 import { RecuritmentHRMsg } from "../../../utilities/ConditionConfig";
 import Loading from "../../Comman/Loading/loading";
 import { cn } from "../../../utilities/cn";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 const DEFAULT_NEW_QUESTION = (): Partial<Question> => ({
   type: "single",
@@ -113,7 +114,7 @@ const QuestionCreation: React.FC = (props: any) => {
     if (mode === "careerPortal" && preparedQuestions.length < minQuestions) {
       showModal({
         type: "error",
-        title: "Minimum Requirement",
+        title: strings.MinimumRequirement,
         message: `Please add at least ${minQuestions} questions. You need ${remaining} more.`,
         confirmLabel: "Ok",
         onConfirm: closeModal,
@@ -144,7 +145,7 @@ const QuestionCreation: React.FC = (props: any) => {
       setLoading(false);
       showModal({
         type: "success",
-        title: "Submitted Successfully",
+        title: strings.SubmittedSuccessfully,
         message:
           mode === "careerPortal"
             ? RecuritmentHRMsg.CareerportalSuccessMsg
@@ -159,7 +160,7 @@ const QuestionCreation: React.FC = (props: any) => {
       showModal({
         type: "error",
         title: "Error",
-        message: "Failed to save questions. Please try again.",
+        message: strings.FailedToSaveQuestionsPleaseTryAgain,
         confirmLabel: "Ok",
         onConfirm: () => {
           closeModal();
@@ -203,7 +204,7 @@ const QuestionCreation: React.FC = (props: any) => {
          <>
           <div className="qc__header">
           <div className="qc__header-left">
-            <button className="qc__back-btn" onClick={handleBack} title="Go back">
+            <button className="qc__back-btn" onClick={handleBack} title={strings.GoBack}>
               <ChevronLeft size={20} />
             </button>
             <div className="qc__job-info">
@@ -227,12 +228,12 @@ const QuestionCreation: React.FC = (props: any) => {
               <div className="qc__criteria-count">
                 <span className="qc__criteria-label">
                   {mode === "careerPortal"
-                    ? "Prepared Criteria"
-                    : "Interview Set"}
+                    ? strings.PreparedCriteria
+                    : strings.InterviewSet}
                 </span>
                 <span className="qc__criteria-value">
                   {preparedQuestions.length}
-                  <span className="qc__criteria-unit"> Questions</span>
+                  <span className="qc__criteria-unit"> {strings.Questions}</span>
                 </span>
               </div>
               <button
@@ -241,7 +242,7 @@ const QuestionCreation: React.FC = (props: any) => {
                 disabled={saving}
               >
                 <Save size={15} />
-                {saving ? "Saving..." : "Finalize & Save"}
+                {saving ? "Saving..." : strings.FinalizeSave}
               </button>
             </div>
         </div>
@@ -263,28 +264,27 @@ const QuestionCreation: React.FC = (props: any) => {
                 <div className="qc-selection__icon-box">
                   <ClipboardList size={32} />
                 </div>
-                <h3 className="qc-selection__title">Question Setup Configuration</h3>
+                <h3 className="qc-selection__title">{strings.QuestionSetupConfiguration}</h3>
                 <p className="qc-selection__subtitle">
-                  Which type of question you are planning to set for this job title?
-                </p>
+                  {strings.WhichTypeOfQuestionYouArePlanningToSetFo}</p>
               </div>
 
               <div className="qc-selection__options">
                 {[
                   {
                     id: "bank",
-                    label: "From Question bank",
-                    desc: "Select pre-verified questions from our official library",
+                    label: strings.FromQuestionBank,
+                    desc: strings.SelectPreVerifiedQuestionsFromOurOfficia,
                   },
                   {
                     id: "new",
-                    label: "Create New set of question",
-                    desc: "Author custom questions specifically for this role",
+                    label: strings.CreateNewSetOfQuestion,
+                    desc: strings.AuthorCustomQuestionsSpecificallyForThis,
                   },
                   {
                     id: "both",
                     label: "Both",
-                    desc: "Combine library templates with custom authored questions",
+                    desc: strings.CombineLibraryTemplatesWithCustomAuthore,
                   },
                 ].map((option) => {
                   const isSelected = sourceSelection === option.id;
@@ -322,8 +322,7 @@ const QuestionCreation: React.FC = (props: any) => {
 
               <div className="qc-selection__footer">
                 <button onClick={onBack} className="qc-selection__cancel-btn">
-                  Cancel Process
-                </button>
+                  {strings.CancelProcess}</button>
               </div>
             </motion.div>
           ) : (

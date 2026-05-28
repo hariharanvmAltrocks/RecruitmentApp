@@ -39,6 +39,7 @@ import { useRecruitmentDetails } from "../../RecruitmentTable/Hooks/useRecruitme
 import { ISelectedCandidate } from "../../RecruitmentTable/RecruitmentTable.types";
 import { ReviewDocument } from "../../OfferRelease/ReviewDocument/ReviewDocument";
 import { PortalItem, useUpdateListPortal } from "../../OfferRelease/ReviewDocument/Hooks/Useupdatelistportal";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 const AssignHRPopup = React.lazy(() =>
   import("../../RecruitmentTable/Components/AssignHRPopup/AssignHRPopup").then(
@@ -105,20 +106,20 @@ const Mytracker: React.FC<DashboardProps> = () => {
 
   const items = trackerData || [];
 
-    const updateList: PortalItem[] = useMemo(() => {
-      return items.map((item) => ({
-        StatusID: item.statusId,
-        ID: item.ItemID,
-        JobRequestID: item.jobrequestID,
-        EmploymentCategory: item.EmploymentCategory,
-        IsExpat: item.IsExpat,
-      }));
-    }, [items]);
-  
-    const { updateListPortal } = useUpdateListPortal({
-      items: updateList,
-      refreshKey,
-    });
+  const updateList: PortalItem[] = useMemo(() => {
+    return items.map((item) => ({
+      StatusID: item.statusId,
+      ID: item.ItemID,
+      JobRequestID: item.jobrequestID,
+      EmploymentCategory: item.EmploymentCategory,
+      IsExpat: item.IsExpat,
+    }));
+  }, [items]);
+
+  const { updateListPortal } = useUpdateListPortal({
+    items: updateList,
+    refreshKey,
+  });
 
   const {
     drawerOpen,
@@ -136,13 +137,13 @@ const Mytracker: React.FC<DashboardProps> = () => {
   } = useStateFromManage();
 
   const { modalState, showModal, closeModal } = useModalPopup();
-  
 
-    useEffect(() => {
-      if (activeMetric === MatricID.BackgroundCheck || activeMetric === MatricID.LabourHire || activeMetric === MatricID.Kcsa) {
-        void updateListPortal();
-      }
-    }, [activeMetric, refreshKey]);
+
+  useEffect(() => {
+    if (activeMetric === MatricID.BackgroundCheck || activeMetric === MatricID.LabourHire || activeMetric === MatricID.Kcsa) {
+      void updateListPortal();
+    }
+  }, [activeMetric, refreshKey]);
 
   const onMetricChange = useCallback(
     (data: any) => {
@@ -200,8 +201,8 @@ const Mytracker: React.FC<DashboardProps> = () => {
         if (item?.nationality !== selectedNationality) {
           showModal({
             type: "warning",
-            title: "Nationality Mismatch",
-            message: "You cannot assign HR for different nationality.",
+            title: strings.NationalityMismatch,
+            message: strings.YouCannotAssignHrForDifferentNationality,
             confirmLabel: "OK",
             onConfirm: closeModal,
           });
@@ -300,11 +301,20 @@ const Mytracker: React.FC<DashboardProps> = () => {
           selectedAdvertID.current = item.ItemID;
           return;
         }
-
+        debugger;
         if (isEvaluationFlow) {
           const today = new Date();
           today.setHours(0, 0, 0, 0);
-          const interviewDate = new Date(item.interviewDate);
+          const [day, month, year] = item.interviewDate.split("-");
+
+          const interviewDate = new Date(
+            Number(year),
+            Number(month) - 1,
+            Number(day)
+          );
+
+          // interviewDate.setHours(0, 0, 0, 0);
+          //           const interviewDate = new Date(item.interviewDate);
           interviewDate.setHours(0, 0, 0, 0);
           const Validation = interviewDate <= today;
           const interviewLevel =
@@ -321,7 +331,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
           if (!Validation) {
             showModal({
               type: "warning",
-              title: "Interview Date Not Reached",
+              title: strings.InterviewDateNotReached,
               message: `You can only fill the scorecard after the interview date. ${moment(
                 item.interviewDate,
               ).format("YYYY-MM-DD")}`,
@@ -334,9 +344,9 @@ const Mytracker: React.FC<DashboardProps> = () => {
           if (alreadySubmitted) {
             showModal({
               type: "warning",
-              title: "Already Submitted",
+              title: strings.AlreadySubmitted,
               message:
-                "The scorecard for this candidate has already been submitted.",
+                strings.TheScorecardForThisCandidateHasAlreadyBe,
               confirmLabel: "OK",
               onConfirm: closeModal,
             });
@@ -408,22 +418,22 @@ const Mytracker: React.FC<DashboardProps> = () => {
   const columns = useRecruitmentColumns({
     role:
       activeMetric === MatricID.EvalutionHR ||
-      activeMetric === MatricID.EvalutionLM ||
-      activeMetric === MatricID.EvalutionHOD ||
-      activeMetric === MatricID.EvalutionEXCO
+        activeMetric === MatricID.EvalutionLM ||
+        activeMetric === MatricID.EvalutionHOD ||
+        activeMetric === MatricID.EvalutionEXCO
         ? "evaluation"
         : activeMetric === MatricID.LabourHire ||
-            activeMetric === MatricID.Kcsa ||
-            activeMetric === MatricID.BackgroundCheck ||
-            activeMetric === MatricID.MySubmissionBGV
+          activeMetric === MatricID.Kcsa ||
+          activeMetric === MatricID.BackgroundCheck ||
+          activeMetric === MatricID.MySubmissionBGV
           ? "OfferRelease"
           : "default",
     actionMode: "View",
     onAction:
       activeMetric === MatricID.LabourHire ||
-      activeMetric === MatricID.Kcsa ||
-      activeMetric === MatricID.BackgroundCheck ||
-      activeMetric === MatricID.MySubmissionBGV
+        activeMetric === MatricID.Kcsa ||
+        activeMetric === MatricID.BackgroundCheck ||
+        activeMetric === MatricID.MySubmissionBGV
         ? handleActionOffer
         : handleAction,
   });
@@ -466,11 +476,9 @@ const Mytracker: React.FC<DashboardProps> = () => {
             {!hasMetrics ? (
               <div className={styles["dashboard-empty"]}>
                 <div className={styles["dashboard-empty__title"]}>
-                  No dashboard metrics available
-                </div>
+                  {strings.NoDashboardMetricsAvailable}</div>
                 <div className={styles["dashboard-empty__subtitle"]}>
-                  Please check your permissions or try again later.
-                </div>
+                  {strings.PleaseCheckYourPermissionsOrTryAgainLate}</div>
               </div>
             ) : (
               <>
@@ -504,11 +512,10 @@ const Mytracker: React.FC<DashboardProps> = () => {
                     <div className={styles["tracker__header"]}>
                       <div className={styles["tracker__header-left"]}>
                         <h2 className={styles["tracker__title"]}>
-                          Recruitment Backlog
-                        </h2>
+                          {strings.RecruitmentBacklog}</h2>
                         <p className={styles["tracker__subtitle"]}>
-                          Showing <strong>{trackerData?.length ?? 0}</strong>{" "}
-                          results for{" "}
+                          {strings.Showing}<strong>{trackerData?.length ?? 0}</strong>{" "}
+                          {strings.ResultsFor}{" "}
                           <span className={styles["tracker__highlight"]}>
                             {selectedmatricId ?? "—"}
                           </span>
@@ -520,15 +527,14 @@ const Mytracker: React.FC<DashboardProps> = () => {
                           className={styles["tracker__action-btn"]}
                           onClick={handleRefresh}
                           disabled={trackerLoading}
-                          title="Refresh table"
+                          title={strings.RefreshTable}
                           aria-label="Refresh table"
                         >
                           <RefreshCw
                             size={13}
                             className={trackerLoading ? styles.spin : undefined}
                           />
-                          Refresh
-                        </button>
+                          {strings.Refresh}</button>
 
                         <div className={styles["tracker__divider"]} />
 
@@ -540,8 +546,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
                           }}
                         >
                           <RotateCcw size={13} />
-                          Back to Dashboard
-                        </button>
+                          {strings.BackToDashboard}</button>
                       </div>
                     </div>
 
@@ -579,7 +584,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
                         </div>
                         <div className={styles["assignment-bar__count"]}>
                           <strong>{selectedIds.length}</strong>
-                          <span>Vacancies Selected</span>
+                          <span>{strings.VacanciesSelected}</span>
                         </div>
                       </div>
 
@@ -591,7 +596,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
                             setSelectedMemberId(Number(e.target.value))
                           }
                           disabled={membersLoading}
-                          placeholder={activeMetric === MatricID.AssignHr ? "Choose HR member" : "Choose Agency member"}
+                          placeholder={activeMetric === MatricID.AssignHr ? strings.ChooseHrMember : strings.ChooseAgencyMember}
                         >
                           {members.map((member) => (
                             <option key={member.id} value={member.id}>
@@ -606,8 +611,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
                           onClick={() => setIsPopupOpen(true)}
                           disabled={!selectedMemberId}
                         >
-                          Execute Assignment
-                          <ChevronRight size={16} />
+                          {strings.ExecuteAssignment}<ChevronRight size={16} />
                         </button>
                       </div>
                     </div>

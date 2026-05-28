@@ -17,6 +17,7 @@ var useModalPopup_1 = require("../../Comman/ModalPopup/useModalPopup");
 var moment_1 = tslib_1.__importDefault(require("moment"));
 var ModalPopup_1 = require("../../Comman/ModalPopup/ModalPopup");
 var loading_1 = tslib_1.__importDefault(require("../../Comman/Loading/loading"));
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 exports.panelVariants = {
     hidden: { x: "100%" },
     visible: {
@@ -99,7 +100,7 @@ var CandidateTable = function (props) {
             if (pendingCount > 0) {
                 showModal({
                     type: "error",
-                    title: "Pending Candidate Alert",
+                    title: strings.PendingCandidateAlert,
                     message: (0, Config_1.PendingCandidateAlertMsg)(pendingCount),
                     confirmLabel: "OK",
                     onConfirm: closeModal,
@@ -110,7 +111,7 @@ var CandidateTable = function (props) {
             if (isJobExpired) {
                 showModal({
                     type: "error",
-                    title: "Job Expired",
+                    title: strings.JobExpired,
                     message: (0, Config_1.JobAdvertAlertMsg)(formattedDate),
                     confirmLabel: "OK",
                     onConfirm: closeModal,
@@ -163,7 +164,7 @@ var CandidateTable = function (props) {
         if (item.workflowStatusId === Config_1.workflowStatusApi.LineManagerLevel1OnHold ||
             item.workflowStatusId === Config_1.workflowStatusApi.LineManagerLevel2OnHold) {
             return {
-                label: "On Hold",
+                label: strings.OnHold,
                 icon: react_1.default.createElement(lucide_react_1.PauseCircle, { size: 14 }),
             };
         }
@@ -184,26 +185,26 @@ var CandidateTable = function (props) {
     var columns = (0, react_1.useMemo)(function () { return [
         {
             id: "ApplicantName",
-            header: "Applicant Name",
+            header: strings.ApplicantName,
             render: function (item) { return (react_1.default.createElement("span", { className: "candidate-table__code" }, item.ApplicantName)); },
         },
         {
             id: "PositionTitle",
-            header: "Position Title",
+            header: strings.PositionTitle,
             render: function (item) { return (react_1.default.createElement("div", null,
                 react_1.default.createElement("div", { className: "candidate-table__name" }, item.PositionTitle),
                 react_1.default.createElement("div", { className: "candidate-table__subtext" }, item.JobCode))); },
         },
         {
             id: "createdBy",
-            header: "Profile From",
+            header: strings.ProfileFrom,
             accessor: "createdBy",
             cellClassName: "data-table__cell--muted",
             hideOnMobile: true,
         },
         {
             id: "createdOn",
-            header: "Profile Received Date",
+            header: strings.ProfileReceivedDate,
             accessor: "createdOn",
             cellClassName: "data-table__cell--muted",
             hideOnMobile: true,
@@ -234,7 +235,7 @@ var CandidateTable = function (props) {
                         react_1.default.createElement("div", { className: "candidate-table__header-icon" },
                             react_1.default.createElement(lucide_react_1.Users, { size: 20 })),
                         react_1.default.createElement("div", null,
-                            react_1.default.createElement("h2", { className: "candidate-table__title" }, "Review Candidate Profiles"),
+                            react_1.default.createElement("h2", { className: "candidate-table__title" }, strings.ReviewCandidateProfiles),
                             react_1.default.createElement("div", { className: "candidate-table__meta" },
                                 react_1.default.createElement("span", { className: "candidate-table__badge" }, headerMeta.code),
                                 react_1.default.createElement("span", { className: "candidate-table__dot" }),
@@ -242,7 +243,7 @@ var CandidateTable = function (props) {
                     react_1.default.createElement("div", { className: "candidate-table__header-right" },
                         react_1.default.createElement("button", { type: "button", className: "candidate-table__refresh", onClick: handleRefresh, disabled: isRefreshing },
                             react_1.default.createElement(lucide_react_1.RefreshCw, { size: 14, className: isRefreshing ? "spin" : "" }),
-                            "Refresh"),
+                            strings.Refresh),
                         react_1.default.createElement("button", { type: "button", className: "candidate-table__close", onClick: handleClose },
                             react_1.default.createElement(lucide_react_1.X, { size: 18 })))),
                 react_1.default.createElement("div", { className: "candidate-table__content" },

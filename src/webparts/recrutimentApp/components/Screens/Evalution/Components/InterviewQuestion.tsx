@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type { Answer, InterviewQuestion } from '../State/CommonStateManagement';
 import styles from './InterviewQuestion.module.scss';
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface InterviewQuestionListProps {
   questions: InterviewQuestion[];
@@ -10,7 +11,7 @@ interface InterviewQuestionListProps {
 }
 
 const ScoreRating = [
-  { key: 1, text: 'Not Acceptable' },
+  { key: 1, text: strings.NotAcceptable },
   { key: 2, text: 'Acceptable' },
   { key: 3, text: 'Excellent' },
 ];
@@ -37,15 +38,15 @@ export default function InterviewQuestionList({
       <div className={styles.sectionTitle}>
         <div className={styles.sectionAccentOrange} />
         <div>
-          <h2 className={styles.sectionH2}>INTERVIEW QUESTIONNAIRES</h2>
+          <h2 className={styles.sectionH2}>{strings.InterviewQuestionnaires}</h2>
           <p className={styles.sectionSub}>Technical &amp; Behavioral Assessment</p>
         </div>
         <div className={styles.ratingGuide}>
-          <span className={styles.ratingGuideLabel}>RATING GUIDE:</span>
+          <span className={styles.ratingGuideLabel}>{strings.RatingGuide}</span>
           <span className={`${styles.dot} ${styles.dotGreen}`} />
-          <span className={styles.guideItem}>3 - <b>Excellent</b></span>
+          <span className={styles.guideItem}>3 - <b>{strings.Excellent}</b></span>
           <span className={`${styles.dot} ${styles.dotBlue}`} />
-          <span className={styles.guideItem}>2 - <b>Acceptable</b></span>
+          <span className={styles.guideItem}>2 - <b>{strings.Acceptable}</b></span>
           <span className={`${styles.dot} ${styles.dotRed}`} />
           <span className={styles.guideItem}>1 - <b>Not Acceptable</b></span>
         </div>
@@ -74,8 +75,8 @@ export default function InterviewQuestionList({
               <div className={styles.guideBox}>
                 <div className={styles.guideBoxHeader}>
                   <span className={styles.guideCheck}>✅</span>
-                  <span className={styles.guideBoxLabel}>EXPECTED RESPONSE GUIDE</span>
-                  <span className={styles.guideBoxIcon}>📋</span>
+                  <span className={styles.guideBoxLabel}>{strings.ExpectedResponseGuide}</span>
+                  <span className={styles.guideBoxIcon}>{strings.StringKey2}</span>
                 </div>
                 <p
                   className={styles.guideBoxText}
@@ -88,7 +89,7 @@ export default function InterviewQuestionList({
             <div className={styles.qBottom}>
               <div>
                 <p className={styles.panelRatingLabel}>
-                  PANEL RATING <span className={styles.req}>*</span>
+                  {strings.PanelRating}<span className={styles.req}>*</span>
                 </p>
                 <div className={styles.ratingBtnRow}>
                   {ScoreRating.map(({ key, text }) => {
@@ -114,7 +115,7 @@ export default function InterviewQuestionList({
               </div>
 
               <div className={styles.scoreDisplay}>
-                <span className={styles.scoreLabel}>SCORE</span>
+                <span className={styles.scoreLabel}>{strings.Score}</span>
                 <span className={styles.scoreNum}>
                   {answer?.rating ?? 0}
                   <span className={styles.scoreMax}>/3</span>

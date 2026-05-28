@@ -6,6 +6,7 @@ import {
   RecruitmentItem,
 } from "../../RecruitmentTable.types";
 import "./AssignHRPopup.scss";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface AssignHRPopupProps {
   isOpen: boolean;
@@ -68,7 +69,7 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
           className="modal-popup__close"
           type="button"
           onClick={onClose}
-          aria-label="Close"
+          aria-label={strings.Close}
         >
           <X size={20} />
         </button>
@@ -76,31 +77,29 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
           <span className="modal-popup__title-icon">
             <BadgeCheck size={20} />
           </span>
-          Finalize Assignment
-        </div>
+          {strings.FinalizeAssignment}</div>
 
         <div className="modal-popup__section">
-          <div className="modal-popup__section-title">Selected Vacancies</div>
+          <div className="modal-popup__section-title">{strings.SelectedVacancies}</div>
           <div className="modal-popup__vacancies">
-            {selectedItems.length} Vacancies
-          </div>
+            {selectedItems.length} {strings.Vacancies}</div>
           <div className="modal-popup__vacancies-subtext">
             {selectedItems.map((item) => item.title).join(", ")}
           </div>
         </div>
 
         <div className="modal-popup__section">
-          <div className="modal-popup__section-title">Assigning To</div>
+          <div className="modal-popup__section-title">{strings.AssigningTo}</div>
           <div className="modal-popup__assignee">
             <span className="modal-popup__avatar">
               {assignedMember?.initials ?? "HR"}
             </span>
             <div>
               <div className="modal-popup__assignee-name">
-                {assignedMember?.name ?? "No member selected"}
+                {assignedMember?.name ?? strings.NoMemberSelected}
               </div>
               <div className="modal-popup__assignee-role">
-                {assignedMember?.role ?? "Select a member to proceed"}
+                {assignedMember?.role ?? strings.SelectAMemberToProceed}
               </div>
             </div>
           </div>
@@ -108,11 +107,10 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
 
         <div className="modal-popup__section">
           <div className="modal-popup__section-title">
-            Instructions / Comments for Staff
-          </div>
+            {strings.InstructionsCommentsForStaff}</div>
           <textarea
             className="modal-popup__input"
-            placeholder="Enter specific instructions for the assigned HR member..."
+            placeholder={strings.EnterSpecificInstructionsForTheAssignedH}
             value={comments}
             onChange={(event) => setComments(event.target.value)}
             onBlur={() => setCommentsTouched(true)}
@@ -127,8 +125,7 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
             onClick={oncancel}
             disabled={isSubmitting}
           >
-            Cancel
-          </button>
+            {strings.Cancel}</button>
           <button
             className="modal-popup__btn modal-popup__btn--primary"
             type="button"
@@ -138,8 +135,7 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
             {isSubmitting ? (
               <>
                 <Loader2 size={16} className="modal-popup__spinner" />
-                Sending...
-              </>
+                {strings.Sending}</>
             ) : (
               <>
                 <Send size={16} style={{ marginRight: 8 }} />

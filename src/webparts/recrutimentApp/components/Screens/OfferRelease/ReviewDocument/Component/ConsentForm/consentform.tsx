@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ConsentFormFile } from "../ResueComponent";
 import "./consentform.scss";
 import { IDocFiles } from "../../../../../../services/SPService/Ispservice";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface ConsentFormSectionProps {
   onFileChange: (file: ConsentFormFile | null) => void;
@@ -49,7 +50,7 @@ const ConsentFormSection: React.FC<ConsentFormSectionProps> = ({
         lastModified: file.lastModified,
       });
     } catch (error) {
-      console.error("Error reading file:", error);
+      console.error(strings.ErrorReadingFile, error);
     } finally {
       setIsReading(false);
     }
@@ -69,15 +70,15 @@ const ConsentFormSection: React.FC<ConsentFormSectionProps> = ({
         <div className="consent-form-section__icon-wrapper">
           <ShieldCheck size={20} className="consent-form-section__icon" />
         </div>
-        <h3 className="consent-form-section__title">Candidate Consent Form</h3>
+        <h3 className="consent-form-section__title">{strings.CandidateConsentForm}</h3>
       </div>
 
       <div className="consent-form-section__content">
         {/* Download Card */}
         <div className="consent-card">
           <div className="consent-card__info">
-            <span className="consent-card__label">Consent Form {consentform?.name}</span>
-            <span className="consent-card__name">Download the form, add your signature, then upload the signed copy below.</span>
+            <span className="consent-card__label">{strings.ConsentForm}{consentform?.name}</span>
+            <span className="consent-card__name">{strings.DownloadTheFormAddYourSignatureThenUploa}</span>
           </div>
           <a 
   href={consentform?.downloadUrl} 
@@ -85,7 +86,7 @@ const ConsentFormSection: React.FC<ConsentFormSectionProps> = ({
   download={consentform?.name ?? true}
 >
   <Download size={16} />
-  <span>Download Template</span>
+  <span>{strings.DownloadTemplate}</span>
 </a>
         </div>
 
@@ -112,8 +113,7 @@ const ConsentFormSection: React.FC<ConsentFormSectionProps> = ({
                 <div className="upload-box__file-details">
                   <span className="upload-box__filename">{selectedFile.name}</span>
                   <span className="upload-box__filesize">
-                    {(selectedFile.size / 1024).toFixed(1)} KB
-                  </span>
+                    {(selectedFile.size / 1024).toFixed(1)} {strings.Kb}</span>
                 </div>
                 <div className="upload-box__status">
                   {isReading ? (
@@ -129,8 +129,8 @@ const ConsentFormSection: React.FC<ConsentFormSectionProps> = ({
                   <Upload size={20} />
                 </div>
                 <div className="upload-box__text">
-                  <span className="upload-box__primary">Click to upload signed form</span>
-                  <span className="upload-box__secondary">PDF or Word document max 5MB</span>
+                  <span className="upload-box__primary">{strings.ClickToUploadSignedForm}</span>
+                  <span className="upload-box__secondary">{strings.PdfOrWordDocumentMax5mb}</span>
                 </div>
               </div>
             )}
@@ -146,7 +146,7 @@ const ConsentFormSection: React.FC<ConsentFormSectionProps> = ({
               exit={{ height: 0, opacity: 0 }}
             >
               <AlertCircle size={14} />
-              <span>Please upload the signed consent form to proceed.</span>
+              <span>{strings.PleaseUploadTheSignedConsentFormToProcee}</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -161,8 +161,7 @@ const ConsentFormSection: React.FC<ConsentFormSectionProps> = ({
             handleRemove();
           }}
         >
-          Replace Document
-        </button>
+          {strings.ReplaceDocument}</button>
       )}
     </div>
   );

@@ -30,6 +30,7 @@ import "../../CandidateTable/CandidateTable.scss";
 import CandidateReviewModal from "./CandidateReviewModal";
 import ReactDOM from "react-dom";
 import style from "../../CandidateTable/Components/ShowCandidateDetailsPopup.module.scss";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface Props {
   candidates: ScorecardCandidateRow[];
@@ -59,8 +60,8 @@ const getStatusClass = (statusId: number) => {
 
 const getInterviewLevelLabel = (interviewLevel?: string): string => {
   const lvl = (interviewLevel || "").trim();
-  if (/level\s*2/i.test(lvl)) return "Level 1 of 1 & Level 2 of 2";
-  if (/level\s*1/i.test(lvl)) return "Level 1 of 1";
+  if (/level\s*2/i.test(lvl)) return strings.Level1Of1Level2Of2;
+  if (/level\s*1/i.test(lvl)) return strings.Level1Of1;
   return lvl || " ";
 };
 
@@ -130,7 +131,7 @@ const CandidateDrawer: React.FC<Props> = ({
       item.statusId === StatusId.CandidateOnHoldbyHODLevel2
     ) {
       return {
-        label: "On Hold",
+        label: strings.OnHold,
         icon: <PauseCircle size={14} />,
       };
     }
@@ -155,14 +156,14 @@ const CandidateDrawer: React.FC<Props> = ({
     () => [
       {
         id: "ApplicantName",
-        header: "Applicant Name",
+        header: strings.ApplicantName,
         render: (item) => (
           <span className="candidate-table__code">{item.fullName}</span>
         ),
       },
       {
         id: "PositionTitle",
-        header: "Position Title",
+        header: strings.PositionTitle,
         render: (item) => (
           <div>
             <div className="candidate-table__name">{item.positionTitle}</div>
@@ -172,7 +173,7 @@ const CandidateDrawer: React.FC<Props> = ({
       },
       {
         id: "interviewLevel",
-        header: "Interview Level",
+        header: strings.InterviewLevel,
         accessor: "interviewLevel" as keyof ScorecardCandidateRow,
         cellClassName: "data-table__cell--muted",
         hideOnMobile: true,
@@ -252,8 +253,7 @@ const CandidateDrawer: React.FC<Props> = ({
                 </div>
                 <div>
                   <h2 className="candidate-table__title">
-                    Review Scorecard Profiles
-                  </h2>
+                    {strings.ReviewScorecardProfiles}</h2>
                   <div className="candidate-table__meta">
                     <span className="candidate-table__badge">
                       {headerMeta.code}
@@ -274,8 +274,7 @@ const CandidateDrawer: React.FC<Props> = ({
                   disabled={isRefreshing}
                 >
                   <RefreshCw size={14} className={isRefreshing ? "spin" : ""} />
-                  Refresh
-                </button>
+                  {strings.Refresh}</button>
 
                 <button
                   type="button"

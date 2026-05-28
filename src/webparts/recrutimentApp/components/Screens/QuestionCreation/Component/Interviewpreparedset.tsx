@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Question } from "../QuestionCreation.types";
 import "./Interviewmode.scss";
 import "../Questioncreation.scss";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface InterviewPreparedProps {
   questions: Question[];
@@ -23,16 +24,14 @@ export const InterviewPreparedSet: React.FC<InterviewPreparedProps> = ({
           <ClipboardList size={26} />
         </div>
         <div>
-          <h3 className="iq-prepared__title">Prepared Interview Set</h3>
+          <h3 className="iq-prepared__title">{strings.PreparedInterviewSet}</h3>
           <p className="iq-prepared__subtitle">
-            Review and organize your selected questions
-          </p>
+            {strings.ReviewAndOrganizeYourSelectedQuestions}</p>
         </div>
       </div>
       <div className="iq-prepared__count-badge">
         <span className="iq-prepared__count-dot" />
-        {questions.length} Questions Selected
-      </div>
+        {questions.length} {strings.QuestionsSelected}</div>
     </div>
 
     <div className="iq-prepared__body">
@@ -42,11 +41,9 @@ export const InterviewPreparedSet: React.FC<InterviewPreparedProps> = ({
             <Plus size={36} />
           </div>
           <p className="iq-prepared__empty-title">
-            No questions added to the set yet
-          </p>
+            {strings.NoQuestionsAddedToTheSetYet}</p>
           <p className="iq-prepared__empty-sub">
-            Add from the library or create a custom one above
-          </p>
+            {strings.AddFromTheLibraryOrCreateACustomOneAbove}</p>
         </div>
       ) : (
         <AnimatePresence>
@@ -66,7 +63,7 @@ export const InterviewPreparedSet: React.FC<InterviewPreparedProps> = ({
                   <span
                     className={`iq-prepared__source-badge ${q.fromBank ? "iq-prepared__source-badge--library" : "iq-prepared__source-badge--custom"}`}
                   >
-                    {q.fromBank ? "Library Asset" : "Custom Draft"}
+                    {q.fromBank ? strings.LibraryAsset : strings.CustomDraft}
                   </span>
                 </div>
 
@@ -76,15 +73,13 @@ export const InterviewPreparedSet: React.FC<InterviewPreparedProps> = ({
                     <div className="iq-prepared__lang-indicator">
                       <span className="iq-prepared__lang-dot iq-prepared__lang-dot--en" />
                       <span className="iq-prepared__lang-label">
-                        English Version
-                      </span>
+                        {strings.EnglishVersion}</span>
                     </div>
                     <p className="iq-prepared__question-text">{q.questionEn}</p>
                     {q.answerEn && (
                       <div className="iq-prepared__answer-block">
                         <span className="iq-prepared__answer-label iq-prepared__answer-label--en">
-                          Expected Answer
-                        </span>
+                          {strings.ExpectedAnswer}</span>
                         <p className="iq-prepared__answer-text">{q.answerEn}</p>
                       </div>
                     )}
@@ -95,8 +90,7 @@ export const InterviewPreparedSet: React.FC<InterviewPreparedProps> = ({
                     <div className="iq-prepared__lang-indicator">
                       <span className="iq-prepared__lang-dot iq-prepared__lang-dot--fr" />
                       <span className="iq-prepared__lang-label">
-                        Version Française
-                      </span>
+                        {strings.VersionFranAise}</span>
                     </div>
                     <p className="iq-prepared__question-text iq-prepared__question-text--italic">
                       {q.questionFr}
@@ -104,8 +98,7 @@ export const InterviewPreparedSet: React.FC<InterviewPreparedProps> = ({
                     {q.answerFr && (
                       <div className="iq-prepared__answer-block">
                         <span className="iq-prepared__answer-label iq-prepared__answer-label--fr">
-                          Réponse Attendue
-                        </span>
+                          {strings.RPonseAttendue}</span>
                         <p className="iq-prepared__answer-text iq-prepared__answer-text--italic">
                           {q.answerFr}
                         </p>
@@ -118,7 +111,7 @@ export const InterviewPreparedSet: React.FC<InterviewPreparedProps> = ({
               <button
                  className="iq-prepared__remove"
                 onClick={() => onEdit(q.id)}
-                title="Edit"
+                title={strings.Edit}
               >
                 <Pencil size={16} />
               </button>
@@ -126,7 +119,7 @@ export const InterviewPreparedSet: React.FC<InterviewPreparedProps> = ({
               <button
                 className="iq-prepared__remove"
                 onClick={() => onRemove(q.id)}
-                title="Remove"
+                title={strings.Remove}
               >
                 <X size={16} />
               </button>

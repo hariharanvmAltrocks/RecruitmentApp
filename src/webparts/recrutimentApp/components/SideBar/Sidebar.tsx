@@ -4,6 +4,7 @@ import { ChevronDown, ChevronUp, Palette } from "lucide-react";
 import styles from "./SideNavigation.module.scss";
 import { useUIState } from "../RecrutimentApp/UIStateContext";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 type MenuItem = {
   Id: number;
@@ -177,7 +178,7 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
                 ? require("../../assets/komoa-logo.png")
                 : require("../../assets/getsitelogo.png")
             }
-            alt="Kamoa Logo"
+            alt={strings.KamoaLogo}
             className={styles.logoImg}
             style={{
               width: isCollapsed ? "24px" : "150px",
@@ -195,7 +196,7 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
       {/* ── Navigation ── */}
       <nav className={styles.nav}>
         {/* "MAIN MENU" section label — matches screenshot */}
-        {!isCollapsed && <div className={styles.sectionLabel}>Main Menu</div>}
+        {!isCollapsed && <div className={styles.sectionLabel}>{strings.MainMenu}</div>}
 
         {sortedMenu.map((parent) => (
           <SidebarItem
@@ -216,12 +217,12 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
       <div className={styles.sidebarFooter}>
         <div className={styles.footerContent}>
           <div className={styles.footerVersion}>v-1.0</div>
-          <div className={styles.footerLabel}>Kamoa Copper SA</div>
+          <div className={styles.footerLabel}>{strings.KamoaCopperSa}</div>
 
            <div
           onClick={() => setSwitcherOpen(true)}
           className={styles.sidebarItem}
-          title={isCollapsed ? "Custom Theme" : undefined}
+          title={isCollapsed ? strings.CustomTheme : undefined}
         >
           <Palette className={styles.icon} />
           <span className={styles.labelWrap}>

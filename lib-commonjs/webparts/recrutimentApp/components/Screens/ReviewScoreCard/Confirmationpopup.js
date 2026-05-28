@@ -12,38 +12,39 @@ var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var framer_motion_1 = require("framer-motion");
 var lucide_react_1 = require("lucide-react");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 // ── Per-type config ───────────────────────────────────────────────────────────
 var CONFIG = {
     submit: {
         icon: React.createElement(lucide_react_1.Send, { size: 26, color: "#fff" }),
         iconBg: "linear-gradient(135deg,#2563eb,#1d4ed8)",
-        title: "Confirm Submission",
-        subtitle: "Are you sure you want to submit the scorecard?",
-        confirmLabel: "Yes, Submit",
+        title: strings.ConfirmSubmission,
+        subtitle: strings.AreYouSureYouWantToSubmitTheScorecard,
+        confirmLabel: strings.YesSubmit,
         confirmStyle: "confirm-blue",
         cancelLabel: "Cancel",
     },
     cancel: {
         icon: React.createElement(lucide_react_1.LogOut, { size: 26, color: "#fff" }),
         iconBg: "linear-gradient(135deg,#f59e0b,#d97706)",
-        title: "Are you sure you want to leave?",
-        subtitle: "Any unsaved changes will be lost. Do you wish to continue?",
-        confirmLabel: "Yes, Leave",
+        title: strings.AreYouSureYouWantToLeave,
+        subtitle: strings.AnyUnsavedChangesWillBeLostDoYouWishToCo,
+        confirmLabel: strings.YesLeave,
         confirmStyle: "confirm-amber",
-        cancelLabel: "Stay Here",
+        cancelLabel: strings.StayHere,
     },
     validation: {
         icon: React.createElement(lucide_react_1.ShieldAlert, { size: 26, color: "#fff" }),
         iconBg: "linear-gradient(135deg,#ef4444,#dc2626)",
-        title: "Please Fill All Mandatory Fields",
-        subtitle: "Complete the following fields before submitting:",
+        title: strings.PleaseFillAllMandatoryFields,
+        subtitle: strings.CompleteTheFollowingFieldsBeforeSubmitti,
         confirmStyle: "confirm-none",
-        cancelLabel: "Got it",
+        cancelLabel: strings.GotIt,
     },
     success: {
         icon: React.createElement(lucide_react_1.CheckCircle2, { size: 26, color: "#fff" }),
         iconBg: "linear-gradient(135deg,#22c55e,#16a34a)",
-        title: "Submitted Successfully!",
+        title: strings.SubmittedSuccessfully1,
         subtitle: "",
         confirmStyle: "confirm-none",
         cancelLabel: "Close",

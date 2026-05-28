@@ -6,6 +6,7 @@ import {
   getStageIndex,
   stages,
 } from "../../../../../../utilities/PositionStatusConfig";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface RoadmapProps {
   statusId: number;
@@ -14,7 +15,7 @@ interface RoadmapProps {
 export const Roadmap: React.FC<RoadmapProps> = ({ statusId }) => {
   const currentStageIndex = getStageIndex(statusId);
   const activeStatusLabel =
-    stages[currentStageIndex]?.label || "Unknown Status";
+    stages[currentStageIndex]?.label || strings.UnknownStatus;
 
   return (
     <div className={styles.roadmapContainer}>
@@ -23,11 +24,10 @@ export const Roadmap: React.FC<RoadmapProps> = ({ statusId }) => {
         <div className={styles.headerRow}>
           <div className={styles.title}>
             <div className={styles.accentBar} />
-            Recruitment Lifecycle Roadmap
-          </div>
+            {strings.RecruitmentLifecycleRoadmap}</div>
           <div className={styles.statusBadge}>
             <div className={styles.dot} />
-            Active Status: {activeStatusLabel}
+            {strings.ActiveStatus}{activeStatusLabel}
           </div>
         </div>
 
@@ -68,7 +68,7 @@ export const Roadmap: React.FC<RoadmapProps> = ({ statusId }) => {
                 <div className={styles.labelContainer}>
                   <span className={nameClass}>{stage.label}</span>
                   {isCompleted && (
-                    <span className={styles.statusText}>Done</span>
+                    <span className={styles.statusText}>{strings.Done}</span>
                   )}
                 </div>
               </div>

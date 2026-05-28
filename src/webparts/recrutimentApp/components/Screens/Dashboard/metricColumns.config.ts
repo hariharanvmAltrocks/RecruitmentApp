@@ -31,13 +31,14 @@ import { PriorityData } from "../../Comman/PriorityWidget/PriorityWidget";
 import { MatricID, menuID, TabNames } from "../../../utilities/ConditionConfig";
 import { userInfo } from "../../../utilities/hooks/RoleContext";
 import { IFilter } from "../../../services/SPService/Ispservice";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 const resolvedGradientStart = "var(--app-primary-color)";
 const resolvedGradientEnd = "var(--app-secondary-color)";
 
 const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   [MatricID.AssignHr]: {
-    label: "HR Assignment",
+    label: strings.HrAssignment,
     status: "ACTIVE",
     icon: UserCheck,
     color: resolvedGradientEnd,
@@ -52,7 +53,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.UploadONEM]: {
-    label: "Upload ONEM",
+    label: strings.UploadOnem,
     status: "PENDING",
     icon: Upload,
     color: resolvedGradientEnd,
@@ -66,7 +67,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.JobAdvert]: {
-    label: "Advert Upload",
+    label: strings.AdvertUpload,
     status: "ACTIVE",
     icon: Megaphone,
     color: resolvedGradientEnd,
@@ -81,7 +82,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.ReviewProfileHR]: {
-    label: "Review Profile",
+    label: strings.ReviewProfile,
     status: "PENDING",
     icon: Eye,
     color: resolvedGradientEnd,
@@ -108,7 +109,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.AssignInterviewPanel]: {
-    label: "Assign Interview Panel",
+    label: strings.AssignInterviewPanel,
     status: "PENDING",
     icon: Users,
     color: resolvedGradientEnd,
@@ -122,7 +123,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.InterviewQuestionHR]: {
-    label: "Interview Question",
+    label: strings.InterviewQuestion,
     status: "CRITICAL",
     icon: MessageSquare,
     color: resolvedGradientEnd,
@@ -162,7 +163,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     TabName: TabNames.BackgroundVerification,
   },
   [MatricID.LabourHire]: {
-    label: "Offer Release - Labour Hire",
+    label: strings.OfferReleaseLabourHire,
     status: "PENDING",
     icon: Send,
     color: resolvedGradientEnd,
@@ -175,7 +176,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
     TabName: TabNames.LabourHire,
   },
   [MatricID.Kcsa]: {
-    label: "Offer Release - KCSA",
+    label: strings.OfferReleaseKcsa,
     status: "PENDING",
     icon: Send,
     color: resolvedGradientEnd,
@@ -189,7 +190,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.AdvertReviewLM]: {
-    label: "Advert Review",
+    label: strings.AdvertReview,
     status: "ACTIVE",
     icon: UserCheck,
     color: resolvedGradientEnd,
@@ -203,7 +204,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.DisqualifiQuesLM]: {
-    label: "Create Minimum Criteria Question",
+    label: strings.CreateMinimumCriteriaQuestion,
     status: "PENDING",
     icon: ClipboardList,
     color: resolvedGradientEnd,
@@ -286,7 +287,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.interviewSchedule]: {
-    label: "Interviews Scheduled",
+    label: strings.InterviewsScheduled,
     status: "SCHEDULED",
     icon: Calendar,
     color: resolvedGradientEnd,
@@ -314,7 +315,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.interviewTracker]: {
-    label: "Interview Tracking",
+    label: strings.InterviewTracking,
     status: "ON-GOING",
     icon: Activity,
     color: resolvedGradientEnd,
@@ -328,7 +329,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.OfferRelease]: {
-    label: "Offer Letters Released",
+    label: strings.OfferLettersReleased,
     status: "OUTBOUND",
     icon: FileText,
     color: resolvedGradientEnd,
@@ -342,7 +343,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.OfferAccepted]: {
-    label: "Offers Accepted",
+    label: strings.OffersAccepted,
     status: "SUCCESS",
     icon: CheckCircle2,
     color:  resolvedGradientEnd,
@@ -356,7 +357,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.OfferRejected]: {
-    label: "Offers Rejected",
+    label: strings.OffersRejected,
     status: "LOST",
     icon: XCircle,
     color: resolvedGradientEnd,
@@ -370,7 +371,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.Onbording]: {
-    label: "Candidates Onboarded",
+    label: strings.CandidatesOnboarded,
     status: "WELCOME",
     icon: UserPlus,
     color: resolvedGradientEnd,
@@ -384,7 +385,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.advertExtension]: {
-    label: "Advert Extension",
+    label: strings.AdvertExtension,
     status: "ON-GOING",
     icon: RefreshCw,
     color: resolvedGradientEnd,
@@ -398,7 +399,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.AssignAgencies]: {
-    label: "Assign Agencies",
+    label: strings.AssignAgencies,
     status: "ON-GOING",
     icon: Building2,
     color: resolvedGradientEnd,
@@ -412,7 +413,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.MySubmission]: {
-    label: "My Submission",
+    label: strings.MySubmission,
     status: "ON-GOING",
     icon: Building2,
     color: resolvedGradientEnd,
@@ -440,7 +441,7 @@ const BASE_METRICS: Record<number, Omit<MetricConfig, "id" | "showArrow">> = {
   },
 
   [MatricID.MySubmissionBGV]: {
-    label: "My Submission - BGV",
+    label: strings.MySubmissionBgv,
     status: "ON-GOING",
     icon: Building2,
     color: resolvedGradientEnd,

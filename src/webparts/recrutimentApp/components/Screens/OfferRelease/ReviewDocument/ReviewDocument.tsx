@@ -58,6 +58,7 @@ import { usePreChecklist } from "./Hooks/fetchPreChecklist";
 import PreChecklist from "./Component/Prechecklist/Prechecklist";
 import Loading from "../../../Comman/Loading/loading";
 import { CandidateStages, getStageIndex, getStageIndexinCandidate, stages } from "../../../../utilities/PositionStatusConfig";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export interface ReviewDocumentProps {
   drawerOpen: boolean;
@@ -107,8 +108,8 @@ const PositionSkeleton = () => (
 );
 
 const CONSULT_OPTIONS = [
-  { value: "hr-manager", label: "Louis Barend Van Wyk" },
-  { value: "legal", label: "Evodie Mushiya Kadima" },
+  { value: "hr-manager", label: strings.LouisBarendVanWyk },
+  { value: "legal", label: strings.EvodieMushiyaKadima },
 ];
 
 export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
@@ -253,8 +254,8 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
   const handleError = useCallback(() => {
     showModal({
       type: "error",
-      title: "Something Went Wrong",
-      message: "An unexpected error occurred. Please try again.",
+      title: strings.SomethingWentWrong,
+      message: strings.AnUnexpectedErrorOccurredPleaseTryAgain,
       confirmLabel: "Close",
       onConfirm: closeModal,
     });
@@ -264,8 +265,8 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     if (!validateAll(vis)) {
       showModal({
         type: "warning",
-        title: "Required Fields Missing",
-        message: "Please complete all highlighted fields before submitting.",
+        title: strings.RequiredFieldsMissing,
+        message: strings.PleaseCompleteAllHighlightedFieldsBefore,
         confirmLabel: "OK",
         onConfirm: closeModal,
       });
@@ -283,7 +284,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     (msg: string) => {
       showModal({
         type: "success",
-        title: "Submitted Successfully",
+        title: strings.SubmittedSuccessfully,
         message: msg,
         confirmLabel: "OK",
         onConfirm: () => {
@@ -326,7 +327,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
   const handleReinitiate = useCallback(() => {
     showModal({
       type: "confirmation",
-      title: "Reinitiate BGV",
+      title: strings.ReinitiateBgv,
       message: RecuritmentHRMsg.ReinitiateBGVWarningMsg,
       confirmLabel: "Yes",
       cancelLabel: "No",
@@ -397,7 +398,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
 
       const isReject = btn === "Reject";
       const config = {
-        title: isReject ? "Reject BGV" : "Approve BGV",
+        title: isReject ? strings.RejectBgv : strings.ApproveBgv,
         message: isReject
           ? RecuritmentHRMsg.RejectBGVCheckMsg
           : RecuritmentHRMsg.ApprvedBGVCheckMsg,
@@ -446,7 +447,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
               onClose();
               refreshKey();
             } else {
-              throw new Error("Unexpected status");
+              throw new Error(strings.UnexpectedStatus);
             }
           } catch {
             handleError();
@@ -491,15 +492,15 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
 
     try {
       const ChecklistValue = {
-        BackgroundChecks: getCheckStatus("Background Checks"),
-        SignedOfferLetterVerified: getCheckStatus("Signed Offer Letter"),
-        SignedEmploymentContract: getCheckStatus("Employment Contract"),
-        WorkPermitApproved: getCheckStatus("Work Permit Approved"),
-        VisaProcess: getCheckStatus("Visa Process"),
-        AccommodationBooked: getCheckStatus("Accommodation Booked"),
-        TravelProcess: getCheckStatus("Travel Process"),
-        ReadyforOnboarding: getCheckStatus("Ready for Onboarding"),
-        MedicalChecks: getCheckStatus("Medical Checks"),
+        BackgroundChecks: getCheckStatus(strings.BackgroundChecks),
+        SignedOfferLetterVerified: getCheckStatus(strings.SignedOfferLetter),
+        SignedEmploymentContract: getCheckStatus(strings.EmploymentContract),
+        WorkPermitApproved: getCheckStatus(strings.WorkPermitApproved),
+        VisaProcess: getCheckStatus(strings.VisaProcess),
+        AccommodationBooked: getCheckStatus(strings.AccommodationBooked),
+        TravelProcess: getCheckStatus(strings.TravelProcess),
+        ReadyforOnboarding: getCheckStatus(strings.ReadyForOnboarding),
+        MedicalChecks: getCheckStatus(strings.MedicalChecks),
         ID: CandidateID,
       };
 
@@ -616,8 +617,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                     className={`review-document__toggle-btn ${showRoadmap ? "review-document__toggle-btn--active" : "review-document__toggle-btn--inactive"}`}
                   >
                     <Network size={14} />
-                    Candidate Status
-                    <ChevronRight
+                    {strings.CandidateStatus}<ChevronRight
                       size={14}
                       className="review-document__toggle-icon"
                     />
@@ -652,8 +652,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                                           <div className="advert-roadmap__header-top">
                                             <h3 className="advert-roadmap__header-title">
                                               <div className="advert-roadmap__header-title-bar"></div>
-                                              Candidate Lifecycle Roadmap
-                                            </h3>
+                                              {strings.CandidateLifecycleRoadmap}</h3>
                                             {/* <div className="advert-roadmap__header-status">
                                               <div className="advert-roadmap__header-status-dot" />
                                               <span className="advert-roadmap__header-status-text">
@@ -788,8 +787,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                             className="review-document__button review-document__button--primary"
                             onClick={() => setshowComments(true)}
                           >
-                            View BGV Comments
-                          </button>
+                            {strings.ViewBgvComments}</button>
                         </div>
                       )}
 
@@ -821,7 +819,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                               >
                                 {/* ✅ Spinner shows only on THIS button */}
                                 {renderBtnContent(
-                                  "Re Initiate",
+                                  strings.ReInitiate,
                                   "reinitiate",
                                   "Processing...",
                                 )}
@@ -867,7 +865,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                           >
                             {/* ✅ Spinner shows only on THIS button */}
                             {renderBtnContent(
-                              !allChecked ? "Save As Draft" : "Submit",
+                              !allChecked ? strings.SaveAsDraft : "Submit",
                               "saveAsDraft",
                               !allChecked ? "Saving..." : "Submitting...",
                             )}
@@ -998,7 +996,7 @@ const CandidateRoadmap = ({ statusId }: { statusId: number }) => {
                 </span>
 
                 {isCompleted && (
-                  <span className="advert-roadmap__status-done">Done</span>
+                  <span className="advert-roadmap__status-done">{strings.Done}</span>
                 )}
               </div>
             </motion.div>

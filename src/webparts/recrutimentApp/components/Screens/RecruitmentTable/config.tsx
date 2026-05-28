@@ -18,6 +18,7 @@ import {
   Initiate_STAUES,
   REVIEW_STATUSES,
 } from "../OfferRelease/Config";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export type ColumnRole = "default" | "evaluation" | "OfferRelease";
 
@@ -81,7 +82,7 @@ export const useRecruitmentColumns = ({
           onClick={() => onActionRef.current(item)}
           type="button"
           aria-label={
-            actionMode === "Upload" ? "Upload document" : "View vacancy"
+            actionMode === strings.Upload ? strings.UploadDocument : strings.ViewVacancy
           }
         >
           {getActionLabel(actionMode, item, matricID)}
@@ -99,13 +100,13 @@ export const useRecruitmentColumns = ({
     () => [
       {
         id: "jobCode",
-        header: "Job Code",
+        header: strings.JobCode,
         accessor: "jobCode",
         cellClassName: "data-table__job-code",
       },
       {
         id: "title",
-        header: "Job Title & Dept",
+        header: strings.JobTitleDept,
         render: (item) => (
           <div className="data-table__job-title">
             <span>{item.title}</span>
@@ -135,7 +136,7 @@ export const useRecruitmentColumns = ({
       },
       {
         id: "requestType",
-        header: "Request Type",
+        header: strings.RequestType,
         accessor: "requestType",
         cellClassName: "data-table__cell--muted",
         hideOnMobile: true,
@@ -183,14 +184,14 @@ export const useRecruitmentColumns = ({
     () => [
       {
         id: "applicantName",
-        header: "Applicant Name",
+        header: strings.ApplicantName,
         accessor: "applicantName",
         cellClassName: "data-table__job-code",
         hideOnMobile: true,
       },
       {
         id: "title",
-        header: "Position Title",
+        header: strings.PositionTitle,
         render: (item) => (
           <div className="data-table__job-title">
             <span>{item.title}</span>
@@ -200,7 +201,7 @@ export const useRecruitmentColumns = ({
       },
       {
         id: "interviewDate",
-        header: "Interview Date",
+        header: strings.InterviewDate,
         accessor: "interviewDate",
         align: "center",
         cellClassName: "data-table__cell--count",
@@ -208,7 +209,7 @@ export const useRecruitmentColumns = ({
       },
       {
         id: "interviewLevels",
-        header: "Interview Levels",
+        header: strings.InterviewLevels,
         accessor: "interviewLevels",
         cellClassName: "data-table__cell--muted",
         hideOnMobile: true,
@@ -270,7 +271,7 @@ export const useRecruitmentColumns = ({
     () => [
       {
         id: "PositionID",
-        header: "Position ID",
+        header: strings.PositionId,
         accessor: "positionId",
         cellClassName: "data-table__job-code",
         hideOnMobile: true,
@@ -287,7 +288,7 @@ export const useRecruitmentColumns = ({
       },
       {
         id: "buCode",
-        header: "Business Unit",
+        header: strings.BusinessUnit,
         render: (item: any) => String(item.buCode || "").padStart(2, "0"),
         cellClassName: "data-table__cell--muted",
         align: "center",

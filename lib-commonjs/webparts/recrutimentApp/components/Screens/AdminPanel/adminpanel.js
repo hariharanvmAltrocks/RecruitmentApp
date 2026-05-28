@@ -12,6 +12,7 @@ var Drawer_1 = require("./Drawer/Drawer");
 var DataTable_1 = require("../../Comman/DataTable/DataTable");
 var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
 var UIStateContext_1 = require("../../RecrutimentApp/UIStateContext");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var CLOSED_DRAWER = {
     open: false,
     mode: "new",
@@ -24,7 +25,7 @@ var AdminManagement = function (_a) {
     var _b = (0, react_1.useState)(false), isRefreshing = _b[0], setIsRefreshing = _b[1];
     // ── Data hook ─────────────────────────────────────────────────────────────
     var _c = (0, Getadminpaneltable_1.useAdminPanelTable)({ type: type, initialPageSize: 10 }), data = _c.data, loading = _c.loading, pagination = _c.pagination, fetchPage = _c.fetchPage, setPageSize = _c.setPageSize, refresh = _c.refresh;
-    var listLabel = type === "labour-hire" ? "Labour Hire" : "Agencies";
+    var listLabel = type === "labour-hire" ? strings.LabourHire : "Agencies";
     // ── Handlers ─────────────────────────────────────────────────────────────
     var handleRefresh = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         return tslib_1.__generator(this, function (_a) {
@@ -40,7 +41,7 @@ var AdminManagement = function (_a) {
     var columns = (0, react_1.useMemo)(function () { return [
         {
             id: "exUserCode",
-            header: "User Code",
+            header: strings.UserCode,
             render: function (item) { return (react_1.default.createElement("span", { className: "data-table__job-code" }, item.exUserCode)); },
         },
         {
@@ -54,7 +55,7 @@ var AdminManagement = function (_a) {
         },
         {
             id: "email",
-            header: "Email ID",
+            header: strings.EmailId,
             accessor: "email",
             cellClassName: "data-table__cell--muted",
             hideOnMobile: true,
@@ -65,10 +66,10 @@ var AdminManagement = function (_a) {
             align: "left",
             cellClassName: "data-table__cell--actions",
             render: function (item) { return (react_1.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } },
-                react_1.default.createElement(framer_motion_1.motion.button, { type: "button", className: "data-table__action-btn", whileHover: { scale: 1.04 }, whileTap: { scale: 0.96 }, onClick: function () { return onViewUser(item); }, title: "View", "aria-label": "View user" },
+                react_1.default.createElement(framer_motion_1.motion.button, { type: "button", className: "data-table__action-btn", whileHover: { scale: 1.04 }, whileTap: { scale: 0.96 }, onClick: function () { return onViewUser(item); }, title: strings.View, "aria-label": strings.ViewUser },
                     react_1.default.createElement(lucide_react_1.Eye, { size: 14 }),
                     "View"),
-                react_1.default.createElement(framer_motion_1.motion.button, { type: "button", className: "data-table__action-btn data-table__action-btn--secondary", whileHover: { scale: 1.04 }, whileTap: { scale: 0.96 }, onClick: function () { return onEditUser(item); }, title: "Edit", "aria-label": "Edit user" },
+                react_1.default.createElement(framer_motion_1.motion.button, { type: "button", className: "data-table__action-btn data-table__action-btn--secondary", whileHover: { scale: 1.04 }, whileTap: { scale: 0.96 }, onClick: function () { return onEditUser(item); }, title: strings.Edit, "aria-label": strings.EditUser },
                     react_1.default.createElement(lucide_react_1.Pencil, { size: 14 }),
                     "Edit"))); },
         },
@@ -80,23 +81,23 @@ var AdminManagement = function (_a) {
         react_1.default.createElement("header", { className: adminpanel_module_scss_1.default.header },
             react_1.default.createElement("div", { className: adminpanel_module_scss_1.default.headerText },
                 react_1.default.createElement("h2", null, title),
-                react_1.default.createElement("p", null, "Management Dashboard")),
+                react_1.default.createElement("p", null, strings.ManagementDashboard)),
             react_1.default.createElement("button", { className: adminpanel_module_scss_1.default.newUserBtn, onClick: onNewUser },
                 react_1.default.createElement(lucide_react_1.Plus, { size: 15 }),
-                "New User")),
+                strings.NewUser)),
         react_1.default.createElement("div", { className: "recruitment-table__table-card" },
             react_1.default.createElement("div", { className: "submission-header" },
                 react_1.default.createElement("h2", { className: "submission-header__title" }, listLabel),
                 react_1.default.createElement("div", { className: "submission-header__actions" },
-                    react_1.default.createElement("button", { className: "submission-header__refresh-btn", onClick: handleRefresh, disabled: loading || isRefreshing, title: "Refresh table", "aria-label": "Refresh table" },
+                    react_1.default.createElement("button", { className: "submission-header__refresh-btn", onClick: handleRefresh, disabled: loading || isRefreshing, title: strings.RefreshTable, "aria-label": "Refresh table" },
                         react_1.default.createElement(lucide_react_1.RefreshCw, { size: 14, className: loading || isRefreshing ? "spin" : undefined }),
-                        "Refresh"),
+                        strings.Refresh),
                     react_1.default.createElement("button", { className: "submission-header__button", onClick: function () {
                             navigate("/Dashboard");
                             setActiveMenuID(ConditionConfig_1.menuID.Dashboard);
                         } },
                         react_1.default.createElement(lucide_react_1.RotateCcw, { size: 14 }),
-                        "Back to Dashboard"))),
+                        strings.BackToDashboard))),
             react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: data, loading: loading, pageSize: pagination.pageSize, currentPage: pagination.currentPage, totalCount: pagination.totalItems, onPageChange: handlePageChange, onPageSizeChange: handlePageSizeChange, pageSizeOptions: [10, 20, 50], emptyMessage: "No users found." }))));
 };
 var AdminPanel = function () {
@@ -117,8 +118,8 @@ var AdminPanel = function () {
     }, []);
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(AdminManagement, { title: activeType === "labour-hire"
-                ? "Labour Hire Management"
-                : "Agency Management", type: activeType, onNewUser: openNew, onEditUser: openEdit, onViewUser: openView }),
+                ? strings.LabourHireManagement
+                : strings.AgencyManagement, type: activeType, onNewUser: openNew, onEditUser: openEdit, onViewUser: openView }),
         react_1.default.createElement(framer_motion_1.AnimatePresence, null, drawer.open && (react_1.default.createElement(Drawer_1.Drawer, { isOpen: drawer.open, onClose: closeDrawer, type: activeType, isNew: drawer.mode === "new", isEdit: drawer.mode === "edit", isView: drawer.mode === "view", selectedItem: drawer.selectedItem, onSuccess: closeDrawer })))));
 };
 exports.AdminPanel = AdminPanel;

@@ -6,6 +6,7 @@ var react_1 = tslib_1.__importStar(require("react"));
 var lucide_react_1 = require("lucide-react");
 var InterviewScheduleInput_module_scss_1 = tslib_1.__importDefault(require("./InterviewScheduleInput.module.scss"));
 var TimeDropdown_1 = require("../../../../Comman/TimeComponent/TimeDropdown");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var WORK_START_H = 9;
 var WORK_END_H = 18;
 function buildTimeSlots(startH, endH) {
@@ -76,7 +77,7 @@ var InterviewScheduleInput = function (_a) {
     return (react_1.default.createElement("div", { className: InterviewScheduleInput_module_scss_1.default.scheduleCard },
         react_1.default.createElement("div", { className: InterviewScheduleInput_module_scss_1.default.panelMembersWrap },
             react_1.default.createElement("label", { className: InterviewScheduleInput_module_scss_1.default.fieldLabel },
-                "Interview panel members",
+                strings.InterviewPanelMembers,
                 react_1.default.createElement("span", { className: InterviewScheduleInput_module_scss_1.default.fieldRequired }, " *")),
             react_1.default.createElement("div", { className: InterviewScheduleInput_module_scss_1.default.panelTagsWrap }, panelOptions.map(function (opt) {
                 var selected = form.panelMembers.includes(opt.value);
@@ -85,26 +86,28 @@ var InterviewScheduleInput = function (_a) {
                     opt.label));
             })),
             needsMore && (react_1.default.createElement("span", { className: InterviewScheduleInput_module_scss_1.default.panelWarning },
-                "Select at least ",
+                strings.SelectAtLeast,
                 minPanelCount,
-                " panel members \u2022",
+                " ",
+                strings.PanelMembers,
                 " ",
                 form.panelMembers.length,
-                " selected"))),
+                " ",
+                strings.Selected))),
         react_1.default.createElement("div", { className: InterviewScheduleInput_module_scss_1.default.dateRow },
             react_1.default.createElement("div", { className: InterviewScheduleInput_module_scss_1.default.dateField },
                 react_1.default.createElement("label", { className: InterviewScheduleInput_module_scss_1.default.timeFieldLabel },
-                    "Date ",
+                    strings.Date,
                     react_1.default.createElement("span", { className: InterviewScheduleInput_module_scss_1.default.fieldRequired }, "*")),
                 react_1.default.createElement("input", { type: "date", className: InterviewScheduleInput_module_scss_1.default.dateInput, value: form.startDate, min: maxDateStr(), onChange: handleDateChange, disabled: Disable })),
             react_1.default.createElement("div", { className: InterviewScheduleInput_module_scss_1.default.dateField },
                 react_1.default.createElement("label", { className: InterviewScheduleInput_module_scss_1.default.timeFieldLabel },
-                    "Start time ",
+                    strings.StartTime,
                     react_1.default.createElement("span", { className: InterviewScheduleInput_module_scss_1.default.fieldRequired }, "*")),
-                react_1.default.createElement(TimeDropdown_1.TimeDropdown, { value: form.startTime, onChange: function (val) { return handleStartTimeChange(val); }, slots: startSlots, placeholder: "Select time", disabled: !form.startDate || Disable })),
+                react_1.default.createElement(TimeDropdown_1.TimeDropdown, { value: form.startTime, onChange: function (val) { return handleStartTimeChange(val); }, slots: startSlots, placeholder: strings.SelectTime, disabled: !form.startDate || Disable })),
             react_1.default.createElement("div", { className: InterviewScheduleInput_module_scss_1.default.dateField },
                 react_1.default.createElement("label", { className: InterviewScheduleInput_module_scss_1.default.timeFieldLabel },
-                    "End time ",
+                    strings.EndTime,
                     react_1.default.createElement("span", { className: InterviewScheduleInput_module_scss_1.default.fieldRequired }, "*")),
                 react_1.default.createElement(TimeDropdown_1.TimeDropdown, { value: form.endTime, onChange: function (val) { return onChange(function (p) { return (tslib_1.__assign(tslib_1.__assign({}, p), { endTime: val })); }); }, slots: endSlots, placeholder: "Select time", disabled: !form.startTime || Disable })))));
 };

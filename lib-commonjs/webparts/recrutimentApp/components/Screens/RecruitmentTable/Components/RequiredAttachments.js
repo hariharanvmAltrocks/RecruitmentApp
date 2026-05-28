@@ -6,6 +6,7 @@ var react_1 = tslib_1.__importStar(require("react"));
 var lucide_react_1 = require("lucide-react");
 require("../RecruitmentTable.scss");
 var reusehooks_1 = require("../../../Hooks/reusehooks");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
     return (react_1.default.createElement("div", { className: "advert-review-drawer__skeleton", style: { width: width, height: height } }));
@@ -54,7 +55,7 @@ var RequiredAttachments = function (_a) {
                     react_1.default.createElement("span", null, doc.type)),
                 react_1.default.createElement("div", { className: "advert-review-drawer__attachment-meta" },
                     react_1.default.createElement("div", { className: "advert-review-drawer__attachment-title", title: doc.title }, doc.title),
-                    react_1.default.createElement("div", { className: "advert-review-drawer__attachment-tag" }, "Recruitment"))),
+                    react_1.default.createElement("div", { className: "advert-review-drawer__attachment-tag" }, strings.Recruitment))),
             react_1.default.createElement("div", { className: "advert-review-drawer__attachment-body" }, doc.versions.map(function (version, idx) {
                 var fileUrl = getVersionUrl(version);
                 return (react_1.default.createElement("div", { key: "".concat(version.lang, "-").concat(idx), className: "advert-review-drawer__attachment-version", onClick: function () {
@@ -95,7 +96,7 @@ var RequiredAttachments = function (_a) {
             react_1.default.createElement("div", { className: "advert-review-drawer__section-header advert-review-drawer__section-header--plain" },
                 react_1.default.createElement("h3", null,
                     react_1.default.createElement(lucide_react_1.Paperclip, { size: 12 }),
-                    "Required Attachments")),
+                    strings.RequiredAttachments)),
             isLoading ? (react_1.default.createElement("div", { className: "advert-review-drawer__attachments" }, Array.from({ length: 3 }).map(function (_, idx) { return (react_1.default.createElement("div", { key: "attachment-skeleton-".concat(idx), className: "advert-review-drawer__attachment-card" },
                 react_1.default.createElement("div", { className: "advert-review-drawer__attachment-header" },
                     react_1.default.createElement(SkeletonBlock, { width: "60%" })),
@@ -115,14 +116,14 @@ var RequiredAttachments = function (_a) {
                     react_1.default.createElement("div", { className: "attachment-viewer__actions" },
                         react_1.default.createElement("a", { className: "attachment-viewer__button", href: viewerFile.url, download: true },
                             react_1.default.createElement(lucide_react_1.Download, { size: 14 }),
-                            "Download"),
+                            strings.Download),
                         react_1.default.createElement("button", { type: "button", className: "attachment-viewer__button attachment-viewer__button--ghost", onClick: closeViewer },
                             react_1.default.createElement(lucide_react_1.X, { size: 14 }),
-                            "Close"))),
+                            strings.Close))),
                 react_1.default.createElement("div", { className: "attachment-viewer__body" },
                     viewerLoading && (react_1.default.createElement("div", { className: "attachment-viewer__loading" },
                         react_1.default.createElement("div", { className: "attachment-viewer__spinner" }),
-                        react_1.default.createElement("span", null, "Loading document..."))),
+                        react_1.default.createElement("span", null, strings.LoadingDocument))),
                     react_1.default.createElement("iframe", { className: "attachment-viewer__iframe", src: getViewerUrl(viewerFile.url), title: viewerFile.title, onLoad: function () { return setViewerLoading(false); }, allow: "fullscreen" })))))));
 };
 exports.RequiredAttachments = RequiredAttachments;

@@ -1,6 +1,7 @@
 // components/PPESizingInfo/PPESizingInfo.tsx
 import React, { useEffect, useRef, useState } from "react";
 import "./Ppesizinginfo.scss"
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 
 export interface PPEItem {
@@ -63,22 +64,21 @@ export const PPESizingTrigger: React.FC<PPETriggerProps> = ({ items }) => {
         aria-haspopup="true"
       >
         <InfoIcon />
-        Personal Protective Equipment sizing information
-      </button>
+        {strings.PersonalProtectiveEquipmentSizingInforma}</button>
 
       {open && (
-        <div className="ppe-popover" role="dialog" aria-label="PPE sizing details">
+        <div className="ppe-popover" role="dialog" aria-label={strings.PpeSizingDetails}>
           {/* Header */}
           <div className="ppe-popover__header">
             <span className="ppe-popover__header-icon">
               <ShieldIcon />
             </span>
-            <span className="ppe-popover__title">Personal Protective Equipment</span>
+            <span className="ppe-popover__title">{strings.PersonalProtectiveEquipment}</span>
             <button
               type="button"
               className="ppe-popover__close"
               onClick={() => setOpen(false)}
-              aria-label="Close"
+              aria-label={strings.Close}
             >
               ×
             </button>
@@ -88,8 +88,8 @@ export const PPESizingTrigger: React.FC<PPETriggerProps> = ({ items }) => {
           <table className="ppe-table">
             <thead>
               <tr>
-                <th>PPE Kit</th>
-                <th>Size</th>
+                <th>{strings.PpeKit}</th>
+                <th>{strings.Size}</th>
               </tr>
             </thead>
             <tbody>
@@ -143,7 +143,7 @@ interface PPETagStripProps {
 export const PPESizingTagStrip: React.FC<PPETagStripProps> = ({ items }) => (
   <div className="ppe-strip">
     <ShieldIcon className="ppe-strip__icon" />
-    <span className="ppe-strip__label">PPE sizes</span>
+    <span className="ppe-strip__label">{strings.PpeSizes}</span>
 
     {items.map((item) => (
       <div key={item.kit} className="ppe-strip__tag">

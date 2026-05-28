@@ -11,6 +11,7 @@ var lucide_react_1 = require("lucide-react");
 var ReviewScorecard_module_scss_1 = tslib_1.__importDefault(require("../ReviewScorecard.module.scss"));
 var useSubmitReviewScoreCard_1 = require("./useSubmitReviewScoreCard");
 var Confirmationpopup_1 = tslib_1.__importDefault(require("../Confirmationpopup"));
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var SubmitReviewScoreCard = function (_a) {
     var roleId = _a.roleId, _b = _a.compact, compact = _b === void 0 ? false : _b, _c = _a.className, className = _c === void 0 ? '' : _c, onClose = _a.onClose, hookDeps = tslib_1.__rest(_a, ["roleId", "compact", "className", "onClose"]);
     var _d = (0, useSubmitReviewScoreCard_1.useSubmitReviewScoreCard)(hookDeps), submitting = _d.submitting, submitError = _d.submitError, successMessage = _d.successMessage, errors = _d.errors, validationErrors = _d.validationErrors, submitDecision = _d.submitDecision, resetSubmit = _d.resetSubmit, runValidation = _d.runValidation;
@@ -71,10 +72,10 @@ var SubmitReviewScoreCard = function (_a) {
     }, [onClose]);
     return (React.createElement(React.Fragment, null,
         React.createElement("div", { className: className, style: { display: 'flex', gap: '0.75rem', alignItems: 'center' } },
-            React.createElement("button", { className: ReviewScorecard_module_scss_1.default.mCancelBtn, onClick: handleCancelClick, disabled: submitting, type: "button" }, "CANCEL"),
+            React.createElement("button", { className: ReviewScorecard_module_scss_1.default.mCancelBtn, onClick: handleCancelClick, disabled: submitting, type: "button" }, strings.Cancel1),
             React.createElement("button", { className: ReviewScorecard_module_scss_1.default.mSubmitBtn, onClick: handleSubmitClick, disabled: submitting || !hookDeps.hodDecision, type: "button", style: { alignSelf: 'flex-end' } }, submitting ? ('Submitting…') : compact ? (React.createElement(lucide_react_1.CheckCircle2, { size: 15 })) : (React.createElement(React.Fragment, null,
                 React.createElement(lucide_react_1.CheckCircle2, { size: 15, style: { marginRight: 6 } }),
-                "SUBMIT ACTION")))),
+                strings.SubmitAction1)))),
         submitError && (React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mSubmitError, style: { marginTop: '0.5rem' } }, submitError)),
         React.createElement(Confirmationpopup_1.default, { type: "submit", open: showSubmitConfirm, onConfirm: handleSubmitConfirmed, onClose: function () { return setShowSubmitConfirm(false); } }),
         React.createElement(Confirmationpopup_1.default, { type: "cancel", open: showCancelConfirm, onConfirm: handleLeaveConfirmed, onClose: function () { return setShowCancelConfirm(false); } }),

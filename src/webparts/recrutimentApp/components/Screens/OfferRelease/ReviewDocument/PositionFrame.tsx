@@ -19,6 +19,7 @@ import {
   PPESizingTagStrip,
 } from "./Component/Ppesizinginfo/Ppesizinginfo";
 import { IDocFiles } from "../../../../services/SPService/Ispservice";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export interface IselectedPosition {
   ID: number;
@@ -114,9 +115,9 @@ const SkeletonBlock: React.FC<{ width?: string; height?: string }> = ({
 }) => <div className="review-document__skeleton" style={{ width, height }} />;
 
 const SAMPLE_ITEMS: PPEItem[] = [
-  { kit: "Cont. Suit Pants", size: "36" },
-  { kit: "Cont. Suit Top", size: "XL" },
-  { kit: "Safety Shoes", size: "7" },
+  { kit: strings.ContSuitPants, size: "36" },
+  { kit: strings.ContSuitTop, size: "XL" },
+  { kit: strings.SafetyShoes, size: "7" },
 ];
 
 export const PositionFrame: React.FC<PositionFrameworkProps> = ({
@@ -128,8 +129,7 @@ export const PositionFrame: React.FC<PositionFrameworkProps> = ({
     <div className="review-document__section-header">
       <h3>
         <span className="review-document__section-indicator" />
-        Position Framework
-      </h3>
+        {strings.PositionFramework}</h3>
       {/* <span className="advert-review-drawer__ref">REF: {headerCode || "-"}</span> */}
     </div>
 
@@ -147,41 +147,40 @@ export const PositionFrame: React.FC<PositionFrameworkProps> = ({
         <div className="review-document__group">
           <h4 className="review-document__group-title">
             <Users size={12} />
-            Organizational Alignment
-          </h4>
+            {strings.OrganizationalAlignment}</h4>
           <div className="review-document__grid">
             <InfoField
-              label="Applicant Name"
+              label={strings.ApplicantName}
               value={positionDetails?.ApplicantName}
               icon={FileText}
             />
             <InfoField
-              label="Nationality"
+              label={strings.Nationality}
               value={positionDetails?.Nationality}
               icon={Users}
             />
             <InfoField
-              label="Gender"
+              label={strings.Gender}
               value={positionDetails?.Gender}
               icon={LayoutDashboard}
             />
             <InfoField
-              label="Proof Of Identity"
+              label={strings.ProofOfIdentity}
               value={positionDetails?.ProofOfIdentity}
               icon={ChevronRight}
             />
             <InfoField
-              label="Identity Number"
+              label={strings.IdentityNumber}
               value={positionDetails?.IdentityNumber}
               icon={ChevronRight}
             />
             <InfoField
-              label="Email"
+              label={strings.Email}
               value={positionDetails?.Email}
               icon={FileText}
             />
             <InfoField
-              label="Location"
+              label={strings.Location}
               value={positionDetails?.Location}
               icon={UserCheck}
             />
@@ -191,60 +190,59 @@ export const PositionFrame: React.FC<PositionFrameworkProps> = ({
 
           <h4 className="review-document__group-title">
             <ClipboardList size={12} />
-            Position Classification
-          </h4>
+            {strings.PositionClassification}</h4>
           <div className="review-document__grid">
             <InfoField
-              label="Business Unit Code"
+              label={strings.BusinessUnitCode}
               value={positionDetails?.BusinessUnitCode}
               icon={Globe}
             />
             <InfoField
-              label="Department"
+              label={strings.Department}
               value={positionDetails?.Department}
               icon={Activity}
             />
             <InfoField
-              label="Sub Department"
+              label={strings.SubDepartment}
               value={positionDetails?.SubDepartment}
               icon={Activity}
             />
             <InfoField
-              label="Section"
+              label={strings.Section}
               value={positionDetails?.Section}
               icon={UserCheck}
             />
             <InfoField
-              label="Department Code"
+              label={strings.DepartmentCode}
               value={positionDetails?.DepartmentCode}
               icon={FileCheck}
             />
             <InfoField
-              label="Employment Category"
+              label={strings.EmploymentCategory}
               value={positionDetails?.EmploymentCategory}
               icon={Users}
             />
             <InfoField
-              label="Type of Contract"
+              label={strings.TypeOfContract}
               value={positionDetails?.TypeofContract}
               icon={Users}
             />
             <InfoField
-              label="Area of Work"
+              label={strings.AreaOfWork}
               value={positionDetails?.AreaofWork}
               icon={Users}
             />
             {positionDetails?.labourHire != null &&
               positionDetails.labourHire !== "" && (
                 <InfoField
-                  label="Labour Hire"
+                  label={strings.LabourHire}
                   value={positionDetails.labourHire}
                   icon={Users}
                 />
               )}
             {positionDetails?.JoiningDate && (
               <InfoField
-                label="Joining Date"
+                label={strings.JoiningDate}
                 value={moment(positionDetails?.JoiningDate).format(
                   "DD-MM-YYYY",
                 )}
@@ -253,7 +251,7 @@ export const PositionFrame: React.FC<PositionFrameworkProps> = ({
             )}
             {positionDetails?.NoticePeriod && (
               <InfoField
-                label="Notice Period"
+                label={strings.NoticePeriod}
                 value={positionDetails?.NoticePeriod}
                 icon={Users}
               />
@@ -263,31 +261,30 @@ export const PositionFrame: React.FC<PositionFrameworkProps> = ({
             <>
               <h4 className="review-document__group-title">
                 <ClipboardList size={12} />
-                Reference Employer Details
-              </h4>
+                {strings.ReferenceEmployerDetails}</h4>
               <div className="review-document__grid">
                 <InfoField
-                  label="Reference Name"
+                  label={strings.ReferenceName}
                   value={positionDetails?.ReferenceName}
                   icon={Globe}
                 />
                 <InfoField
-                  label="Reference Designation"
+                  label={strings.ReferenceDesignation}
                   value={positionDetails?.ReferenceDesignation}
                   icon={Activity}
                 />
                 <InfoField
-                  label="Reference Email ID"
+                  label={strings.ReferenceEmailId}
                   value={positionDetails?.ReferenceEmail}
                   icon={Activity}
                 />
                 <InfoField
-                  label="Reference Contact Number"
+                  label={strings.ReferenceContactNumber}
                   value={positionDetails?.ReferencePhone}
                   icon={UserCheck}
                 />
                 <InfoField
-                  label="Reference Company Name"
+                  label={strings.ReferenceCompanyName}
                   value={positionDetails?.ReferenceCompanyName}
                   icon={FileCheck}
                 />

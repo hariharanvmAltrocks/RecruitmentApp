@@ -21,6 +21,7 @@ var useModalPopup_1 = require("../../Comman/ModalPopup/useModalPopup");
 var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
 var loading_1 = tslib_1.__importDefault(require("../../Comman/Loading/loading"));
 var cn_1 = require("../../../utilities/cn");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var DEFAULT_NEW_QUESTION = function () { return ({
     type: "single",
     questionEn: "",
@@ -96,7 +97,7 @@ var QuestionCreation = function (props) {
                     if (mode === "careerPortal" && preparedQuestions.length < minQuestions) {
                         showModal({
                             type: "error",
-                            title: "Minimum Requirement",
+                            title: strings.MinimumRequirement,
                             message: "Please add at least ".concat(minQuestions, " questions. You need ").concat(remaining, " more."),
                             confirmLabel: "Ok",
                             onConfirm: closeModal,
@@ -129,7 +130,7 @@ var QuestionCreation = function (props) {
                         setLoading(false);
                         showModal({
                             type: "success",
-                            title: "Submitted Successfully",
+                            title: strings.SubmittedSuccessfully,
                             message: mode === "careerPortal"
                                 ? ConditionConfig_1.RecuritmentHRMsg.CareerportalSuccessMsg
                                 : ConditionConfig_1.RecuritmentHRMsg.InterviewQuestionSuccessMsg,
@@ -144,7 +145,7 @@ var QuestionCreation = function (props) {
                         showModal({
                             type: "error",
                             title: "Error",
-                            message: "Failed to save questions. Please try again.",
+                            message: strings.FailedToSaveQuestionsPleaseTryAgain,
                             confirmLabel: "Ok",
                             onConfirm: function () {
                                 closeModal();
@@ -179,7 +180,7 @@ var QuestionCreation = function (props) {
             react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement("div", { className: "qc__header" },
                     react_1.default.createElement("div", { className: "qc__header-left" },
-                        react_1.default.createElement("button", { className: "qc__back-btn", onClick: handleBack, title: "Go back" },
+                        react_1.default.createElement("button", { className: "qc__back-btn", onClick: handleBack, title: strings.GoBack },
                             react_1.default.createElement(lucide_react_1.ChevronLeft, { size: 20 })),
                         react_1.default.createElement("div", { className: "qc__job-info" },
                             react_1.default.createElement("div", { className: "qc__job-top" },
@@ -196,35 +197,37 @@ var QuestionCreation = function (props) {
                     react_1.default.createElement("div", { className: "qc__header-right" },
                         react_1.default.createElement("div", { className: "qc__criteria-count" },
                             react_1.default.createElement("span", { className: "qc__criteria-label" }, mode === "careerPortal"
-                                ? "Prepared Criteria"
-                                : "Interview Set"),
+                                ? strings.PreparedCriteria
+                                : strings.InterviewSet),
                             react_1.default.createElement("span", { className: "qc__criteria-value" },
                                 preparedQuestions.length,
-                                react_1.default.createElement("span", { className: "qc__criteria-unit" }, " Questions"))),
+                                react_1.default.createElement("span", { className: "qc__criteria-unit" },
+                                    " ",
+                                    strings.Questions))),
                         react_1.default.createElement("button", { className: "qc__save-btn", onClick: handleSave, disabled: saving },
                             react_1.default.createElement(lucide_react_1.Save, { size: 15 }),
-                            saving ? "Saving..." : "Finalize & Save")))),
+                            saving ? "Saving..." : strings.FinalizeSave)))),
             react_1.default.createElement(framer_motion_1.AnimatePresence, { exitBeforeEnter: true }, !sourceSelection ? (react_1.default.createElement(framer_motion_1.motion.div, { key: "selection-screen", initial: { opacity: 0, scale: 0.95 }, animate: { opacity: 1, scale: 1 }, exit: { opacity: 0, scale: 0.95 }, transition: { duration: 0.25 }, className: "qc-selection" },
                 react_1.default.createElement("div", { className: "qc-selection__header" },
                     react_1.default.createElement("div", { className: "qc-selection__icon-box" },
                         react_1.default.createElement(lucide_react_1.ClipboardList, { size: 32 })),
-                    react_1.default.createElement("h3", { className: "qc-selection__title" }, "Question Setup Configuration"),
-                    react_1.default.createElement("p", { className: "qc-selection__subtitle" }, "Which type of question you are planning to set for this job title?")),
+                    react_1.default.createElement("h3", { className: "qc-selection__title" }, strings.QuestionSetupConfiguration),
+                    react_1.default.createElement("p", { className: "qc-selection__subtitle" }, strings.WhichTypeOfQuestionYouArePlanningToSetFo)),
                 react_1.default.createElement("div", { className: "qc-selection__options" }, [
                     {
                         id: "bank",
-                        label: "From Question bank",
-                        desc: "Select pre-verified questions from our official library",
+                        label: strings.FromQuestionBank,
+                        desc: strings.SelectPreVerifiedQuestionsFromOurOfficia,
                     },
                     {
                         id: "new",
-                        label: "Create New set of question",
-                        desc: "Author custom questions specifically for this role",
+                        label: strings.CreateNewSetOfQuestion,
+                        desc: strings.AuthorCustomQuestionsSpecificallyForThis,
                     },
                     {
                         id: "both",
                         label: "Both",
-                        desc: "Combine library templates with custom authored questions",
+                        desc: strings.CombineLibraryTemplatesWithCustomAuthore,
                     },
                 ].map(function (option) {
                     var isSelected = sourceSelection === option.id;
@@ -235,7 +238,7 @@ var QuestionCreation = function (props) {
                             react_1.default.createElement("div", { className: "qc-selection__option-desc" }, option.desc))));
                 })),
                 react_1.default.createElement("div", { className: "qc-selection__footer" },
-                    react_1.default.createElement("button", { onClick: onBack, className: "qc-selection__cancel-btn" }, "Cancel Process")))) : (react_1.default.createElement(framer_motion_1.motion.div, { key: "main-ui", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.25 }, className: "qc__grid" },
+                    react_1.default.createElement("button", { onClick: onBack, className: "qc-selection__cancel-btn" }, strings.CancelProcess)))) : (react_1.default.createElement(framer_motion_1.motion.div, { key: "main-ui", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.25 }, className: "qc__grid" },
                 react_1.default.createElement("div", { className: "qc__col qc__col--left" },
                     sourceSelection === "bank" && (mode === "careerPortal" ? (react_1.default.createElement(Careerportalquestionbank_1.CareerPortalQuestionBank, { questionBank: questionBank, loading: questionloading, preparedQuestionIds: preparedIds, searchQuery: searchQuery, onSearchChange: setSearchQuery, onAddFromBank: handleAddFromBank })) : (react_1.default.createElement(Interviewquestionbank_1.InterviewQuestionBank, { questionBank: questionBank, loading: questionloading, preparedQuestionIds: preparedIds, onAddFromBank: handleAddFromBank }))),
                     sourceSelection === "new" && (mode === "careerPortal" ? (react_1.default.createElement(Careerportalcomposer_1.CareerPortalComposer, { newQuestion: newQuestion, onChange: setNewQuestion, onAdd: handleAddNew, onClear: function () { return setNewQuestion(DEFAULT_NEW_QUESTION()); } })) : (react_1.default.createElement(Interviewcomposer_1.InterviewComposer, { newQuestion: newQuestion, onChange: setNewQuestion, onAdd: handleAddNew, onClear: function () { return setNewQuestion(DEFAULT_NEW_QUESTION()); } }))),

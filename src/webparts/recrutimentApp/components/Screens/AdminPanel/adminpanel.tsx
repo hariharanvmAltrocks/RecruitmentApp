@@ -10,6 +10,7 @@ import { DataTable, DataTableColumn } from "../../Comman/DataTable/DataTable";
 import { menuID } from "../../../utilities/ConditionConfig";
 import { useUIState } from "../../RecrutimentApp/UIStateContext";
 import { AdminDashboard } from "../../../services/AdminPanel/IAdminpanelService";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 type DrawerMode = "new" | "edit" | "view";
 
@@ -49,7 +50,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({
   const { data, loading, pagination, fetchPage, setPageSize, refresh } =
     useAdminPanelTable({ type, initialPageSize: 10 });
 
-  const listLabel = type === "labour-hire" ? "Labour Hire" : "Agencies";
+  const listLabel = type === "labour-hire" ? strings.LabourHire : "Agencies";
 
   // ── Handlers ─────────────────────────────────────────────────────────────
   const handleRefresh = useCallback(async () => {
@@ -73,7 +74,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({
     () => [
       {
         id: "exUserCode",
-        header: "User Code",
+        header: strings.UserCode,
         render: (item) => (
           <span className="data-table__job-code">{item.exUserCode}</span>
         ),
@@ -91,7 +92,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({
       },
       {
         id: "email",
-        header: "Email ID",
+        header: strings.EmailId,
         accessor: "email" as keyof AdminDashboard,
         cellClassName: "data-table__cell--muted",
         hideOnMobile: true,
@@ -110,8 +111,8 @@ const AdminManagement: React.FC<AdminManagementProps> = ({
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
               onClick={() => onViewUser(item)}
-              title="View"
-              aria-label="View user"
+              title={strings.View}
+              aria-label={strings.ViewUser}
             >
               <Eye size={14} />
               View
@@ -124,8 +125,8 @@ const AdminManagement: React.FC<AdminManagementProps> = ({
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
               onClick={() => onEditUser(item)}
-              title="Edit"
-              aria-label="Edit user"
+              title={strings.Edit}
+              aria-label={strings.EditUser}
             >
               <Pencil size={14} />
               Edit
@@ -145,13 +146,12 @@ const AdminManagement: React.FC<AdminManagementProps> = ({
       <header className={styles.header}>
         <div className={styles.headerText}>
           <h2>{title}</h2>
-          <p>Management Dashboard</p>
+          <p>{strings.ManagementDashboard}</p>
         </div>
 
         <button className={styles.newUserBtn} onClick={onNewUser}>
           <Plus size={15} />
-          New User
-        </button>
+          {strings.NewUser}</button>
       </header>
 
       {/* ── Table card ───────────────────────────────────────────────────── */}
@@ -165,15 +165,14 @@ const AdminManagement: React.FC<AdminManagementProps> = ({
               className="submission-header__refresh-btn"
               onClick={handleRefresh}
               disabled={loading || isRefreshing}
-              title="Refresh table"
+              title={strings.RefreshTable}
               aria-label="Refresh table"
             >
               <RefreshCw
                 size={14}
                 className={loading || isRefreshing ? "spin" : undefined}
               />
-              Refresh
-            </button>
+              {strings.Refresh}</button>
 
             <button
               className="submission-header__button"
@@ -183,8 +182,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({
               }}
             >
               <RotateCcw size={14} />
-              Back to Dashboard
-            </button>
+              {strings.BackToDashboard}</button>
           </div>
         </div>
 
@@ -235,8 +233,8 @@ export const AdminPanel: React.FC = () => {
       <AdminManagement
         title={
           activeType === "labour-hire"
-            ? "Labour Hire Management"
-            : "Agency Management"
+            ? strings.LabourHireManagement
+            : strings.AgencyManagement
         }
         type={activeType}
         onNewUser={openNew}

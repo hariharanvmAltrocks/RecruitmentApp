@@ -28,21 +28,23 @@ import { canEdit } from "../Hooks/useReviewScorecard";
 import { SubmitHookDeps } from "./useSubmitReviewScoreCard";
 import { InfoItem } from "../../CandidateTable/Components/reuseUI";
 import Loading from "../../../Comman/Loading/loading";
+import * as strings from 'RecrutimentAppWebPartStrings';
+import { Text } from '@microsoft/sp-core-library';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const SCORE_CRITERIA = [
-  { field: "RelevantQualification", label: "Qualification (Relevant)" },
-  { field: "ReleventExperience", label: "Experience (Relevant)" },
+  { field: "RelevantQualification", label: strings.QualificationRelevant },
+  { field: "ReleventExperience", label: strings.ExperienceRelevant1 },
   { field: "Knowledge", label: "Knowledge" },
-  { field: "EnergyLevel", label: "Energy Level" },
-  { field: "MeetJobRequirement", label: "Meets All Job Requirements" },
+  { field: "EnergyLevel", label: strings.EnergyLevel1 },
+  { field: "MeetJobRequirement", label: strings.MeetsAllJobRequirements },
   {
     field: "ContributeTowardsCultureRequried",
-    label: "Will Contribute to Culture Required",
+    label: strings.WillContributeToCultureRequired,
   },
   { field: "Experience", label: "Experience" },
-  { field: "OtherCriteriaScore", label: "Other Criteria Recognized by Panel" },
+  { field: "OtherCriteriaScore", label: strings.OtherCriteriaRecognizedByPanel },
 ];
 
 const MAX_OVERALL_PER_PANEL = 40;
@@ -176,7 +178,7 @@ const CandidateReviewModal: React.FC<Props> = ({
       qJson.forEach((q: any) => {
         const key = Object.keys(q)[0];
         if (!qMap[key]) qMap[key] = { criteria: key };
-        qMap[key][`panel_${i}`] = q[key];
+        qMap[key][Text.format(strings.Panel, )] = q[key];
       });
     });
     return Object.values(qMap);
@@ -260,11 +262,11 @@ const CandidateReviewModal: React.FC<Props> = ({
           </div>
           <div className={styles.headerMeta}>
             <div className={styles.breadcrumb}>
-              <span>Candidate selection</span>
+              <span>{strings.CandidateSelection}</span>
               <ChevronRight size={12} className={styles.breadcrumbChevron} />
-              <span className={styles.breadcrumbActive}>Review Scorecard</span>
+              <span className={styles.breadcrumbActive}>{strings.ReviewScorecard}</span>
             </div>
-            <h2 className={styles.headerTitle}>Candidate Scorecard Review</h2>
+            <h2 className={styles.headerTitle}>{strings.CandidateScorecardReview}</h2>
             <div className={styles.headerSubtitle}>
               <span className={styles.jobCodeBadge}>
                 {candidate.jobCode || "---"}
@@ -279,14 +281,14 @@ const CandidateReviewModal: React.FC<Props> = ({
         <div>
           <div className={styles.mHeaderRight}>
             <div className={styles.mGpa}>
-              <span className={styles.mGpaLabel}>OVERALL GPA</span>
+              <span className={styles.mGpaLabel}>{strings.OverallGpa}</span>
               <span className={styles.mGpaValue}>{candidate.gpa || "—"}</span>
             </div>
             <button
               className={styles.closeBtn}
               type="button"
               onClick={onClose}
-              aria-label="Close"
+              aria-label={strings.Close}
             >
               <X size={20} strokeWidth={2.5} />
             </button>
@@ -309,17 +311,17 @@ const CandidateReviewModal: React.FC<Props> = ({
           <div className={styles.infoGrid}>
             <InfoItem
               icon={<Globe size={14} />}
-              label="Nationality"
+              label={strings.Nationality}
               value={raw.Nationality || candidate.nationality || ""}
             />
             <InfoItem
               icon={<Users size={14} />}
-              label="Gender"
+              label={strings.Gender}
               value={raw.Gender || candidate.gender || ""}
             />
             <InfoItem
               icon={<FileText size={14} />}
-              label="Qualification"
+              label={strings.Qualification}
               value={raw.Qualification || ""}
             />
 
@@ -327,14 +329,14 @@ const CandidateReviewModal: React.FC<Props> = ({
               <div className={styles.infoRowItem}>
                 <InfoItem
                   icon={<Zap size={14} />}
-                  label="Mining exp."
+                  label={strings.MiningExp}
                   value={raw.TotalYearOfExperiance || ""}
                 />
               </div>
               <div className={styles.infoRowItem}>
                 <InfoItem
                   icon={<Zap size={14} />}
-                  label="Related exp."
+                  label={strings.RelatedExp}
                   value={raw.ReleventExperience || ""}
                 />
               </div>
@@ -344,14 +346,14 @@ const CandidateReviewModal: React.FC<Props> = ({
               <div className={styles.infoRowItem}>
                 <InfoItem
                   icon={<AlertTriangle size={14} />}
-                  label="Conflicts"
+                  label={strings.Conflicts}
                   value={raw.ConflictsOfInterest || ""}
                 />
               </div>
               <div className={styles.infoRowItem}>
                 <InfoItem
                   icon={<Accessibility size={14} />}
-                  label="Disability"
+                  label={strings.Disability}
                   value={raw.Disability || raw.disability || ""}
                 />
               </div>
@@ -360,23 +362,23 @@ const CandidateReviewModal: React.FC<Props> = ({
             <div className={styles.infoRow}>
               <div className={styles.infoRowItem}>
                 <InfoItem
-                  label="Levels"
+                  label={strings.Levels}
                   value={candidate.interviewLevel || ""}
                 />
               </div>
               <div className={styles.infoRowItem}>
-                <InfoItem label="Interview Date" value={formattedDate} />
+                <InfoItem label={strings.InterviewDate} value={formattedDate} />
               </div>
             </div>
 
-            <InfoItem label="GRADE" value={candidate.grade || ""} />
+            <InfoItem label={strings.Grade} value={candidate.grade || ""} />
           </div>
 
           {panelMembers.length > 0 && (
             <div className={styles.mPanelSection}>
               <div className={styles.mPanelHeader}>
                 <Users size={12} color="#2563eb" />
-                <span>INTERVIEW PANEL</span>
+                <span>{strings.InterviewPanel}</span>
               </div>
               <div className={styles.mPanelList}>
                 {panelMembers.map((name, i) => (
@@ -428,8 +430,8 @@ const CandidateReviewModal: React.FC<Props> = ({
 
           {activeScorecardTab === "qEval" && (
             <ScoreTable
-              title="QUESTION EVALUATION SCORECARD"
-              subtitle="Panel-wise Question Scores — All Interviewers"
+              title={strings.QuestionEvaluationScorecard}
+              subtitle={strings.PanelWiseQuestionScoresAllInterviewers}
               accentColor="#6366f1"
               rows={questionTableRows}
               panelMembers={panelMembers}
@@ -440,8 +442,8 @@ const CandidateReviewModal: React.FC<Props> = ({
 
           {activeScorecardTab === "overall" && (
             <ScoreTable
-              title="OVERALL EVALUATION SCORECARD"
-              subtitle="Core Criteria Scores — All Interviewers (Max 5 per criterion)"
+              title={strings.OverallEvaluationScorecard}
+              subtitle={strings.CoreCriteriaScoresAllInterviewersMax5Per}
               accentColor="#22c55e"
               rows={overallTableRows}
               panelMembers={panelMembers}

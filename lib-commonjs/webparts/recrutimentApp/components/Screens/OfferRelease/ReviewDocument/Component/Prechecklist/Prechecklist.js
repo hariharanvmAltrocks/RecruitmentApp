@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importDefault(require("react"));
 require("./Prechecklist.modules.scss");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
+var sp_core_library_1 = require("@microsoft/sp-core-library");
 // ── Icons ────────────────────────────────────────────────────────────────────
 var CheckIcon = function () { return (react_1.default.createElement("svg", { viewBox: "0 0 16 16", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" },
     react_1.default.createElement("polyline", { points: "2.5,8.5 6,12 13.5,4.5" }))); };
@@ -39,17 +41,13 @@ var ChecklistSection = function (_a) {
                     width: progressWidth,
                     "--progress-width": progressWidth,
                 } })),
-        react_1.default.createElement("div", { className: "prechecklist__list" }, items.map(function (item) { return (react_1.default.createElement("div", { key: item.ID, className: "prechecklist__item".concat(item.value === true
-                ? " prechecklist__item--yes"
-                : item.value === false
-                    ? " prechecklist__item--no"
-                    : "") },
+        react_1.default.createElement("div", { className: "prechecklist__list" }, items.map(function (item) { return (react_1.default.createElement("div", { key: item.ID, className: sp_core_library_1.Text.format(strings.PrechecklistItem) },
             react_1.default.createElement("div", { className: "prechecklist__avatar" },
                 react_1.default.createElement("span", null, item.Initials)),
             react_1.default.createElement("div", { className: "prechecklist__item-body" },
                 react_1.default.createElement("span", { className: "prechecklist__item-label" }, item.Title),
                 react_1.default.createElement("span", { className: "prechecklist__item-id" },
-                    "ID: ",
+                    strings.Id,
                     item.ID)),
             react_1.default.createElement("div", { className: "prechecklist__toggle-group" },
                 react_1.default.createElement("button", { className: "prechecklist__toggle-btn prechecklist__toggle-btn--yes".concat(item.value === true ? " prechecklist__toggle-btn--active" : ""), onClick: function (e) {
@@ -58,7 +56,7 @@ var ChecklistSection = function (_a) {
                     }, type: "button", "aria-pressed": item.value === true },
                     react_1.default.createElement("span", { className: "prechecklist__toggle-icon" },
                         react_1.default.createElement(CheckIcon, null)),
-                    "Yes"),
+                    strings.Yes1),
                 react_1.default.createElement("button", { className: "prechecklist__toggle-btn prechecklist__toggle-btn--no".concat(item.value === false
                         ? " prechecklist__toggle-btn--active"
                         : ""), onClick: function (e) {
@@ -67,7 +65,7 @@ var ChecklistSection = function (_a) {
                     }, type: "button", "aria-pressed": item.value === false },
                     react_1.default.createElement("span", { className: "prechecklist__toggle-icon" },
                         react_1.default.createElement(XIcon, null)),
-                    "No")),
+                    strings.No1)),
             react_1.default.createElement("div", { className: "prechecklist__status-dot".concat(item.value === true
                     ? " prechecklist__status-dot--yes"
                     : item.value === false
@@ -81,14 +79,14 @@ var PreChecklist = function (_a) {
     var totalChecked = allItems.filter(function (i) { return i.value === true; }).length;
     var total = allItems.length;
     return (react_1.default.createElement("div", { className: "prechecklist" },
-        react_1.default.createElement(ChecklistSection, { title: "Onboarding Prechecklist", subtitle: "Mandatory pre-hire checks", icon: react_1.default.createElement(ShieldIcon, null), items: nationalItems, onToggle: onToggle }),
+        react_1.default.createElement(ChecklistSection, { title: strings.OnboardingPrechecklist, subtitle: strings.MandatoryPreHireChecks, icon: react_1.default.createElement(ShieldIcon, null), items: nationalItems, onToggle: onToggle }),
         react_1.default.createElement("div", { className: "prechecklist__summary" },
             react_1.default.createElement("div", { className: "prechecklist__summary-icon".concat(allChecked ? " prechecklist__summary-icon--complete" : "") }, allChecked ? react_1.default.createElement(CheckIcon, null) : react_1.default.createElement(ClipboardIcon, null)),
             react_1.default.createElement("div", { className: "prechecklist__summary-text" },
-                react_1.default.createElement("span", { className: "prechecklist__summary-label" }, allChecked ? "All requirements met!" : "Checklist in progress"),
+                react_1.default.createElement("span", { className: "prechecklist__summary-label" }, allChecked ? strings.AllRequirementsMet : strings.ChecklistInProgress),
                 react_1.default.createElement("span", { className: "prechecklist__summary-desc" }, allChecked
-                    ? "You can now submit this candidate for review."
-                    : "Complete all items above to enable submission.")),
+                    ? strings.YouCanNowSubmitThisCandidateForReview
+                    : strings.CompleteAllItemsAboveToEnableSubmission)),
             react_1.default.createElement("div", { className: "prechecklist__summary-count".concat(allChecked ? " prechecklist__summary-count--complete" : "") },
                 totalChecked,
                 react_1.default.createElement("span", null,

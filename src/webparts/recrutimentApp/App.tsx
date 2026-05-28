@@ -9,6 +9,7 @@ import { MenuDataProvider } from "./utilities/hooks/MenuDataContext";
 import { ThemeProvider, useThemeVars } from "./theme/ThemeContext";
 import * as strings from 'RecrutimentAppWebPartStrings';
 import { UIProvider } from "./components/RecrutimentApp/UIStateContext";
+import { LanguageProvider } from "./components/RecrutimentApp/LanguageContext";
 
 const FaviconSetter: React.FC<{ webURL: string }> = ({ webURL }) => {
   React.useEffect(() => {
@@ -72,7 +73,9 @@ export default function AppWrapper(props: IRecrutimentAppProps) {
   return (
     <HashRouter>
       <ThemeProvider>
-        <App {...props} />
+        <LanguageProvider>
+          <App {...props} />
+        </LanguageProvider>
       </ThemeProvider>
     </HashRouter>
   );

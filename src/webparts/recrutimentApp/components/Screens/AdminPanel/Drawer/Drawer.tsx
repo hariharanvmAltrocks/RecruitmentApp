@@ -19,6 +19,7 @@ import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
 import { formatDate } from "../../../Hooks/dateConfigfn";
 import { userInfo } from "../../../../utilities/hooks/RoleContext";
 import Loading from "../../../Comman/Loading/loading";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface DrawerProps {
   isOpen: boolean;
@@ -99,7 +100,7 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   // Derive a human-readable mode label and the read-only flag
   const modeLabel = isView ? "View" : isEdit ? "Edit" : "New";
-  const typeLabel = type === "labour-hire" ? "Labour Hire" : "Agency";
+  const typeLabel = type === "labour-hire" ? strings.LabourHire : "Agency";
   const readOnly = isView; // all inputs disabled in view mode
 
   useEffect(() => {
@@ -185,9 +186,9 @@ export const Drawer: React.FC<DrawerProps> = ({
   const handleReset = async () => {
     showModal({
       type: "confirmation",
-      title: "Password Reset",
+      title: strings.PasswordReset,
       message:
-        "A password reset link has been sent to your email. Please check your inbox.",
+        strings.APasswordResetLinkHasBeenSentToYourEmail,
       confirmLabel: "Ok",
       onConfirm: () => {
         resetPassword();
@@ -202,8 +203,8 @@ export const Drawer: React.FC<DrawerProps> = ({
   const handleCancel = useCallback(() => {
     showModal({
       type: "confirmation",
-      title: "Cancel Assignment",
-      message: "Are you sure you want to cancel the assignment?",
+      title: strings.CancelAssignment,
+      message: strings.AreYouSureYouWantToCancelTheAssignment,
       confirmLabel: "Yes",
       cancelLabel: "No",
       onConfirm: () => {
@@ -255,14 +256,13 @@ export const Drawer: React.FC<DrawerProps> = ({
                   </div>
                   <div className={styles.headerText}>
                     <h3>
-                      {modeLabel} {typeLabel} User
-                    </h3>
+                      {modeLabel} {typeLabel} {strings.User}</h3>
                     <p>
                       {isView
-                        ? "Viewing user details — read only"
+                        ? strings.ViewingUserDetailsReadOnly
                         : isEdit
-                          ? "Update user access and contract details"
-                          : "Configure user access and contract details"}
+                          ? strings.UpdateUserAccessAndContractDetails
+                          : strings.ConfigureUserAccessAndContractDetails}
                     </p>
                   </div>
                 </div>
@@ -273,8 +273,7 @@ export const Drawer: React.FC<DrawerProps> = ({
                     <>
                       <div className={styles.toggleGroup}>
                         <span className={styles.toggleGroupLabel}>
-                          Account Status
-                        </span>
+                          {strings.AccountStatus}</span>
                         <button
                           type="button"
                           className={styles.toggleBtn}
@@ -312,7 +311,7 @@ export const Drawer: React.FC<DrawerProps> = ({
               <div className={styles.body}>
                 {/* Identity & Profile */}
                 <Group badge="Identity & Profile">
-                  <Field label="User Code">
+                  <Field label={strings.UserCode}>
                     <input
                       readOnly
                       value={payload.userCode}
@@ -320,7 +319,7 @@ export const Drawer: React.FC<DrawerProps> = ({
                     />
                   </Field>
 
-                  <Field label="Nationality">
+                  <Field label={strings.Nationality}>
                     <select
                       className={`${isView ? styles.disabledWhite : styles.select}`}
                       value={payload.nationality}
@@ -332,40 +331,40 @@ export const Drawer: React.FC<DrawerProps> = ({
                     </select>
                   </Field>
 
-                  <Field label="First Name" error={errors.firstName}>
+                  <Field label={strings.FirstName} error={errors.firstName}>
                     <input
                       className={`${styles.input} ${errors.firstName ? styles.hasError : ""}`}
-                      placeholder="Enter first name"
+                      placeholder={strings.EnterFirstName}
                       value={payload.firstName}
                       readOnly={readOnly}
                       onChange={(e) => setField("firstName", e.target.value)}
                     />
                   </Field>
 
-                  <Field label="Last Name" error={errors.lastName}>
+                  <Field label={strings.LastName} error={errors.lastName}>
                     <input
                       className={`${styles.input} ${errors.lastName ? styles.hasError : ""}`}
-                      placeholder="Enter last name"
+                      placeholder={strings.EnterLastName}
                       value={payload.lastName}
                       readOnly={readOnly}
                       onChange={(e) => setField("lastName", e.target.value)}
                     />
                   </Field>
 
-                  <Field label="Company Name" error={errors.companyName}>
+                  <Field label={strings.CompanyName} error={errors.companyName}>
                     <input
                       className={`${styles.input} ${errors.companyName ? styles.hasError : ""}`}
-                      placeholder="Enter legal company name"
+                      placeholder={strings.EnterLegalCompanyName}
                       value={payload.companyName}
                       readOnly={readOnly}
                       onChange={(e) => setField("companyName", e.target.value)}
                     />
                   </Field>
 
-                  <Field label="Designation">
+                  <Field label={strings.Designation}>
                     <input
                       className={styles.input}
-                      placeholder="Enter role / title"
+                      placeholder={strings.EnterRoleTitle}
                       value={payload.designation}
                       readOnly={readOnly}
                       onChange={(e) => setField("designation", e.target.value)}
@@ -375,11 +374,11 @@ export const Drawer: React.FC<DrawerProps> = ({
 
                 {/* Contract Details */}
                 <Group badge="Contract Details">
-                  <Field label="No. of Users">
+                  <Field label={strings.NoOfUsers}>
                     <input
                       type="number"
                       className={styles.input}
-                      placeholder="Total allocated seats"
+                      placeholder={strings.TotalAllocatedSeats}
                       value={payload.numberOfUsers}
                       readOnly={readOnly}
                       onChange={(e) =>
@@ -389,7 +388,7 @@ export const Drawer: React.FC<DrawerProps> = ({
                   </Field>
                   <div /> {/* grid spacer */}
                   <Field
-                    label="Start Date of Contract"
+                    label={strings.StartDateOfContract}
                     error={errors.contractStart}
                   >
                     <input
@@ -403,7 +402,7 @@ export const Drawer: React.FC<DrawerProps> = ({
                     />
                   </Field>
                   <Field
-                    label="End Date of Contract"
+                    label={strings.EndDateOfContract}
                     error={errors.contractEnd}
                   >
                     <input
@@ -420,7 +419,7 @@ export const Drawer: React.FC<DrawerProps> = ({
                 {/* Access & Security */}
                 <Group badge="Access & Security">
                   <Field
-                    label="Email ID"
+                    label={strings.EmailId}
                     error={errors.email}
                     className={styles.colSpan2}
                   >
@@ -437,20 +436,20 @@ export const Drawer: React.FC<DrawerProps> = ({
                   {isNew && (
                     <>
                       <Field
-                        label={isEdit ? "New Password (optional)" : "Password"}
+                        label={isEdit ? strings.NewPasswordOptional : strings.Password}
                         error={errors.password}
                       >
                         <input
                           type="password"
                           className={`${styles.input} ${errors.password ? styles.hasError : ""}`}
-                          placeholder="••••••••"
+                          placeholder={strings.StringKey}
                           value={payload.password}
                           onChange={(e) => setField("password", e.target.value)}
                         />
                       </Field>
 
                       <Field
-                        label="Confirm Password"
+                        label={strings.ConfirmPassword}
                         error={errors.confirmPassword}
                       >
                         <input
@@ -485,8 +484,7 @@ export const Drawer: React.FC<DrawerProps> = ({
                     onClick={handleReset}
                     disabled={isSaving}
                   >
-                    Reset Password
-                  </button>
+                    {strings.ResetPassword}</button>
                 )}
 
                 {!isView && (
@@ -504,8 +502,8 @@ export const Drawer: React.FC<DrawerProps> = ({
                     {isSaving
                       ? "Saving…"
                       : isEdit
-                        ? "Update User"
-                        : "Create Enterprise User"}
+                        ? strings.UpdateUser
+                        : strings.CreateEnterpriseUser}
                   </button>
                 )}
               </footer>

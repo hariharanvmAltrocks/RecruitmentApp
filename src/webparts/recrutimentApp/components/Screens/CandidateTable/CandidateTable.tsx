@@ -38,6 +38,7 @@ import { useModalPopup } from "../../Comman/ModalPopup/useModalPopup";
 import moment from "moment";
 import { ModalPopup } from "../../Comman/ModalPopup/ModalPopup";
 import Loading from "../../Comman/Loading/loading";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export const panelVariants = {
   hidden: { x: "100%" },
@@ -153,7 +154,7 @@ export const CandidateTable: React.FC = (props: any) => {
         if (pendingCount > 0) {
           showModal({
             type: "error",
-            title: "Pending Candidate Alert",
+            title: strings.PendingCandidateAlert,
             message: PendingCandidateAlertMsg(pendingCount),
             confirmLabel: "OK",
             onConfirm: closeModal,
@@ -167,7 +168,7 @@ export const CandidateTable: React.FC = (props: any) => {
         if (isJobExpired) {
           showModal({
             type: "error",
-            title: "Job Expired",
+            title: strings.JobExpired,
             message: JobAdvertAlertMsg(formattedDate),
             confirmLabel: "OK",
             onConfirm: closeModal,
@@ -237,7 +238,7 @@ export const CandidateTable: React.FC = (props: any) => {
       item.workflowStatusId === workflowStatusApi.LineManagerLevel2OnHold
     ) {
       return {
-        label: "On Hold",
+        label: strings.OnHold,
         icon: <PauseCircle size={14} />,
       };
     }
@@ -264,14 +265,14 @@ export const CandidateTable: React.FC = (props: any) => {
     () => [
       {
         id: "ApplicantName",
-        header: "Applicant Name",
+        header: strings.ApplicantName,
         render: (item) => (
           <span className="candidate-table__code">{item.ApplicantName}</span>
         ),
       },
       {
         id: "PositionTitle",
-        header: "Position Title",
+        header: strings.PositionTitle,
         render: (item) => (
           <div>
             <div className="candidate-table__name">{item.PositionTitle}</div>
@@ -281,14 +282,14 @@ export const CandidateTable: React.FC = (props: any) => {
       },
       {
         id: "createdBy",
-        header: "Profile From",
+        header: strings.ProfileFrom,
         accessor: "createdBy" as keyof CandidateDashboardItem,
         cellClassName: "data-table__cell--muted",
         hideOnMobile: true,
       },
       {
         id: "createdOn",
-        header: "Profile Received Date",
+        header: strings.ProfileReceivedDate,
         accessor: "createdOn" as keyof CandidateDashboardItem,
         cellClassName: "data-table__cell--muted",
         hideOnMobile: true,
@@ -358,8 +359,7 @@ export const CandidateTable: React.FC = (props: any) => {
               </div>
               <div>
                 <h2 className="candidate-table__title">
-                  Review Candidate Profiles
-                </h2>
+                  {strings.ReviewCandidateProfiles}</h2>
                 <div className="candidate-table__meta">
                   <span className="candidate-table__badge">
                     {headerMeta.code}
@@ -380,8 +380,7 @@ export const CandidateTable: React.FC = (props: any) => {
                 disabled={isRefreshing}
               >
                 <RefreshCw size={14} className={isRefreshing ? "spin" : ""} />
-                Refresh
-              </button>
+                {strings.Refresh}</button>
 
               <button
                 type="button"

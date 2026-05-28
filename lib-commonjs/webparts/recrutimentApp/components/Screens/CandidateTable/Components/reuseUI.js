@@ -5,6 +5,7 @@ exports.getViewerUrl = exports.buildOfficeViewerUrl = exports.buildWopiUrl = exp
 var tslib_1 = require("tslib");
 var ShowCandidateDetailsPopup_module_scss_1 = tslib_1.__importDefault(require("./ShowCandidateDetailsPopup.module.scss"));
 var react_1 = tslib_1.__importDefault(require("react"));
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 exports.backdropVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 0.2 } },
@@ -70,7 +71,7 @@ var QuestionCard = function (_a) {
             react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.questionBody },
                 react_1.default.createElement("h4", { className: ShowCandidateDetailsPopup_module_scss_1.default.questionText }, question),
                 react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.answerRow },
-                    react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.answerLabel }, "Answer:"),
+                    react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.answerLabel }, strings.Answer),
                     react_1.default.createElement("span", { className: "".concat(ShowCandidateDetailsPopup_module_scss_1.default.answerBadge, " ").concat(badgeClass) }, answer !== null && answer !== void 0 ? answer : "--"))))));
 };
 exports.QuestionCard = QuestionCard;

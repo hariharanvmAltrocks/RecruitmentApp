@@ -16,6 +16,7 @@ import { useSubmitEvaluation } from "./Hooks/Usesubmitevaluation";
 import SubmitEvaluation from "./Components/Submitevaluation";
 import { StatusId } from "../../../utilities/Config";
 import Loading from "../../Comman/Loading/loading";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export interface EvalutionProps {
   candidateId: number;
@@ -134,7 +135,7 @@ function EvalutionContent({
     return (
       <div className={styles.loadingPage}>
         <div className={styles.spinner} />
-        <p className={styles.loadingText}>Loading evaluation form…</p>
+        <p className={styles.loadingText}>{strings.LoadingEvaluationForm}</p>
       </div>
     );
   }
@@ -142,10 +143,9 @@ function EvalutionContent({
     <div className={styles.root}>
       {hasError && (
         <div className={styles.errorBanner}>
-          <span>We could not load all evaluation data. Please try again.</span>
+          <span>{strings.WeCouldNotLoadAllEvaluationDataPleaseTry}</span>
           <button className={styles.retryBtn} onClick={handleRetry}>
-            Retry
-          </button>
+            {strings.Retry}</button>
         </div>
       )}
       {submitHook.submitting && <Loading />}

@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./taskPattern.module.scss";
 import { Metric } from "../../../models/IDashboard";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface TaskPatternProps {
   metrics: Metric[];
@@ -20,10 +21,10 @@ const TaskPattern: React.FC<TaskPatternProps> = ({
         <div className={styles.roadmapHeaderLeft}>
           <div className={styles.roadmapHeaderInner}>
             <span className={styles.roadmapDot} />
-            <span className={styles.roadmapTitle}>Lifecycle Roadmap</span>
+            <span className={styles.roadmapTitle}>{strings.LifecycleRoadmap}</span>
           </div>
         </div>
-        <span className={styles.roadmapSubtitle}>Operational Sequence</span>
+        <span className={styles.roadmapSubtitle}>{strings.OperationalSequence}</span>
       </div>
 
       {/* ── Chevron track — only this scrolls ───────────────────────── */}
@@ -70,7 +71,7 @@ const TaskPattern: React.FC<TaskPatternProps> = ({
                 {/* Text */}
                 <div className={styles.stepText}>
                   <span className={styles.stepNum}>
-                    STEP {String(index + 1).padStart(2, "0")}
+                    {strings.Step1}{String(index + 1).padStart(2, "0")}
                   </span>
                   <span className={styles.stepLabel}>{metric.label}</span>
                 </div>

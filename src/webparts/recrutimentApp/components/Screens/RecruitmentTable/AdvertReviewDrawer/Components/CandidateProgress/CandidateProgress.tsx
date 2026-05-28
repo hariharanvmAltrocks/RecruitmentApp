@@ -3,6 +3,7 @@ import { Filter, Search, Calendar, MoreHorizontal, Check } from "lucide-react";
 import styles from "./CandidateProgress.module.scss";
 import { PROGRESS_STEPS } from "../../../../../../utilities/PositionStatusConfig";
 import { getStatusRoadMap } from "../../Hooks/getStatusRoadMap";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface ICandidateProgressProps {
   RecID: number;
@@ -52,16 +53,14 @@ export const CandidateProgress: React.FC<ICandidateProgressProps> = ({
               marginBottom: "4px",
             }}
           >
-            <h3 style={{ margin: 0 }}>Candidate Progress</h3>
+            <h3 style={{ margin: 0 }}>{strings.CandidateProgress}</h3>
             {!loading && (
               <span className={styles.totalCountBadge}>
-                {validData.length} Total
-              </span>
+                {validData.length} {strings.Total}</span>
             )}
           </div>
           <p>
-            Track progress for each candidate through the recruitment process
-          </p>
+            {strings.TrackProgressForEachCandidateThroughTheR}</p>
         </div>
       </div>
 
@@ -77,9 +76,9 @@ export const CandidateProgress: React.FC<ICandidateProgressProps> = ({
       <table className={styles.candidateProgress__table}>
         <thead>
           <tr>
-            <th>Candidate</th>
-            <th>Current Step</th>
-            <th>Progress</th>
+            <th>{strings.Candidate}</th>
+            <th>{strings.CurrentStep}</th>
+            <th>{strings.Progress}</th>
             <th></th>
           </tr>
         </thead>
@@ -94,8 +93,7 @@ export const CandidateProgress: React.FC<ICandidateProgressProps> = ({
                     color: "#64748b",
                   }}
                 >
-                  Loading candidates...
-                </div>
+                  {strings.LoadingCandidates}</div>
               </td>
             </tr>
           ) : currentData && currentData.length > 0 ? (
@@ -131,7 +129,7 @@ export const CandidateProgress: React.FC<ICandidateProgressProps> = ({
                         {PROGRESS_STEPS[candidate.currentStepIndex]}
                       </span>
                       <span className={styles.stepStatus}>
-                        In Progress <span className={styles.dot} />
+                        {strings.InProgress}<span className={styles.dot} />
                       </span>
                     </div>
                   </div>
@@ -198,8 +196,7 @@ export const CandidateProgress: React.FC<ICandidateProgressProps> = ({
                   }}
                 >
                   <p style={{ margin: 0, fontWeight: 500 }}>
-                    No candidates are currently scheduled for an interview.
-                  </p>
+                    {strings.NoCandidatesAreCurrentlyScheduledForAnIn}</p>
                 </div>
               </td>
             </tr>
@@ -214,18 +211,16 @@ export const CandidateProgress: React.FC<ICandidateProgressProps> = ({
             disabled={currentPage === 1}
             className={styles.paginationBtn}
           >
-            Previous
-          </button>
+            {strings.Previous}</button>
           <span className={styles.paginationText}>
-            Page {currentPage} of {totalPages}
+            {strings.Page}{currentPage} {strings.Of}{totalPages}
           </span>
           <button
             onClick={handleNextPage}
             disabled={currentPage === totalPages}
             className={styles.paginationBtn}
           >
-            Next
-          </button>
+            {strings.Next}</button>
         </div>
       )}
         </>

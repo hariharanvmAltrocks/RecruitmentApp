@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Check, Eye, EyeOff, Info } from "lucide-react";
 import styles from "./Drawer.module.scss";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export interface PasswordRule {
   key: string;
@@ -11,27 +12,27 @@ export interface PasswordRule {
 export const PASSWORD_RULES: PasswordRule[] = [
   {
     key: "length",
-    label: "At least 10 characters long",
+    label: strings.AtLeast10CharactersLong,
     test: (pw) => pw.length >= 10,
   },
   {
     key: "uppercase",
-    label: "Contains an uppercase letter (A–Z)",
+    label: strings.ContainsAnUppercaseLetterAZ,
     test: (pw) => /[A-Z]/.test(pw),
   },
   {
     key: "lowercase",
-    label: "Contains a lowercase letter (a–z)",
+    label: strings.ContainsALowercaseLetterAZ,
     test: (pw) => /[a-z]/.test(pw),
   },
   {
     key: "number",
-    label: "Contains a number (0–9)",
+    label: strings.ContainsANumber09,
     test: (pw) => /[0-9]/.test(pw),
   },
   {
     key: "special",
-    label: "Contains a special character (!@#$…)",
+    label: strings.ContainsASpecialCharacter,
     test: (pw) => /[^A-Za-z0-9]/.test(pw),
   },
 ];
@@ -84,7 +85,7 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({
             className={styles.tooltipAnchor}
             tabIndex={0}
             role="button"
-            aria-label="Password requirements"
+            aria-label={strings.PasswordRequirements}
           >
             <Info size={14} className={styles.tooltipIcon} />
 
@@ -128,7 +129,7 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({
             className={styles.passwordToggleBtn}
             onClick={() => setShow((s) => !s)}
             tabIndex={-1}
-            aria-label={show ? "Hide password" : "Show password"}
+            aria-label={show ? strings.HidePassword : strings.ShowPassword}
           >
             {show ? <EyeOff size={15} /> : <Eye size={15} />}
           </button>

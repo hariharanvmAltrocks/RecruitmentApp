@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from "react";
 import { CheckCircle } from "lucide-react";
 import styles from "./InterviewScheduleInput.module.scss";
 import { TimeDropdown } from "../../../../Comman/TimeComponent/TimeDropdown";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export interface ScheduleForm {
   panelMembers: string[];
@@ -128,8 +129,7 @@ export const InterviewScheduleInput: React.FC<InterviewScheduleInputProps> = ({
       {/* ── Panel Members ─────────────────────────────────────────────────── */}
       <div className={styles.panelMembersWrap}>
         <label className={styles.fieldLabel}>
-          Interview panel members
-          <span className={styles.fieldRequired}> *</span>
+          {strings.InterviewPanelMembers}<span className={styles.fieldRequired}> *</span>
         </label>
 
         <div className={styles.panelTagsWrap}>
@@ -156,9 +156,8 @@ export const InterviewScheduleInput: React.FC<InterviewScheduleInputProps> = ({
 
         {needsMore && (
           <span className={styles.panelWarning}>
-            Select at least {minPanelCount} panel members •{" "}
-            {form.panelMembers.length} selected
-          </span>
+            {strings.SelectAtLeast}{minPanelCount} {strings.PanelMembers}{" "}
+            {form.panelMembers.length} {strings.Selected}</span>
         )}
       </div>
 
@@ -167,7 +166,7 @@ export const InterviewScheduleInput: React.FC<InterviewScheduleInputProps> = ({
         {/* Date */}
         <div className={styles.dateField}>
           <label className={styles.timeFieldLabel}>
-            Date <span className={styles.fieldRequired}>*</span>
+            {strings.Date}<span className={styles.fieldRequired}>*</span>
           </label>
           <input
             type="date"
@@ -182,13 +181,13 @@ export const InterviewScheduleInput: React.FC<InterviewScheduleInputProps> = ({
         {/* Start Time */}
         <div className={styles.dateField}>
           <label className={styles.timeFieldLabel}>
-            Start time <span className={styles.fieldRequired}>*</span>
+            {strings.StartTime}<span className={styles.fieldRequired}>*</span>
           </label>
           <TimeDropdown
             value={form.startTime}
             onChange={(val) => handleStartTimeChange(val)}
             slots={startSlots}
-            placeholder="Select time"
+            placeholder={strings.SelectTime}
             disabled={!form.startDate || Disable}
           />
         </div>
@@ -198,7 +197,7 @@ export const InterviewScheduleInput: React.FC<InterviewScheduleInputProps> = ({
         {/* End Time */}
         <div className={styles.dateField}>
           <label className={styles.timeFieldLabel}>
-            End time <span className={styles.fieldRequired}>*</span>
+            {strings.EndTime}<span className={styles.fieldRequired}>*</span>
           </label>
           <TimeDropdown
             value={form.endTime}

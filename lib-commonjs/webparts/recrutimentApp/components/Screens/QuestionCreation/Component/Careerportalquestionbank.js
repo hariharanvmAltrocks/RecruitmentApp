@@ -7,9 +7,10 @@ var lucide_react_1 = require("lucide-react");
 var framer_motion_1 = require("framer-motion");
 require("./Interviewmode.scss");
 require("../Questioncreation.scss");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var QuestionTypeBadge = function (_a) {
     var type = _a.type;
-    return (react_1.default.createElement("span", { className: "qc-badge qc-badge--".concat(type) }, type === "single" ? "Single Choice" : "Multiple Choice"));
+    return (react_1.default.createElement("span", { className: "qc-badge qc-badge--".concat(type) }, type === "single" ? strings.SingleChoice : strings.MultipleChoice));
 };
 var SkeletonCard = function () { return (react_1.default.createElement("div", { className: "qc-bank__skeleton" },
     react_1.default.createElement("div", { className: "qc-bank__skeleton-header" }),
@@ -29,15 +30,16 @@ var CareerPortalQuestionBank = function (_a) {
             react_1.default.createElement("div", { className: "qc-bank__title-row" },
                 react_1.default.createElement("h3", { className: "qc-bank__title" },
                     react_1.default.createElement("span", { className: "qc-bank__title-bar" }),
-                    "Question Bank"),
+                    strings.QuestionBank),
                 react_1.default.createElement("span", { className: "qc-bank__count" },
                     questionBank.length,
-                    " Templates"))),
+                    " ",
+                    strings.Templates))),
         react_1.default.createElement("div", { className: "qc-bank__list" }, loading ? (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(SkeletonCard, null),
             react_1.default.createElement(SkeletonCard, null),
             react_1.default.createElement(SkeletonCard, null))) : filtered.length === 0 ? (react_1.default.createElement("div", { className: "qc-bank__empty" },
-            react_1.default.createElement("p", { className: "qc-bank__empty-text" }, "No questions found"))) : (react_1.default.createElement(framer_motion_1.AnimatePresence, null, filtered.map(function (q, i) {
+            react_1.default.createElement("p", { className: "qc-bank__empty-text" }, strings.NoQuestionsFound))) : (react_1.default.createElement(framer_motion_1.AnimatePresence, null, filtered.map(function (q, i) {
             var isAdded = preparedQuestionIds.includes(q.id);
             return (react_1.default.createElement(framer_motion_1.motion.div, { key: q.id, className: "qc-bank__card ".concat(isAdded ? "qc-bank__card--added" : ""), initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: {
                     delay: i * 0.05,
@@ -46,14 +48,14 @@ var CareerPortalQuestionBank = function (_a) {
                 }, whileHover: { scale: 1.01, transition: { duration: 0.15 } } },
                 react_1.default.createElement("div", { className: "qc-bank__card-header" },
                     react_1.default.createElement(QuestionTypeBadge, { type: q.type }),
-                    react_1.default.createElement("button", { className: "qc-bank__add-btn ".concat(isAdded ? "qc-bank__add-btn--added" : ""), onClick: function () { return !isAdded && onAddFromBank(q); }, title: isAdded ? "Already added" : "Add to criteria" }, isAdded ? (react_1.default.createElement(lucide_react_1.CheckCircle2, { size: 16 })) : (react_1.default.createElement(lucide_react_1.Plus, { size: 16 })))),
+                    react_1.default.createElement("button", { className: "qc-bank__add-btn ".concat(isAdded ? "qc-bank__add-btn--added" : ""), onClick: function () { return !isAdded && onAddFromBank(q); }, title: isAdded ? strings.AlreadyAdded : strings.AddToCriteria }, isAdded ? (react_1.default.createElement(lucide_react_1.CheckCircle2, { size: 16 })) : (react_1.default.createElement(lucide_react_1.Plus, { size: 16 })))),
                 react_1.default.createElement("div", { className: "qc-bank__card-body" },
                     react_1.default.createElement("div", { className: "qc-bank__lang-block" },
-                        react_1.default.createElement("span", { className: "qc-bank__lang-label qc-bank__lang-label--en" }, "English"),
+                        react_1.default.createElement("span", { className: "qc-bank__lang-label qc-bank__lang-label--en" }, strings.English),
                         react_1.default.createElement("p", { className: "qc-bank__question-text" }, q.questionEn)),
                     react_1.default.createElement("div", { className: "qc-bank__divider" }),
                     react_1.default.createElement("div", { className: "qc-bank__lang-block" },
-                        react_1.default.createElement("span", { className: "qc-bank__lang-label qc-bank__lang-label--fr" }, "Fran\u00E7ais"),
+                        react_1.default.createElement("span", { className: "qc-bank__lang-label qc-bank__lang-label--fr" }, strings.FranAis),
                         react_1.default.createElement("p", { className: "qc-bank__question-text qc-bank__question-text--italic" }, q.questionFr)))));
         }))))));
 };

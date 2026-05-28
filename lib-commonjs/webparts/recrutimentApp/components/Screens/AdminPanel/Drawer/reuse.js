@@ -5,30 +5,31 @@ var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importStar(require("react"));
 var lucide_react_1 = require("lucide-react");
 var Drawer_module_scss_1 = tslib_1.__importDefault(require("./Drawer.module.scss"));
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 exports.PASSWORD_RULES = [
     {
         key: "length",
-        label: "At least 10 characters long",
+        label: strings.AtLeast10CharactersLong,
         test: function (pw) { return pw.length >= 10; },
     },
     {
         key: "uppercase",
-        label: "Contains an uppercase letter (A–Z)",
+        label: strings.ContainsAnUppercaseLetterAZ,
         test: function (pw) { return /[A-Z]/.test(pw); },
     },
     {
         key: "lowercase",
-        label: "Contains a lowercase letter (a–z)",
+        label: strings.ContainsALowercaseLetterAZ,
         test: function (pw) { return /[a-z]/.test(pw); },
     },
     {
         key: "number",
-        label: "Contains a number (0–9)",
+        label: strings.ContainsANumber09,
         test: function (pw) { return /[0-9]/.test(pw); },
     },
     {
         key: "special",
-        label: "Contains a special character (!@#$…)",
+        label: strings.ContainsASpecialCharacter,
         test: function (pw) { return /[^A-Za-z0-9]/.test(pw); },
     },
 ];
@@ -50,7 +51,7 @@ var PasswordField = function (_a) {
     return (react_1.default.createElement("div", { className: Drawer_module_scss_1.default.field },
         react_1.default.createElement("div", { style: { display: "flex", alignItems: "center" } },
             react_1.default.createElement("span", { className: Drawer_module_scss_1.default.label }, label),
-            showRules && (react_1.default.createElement("span", { className: Drawer_module_scss_1.default.tooltipAnchor, tabIndex: 0, role: "button", "aria-label": "Password requirements" },
+            showRules && (react_1.default.createElement("span", { className: Drawer_module_scss_1.default.tooltipAnchor, tabIndex: 0, role: "button", "aria-label": strings.PasswordRequirements },
                 react_1.default.createElement(lucide_react_1.Info, { size: 14, className: Drawer_module_scss_1.default.tooltipIcon }),
                 react_1.default.createElement("div", { className: Drawer_module_scss_1.default.tooltipBox, role: "tooltip" },
                     react_1.default.createElement("div", { className: Drawer_module_scss_1.default.tooltipTitle }, "Password requirements"),
@@ -62,7 +63,7 @@ var PasswordField = function (_a) {
                     })))))),
         react_1.default.createElement("div", { className: Drawer_module_scss_1.default.passwordInputRow },
             react_1.default.createElement("input", { type: show ? "text" : "password", className: "".concat(Drawer_module_scss_1.default.input, " ").concat(Drawer_module_scss_1.default.passwordInput, " ").concat(error ? Drawer_module_scss_1.default.hasError : ""), placeholder: placeholder, value: value, readOnly: readOnly, onChange: function (e) { return onChange(e.target.value); } }),
-            !readOnly && (react_1.default.createElement("button", { type: "button", className: Drawer_module_scss_1.default.passwordToggleBtn, onClick: function () { return setShow(function (s) { return !s; }); }, tabIndex: -1, "aria-label": show ? "Hide password" : "Show password" }, show ? react_1.default.createElement(lucide_react_1.EyeOff, { size: 15 }) : react_1.default.createElement(lucide_react_1.Eye, { size: 15 })))),
+            !readOnly && (react_1.default.createElement("button", { type: "button", className: Drawer_module_scss_1.default.passwordToggleBtn, onClick: function () { return setShow(function (s) { return !s; }); }, tabIndex: -1, "aria-label": show ? strings.HidePassword : strings.ShowPassword }, show ? react_1.default.createElement(lucide_react_1.EyeOff, { size: 15 }) : react_1.default.createElement(lucide_react_1.Eye, { size: 15 })))),
         showRules && passwordValue.length > 0 && (react_1.default.createElement("div", { className: Drawer_module_scss_1.default.strengthBarWrap, "aria-hidden": "true" }, exports.PASSWORD_RULES.map(function (_, i) { return (react_1.default.createElement("div", { key: i, className: "".concat(Drawer_module_scss_1.default.strengthSegment, " ").concat(i <= strengthIndex ? strengthClasses[strengthIndex] : "") })); }))),
         error && react_1.default.createElement("span", { className: Drawer_module_scss_1.default.errorText }, error)));
 };

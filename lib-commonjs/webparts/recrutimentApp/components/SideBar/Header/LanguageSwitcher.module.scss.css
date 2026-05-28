@@ -1,0 +1,77 @@
+.switcherContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+.toggleWrapper {
+  display: flex;
+  background: rgba(243, 244, 246, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(229, 231, 235, 0.8);
+  border-radius: 9999px;
+  padding: 3px;
+  position: relative;
+  width: 96px;
+  height: 36px;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+.slidingPill {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  height: 28px;
+  width: 43px;
+  background: #ffffff;
+  border-radius: 9999px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+  box-sizing: border-box;
+}
+.slidingPill.fr {
+  transform: translateX(45px);
+}
+
+.langOption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b7280;
+  z-index: 2;
+  transition: color 0.2s ease;
+  height: 100%;
+  letter-spacing: 0.05em;
+}
+.langOption.active {
+  color: #0f172a;
+}
+
+:global([data-theme="dark"]) .toggleWrapper,
+:global(.dark-theme) .toggleWrapper {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: rgba(71, 85, 105, 0.8);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+:global([data-theme="dark"]) .slidingPill,
+:global(.dark-theme) .slidingPill {
+  background: #0f172a;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+:global([data-theme="dark"]) .langOption,
+:global(.dark-theme) .langOption {
+  color: #94a3b8;
+}
+:global([data-theme="dark"]) .langOption.active,
+:global(.dark-theme) .langOption.active {
+  color: #f8fafc;
+}

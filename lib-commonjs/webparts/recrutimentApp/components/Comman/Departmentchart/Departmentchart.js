@@ -7,6 +7,7 @@ var lucide_react_1 = require("lucide-react");
 var Departmentchart_module_scss_1 = tslib_1.__importDefault(require("./Departmentchart.module.scss"));
 var Usedepartmentchart_1 = tslib_1.__importDefault(require("../../Screens/Dashboard/Hooks/Usedepartmentchart"));
 var ThemeContext_1 = require("../../../theme/ThemeContext");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var CustomTooltip = function (_a) {
     var active = _a.active, payload = _a.payload, _b = _a.tooltipValueLabel, tooltipValueLabel = _b === void 0 ? "Openings" : _b;
     if (!active || !(payload === null || payload === void 0 ? void 0 : payload.length))
@@ -18,7 +19,7 @@ var CustomTooltip = function (_a) {
         react_1.default.createElement("p", { className: Departmentchart_module_scss_1.default.tooltipSub }, tooltipValueLabel)));
 };
 var DepartmentChart = function (_a) {
-    var data = _a.data, _b = _a.itemsPerPage, itemsPerPage = _b === void 0 ? 7 : _b, _c = _a.title, title = _c === void 0 ? "Departmental Demand" : _c, _d = _a.subtitle, subtitle = _d === void 0 ? "Pending recruitment lifecycle status" : _d, _e = _a.tooltipValueLabel, tooltipValueLabel = _e === void 0 ? "Openings" : _e, _f = _a.refreshKey, refreshKey = _f === void 0 ? 0 : _f;
+    var data = _a.data, _b = _a.itemsPerPage, itemsPerPage = _b === void 0 ? 7 : _b, _c = _a.title, title = _c === void 0 ? strings.DepartmentalDemand : _c, _d = _a.subtitle, subtitle = _d === void 0 ? strings.PendingRecruitmentLifecycleStatus : _d, _e = _a.tooltipValueLabel, tooltipValueLabel = _e === void 0 ? "Openings" : _e, _f = _a.refreshKey, refreshKey = _f === void 0 ? 0 : _f;
     var theme = (0, ThemeContext_1.useTheme)();
     var resolvedGradientStart = theme.primaryColor;
     var resolvedGradientEnd = theme.secondaryColor;
@@ -31,22 +32,22 @@ var DepartmentChart = function (_a) {
                     react_1.default.createElement("span", { className: Departmentchart_module_scss_1.default.dot, "aria-hidden": "true" }),
                     react_1.default.createElement("h2", { className: Departmentchart_module_scss_1.default.title }, title)),
                 react_1.default.createElement("p", { className: Departmentchart_module_scss_1.default.subtitle }, subtitle)),
-            visibleData && visibleData.length > 0 && (react_1.default.createElement("div", { className: Departmentchart_module_scss_1.default.pagination, role: "navigation", "aria-label": "Chart pages" },
-                react_1.default.createElement("button", { className: "".concat(Departmentchart_module_scss_1.default.pageBtn, " ").concat(hasPrev ? Departmentchart_module_scss_1.default.active : Departmentchart_module_scss_1.default.disabled), onClick: handlePrev, disabled: !hasPrev, "aria-label": "Previous page" },
+            visibleData && visibleData.length > 0 && (react_1.default.createElement("div", { className: Departmentchart_module_scss_1.default.pagination, role: "navigation", "aria-label": strings.ChartPages },
+                react_1.default.createElement("button", { className: "".concat(Departmentchart_module_scss_1.default.pageBtn, " ").concat(hasPrev ? Departmentchart_module_scss_1.default.active : Departmentchart_module_scss_1.default.disabled), onClick: handlePrev, disabled: !hasPrev, "aria-label": strings.PreviousPage },
                     react_1.default.createElement(lucide_react_1.ChevronLeft, { size: 20 })),
                 react_1.default.createElement("div", { className: Departmentchart_module_scss_1.default.pageInfo, "aria-live": "polite" },
                     react_1.default.createElement("span", { className: Departmentchart_module_scss_1.default.pageNumbers },
                         currentPage,
                         " / ",
                         totalPages),
-                    react_1.default.createElement("span", { className: Departmentchart_module_scss_1.default.pageLabel }, "Pages")),
-                react_1.default.createElement("button", { className: "".concat(Departmentchart_module_scss_1.default.pageBtn, " ").concat(hasNext ? Departmentchart_module_scss_1.default.active : Departmentchart_module_scss_1.default.disabled), onClick: handleNext, disabled: !hasNext, "aria-label": "Next page" },
+                    react_1.default.createElement("span", { className: Departmentchart_module_scss_1.default.pageLabel }, strings.Pages)),
+                react_1.default.createElement("button", { className: "".concat(Departmentchart_module_scss_1.default.pageBtn, " ").concat(hasNext ? Departmentchart_module_scss_1.default.active : Departmentchart_module_scss_1.default.disabled), onClick: handleNext, disabled: !hasNext, "aria-label": strings.NextPage },
                     react_1.default.createElement(lucide_react_1.ChevronRight, { size: 20 }))))),
         react_1.default.createElement("div", { className: Departmentchart_module_scss_1.default.chartArea }, !visibleData || visibleData.length === 0 ? (react_1.default.createElement("div", { className: Departmentchart_module_scss_1.default.emptyState },
             react_1.default.createElement("div", { className: Departmentchart_module_scss_1.default.emptyIconContainer },
                 react_1.default.createElement(lucide_react_1.Building2, { size: 40, className: Departmentchart_module_scss_1.default.emptyIcon })),
-            react_1.default.createElement("p", { className: Departmentchart_module_scss_1.default.emptyTitle }, "No Department in request for position"),
-            react_1.default.createElement("p", { className: Departmentchart_module_scss_1.default.emptySubtitle }, "There are currently no active position requests for any department."))) : (react_1.default.createElement(recharts_1.ResponsiveContainer, { width: "100%", height: "100%" },
+            react_1.default.createElement("p", { className: Departmentchart_module_scss_1.default.emptyTitle }, strings.NoDepartmentInRequestForPosition),
+            react_1.default.createElement("p", { className: Departmentchart_module_scss_1.default.emptySubtitle }, strings.ThereAreCurrentlyNoActivePositionRequest))) : (react_1.default.createElement(recharts_1.ResponsiveContainer, { width: "100%", height: "100%" },
             react_1.default.createElement(recharts_1.BarChart, { data: visibleData, margin: { top: 10, right: 20, left: 0, bottom: 20 } },
                 react_1.default.createElement("defs", null,
                     react_1.default.createElement("linearGradient", { id: gradientId, x1: "0", y1: "0", x2: "0", y2: "1" },

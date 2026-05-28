@@ -14,6 +14,7 @@ import {
 import "../RecruitmentTable.scss";
 import { PositionDetails } from "../AdvertReviewDrawer/Hooks/getPositionDetails";
 import moment from "moment";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export interface PositionFrameworkProps {
   positionDetails: PositionDetails | null;
@@ -53,8 +54,7 @@ export const PositionFramework: React.FC<PositionFrameworkProps> = ({
     <div className="advert-review-drawer__section-header">
       <h3>
         <span className="advert-review-drawer__section-indicator" />
-        Position Framework
-      </h3>
+        {strings.PositionFramework}</h3>
       {/* <span className="advert-review-drawer__ref">REF: {headerCode || "-"}</span> */}
     </div>
 
@@ -74,38 +74,37 @@ export const PositionFramework: React.FC<PositionFrameworkProps> = ({
       <div className="advert-review-drawer__group">
         <h4 className="advert-review-drawer__group-title">
           <Users size={12} />
-          Organizational Alignment
-        </h4>
+          {strings.OrganizationalAlignment}</h4>
         <div className="advert-review-drawer__grid">
           <InfoField
-            label="BU Code"
+            label={strings.BuCode}
             value={positionDetails?.buCode}
             icon={FileText}
           />
           {/* <InfoField label="BU Name" value={positionDetails?.buName} icon={LayoutDashboard} /> */}
           <InfoField
-            label="Department"
+            label={strings.Department}
             value={positionDetails?.department}
             icon={Users}
           />
           <InfoField
-            label="Sub Department"
+            label={strings.SubDepartment}
             value={positionDetails?.subDepartment}
             icon={ChevronRight}
           />
           <InfoField
-            label="Section"
+            label={strings.Section}
             value={positionDetails?.section}
             icon={ChevronRight}
           />
           <InfoField
-            label="Dept Code"
+            label={strings.DeptCode}
             value={positionDetails?.deptCode}
             icon={FileText}
           />
           {/* <InfoField label="Reports To" value={positionDetails?.reportsTo} icon={UserCheck} /> */}
           <InfoField
-            label="Area of Work"
+            label={strings.AreaOfWork}
             value={positionDetails?.areaOfWork}
             icon={Globe}
           />
@@ -115,41 +114,40 @@ export const PositionFramework: React.FC<PositionFrameworkProps> = ({
 
         <h4 className="advert-review-drawer__group-title">
           <ClipboardList size={12} />
-          Position Classification
-        </h4>
+          {strings.PositionClassification}</h4>
         <div className="advert-review-drawer__grid">
           <InfoField
-            label="Nationality"
+            label={strings.Nationality}
             value={positionDetails?.nationality}
             icon={Globe}
           />
           <InfoField
-            label="Paterson Grade"
+            label={strings.PatersonGrade}
             value={positionDetails?.patersonGrade}
             icon={Activity}
           />
           <InfoField
-            label="DRC Grade"
+            label={strings.DrcGrade}
             value={positionDetails?.drcGrade}
             icon={Activity}
           />
           <InfoField
-            label="Employment Category"
+            label={strings.EmploymentCategory}
             value={positionDetails?.employmentCategory}
             icon={UserCheck}
           />
           <InfoField
-            label="Type of Contract"
+            label={strings.TypeOfContract}
             value={positionDetails?.contractType}
             icon={FileCheck}
           />
           <InfoField
-            label="No of Person(s)"
+            label={strings.NoOfPersonS}
             value={positionDetails?.numberOfPersons}
             icon={Users}
           />
           <InfoField
-            label="Date Required"
+            label={strings.DateRequired}
             value={moment(positionDetails?.dateRequired).format("DD-MM-YYYY")}
             icon={Calendar}
           />

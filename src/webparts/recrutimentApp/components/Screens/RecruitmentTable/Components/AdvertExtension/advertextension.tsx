@@ -9,6 +9,7 @@ import { usePositionDetails } from "../../AdvertReviewDrawer/Hooks/getPositionDe
 import Loading from "../../../../Comman/Loading/loading";
 import { ModalPopup } from "../../../../Comman/ModalPopup/ModalPopup";
 import { useModalPopup } from "../../../../Comman/ModalPopup/useModalPopup";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -37,9 +38,9 @@ type DateState = {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const EXTENSION_LABELS = [
-  "First Extension Date",
-  "Second Extension Date",
-  "Third Extension Date",
+  strings.FirstExtensionDate,
+  strings.SecondExtensionDate,
+  strings.ThirdExtensionDate,
 ] as const;
 
 const EMPTY_DATE: DateState = { StartDate: undefined, EndDate: undefined };
@@ -233,7 +234,7 @@ export const AdvertExtension: React.FC<AdvertExtensionProps> = ({
   useEffect(() => {
     if (cannotExtend && comparisonDate) {
       showModal({
-        title: "Extension Not Allowed",
+        title: strings.ExtensionNotAllowed,
         message: `You cannot extend the advertisement as the posting period has ${formatDateDisplay(comparisonDate)} already ended.`,
         type: "error",
         confirmLabel: "OK",
@@ -329,12 +330,12 @@ export const AdvertExtension: React.FC<AdvertExtensionProps> = ({
                   <polyline points="12 6 12 12 16 14" />
                 </svg>
               </div>
-              <h2 className={styles.title}>Advertisement Extension</h2>
+              <h2 className={styles.title}>{strings.AdvertisementExtension}</h2>
             </div>
             <button
               className={styles.closeBtn}
               onClick={onClose}
-              aria-label="Close"
+              aria-label={strings.Close}
             >
               <CloseIcon />
             </button>
@@ -342,7 +343,7 @@ export const AdvertExtension: React.FC<AdvertExtensionProps> = ({
 
           {/* Job subtitle */}
           <div className={styles.jobSubtitle}>
-            <span className={styles.jobLabel}>Job Title</span>
+            <span className={styles.jobLabel}>{strings.JobTitle}</span>
             <span className={styles.jobName}>
               {positionDetails?.JobTitleEnglish ?? "—"}
             </span>
@@ -357,11 +358,11 @@ export const AdvertExtension: React.FC<AdvertExtensionProps> = ({
                   <span className={styles.extensionLabel}>{row.label}</span>
                 </div>
                 <div className={styles.dateRow}>
-                  <DateField label="Start Date" date={row.start} />
+                  <DateField label={strings.StartDate} date={row.start} />
                   <div className={styles.dateDivider}>
                     <span className={styles.arrowLine} />
                   </div>
-                  <DateField label="End Date" date={row.end} />
+                  <DateField label={strings.EndDate} date={row.end} />
                 </div>
                 {i < extensionRows.length - 1 && (
                   <div className={styles.divider} />
@@ -391,8 +392,7 @@ export const AdvertExtension: React.FC<AdvertExtensionProps> = ({
                   <line x1="22" y1="2" x2="11" y2="13" />
                   <polygon points="22 2 15 22 11 13 2 9 22 2" />
                 </svg>
-                Submit
-              </button>
+                {strings.Submit}</button>
             )}
           </div>
         </div>

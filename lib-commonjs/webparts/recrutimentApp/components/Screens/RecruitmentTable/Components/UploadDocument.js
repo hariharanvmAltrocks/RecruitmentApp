@@ -5,6 +5,7 @@ var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importStar(require("react"));
 var lucide_react_1 = require("lucide-react");
 require("./UploadDocument.scss");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var DEFAULT_ACCEPTED = ".pdf,.doc,.docx,.xls,.xlsx";
 var DEFAULT_MAX_MB = 15;
 var parseAcceptedFormats = function (acceptedFormats) {
@@ -31,7 +32,7 @@ var isAcceptedFile = function (file, accepted) {
     });
 };
 var UploadDocument = function (_a) {
-    var _b = _a.multiple, multiple = _b === void 0 ? false : _b, _c = _a.acceptedFormats, acceptedFormats = _c === void 0 ? DEFAULT_ACCEPTED : _c, _d = _a.maxFileSizeMB, maxFileSizeMB = _d === void 0 ? DEFAULT_MAX_MB : _d, _e = _a.label, label = _e === void 0 ? "Upload documents" : _e, _f = _a.required, required = _f === void 0 ? false : _f, onChange = _a.onChange, _g = _a.hasError, hasError = _g === void 0 ? false : _g, _h = _a.disabled, disabled = _h === void 0 ? false : _h;
+    var _b = _a.multiple, multiple = _b === void 0 ? false : _b, _c = _a.acceptedFormats, acceptedFormats = _c === void 0 ? DEFAULT_ACCEPTED : _c, _d = _a.maxFileSizeMB, maxFileSizeMB = _d === void 0 ? DEFAULT_MAX_MB : _d, _e = _a.label, label = _e === void 0 ? strings.UploadDocuments : _e, _f = _a.required, required = _f === void 0 ? false : _f, onChange = _a.onChange, _g = _a.hasError, hasError = _g === void 0 ? false : _g, _h = _a.disabled, disabled = _h === void 0 ? false : _h;
     var inputRef = (0, react_1.useRef)(null);
     var _j = (0, react_1.useState)([]), files = _j[0], setFiles = _j[1];
     var _k = (0, react_1.useState)([]), errors = _k[0], setErrors = _k[1];
@@ -67,7 +68,7 @@ var UploadDocument = function (_a) {
                     nextErrors = [];
                     validFiles = [];
                     if (!multiple && selected.length > 1) {
-                        nextErrors.push("Only one file is allowed.");
+                        nextErrors.push(strings.OnlyOneFileIsAllowed);
                     }
                     selected.slice(0, multiple ? selected.length : 1).forEach(function (file) {
                         if (!isAcceptedFile(file, acceptedList)) {
@@ -146,7 +147,7 @@ var UploadDocument = function (_a) {
     }); }, [processFiles]);
     var requiredError = (0, react_1.useMemo)(function () {
         return required && touched && files.length === 0
-            ? "This field is required."
+            ? strings.ThisFieldIsRequired
             : null;
     }, [required, touched, files.length]);
     return (react_1.default.createElement("div", { className: "upload-document" },
@@ -156,11 +157,13 @@ var UploadDocument = function (_a) {
                     label,
                     required && react_1.default.createElement("span", { className: "upload-document__required" }, "*")),
                 react_1.default.createElement("div", { className: "upload-document__hint" },
-                    multiple ? "Upload one or more files" : "Upload a single file",
-                    " \u2014 Max ",
+                    multiple ? strings.UploadOneOrMoreFiles : strings.UploadASingleFile,
+                    " ",
+                    strings.Max,
                     maxFileSizeMB,
-                    " MB")),
-            files.length > 1 && (react_1.default.createElement("button", { type: "button", className: "upload-document__clear", onClick: handleClearAll }, "Clear all"))),
+                    " ",
+                    strings.Mb)),
+            files.length > 1 && (react_1.default.createElement("button", { type: "button", className: "upload-document__clear", onClick: handleClearAll }, strings.ClearAll))),
         react_1.default.createElement("div", { className: [
                 "upload-document__dropzone",
                 isDragging ? "is-dragging" : "",
@@ -179,22 +182,22 @@ var UploadDocument = function (_a) {
             } },
             react_1.default.createElement("div", { className: "upload-document__icon" },
                 react_1.default.createElement(lucide_react_1.FileUpIcon, { size: 22 })),
-            react_1.default.createElement("div", { className: "upload-document__title" }, "Drop files here or click to browse"),
+            react_1.default.createElement("div", { className: "upload-document__title" }, strings.DropFilesHereOrClickToBrowse),
             react_1.default.createElement("div", { className: "upload-document__formats" },
-                "Accepted: ",
+                strings.Accepted,
                 acceptedFormats)),
         react_1.default.createElement("input", { ref: inputRef, type: "file", className: "upload-document__input", accept: acceptedFormats, multiple: multiple, onChange: handleInputChange, disabled: disabled }),
         (errors.length > 0 || requiredError) && (react_1.default.createElement("div", { className: "upload-document__errors" },
             requiredError && (react_1.default.createElement("div", { className: "upload-document__error" }, requiredError)),
             errors.map(function (err, idx) { return (react_1.default.createElement("div", { key: "".concat(err, "-").concat(idx), className: "upload-document__error" }, err)); }))),
-        hasError && (react_1.default.createElement("span", { className: "upload-document__error-text" }, "Upload document is required.")),
-        react_1.default.createElement("div", { className: "upload-document__list" }, files.length === 0 ? (react_1.default.createElement("div", { className: "upload-document__empty" }, "No files selected yet.")) : (files.map(function (file, index) { return (react_1.default.createElement("div", { key: "".concat(file.name, "-").concat(index), className: "upload-document__item" },
+        hasError && (react_1.default.createElement("span", { className: "upload-document__error-text" }, strings.UploadDocumentIsRequired)),
+        react_1.default.createElement("div", { className: "upload-document__list" }, files.length === 0 ? (react_1.default.createElement("div", { className: "upload-document__empty" }, strings.NoFilesSelectedYet)) : (files.map(function (file, index) { return (react_1.default.createElement("div", { key: "".concat(file.name, "-").concat(index), className: "upload-document__item" },
             react_1.default.createElement("div", { className: "upload-document__file" },
                 react_1.default.createElement(lucide_react_1.FileText, { size: 16 }),
                 react_1.default.createElement("span", null, file.name)),
             react_1.default.createElement("button", { type: "button", className: "upload-document__remove", onClick: function () { return handleRemove(index); } },
                 react_1.default.createElement(lucide_react_1.X, { size: 14 }),
-                "Remove"))); })))));
+                strings.Remove))); })))));
 };
 exports.UploadDocument = UploadDocument;
 //# sourceMappingURL=UploadDocument.js.map

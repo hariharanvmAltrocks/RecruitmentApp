@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Question } from "../QuestionCreation.types";
 import "./Interviewmode.scss";
 import "../Questioncreation.scss";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface CareerPortalPreparedProps {
   questions: Question[];
@@ -20,9 +21,8 @@ export const CareerPortalPreparedSet: React.FC<CareerPortalPreparedProps> = ({
     <div className="qc-prepared__header">
       <h3 className="qc-prepared__title">
         <span className="qc-prepared__title-bar" />
-        Prepared Minimum Criteria
-      </h3>
-      <span className="qc-prepared__count">{questions.length} Items</span>
+        {strings.PreparedMinimumCriteria}</h3>
+      <span className="qc-prepared__count">{questions.length} {strings.Items}</span>
     </div>
 
     <div className="qc-prepared__body">
@@ -31,10 +31,9 @@ export const CareerPortalPreparedSet: React.FC<CareerPortalPreparedProps> = ({
           <div className="qc-prepared__empty-icon">
             <ClipboardList size={30} />
           </div>
-          <p className="qc-prepared__empty-title">No criteria added yet</p>
+          <p className="qc-prepared__empty-title">{strings.NoCriteriaAddedYet}</p>
           <p className="qc-prepared__empty-sub">
-            Select from bank or create new
-          </p>
+            {strings.SelectFromBankOrCreateNew}</p>
         </div>
       ) : (
         <AnimatePresence>
@@ -50,7 +49,7 @@ export const CareerPortalPreparedSet: React.FC<CareerPortalPreparedProps> = ({
               <div className="qc-prepared__meta">
                 <span className="qc-prepared__num">{idx + 1}</span>
                 {q.fromBank && (
-                  <span className="qc-prepared__from-bank" title="From Bank">
+                  <span className="qc-prepared__from-bank" title={strings.FromBank}>
                     <CheckCircle2 size={11} />
                   </span>
                 )}
@@ -59,8 +58,7 @@ export const CareerPortalPreparedSet: React.FC<CareerPortalPreparedProps> = ({
               <div className="qc-prepared__content">
                 <div className="qc-prepared__lang-header">
                   <span className="qc-prepared__lang-tag qc-prepared__lang-tag--en">
-                    English
-                  </span>
+                    {strings.English}</span>
                   <span
                     className={`qc-prepared__type-tag qc-prepared__type-tag--${q.type}`}
                   >
@@ -72,8 +70,7 @@ export const CareerPortalPreparedSet: React.FC<CareerPortalPreparedProps> = ({
                 <div className="qc-prepared__sep" />
 
                 <span className="qc-prepared__lang-tag qc-prepared__lang-tag--fr">
-                  Français
-                </span>
+                  {strings.FranAis}</span>
                 <p className="qc-prepared__question qc-prepared__question--italic">
                   {q.questionFr}
                 </p>
@@ -94,7 +91,7 @@ export const CareerPortalPreparedSet: React.FC<CareerPortalPreparedProps> = ({
               <button
                 className="qc-prepared__remove"
                 onClick={() => onEdit(q.id)}
-                title="Edit"
+                title={strings.Edit}
               >
                 <Pencil size={16} />
               </button>
@@ -102,7 +99,7 @@ export const CareerPortalPreparedSet: React.FC<CareerPortalPreparedProps> = ({
               <button
                 className="qc-prepared__remove"
                 onClick={() => onRemove(q.id)}
-                title="Remove"
+                title={strings.Remove}
               >
                 <X size={16} />
               </button>

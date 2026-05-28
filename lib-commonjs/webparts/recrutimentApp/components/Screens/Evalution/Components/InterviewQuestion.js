@@ -3,8 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var InterviewQuestion_module_scss_1 = tslib_1.__importDefault(require("./InterviewQuestion.module.scss"));
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var ScoreRating = [
-    { key: 1, text: 'Not Acceptable' },
+    { key: 1, text: strings.NotAcceptable },
     { key: 2, text: 'Acceptable' },
     { key: 3, text: 'Excellent' },
 ];
@@ -24,18 +25,18 @@ function InterviewQuestionList(_a) {
         React.createElement("div", { className: InterviewQuestion_module_scss_1.default.sectionTitle },
             React.createElement("div", { className: InterviewQuestion_module_scss_1.default.sectionAccentOrange }),
             React.createElement("div", null,
-                React.createElement("h2", { className: InterviewQuestion_module_scss_1.default.sectionH2 }, "INTERVIEW QUESTIONNAIRES"),
+                React.createElement("h2", { className: InterviewQuestion_module_scss_1.default.sectionH2 }, strings.InterviewQuestionnaires),
                 React.createElement("p", { className: InterviewQuestion_module_scss_1.default.sectionSub }, "Technical & Behavioral Assessment")),
             React.createElement("div", { className: InterviewQuestion_module_scss_1.default.ratingGuide },
-                React.createElement("span", { className: InterviewQuestion_module_scss_1.default.ratingGuideLabel }, "RATING GUIDE:"),
+                React.createElement("span", { className: InterviewQuestion_module_scss_1.default.ratingGuideLabel }, strings.RatingGuide),
                 React.createElement("span", { className: "".concat(InterviewQuestion_module_scss_1.default.dot, " ").concat(InterviewQuestion_module_scss_1.default.dotGreen) }),
                 React.createElement("span", { className: InterviewQuestion_module_scss_1.default.guideItem },
                     "3 - ",
-                    React.createElement("b", null, "Excellent")),
+                    React.createElement("b", null, strings.Excellent)),
                 React.createElement("span", { className: "".concat(InterviewQuestion_module_scss_1.default.dot, " ").concat(InterviewQuestion_module_scss_1.default.dotBlue) }),
                 React.createElement("span", { className: InterviewQuestion_module_scss_1.default.guideItem },
                     "2 - ",
-                    React.createElement("b", null, "Acceptable")),
+                    React.createElement("b", null, strings.Acceptable)),
                 React.createElement("span", { className: "".concat(InterviewQuestion_module_scss_1.default.dot, " ").concat(InterviewQuestion_module_scss_1.default.dotRed) }),
                 React.createElement("span", { className: InterviewQuestion_module_scss_1.default.guideItem },
                     "1 - ",
@@ -54,13 +55,13 @@ function InterviewQuestionList(_a) {
                 question.expectedResponse && (React.createElement("div", { className: InterviewQuestion_module_scss_1.default.guideBox },
                     React.createElement("div", { className: InterviewQuestion_module_scss_1.default.guideBoxHeader },
                         React.createElement("span", { className: InterviewQuestion_module_scss_1.default.guideCheck }, "\u2705"),
-                        React.createElement("span", { className: InterviewQuestion_module_scss_1.default.guideBoxLabel }, "EXPECTED RESPONSE GUIDE"),
-                        React.createElement("span", { className: InterviewQuestion_module_scss_1.default.guideBoxIcon }, "\uD83D\uDCCB")),
+                        React.createElement("span", { className: InterviewQuestion_module_scss_1.default.guideBoxLabel }, strings.ExpectedResponseGuide),
+                        React.createElement("span", { className: InterviewQuestion_module_scss_1.default.guideBoxIcon }, strings.StringKey2)),
                     React.createElement("p", { className: InterviewQuestion_module_scss_1.default.guideBoxText, dangerouslySetInnerHTML: { __html: cleanHTML(question.expectedResponse) } }))),
                 React.createElement("div", { className: InterviewQuestion_module_scss_1.default.qBottom },
                     React.createElement("div", null,
                         React.createElement("p", { className: InterviewQuestion_module_scss_1.default.panelRatingLabel },
-                            "PANEL RATING ",
+                            strings.PanelRating,
                             React.createElement("span", { className: InterviewQuestion_module_scss_1.default.req }, "*")),
                         React.createElement("div", { className: InterviewQuestion_module_scss_1.default.ratingBtnRow }, ScoreRating.map(function (_a) {
                             var key = _a.key, text = _a.text;
@@ -74,7 +75,7 @@ function InterviewQuestionList(_a) {
                             return (React.createElement("button", { key: key, className: btnClass, onClick: function () { return onAnswerChange(question.id, { rating: key }); } }, text));
                         }))),
                     React.createElement("div", { className: InterviewQuestion_module_scss_1.default.scoreDisplay },
-                        React.createElement("span", { className: InterviewQuestion_module_scss_1.default.scoreLabel }, "SCORE"),
+                        React.createElement("span", { className: InterviewQuestion_module_scss_1.default.scoreLabel }, strings.Score),
                         React.createElement("span", { className: InterviewQuestion_module_scss_1.default.scoreNum }, (_a = answer === null || answer === void 0 ? void 0 : answer.rating) !== null && _a !== void 0 ? _a : 0,
                             React.createElement("span", { className: InterviewQuestion_module_scss_1.default.scoreMax }, "/3"))))));
         })));

@@ -21,6 +21,7 @@ import { ReviewCommentSignature } from "../../RecruitmentTable/Components/Review
 import { useSignatureDetails } from "../../RecruitmentTable/AdvertReviewDrawer/Hooks/getSignatureDetails";
 import { canView } from "../ReviewScoreCardServies/ReviewScoreCardServices";
 import { CheckboxContent } from "../../../../utilities/ConditionConfig";
+import * as strings from 'RecrutimentAppWebPartStrings';
 const _FEEDBACK_LEVEL2_STATUS_IDS = [130, 129];
 
 interface Props {
@@ -81,8 +82,8 @@ const HODDecisionPanel: React.FC<Props> = ({
   roleId,
 }) => {
   const feedbackLabel = _FEEDBACK_LEVEL2_STATUS_IDS.includes(statusId)
-    ? "Feedback — Level 2"
-    : "Feedback — Level 1";
+    ? strings.FeedbackLevel2
+    : strings.FeedbackLevel1;
   const [openPosition, setOpenPosition] = React.useState(false);
   const { data: signatureDetails, loading: signatureLoading } =
     useSignatureDetails();
@@ -101,8 +102,7 @@ const HODDecisionPanel: React.FC<Props> = ({
           // disabled={submitHook.submitting}
         >
           <FileText size={16} />
-          VIEW COMMENTS
-        </button>
+          {strings.ViewComments}</button>
       </div>
 
       <div className={styles.lmDecisionCard} style={{ marginBottom: "4%" }}>
@@ -112,11 +112,9 @@ const HODDecisionPanel: React.FC<Props> = ({
           </div>
           <div className={styles.lmDecisionTitleWrap}>
             <h3 className={styles.lmDecisionTitle}>
-              Do you wish to select this candidate?
-            </h3>
+              {strings.DoYouWishToSelectThisCandidate}</h3>
             <p className={styles.lmDecisionSubtitle}>
-              As HOD, review the evaluation and provide your decision.
-            </p>
+              {strings.AsHodReviewTheEvaluationAndProvideYourDe}</p>
           </div>
         </div>
 
@@ -138,7 +136,7 @@ const HODDecisionPanel: React.FC<Props> = ({
                 hodDecision === "Yes" ? styles.iconWhite : styles.iconGreen
               }
             />
-            <span className={styles.decisionBtnLabel}>YES, SELECT</span>
+            <span className={styles.decisionBtnLabel}>{strings.YesSelect}</span>
           </button>
 
           <button
@@ -157,7 +155,7 @@ const HODDecisionPanel: React.FC<Props> = ({
                 hodDecision === "No" ? styles.iconWhite : styles.iconRed
               }
             />
-            <span className={styles.decisionBtnLabel}>NO, REJECT</span>
+            <span className={styles.decisionBtnLabel}>{strings.NoReject}</span>
           </button>
 
           <button
@@ -176,7 +174,7 @@ const HODDecisionPanel: React.FC<Props> = ({
                 hodDecision === "On Hold" ? styles.iconWhite : styles.iconAmber
               }
             />
-            <span className={styles.decisionBtnLabel}>ON HOLD</span>
+            <span className={styles.decisionBtnLabel}>{strings.OnHold1}</span>
           </button>
         </div>
 
@@ -189,8 +187,7 @@ const HODDecisionPanel: React.FC<Props> = ({
               marginTop: "0.4rem",
             }}
           >
-            ⚠ Please select a decision.
-          </div>
+            {strings.PleaseSelectADecision}</div>
         )}
 
         {!canEdit && (
@@ -202,7 +199,7 @@ const HODDecisionPanel: React.FC<Props> = ({
             animate="visible"
           >
             <div className={styles.hrFeedbackCard} style={{ marginTop: "5%" }}>
-              <SectionHeader title="Assign Position ID" accent="green" />
+              <SectionHeader title={strings.AssignPositionId} accent="green" />
 
               <div className={styles.hrFeedbackFieldWrap}>
                 <label
@@ -258,7 +255,7 @@ const HODDecisionPanel: React.FC<Props> = ({
                   Assign Position ID{" "}
                   <span className={styles.fieldRequired}>*</span>
                   {errors.position && (
-                    <span className={styles.mErrText}> — Required</span>
+                    <span className={styles.mErrText}> {strings.Required1}</span>
                   )}
                 </label>
 
@@ -278,7 +275,7 @@ const HODDecisionPanel: React.FC<Props> = ({
                     >
                       {selectedPositionText
                         ? selectedPositionText
-                        : "Select a position…"}
+                        : strings.SelectAPosition}
                     </span>
                     <ChevronDown
                       size={18}
@@ -314,8 +311,7 @@ const HODDecisionPanel: React.FC<Props> = ({
                           ))
                         ) : (
                           <div className={styles.mNoData}>
-                            No positions available.
-                          </div>
+                            {strings.NoPositionsAvailable}</div>
                         )}
                       </motion.div>
                     )}

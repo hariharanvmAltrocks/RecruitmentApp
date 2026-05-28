@@ -29,6 +29,7 @@ import {
   PortalItem,
   useUpdateListPortal,
 } from "./ReviewDocument/Hooks/Useupdatelistportal";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export type ActionMode = "Initiate" | "Review" | "View" | "Edit";
 
@@ -70,7 +71,7 @@ function buildColumns(
   return [
     {
       id: "PositionID",
-      header: "Position ID",
+      header: strings.PositionId,
       accessor: "positionId",
       render: (item: any) => (
         <div className="data-table__job-code">
@@ -80,7 +81,7 @@ function buildColumns(
     },
     {
       id: "title",
-      header: "Job Title & Dept",
+      header: strings.JobTitleDept,
       render: (item: any) => (
         <div className="data-table__job-title">
           <span>{item.title}</span>
@@ -90,7 +91,7 @@ function buildColumns(
     },
     {
       id: "buCode",
-      header: "Business Unit",
+      header: strings.BusinessUnit,
       render: (item: any) => String(item.buCode || "").padStart(2, "0"),
       cellClassName: "data-table__cell--muted",
       align: "center",
@@ -98,7 +99,7 @@ function buildColumns(
     },
     {
       id: "applicantName",
-      header: "Applicant Name",
+      header: strings.ApplicantName,
       accessor: "applicantName",
       cellClassName: "data-table__cell--count",
       hideOnMobile: true,
@@ -275,23 +276,21 @@ export const OfferTable: React.FC = () => {
               className="submission-header__refresh-btn"
               onClick={handleRefresh}
               disabled={tableLoading}
-              title="Refresh table"
+              title={strings.RefreshTable}
               aria-label="Refresh table"
             >
               <RefreshCw
                 size={14}
                 className={tableLoading ? "spin" : undefined}
               />
-              Refresh
-            </button>
+              {strings.Refresh}</button>
 
             <button
               onClick={() => navigate("/Dashboard")}
               className="submission-header__button"
             >
               <RotateCcw size={14} />
-              Back to Dashboard
-            </button>
+              {strings.BackToDashboard}</button>
           </div>
         </div>
 

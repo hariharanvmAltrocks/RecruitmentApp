@@ -1,5 +1,6 @@
 import * as React from "react";
 import styles from "../ReviewScorecard.module.scss";
+import * as strings from 'RecrutimentAppWebPartStrings';
 const SCORECARD_BAR_LABELS = [
   { key: "RelevantQualification", label: "QUALIFICATIONS" },
   { key: "ReleventExperience", label: "EXPERIENCE" },
@@ -7,7 +8,7 @@ const SCORECARD_BAR_LABELS = [
   { key: "EnergyLevel", label: "ENERGY" },
   { key: "MeetJobRequirement", label: "REQUIREMENTS" },
   { key: "ContributeTowardsCultureRequried", label: "CULTURE" },
-  { key: "Experience", label: "EXPAT EXP." },
+  { key: "Experience", label: strings.ExpatExp },
   { key: "OtherCriteriaScore", label: "OTHER" },
 ];
 
@@ -39,10 +40,9 @@ const QuestionnaireTab: React.FC<Props> = ({
     <div className={styles.mSectionHeader}>
       <div className={styles.mSectionBar} style={{ background: "#f97316" }} />
       <div>
-        <div className={styles.mSectionTitle}>INTERVIEW QUESTIONNAIRES</div>
+        <div className={styles.mSectionTitle}>{strings.InterviewQuestionnaires}</div>
         <div className={styles.mSectionSub}>
-          Panel Assessment Results
-          {panelMemberName ? ` — ${panelMemberName}` : ""}
+          {strings.PanelAssessmentResults}{panelMemberName ? ` — ${panelMemberName}` : ""}
         </div>
       </div>
     </div>
@@ -51,9 +51,9 @@ const QuestionnaireTab: React.FC<Props> = ({
       {/*style={{ maxHeight: "500px", overflowY: "auto" }}*/}
       {/* Q cards */}
       {fetchingQuestions ? (
-        <div className={styles.mNoData}>Loading questions…</div>
+        <div className={styles.mNoData}>{strings.LoadingQuestions}</div>
       ) : questions.length === 0 ? (
-        <div className={styles.mNoData}>No questions found for this job.</div>
+        <div className={styles.mNoData}>{strings.NoQuestionsFoundForThisJob}</div>
       ) : (
         questions.map((q: any, idx: number) => {
           const qScore = activeQJson[idx]
@@ -79,14 +79,14 @@ const QuestionnaireTab: React.FC<Props> = ({
                   />
                   {answerText && (
                     <p className={styles.mQAnswer}>
-                      <strong>Expected Answer:</strong> {answerText}
+                      <strong>{strings.ExpectedAnswer1}</strong> {answerText}
                     </p>
                   )}
                 </div>
               </div>
               <div className={styles.mQBottom}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span className={styles.mRatingLabel}>RATING:</span>
+                  <span className={styles.mRatingLabel}>{strings.Rating}</span>
                   <span
                     className={styles.mRatingBadge}
                     style={{
@@ -99,7 +99,7 @@ const QuestionnaireTab: React.FC<Props> = ({
                   </span>
                 </div>
                 <div className={styles.mScoreDisplay}>
-                  <span className={styles.mScoreLabel}>SCORE</span>
+                  <span className={styles.mScoreLabel}>{strings.Score}</span>
                   <span className={styles.mScoreNum}>
                     {qScore}
                     <span className={styles.mScoreMax}>/3</span>
@@ -118,10 +118,9 @@ const QuestionnaireTab: React.FC<Props> = ({
               style={{ background: "#22c55e" }}
             />
             <div>
-              <div className={styles.mSectionTitle}>SCORECARD DETAILS</div>
+              <div className={styles.mSectionTitle}>{strings.ScorecardDetails}</div>
               <div className={styles.mSectionSub}>
-                Core Competency Assessment (1–5 Scale)
-              </div>
+                {strings.CoreCompetencyAssessment15Scale}</div>
             </div>
           </div>
           <div className={styles.mScoreCard}>
@@ -148,20 +147,18 @@ const QuestionnaireTab: React.FC<Props> = ({
             {/* Panel recommendation + overall feedback */}
             <div className={styles.mRecFeedbackRow}>
               <div className={styles.mRecCol}>
-                <div className={styles.mRecLabel}>PANEL RECOMMENDATION</div>
+                <div className={styles.mRecLabel}>{strings.PanelRecommendation}</div>
                 {activeScore.ConsiderForEmployment === "Yes" ? (
                   <div className={styles.mRecBadgeYes}>
-                    ✓ Consider for Employment
-                  </div>
+                    {strings.ConsiderForEmployment1}</div>
                 ) : (
-                  <div className={styles.mRecBadgeNo}>✕ Do Not Consider</div>
+                  <div className={styles.mRecBadgeNo}>{strings.DoNotConsider}</div>
                 )}
               </div>
               {activeScore.OverAllEvaluationFeedback && (
                 <div className={styles.mFeedbackCol}>
                   <div className={styles.mRecLabel}>
-                    OVERALL EVALUATION FEEDBACK
-                  </div>
+                    {strings.OverallEvaluationFeedback}</div>
                   <div className={styles.mFeedbackText}>
                     "{activeScore.OverAllEvaluationFeedback}"
                   </div>

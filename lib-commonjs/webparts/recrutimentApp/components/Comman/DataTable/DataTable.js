@@ -5,6 +5,7 @@ var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importStar(require("react"));
 var lucide_react_1 = require("lucide-react");
 require("./DataTable.scss");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var getRowIdFallback = function (row, index) {
     var possibleId = row.id;
     return possibleId !== null && possibleId !== void 0 ? possibleId : String(index);
@@ -20,7 +21,7 @@ var buildCellValue = function (row, column) {
     return "-";
 };
 var DataTable = function (_a) {
-    var columns = _a.columns, data = _a.data, _b = _a.enableCheckbox, enableCheckbox = _b === void 0 ? false : _b, _c = _a.selectedRowIds, selectedRowIds = _c === void 0 ? [] : _c, _d = _a.getRowId, getRowId = _d === void 0 ? getRowIdFallback : _d, onToggleRow = _a.onToggleRow, onToggleAll = _a.onToggleAll, pageSize = _a.pageSize, currentPage = _a.currentPage, totalCount = _a.totalCount, onPageChange = _a.onPageChange, _e = _a.pageSizeOptions, pageSizeOptions = _e === void 0 ? [10, 20, 50] : _e, onPageSizeChange = _a.onPageSizeChange, _f = _a.loading, loading = _f === void 0 ? false : _f, _g = _a.emptyMessage, emptyMessage = _g === void 0 ? "No records found." : _g, onRowClick = _a.onRowClick;
+    var columns = _a.columns, data = _a.data, _b = _a.enableCheckbox, enableCheckbox = _b === void 0 ? false : _b, _c = _a.selectedRowIds, selectedRowIds = _c === void 0 ? [] : _c, _d = _a.getRowId, getRowId = _d === void 0 ? getRowIdFallback : _d, onToggleRow = _a.onToggleRow, onToggleAll = _a.onToggleAll, pageSize = _a.pageSize, currentPage = _a.currentPage, totalCount = _a.totalCount, onPageChange = _a.onPageChange, _e = _a.pageSizeOptions, pageSizeOptions = _e === void 0 ? [10, 20, 50] : _e, onPageSizeChange = _a.onPageSizeChange, _f = _a.loading, loading = _f === void 0 ? false : _f, _g = _a.emptyMessage, emptyMessage = _g === void 0 ? strings.NoRecordsFound : _g, onRowClick = _a.onRowClick;
     var rowIds = (0, react_1.useMemo)(function () { return data.map(function (row, index) { return getRowId(row, index); }); }, [data, getRowId]);
     var allSelected = enableCheckbox &&
         rowIds.length > 0 &&
@@ -50,7 +51,7 @@ var DataTable = function (_a) {
             react_1.default.createElement("thead", { className: "data-table__head" },
                 react_1.default.createElement("tr", { className: "data-table__head-row" },
                     enableCheckbox && (react_1.default.createElement("th", { className: "data-table__checkbox-cell" },
-                        react_1.default.createElement("button", { className: "data-table__checkbox ".concat(allSelected || someSelected ? "data-table__checkbox--checked" : "").trim(), type: "button", "aria-pressed": allSelected, "aria-label": "Select all rows", onClick: onToggleAll, disabled: !onToggleAll },
+                        react_1.default.createElement("button", { className: "data-table__checkbox ".concat(allSelected || someSelected ? "data-table__checkbox--checked" : "").trim(), type: "button", "aria-pressed": allSelected, "aria-label": strings.SelectAllRows, onClick: onToggleAll, disabled: !onToggleAll },
                             allSelected ? react_1.default.createElement(lucide_react_1.Check, { size: 12 }) : null,
                             someSelected && !allSelected ? react_1.default.createElement(lucide_react_1.Minus, { size: 12 }) : null))),
                     columns.map(function (column) {
@@ -89,7 +90,7 @@ var DataTable = function (_a) {
                         var isSelected = selectedRowIds.includes(rowId);
                         return (react_1.default.createElement("tr", { key: rowId, onClick: onRowClick ? function () { return onRowClick(row); } : undefined, style: onRowClick ? { cursor: "pointer" } : undefined, className: "data-table__row ".concat(isSelected ? "data-table__row--selected" : "").trim() },
                             enableCheckbox && (react_1.default.createElement("td", { className: "data-table__cell data-table__checkbox-cell" },
-                                react_1.default.createElement("button", { className: "data-table__checkbox ".concat(isSelected ? "data-table__checkbox--checked" : "").trim(), type: "button", "aria-pressed": isSelected, "aria-label": "Select row", onClick: function () { return onToggleRow === null || onToggleRow === void 0 ? void 0 : onToggleRow(rowId); }, disabled: !onToggleRow }, isSelected ? react_1.default.createElement(lucide_react_1.Check, { size: 12 }) : null))),
+                                react_1.default.createElement("button", { className: "data-table__checkbox ".concat(isSelected ? "data-table__checkbox--checked" : "").trim(), type: "button", "aria-pressed": isSelected, "aria-label": strings.SelectRow, onClick: function () { return onToggleRow === null || onToggleRow === void 0 ? void 0 : onToggleRow(rowId); }, disabled: !onToggleRow }, isSelected ? react_1.default.createElement(lucide_react_1.Check, { size: 12 }) : null))),
                             columns.map(function (column) {
                                 var _a;
                                 return (react_1.default.createElement("td", { key: "".concat(column.id, "-").concat(rowId), className: [
@@ -105,28 +106,30 @@ var DataTable = function (_a) {
                             })));
                     }))),
         react_1.default.createElement("div", { className: "data-table__pagination" },
-            react_1.default.createElement("div", { className: "data-table__pagination-summary" }, totalCount === 0 ? ("No records") : (react_1.default.createElement(react_1.default.Fragment, null,
-                "Showing ",
+            react_1.default.createElement("div", { className: "data-table__pagination-summary" }, totalCount === 0 ? (strings.NoRecords) : (react_1.default.createElement(react_1.default.Fragment, null,
+                strings.Showing,
                 react_1.default.createElement("strong", null, rangeStart),
-                " to",
+                " ",
+                strings.To,
                 " ",
                 react_1.default.createElement("strong", null, rangeEnd),
-                " of ",
+                " ",
+                strings.Of,
                 react_1.default.createElement("strong", null, totalCount),
                 " ",
-                "results"))),
+                strings.Results))),
             onPageSizeChange && (react_1.default.createElement("div", { className: "data-table__page-size" },
-                react_1.default.createElement("span", { className: "data-table__page-size-label" }, "Rows per page"),
+                react_1.default.createElement("span", { className: "data-table__page-size-label" }, strings.RowsPerPage),
                 react_1.default.createElement("div", { className: "data-table__page-size-group" }, pageSizeOptions.map(function (size) { return (react_1.default.createElement("button", { key: size, type: "button", className: "data-table__page-size-btn ".concat(size === pageSize ? "data-table__page-size-btn--active" : ""), onClick: function () {
                         onPageSizeChange(size);
                         onPageChange(1);
                     } }, size)); })))),
             react_1.default.createElement("div", { className: "data-table__pagination-controls" },
-                react_1.default.createElement("button", { className: "data-table__page-arrow", type: "button", onClick: handlePrev, disabled: safeCurrentPage <= 1, "aria-label": "Previous page" }, "\u2039"),
+                react_1.default.createElement("button", { className: "data-table__page-arrow", type: "button", onClick: handlePrev, disabled: safeCurrentPage <= 1, "aria-label": strings.PreviousPage }, "\u2039"),
                 pages.map(function (page) { return (react_1.default.createElement("button", { key: page, type: "button", className: "data-table__page-number ".concat(page === safeCurrentPage
                         ? "data-table__page-number--active"
                         : ""), onClick: function () { return onPageChange(page); } }, page)); }),
-                react_1.default.createElement("button", { className: "data-table__page-arrow", type: "button", onClick: handleNext, disabled: safeCurrentPage >= totalPages, "aria-label": "Next page" }, "\u203A")))));
+                react_1.default.createElement("button", { className: "data-table__page-arrow", type: "button", onClick: handleNext, disabled: safeCurrentPage >= totalPages, "aria-label": strings.NextPage }, "\u203A")))));
 };
 exports.DataTable = DataTable;
 //# sourceMappingURL=DataTable.js.map

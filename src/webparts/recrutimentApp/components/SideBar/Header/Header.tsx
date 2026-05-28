@@ -6,6 +6,7 @@ import { findBreadcrumbPath } from "../menuUtils";
 import { useTheme } from "../../../theme/ThemeContext";
 import * as strings from "RecrutimentAppWebPartStrings";
 import { userInfo } from "../../../utilities/hooks/RoleContext";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 interface HeaderProps {
   menuData: any[];
@@ -69,6 +70,8 @@ const Header: React.FC<HeaderProps> = ({
             <Bell size={20} />
             <span className="notification-dot" />
           </button> */}
+
+          {/* <LanguageSwitcher /> */}
 
           <div className="divider" />
 

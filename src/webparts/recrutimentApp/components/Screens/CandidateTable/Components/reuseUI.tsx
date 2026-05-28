@@ -2,6 +2,7 @@ import { CheckCircle } from "lucide-react";
 import { InterviewScheduleForm } from "../Hooks/Usesubmitcandidatereview";
 import styles from "./ShowCandidateDetailsPopup.module.scss";
 import React from "react";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export const backdropVariants = {
   hidden: { opacity: 0 },
@@ -88,7 +89,7 @@ export const QuestionCard: React.FC<{
         <div className={styles.questionBody}>
           <h4 className={styles.questionText}>{question}</h4>
           <div className={styles.answerRow}>
-            <span className={styles.answerLabel}>Answer:</span>
+            <span className={styles.answerLabel}>{strings.Answer}</span>
             <span className={`${styles.answerBadge} ${badgeClass}`}>
               {answer ?? "--"}
             </span>

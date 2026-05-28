@@ -6,6 +6,7 @@ var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importStar(require("react"));
 var lucide_react_1 = require("lucide-react");
 require("./Coicard.modules.scss");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var MAX_COMMENT_LENGTH = 256;
 var COICard = function (_a) {
     var consultOptions = _a.consultOptions, _b = _a.isReadOnly, isReadOnly = _b === void 0 ? false : _b, _c = _a.hasError, hasError = _c === void 0 ? false : _c, onChange = _a.onChange;
@@ -58,7 +59,7 @@ var COICard = function (_a) {
                     return [3 /*break*/, 4];
                 case 3:
                     error_1 = _b.sent();
-                    console.error("File conversion error:", error_1);
+                    console.error(strings.FileConversionError, error_1);
                     return [3 /*break*/, 4];
                 case 4:
                     target.value = "";
@@ -74,68 +75,69 @@ var COICard = function (_a) {
     return (react_1.default.createElement("div", { className: "coi-card" },
         react_1.default.createElement("div", { className: "coi-card__titleRow" },
             react_1.default.createElement("span", { className: "coi-card__titleBar" }),
-            react_1.default.createElement("h2", { className: "coi-card__title" }, "Background Verification")),
+            react_1.default.createElement("h2", { className: "coi-card__title" }, strings.BackgroundVerification)),
         react_1.default.createElement("div", { className: "coi-card__fields" },
             react_1.default.createElement("div", { className: "coi-card__field ".concat(consultedWithError ? "coi-card__field--error" : "") },
                 react_1.default.createElement("label", { className: "coi-card__label" },
-                    "Consulted with ",
+                    strings.ConsultedWith,
                     react_1.default.createElement("span", { className: "coi-card__required" }, "*")),
                 react_1.default.createElement("div", { className: "coi-card__select-wrap" },
                     react_1.default.createElement("select", { className: "coi-card__select", value: state.consultedWith, onChange: function (e) { return update({ consultedWith: e.target.value }); }, disabled: isReadOnly },
-                        react_1.default.createElement("option", { value: "" }, "Select..."),
+                        react_1.default.createElement("option", { value: "" }, strings.Select),
                         consultOptions.map(function (opt) { return (react_1.default.createElement("option", { key: opt.value, value: opt.value }, opt.label)); })),
                     react_1.default.createElement(lucide_react_1.ChevronDown, { size: 16, className: "coi-card__select-chevron" })),
-                consultedWithError && (react_1.default.createElement("span", { className: "coi-card__error-msg" }, "This field is required."))),
+                consultedWithError && (react_1.default.createElement("span", { className: "coi-card__error-msg" }, strings.ThisFieldIsRequired))),
             react_1.default.createElement("div", { className: "coi-card__field ".concat(attachmentError ? "coi-card__field--error" : "") },
                 react_1.default.createElement("label", { className: "coi-card__label" },
-                    "Proof of discussion ",
+                    strings.ProofOfDiscussion,
                     react_1.default.createElement("span", { className: "coi-card__required" }, "*")),
                 !isReadOnly ? (state.attachment.length === 0 ? (react_1.default.createElement("button", { type: "button", className: "coi-card__upload-btn ".concat(attachmentError ? "coi-card__upload-btn--error" : ""), onClick: function () { var _a; return (_a = fileInputRef.current) === null || _a === void 0 ? void 0 : _a.click(); } },
                     react_1.default.createElement("span", { className: "coi-card__upload-icon" },
                         react_1.default.createElement(lucide_react_1.Upload, { size: 16 })),
                     react_1.default.createElement("span", { className: "coi-card__upload-text" },
-                        react_1.default.createElement("span", { className: "coi-card__upload-primary" }, "Click to upload"),
-                        react_1.default.createElement("span", { className: "coi-card__upload-hint" }, "PDF, DOC, DOCX, PNG, JPG")))) : (react_1.default.createElement("div", { className: "coi-card__file-preview" },
+                        react_1.default.createElement("span", { className: "coi-card__upload-primary" }, strings.ClickToUpload),
+                        react_1.default.createElement("span", { className: "coi-card__upload-hint" }, strings.PdfDocDocxPngJpg)))) : (react_1.default.createElement("div", { className: "coi-card__file-preview" },
                     react_1.default.createElement("span", { className: "coi-card__file-icon" },
                         react_1.default.createElement(lucide_react_1.FileText, { size: 16 })),
                     react_1.default.createElement("div", { className: "coi-card__file-info" },
                         react_1.default.createElement("span", { className: "coi-card__file-name" }, state.attachment[0].name),
                         react_1.default.createElement("span", { className: "coi-card__file-ready" },
                             react_1.default.createElement(lucide_react_1.CheckCircle, { size: 11 }),
-                            " Ready to submit")),
-                    react_1.default.createElement("button", { type: "button", className: "coi-card__file-remove", onClick: handleClearFile, "aria-label": "Remove file" },
+                            " ",
+                            strings.ReadyToSubmit)),
+                    react_1.default.createElement("button", { type: "button", className: "coi-card__file-remove", onClick: handleClearFile, "aria-label": strings.RemoveFile },
                         react_1.default.createElement(lucide_react_1.Trash2, { size: 14 }))))) : /* Read-only file display */
                     state.attachment.length > 0 ? (react_1.default.createElement("div", { className: "coi-card__file-preview coi-card__file-preview--readonly" },
                         react_1.default.createElement("span", { className: "coi-card__file-icon" },
                             react_1.default.createElement(lucide_react_1.FileText, { size: 16 })),
-                        react_1.default.createElement("span", { className: "coi-card__file-name" }, state.attachment[0].name))) : (react_1.default.createElement("span", { className: "coi-card__empty" }, "No file uploaded")),
+                        react_1.default.createElement("span", { className: "coi-card__file-name" }, state.attachment[0].name))) : (react_1.default.createElement("span", { className: "coi-card__empty" }, strings.NoFileUploaded)),
                 react_1.default.createElement("input", { ref: fileInputRef, type: "file", accept: ".pdf,.doc,.docx,.png,.jpg", style: { display: "none" }, onChange: handleFileChange }),
-                attachmentError && (react_1.default.createElement("span", { className: "coi-card__error-msg" }, "Please upload proof of discussion.")))),
+                attachmentError && (react_1.default.createElement("span", { className: "coi-card__error-msg" }, strings.PleaseUploadProofOfDiscussion)))),
         react_1.default.createElement("div", { className: "coi-card__textarea-wrap ".concat(commentsError ? "coi-card__field--error" : "") },
             react_1.default.createElement("label", { className: "coi-card__label" },
-                "Reason / Comments ",
+                strings.ReasonComments,
                 react_1.default.createElement("span", { className: "coi-card__required" }, "*")),
             react_1.default.createElement("div", { className: "coi-card__textarea-relative" },
-                react_1.default.createElement("textarea", { className: "coi-card__textarea ".concat(commentsError ? "coi-card__textarea--error" : ""), maxLength: MAX_COMMENT_LENGTH, placeholder: "Enter your comments (max 256 characters)...", value: state.comments, onChange: function (e) { return update({ comments: e.target.value }); }, readOnly: isReadOnly }),
+                react_1.default.createElement("textarea", { className: "coi-card__textarea ".concat(commentsError ? "coi-card__textarea--error" : ""), maxLength: MAX_COMMENT_LENGTH, placeholder: strings.EnterYourCommentsMax256Characters, value: state.comments, onChange: function (e) { return update({ comments: e.target.value }); }, readOnly: isReadOnly }),
                 react_1.default.createElement("span", { className: "coi-card__char-count" },
                     state.comments.length,
                     "/",
                     MAX_COMMENT_LENGTH)),
-            commentsError && (react_1.default.createElement("span", { className: "coi-card__error-msg" }, "Comments are required."))),
+            commentsError && (react_1.default.createElement("span", { className: "coi-card__error-msg" }, strings.CommentsAreRequired))),
         react_1.default.createElement("div", { className: "coi-card__radio-group ".concat(proceedError ? "coi-card__field--error" : "") },
             react_1.default.createElement("label", { className: "coi-card__label" },
-                "Do you wish to proceed with this action ?",
+                strings.DoYouWishToProceedWithThisAction,
                 " ",
                 react_1.default.createElement("span", { className: "coi-card__required" }, "*")),
             react_1.default.createElement("div", { className: "coi-card__radio-options" },
                 react_1.default.createElement("label", { className: "coi-card__radio-label" },
                     react_1.default.createElement("input", { type: "radio", name: "proceedAction", value: "Yes", checked: state.wishesToProceed === "Yes", onChange: function () { return update({ wishesToProceed: "Yes" }); }, disabled: isReadOnly }),
                     react_1.default.createElement("span", { className: "coi-card__radio-custom" }),
-                    react_1.default.createElement("span", { className: "coi-card__radio-text" }, "Yes")),
+                    react_1.default.createElement("span", { className: "coi-card__radio-text" }, strings.Yes1)),
                 react_1.default.createElement("label", { className: "coi-card__radio-label" },
                     react_1.default.createElement("input", { type: "radio", name: "proceedAction", value: "No", checked: state.wishesToProceed === "No", onChange: function () { return update({ wishesToProceed: "No" }); }, disabled: isReadOnly }),
                     react_1.default.createElement("span", { className: "coi-card__radio-custom" }),
-                    react_1.default.createElement("span", { className: "coi-card__radio-text" }, "No"))),
+                    react_1.default.createElement("span", { className: "coi-card__radio-text" }, strings.No1))),
             proceedError && (react_1.default.createElement("span", { className: "coi-card__error-msg" }, "This field is required.")))));
 };
 exports.COICard = COICard;

@@ -2,6 +2,7 @@
 import React from "react";
 import { CheckCircle2, FileText, Upload, X } from "lucide-react";
 import { IDocFiles } from "../../../../../../services/SPService/Ispservice";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export interface WorkPermitUploadBoxProps {
   fileInputRef: React.RefObject<HTMLInputElement>;
@@ -36,7 +37,7 @@ const FilePreview: React.FC<FilePreviewProps> = ({
 
     <div className="upload-box__file-details">
       <span className="upload-box__filename">{file.name}</span>
-      <span className="upload-box__filesize">{file.fileSizeMB} MB</span>
+      <span className="upload-box__filesize">{file.fileSizeMB} {strings.Mb}</span>
     </div>
 
     <div className="upload-box__status">
@@ -68,11 +69,9 @@ const UploadPlaceholder: React.FC = () => (
     </div>
     <div className="upload-box__text">
       <span className="upload-box__primary">
-        Click to upload Work Permit Acknowledgement
-      </span>
+        {strings.ClickToUploadWorkPermitAcknowledgement}</span>
       <span className="upload-box__secondary">
-        PDF or Word document · max 5 MB
-      </span>
+        {strings.PdfOrWordDocumentMax5Mb}</span>
     </div>
   </div>
 );
@@ -104,11 +103,9 @@ export const WorkPermitUploadBox: React.FC<WorkPermitUploadBoxProps> = ({
         </div>
         <div className="upload-workpermit-card__header-text">
           <p className="upload-workpermit-card__title">
-            Work Permit Acknowledgement
-          </p>
+            {strings.WorkPermitAcknowledgement}</p>
           <p className="upload-workpermit-card__subtitle">
-            Upload the signed acknowledgement document
-          </p>
+            {strings.UploadTheSignedAcknowledgementDocument}</p>
         </div>
       </div>
 
@@ -139,8 +136,7 @@ export const WorkPermitUploadBox: React.FC<WorkPermitUploadBoxProps> = ({
 
       {hasFileError && (
         <span className="upload-box__error-text">
-          Please upload the Work Permit Acknowledgement document.
-        </span>
+          {strings.PleaseUploadTheWorkPermitAcknowledgement}</span>
       )}
     </div>
   );

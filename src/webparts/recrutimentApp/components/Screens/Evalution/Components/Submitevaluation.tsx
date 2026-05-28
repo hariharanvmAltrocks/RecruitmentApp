@@ -3,6 +3,7 @@ import * as React from "react";
 import styles from "../Evalution.module.scss";
 import ConfirmationPopup from "../../ReviewScoreCard/Confirmationpopup";
 import { UseSubmitEvaluationReturn } from "../Hooks/Usesubmitevaluation";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface SubmitEvaluationProps {
   submitHook: UseSubmitEvaluationReturn;
@@ -70,8 +71,7 @@ const SubmitEvaluation: React.FC<SubmitEvaluationProps> = ({
           disabled={submitting}
           type="button"
         >
-          Cancel
-        </button>
+          {strings.Cancel}</button>
 
         <button
           className={styles.submitBtn}
@@ -79,7 +79,7 @@ const SubmitEvaluation: React.FC<SubmitEvaluationProps> = ({
           disabled={submitting || !acknowledged}
           type="button"
         >
-          {submitting ? "Submitting…" : "Submit Evaluation"}
+          {submitting ? "Submitting…" : strings.SubmitEvaluation}
         </button>
       </div>
       <ConfirmationPopup

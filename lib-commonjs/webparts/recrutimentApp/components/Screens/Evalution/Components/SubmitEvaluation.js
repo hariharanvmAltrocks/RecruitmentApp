@@ -4,6 +4,7 @@ var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 var Evalution_module_scss_1 = tslib_1.__importDefault(require("../Evalution.module.scss"));
 var Confirmationpopup_1 = tslib_1.__importDefault(require("../../ReviewScoreCard/Confirmationpopup"));
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var SubmitEvaluation = function (_a) {
     var submitHook = _a.submitHook, acknowledged = _a.acknowledged, onCancel = _a.onCancel;
     var submitting = submitHook.submitting, submitError = submitHook.submitError, successMessage = submitHook.successMessage, validationErrors = submitHook.validationErrors, runValidation = submitHook.runValidation, submitEval = submitHook.submitEval, resetSubmit = submitHook.resetSubmit, onSuccess = submitHook.onSuccess;
@@ -50,8 +51,8 @@ var SubmitEvaluation = function (_a) {
     return (React.createElement(React.Fragment, null,
         React.createElement("div", { className: Evalution_module_scss_1.default.footer },
             submitError && (React.createElement("span", { className: Evalution_module_scss_1.default.inlineError }, submitError)),
-            React.createElement("button", { className: Evalution_module_scss_1.default.cancelBtn, onClick: handleCancelClick, disabled: submitting, type: "button" }, "Cancel"),
-            React.createElement("button", { className: Evalution_module_scss_1.default.submitBtn, onClick: handleSubmitClick, disabled: submitting || !acknowledged, type: "button" }, submitting ? "Submitting…" : "Submit Evaluation")),
+            React.createElement("button", { className: Evalution_module_scss_1.default.cancelBtn, onClick: handleCancelClick, disabled: submitting, type: "button" }, strings.Cancel),
+            React.createElement("button", { className: Evalution_module_scss_1.default.submitBtn, onClick: handleSubmitClick, disabled: submitting || !acknowledged, type: "button" }, submitting ? "Submitting…" : strings.SubmitEvaluation)),
         React.createElement(Confirmationpopup_1.default, { type: "submit", open: showSubmitConfirm, onConfirm: handleSubmitConfirmed, onClose: function () { return setShowSubmitConfirm(false); } }),
         React.createElement(Confirmationpopup_1.default, { type: "cancel", open: showCancelConfirm, onConfirm: handleLeaveConfirmed, onClose: function () { return setShowCancelConfirm(false); } }),
         React.createElement(Confirmationpopup_1.default, { type: "validation", open: showValidation, validationErrors: validationErrors, onClose: function () { return setShowValidation(false); } }),

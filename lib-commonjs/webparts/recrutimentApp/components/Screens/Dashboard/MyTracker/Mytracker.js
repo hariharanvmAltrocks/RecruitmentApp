@@ -27,6 +27,7 @@ var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
 var useRecruitmentDetails_1 = require("../../RecruitmentTable/Hooks/useRecruitmentDetails");
 var ReviewDocument_1 = require("../../OfferRelease/ReviewDocument/ReviewDocument");
 var Useupdatelistportal_1 = require("../../OfferRelease/ReviewDocument/Hooks/Useupdatelistportal");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var AssignHRPopup = react_1.default.lazy(function () {
     return Promise.resolve().then(function () { return tslib_1.__importStar(require("../../RecruitmentTable/Components/AssignHRPopup/AssignHRPopup")); }).then(function (module) { return ({
         default: module.AssignHRPopup,
@@ -111,8 +112,8 @@ var Mytracker = function () {
             if ((item === null || item === void 0 ? void 0 : item.nationality) !== selectedNationality) {
                 showModal({
                     type: "warning",
-                    title: "Nationality Mismatch",
-                    message: "You cannot assign HR for different nationality.",
+                    title: strings.NationalityMismatch,
+                    message: strings.YouCannotAssignHrForDifferentNationality,
                     confirmLabel: "OK",
                     onConfirm: closeModal,
                 });
@@ -165,17 +166,17 @@ var Mytracker = function () {
         setDrawerOfferOpen(true);
     }, [drawerOfferOpen]);
     var handleAction = (0, react_1.useCallback)(function (item) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var ItemID, isEvaluationFlow, today, interviewDate, Validation, interviewLevel, alreadySubmitted, evalutionIDs, routeMap, route;
-        var _a;
-        return tslib_1.__generator(this, function (_b) {
-            switch (_b.label) {
+        var ItemID, isEvaluationFlow, today, _a, day, month, year, interviewDate, Validation, interviewLevel, alreadySubmitted, evalutionIDs, routeMap, route;
+        var _b;
+        return tslib_1.__generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
                     if (processingRef.current)
                         return [2 /*return*/];
                     processingRef.current = true;
-                    _b.label = 1;
+                    _c.label = 1;
                 case 1:
-                    _b.trys.push([1, , 4, 5]);
+                    _c.trys.push([1, , 4, 5]);
                     ItemID = item.ItemID;
                     isEvaluationFlow = activeMetric === ConditionConfig_1.MatricID.EvalutionHR ||
                         activeMetric === ConditionConfig_1.MatricID.EvalutionLM ||
@@ -186,10 +187,14 @@ var Mytracker = function () {
                         selectedAdvertID.current = item.ItemID;
                         return [2 /*return*/];
                     }
+                    debugger;
                     if (!isEvaluationFlow) return [3 /*break*/, 3];
                     today = new Date();
                     today.setHours(0, 0, 0, 0);
-                    interviewDate = new Date(item.interviewDate);
+                    _a = item.interviewDate.split("-"), day = _a[0], month = _a[1], year = _a[2];
+                    interviewDate = new Date(Number(year), Number(month) - 1, Number(day));
+                    // interviewDate.setHours(0, 0, 0, 0);
+                    //           const interviewDate = new Date(item.interviewDate);
                     interviewDate.setHours(0, 0, 0, 0);
                     Validation = interviewDate <= today;
                     interviewLevel = item.statusId === Config_1.StatusId.InterviewLevel2InProgress
@@ -197,11 +202,11 @@ var Mytracker = function () {
                         : ConditionConfig_1.InterviewLevel.Level1;
                     return [4 /*yield*/, (0, Evaluationformservice_1.checkIsAlreadySubmitted)(ItemID, ADGroupData.EmailId[0], interviewLevel)];
                 case 2:
-                    alreadySubmitted = _b.sent();
+                    alreadySubmitted = _c.sent();
                     if (!Validation) {
                         showModal({
                             type: "warning",
-                            title: "Interview Date Not Reached",
+                            title: strings.InterviewDateNotReached,
                             message: "You can only fill the scorecard after the interview date. ".concat((0, moment_1.default)(item.interviewDate).format("YYYY-MM-DD")),
                             confirmLabel: "OK",
                             onConfirm: closeModal,
@@ -211,14 +216,14 @@ var Mytracker = function () {
                     if (alreadySubmitted) {
                         showModal({
                             type: "warning",
-                            title: "Already Submitted",
-                            message: "The scorecard for this candidate has already been submitted.",
+                            title: strings.AlreadySubmitted,
+                            message: strings.TheScorecardForThisCandidateHasAlreadyBe,
                             confirmLabel: "OK",
                             onConfirm: closeModal,
                         });
                         return [2 /*return*/];
                     }
-                    _b.label = 3;
+                    _c.label = 3;
                 case 3:
                     evalutionIDs = [
                         ConditionConfig_1.MatricID.EvalutionHR,
@@ -226,7 +231,7 @@ var Mytracker = function () {
                         ConditionConfig_1.MatricID.EvalutionHOD,
                         ConditionConfig_1.MatricID.EvalutionEXCO,
                     ];
-                    routeMap = tslib_1.__assign((_a = {}, _a[ConditionConfig_1.MatricID.InterviewQuestionHR] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.DisqualifiQuesLM] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.InterviewQuestionLM] = "/QuestionCreation", _a[ConditionConfig_1.MatricID.ReviewProfileHR] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewProfileLM] = "/CandidateTable", _a[ConditionConfig_1.MatricID.AssignInterviewPanel] = "/CandidateTable", _a[ConditionConfig_1.MatricID.ReviewScoreCard] = "/ReviewScoreCard", _a), Object.fromEntries(evalutionIDs.map(function (id) { return [
+                    routeMap = tslib_1.__assign((_b = {}, _b[ConditionConfig_1.MatricID.InterviewQuestionHR] = "/QuestionCreation", _b[ConditionConfig_1.MatricID.DisqualifiQuesLM] = "/QuestionCreation", _b[ConditionConfig_1.MatricID.InterviewQuestionLM] = "/QuestionCreation", _b[ConditionConfig_1.MatricID.ReviewProfileHR] = "/CandidateTable", _b[ConditionConfig_1.MatricID.ReviewProfileLM] = "/CandidateTable", _b[ConditionConfig_1.MatricID.AssignInterviewPanel] = "/CandidateTable", _b[ConditionConfig_1.MatricID.ReviewScoreCard] = "/ReviewScoreCard", _b), Object.fromEntries(evalutionIDs.map(function (id) { return [
                         id,
                         item.statusId === Config_1.StatusId.InterviewLevel2InProgress
                             ? "/EvalutionL2"
@@ -299,33 +304,33 @@ var Mytracker = function () {
     };
     return (react_1.default.createElement(framer_motion_1.motion.div, { className: MyTracker_module_scss_1.default.dashboard, key: "dashboard", initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 10 }, transition: { duration: 0.3 } },
         react_1.default.createElement(framer_motion_1.AnimatePresence, null, loading ? (react_1.default.createElement(loading_1.default, null)) : (react_1.default.createElement(framer_motion_1.motion.div, { key: "dashboard-content", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 } }, !hasMetrics ? (react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["dashboard-empty"] },
-            react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["dashboard-empty__title"] }, "No dashboard metrics available"),
-            react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["dashboard-empty__subtitle"] }, "Please check your permissions or try again later."))) : (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["dashboard-empty__title"] }, strings.NoDashboardMetricsAvailable),
+            react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["dashboard-empty__subtitle"] }, strings.PleaseCheckYourPermissionsOrTryAgainLate))) : (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(framer_motion_1.motion.div, { className: MyTracker_module_scss_1.default["metrics-grid"], variants: metricsContainer, initial: "hidden", animate: "visible" },
                 react_1.default.createElement(matric_1.default, { metrics: martics.metrics, onCardClick: onMetricChange, loading: loading, handleRefresh: handleRefresh, active: activeMetric })),
             react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["tracker-panel"] },
                 react_1.default.createElement(framer_motion_1.motion.div, { className: MyTracker_module_scss_1.default.tracker, key: "tracker", initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 12 }, transition: { duration: 0.3 } },
                     react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["tracker__header"] },
                         react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["tracker__header-left"] },
-                            react_1.default.createElement("h2", { className: MyTracker_module_scss_1.default["tracker__title"] }, "Recruitment Backlog"),
+                            react_1.default.createElement("h2", { className: MyTracker_module_scss_1.default["tracker__title"] }, strings.RecruitmentBacklog),
                             react_1.default.createElement("p", { className: MyTracker_module_scss_1.default["tracker__subtitle"] },
-                                "Showing ",
+                                strings.Showing,
                                 react_1.default.createElement("strong", null, (_a = trackerData === null || trackerData === void 0 ? void 0 : trackerData.length) !== null && _a !== void 0 ? _a : 0),
                                 " ",
-                                "results for",
+                                strings.ResultsFor,
                                 " ",
                                 react_1.default.createElement("span", { className: MyTracker_module_scss_1.default["tracker__highlight"] }, selectedmatricId !== null && selectedmatricId !== void 0 ? selectedmatricId : "—"))),
                         react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["tracker__header-actions"] },
-                            react_1.default.createElement("button", { className: MyTracker_module_scss_1.default["tracker__action-btn"], onClick: handleRefresh, disabled: trackerLoading, title: "Refresh table", "aria-label": "Refresh table" },
+                            react_1.default.createElement("button", { className: MyTracker_module_scss_1.default["tracker__action-btn"], onClick: handleRefresh, disabled: trackerLoading, title: strings.RefreshTable, "aria-label": "Refresh table" },
                                 react_1.default.createElement(lucide_react_1.RefreshCw, { size: 13, className: trackerLoading ? MyTracker_module_scss_1.default.spin : undefined }),
-                                "Refresh"),
+                                strings.Refresh),
                             react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["tracker__divider"] }),
                             react_1.default.createElement("button", { className: MyTracker_module_scss_1.default["tracker__action-btn"], onClick: function () {
                                     navigate("/Dashboard");
                                     setActiveMenuID(ConditionConfig_1.menuID.Dashboard);
                                 } },
                                 react_1.default.createElement(lucide_react_1.RotateCcw, { size: 13 }),
-                                "Back to Dashboard"))),
+                                strings.BackToDashboard))),
                     react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["tracker__table-wrapper"] },
                         react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: paginatedItems, enableCheckbox: activeMetric === ConditionConfig_1.MatricID.AssignHr || activeMetric === ConditionConfig_1.MatricID.AssignAgencies, selectedRowIds: selectedIds, getRowId: function (item) { return item.id; }, onToggleRow: handleToggleRow, onToggleAll: handleToggleAll, pageSize: pageSize, currentPage: currentPage, totalCount: totalCount, onPageChange: setCurrentPage, onPageSizeChange: function (size) {
                                 setPageSize(size);
@@ -338,16 +343,16 @@ var Mytracker = function () {
                             react_1.default.createElement(lucide_react_1.Users, { size: 18 })),
                         react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["assignment-bar__count"] },
                             react_1.default.createElement("strong", null, selectedIds.length),
-                            react_1.default.createElement("span", null, "Vacancies Selected"))),
+                            react_1.default.createElement("span", null, strings.VacanciesSelected))),
                     react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["assignment-bar__controls"] },
                         react_1.default.createElement("select", { className: MyTracker_module_scss_1.default["assignment-bar__select"], value: selectedMemberId, onChange: function (e) {
                                 return setSelectedMemberId(Number(e.target.value));
-                            }, disabled: membersLoading, placeholder: activeMetric === ConditionConfig_1.MatricID.AssignHr ? "Choose HR member" : "Choose Agency member" }, members.map(function (member) { return (react_1.default.createElement("option", { key: member.id, value: member.id },
+                            }, disabled: membersLoading, placeholder: activeMetric === ConditionConfig_1.MatricID.AssignHr ? strings.ChooseHrMember : strings.ChooseAgencyMember }, members.map(function (member) { return (react_1.default.createElement("option", { key: member.id, value: member.id },
                             member.name,
                             " - ",
                             member.role)); })),
                         react_1.default.createElement("button", { className: MyTracker_module_scss_1.default["assignment-bar__button"], type: "button", onClick: function () { return setIsPopupOpen(true); }, disabled: !selectedMemberId },
-                            "Execute Assignment",
+                            strings.ExecuteAssignment,
                             react_1.default.createElement(lucide_react_1.ChevronRight, { size: 16 })))))),
             isPopupOpen && (react_1.default.createElement(react_1.Suspense, { fallback: null },
                 react_1.default.createElement(AssignHRPopup, { isOpen: isPopupOpen, selectedItems: selectedItems, assignedMember: selectedMember, onClose: handleClosePopup, oncancel: handleClosePopup, onConfirm: handleConfirmAssignment }))),

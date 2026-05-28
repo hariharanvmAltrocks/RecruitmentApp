@@ -15,6 +15,7 @@ import { Metric } from "../../../models/IDashboard";
 import MetricCard from "./matricCard";
 import { userInfo } from "../../../utilities/hooks/RoleContext";
 import TaskPattern from "./Taskpattern";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface MetricDashboardProps {
   metrics: Metric[];
@@ -115,16 +116,15 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
       <div className="metric-dashboard__topbar">
         <div className="metric-dashboard__welcome">
           <h1 className="metric-dashboard__welcome-title">
-            Welcome,{" "}
+            {strings.Welcome}{" "}
             <span className="metric-dashboard__welcome-name">{UserName}</span>
           </h1>
           <p className="metric-dashboard__urgent">
-            YOU HAVE{" "}
+            {strings.YouHave}{" "}
             <strong>
-              {urgentCount} URGENT ACTION{urgentCount !== 1 ? "S" : ""}
+              {urgentCount} {strings.UrgentAction}{urgentCount !== 1 ? "S" : ""}
             </strong>{" "}
-            TO PROCESS
-          </p>
+            {strings.ToProcess}</p>
         </div>
         <div style={{ display: "flex", justifyContent: "end", gap: "10px" }}>
           {taskMetrics.length > 0 && (
@@ -142,7 +142,7 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
                 <div className="metric-dashboard__oversight-btn-icon">
                   <Activity size={14} strokeWidth={2.5} />
                 </div>
-                <span>My TASKS</span>
+                <span>{strings.MyTasks}</span>
                 <svg
                   className="metric-dashboard__oversight-chevron"
                   xmlns="http://www.w3.org/2000/svg"
@@ -206,7 +206,7 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
                 <div className="metric-dashboard__oversight-btn-icon">
                   <Activity size={14} strokeWidth={2.5} />
                 </div>
-                <span>ONGOING OVERSIGHTS</span>
+                <span>{strings.OngoingOversights}</span>
                 <svg
                   className="metric-dashboard__oversight-chevron"
                   xmlns="http://www.w3.org/2000/svg"

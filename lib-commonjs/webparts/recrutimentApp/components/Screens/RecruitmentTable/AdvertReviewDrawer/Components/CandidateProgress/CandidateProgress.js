@@ -7,6 +7,7 @@ var lucide_react_1 = require("lucide-react");
 var CandidateProgress_module_scss_1 = tslib_1.__importDefault(require("./CandidateProgress.module.scss"));
 var PositionStatusConfig_1 = require("../../../../../../utilities/PositionStatusConfig");
 var getStatusRoadMap_1 = require("../../Hooks/getStatusRoadMap");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var CandidateProgress = function (_a) {
     var RecID = _a.RecID;
     var _b = (0, getStatusRoadMap_1.getStatusRoadMap)(RecID), data = _b.data, loading = _b.loading;
@@ -35,20 +36,21 @@ var CandidateProgress = function (_a) {
                         gap: "12px",
                         marginBottom: "4px",
                     } },
-                    react_1.default.createElement("h3", { style: { margin: 0 } }, "Candidate Progress"),
+                    react_1.default.createElement("h3", { style: { margin: 0 } }, strings.CandidateProgress),
                     !loading && (react_1.default.createElement("span", { className: CandidateProgress_module_scss_1.default.totalCountBadge },
                         validData.length,
-                        " Total"))),
-                react_1.default.createElement("p", null, "Track progress for each candidate through the recruitment process"))),
+                        " ",
+                        strings.Total))),
+                react_1.default.createElement("p", null, strings.TrackProgressForEachCandidateThroughTheR))),
         react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.candidateProgress__timelineHeader }, PositionStatusConfig_1.PROGRESS_STEPS.map(function (step, idx) { return (react_1.default.createElement("div", { key: idx, className: CandidateProgress_module_scss_1.default.candidateProgress__stepHeader },
             react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.stepNum }, idx + 1),
             react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.stepLabel }, step))); })),
         react_1.default.createElement("table", { className: CandidateProgress_module_scss_1.default.candidateProgress__table },
             react_1.default.createElement("thead", null,
                 react_1.default.createElement("tr", null,
-                    react_1.default.createElement("th", null, "Candidate"),
-                    react_1.default.createElement("th", null, "Current Step"),
-                    react_1.default.createElement("th", null, "Progress"),
+                    react_1.default.createElement("th", null, strings.Candidate),
+                    react_1.default.createElement("th", null, strings.CurrentStep),
+                    react_1.default.createElement("th", null, strings.Progress),
                     react_1.default.createElement("th", null))),
             react_1.default.createElement("tbody", null, loading ? (react_1.default.createElement("tr", null,
                 react_1.default.createElement("td", { colSpan: 4 },
@@ -56,7 +58,7 @@ var CandidateProgress = function (_a) {
                             textAlign: "center",
                             padding: "30px 20px",
                             color: "#64748b",
-                        } }, "Loading candidates...")))) : currentData && currentData.length > 0 ? (currentData.map(function (candidate) { return (react_1.default.createElement("tr", { key: candidate.id },
+                        } }, strings.LoadingCandidates)))) : currentData && currentData.length > 0 ? (currentData.map(function (candidate) { return (react_1.default.createElement("tr", { key: candidate.id },
                 react_1.default.createElement("td", null,
                     react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.candidateProgress__candidateInfo },
                         react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.details },
@@ -69,7 +71,7 @@ var CandidateProgress = function (_a) {
                         react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.stepInfo },
                             react_1.default.createElement("span", { className: CandidateProgress_module_scss_1.default.stepName }, PositionStatusConfig_1.PROGRESS_STEPS[candidate.currentStepIndex]),
                             react_1.default.createElement("span", { className: CandidateProgress_module_scss_1.default.stepStatus },
-                                "In Progress ",
+                                strings.InProgress,
                                 react_1.default.createElement("span", { className: CandidateProgress_module_scss_1.default.dot }))))),
                 react_1.default.createElement("td", { style: { width: "40%" } },
                     react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.candidateProgress__progressRow }, PositionStatusConfig_1.PROGRESS_STEPS.map(function (_, idx) {
@@ -95,15 +97,16 @@ var CandidateProgress = function (_a) {
                             alignItems: "center",
                             gap: "10px",
                         } },
-                        react_1.default.createElement("p", { style: { margin: 0, fontWeight: 500 } }, "No candidates are currently scheduled for an interview."))))))),
+                        react_1.default.createElement("p", { style: { margin: 0, fontWeight: 500 } }, strings.NoCandidatesAreCurrentlyScheduledForAnIn))))))),
         validData.length > itemsPerPage && (react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.candidateProgress__pagination },
-            react_1.default.createElement("button", { onClick: handlePrevPage, disabled: currentPage === 1, className: CandidateProgress_module_scss_1.default.paginationBtn }, "Previous"),
+            react_1.default.createElement("button", { onClick: handlePrevPage, disabled: currentPage === 1, className: CandidateProgress_module_scss_1.default.paginationBtn }, strings.Previous),
             react_1.default.createElement("span", { className: CandidateProgress_module_scss_1.default.paginationText },
-                "Page ",
+                strings.Page,
                 currentPage,
-                " of ",
+                " ",
+                strings.Of,
                 totalPages),
-            react_1.default.createElement("button", { onClick: handleNextPage, disabled: currentPage === totalPages, className: CandidateProgress_module_scss_1.default.paginationBtn }, "Next")))))));
+            react_1.default.createElement("button", { onClick: handleNextPage, disabled: currentPage === totalPages, className: CandidateProgress_module_scss_1.default.paginationBtn }, strings.Next)))))));
 };
 exports.CandidateProgress = CandidateProgress;
 //# sourceMappingURL=CandidateProgress.js.map

@@ -7,6 +7,7 @@ var lucide_react_1 = require("lucide-react");
 var SideNavigation_module_scss_1 = tslib_1.__importDefault(require("./SideNavigation.module.scss"));
 var UIStateContext_1 = require("../RecrutimentApp/UIStateContext");
 var ThemeSwitcher_1 = require("./ThemeSwitcher");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var SidebarItem = function (_a) {
     var _b;
     var item = _a.item, activeMenuID = _a.activeMenuID, onSelectCallback = _a.onSelectCallback, isExpanded = _a.isExpanded, onToggleExpand = _a.onToggleExpand, _c = _a.isCollapsed, isCollapsed = _c === void 0 ? false : _c;
@@ -80,18 +81,18 @@ var SideNavigation = function (_a) {
                 } },
                 react_1.default.createElement("img", { src: isCollapsed
                         ? require("../../assets/komoa-logo.png")
-                        : require("../../assets/getsitelogo.png"), alt: "Kamoa Logo", className: SideNavigation_module_scss_1.default.logoImg, style: {
+                        : require("../../assets/getsitelogo.png"), alt: strings.KamoaLogo, className: SideNavigation_module_scss_1.default.logoImg, style: {
                         width: isCollapsed ? "24px" : "150px",
                         height: isCollapsed ? "24px" : "100px",
                     } }))),
         react_1.default.createElement("nav", { className: SideNavigation_module_scss_1.default.nav },
-            !isCollapsed && react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.sectionLabel }, "Main Menu"),
+            !isCollapsed && react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.sectionLabel }, strings.MainMenu),
             sortedMenu.map(function (parent) { return (react_1.default.createElement(SidebarItem, { key: parent.Id, item: parent, activeMenuID: activeMenuID, onSelectCallback: handleSelect, isExpanded: expandedMenus.includes(parent.Id), onToggleExpand: function () { return toggleExpand(parent.Id); }, isCollapsed: isCollapsed })); })),
         react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.sidebarFooter },
             react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerContent },
                 react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerVersion }, "v-1.0"),
-                react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerLabel }, "Kamoa Copper SA"),
-                react_1.default.createElement("div", { onClick: function () { return setSwitcherOpen(true); }, className: SideNavigation_module_scss_1.default.sidebarItem, title: isCollapsed ? "Custom Theme" : undefined },
+                react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerLabel }, strings.KamoaCopperSa),
+                react_1.default.createElement("div", { onClick: function () { return setSwitcherOpen(true); }, className: SideNavigation_module_scss_1.default.sidebarItem, title: isCollapsed ? strings.CustomTheme : undefined },
                     react_1.default.createElement(lucide_react_1.Palette, { className: SideNavigation_module_scss_1.default.icon }),
                     react_1.default.createElement("span", { className: SideNavigation_module_scss_1.default.labelWrap },
                         react_1.default.createElement("span", { className: SideNavigation_module_scss_1.default.label }, "Custom Theme"),

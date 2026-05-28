@@ -17,6 +17,7 @@ var Tabs_1 = tslib_1.__importDefault(require("../../Comman/Tabs/Tabs"));
 var useStateFromManage_1 = require("./StateManage/useStateFromManage");
 var Config_1 = require("./Config");
 var Useupdatelistportal_1 = require("./ReviewDocument/Hooks/Useupdatelistportal");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 function resolveActionMode(statusID) {
     if (Config_1.Initiate_STAUES.has(statusID))
         return "Initiate";
@@ -39,21 +40,21 @@ function buildColumns(onAction) {
     return [
         {
             id: "PositionID",
-            header: "Position ID",
+            header: strings.PositionId,
             accessor: "positionId",
             render: function (item) { return (react_1.default.createElement("div", { className: "data-table__job-code" },
                 react_1.default.createElement("span", { className: "offer-table__code" }, item.positionId))); },
         },
         {
             id: "title",
-            header: "Job Title & Dept",
+            header: strings.JobTitleDept,
             render: function (item) { return (react_1.default.createElement("div", { className: "data-table__job-title" },
                 react_1.default.createElement("span", null, item.title),
                 react_1.default.createElement("span", { className: "data-table__job-dept" }, item.department))); },
         },
         {
             id: "buCode",
-            header: "Business Unit",
+            header: strings.BusinessUnit,
             render: function (item) { return String(item.buCode || "").padStart(2, "0"); },
             cellClassName: "data-table__cell--muted",
             align: "center",
@@ -61,7 +62,7 @@ function buildColumns(onAction) {
         },
         {
             id: "applicantName",
-            header: "Applicant Name",
+            header: strings.ApplicantName,
             accessor: "applicantName",
             cellClassName: "data-table__cell--count",
             hideOnMobile: true,
@@ -168,12 +169,12 @@ var OfferTable = function () {
             react_1.default.createElement("div", { className: "submission-header" },
                 react_1.default.createElement("h2", { className: "submission-header__title" }, currentTabName),
                 react_1.default.createElement("div", { className: "submission-header__actions" },
-                    react_1.default.createElement("button", { className: "submission-header__refresh-btn", onClick: handleRefresh, disabled: tableLoading, title: "Refresh table", "aria-label": "Refresh table" },
+                    react_1.default.createElement("button", { className: "submission-header__refresh-btn", onClick: handleRefresh, disabled: tableLoading, title: strings.RefreshTable, "aria-label": "Refresh table" },
                         react_1.default.createElement(lucide_react_1.RefreshCw, { size: 14, className: tableLoading ? "spin" : undefined }),
-                        "Refresh"),
+                        strings.Refresh),
                     react_1.default.createElement("button", { onClick: function () { return navigate("/Dashboard"); }, className: "submission-header__button" },
                         react_1.default.createElement(lucide_react_1.RotateCcw, { size: 14 }),
-                        "Back to Dashboard"))),
+                        strings.BackToDashboard))),
             react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: paginatedItems, enableCheckbox: false, pageSize: pageSize, currentPage: currentPage, totalCount: totalCount, onPageChange: setCurrentPage, onPageSizeChange: function (size) {
                     setPageSize(size);
                     setCurrentPage(1);

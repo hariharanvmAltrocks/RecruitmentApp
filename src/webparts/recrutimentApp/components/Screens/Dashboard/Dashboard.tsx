@@ -17,6 +17,7 @@ import Loading from "../../Comman/Loading/loading";
 import { menuID } from "../../../utilities/ConditionConfig";
 import DepartmentChart from "../../Comman/Departmentchart/Departmentchart";
 import useDepartmentChart from "./Hooks/Usedepartmentchart";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface DashboardProps {
   props: any;
@@ -125,11 +126,9 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
             {!hasMetrics ? (
               <div className="dashboard-empty">
                 <div className="dashboard-empty__title">
-                  No dashboard metrics available
-                </div>
+                  {strings.NoDashboardMetricsAvailable}</div>
                 <div className="dashboard-empty__subtitle">
-                  Please check your permissions or try again later.
-                </div>
+                  {strings.PleaseCheckYourPermissionsOrTryAgainLate}</div>
               </div>
             ) : (
               <>
@@ -151,8 +150,8 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                 <div className="dashboard-layout">
                   <DepartmentChart
                     itemsPerPage={7}
-                    title="Departmental Demand"
-                    subtitle="Pending lifecycle"
+                    title={strings.DepartmentalDemand}
+                    subtitle={strings.PendingLifecycle}
                     tooltipValueLabel="Openings"
                   />
                   {/* <div className="tracker-panel">

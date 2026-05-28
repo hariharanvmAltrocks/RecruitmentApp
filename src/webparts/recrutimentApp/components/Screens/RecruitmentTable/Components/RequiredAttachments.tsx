@@ -9,6 +9,7 @@ import {
   isSharePointUrl,
   truncateText,
 } from "../../../Hooks/reusehooks";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export interface RequiredAttachmentsProps {
   attachments: AttachmentDetails[];
@@ -96,8 +97,7 @@ export const RequiredAttachments: React.FC<RequiredAttachmentsProps> = ({
                 {doc.title}
               </div>
               <div className="advert-review-drawer__attachment-tag">
-                Recruitment
-              </div>
+                {strings.Recruitment}</div>
             </div>
           </div>
 
@@ -171,8 +171,7 @@ export const RequiredAttachments: React.FC<RequiredAttachmentsProps> = ({
         <div className="advert-review-drawer__section-header advert-review-drawer__section-header--plain">
           <h3>
             <Paperclip size={12} />
-            Required Attachments
-          </h3>
+            {strings.RequiredAttachments}</h3>
         </div>
         {isLoading ? (
           <div className="advert-review-drawer__attachments">
@@ -223,23 +222,21 @@ export const RequiredAttachments: React.FC<RequiredAttachmentsProps> = ({
                   download
                 >
                   <Download size={14} />
-                  Download
-                </a>
+                  {strings.Download}</a>
                 <button
                   type="button"
                   className="attachment-viewer__button attachment-viewer__button--ghost"
                   onClick={closeViewer}
                 >
                   <X size={14} />
-                  Close
-                </button>
+                  {strings.Close}</button>
               </div>
             </div>
             <div className="attachment-viewer__body">
               {viewerLoading && (
                 <div className="attachment-viewer__loading">
                   <div className="attachment-viewer__spinner" />
-                  <span>Loading document...</span>
+                  <span>{strings.LoadingDocument}</span>
                 </div>
               )}
               <iframe

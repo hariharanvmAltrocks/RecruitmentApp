@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Question } from "../QuestionCreation.types";
 import "./Interviewmode.scss";
 import "../Questioncreation.scss";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface CareerPortalComposerProps {
   newQuestion: Partial<Question>;
@@ -82,21 +83,18 @@ export const CareerPortalComposer: React.FC<CareerPortalComposerProps> = ({
       <div className="qc-composer__header">
         <h3 className="qc-composer__title">
           <span className="qc-composer__title-bar" />
-          Create Minimum Criteria
-        </h3>
+          {strings.CreateMinimumCriteria}</h3>
         <div className="qc-composer__type-toggle">
           <button
             className={`qc-composer__type-btn ${newQuestion.type === "single" ? "qc-composer__type-btn--active" : ""}`}
             onClick={() => onChange({ ...newQuestion, type: "single" })}
           >
-            Single Choice
-          </button>
+            {strings.SingleChoice}</button>
           <button
             className={`qc-composer__type-btn ${newQuestion.type === "multiple" ? "qc-composer__type-btn--active" : ""}`}
             onClick={() => onChange({ ...newQuestion, type: "multiple" })}
           >
-            Multiple Choice
-          </button>
+            {strings.MultipleChoice}</button>
         </div>
       </div>
 
@@ -105,11 +103,10 @@ export const CareerPortalComposer: React.FC<CareerPortalComposerProps> = ({
         <div className="qc-composer__questions-grid">
           <div className="qc-composer__field">
             <label className="qc-composer__label qc-composer__label--en">
-              <Globe size={11} /> English Question
-            </label>
+              <Globe size={11} /> {strings.EnglishQuestion}</label>
             <textarea
               className="qc-composer__textarea"
-              placeholder="Enter question in English..."
+              placeholder={strings.EnterQuestionInEnglish}
               value={newQuestion.questionEn ?? ""}
               onChange={(e) =>
                 onChange({ ...newQuestion, questionEn: e.target.value })
@@ -118,11 +115,10 @@ export const CareerPortalComposer: React.FC<CareerPortalComposerProps> = ({
           </div>
           <div className="qc-composer__field">
             <label className="qc-composer__label qc-composer__label--fr">
-              <Globe size={11} /> French Question
-            </label>
+              <Globe size={11} /> {strings.FrenchQuestion}</label>
             <textarea
               className="qc-composer__textarea qc-composer__textarea--italic"
-              placeholder="Saisir la question en français..."
+              placeholder={strings.SaisirLaQuestionEnFranAis}
               value={newQuestion.questionFr ?? ""}
               onChange={(e) =>
                 onChange({ ...newQuestion, questionFr: e.target.value })
@@ -134,10 +130,9 @@ export const CareerPortalComposer: React.FC<CareerPortalComposerProps> = ({
         {/* Options */}
         <div className="qc-composer__options-section">
           <div className="qc-composer__options-header">
-            <span className="qc-composer__options-label">Answer Options</span>
+            <span className="qc-composer__options-label">{strings.AnswerOptions}</span>
             <button className="qc-composer__add-option" onClick={addOption}>
-              <Plus size={11} /> Add Option
-            </button>
+              <Plus size={11} /> {strings.AddOption}</button>
           </div>
 
           <AnimatePresence>
@@ -170,7 +165,7 @@ export const CareerPortalComposer: React.FC<CareerPortalComposerProps> = ({
                   <input
                     type="text"
                     className="qc-composer__option-input"
-                    placeholder="Option (English)"
+                    placeholder={strings.OptionEnglish}
                     value={opt.textEn}
                     onChange={(e) =>
                       updateOptionText(opt.id, "textEn", e.target.value)
@@ -179,7 +174,7 @@ export const CareerPortalComposer: React.FC<CareerPortalComposerProps> = ({
                   <input
                     type="text"
                     className="qc-composer__option-input qc-composer__option-input--italic"
-                    placeholder="Option (Français)"
+                    placeholder={strings.OptionFranAis}
                     value={opt.textFr}
                     onChange={(e) =>
                       updateOptionText(opt.id, "textFr", e.target.value)
@@ -189,7 +184,7 @@ export const CareerPortalComposer: React.FC<CareerPortalComposerProps> = ({
                 <button
                   className="qc-composer__option-remove"
                   onClick={() => removeOption(opt.id)}
-                  title="Remove option"
+                  title={strings.RemoveOption}
                 >
                   <X size={14} />
                 </button>
@@ -200,15 +195,13 @@ export const CareerPortalComposer: React.FC<CareerPortalComposerProps> = ({
 
         <div className="qc-composer__footer">
           <button className="qc-composer__clear-btn" onClick={onClear}>
-            Clear All
-          </button>
+            {strings.ClearAll1}</button>
           <button
             className={`qc-composer__submit-btn ${!canAdd ? "qc-composer__submit-btn--disabled" : ""}`}
             onClick={onAdd}
             disabled={!canAdd}
           >
-            <Plus size={13} /> Add to Criteria Set
-          </button>
+            <Plus size={13} /> {strings.AddToCriteriaSet}</button>
         </div>
       </div>
     </div>

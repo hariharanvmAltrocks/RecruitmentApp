@@ -27,19 +27,21 @@ import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
 import { RecuritmentHRMsg } from "../../../../utilities/ConditionConfig";
 import { InfoItem } from "../../CandidateTable/Components/reuseUI";
 import Loading from "../../../Comman/Loading/loading";
+import * as strings from 'RecrutimentAppWebPartStrings';
+import { Text } from '@microsoft/sp-core-library';
 
 const SCORE_CRITERIA = [
-  { field: "RelevantQualification", label: "Qualification (Relevant)" },
-  { field: "ReleventExperience", label: "Experience (Relevant)" },
+  { field: "RelevantQualification", label: strings.QualificationRelevant },
+  { field: "ReleventExperience", label: strings.ExperienceRelevant1 },
   { field: "Knowledge", label: "Knowledge" },
-  { field: "EnergyLevel", label: "Energy Level" },
-  { field: "MeetJobRequirement", label: "Meets All Job Requirements" },
+  { field: "EnergyLevel", label: strings.EnergyLevel1 },
+  { field: "MeetJobRequirement", label: strings.MeetsAllJobRequirements },
   {
     field: "ContributeTowardsCultureRequried",
-    label: "Will Contribute to Culture Required",
+    label: strings.WillContributeToCultureRequired,
   },
   { field: "Experience", label: "Experience" },
-  { field: "OtherCriteriaScore", label: "Other Criteria Recognized by Panel" },
+  { field: "OtherCriteriaScore", label: strings.OtherCriteriaRecognizedByPanel },
 ];
 
 const MAX_OVERALL_PER_PANEL = 40;
@@ -51,7 +53,7 @@ const MField = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
-const PageLoader = () => <Loading text="Loading data" />;
+const PageLoader = () => <Loading text={strings.LoadingData} />;
 
 type ScorecardTabKey = "questions" | "qEval" | "overall";
 
@@ -80,7 +82,7 @@ const EvalutionL2: React.FC<any> = (props) => {
       type: "success",
       title: "Success",
       message: RecuritmentHRMsg.ScoreCardMsgLevel2,
-      confirmLabel: "Go to Dashboard",
+      confirmLabel: strings.GoToDashboard,
       onConfirm: () => {
         closeModal();
         navigate("/Dashboard");
@@ -130,7 +132,7 @@ const EvalutionL2: React.FC<any> = (props) => {
       qJson.forEach((q: any) => {
         const key = Object.keys(q)[0];
         if (!qMap[key]) qMap[key] = { criteria: key };
-        qMap[key][`panel_${i}`] = q[key];
+        qMap[key][Text.format(strings.Panel, )] = q[key];
       });
     });
     return Object.values(qMap);
@@ -211,7 +213,7 @@ const EvalutionL2: React.FC<any> = (props) => {
         className={styles.modalWindow}
       >
         {/* ══ HEADER ══ */}
-        {loading && <Loading text="Loading details..." />}
+        {loading && <Loading text={strings.LoadingDetails} />}
         <header className={styles.header}>
           <div className={styles.headerLeft}>
             <div className={styles.headerIcon}>
@@ -219,13 +221,12 @@ const EvalutionL2: React.FC<any> = (props) => {
             </div>
             <div className={styles.headerMeta}>
               <div className={styles.breadcrumb}>
-                <span>Candidate selection</span>
+                <span>{strings.CandidateSelection}</span>
                 <ChevronRight size={12} className={styles.breadcrumbChevron} />
                 <span className={styles.breadcrumbActive}>
-                  Review Scorecard
-                </span>
+                  {strings.ReviewScorecard}</span>
               </div>
-              <h2 className={styles.headerTitle}>Candidate Scorecard Review</h2>
+              <h2 className={styles.headerTitle}>{strings.CandidateScorecardReview}</h2>
               <div className={styles.headerSubtitle}>
                 <span className={styles.jobCodeBadge}>
                   {hook.reviewingCandidate?.jobCode || "---"}
@@ -240,7 +241,7 @@ const EvalutionL2: React.FC<any> = (props) => {
           <div>
             <div className={styles.mHeaderRight}>
               <div className={styles.mGpa}>
-                <span className={styles.mGpaLabel}>OVERALL GPA</span>
+                <span className={styles.mGpaLabel}>{strings.OverallGpa}</span>
                 <span className={styles.mGpaValue}>
                   {hook.reviewingCandidate?.gpa || "—"}
                 </span>
@@ -249,7 +250,7 @@ const EvalutionL2: React.FC<any> = (props) => {
                 className={styles.closeBtn}
                 type="button"
                 onClick={onClose}
-                aria-label="Close"
+                aria-label={strings.Close}
               >
                 <X size={20} strokeWidth={2.5} />
               </button>
@@ -276,19 +277,19 @@ const EvalutionL2: React.FC<any> = (props) => {
             <div className={styles.infoGrid}>
               <InfoItem
                 icon={<Globe size={14} />}
-                label="Nationality"
+                label={strings.Nationality}
                 value={
                   raw.Nationality || hook.reviewingCandidate?.nationality || ""
                 }
               />
               <InfoItem
                 icon={<Users size={14} />}
-                label="Gender"
+                label={strings.Gender}
                 value={raw.Gender || hook.reviewingCandidate?.gender || ""}
               />
               <InfoItem
                 icon={<FileText size={14} />}
-                label="Qualification"
+                label={strings.Qualification}
                 value={raw.Qualification || ""}
               />
 
@@ -296,14 +297,14 @@ const EvalutionL2: React.FC<any> = (props) => {
                 <div className={styles.infoRowItem}>
                   <InfoItem
                     icon={<Zap size={14} />}
-                    label="Mining exp."
+                    label={strings.MiningExp}
                     value={raw.TotalYearOfExperiance || ""}
                   />
                 </div>
                 <div className={styles.infoRowItem}>
                   <InfoItem
                     icon={<Zap size={14} />}
-                    label="Related exp."
+                    label={strings.RelatedExp}
                     value={raw.ReleventExperience || ""}
                   />
                 </div>
@@ -313,14 +314,14 @@ const EvalutionL2: React.FC<any> = (props) => {
                 <div className={styles.infoRowItem}>
                   <InfoItem
                     icon={<AlertTriangle size={14} />}
-                    label="Conflicts"
+                    label={strings.Conflicts}
                     value={raw.ConflictsOfInterest || ""}
                   />
                 </div>
                 <div className={styles.infoRowItem}>
                   <InfoItem
                     icon={<Accessibility size={14} />}
-                    label="Disability"
+                    label={strings.Disability}
                     value={raw.Disability || raw.disability || ""}
                   />
                 </div>
@@ -329,17 +330,17 @@ const EvalutionL2: React.FC<any> = (props) => {
               <div className={styles.infoRow}>
                 <div className={styles.infoRowItem}>
                   <InfoItem
-                    label="Levels"
+                    label={strings.Levels}
                     value={hook.reviewingCandidate?.interviewLevel || ""}
                   />
                 </div>
                 <div className={styles.infoRowItem}>
-                  <InfoItem label="Interview Date" value={formattedDate} />
+                  <InfoItem label={strings.InterviewDate} value={formattedDate} />
                 </div>
               </div>
 
               <InfoItem
-                label="GRADE"
+                label={strings.Grade}
                 value={hook.reviewingCandidate?.grade || ""}
               />
             </div>
@@ -348,7 +349,7 @@ const EvalutionL2: React.FC<any> = (props) => {
               <div className={styles.mPanelSection}>
                 <div className={styles.mPanelHeader}>
                   <Users size={12} color="#2563eb" />
-                  <span>INTERVIEW PANEL</span>
+                  <span>{strings.InterviewPanel}</span>
                 </div>
                 <div className={styles.mPanelList}>
                   {panelMembers.map((name, i) => (
@@ -397,8 +398,8 @@ const EvalutionL2: React.FC<any> = (props) => {
             )}
             {activeScorecardTab === "qEval" && (
               <ScoreTable
-                title="QUESTION EVALUATION SCORECARD"
-                subtitle="Panel-wise Question Scores — All Interviewers"
+                title={strings.QuestionEvaluationScorecard}
+                subtitle={strings.PanelWiseQuestionScoresAllInterviewers}
                 accentColor="#6366f1"
                 rows={questionTableRows}
                 panelMembers={panelMembers}
@@ -408,8 +409,8 @@ const EvalutionL2: React.FC<any> = (props) => {
             )}
             {activeScorecardTab === "overall" && (
               <ScoreTable
-                title="OVERALL EVALUATION SCORECARD"
-                subtitle="Core Criteria Scores — All Interviewers (Max 5 per criterion)"
+                title={strings.OverallEvaluationScorecard}
+                subtitle={strings.CoreCriteriaScoresAllInterviewersMax5Per}
                 accentColor="#22c55e"
                 rows={overallTableRows}
                 panelMembers={panelMembers}
@@ -427,8 +428,7 @@ const EvalutionL2: React.FC<any> = (props) => {
                 // disabled={submitHook.submitting}
               >
                 <FileText size={16} />
-                VIEW COMMENTS
-              </button>
+                {strings.ViewComments}</button>
             </div>
 
             <ReviewCommentSignature
@@ -454,8 +454,7 @@ const EvalutionL2: React.FC<any> = (props) => {
                 disabled={submitHook.submitting}
                 type="button"
               >
-                CANCEL
-              </button>
+                {strings.Cancel1}</button>
 
               <button
                 className={styles.mSubmitBtn}
@@ -472,13 +471,11 @@ const EvalutionL2: React.FC<any> = (props) => {
                         animation: "spin 1s linear infinite",
                       }}
                     />
-                    Submitting…
-                  </>
+                    {strings.Submitting}</>
                 ) : (
                   <>
                     <CheckCircle2 size={15} style={{ marginRight: 6 }} />
-                    SUBMIT ACTION
-                  </>
+                    {strings.SubmitAction1}</>
                 )}
               </button>
             </div>
@@ -487,7 +484,7 @@ const EvalutionL2: React.FC<any> = (props) => {
       </motion.div>
 
       {/* Spinner keyframe */}
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+      <style>{strings.KeyframesSpinFromTransformRotate0degToTr}</style>
 
       <CommentsModal
         open={hook?.showComments}

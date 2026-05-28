@@ -3,6 +3,7 @@ import { Plus, Globe, CheckCircle2, MessageSquare } from "lucide-react";
 import { Question } from "../QuestionCreation.types";
 import "./Interviewmode.scss";
 import "../Questioncreation.scss";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface InterviewComposerProps {
   newQuestion: Partial<Question>;
@@ -31,24 +32,21 @@ export const InterviewComposer: React.FC<InterviewComposerProps> = ({
             <Plus size={22} />
           </div>
           <div>
-            <h3 className="iq-composer__title">Create New Question</h3>
+            <h3 className="iq-composer__title">{strings.CreateNewQuestion}</h3>
             <p className="iq-composer__subtitle">
-              Draft custom bilingual content
-            </p>
+              {strings.DraftCustomBilingualContent}</p>
           </div>
         </div>
         <div className="iq-composer__header-actions">
           <button className="iq-composer__clear-btn" onClick={onClear}>
-            Clear All
-          </button>
+            {strings.ClearAll1}</button>
           <button
             className={`iq-composer__add-btn ${!canAdd ? "iq-composer__add-btn--disabled" : ""}`}
             onClick={onAdd}
             disabled={!canAdd}
           >
             <Plus size={15} />
-            Add to Interview Set
-          </button>
+            {strings.AddToInterviewSet}</button>
         </div>
       </div>
 
@@ -58,18 +56,16 @@ export const InterviewComposer: React.FC<InterviewComposerProps> = ({
         <div className="iq-composer__col">
           <div className="iq-composer__lang-header">
             <span className="iq-composer__lang-badge iq-composer__lang-badge--en">
-              EN
-            </span>
-            <span className="iq-composer__lang-title">English Version</span>
+              {strings.En}</span>
+            <span className="iq-composer__lang-title">{strings.EnglishVersion}</span>
           </div>
 
           <div className="iq-composer__field">
             <label className="iq-composer__label iq-composer__label--en">
-              <MessageSquare size={11} /> Question Prompt
-            </label>
+              <MessageSquare size={11} /> {strings.QuestionPrompt}</label>
             <textarea
               className="iq-composer__textarea"
-              placeholder="Enter the question in English..."
+              placeholder={strings.EnterTheQuestionInEnglish}
               value={newQuestion.questionEn ?? ""}
               onChange={(e) =>
                 onChange({ ...newQuestion, questionEn: e.target.value })
@@ -79,11 +75,10 @@ export const InterviewComposer: React.FC<InterviewComposerProps> = ({
 
           <div className="iq-composer__field">
             <label className="iq-composer__label iq-composer__label--en">
-              <CheckCircle2 size={11} /> Expected Answer
-            </label>
+              <CheckCircle2 size={11} /> {strings.ExpectedAnswer}</label>
             <textarea
               className="iq-composer__textarea"
-              placeholder="What are the key points for a good answer?"
+              placeholder={strings.WhatAreTheKeyPointsForAGoodAnswer}
               value={newQuestion.answerEn ?? ""}
               onChange={(e) =>
                 onChange({ ...newQuestion, answerEn: e.target.value })
@@ -96,18 +91,16 @@ export const InterviewComposer: React.FC<InterviewComposerProps> = ({
         <div className="iq-composer__col iq-composer__col--fr">
           <div className="iq-composer__lang-header">
             <span className="iq-composer__lang-badge iq-composer__lang-badge--fr">
-              FR
-            </span>
-            <span className="iq-composer__lang-title">Version Française</span>
+              {strings.Fr}</span>
+            <span className="iq-composer__lang-title">{strings.VersionFranAise}</span>
           </div>
 
           <div className="iq-composer__field">
             <label className="iq-composer__label iq-composer__label--fr">
-              <MessageSquare size={11} /> Prompt de la Question
-            </label>
+              <MessageSquare size={11} /> {strings.PromptDeLaQuestion}</label>
             <textarea
               className="iq-composer__textarea iq-composer__textarea--italic"
-              placeholder="Saisissez la question en français..."
+              placeholder={strings.SaisissezLaQuestionEnFranAis}
               value={newQuestion.questionFr ?? ""}
               onChange={(e) =>
                 onChange({ ...newQuestion, questionFr: e.target.value })
@@ -117,11 +110,10 @@ export const InterviewComposer: React.FC<InterviewComposerProps> = ({
 
           <div className="iq-composer__field">
             <label className="iq-composer__label iq-composer__label--fr">
-              <CheckCircle2 size={11} /> Réponse Attendue
-            </label>
+              <CheckCircle2 size={11} /> {strings.RPonseAttendue}</label>
             <textarea
               className="iq-composer__textarea iq-composer__textarea--italic"
-              placeholder="Quels sont les points clés d'une bonne réponse ?"
+              placeholder={strings.QuelsSontLesPointsClSDUneBonneRPonse}
               value={newQuestion.answerFr ?? ""}
               onChange={(e) =>
                 onChange({ ...newQuestion, answerFr: e.target.value })

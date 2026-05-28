@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { FileText, FileUpIcon, X } from "lucide-react";
 import "./UploadDocument.scss";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export interface UploadedFile {
   name: string;
@@ -55,7 +56,7 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
   multiple = false,
   acceptedFormats = DEFAULT_ACCEPTED,
   maxFileSizeMB = DEFAULT_MAX_MB,
-  label = "Upload documents",
+  label = strings.UploadDocuments,
   required = false,
   onChange,
   hasError = false,
@@ -104,7 +105,7 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
       const validFiles: File[] = [];
 
       if (!multiple && selected.length > 1) {
-        nextErrors.push("Only one file is allowed.");
+        nextErrors.push(strings.OnlyOneFileIsAllowed);
       }
 
       selected.slice(0, multiple ? selected.length : 1).forEach((file) => {
@@ -179,7 +180,7 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
   const requiredError = useMemo(
     () =>
       required && touched && files.length === 0
-        ? "This field is required."
+        ? strings.ThisFieldIsRequired
         : null,
     [required, touched, files.length],
   );
@@ -194,9 +195,7 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
             {required && <span className="upload-document__required">*</span>}
           </div>
           <div className="upload-document__hint">
-            {multiple ? "Upload one or more files" : "Upload a single file"} —
-            Max {maxFileSizeMB} MB
-          </div>
+            {multiple ? strings.UploadOneOrMoreFiles : strings.UploadASingleFile} {strings.Max}{maxFileSizeMB} {strings.Mb}</div>
         </div>
         {files.length > 1 && (
           <button
@@ -204,8 +203,7 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
             className="upload-document__clear"
             onClick={handleClearAll}
           >
-            Clear all
-          </button>
+            {strings.ClearAll}</button>
         )}
       </div>
 
@@ -238,10 +236,9 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
           <FileUpIcon size={22} />
         </div>
         <div className="upload-document__title">
-          Drop files here or click to browse
-        </div>
+          {strings.DropFilesHereOrClickToBrowse}</div>
         <div className="upload-document__formats">
-          Accepted: {acceptedFormats}
+          {strings.Accepted}{acceptedFormats}
         </div>
       </div>
 
@@ -272,14 +269,13 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
       {/* ── Parent-driven submit error ── */}
       {hasError && (
         <span className="upload-document__error-text">
-          Upload document is required.
-        </span>
+          {strings.UploadDocumentIsRequired}</span>
       )}
 
       {/* ── File list ── */}
       <div className="upload-document__list">
         {files.length === 0 ? (
-          <div className="upload-document__empty">No files selected yet.</div>
+          <div className="upload-document__empty">{strings.NoFilesSelectedYet}</div>
         ) : (
           files.map((file, index) => (
             <div
@@ -296,8 +292,7 @@ export const UploadDocument: React.FC<UploadDocumentProps> = ({
                 onClick={() => handleRemove(index)}
               >
                 <X size={14} />
-                Remove
-              </button>
+                {strings.Remove}</button>
             </div>
           ))
         )}

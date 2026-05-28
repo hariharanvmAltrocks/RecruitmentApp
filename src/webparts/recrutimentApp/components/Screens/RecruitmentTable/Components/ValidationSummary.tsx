@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle, XCircle } from "lucide-react";
 import React from "react";
 import "../AdvertReviewDrawer/AdvertReviewDrawer.scss"
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export interface ValidationMessage {
   key: string;
@@ -28,7 +29,7 @@ export const ValidationSummary: React.FC<ValidationSummaryProps> = ({ show, mess
         >
           <div className="advert-review-drawer__validation-header">
             <AlertTriangle size={14} />
-            <span>Please fix the following:</span>
+            <span>{strings.PleaseFixTheFollowing}</span>
           </div>
           {invalidMessages.map((message) => (
             <div key={message.key} className="advert-review-drawer__validation-message">

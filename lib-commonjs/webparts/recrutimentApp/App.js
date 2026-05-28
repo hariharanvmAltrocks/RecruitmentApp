@@ -11,6 +11,7 @@ var MenuDataContext_1 = require("./utilities/hooks/MenuDataContext");
 var ThemeContext_1 = require("./theme/ThemeContext");
 var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var UIStateContext_1 = require("./components/RecrutimentApp/UIStateContext");
+var LanguageContext_1 = require("./components/RecrutimentApp/LanguageContext");
 var FaviconSetter = function (_a) {
     var webURL = _a.webURL;
     React.useEffect(function () {
@@ -55,7 +56,8 @@ var App = function (props) {
 function AppWrapper(props) {
     return (React.createElement(react_router_dom_1.HashRouter, null,
         React.createElement(ThemeContext_1.ThemeProvider, null,
-            React.createElement(App, tslib_1.__assign({}, props)))));
+            React.createElement(LanguageContext_1.LanguageProvider, null,
+                React.createElement(App, tslib_1.__assign({}, props))))));
 }
 exports.default = AppWrapper;
 //# sourceMappingURL=App.js.map

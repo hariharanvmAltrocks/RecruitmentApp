@@ -18,6 +18,8 @@ import {
 import { AdvertLanguage } from "../AdvertReviewDrawer/StateManage/useStateFromManage";
 import { AdvertLanguageDetails } from "../AdvertReviewDrawer/Hooks/getAdvertismentDetails";
 import "../RecruitmentTable.scss";
+import * as strings from 'RecrutimentAppWebPartStrings';
+import { Text } from '@microsoft/sp-core-library';
 
 export interface AdvertLanguageToggleProps {
   advertLanguage: AdvertLanguage;
@@ -169,36 +171,32 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
         <div className="advert-review-drawer__section-header">
           <h3>
             <span className="advert-review-drawer__section-indicator" />
-            Job Advertisement
-          </h3>
+            {strings.JobAdvertisement}</h3>
         </div>
         <div className="advert-review-drawer__section advert-review-drawer__section--toggle">
           <div className="advert-review-drawer__toggle-label">
             <Globe size={14} />
-            Advert Language
-          </div>
+            {strings.AdvertLanguage}</div>
           <div className="advert-review-drawer__toggle">
             <button
               type="button"
               className={`advert-review-drawer__toggle-button ${advertLanguage === "EN" ? "is-active" : ""}`.trim()}
               onClick={() => onLanguageChange("EN")}
             >
-              English
-            </button>
+              {strings.English}</button>
             <button
               type="button"
               className={`advert-review-drawer__toggle-button ${advertLanguage === "FR" ? "is-active" : ""}`.trim()}
               onClick={() => onLanguageChange("FR")}
             >
-              French
-            </button>
+              {strings.French}</button>
           </div>
         </div>
 
         <section className="advert-review-drawer__section">
           <h3 className="advert-review-drawer__section-title">
             <FileText size={12} />
-            Job Description ({advertLanguage})
+            {strings.JobDescription}{advertLanguage})
           </h3>
           {isLoading ? (
             <SkeletonBlock height="72px" />
@@ -210,7 +208,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
         </section>
 
         <Section
-          title={`Key Responsibilities (${advertLanguage})`}
+          title={Text.format(strings.KeyResponsibilities, )}
           icon={<CheckCircle2 size={12} />}
           isLoading={isLoading}
           isEmpty={isEmpty(advertContent?.responsibilities)}
@@ -219,7 +217,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
         </Section>
 
         <Section
-          title={`Experience (${advertLanguage})`}
+          title={Text.format(strings.Experience, )}
           icon={<Activity size={12} />}
           isLoading={isLoading}
           skeletonLines={2}
@@ -230,7 +228,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
 
         <div className="advert-review-drawer__grid advert-review-drawer__grid--split">
           <Section
-            title={`Minimum Qualification (${advertLanguage})`}
+            title={Text.format(strings.MinimumQualification, )}
             icon={<Award size={12} />}
             isLoading={isLoading}
             skeletonLines={2}
@@ -240,7 +238,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
           </Section>
 
           <Section
-            title={`Preferred Qualification (${advertLanguage})`}
+            title={Text.format(strings.PreferredQualification, )}
             icon={<Star size={12} />}
             isLoading={isLoading}
             skeletonLines={2}
@@ -250,7 +248,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
           </Section>
 
           <Section
-            title={`Role Specific Knowledge (${advertLanguage})`}
+            title={Text.format(strings.RoleSpecificKnowledge, )}
             icon={<BookOpen size={12} />}
             isLoading={isLoading}
             skeletonLines={2}
@@ -260,7 +258,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
           </Section>
 
           <Section
-            title={`Required Level (${advertLanguage})`}
+            title={Text.format(strings.RequiredLevel, )}
             icon={<TrendingUp size={12} />}
             isLoading={isLoading}
             skeletonLines={2}
@@ -270,7 +268,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
           </Section>
 
           <Section
-            title={`Technical Skills - Ability to Apply Knowledge (${advertLanguage})`}
+            title={Text.format(strings.TechnicalSkillsAbilityToApplyKnowledge, )}
             icon={<Wrench size={12} />}
             isLoading={isLoading}
             skeletonLines={2}
@@ -280,7 +278,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
           </Section>
 
           <Section
-            title={`Level of Proficiency (${advertLanguage})`}
+            title={Text.format(strings.LevelOfProficiency, )}
             icon={<Zap size={12} />}
             isLoading={isLoading}
             skeletonLines={2}
@@ -290,7 +288,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
           </Section>
 
           <Section
-            title={`Job Functional Type (${advertLanguage})`}
+            title={Text.format(strings.JobFunctionalType, )}
             icon={<Briefcase size={12} />}
             isLoading={isLoading}
             skeletonLines={2}

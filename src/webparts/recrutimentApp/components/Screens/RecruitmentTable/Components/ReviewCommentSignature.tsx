@@ -2,6 +2,7 @@ import React from "react";
 import { CheckCircle2, MessageSquare, User } from "lucide-react";
 import "../AdvertReviewDrawer/AdvertReviewDrawer.scss";
 import { SignatureDetails } from "../AdvertReviewDrawer/Hooks/getSignatureDetails";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export interface ReviewCommentSignatureProps {
   reviewerComments: string;
@@ -40,7 +41,7 @@ export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
   <section className="advert-review-drawer__section advert-review-drawer__section--comments">
     <h3 className="advert-review-drawer__section-title">
       <MessageSquare size={12} />
-      {ReviewLabel ? ReviewLabel : "Reviewer Comments"}
+      {ReviewLabel ? ReviewLabel : strings.ReviewerComments}
     </h3>
 
     {/* ── Textarea — red border when commentError=true ── */}
@@ -51,7 +52,7 @@ export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
       ]
         .filter(Boolean)
         .join(" ")}
-      placeholder="Add your feedback or notes here..."
+      placeholder={strings.AddYourFeedbackOrNotesHere}
       value={reviewerComments}
       onChange={(e) => onCommentsChange(e.target.value)}
       rows={4}
@@ -59,8 +60,7 @@ export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
     />
     {commentError && (
       <span className="advert-review-drawer__field-error">
-        Reviewer comment is required.
-      </span>
+        {strings.ReviewerCommentIsRequired}</span>
     )}
 
     <div className="advert-review-drawer__signature">
@@ -92,13 +92,12 @@ export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
         <span>
           {acknowledgementLabel
             ? acknowledgementLabel
-            : "I hereby acknowledge that I have reviewed the job advertisement details and attachments, and I confirm that the information is accurate and ready for publication."}
+            : strings.IHerebyAcknowledgeThatIHaveReviewedTheJo}
         </span>
       </label>
       {checkboxError && (
         <span className="advert-review-drawer__field-error">
-          Please acknowledge before approving.
-        </span>
+          {strings.PleaseAcknowledgeBeforeApproving}</span>
       )}
 
       {/* ── Signature card ── */}
@@ -109,8 +108,7 @@ export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
         <div className="advert-review-drawer__signature-meta">
           <div>
             <div className="advert-review-drawer__signature-label">
-              Reviewer Name
-            </div>
+              {strings.ReviewerName}</div>
             <div className="advert-review-drawer__signature-value">
               {isLoading ? (
                 <SkeletonBlock width="120px" />
@@ -121,8 +119,7 @@ export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
           </div>
           <div>
             <div className="advert-review-drawer__signature-label">
-              Job Title (EN)
-            </div>
+              {strings.JobTitleEn}</div>
             <div className="advert-review-drawer__signature-value">
               {isLoading ? (
                 <SkeletonBlock width="140px" />
@@ -133,8 +130,7 @@ export const ReviewCommentSignature: React.FC<ReviewCommentSignatureProps> = ({
           </div>
           <div>
             <div className="advert-review-drawer__signature-label">
-              Job Title (FR)
-            </div>
+              {strings.JobTitleFr}</div>
             <div className="advert-review-drawer__signature-value">
               {isLoading ? (
                 <SkeletonBlock width="160px" />

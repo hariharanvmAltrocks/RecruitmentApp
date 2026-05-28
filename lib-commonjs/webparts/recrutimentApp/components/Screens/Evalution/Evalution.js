@@ -14,6 +14,7 @@ var Evalution_module_scss_1 = tslib_1.__importDefault(require("./Evalution.modul
 var Usesubmitevaluation_1 = require("./Hooks/Usesubmitevaluation");
 var Submitevaluation_1 = tslib_1.__importDefault(require("./Components/Submitevaluation"));
 var loading_1 = tslib_1.__importDefault(require("../../Comman/Loading/loading"));
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var Evalution = function (props) {
     var _a;
     var location = (0, react_router_dom_1.useLocation)();
@@ -79,12 +80,12 @@ function EvalutionContent(_a) {
     if (isLoading) {
         return (React.createElement("div", { className: Evalution_module_scss_1.default.loadingPage },
             React.createElement("div", { className: Evalution_module_scss_1.default.spinner }),
-            React.createElement("p", { className: Evalution_module_scss_1.default.loadingText }, "Loading evaluation form\u2026")));
+            React.createElement("p", { className: Evalution_module_scss_1.default.loadingText }, strings.LoadingEvaluationForm)));
     }
     return (React.createElement("div", { className: Evalution_module_scss_1.default.root },
         hasError && (React.createElement("div", { className: Evalution_module_scss_1.default.errorBanner },
-            React.createElement("span", null, "We could not load all evaluation data. Please try again."),
-            React.createElement("button", { className: Evalution_module_scss_1.default.retryBtn, onClick: handleRetry }, "Retry"))),
+            React.createElement("span", null, strings.WeCouldNotLoadAllEvaluationDataPleaseTry),
+            React.createElement("button", { className: Evalution_module_scss_1.default.retryBtn, onClick: handleRetry }, strings.Retry))),
         submitHook.submitting && React.createElement(loading_1.default, null),
         React.createElement("div", { className: Evalution_module_scss_1.default.layout },
             React.createElement(CandidateInfo_1.default, { candidate: candidate }),

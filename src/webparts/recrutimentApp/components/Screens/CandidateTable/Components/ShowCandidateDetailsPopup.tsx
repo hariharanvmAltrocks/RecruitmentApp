@@ -60,6 +60,7 @@ import {
   InterviewScheduleInput,
   ScheduleForm,
 } from "./InterviewSchedule/InterviewScheduleInput";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -91,7 +92,7 @@ const FEEDBACK_OPTIONS = [
   "Excellent",
   "Good",
   "Average",
-  "Below Average",
+  strings.BelowAverage,
   "Poor",
 ] as const;
 
@@ -159,7 +160,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
                 type="button"
                 className={styles.previewClose}
                 onClick={onClose}
-                aria-label="Close preview"
+                aria-label={strings.ClosePreview}
               >
                 <X size={18} />
               </button>
@@ -492,9 +493,9 @@ export const ShowCandidateDetailsPopup: React.FC<
     if (!canSubmit) {
       showModal({
         type: "warning",
-        title: "Required Fields Missing",
+        title: strings.RequiredFieldsMissing,
         message:
-          "One or more fields are required. Please complete all highlighted fields before submitting.",
+          strings.OneOrMoreFieldsAreRequiredPleaseComplete,
         confirmLabel: "OK",
         onConfirm: closeModal,
       });
@@ -570,18 +571,16 @@ export const ShowCandidateDetailsPopup: React.FC<
                 </div>
                 <div className={styles.headerMeta}>
                   <div className={styles.breadcrumb}>
-                    <span>Candidate selection</span>
+                    <span>{strings.CandidateSelection}</span>
                     <ChevronRight
                       size={12}
                       className={styles.breadcrumbChevron}
                     />
                     <span className={styles.breadcrumbActive}>
-                      Review Profile
-                    </span>
+                      {strings.ReviewProfile}</span>
                   </div>
                   <h2 className={styles.headerTitle}>
-                    Candidate Profile Review
-                  </h2>
+                    {strings.CandidateProfileReview}</h2>
                   <div className={styles.headerSubtitle}>
                     <span className={styles.jobCodeBadge}>
                       {data?.JobCode || "---"}
@@ -597,7 +596,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                 className={styles.closeBtn}
                 type="button"
                 onClick={onClose}
-                aria-label="Close"
+                aria-label={strings.Close}
               >
                 <X size={20} strokeWidth={2.5} />
               </button>
@@ -622,17 +621,17 @@ export const ShowCandidateDetailsPopup: React.FC<
                 <div className={styles.infoGrid}>
                   <InfoItem
                     icon={<Globe size={14} />}
-                    label="Nationality"
+                    label={strings.Nationality}
                     value={data?.Nationality}
                   />
                   <InfoItem
                     icon={<Users size={14} />}
-                    label="Gender"
+                    label={strings.Gender}
                     value={data?.Gender}
                   />
                   <InfoItem
                     icon={<FileText size={14} />}
-                    label="Qualification"
+                    label={strings.Qualification}
                     value={data?.HighestQualification}
                   />
 
@@ -640,14 +639,14 @@ export const ShowCandidateDetailsPopup: React.FC<
                     <div className={styles.infoRowItem}>
                       <InfoItem
                         icon={<Zap size={14} />}
-                        label="Mining exp."
+                        label={strings.MiningExp}
                         value={data?.ExperienceMining}
                       />
                     </div>
                     <div className={styles.infoRowItem}>
                       <InfoItem
                         icon={<Zap size={14} />}
-                        label="Related exp."
+                        label={strings.RelatedExp}
                         value={String(data?.ExperRelatedfield ?? "")}
                       />
                     </div>
@@ -657,14 +656,14 @@ export const ShowCandidateDetailsPopup: React.FC<
                     <div className={styles.infoRowItem}>
                       <InfoItem
                         icon={<AlertTriangle size={14} />}
-                        label="Conflicts"
+                        label={strings.Conflicts}
                         value={data?.ConflictsOfInterest ?? "No"}
                       />
                     </div>
                     <div className={styles.infoRowItem}>
                       <InfoItem
                         icon={<Accessibility size={14} />}
-                        label="Disability"
+                        label={strings.Disability}
                         value={data?.disability ?? "No"}
                       />
                     </div>
@@ -673,13 +672,13 @@ export const ShowCandidateDetailsPopup: React.FC<
                   <div className={styles.infoRow}>
                     <div className={styles.infoRowItem}>
                       <InfoItem
-                        label="Tax dependents"
+                        label={strings.TaxDependents}
                         value={String(data?.NumberOftax ?? "")}
                       />
                     </div>
                     <div className={styles.infoRowItem}>
                       <InfoItem
-                        label="Current position"
+                        label={strings.CurrentPosition}
                         value={data?.CurrentPosition}
                       />
                     </div>
@@ -687,7 +686,7 @@ export const ShowCandidateDetailsPopup: React.FC<
 
                   {data?.hasIvanhoeZijinExperience && (
                     <InfoItem
-                      label="Group / partner companies"
+                      label={strings.GroupPartnerCompanies}
                       value={data.hasIvanhoeZijinExperience}
                     />
                   )}
@@ -699,8 +698,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                       size={14}
                       className={styles.attachmentsLabelIcon}
                     />{" "}
-                    Attachments
-                  </div>
+                    {strings.Attachments}</div>
                   <div className={styles.attachmentsBox}>
                     <RequiredAttachments
                       attachments={data?.OverallAtttachment ?? []}
@@ -722,8 +720,8 @@ export const ShowCandidateDetailsPopup: React.FC<
                     animate="visible"
                   >
                     <SectionHeader
-                      title="Screening Questions"
-                      subtitle="Candidate responses"
+                      title={strings.ScreeningQuestions}
+                      subtitle={strings.CandidateResponses}
                       accent="orange"
                     />
                     <div className={styles.questionsCard}>
@@ -762,7 +760,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                     initial="hidden"
                     animate="visible"
                   >
-                    <SectionHeader title="Conflict of interest" accent="red" />
+                    <SectionHeader title={strings.ConflictOfInterest} accent="red" />
                     <div className={styles.coiCard}>
                       <div className={styles.coiAlert}>
                         <AlertTriangle
@@ -771,8 +769,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                         />
                         <div className={styles.coiAlertContent}>
                           <span className={styles.coiAlertTitle}>
-                            Conflict of Interest Declared
-                          </span>
+                            {strings.ConflictOfInterestDeclared}</span>
                           {data?.COIReason && (
                             <span className={styles.coiAlertReason}>
                               {data.COIReason}
@@ -785,7 +782,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                         {/* Consulted with */}
                         <div className={styles.coiField}>
                           <label className={styles.fieldLabel}>
-                            Consulted with{" "}
+                            {strings.ConsultedWith}{" "}
                             <span className={styles.fieldRequired}>*</span>
                           </label>
                           <div className={styles.selectWrapper}>
@@ -800,7 +797,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                               }
                               disabled={isReadOnly}
                             >
-                              <option value="">Select...</option>
+                              <option value="">{strings.Select}</option>
                               {consultoptions.map((opt) => (
                                 <option key={opt.value} value={opt.value}>
                                   {opt.label}
@@ -817,7 +814,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                         {/* Proof of discussion */}
                         <div className={styles.coiField}>
                           <label className={styles.fieldLabel}>
-                            Proof of discussion{" "}
+                            {strings.ProofOfDiscussion}{" "}
                             <span className={styles.fieldRequired}>*</span>
                           </label>
 
@@ -834,11 +831,9 @@ export const ShowCandidateDetailsPopup: React.FC<
                                 </div>
                                 <div className={styles.uploadText}>
                                   <span className={styles.uploadTitle}>
-                                    Click to upload
-                                  </span>
+                                    {strings.ClickToUpload}</span>
                                   <span className={styles.uploadSub}>
-                                    PDF, DOC, DOCX, PNG, JPG
-                                  </span>
+                                    {strings.PdfDocDocxPngJpg}</span>
                                 </div>
                               </button>
                             ) : (
@@ -858,8 +853,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                             />
                           ) : (
                             <span className={styles.fieldLabel}>
-                              No attachment
-                            </span>
+                              {strings.NoAttachment}</span>
                           )}
 
                           <input
@@ -875,14 +869,14 @@ export const ShowCandidateDetailsPopup: React.FC<
                       {/* COI Comments */}
                       <div className={styles.coiTextareaWrap}>
                         <label className={styles.fieldLabel}>
-                          Reason / Comments{" "}
+                          {strings.ReasonComments}{" "}
                           <span className={styles.fieldRequired}>*</span>
                         </label>
                         <div className={styles.coiTextareaRelative}>
                           <textarea
                             className={styles.coiTextarea}
                             maxLength={256}
-                            placeholder="Enter your comments (max 256 characters)..."
+                            placeholder={strings.EnterYourCommentsMax256Characters}
                             value={coi.comments}
                             onChange={(e) =>
                               setCoi((p) => ({
@@ -914,8 +908,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                     <div className={styles.disabilityCard}>
                       <div className={styles.disabilityField}>
                         <span className={styles.disabilityFieldLabel}>
-                          Disability status
-                        </span>
+                          {strings.DisabilityStatus}</span>
                         <span className={styles.disabilityFieldValue}>
                           {data?.disability ?? "--"}
                         </span>
@@ -923,8 +916,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                       {data?.disability && (
                         <div className={styles.disabilityDivider}>
                           <span className={styles.disabilityFieldLabel}>
-                            Comments
-                          </span>
+                            {strings.Comments}</span>
                           <span className={styles.disabilityReason}>
                             {data.disabilityReason}
                           </span>
@@ -945,12 +937,12 @@ export const ShowCandidateDetailsPopup: React.FC<
                     >
                       <div className={styles.hrFeedbackCard}>
                         <SectionHeader
-                          title="HR Review Feedback"
+                          title={strings.HrReviewFeedback}
                           accent="green"
                         />
                         <div className={styles.hrFeedbackFieldWrap}>
                           <label className={styles.fieldLabel}>
-                            Review Profile Feedback - HR{" "}
+                            {strings.ReviewProfileFeedbackHr}{" "}
                             <span className={styles.fieldRequired}>*</span>
                           </label>
                           <div className={`${styles.dropdownWrapper} dropdown`}>
@@ -973,7 +965,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                                     : styles.dropdownPlaceholder
                                 }
                               >
-                                {HRReview || "Select feedback"}
+                                {HRReview || strings.SelectFeedback}
                               </span>
                               <ChevronDown
                                 size={18}
@@ -1033,7 +1025,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                     animate="visible"
                   >
                     <SectionHeader
-                      title="Interview schedule - Level 1"
+                      title={strings.InterviewScheduleLevel1}
                       accent="blue"
                     />
                     <InterviewScheduleInput
@@ -1064,7 +1056,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                     animate="visible"
                   >
                     <SectionHeader
-                      title="Interview schedule - Level 2"
+                      title={strings.InterviewScheduleLevel2}
                       accent="green"
                     />
                     <InterviewScheduleInput
@@ -1101,12 +1093,9 @@ export const ShowCandidateDetailsPopup: React.FC<
                         </div>
                         <div className={styles.lmDecisionTitleWrap}>
                           <h3 className={styles.lmDecisionTitle}>
-                            Do you wish to select this candidate?
-                          </h3>
+                            {strings.DoYouWishToSelectThisCandidate}</h3>
                           <p className={styles.lmDecisionSubtitle}>
-                            Please review the candidate and provide your final
-                            decision.
-                          </p>
+                            {strings.PleaseReviewTheCandidateAndProvideYourFi}</p>
                         </div>
                       </div>
 
@@ -1115,7 +1104,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                           [
                             {
                               value: "YES",
-                              label: "YES, SELECT",
+                              label: strings.YesSelect,
                               Icon: CheckCircle,
                               activeStyle: styles.decisionBtnYesActive,
                               inactiveStyle: styles.decisionBtnYesInactive,
@@ -1124,7 +1113,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                             },
                             {
                               value: "NO",
-                              label: "NO, REJECT",
+                              label: strings.NoReject,
                               Icon: XCircle,
                               activeStyle: styles.decisionBtnNoActive,
                               inactiveStyle: styles.decisionBtnNoInactive,
@@ -1133,7 +1122,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                             },
                             {
                               value: "HOLD",
-                              label: "ON HOLD",
+                              label: strings.OnHold1,
                               Icon: Activity,
                               activeStyle: styles.decisionBtnHoldActive,
                               inactiveStyle: styles.decisionBtnHoldInactive,
@@ -1192,13 +1181,12 @@ export const ShowCandidateDetailsPopup: React.FC<
                       <div className={styles.lmCommentsFieldWrap}>
                         <label className={styles.lmCommentsLabel}>
                           <span className={styles.lmCommentsLabelText}>
-                            Decision justification / comments
-                          </span>{" "}
+                            {strings.DecisionJustificationComments}</span>{" "}
                           <span className={styles.lmCommentsRequired}>*</span>
                         </label>
                         <textarea
                           className={styles.lmCommentsTextarea}
-                          placeholder="Provide your final decision rationale..."
+                          placeholder={strings.ProvideYourFinalDecisionRationale}
                           value={decisionComments}
                           onChange={(e) => setDecisionComments(e.target.value)}
                           disabled={submitting}
@@ -1218,8 +1206,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                   className={styles.cancelBtn}
                   onClick={onClose}
                 >
-                  Cancel
-                </button>
+                  {strings.Cancel}</button>
                 <button
                   type="button"
                   className={`${styles.submitBtn} ${
@@ -1235,7 +1222,7 @@ export const ShowCandidateDetailsPopup: React.FC<
                   ) : (
                     <>
                       <CheckCircle size={16} />
-                      {PanelMember ? "Schedule Interview" : "Submit action"}
+                      {PanelMember ? strings.ScheduleInterview : strings.SubmitAction}
                     </>
                   )}
                 </button>
@@ -1246,7 +1233,7 @@ export const ShowCandidateDetailsPopup: React.FC<
             {loading && (
               <div className={styles.loadingOverlay}>
                 <div className={styles.spinner} />
-                <div className={styles.loadingText}>Loading details...</div>
+                <div className={styles.loadingText}>{strings.LoadingDetails}</div>
               </div>
             )}
             {pageLoading && <Loading />}
@@ -1296,7 +1283,7 @@ const AttachmentRow: React.FC<AttachmentRowProps> = React.memo(
           <span className={styles.fileName}>{file.name}</span>
           <span className={styles.fileReady}>
             <CheckCircle size={12} />
-            {isReadOnly ? "Click to preview" : "Ready to submit"}
+            {isReadOnly ? strings.ClickToPreview : strings.ReadyToSubmit}
           </span>
         </div>
       </div>
@@ -1306,7 +1293,7 @@ const AttachmentRow: React.FC<AttachmentRowProps> = React.memo(
           type="button"
           className={styles.clearFileBtn}
           onClick={onClear}
-          aria-label="Remove file"
+          aria-label={strings.RemoveFile}
         >
           <Trash2 size={16} />
         </button>

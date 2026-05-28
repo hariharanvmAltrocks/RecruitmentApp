@@ -9,6 +9,7 @@ import { CheckCircle2 } from 'lucide-react';
 import styles from '../ReviewScorecard.module.scss';
 import { useSubmitReviewScoreCard, SubmitHookDeps } from './useSubmitReviewScoreCard';
 import ConfirmationPopup from '../Confirmationpopup';
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface SubmitReviewScoreCardProps extends SubmitHookDeps {
   roleId:     number;
@@ -94,8 +95,7 @@ const SubmitReviewScoreCard: React.FC<SubmitReviewScoreCardProps> = ({
           disabled={submitting}
           type="button"
         >
-          CANCEL
-        </button>
+          {strings.Cancel1}</button>
 
         {/* SUBMIT button */}
         <button
@@ -112,8 +112,7 @@ const SubmitReviewScoreCard: React.FC<SubmitReviewScoreCardProps> = ({
           ) : (
             <>
               <CheckCircle2 size={15} style={{ marginRight: 6 }} />
-              SUBMIT ACTION
-            </>
+              {strings.SubmitAction1}</>
           )}
         </button>
       </div>

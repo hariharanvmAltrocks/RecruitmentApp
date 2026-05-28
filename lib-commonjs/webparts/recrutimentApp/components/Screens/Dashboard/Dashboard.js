@@ -14,6 +14,7 @@ var matric_1 = tslib_1.__importDefault(require("../../Comman/MatricBox/matric"))
 var loading_1 = tslib_1.__importDefault(require("../../Comman/Loading/loading"));
 var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
 var Departmentchart_1 = tslib_1.__importDefault(require("../../Comman/Departmentchart/Departmentchart"));
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var Dashboard = function (props) {
     var _a;
     var _b = (0, react_1.useState)(0), activeMetric = _b[0], setActiveMetric = _b[1];
@@ -77,12 +78,12 @@ var Dashboard = function (props) {
         react_1.default.createElement(framer_motion_1.AnimatePresence, null, loading ? (
         // <DashboardSkeleton key="dashboard-skeleton" />
         react_1.default.createElement(loading_1.default, null)) : (react_1.default.createElement(framer_motion_1.motion.div, { key: "dashboard-content", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 } }, !hasMetrics ? (react_1.default.createElement("div", { className: "dashboard-empty" },
-            react_1.default.createElement("div", { className: "dashboard-empty__title" }, "No dashboard metrics available"),
-            react_1.default.createElement("div", { className: "dashboard-empty__subtitle" }, "Please check your permissions or try again later."))) : (react_1.default.createElement(react_1.default.Fragment, null,
+            react_1.default.createElement("div", { className: "dashboard-empty__title" }, strings.NoDashboardMetricsAvailable),
+            react_1.default.createElement("div", { className: "dashboard-empty__subtitle" }, strings.PleaseCheckYourPermissionsOrTryAgainLate))) : (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(framer_motion_1.motion.div, { className: "metrics-grid", variants: metricsContainer, initial: "hidden", animate: "visible" },
                 react_1.default.createElement(matric_1.default, { metrics: martics.metrics, onCardClick: function (metric) { return onMetricChange(metric); }, loading: loading, handleRefresh: handleRefresh, active: activeMetric })),
             react_1.default.createElement("div", { className: "dashboard-layout" },
-                react_1.default.createElement(Departmentchart_1.default, { itemsPerPage: 7, title: "Departmental Demand", subtitle: "Pending lifecycle", tooltipValueLabel: "Openings" })))))))));
+                react_1.default.createElement(Departmentchart_1.default, { itemsPerPage: 7, title: strings.DepartmentalDemand, subtitle: strings.PendingLifecycle, tooltipValueLabel: "Openings" })))))))));
 };
 exports.default = Dashboard;
 //# sourceMappingURL=Dashboard.js.map

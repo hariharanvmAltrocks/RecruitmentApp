@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Question } from "../QuestionCreation.types";
 import "./Interviewmode.scss";
 import "../Questioncreation.scss";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 interface CareerPortalBankProps {
   questionBank: Question[];
@@ -16,7 +17,7 @@ interface CareerPortalBankProps {
 
 const QuestionTypeBadge: React.FC<{ type: Question["type"] }> = ({ type }) => (
   <span className={`qc-badge qc-badge--${type}`}>
-    {type === "single" ? "Single Choice" : "Multiple Choice"}
+    {type === "single" ? strings.SingleChoice : strings.MultipleChoice}
   </span>
 );
 
@@ -54,11 +55,9 @@ export const CareerPortalQuestionBank: React.FC<CareerPortalBankProps> = ({
         <div className="qc-bank__title-row">
           <h3 className="qc-bank__title">
             <span className="qc-bank__title-bar" />
-            Question Bank
-          </h3>
+            {strings.QuestionBank}</h3>
           <span className="qc-bank__count">
-            {questionBank.length} Templates
-          </span>
+            {questionBank.length} {strings.Templates}</span>
         </div>
       </div>
 
@@ -71,7 +70,7 @@ export const CareerPortalQuestionBank: React.FC<CareerPortalBankProps> = ({
           </>
         ) : filtered.length === 0 ? (
           <div className="qc-bank__empty">
-            <p className="qc-bank__empty-text">No questions found</p>
+            <p className="qc-bank__empty-text">{strings.NoQuestionsFound}</p>
           </div>
         ) : (
           <AnimatePresence>
@@ -95,7 +94,7 @@ export const CareerPortalQuestionBank: React.FC<CareerPortalBankProps> = ({
                     <button
                       className={`qc-bank__add-btn ${isAdded ? "qc-bank__add-btn--added" : ""}`}
                       onClick={() => !isAdded && onAddFromBank(q)}
-                      title={isAdded ? "Already added" : "Add to criteria"}
+                      title={isAdded ? strings.AlreadyAdded : strings.AddToCriteria}
                     >
                       {isAdded ? (
                         <CheckCircle2 size={16} />
@@ -108,15 +107,13 @@ export const CareerPortalQuestionBank: React.FC<CareerPortalBankProps> = ({
                   <div className="qc-bank__card-body">
                     <div className="qc-bank__lang-block">
                       <span className="qc-bank__lang-label qc-bank__lang-label--en">
-                        English
-                      </span>
+                        {strings.English}</span>
                       <p className="qc-bank__question-text">{q.questionEn}</p>
                     </div>
                     <div className="qc-bank__divider" />
                     <div className="qc-bank__lang-block">
                       <span className="qc-bank__lang-label qc-bank__lang-label--fr">
-                        Français
-                      </span>
+                        {strings.FranAis}</span>
                       <p className="qc-bank__question-text qc-bank__question-text--italic">
                         {q.questionFr}
                       </p>

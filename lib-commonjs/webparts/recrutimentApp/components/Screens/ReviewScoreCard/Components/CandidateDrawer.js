@@ -14,6 +14,7 @@ var EvaluationConfig_1 = require("../../SelectionProcess/config/EvaluationConfig
 require("../../CandidateTable/CandidateTable.scss");
 var CandidateReviewModal_1 = tslib_1.__importDefault(require("./CandidateReviewModal"));
 var react_dom_1 = tslib_1.__importDefault(require("react-dom"));
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var getStatusClass = function (statusId) {
     if (statusId === 122)
         return ReviewScorecard_module_scss_1.default.statusSelected;
@@ -24,9 +25,9 @@ var getStatusClass = function (statusId) {
 var getInterviewLevelLabel = function (interviewLevel) {
     var lvl = (interviewLevel || "").trim();
     if (/level\s*2/i.test(lvl))
-        return "Level 1 of 1 & Level 2 of 2";
+        return strings.Level1Of1Level2Of2;
     if (/level\s*1/i.test(lvl))
-        return "Level 1 of 1";
+        return strings.Level1Of1;
     return lvl || " ";
 };
 function resolveStatusTone(status) {
@@ -90,7 +91,7 @@ var CandidateDrawer = function (_a) {
             item.statusId === EvaluationConfig_1.StatusId.CandidateOnHoldbyHODLevel1 ||
             item.statusId === EvaluationConfig_1.StatusId.CandidateOnHoldbyHODLevel2) {
             return {
-                label: "On Hold",
+                label: strings.OnHold,
                 icon: React.createElement(lucide_react_1.PauseCircle, { size: 14 }),
             };
         }
@@ -109,19 +110,19 @@ var CandidateDrawer = function (_a) {
     var columns = (0, react_1.useMemo)(function () { return [
         {
             id: "ApplicantName",
-            header: "Applicant Name",
+            header: strings.ApplicantName,
             render: function (item) { return (React.createElement("span", { className: "candidate-table__code" }, item.fullName)); },
         },
         {
             id: "PositionTitle",
-            header: "Position Title",
+            header: strings.PositionTitle,
             render: function (item) { return (React.createElement("div", null,
                 React.createElement("div", { className: "candidate-table__name" }, item.positionTitle),
                 React.createElement("div", { className: "candidate-table__subtext" }, item.department))); },
         },
         {
             id: "interviewLevel",
-            header: "Interview Level",
+            header: strings.InterviewLevel,
             accessor: "interviewLevel",
             cellClassName: "data-table__cell--muted",
             hideOnMobile: true,
@@ -159,7 +160,7 @@ var CandidateDrawer = function (_a) {
                             React.createElement("div", { className: "candidate-table__header-icon" },
                                 React.createElement(lucide_react_1.Users, { size: 20 })),
                             React.createElement("div", null,
-                                React.createElement("h2", { className: "candidate-table__title" }, "Review Scorecard Profiles"),
+                                React.createElement("h2", { className: "candidate-table__title" }, strings.ReviewScorecardProfiles),
                                 React.createElement("div", { className: "candidate-table__meta" },
                                     React.createElement("span", { className: "candidate-table__badge" }, headerMeta.code),
                                     React.createElement("span", { className: "candidate-table__dot" }),
@@ -167,7 +168,7 @@ var CandidateDrawer = function (_a) {
                         React.createElement("div", { className: "candidate-table__header-right" },
                             React.createElement("button", { type: "button", className: "candidate-table__refresh", onClick: handleRefresh, disabled: isRefreshing },
                                 React.createElement(lucide_react_1.RefreshCw, { size: 14, className: isRefreshing ? "spin" : "" }),
-                                "Refresh"),
+                                strings.Refresh),
                             React.createElement("button", { type: "button", className: "candidate-table__close", onClick: handleClose },
                                 React.createElement(lucide_react_1.X, { size: 18 })))),
                     React.createElement("div", { className: "candidate-table__content" },

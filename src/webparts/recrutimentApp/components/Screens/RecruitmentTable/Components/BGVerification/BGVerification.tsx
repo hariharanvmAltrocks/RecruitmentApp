@@ -1,5 +1,7 @@
 import * as React from "react";
 import "./BGVerification.scss";
+import * as strings from 'RecrutimentAppWebPartStrings';
+import { Text } from '@microsoft/sp-core-library';
 
 export type VerifiedCheck = {
   id: string;
@@ -39,7 +41,7 @@ const BGVerification = ({
 }: VerificationCardProps) => {
   const optionalChecks: VerifiedCheck[] = VerificationChecks.map((check) => ({
     id: String(check.id),
-    label: check.description || "Unnamed Check",
+    label: check.description || strings.UnnamedCheck,
     checked: Boolean(check.checked),
   }));
 
@@ -54,19 +56,16 @@ const BGVerification = ({
     >
       <div className="vc-header">
         <h2 className="vc-title">
-          Background Verification Requirements
-          <span className="vc-required-asterisk">*</span>
+          {strings.BackgroundVerificationRequirements}<span className="vc-required-asterisk">*</span>
         </h2>
         <p className="vc-subtitle">
-          Select the required background checks for this job title.
-        </p>
+          {strings.SelectTheRequiredBackgroundChecksForThis}</p>
       </div>
 
       <div className="vc-body">
         <div className="vc-section">
           <h3 className="vc-section-title">
-            Standard Requirements (Pre-selected)
-          </h3>
+            {strings.StandardRequirementsPreSelected}</h3>
           <div className="vc-grid">
             {mandatoryChecks.map((item) => (
               <label key={item.id} className="vc-option disabled">
@@ -82,7 +81,7 @@ const BGVerification = ({
                   <span className="vc-custom-checkbox" aria-hidden="true" />
                 </span>
                 <span className="vc-label-text">{item.label}</span>
-                <span className="vc-badge">Required</span>
+                <span className="vc-badge">{strings.Required}</span>
               </label>
             ))}
           </div>
@@ -90,13 +89,12 @@ const BGVerification = ({
 
         <div className="vc-section">
           <h3 className="vc-section-title">
-            Additional Role-Specific Checks
-          </h3>
+            {strings.AdditionalRoleSpecificChecks}</h3>
           <div className="vc-grid">
             {optionalChecks.map((item) => (
               <label
                 key={item.id}
-                className={`vc-option interactive${item.checked ? " checked" : ""}`}
+                className={Text.format(strings.VcOptionInteractive, )}
               >
                 <input
                   type="checkbox"
@@ -118,8 +116,7 @@ const BGVerification = ({
 
       {hasError && (
         <p className="vc-error-text">
-          Please choose at least one BGV verification option.
-        </p>
+          {strings.PleaseChooseAtLeastOneBgvVerificationOpt}</p>
       )}
     </div>
   );

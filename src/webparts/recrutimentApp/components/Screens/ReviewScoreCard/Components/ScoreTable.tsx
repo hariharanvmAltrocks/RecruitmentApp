@@ -1,6 +1,8 @@
 
 import * as React from "react";
 import styles from "../ReviewScorecard.module.scss";
+import * as strings from 'RecrutimentAppWebPartStrings';
+import { Text } from '@microsoft/sp-core-library';
 
 interface ScoreRow {
   criteria: string;
@@ -20,7 +22,7 @@ interface Props {
 
 const ScoreTable: React.FC<Props> = ({
   title, subtitle, accentColor, rows, panelMembers,
-  showTotal = false, emptyText = "No data available.",
+  showTotal = false, emptyText = strings.NoDataAvailable,
 }) => (
   <div className={styles.mSection}>
     <div className={styles.mSectionHeader}>
@@ -34,14 +36,14 @@ const ScoreTable: React.FC<Props> = ({
       <table className={styles.scoreTable}>
         <thead>
           <tr>
-            <th>Criteria</th>
+            <th>{strings.Criteria}</th>
             {panelMembers.map((name, i) => (
               <th key={i}>
-                Interviewer {i + 1}<br />
+                {strings.Interviewer}{i + 1}<br />
                 <span className={styles.interviewerName}>({name || ""})</span>
               </th>
             ))}
-            {showTotal && <th>Total</th>}
+            {showTotal && <th>{strings.Total}</th>}
           </tr>
         </thead>
         <tbody>
@@ -64,7 +66,7 @@ const ScoreTable: React.FC<Props> = ({
             >
               <td><strong>{row.criteria}</strong></td>
               {panelMembers.map((_, j) => (
-                <td key={j}>{row[`panel_${j}`] ?? ""}</td>
+                <td key={j}>{row[Text.format(strings.Panel, )] ?? ""}</td>
               ))}
               {showTotal && <td><strong>{row.total}</strong></td>}
             </tr>

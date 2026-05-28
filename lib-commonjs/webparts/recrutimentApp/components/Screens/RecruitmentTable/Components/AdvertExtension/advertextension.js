@@ -9,11 +9,12 @@ var getPositionDetails_1 = require("../../AdvertReviewDrawer/Hooks/getPositionDe
 var loading_1 = tslib_1.__importDefault(require("../../../../Comman/Loading/loading"));
 var ModalPopup_1 = require("../../../../Comman/ModalPopup/ModalPopup");
 var useModalPopup_1 = require("../../../../Comman/ModalPopup/useModalPopup");
+var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 // ─── Constants ────────────────────────────────────────────────────────────────
 var EXTENSION_LABELS = [
-    "First Extension Date",
-    "Second Extension Date",
-    "Third Extension Date",
+    strings.FirstExtensionDate,
+    strings.SecondExtensionDate,
+    strings.ThirdExtensionDate,
 ];
 var EMPTY_DATE = { StartDate: undefined, EndDate: undefined };
 // ─── Pure Helpers ─────────────────────────────────────────────────────────────
@@ -130,7 +131,7 @@ var AdvertExtension = function (_a) {
     (0, react_1.useEffect)(function () {
         if (cannotExtend && comparisonDate) {
             showModal({
-                title: "Extension Not Allowed",
+                title: strings.ExtensionNotAllowed,
                 message: "You cannot extend the advertisement as the posting period has ".concat(formatDateDisplay(comparisonDate), " already ended."),
                 type: "error",
                 confirmLabel: "OK",
@@ -202,21 +203,21 @@ var AdvertExtension = function (_a) {
                             react_1.default.createElement("svg", { width: "22", height: "22", viewBox: "0 0 24 24", fill: "none", stroke: "#7c3aed", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
                                 react_1.default.createElement("circle", { cx: "12", cy: "12", r: "10" }),
                                 react_1.default.createElement("polyline", { points: "12 6 12 12 16 14" }))),
-                        react_1.default.createElement("h2", { className: advertextension_module_scss_1.default.title }, "Advertisement Extension")),
-                    react_1.default.createElement("button", { className: advertextension_module_scss_1.default.closeBtn, onClick: onClose, "aria-label": "Close" },
+                        react_1.default.createElement("h2", { className: advertextension_module_scss_1.default.title }, strings.AdvertisementExtension)),
+                    react_1.default.createElement("button", { className: advertextension_module_scss_1.default.closeBtn, onClick: onClose, "aria-label": strings.Close },
                         react_1.default.createElement(CloseIcon, null))),
                 react_1.default.createElement("div", { className: advertextension_module_scss_1.default.jobSubtitle },
-                    react_1.default.createElement("span", { className: advertextension_module_scss_1.default.jobLabel }, "Job Title"),
+                    react_1.default.createElement("span", { className: advertextension_module_scss_1.default.jobLabel }, strings.JobTitle),
                     react_1.default.createElement("span", { className: advertextension_module_scss_1.default.jobName }, (_p = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobTitleEnglish) !== null && _p !== void 0 ? _p : "—")),
                 react_1.default.createElement("div", { className: advertextension_module_scss_1.default.body }, extensionRows.map(function (row, i) { return (react_1.default.createElement("div", { className: advertextension_module_scss_1.default.extensionBlock, key: i },
                     react_1.default.createElement("div", { className: advertextension_module_scss_1.default.extensionLabelRow },
                         react_1.default.createElement("span", { className: advertextension_module_scss_1.default.extensionIndex }, i + 1),
                         react_1.default.createElement("span", { className: advertextension_module_scss_1.default.extensionLabel }, row.label)),
                     react_1.default.createElement("div", { className: advertextension_module_scss_1.default.dateRow },
-                        react_1.default.createElement(DateField, { label: "Start Date", date: row.start }),
+                        react_1.default.createElement(DateField, { label: strings.StartDate, date: row.start }),
                         react_1.default.createElement("div", { className: advertextension_module_scss_1.default.dateDivider },
                             react_1.default.createElement("span", { className: advertextension_module_scss_1.default.arrowLine })),
-                        react_1.default.createElement(DateField, { label: "End Date", date: row.end })),
+                        react_1.default.createElement(DateField, { label: strings.EndDate, date: row.end })),
                     i < extensionRows.length - 1 && (react_1.default.createElement("div", { className: advertextension_module_scss_1.default.divider })))); })),
                 react_1.default.createElement("div", { className: advertextension_module_scss_1.default.footer },
                     react_1.default.createElement("button", { className: advertextension_module_scss_1.default.cancelBtn, onClick: onClose }, "Close"),
@@ -224,7 +225,7 @@ var AdvertExtension = function (_a) {
                         react_1.default.createElement("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" },
                             react_1.default.createElement("line", { x1: "22", y1: "2", x2: "11", y2: "13" }),
                             react_1.default.createElement("polygon", { points: "22 2 15 22 11 13 2 9 22 2" })),
-                        "Submit"))))),
+                        strings.Submit))))),
         react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal }))));
 };
 exports.AdvertExtension = AdvertExtension;

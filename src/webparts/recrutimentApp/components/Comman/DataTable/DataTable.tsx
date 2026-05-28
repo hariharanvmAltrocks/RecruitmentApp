@@ -1,6 +1,7 @@
 import React, { ReactNode, useMemo } from "react";
 import { Check, Minus } from "lucide-react";
 import "./DataTable.scss";
+import * as strings from 'RecrutimentAppWebPartStrings';
 
 export type DataTableAlign = "left" | "center" | "right";
 
@@ -68,7 +69,7 @@ export const DataTable = <T,>({
   pageSizeOptions = [10, 20, 50],
   onPageSizeChange,
   loading = false,
-  emptyMessage = "No records found.",
+  emptyMessage = strings.NoRecordsFound,
   onRowClick,
 }: DataTableProps<T>) => {
   const rowIds = useMemo(
@@ -121,7 +122,7 @@ export const DataTable = <T,>({
                   className={`data-table__checkbox ${allSelected || someSelected ? "data-table__checkbox--checked" : ""}`.trim()}
                   type="button"
                   aria-pressed={allSelected}
-                  aria-label="Select all rows"
+                  aria-label={strings.SelectAllRows}
                   onClick={onToggleAll}
                   disabled={!onToggleAll}
                 >
@@ -206,7 +207,7 @@ export const DataTable = <T,>({
                         className={`data-table__checkbox ${isSelected ? "data-table__checkbox--checked" : ""}`.trim()}
                         type="button"
                         aria-pressed={isSelected}
-                        aria-label="Select row"
+                        aria-label={strings.SelectRow}
                         onClick={() => onToggleRow?.(rowId)}
                         disabled={!onToggleRow}
                       >
@@ -241,19 +242,18 @@ export const DataTable = <T,>({
         {/* Left: summary text */}
         <div className="data-table__pagination-summary">
           {totalCount === 0 ? (
-            "No records"
+            strings.NoRecords
           ) : (
             <>
-              Showing <strong>{rangeStart}</strong> to{" "}
-              <strong>{rangeEnd}</strong> of <strong>{totalCount}</strong>{" "}
-              results
-            </>
+              {strings.Showing}<strong>{rangeStart}</strong> {strings.To}{" "}
+              <strong>{rangeEnd}</strong> {strings.Of}<strong>{totalCount}</strong>{" "}
+              {strings.Results}</>
           )}
         </div>
 
         {onPageSizeChange && (
           <div className="data-table__page-size">
-            <span className="data-table__page-size-label">Rows per page</span>
+            <span className="data-table__page-size-label">{strings.RowsPerPage}</span>
             <div className="data-table__page-size-group">
               {pageSizeOptions.map((size) => (
                 <button
@@ -281,7 +281,7 @@ export const DataTable = <T,>({
             type="button"
             onClick={handlePrev}
             disabled={safeCurrentPage <= 1}
-            aria-label="Previous page"
+            aria-label={strings.PreviousPage}
           >
             ‹
           </button>
@@ -306,7 +306,7 @@ export const DataTable = <T,>({
             type="button"
             onClick={handleNext}
             disabled={safeCurrentPage >= totalPages}
-            aria-label="Next page"
+            aria-label={strings.NextPage}
           >
             ›
           </button>
