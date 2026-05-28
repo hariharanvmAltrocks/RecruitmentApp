@@ -31,8 +31,7 @@ var TaskPattern = function (_a) {
                         react_1.default.createElement("span", { className: taskPattern_module_scss_1.default.stepNum },
                             "STEP ",
                             String(index + 1).padStart(2, "0")),
-                        react_1.default.createElement("span", { className: taskPattern_module_scss_1.default.stepLabel }, metric.label)),
-                    !isLast && react_1.default.createElement("div", { className: taskPattern_module_scss_1.default.separator }))));
+                        react_1.default.createElement("span", { className: taskPattern_module_scss_1.default.stepLabel }, metric.label)))));
         }))));
 };
 exports.default = TaskPattern;

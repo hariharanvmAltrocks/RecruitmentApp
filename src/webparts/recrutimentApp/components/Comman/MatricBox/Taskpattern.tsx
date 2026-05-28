@@ -89,7 +89,7 @@ const TaskPattern: React.FC<TaskPatternProps> = ({
                 )} */}
 
                 {/* Separator (not on last item) */}
-                {!isLast && <div className={styles.separator} />}
+                {/* {!isLast && <div className={styles.separator} />} */}
               </div>
             </div>
           );

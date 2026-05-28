@@ -497,8 +497,8 @@ var MatricColums = function (roles) {
                                 ],
                             },
                         }),
-                        buildCol(ConditionConfig_1.MatricID.EvalutionHR, { showArrow: true }),
                         buildCol(ConditionConfig_1.MatricID.InterviewQuestionHR, { showArrow: true }),
+                        buildCol(ConditionConfig_1.MatricID.EvalutionHR, { showArrow: true }),
                         buildCol(ConditionConfig_1.MatricID.BackgroundCheck, { showArrow: true }),
                         buildCol(ConditionConfig_1.MatricID.LabourHire, { showArrow: true }),
                         buildCol(ConditionConfig_1.MatricID.Kcsa, { showArrow: true }),
@@ -516,7 +516,6 @@ var MatricColums = function (roles) {
                     roleColumns = [
                         buildCol(ConditionConfig_1.MatricID.AdvertReviewLM, { showArrow: true }),
                         buildCol(ConditionConfig_1.MatricID.DisqualifiQuesLM, { showArrow: true }),
-                        buildCol(ConditionConfig_1.MatricID.InterviewQuestionLM, { showArrow: true }),
                         buildCol(ConditionConfig_1.MatricID.ReviewProfileLM, {
                             showArrow: true,
                             externalApi: {
@@ -528,6 +527,7 @@ var MatricColums = function (roles) {
                                 ],
                             },
                         }),
+                        buildCol(ConditionConfig_1.MatricID.InterviewQuestionLM, { showArrow: true }),
                         buildCol(ConditionConfig_1.MatricID.EvalutionLM, { showArrow: true }),
                         // buildCol(MatricID.ReviewScoreCard, { showArrow: false }),
                         buildCol(ConditionConfig_1.MatricID.interviewSchedule, { showArrow: false }),

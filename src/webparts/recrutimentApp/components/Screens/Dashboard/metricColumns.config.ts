@@ -559,8 +559,8 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
               ],
             },
           }),
-          buildCol(MatricID.EvalutionHR, { showArrow: true }),
           buildCol(MatricID.InterviewQuestionHR, { showArrow: true }),
+          buildCol(MatricID.EvalutionHR, { showArrow: true }),
           buildCol(MatricID.BackgroundCheck, { showArrow: true }),
           buildCol(MatricID.LabourHire, { showArrow: true }),
           buildCol(MatricID.Kcsa, { showArrow: true }),
@@ -580,7 +580,6 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
         roleColumns = [
           buildCol(MatricID.AdvertReviewLM, { showArrow: true }),
           buildCol(MatricID.DisqualifiQuesLM, { showArrow: true }),
-          buildCol(MatricID.InterviewQuestionLM, { showArrow: true }),
           buildCol(MatricID.ReviewProfileLM, {
             showArrow: true,
             externalApi: {
@@ -592,6 +591,7 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
               ],
             },
           }),
+          buildCol(MatricID.InterviewQuestionLM, { showArrow: true }),
           buildCol(MatricID.EvalutionLM, { showArrow: true }),
           // buildCol(MatricID.ReviewScoreCard, { showArrow: false }),
           buildCol(MatricID.interviewSchedule, { showArrow: false }),
