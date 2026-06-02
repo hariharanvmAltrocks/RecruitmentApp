@@ -70,7 +70,11 @@ var RecruitmentTable = function () {
             onCancel: closeModal,
         });
     }, []);
-    var _l = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh), handleConfirmAssignment = _l.handleConfirmAssignment, assignmentModalState = _l.modalState, assignmentCloseModal = _l.closeModal, assignmentLoading = _l.loading, Submitted = _l.Submitted;
+    var resetSelection = (0, react_1.useCallback)(function () {
+        setSelectedIds([]);
+        setSelectedMemberId(0);
+    }, []);
+    var _l = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh, resetSelection), handleConfirmAssignment = _l.handleConfirmAssignment, assignmentModalState = _l.modalState, assignmentCloseModal = _l.closeModal, assignmentLoading = _l.loading;
     var _m = (0, useadvertextend_1.useAdvertExtends)(handleClosePopup, handleRefresh, setAdvertPopupOpen), handleAdvertExtend = _m.handleAdvertExtend, advertModalState = _m.modalState, advertCloseModal = _m.closeModal, advertLoading = _m.loading, advertSubmitted = _m.Submitted;
     var _o = (0, useModalPopup_1.useModalPopup)(), modalState = _o.modalState, showModal = _o.showModal, closeModal = _o.closeModal;
     var _p = (0, react_1.useState)([]), selectedIds = _p[0], setSelectedIds = _p[1];
@@ -88,11 +92,6 @@ var RecruitmentTable = function () {
         if (sideNavflag && tabs.length > 0 && !currentTabName) {
             setMatricID(tabs[0].matricId);
             setCurrentTabName((_b = (_a = tabs[1]) === null || _a === void 0 ? void 0 : _a.description) !== null && _b !== void 0 ? _b : "");
-        }
-        if (Submitted) {
-            setSelectedIds([]);
-            setSelectedMemberId(0);
-            handleRefresh();
         }
     }, [tabs]);
     (0, react_1.useEffect)(function () {

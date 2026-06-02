@@ -13,7 +13,7 @@ var useModalPopup_1 = require("../../../Comman/ModalPopup/useModalPopup");
 var ConditionConfig_1 = require("../../../../utilities/ConditionConfig");
 var UIStateContext_1 = require("../../../RecrutimentApp/UIStateContext");
 var spservice_1 = tslib_1.__importDefault(require("../../../../services/SPService/spservice"));
-var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
+var useConfirmAssignment = function (handleClosePopup, handleRefresh, onSuccess) {
     var _a = (0, react_1.useState)(false), loading = _a[0], setLoading = _a[1];
     var navigate = (0, react_router_dom_1.useNavigate)();
     var _b = (0, RoleContext_1.userInfo)(), roleIDs = _b.roleIDs, ADGroupData = _b.ADGroupData;
@@ -180,6 +180,8 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                             onConfirm: function () {
                                 closeModal();
                                 handleClosePopup();
+                                if (onSuccess)
+                                    onSuccess();
                                 navigate("/MyTracker");
                                 handleRefresh();
                             },
@@ -240,6 +242,8 @@ var useConfirmAssignment = function (handleClosePopup, handleRefresh) {
                             onConfirm: function () {
                                 closeModal();
                                 handleClosePopup();
+                                if (onSuccess)
+                                    onSuccess();
                                 navigate("/MyTracker");
                                 handleRefresh();
                             },

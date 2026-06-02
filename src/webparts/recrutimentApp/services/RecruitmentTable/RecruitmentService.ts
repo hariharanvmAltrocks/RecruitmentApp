@@ -11,6 +11,7 @@ import SPServices, { getSP } from "../SPService/spservice";
 import { BatchQuery, IDocFiles } from "../SPService/Ispservice";
 import { _mapRecruitmentItems } from "./mapItems";
 import {
+  CommentsData,
   DataSyncToRecruitmentResponse,
   IDptData,
   InsertComments,
@@ -1397,6 +1398,68 @@ export default class RecruitmentService implements IRecruitmentService {
       return {
         data: [],
         status: 500,
+        message: "Error fetching data",
+      };
+    }
+  }
+
+  async GetCommentsData(
+    filter: any,
+  ): Promise<ApiResponse<CommentsData[]>> {
+    let CommentsData: CommentsData[] = [];
+    try {
+      let listItems: any;
+      listItems = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSRecruitmentComments,
+        Select: "*, Author/EMail,Author/Title,Role/RoleTitle,RecruitmentID/ID",
+        Expand: "Author,Role,RecruitmentID",
+        Filter: filter,
+        Orderby: "ID",
+        Orderbydecorasc: false,
+      });
+      listItems.forEach(async (objresult: any) => {
+        // const Email = objresult.Author?.EMail.toLowerCase();
+        let EmployeeFilter = [
+          {
+            FilterKey: "EmailId",
+            Operator: "eq",
+            FilterValue: objresult.Author?.EMail || "",
+          }
+        ]
+        const Employee = await masterService.GetUserDetails(EmployeeFilter, "and");
+
+        let d: CommentsData = {
+          Id: objresult.ApprovedID ? objresult.ApprovedID.ID : "",
+          JobTitleInEnglish: Employee ? Employee.data.JopTitleEnglish : "",
+          JobTitleInFrench: Employee ? Employee.data.JopTitleFrench : "",
+          comments: objresult.Comments || "",
+          Department: objresult.Department
+            ? objresult.Department.DepartmentName
+            : "",
+          Date: objresult.Created ? new Date(objresult.Created) : null,
+          JobTitle: objresult.JobTitle || "",
+          RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
+          Name: Employee
+            ? (Employee.data.FirstName ?? "") +
+            " " +
+            (Employee.data.MiddleName ?? "") +
+            " " +
+            (Employee.data.LastName ?? "")
+            : "",
+        };
+        CommentsData.push(d);
+      });
+
+      return {
+        data: CommentsData,
+        status: 200,
+        message: "Data fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      return {
+        data: [],
+        status: 400,
         message: "Error fetching data",
       };
     }

@@ -4,7 +4,6 @@ var tslib_1 = require("tslib");
 var React = tslib_1.__importStar(require("react"));
 require("./BGVerification.scss");
 var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
-var sp_core_library_1 = require("@microsoft/sp-core-library");
 var BGVerification = function (_a) {
     var mandatoryChecks = _a.mandatoryChecks, VerificationChecks = _a.VerificationChecks, onToggleOption = _a.onToggleOption, _b = _a.hasError, hasError = _b === void 0 ? false : _b, _c = _a.disabled, disabled = _c === void 0 ? false : _c;
     var optionalChecks = VerificationChecks.map(function (check) { return ({
@@ -34,7 +33,12 @@ var BGVerification = function (_a) {
                     React.createElement("span", { className: "vc-badge" }, strings.Required))); }))),
             React.createElement("div", { className: "vc-section" },
                 React.createElement("h3", { className: "vc-section-title" }, strings.AdditionalRoleSpecificChecks),
-                React.createElement("div", { className: "vc-grid" }, optionalChecks.map(function (item) { return (React.createElement("label", { key: item.id, className: sp_core_library_1.Text.format(strings.VcOptionInteractive) },
+                React.createElement("div", { className: "vc-grid" }, optionalChecks.map(function (item) { return (React.createElement("label", { key: item.id, className: [
+                        strings.VcOptionInteractive || "vc-option interactive",
+                        item.checked ? "checked" : "",
+                    ]
+                        .filter(Boolean)
+                        .join(" ") },
                     React.createElement("input", { type: "checkbox", className: "vc-checkbox", checked: item.checked, onChange: function () { return onToggleOption(item.id); }, "aria-label": item.label, disabled: disabled }),
                     React.createElement("span", { className: "vc-checkbox-wrap" },
                         React.createElement("span", { className: "vc-custom-checkbox", "aria-hidden": "true" })),

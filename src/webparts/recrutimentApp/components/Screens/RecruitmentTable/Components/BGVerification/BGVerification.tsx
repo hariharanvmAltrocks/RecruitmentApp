@@ -94,7 +94,12 @@ const BGVerification = ({
             {optionalChecks.map((item) => (
               <label
                 key={item.id}
-                className={Text.format(strings.VcOptionInteractive, )}
+                className={[
+                  strings.VcOptionInteractive || "vc-option interactive",
+                  item.checked ? "checked" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
               >
                 <input
                   type="checkbox"

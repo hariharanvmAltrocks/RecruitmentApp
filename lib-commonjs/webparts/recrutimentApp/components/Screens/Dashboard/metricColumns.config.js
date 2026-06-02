@@ -509,8 +509,8 @@ var MatricColums = function (roles) {
                         buildCol(ConditionConfig_1.MatricID.OfferAccepted, { showArrow: false }),
                         buildCol(ConditionConfig_1.MatricID.OfferRejected, { showArrow: false }),
                         buildCol(ConditionConfig_1.MatricID.Onbording, { showArrow: false }),
-                        buildCol(ConditionConfig_1.MatricID.MySubmissionHR, { showArrow: false }),
-                        buildCol(ConditionConfig_1.MatricID.MySubmissionBGV, { showArrow: false })
+                        buildCol(ConditionConfig_1.MatricID.MySubmissionBGV, { showArrow: false }),
+                        buildCol(ConditionConfig_1.MatricID.MySubmissionHR, { showArrow: false })
                     ];
                     break;
                 case Config_1.RoleID.LineManager:

@@ -247,12 +247,17 @@ const Mytracker: React.FC<DashboardProps> = () => {
     setIsPopupOpen(false);
   }, []);
 
+  const resetSelection = useCallback(() => {
+    setSelectedIds([]);
+    setSelectedMemberId(0);
+  }, []);
+
   const {
     handleConfirmAssignment,
     modalState: assignmentModalState,
     closeModal: assignmentCloseModal,
     loading: assignmentLoading,
-  } = useConfirmAssignment(handleClosePopup, handleRefresh);
+  } = useConfirmAssignment(handleClosePopup, handleRefresh, resetSelection);
 
   const {
     handleAdvertExtend,

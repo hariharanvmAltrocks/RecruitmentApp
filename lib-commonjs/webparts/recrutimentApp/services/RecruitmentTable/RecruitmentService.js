@@ -1260,6 +1260,86 @@ var RecruitmentService = /** @class */ (function () {
             });
         });
     };
+    RecruitmentService.prototype.GetCommentsData = function (filter) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var CommentsData, listItems, error_15;
+            var _this = this;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        CommentsData = [];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        listItems = void 0;
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSRecruitmentComments,
+                                Select: "*, Author/EMail,Author/Title,Role/RoleTitle,RecruitmentID/ID",
+                                Expand: "Author,Role,RecruitmentID",
+                                Filter: filter,
+                                Orderby: "ID",
+                                Orderbydecorasc: false,
+                            })];
+                    case 2:
+                        listItems = _a.sent();
+                        listItems.forEach(function (objresult) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                            var EmployeeFilter, Employee, d;
+                            var _a, _b, _c, _d;
+                            return tslib_1.__generator(this, function (_e) {
+                                switch (_e.label) {
+                                    case 0:
+                                        EmployeeFilter = [
+                                            {
+                                                FilterKey: "EmailId",
+                                                Operator: "eq",
+                                                FilterValue: ((_a = objresult.Author) === null || _a === void 0 ? void 0 : _a.EMail) || "",
+                                            }
+                                        ];
+                                        return [4 /*yield*/, ServiceExport_1.masterService.GetUserDetails(EmployeeFilter, "and")];
+                                    case 1:
+                                        Employee = _e.sent();
+                                        d = {
+                                            Id: objresult.ApprovedID ? objresult.ApprovedID.ID : "",
+                                            JobTitleInEnglish: Employee ? Employee.data.JopTitleEnglish : "",
+                                            JobTitleInFrench: Employee ? Employee.data.JopTitleFrench : "",
+                                            comments: objresult.Comments || "",
+                                            Department: objresult.Department
+                                                ? objresult.Department.DepartmentName
+                                                : "",
+                                            Date: objresult.Created ? new Date(objresult.Created) : null,
+                                            JobTitle: objresult.JobTitle || "",
+                                            RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
+                                            Name: Employee
+                                                ? ((_b = Employee.data.FirstName) !== null && _b !== void 0 ? _b : "") +
+                                                    " " +
+                                                    ((_c = Employee.data.MiddleName) !== null && _c !== void 0 ? _c : "") +
+                                                    " " +
+                                                    ((_d = Employee.data.LastName) !== null && _d !== void 0 ? _d : "")
+                                                : "",
+                                        };
+                                        CommentsData.push(d);
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }); });
+                        return [2 /*return*/, {
+                                data: CommentsData,
+                                status: 200,
+                                message: "Data fetched successfully",
+                            }];
+                    case 3:
+                        error_15 = _a.sent();
+                        console.error("Error fetching user data:", error_15);
+                        return [2 /*return*/, {
+                                data: [],
+                                status: 400,
+                                message: "Error fetching data",
+                            }];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
     return RecruitmentService;
 }());
 exports.default = RecruitmentService;

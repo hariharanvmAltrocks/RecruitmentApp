@@ -10,12 +10,14 @@ interface InterviewPreparedProps {
   questions: Question[];
   onRemove: (id: string | number) => void;
   onEdit: (id: string | number) => void;
+  EditFlag: boolean;
 }
 
 export const InterviewPreparedSet: React.FC<InterviewPreparedProps> = ({
   questions,
   onRemove,
   onEdit,
+  EditFlag
 }) => (
   <div className="iq-prepared">
     <div className="iq-prepared__header">
@@ -108,7 +110,7 @@ export const InterviewPreparedSet: React.FC<InterviewPreparedProps> = ({
                 </div>
               </div>
 
-               {!q.fromBank && (
+               {!q.fromBank && EditFlag && (
               <button
                 className="qc-prepared__remove"
                 onClick={() => onEdit(q.id)}

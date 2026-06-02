@@ -1227,6 +1227,36 @@ $error-bg : rgba(229, 62, 62, 0.05);
   padding: 8px 10px;
 }
 
+.mFormGroup {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+.mSubmitBtn {
+  padding: 0.75rem 3rem;
+  background-color: $primary-color;
+  color: white;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: none;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background-color: #1d4ed8;
+  }
+
+  &:disabled {
+    background-color: $border-color;
+    color: $text-muted;
+    cursor: not-allowed;
+  }
+}
+
+.mSubmitBtn { display: flex; align-items: center; gap: 0.375rem; padding: 0.625rem 1.75rem; background: $text-muted; color: $dashboard-card-bg; border: none; border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 700; cursor: pointer; letter-spacing: 0.04em; transition: background 0.15s; &:not(:disabled) { background: $primary-color; &:hover { background: #1d4ed8; } } &:disabled { opacity: 0.6; cursor: not-allowed; } }
+.mFormGroup { margin-bottom: 1rem; }
+
 // Shared inline error text used by both textarea and checkbox
 .advert-review-drawer__field-error {
   display: block;

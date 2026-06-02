@@ -28,6 +28,7 @@ import SPServices from "../../../../services/SPService/spservice";
 export const useConfirmAssignment = (
   handleClosePopup: () => void,
   handleRefresh: () => void,
+  onSuccess?: () => void,
 ) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -195,6 +196,7 @@ export const useConfirmAssignment = (
               onConfirm: () => {
                 closeModal();
                 handleClosePopup();
+                if (onSuccess) onSuccess();
                 navigate("/MyTracker");
                 handleRefresh();
               },
@@ -257,6 +259,7 @@ export const useConfirmAssignment = (
               onConfirm: () => {
                 closeModal();
                 handleClosePopup();
+                if (onSuccess) onSuccess();
                 navigate("/MyTracker");
                 handleRefresh();
               },

@@ -10,12 +10,14 @@ interface CareerPortalPreparedProps {
   questions: Question[];
   onRemove: (id: string | number) => void;
   onEdit: (id: string | number) => void;
+  EditFlag: boolean;
 }
 
 export const CareerPortalPreparedSet: React.FC<CareerPortalPreparedProps> = ({
   questions,
   onRemove,
   onEdit,
+  EditFlag,
 }) => (
   <div className="qc-prepared">
     <div className="qc-prepared__header">
@@ -88,7 +90,7 @@ export const CareerPortalPreparedSet: React.FC<CareerPortalPreparedProps> = ({
                 </div>
               </div>
 
-              {!q.fromBank && (
+              {!q.fromBank && EditFlag && (
               <button
                 className="qc-prepared__remove"
                 onClick={() => onEdit(q.id)}

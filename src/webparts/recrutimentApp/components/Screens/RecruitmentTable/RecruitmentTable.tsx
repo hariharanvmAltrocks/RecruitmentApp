@@ -120,13 +120,17 @@ export const RecruitmentTable: React.FC = () => {
     });
   }, []);
 
+  const resetSelection = useCallback(() => {
+    setSelectedIds([]);
+    setSelectedMemberId(0);
+  }, []);
+
   const {
     handleConfirmAssignment,
     modalState: assignmentModalState,
     closeModal: assignmentCloseModal,
     loading: assignmentLoading,
-    Submitted,
-  } = useConfirmAssignment(handleClosePopup, handleRefresh);
+  } = useConfirmAssignment(handleClosePopup, handleRefresh, resetSelection);
 
   const {
     handleAdvertExtend,
@@ -175,11 +179,6 @@ export const RecruitmentTable: React.FC = () => {
     if (sideNavflag && tabs.length > 0 && !currentTabName) {
       setMatricID(tabs[0].matricId);
       setCurrentTabName(tabs[1]?.description ?? "");
-    }
-    if (Submitted) {
-      setSelectedIds([]);
-      setSelectedMemberId(0);
-      handleRefresh();
     }
   }, [tabs]);
 

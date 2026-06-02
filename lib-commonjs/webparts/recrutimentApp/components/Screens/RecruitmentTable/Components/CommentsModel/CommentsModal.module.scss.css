@@ -1,0 +1,144 @@
+.mCommentsModalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mCommentsModalWindow {
+  background: white;
+  width: 600px;
+  max-width: 90%;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+}
+
+.mCommentsHeader {
+  padding: 20px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+}
+.mCommentsHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mCommentsHeader button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  padding: 0;
+  display: flex;
+}
+.mCommentsHeader button:hover {
+  color: #1e293b;
+}
+
+.mCommentsBody {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.mCommentsLoading {
+  padding: 40px;
+  text-align: center;
+  color: #64748b;
+}
+
+.mCommentsNoData {
+  padding: 40px;
+  text-align: center;
+  color: #64748b;
+}
+
+.mCommentItemL1 {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f1f5f9;
+  border-radius: 8px;
+}
+.mCommentItemL1 .mCommentRole {
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 8px;
+}
+.mCommentItemL1 .mCommentText {
+  font-size: 14px;
+  color: #475569;
+  margin-bottom: 8px;
+}
+.mCommentItemL1 .mCommentDate {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 8px;
+}
+.mCommentItemL1 .mCommentAuthor {
+  font-size: 13px;
+  color: #0f172a;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.mCommentItemL2 {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f0fdf4;
+  border-radius: 8px;
+}
+.mCommentItemL2 .mCommentRole {
+  font-weight: 600;
+  color: #166534;
+  margin-bottom: 8px;
+}
+.mCommentItemL2 .mCommentText {
+  font-size: 14px;
+  color: #15803d;
+  margin-bottom: 8px;
+}
+.mCommentItemL2 .mCommentDate {
+  font-size: 12px;
+  color: #166534;
+  margin-top: 8px;
+  opacity: 0.7;
+}
+.mCommentItemL2 .mCommentAuthor {
+  font-size: 13px;
+  color: #14532d;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.mCommentsFooter {
+  padding: 16px 20px;
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
+  text-align: right;
+}
+.mCommentsFooter .closeBtn {
+  background: #e2e8f0;
+  color: #0f172a;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.mCommentsFooter .closeBtn:hover {
+  background: #cbd5e1;
+}

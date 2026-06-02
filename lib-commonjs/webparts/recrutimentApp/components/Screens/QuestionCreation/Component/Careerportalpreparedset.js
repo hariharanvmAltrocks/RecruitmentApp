@@ -9,7 +9,7 @@ require("./Interviewmode.scss");
 require("../Questioncreation.scss");
 var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var CareerPortalPreparedSet = function (_a) {
-    var questions = _a.questions, onRemove = _a.onRemove, onEdit = _a.onEdit;
+    var questions = _a.questions, onRemove = _a.onRemove, onEdit = _a.onEdit, EditFlag = _a.EditFlag;
     return (react_1.default.createElement("div", { className: "qc-prepared" },
         react_1.default.createElement("div", { className: "qc-prepared__header" },
             react_1.default.createElement("h3", { className: "qc-prepared__title" },
@@ -41,7 +41,7 @@ var CareerPortalPreparedSet = function (_a) {
                     opt.textEn,
                     " / ",
                     opt.textFr)); }))),
-            !q.fromBank && (react_1.default.createElement("button", { className: "qc-prepared__remove", onClick: function () { return onEdit(q.id); }, title: strings.Edit },
+            !q.fromBank && EditFlag && (react_1.default.createElement("button", { className: "qc-prepared__remove", onClick: function () { return onEdit(q.id); }, title: strings.Edit },
                 react_1.default.createElement(lucide_react_1.Pencil, { size: 16 }))),
             react_1.default.createElement("button", { className: "qc-prepared__remove", onClick: function () { return onRemove(q.id); }, title: strings.Remove },
                 react_1.default.createElement(lucide_react_1.X, { size: 16 })))); }))))));

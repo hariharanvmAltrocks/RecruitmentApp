@@ -5,8 +5,6 @@ import {
 } from "../../../../../services/ServiceExport";
 import { ResponeStatus } from "../../../../../utilities/ApiConfig";
 import { useUIState } from "../../../../RecrutimentApp/UIStateContext";
-import { MetricQueryConfig } from "../../../Dashboard/metricColumns.config";
-import { ListNames } from "../../../../../utilities/Config";
 import { DataSyncToRecruitmentResponse } from "../../../../../services/RecruitmentTable/IRecruitmentService";
 
 export interface PositionDetails {

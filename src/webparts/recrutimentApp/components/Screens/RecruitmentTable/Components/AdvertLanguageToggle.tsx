@@ -196,7 +196,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
         <section className="advert-review-drawer__section">
           <h3 className="advert-review-drawer__section-title">
             <FileText size={12} />
-            {strings.JobDescription}{advertLanguage})
+            {strings.JobDescription}{advertLanguage}
           </h3>
           {isLoading ? (
             <SkeletonBlock height="72px" />

@@ -151,7 +151,11 @@ var Mytracker = function () {
     var handleClosePopup = (0, react_1.useCallback)(function () {
         setIsPopupOpen(false);
     }, []);
-    var _0 = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh), handleConfirmAssignment = _0.handleConfirmAssignment, assignmentModalState = _0.modalState, assignmentCloseModal = _0.closeModal, assignmentLoading = _0.loading;
+    var resetSelection = (0, react_1.useCallback)(function () {
+        setSelectedIds([]);
+        setSelectedMemberId(0);
+    }, []);
+    var _0 = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh, resetSelection), handleConfirmAssignment = _0.handleConfirmAssignment, assignmentModalState = _0.modalState, assignmentCloseModal = _0.closeModal, assignmentLoading = _0.loading;
     var _1 = (0, useadvertextend_1.useAdvertExtends)(handleClosePopup, handleRefresh, setAdvertPopupOpen), handleAdvertExtend = _1.handleAdvertExtend, advertModalState = _1.modalState, advertCloseModal = _1.closeModal, advertLoading = _1.loading;
     var selectedItemRef = (0, react_1.useRef)(null);
     var handleActionOffer = (0, react_1.useCallback)(function (item) {

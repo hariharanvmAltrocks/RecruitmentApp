@@ -190,6 +190,8 @@ const QuestionCreation: React.FC = (props: any) => {
     nationality: positionDetails?.Nationality,
   };
 
+  const EditFlag = sourceSelection === "new"  || sourceSelection === "both";
+
   return (
     <>
       {loading && <Loading />}
@@ -404,12 +406,15 @@ const QuestionCreation: React.FC = (props: any) => {
                       questions={preparedQuestions}
                       onRemove={handleRemovePrepared}
                       onEdit={handleEditPrepared}
+                      EditFlag={EditFlag}
                     />
                   ) : (
                     <InterviewPreparedSet
                       questions={preparedQuestions}
                       onRemove={handleRemovePrepared}
                       onEdit={handleEditPrepared}
+                      EditFlag={EditFlag}
+
                     />
                   )
                 )}
@@ -420,12 +425,14 @@ const QuestionCreation: React.FC = (props: any) => {
                       questions={preparedQuestions}
                       onRemove={handleRemovePrepared}
                       onEdit={handleEditPrepared}
+                      EditFlag={EditFlag}
                     />
                   ) : (
                     <InterviewPreparedSet
                       questions={preparedQuestions}
                       onRemove={handleRemovePrepared}
                       onEdit={handleEditPrepared}
+                      EditFlag={EditFlag}
                     />
                   )
                 )}
@@ -444,6 +451,7 @@ const QuestionCreation: React.FC = (props: any) => {
                           questions={preparedQuestions}
                           onRemove={handleRemovePrepared}
                           onEdit={handleEditPrepared}
+                          EditFlag={EditFlag}
                         />
                       </>
                     ) : (
@@ -458,6 +466,7 @@ const QuestionCreation: React.FC = (props: any) => {
                           questions={preparedQuestions}
                           onRemove={handleRemovePrepared}
                           onEdit={handleEditPrepared}
+                          EditFlag={EditFlag}
                         />
                       </>
                     )}

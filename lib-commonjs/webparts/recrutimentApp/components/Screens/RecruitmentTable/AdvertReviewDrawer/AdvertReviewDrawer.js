@@ -30,6 +30,8 @@ var loading_1 = tslib_1.__importDefault(require("../../../Comman/Loading/loading
 var PositionStatusConfig_1 = require("../../../../utilities/PositionStatusConfig");
 var CandidateProgress_1 = require("./Components/CandidateProgress/CandidateProgress");
 var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
+var CommentsModal_1 = tslib_1.__importDefault(require("../Components/CommentsModel/CommentsModal"));
+var getCommentsDetails_1 = require("./Hooks/getCommentsDetails");
 var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
     return (react_1.default.createElement("div", { className: "advert-review-drawer__skeleton", style: { width: width, height: height } }));
@@ -47,7 +49,7 @@ var toPositionDetails = function (p) { return ({
     jobCode: p.JobCode,
     department: p.Department,
     buCode: p.BusinessUnitCode,
-    buName: "", // TODO: wire real value
+    buName: "",
     subDepartment: p.SubDepartment,
     section: p.Section,
     deptCode: p.DepartmentCode,
@@ -70,14 +72,16 @@ var AdvertReviewDrawer = function (_a) {
     var _e = (0, useModalPopup_1.useModalPopup)(), modalState = _e.modalState, showModal = _e.showModal, closeModal = _e.closeModal;
     var _f = (0, react_1.useState)(false), loading = _f[0], setLoading = _f[1];
     var _g = (0, react_1.useState)(false), showRoadmap = _g[0], setShowRoadmap = _g[1];
-    var _h = (0, getPositionDetails_1.usePositionDetails)(selectedJobId, selectedType), positionDetails = _h.data, positionLoading = _h.loading;
-    var _j = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _j.data, signatureLoading = _j.loading;
+    var _h = (0, react_1.useState)(false), commentsflag = _h[0], setCommentsflag = _h[1];
+    var _j = (0, getPositionDetails_1.usePositionDetails)(selectedJobId, selectedType), positionDetails = _j.data, positionLoading = _j.loading;
+    var _k = (0, getCommentsDetails_1.useCommentsDetails)(selectedJobId), commentsData = _k.data, commentsLoading = _k.loading;
+    var _l = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _l.data, signatureLoading = _l.loading;
     var jobCodeId = (_b = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCodeId) !== null && _b !== void 0 ? _b : 0;
     var jobCode = (_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCode) !== null && _c !== void 0 ? _c : selectedJobCode;
-    var _k = (0, getAdvertismentDetails_1.useAdvertismentDetails)(jobCodeId, { enabled: !!jobCodeId }), advertDetails = _k.data, BGVData = _k.BGVValue, handleBvgToggle = _k.handleBvgToggle, advertLoading = _k.loading;
-    var _l = (0, getAttachmentDetails_1.useAttachmentDetails)(jobCode, { enabled: !!jobCode }), attachments = _l.data, attachmentLoading = _l.loading;
+    var _m = (0, getAdvertismentDetails_1.useAdvertismentDetails)(jobCodeId, { enabled: !!jobCodeId }), advertDetails = _m.data, BGVData = _m.BGVValue, handleBvgToggle = _m.handleBvgToggle, advertLoading = _m.loading;
+    var _o = (0, getAttachmentDetails_1.useAttachmentDetails)(jobCode, { enabled: !!jobCode }), attachments = _o.data, attachmentLoading = _o.loading;
     var isLoading = positionLoading || advertLoading || attachmentLoading || signatureLoading;
-    var _m = (0, react_1.useState)([]), uploadDocument = _m[0], setUploadDocument = _m[1];
+    var _p = (0, react_1.useState)([]), uploadDocument = _p[0], setUploadDocument = _p[1];
     var showValidationRef = (0, react_1.useRef)(false);
     var isSubmittingRef = (0, react_1.useRef)(false);
     (0, react_1.useEffect)(function () {
@@ -331,6 +335,10 @@ var AdvertReviewDrawer = function (_a) {
                             : strings.DraftOnemAdvertdocFrenchOnlyPdf, required: true, onChange: setUploadDocument, hasError: uploadError, disabled: isSubmittingRef.current })),
                     showBGVSection && (react_1.default.createElement("div", { style: { marginTop: "20px" } },
                         react_1.default.createElement(BGVerification_1.default, { mandatoryChecks: BGVData.mantoryChecks, VerificationChecks: BGVData.checkboxBGVOption, onToggleOption: handleBvgToggle, hasError: bgvError, disabled: isSubmittingRef.current }))),
+                    react_1.default.createElement("div", { className: "mFormGroup" },
+                        react_1.default.createElement("button", { onClick: function () { return setCommentsflag(true); }, className: "mSubmitBtn", type: "button" },
+                            react_1.default.createElement(lucide_react_1.FileText, { size: 16 }),
+                            strings.ViewComments)),
                     showReviewFooter && (react_1.default.createElement(react_1.default.Fragment, null,
                         react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, 
                             // commentError={commentError}
@@ -348,7 +356,8 @@ var AdvertReviewDrawer = function (_a) {
                                     strings.Sending)) : (react_1.default.createElement(react_1.default.Fragment, null,
                                     react_1.default.createElement(lucide_react_1.Send, { size: 16, style: { marginRight: 8 } }),
                                     strings.Submit)))))))))),
-        react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal }))))));
+        react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal })),
+        react_1.default.createElement(CommentsModal_1.default, { open: commentsflag, loading: commentsLoading, Comments: commentsData || [], onClose: function () { return setCommentsflag(false); } })))));
 };
 exports.AdvertReviewDrawer = AdvertReviewDrawer;
 var PositionRoadmap = function (_a) {

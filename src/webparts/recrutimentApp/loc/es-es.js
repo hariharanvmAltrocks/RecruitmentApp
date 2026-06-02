@@ -109,7 +109,7 @@ define([], function() {
     "AdvertExtension": "Advert Extension",
     "AssignAgencies": "Assign Agencies",
     "MySubmission": "My Submission",
-    "MySubmissionBgv": "My Submission - BGV",
+    "MySubmissionBgv": "Recruitment In Progress",
     "SubmittedSuccessfully": "Submitted Successfully",
     "RequiredFieldsMissing": "Required Fields Missing",
     "OneOrMoreFieldsAreRequiredPleaseComplete": "One or more fields are required. Please complete all highlighted fields before submitting.",

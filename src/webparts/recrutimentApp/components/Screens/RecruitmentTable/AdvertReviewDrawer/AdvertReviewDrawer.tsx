@@ -13,16 +13,8 @@ import {
   X,
   Network,
   ChevronRight,
-  FileSearch,
-  ClipboardCheck,
-  Play,
-  Filter,
-  Calendar,
-  UserCheck,
-  ShieldCheck,
-  Briefcase,
-  CheckCircle2,
   Check,
+  FileText,
 } from "lucide-react";
 import {
   PositionDetails,
@@ -63,6 +55,8 @@ import {
 } from "../../../../utilities/PositionStatusConfig";
 import { CandidateProgress } from "./Components/CandidateProgress/CandidateProgress";
 import * as strings from 'RecrutimentAppWebPartStrings';
+import CustomComments from "../Components/CommentsModel/CommentsModal";
+import { useCommentsDetails } from "./Hooks/getCommentsDetails";
 
 export interface AdvertReviewDrawerProps {
   drawerOpen: boolean;
@@ -103,7 +97,7 @@ const toPositionDetails = (
   jobCode: p.JobCode,
   department: p.Department,
   buCode: p.BusinessUnitCode,
-  buName: "", // TODO: wire real value
+  buName: "",
   subDepartment: p.SubDepartment,
   section: p.Section,
   deptCode: p.DepartmentCode,
@@ -138,12 +132,18 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   const { roleIDs } = userInfo();
   const navigate = useNavigate();
   const { modalState, showModal, closeModal } = useModalPopup();
+  
 
   const [loading, setLoading] = useState(false);
   const [showRoadmap, setShowRoadmap] = useState(false);
+  const [commentsflag, setCommentsflag] = useState(false);
+
+
 
   const { data: positionDetails, loading: positionLoading } =
     usePositionDetails(selectedJobId, selectedType);
+
+  const { data: commentsData, loading: commentsLoading } = useCommentsDetails(selectedJobId);
   const { data: signatureDetails, loading: signatureLoading } =
     useSignatureDetails();
 
@@ -560,6 +560,17 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                   </div>
                 )}
 
+                 <div className="mFormGroup">
+              <button
+                onClick={() => setCommentsflag(true)}
+                className="mSubmitBtn"
+                type="button"
+                // disabled={submitHook.submitting}
+              >
+                <FileText size={16} />
+                {strings.ViewComments}</button>
+            </div>
+
                 {showReviewFooter && (
                   <>
                     <ReviewCommentSignature
@@ -620,6 +631,13 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
           </div>
 
           <ModalPopup {...modalState} onClose={closeModal} />
+          
+          <CustomComments
+        open={commentsflag}
+        loading={commentsLoading}
+        Comments={commentsData || []}
+        onClose={() => setCommentsflag(false)}
+      />
         </>
       )}
     </AnimatePresence>

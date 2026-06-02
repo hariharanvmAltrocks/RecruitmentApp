@@ -572,8 +572,8 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
           buildCol(MatricID.OfferAccepted, { showArrow: false }),
           buildCol(MatricID.OfferRejected, { showArrow: false }),
           buildCol(MatricID.Onbording, { showArrow: false }),
-          buildCol(MatricID.MySubmissionHR, { showArrow: false }),
-          buildCol(MatricID.MySubmissionBGV, { showArrow: false })
+          buildCol(MatricID.MySubmissionBGV, { showArrow: false }),
+          buildCol(MatricID.MySubmissionHR, { showArrow: false })
         ];
         break;
 

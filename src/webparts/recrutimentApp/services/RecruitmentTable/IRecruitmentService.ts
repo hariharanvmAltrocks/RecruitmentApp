@@ -173,6 +173,18 @@ export type IDptData = {
   StatusId: number;
 };
 
+export type CommentsData = {
+  Id: number | null;
+  Name: string;
+  JobTitleInEnglish: string;
+  JobTitleInFrench: string;
+  comments: string;
+  Department: string;
+  Date: Date | null;
+  JobTitle: string;
+  RoleName: string;
+};
+
 export type IRecruitmentService = {
   GetRecruitmentDetails(
     filterParam: any,
@@ -222,6 +234,9 @@ export type IRecruitmentService = {
     filterParam: any,
     filterConditions: any,
   ): Promise<ApiResponse<RoadMapStatus[]>>;
+   GetCommentsData(
+    filter: any,
+  ): Promise<ApiResponse<CommentsData[]>>;
 };
 
 export const stripHtml = (html: string | null | undefined): string => {
