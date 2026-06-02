@@ -5,14 +5,12 @@ var react_1 = tslib_1.__importStar(require("react"));
 var framer_motion_1 = require("framer-motion");
 var lucide_react_1 = require("lucide-react");
 var react_router_dom_1 = require("react-router-dom");
-var moment_1 = tslib_1.__importDefault(require("moment"));
 var MyTracker_module_scss_1 = tslib_1.__importDefault(require("./MyTracker.module.scss"));
 var loading_1 = tslib_1.__importDefault(require("../../../Comman/Loading/loading"));
 var matric_1 = tslib_1.__importDefault(require("../../../Comman/MatricBox/matric"));
 var DataTable_1 = require("../../../Comman/DataTable/DataTable");
 var ModalPopup_1 = require("../../../Comman/ModalPopup/ModalPopup");
 var useModalPopup_1 = require("../../../Comman/ModalPopup/useModalPopup");
-var useDashboardMetrics_1 = require("../Hooks/useDashboardMetrics");
 var config_1 = require("../../RecruitmentTable/config");
 var useAssignMembers_1 = require("../../RecruitmentTable/Hooks/useAssignMembers");
 var Useconfirmassignment_1 = require("../../RecruitmentTable/Hooks/Useconfirmassignment");
@@ -39,19 +37,19 @@ var AdvertExtension = react_1.default.lazy(function () {
     }); });
 });
 var Mytracker = function () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     var navigate = (0, react_router_dom_1.useNavigate)();
     var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
-    var _m = (0, UIStateContext_1.useUIState)(), activeMetric = _m.MatricID, setNavigationPath = _m.setNavigationPath, setActiveMenuID = _m.setActiveMenuID, setActiveTab = _m.setActiveTab, setMatricID = _m.setMatricID, setCurrentTabName = _m.setCurrentTabName, currentTabName = _m.currentTabName, navigationPath = _m.navigationPath;
-    var _o = (0, react_1.useState)(0), refreshKey = _o[0], setRefreshKey = _o[1];
-    var _p = (0, react_1.useState)([]), selectedIds = _p[0], setSelectedIds = _p[1];
-    var _q = (0, react_1.useState)(10), pageSize = _q[0], setPageSize = _q[1];
-    var _r = (0, react_1.useState)(1), currentPage = _r[0], setCurrentPage = _r[1];
-    var _s = (0, react_1.useState)(false), isPopupOpen = _s[0], setIsPopupOpen = _s[1];
-    var _t = (0, react_1.useState)(false), isadvertPopupOpen = _t[0], setAdvertPopupOpen = _t[1];
-    var _u = (0, react_1.useState)(0), selectedMemberId = _u[0], setSelectedMemberId = _u[1];
-    var _v = (0, react_1.useState)(currentTabName), selectedmatricId = _v[0], setselectedmatricId = _v[1];
-    var _w = (0, react_1.useState)(false), drawerOfferOpen = _w[0], setDrawerOfferOpen = _w[1];
+    var _l = (0, UIStateContext_1.useUIState)(), activeMetric = _l.MatricID, setNavigationPath = _l.setNavigationPath, setActiveMenuID = _l.setActiveMenuID, setActiveTab = _l.setActiveTab, setMatricID = _l.setMatricID, setCurrentTabName = _l.setCurrentTabName, currentTabName = _l.currentTabName, navigationPath = _l.navigationPath;
+    var _m = (0, react_1.useState)(0), refreshKey = _m[0], setRefreshKey = _m[1];
+    var _o = (0, react_1.useState)([]), selectedIds = _o[0], setSelectedIds = _o[1];
+    var _p = (0, react_1.useState)(10), pageSize = _p[0], setPageSize = _p[1];
+    var _q = (0, react_1.useState)(1), currentPage = _q[0], setCurrentPage = _q[1];
+    var _r = (0, react_1.useState)(false), isPopupOpen = _r[0], setIsPopupOpen = _r[1];
+    var _s = (0, react_1.useState)(false), isadvertPopupOpen = _s[0], setAdvertPopupOpen = _s[1];
+    var _t = (0, react_1.useState)(0), selectedMemberId = _t[0], setSelectedMemberId = _t[1];
+    var _u = (0, react_1.useState)(currentTabName), selectedmatricId = _u[0], setselectedmatricId = _u[1];
+    var _v = (0, react_1.useState)(false), drawerOfferOpen = _v[0], setDrawerOfferOpen = _v[1];
     var processingRef = (0, react_1.useRef)(false);
     var selectedAdvertID = (0, react_1.useRef)(0);
     var ref = (0, react_1.useRef)(0);
@@ -59,8 +57,9 @@ var Mytracker = function () {
         isOpen: false,
         selectedType: "",
     });
-    var _x = (0, useRecruitmentDetails_1.useRecruitmentDetails)(refreshKey), trackerData = _x.items, trackerLoading = _x.loading;
-    var martics = (0, useDashboardMetrics_1.useDashboardMetrics)(refreshKey);
+    var _w = (0, useRecruitmentDetails_1.useRecruitmentDetails)(refreshKey), trackerData = _w.items, trackerLoading = _w.loading;
+    var MatricData = (0, RoleContext_1.useRoleContext)().MatricData;
+    // const martics = useDashboardMetrics(refreshKey);
     var items = trackerData || [];
     var updateList = (0, react_1.useMemo)(function () {
         return items.map(function (item) { return ({
@@ -75,8 +74,8 @@ var Mytracker = function () {
         items: updateList,
         refreshKey: refreshKey,
     }).updateListPortal;
-    var _y = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _y.drawerOpen, selectedJobId = _y.selectedJobId, advertLanguage = _y.advertLanguage, reviewerComments = _y.reviewerComments, acknowledgementCheckbox = _y.acknowledgementCheckbox, loadingState = _y.loadingState, openDrawer = _y.openDrawer, closeDrawer = _y.closeDrawer, setAdvertLanguage = _y.setAdvertLanguage, setComments = _y.setComments, toggleAcknowledgement = _y.toggleAcknowledgement, setLoadingState = _y.setLoadingState;
-    var _z = (0, useModalPopup_1.useModalPopup)(), modalState = _z.modalState, showModal = _z.showModal, closeModal = _z.closeModal;
+    var _x = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _x.drawerOpen, selectedJobId = _x.selectedJobId, advertLanguage = _x.advertLanguage, reviewerComments = _x.reviewerComments, acknowledgementCheckbox = _x.acknowledgementCheckbox, loadingState = _x.loadingState, openDrawer = _x.openDrawer, closeDrawer = _x.closeDrawer, setAdvertLanguage = _x.setAdvertLanguage, setComments = _x.setComments, toggleAcknowledgement = _x.toggleAcknowledgement, setLoadingState = _x.setLoadingState;
+    var _y = (0, useModalPopup_1.useModalPopup)(), modalState = _y.modalState, showModal = _y.showModal, closeModal = _y.closeModal;
     (0, react_1.useEffect)(function () {
         if (activeMetric === ConditionConfig_1.MatricID.BackgroundCheck || activeMetric === ConditionConfig_1.MatricID.LabourHire || activeMetric === ConditionConfig_1.MatricID.Kcsa) {
             void updateListPortal();
@@ -104,7 +103,7 @@ var Mytracker = function () {
     var selectedItems = (0, react_1.useMemo)(function () { return items.filter(function (item) { return selectedIds.includes(item.id); }); }, [items, selectedIds]);
     var selectedJobCode = (0, react_1.useMemo)(function () { var _a; return (selectedItems.length === 1 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.jobCode : ""); }, [selectedItems]);
     var selectedNationality = (0, react_1.useMemo)(function () { var _a; return (selectedItems.length > 0 ? (_a = selectedItems[0]) === null || _a === void 0 ? void 0 : _a.nationality : null); }, [selectedItems]);
-    var _0 = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _0.members, membersLoading = _0.loading;
+    var _z = (0, useAssignMembers_1.useAssignMembers)(selectedNationality), members = _z.members, membersLoading = _z.loading;
     var selectedMember = (0, react_1.useMemo)(function () { var _a; return (_a = members.find(function (m) { return m.id === selectedMemberId; })) !== null && _a !== void 0 ? _a : null; }, [members, selectedMemberId]);
     var handleToggleRow = (0, react_1.useCallback)(function (id) {
         if (selectedNationality) {
@@ -152,8 +151,8 @@ var Mytracker = function () {
     var handleClosePopup = (0, react_1.useCallback)(function () {
         setIsPopupOpen(false);
     }, []);
-    var _1 = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh), handleConfirmAssignment = _1.handleConfirmAssignment, assignmentModalState = _1.modalState, assignmentCloseModal = _1.closeModal, assignmentLoading = _1.loading;
-    var _2 = (0, useadvertextend_1.useAdvertExtends)(handleClosePopup, handleRefresh, setAdvertPopupOpen), handleAdvertExtend = _2.handleAdvertExtend, advertModalState = _2.modalState, advertCloseModal = _2.closeModal, advertLoading = _2.loading;
+    var _0 = (0, Useconfirmassignment_1.useConfirmAssignment)(handleClosePopup, handleRefresh), handleConfirmAssignment = _0.handleConfirmAssignment, assignmentModalState = _0.modalState, assignmentCloseModal = _0.closeModal, assignmentLoading = _0.loading;
+    var _1 = (0, useadvertextend_1.useAdvertExtends)(handleClosePopup, handleRefresh, setAdvertPopupOpen), handleAdvertExtend = _1.handleAdvertExtend, advertModalState = _1.modalState, advertCloseModal = _1.closeModal, advertLoading = _1.loading;
     var selectedItemRef = (0, react_1.useRef)(null);
     var handleActionOffer = (0, react_1.useCallback)(function (item) {
         selectedItemRef.current = {
@@ -187,7 +186,6 @@ var Mytracker = function () {
                         selectedAdvertID.current = item.ItemID;
                         return [2 /*return*/];
                     }
-                    debugger;
                     if (!isEvaluationFlow) return [3 /*break*/, 3];
                     today = new Date();
                     today.setHours(0, 0, 0, 0);
@@ -207,7 +205,7 @@ var Mytracker = function () {
                         showModal({
                             type: "warning",
                             title: strings.InterviewDateNotReached,
-                            message: "You can only fill the scorecard after the interview date. ".concat((0, moment_1.default)(item.interviewDate).format("YYYY-MM-DD")),
+                            message: "You can only fill the scorecard after the interview date. {item.interviewDate}",
                             confirmLabel: "OK",
                             onConfirm: closeModal,
                         });
@@ -271,6 +269,10 @@ var Mytracker = function () {
         closeModal,
         ADGroupData.EmailId,
     ]);
+    var shouldShowProfile = activeMetric === ConditionConfig_1.MatricID.ReviewProfileHR ||
+        activeMetric === ConditionConfig_1.MatricID.ReviewProfileLM ||
+        activeMetric === ConditionConfig_1.MatricID.AssignInterviewPanel ||
+        activeMetric === ConditionConfig_1.MatricID.ReviewScoreCard;
     var columns = (0, config_1.useRecruitmentColumns)({
         role: activeMetric === ConditionConfig_1.MatricID.EvalutionHR ||
             activeMetric === ConditionConfig_1.MatricID.EvalutionLM ||
@@ -290,9 +292,10 @@ var Mytracker = function () {
             activeMetric === ConditionConfig_1.MatricID.MySubmissionBGV
             ? handleActionOffer
             : handleAction,
+        hasProfileCount: shouldShowProfile
     });
-    var loading = martics.loading || trackerLoading || martics.metrics.length === 0 || assignmentLoading || advertLoading;
-    var hasMetrics = martics.metrics.length > 0;
+    var loading = MatricData.length === 0 || trackerLoading || assignmentLoading || advertLoading;
+    var hasMetrics = MatricData.length > 0;
     var showAssignmentBar = (activeMetric === ConditionConfig_1.MatricID.AssignHr || activeMetric === ConditionConfig_1.MatricID.AssignAgencies) && selectedIds.length > 0 && members.length > 0;
     var metricsContainer = {
         hidden: {},
@@ -307,16 +310,13 @@ var Mytracker = function () {
             react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["dashboard-empty__title"] }, strings.NoDashboardMetricsAvailable),
             react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["dashboard-empty__subtitle"] }, strings.PleaseCheckYourPermissionsOrTryAgainLate))) : (react_1.default.createElement(react_1.default.Fragment, null,
             react_1.default.createElement(framer_motion_1.motion.div, { className: MyTracker_module_scss_1.default["metrics-grid"], variants: metricsContainer, initial: "hidden", animate: "visible" },
-                react_1.default.createElement(matric_1.default, { metrics: martics.metrics, onCardClick: onMetricChange, loading: loading, handleRefresh: handleRefresh, active: activeMetric })),
+                react_1.default.createElement(matric_1.default, { metrics: MatricData, onCardClick: onMetricChange, loading: loading, handleRefresh: handleRefresh, active: activeMetric })),
             react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["tracker-panel"] },
                 react_1.default.createElement(framer_motion_1.motion.div, { className: MyTracker_module_scss_1.default.tracker, key: "tracker", initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 12 }, transition: { duration: 0.3 } },
                     react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["tracker__header"] },
                         react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["tracker__header-left"] },
                             react_1.default.createElement("h2", { className: MyTracker_module_scss_1.default["tracker__title"] }, strings.RecruitmentBacklog),
                             react_1.default.createElement("p", { className: MyTracker_module_scss_1.default["tracker__subtitle"] },
-                                strings.Showing,
-                                react_1.default.createElement("strong", null, (_a = trackerData === null || trackerData === void 0 ? void 0 : trackerData.length) !== null && _a !== void 0 ? _a : 0),
-                                " ",
                                 strings.ResultsFor,
                                 " ",
                                 react_1.default.createElement("span", { className: MyTracker_module_scss_1.default["tracker__highlight"] }, selectedmatricId !== null && selectedmatricId !== void 0 ? selectedmatricId : "—"))),
@@ -363,7 +363,7 @@ var Mytracker = function () {
                         },
                     }); } }))),
             drawerMeta.current.isOpen && (react_1.default.createElement(AdvertReviewDrawer_1.AdvertReviewDrawer, { drawerOpen: drawerOpen, selectedJobId: selectedJobId, selectedJobCode: selectedJobCode, selectedType: drawerMeta.current.selectedType, advertLanguage: advertLanguage, reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, loadingState: loadingState, onClose: closeDrawer, onLanguageChange: setAdvertLanguage, onCommentsChange: setComments, onToggleAcknowledgement: toggleAcknowledgement, setLoadingState: setLoadingState, refreshKey: handleRefresh })),
-            drawerOfferOpen && (react_1.default.createElement(ReviewDocument_1.ReviewDocument, { drawerOpen: drawerOfferOpen, selectedJobId: (_c = (_b = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _b === void 0 ? void 0 : _b.jobId) !== null && _c !== void 0 ? _c : 0, CandidateID: (_e = (_d = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _d === void 0 ? void 0 : _d.candidateID) !== null && _e !== void 0 ? _e : 0, selectedcandidateID: (_g = (_f = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _f === void 0 ? void 0 : _f.selectedcandidateID) !== null && _g !== void 0 ? _g : 0, IsExpat: (_j = (_h = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _h === void 0 ? void 0 : _h.IsExpat) !== null && _j !== void 0 ? _j : false, jobrequestID: (_l = (_k = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _k === void 0 ? void 0 : _k.jobrequestID) !== null && _l !== void 0 ? _l : "", reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, loadingState: loadingState, onClose: function () { return setDrawerOfferOpen(false); }, onCommentsChange: setComments, onToggleAcknowledgement: toggleAcknowledgement, setLoadingState: setLoadingState, refreshKey: handleRefresh })),
+            drawerOfferOpen && (react_1.default.createElement(ReviewDocument_1.ReviewDocument, { drawerOpen: drawerOfferOpen, selectedJobId: (_b = (_a = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _a === void 0 ? void 0 : _a.jobId) !== null && _b !== void 0 ? _b : 0, CandidateID: (_d = (_c = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _c === void 0 ? void 0 : _c.candidateID) !== null && _d !== void 0 ? _d : 0, selectedcandidateID: (_f = (_e = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _e === void 0 ? void 0 : _e.selectedcandidateID) !== null && _f !== void 0 ? _f : 0, IsExpat: (_h = (_g = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _g === void 0 ? void 0 : _g.IsExpat) !== null && _h !== void 0 ? _h : false, jobrequestID: (_k = (_j = selectedItemRef === null || selectedItemRef === void 0 ? void 0 : selectedItemRef.current) === null || _j === void 0 ? void 0 : _j.jobrequestID) !== null && _k !== void 0 ? _k : "", reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, loadingState: loadingState, onClose: function () { return setDrawerOfferOpen(false); }, onCommentsChange: setComments, onToggleAcknowledgement: toggleAcknowledgement, setLoadingState: setLoadingState, refreshKey: handleRefresh })),
             react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, assignmentModalState, { onClose: assignmentCloseModal })),
             react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal })),
             react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, advertModalState, { onClose: advertCloseModal })))))))));

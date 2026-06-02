@@ -1,3 +1,5 @@
+import { DepartmentDataItem } from "../../components/Screens/Dashboard/Hooks/Usedepartmentchart";
+import { Metric } from "../../models/IDashboard";
 import { IUserDetails } from "../../models/master";
 
 export type UserRoleData = {
@@ -40,5 +42,7 @@ export type RoleContextType = {
   error: Error | null;
   showRoleSelector: boolean;
   setShowRoleSelector: React.Dispatch<React.SetStateAction<boolean>>;
+  MatricData: Metric[];
+  DepartmentData: DepartmentDataItem[];
 }
 

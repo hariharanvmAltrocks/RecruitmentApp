@@ -101,7 +101,8 @@ refreshKey) {
                             matricID === ConditionConfig_1.MatricID.EvalutionEXCO;
                         shouldShowProfile_1 = matricID === ConditionConfig_1.MatricID.ReviewProfileHR ||
                             matricID === ConditionConfig_1.MatricID.ReviewProfileLM ||
-                            matricID === ConditionConfig_1.MatricID.AssignInterviewPanel;
+                            matricID === ConditionConfig_1.MatricID.AssignInterviewPanel ||
+                            matricID === ConditionConfig_1.MatricID.ReviewScoreCard;
                         mappedItems = data.map(function (item) {
                             if (isEvaluation_1)
                                 return mapEvaluationItem(item);

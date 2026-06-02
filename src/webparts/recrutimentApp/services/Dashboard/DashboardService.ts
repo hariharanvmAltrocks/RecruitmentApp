@@ -436,6 +436,32 @@ export default class DashboardService implements IDashboard {
         return level1 + (level2?.data?.length ?? 0);
       }
 
+      if(MatricId === MatricID.ReviewScoreCard){
+           const ReviewScoreCard = await this.GetCandidateDetails(
+          [
+            {
+              FilterKey: "StatusId",
+              Operator: "in",
+              FilterValue:
+                [
+        StatusId.PendingwithpositionIDAssignmentWithHOD,
+        StatusId.pendingL2shorlistingwithHOD,
+        StatusId.CandidateOnHoldbyHODLevel1,
+        StatusId.CandidateOnHoldbyHODLevel2,
+        StatusId.OnHoldbyHOD
+      ],
+            },
+            {
+              FilterKey: "RecruitmentID/ID",
+              Operator: "eq",
+              FilterValue: RecID,
+            },
+          ],
+          "and",
+        );
+        return ReviewScoreCard?.data?.length ?? 0;
+      }
+
       return 0;
     } catch (error) {
       console.error("_getCandidateCountByMatric Error:", error);
@@ -536,13 +562,31 @@ export default class DashboardService implements IDashboard {
           return "";
         }
       };
+       const shouldCheckCandidateCount =
+      MatricId === MatricID.ReviewProfileHR ||
+      MatricId === MatricID.AssignInterviewPanel ||
+      MatricId === MatricID.ReviewProfileLM ||
+      MatricId === MatricID.ReviewScoreCard;
+      const filteredResponse = [];
+     for (const item of recruitmentResponse) {
+  if (shouldCheckCandidateCount) {
+    const candidateCount = await this._getCandidateCountByMatric(
+      item.JobCodeId,
+      MatricId ?? 0,
+      item.ID
+    );
+
+    if (candidateCount === 0) {
+      continue;
+    }
+
+    item.candidateCount = candidateCount;
+  }
+  filteredResponse.push(item);
+}
       const GridResult: DashboardData[] = await Promise.all(
-        recruitmentResponse.map(async (item: any, index: number) => {
-          const candidateCount = await this._getCandidateCountByMatric(
-            item.JobCodeId,
-            MatricId ?? 0,
-            item.ID,
-          );
+        filteredResponse.map(async (item: any, index: number) => {
+         
           const jdeData = jdeMap.get(item.BusinessUnitCodeId);
           const [LineManager, HOD, Exco, HR, HRLead] = await Promise.all([
             getCachedUserName(
@@ -607,11 +651,11 @@ export default class DashboardService implements IDashboard {
               : undefined,
             Department: item?.Department?.DepartmentName ?? "",
             EmploymentCategory: item?.EmploymentCategory,
-            CandidateCount: candidateCount,
             StatusTooltip,
+            CandidateCount: item?.candidateCount ?? 0, 
           };
-        }),
-      );
+        })
+      ) 
       return {
         data: GridResult,
         status: 200,

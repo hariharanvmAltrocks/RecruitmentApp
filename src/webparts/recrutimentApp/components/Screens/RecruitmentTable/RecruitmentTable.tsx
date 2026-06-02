@@ -393,6 +393,12 @@ export const RecruitmentTable: React.FC = () => {
   const showAssignmentBar =
     activeTabs?.tableMode === "checkbox" && selectedIds.length > 0;
 
+  const shouldShowProfile =
+    matricID === MatricID.ReviewProfileHR ||
+    matricID === MatricID.ReviewProfileLM ||
+    matricID === MatricID.AssignInterviewPanel ||
+    matricID === MatricID.ReviewScoreCard;
+
   const columns = useRecruitmentColumns({
     role:
       matricID === MatricID.EvalutionHR ||
@@ -403,6 +409,7 @@ export const RecruitmentTable: React.FC = () => {
         : "default",
     actionMode: activeTabs?.actionMode ?? "View",
     onAction: handleAction,
+    hasProfileCount: shouldShowProfile,
   });
 
   let loading = assignmentLoading || advertLoading;

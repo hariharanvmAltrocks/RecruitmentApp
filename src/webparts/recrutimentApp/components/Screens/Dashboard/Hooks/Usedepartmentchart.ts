@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { DashboardServices } from "../../../../services/ServiceExport";
 import { ResponeStatus } from "../../../../utilities/ApiConfig";
+import { useRoleContext } from "../../../../utilities/hooks/RoleContext";
 
 export interface DepartmentDataItem {
   name: string;
@@ -33,15 +34,15 @@ const useDepartmentChart = ({
   const [startIndex, setStartIndex] = useState(0);
   const [data, setData] = useState<DepartmentDataItem[]>([]);
 
+  
+    const { DepartmentData } = useRoleContext();
       const fetchDepartmentPosition = useCallback(async () => {
       try {
   
-        const res = await DashboardServices.GetDepartmentDetails();
-        const data = res.data || [];
-  
-        if (res.status === ResponeStatus.SUCCESS) {
-          setData(data);
-        }
+        // const res = await DashboardServices.GetDepartmentDetails();
+          setData(DepartmentData);
+
+       
       } catch (error) {
         console.error("Dashboard urgent tasks error", error);
       } finally {

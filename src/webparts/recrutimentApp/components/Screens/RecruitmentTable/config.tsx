@@ -26,6 +26,7 @@ interface UseRecruitmentColumnsOptions {
   role: ColumnRole;
   actionMode: "Upload" | "View";
   onAction: (item: any) => void;
+  hasProfileCount?: boolean;  
 }
 
 const getActionLabel = (
@@ -63,12 +64,25 @@ export const useRecruitmentColumns = ({
   role,
   actionMode,
   onAction,
+  hasProfileCount
 }: UseRecruitmentColumnsOptions): DataTableColumn<RecruitmentItem>[] => {
   const { MatricID: matricID } = useUIState();
   const onActionRef = useRef(onAction);
   useEffect(() => {
     onActionRef.current = onAction;
   }, [onAction]);
+
+  const showProfile = useMemo(() => {
+    if (hasProfileCount !== undefined) {
+      return hasProfileCount;
+    }
+    return (
+      matricID === MatricID.ReviewProfileHR ||
+      matricID === MatricID.ReviewProfileLM ||
+      matricID === MatricID.AssignInterviewPanel ||
+      matricID === MatricID.ReviewScoreCard
+    );
+  }, [hasProfileCount, matricID]);
 
   const actionColumn: DataTableColumn<RecruitmentItem> = useMemo(
     () => ({
@@ -91,10 +105,6 @@ export const useRecruitmentColumns = ({
     }),
     [actionMode],
   );
-  const shouldShowProfile =
-    matricID === MatricID.ReviewProfileHR ||
-    matricID === MatricID.ReviewProfileLM ||
-    matricID === MatricID.AssignInterviewPanel;
 
   const defaultColumns: DataTableColumn<RecruitmentItem>[] = useMemo(
     () => [
@@ -114,12 +124,12 @@ export const useRecruitmentColumns = ({
           </div>
         ),
       },
-      ...(shouldShowProfile
+      ...(showProfile
         ? [
             {
               id: "ProfileCount",
               header: " Profile Count",
-              render: (item: any) => String(item.ProfileCount).padStart(2, "0"),
+              render: (item: any) => String(item.ProfileCount ?? 0).padStart(2, "0"),
               cellClassName: "data-table__cell--count",
               // align: "center",
               hideOnMobile: true,
@@ -177,7 +187,7 @@ export const useRecruitmentColumns = ({
       },
       actionColumn,
     ],
-    [actionColumn],
+    [actionColumn, showProfile],
   );
 
   const evaluationColumns: DataTableColumn<any>[] = useMemo(

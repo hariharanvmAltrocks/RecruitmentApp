@@ -18,6 +18,7 @@ import { menuID } from "../../../utilities/ConditionConfig";
 import DepartmentChart from "../../Comman/Departmentchart/Departmentchart";
 import useDepartmentChart from "./Hooks/Usedepartmentchart";
 import * as strings from 'RecrutimentAppWebPartStrings';
+import { useRoleContext } from "../../../utilities/hooks/RoleContext";
 
 interface DashboardProps {
   props: any;
@@ -27,13 +28,8 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
   const [activeMetric, setActiveMetric] = useState<number>(0);
   const [refreshKey, setRefreshKey] = useState<number>(0);
 
-  const martics = useDashboardMetrics(refreshKey);
-  const { trackerData, loading: trackerLoading } = useTrackerData(
-    activeMetric,
-    refreshKey,
-  );
-  const { urgentTasks, loading: urgentLoading } = useUrgentTasks(refreshKey);
-
+  const { MatricData } = useRoleContext();
+   
   const navigate = useNavigate();
   const {
     setActiveMenuID,
@@ -47,16 +43,16 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
   const ref = useRef(0);
 
   useEffect(() => {
-    if (martics.metrics.length > 0 && !activeMetric) {
-      setActiveMetric(martics.metrics[0].id);
-      setNavigationPath(martics.metrics[0].path);
-      ref.current = martics.metrics[0].menuId;
-      // setActiveMenuID(martics.metrics[0].menuId);
-      setActiveTab(martics.metrics[0].TabValue);
-      setCurrentTabName(martics.metrics[0].TabName);
-      setMatricID(martics.metrics[0].id);
+    if (MatricData.length > 0 && !activeMetric) {
+      setActiveMetric(MatricData[0].id);
+      setNavigationPath(MatricData[0].path);
+      ref.current = MatricData[0].menuId;
+      // setActiveMenuID(MatricData[0].menuId);
+      setActiveTab(MatricData[0].TabValue);
+      setCurrentTabName(MatricData[0].TabName);
+      setMatricID(MatricData[0].id);
     }
-  }, [martics.metrics]);
+  }, [MatricData]);
 
   const onMetricChange = (data: MetricConfig) => {
     setActiveMetric(data.id);
@@ -74,32 +70,13 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     setActiveMetric(0);
   };
 
-  const selectedMetric =
-    martics.metrics.find((m) => m.id === activeMetric) ?? martics.metrics[0];
-  const priorityData = priorityValues(martics.metrics);
-  const total = totalPriority(martics.metrics);
   const loading =
-    martics.loading ||
-    trackerLoading ||
-    urgentLoading ||
-    martics.metrics.length === 0;
-  const hasMetrics = martics.metrics && martics.metrics.length > 0;
-
-  const onTrackerChange = (row: DashboardData) => {
-    if (selectedMetric?.showArrow) {
-      setActiveMenuID(ref.current);
-      navigate(navigationPath);
-    }
-  };
+    MatricData.length === 0;
+  const hasMetrics = MatricData && MatricData.length > 0;
 
   const metricsContainer = {
     hidden: {},
     visible: { transition: { staggerChildren: 0.1 } },
-  };
-
-  const metricItem = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.25 } },
   };
 
   return (
@@ -139,7 +116,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                   animate="visible"
                 >
                   <MetricDashboard
-                    metrics={martics.metrics}
+                    metrics={MatricData}
                     onCardClick={(metric) => onMetricChange(metric)}
                     loading={loading}
                     handleRefresh={handleRefresh}

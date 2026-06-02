@@ -4,8 +4,9 @@ import { RoleID, workflowStatusApi } from "../../../../../utilities/Config";
 import { Choices } from "../../../../../utilities/ApiConfig";
 import { EmployeementCategory } from "../../../../../utilities/ConditionConfig";
 import { userInfo } from "../../../../../utilities/hooks/RoleContext";
-import { OfferServices } from "../../../../../services/ServiceExport";
+import { DashboardServices, OfferServices } from "../../../../../services/ServiceExport";
 import { WorkflowHODConfig } from "../../../../Hooks/WorkflowConfig";
+import { ISelectedCandidate } from "../../../RecruitmentTable/RecruitmentTable.types";
 
 interface Filter {
   FilterKey: string;
@@ -103,6 +104,8 @@ const getApprovedIds = (empCategory: string): (string | number)[] => [
     : "",
 ];
 
+
+
 const resolveStatusUpdate = (
   item: WorkflowStatusItem,
   portalItems: PortalItem[],
@@ -151,6 +154,18 @@ const resolveStatusUpdate = (
   return null;
 };
 
+ const mapSelectedCandidate = (item: any): PortalItem => {
+  const dept = item.DeptDetails;
+  const candi = item?.candiDetails;
+  return {
+  StatusID: item?.StatusId,
+  ID: item?.ItemID,
+  JobRequestID: candi?.jobrequestID,
+  EmploymentCategory: dept?.EmploymentCategory,
+  IsExpat: candi?.isExpat,
+  };
+};
+
 export const useUpdateListPortal = ({
   items,
   refreshKey = 0,
@@ -173,18 +188,32 @@ export const useUpdateListPortal = ({
     setError(null);
 
     try {
-      if (!items) {
-        setIsLoading(false);
-        return;
-      }
+      // if (!items) {
+      //   setIsLoading(false);
+      //   return;
+      // }
       //   const filters = buildFilters(roleIDs, userDetails);
       //   const items   = await OfferLetterServices.fetchResiCandidateDetails(filters, "and");
 
-      const portalItems = filterPortalItems(items);
+      // const portalItems = filterPortalItems(items);
+      const filter = [
+        {
+          FilterKey: "StatusId",
+      Operator: "in",
+      FilterValue: PORTAL_STATUS_IDS,
+        },
+      ];
+
+      const selectedCandidates = await DashboardServices.GetSelectedCandidate(filter, "and");
+      let portalItems = selectedCandidates.data?.map((item) => {
+          return mapSelectedCandidate(item);
+      }) ?? [];
+
       if (portalItems.length === 0) {
         setIsSuccess(true);
         return;
       }
+
       const jobRequestIDs = portalItems.map((item) => item.JobRequestID);
 
       const updatedStatus =

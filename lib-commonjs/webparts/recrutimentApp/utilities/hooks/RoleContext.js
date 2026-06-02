@@ -12,6 +12,7 @@ var ApiConfig_1 = require("../ApiConfig");
 var GraphService_1 = tslib_1.__importDefault(require("../../services/GraphService/GraphService"));
 var CustomLoader_1 = tslib_1.__importDefault(require("../../services/Loader/CustomLoader"));
 var CareerPortalAPI_1 = require("../../services/AxiosService/CareerPortalAPI");
+var useDashboardMetrics_1 = require("../../components/Screens/Dashboard/Hooks/useDashboardMetrics");
 var RoleContext = (0, react_1.createContext)(undefined);
 var initialState = {
     userName: "",
@@ -21,6 +22,8 @@ var initialState = {
     isLoading: true,
     error: null,
     apiUrlsError: null,
+    MatricData: [],
+    DepartmentData: []
 };
 function providerReducer(state, action) {
     switch (action.type) {
@@ -36,6 +39,10 @@ function providerReducer(state, action) {
             return tslib_1.__assign(tslib_1.__assign({}, state), { isLoading: action.isLoading });
         case "SET_API_URLS_ERROR":
             return tslib_1.__assign(tslib_1.__assign({}, state), { apiUrlsError: action.message });
+        case "SET_MATRIC_DATA":
+            return tslib_1.__assign(tslib_1.__assign({}, state), { MatricData: action.MatricData });
+        case "SET_DEPARTMENT_DATA":
+            return tslib_1.__assign(tslib_1.__assign({}, state), { DepartmentData: action.DepartmentData });
         default:
             return state;
     }
@@ -201,8 +208,17 @@ var RoleProvider = function (_a) {
     var children = _a.children;
     var _b = (0, react_1.useReducer)(providerReducer, initialState), state = _b[0], dispatch = _b[1];
     var _c = (0, react_1.useState)(false), showRoleSelector = _c[0], setShowRoleSelector = _c[1];
+    var roleIDs = React.useMemo(function () {
+        return state.resolvedRoles.map(function (r) { return r.ID; });
+    }, [state.resolvedRoles]);
+    var _d = (0, useDashboardMetrics_1.useDashboardMetrics)(roleIDs, state.userEmail), matricData = _d.metrics, metricsLoading = _d.loading;
+    (0, react_1.useEffect)(function () {
+        if (state.resolvedRoles.length > 0) {
+            dispatch({ type: "SET_MATRIC_DATA", MatricData: matricData });
+        }
+    }, [matricData, state.resolvedRoles.length]);
     var initialise = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var _a, userResult, raw;
+        var _a, userResult, raw, res, error_2;
         return tslib_1.__generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -274,6 +290,19 @@ var RoleProvider = function (_a) {
                             error: raw instanceof Error ? raw : new Error(String(raw)),
                         });
                     }
+                    _b.label = 2;
+                case 2:
+                    _b.trys.push([2, 4, , 5]);
+                    return [4 /*yield*/, ServiceExport_1.DashboardServices.GetDepartmentDetails()];
+                case 3:
+                    res = _b.sent();
+                    dispatch({ type: "SET_DEPARTMENT_DATA", DepartmentData: res.data });
+                    return [3 /*break*/, 5];
+                case 4:
+                    error_2 = _b.sent();
+                    console.error("[RoleProvider] Failed to fetch department details:", error_2);
+                    return [3 /*break*/, 5];
+                case 5:
                     dispatch({ type: "SET_LOADING", isLoading: false });
                     return [2 /*return*/];
             }
@@ -283,27 +312,30 @@ var RoleProvider = function (_a) {
         void initialise();
     }, [initialise]);
     var ADGroupData = buildADGroupData(state.resolvedRoles, state.userName);
+    var combinedLoading = state.isLoading || (state.resolvedRoles.length > 0 && metricsLoading);
     var contextValue = {
         roleIDs: ADGroupData.roleIDs,
         userName: state.userName,
         userRole: ADGroupData.userRole,
         ADGroupData: ADGroupData,
-        isLoading: state.isLoading,
+        isLoading: combinedLoading,
         error: state.error,
         showRoleSelector: showRoleSelector,
         setShowRoleSelector: setShowRoleSelector,
+        MatricData: state.MatricData,
+        DepartmentData: state.DepartmentData
     };
-    var isFullyReady = !state.isLoading &&
+    var isFullyReady = !combinedLoading &&
         !state.error &&
         state.userName !== "" &&
         state.resolvedRoles.length > 0 &&
         state.apiUrlsReady;
-    var hasNoRoles = !state.isLoading &&
+    var hasNoRoles = !combinedLoading &&
         !state.error &&
         state.userName !== "" &&
         state.resolvedRoles.length === 0;
     return (React.createElement(RoleContext.Provider, { value: contextValue },
-        React.createElement(CustomLoader_1.default, { isLoading: state.isLoading }, state.apiUrlsError ? ( // ← check this first
+        React.createElement(CustomLoader_1.default, { isLoading: combinedLoading }, state.apiUrlsError ? ( // ← check this first
         // <ServerDownError message={state.apiUrlsError} />
         React.createElement(React.Fragment, null)) : state.error ? (
         // <ErrorScreen message={state.error.message} />

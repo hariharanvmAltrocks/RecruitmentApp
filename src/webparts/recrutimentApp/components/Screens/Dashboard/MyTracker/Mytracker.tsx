@@ -10,9 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight, RefreshCw, RotateCcw, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-
 import styles from "./MyTracker.module.scss";
-
 import Loading from "../../../Comman/Loading/loading";
 import MetricDashboard from "../../../Comman/MatricBox/matric";
 import { DataTable } from "../../../Comman/DataTable/DataTable";
@@ -34,7 +32,7 @@ import {
 } from "../../../../utilities/ConditionConfig";
 import { StatusId } from "../../../../utilities/Config";
 import { checkIsAlreadySubmitted } from "../../Evalution/Evaluationservice/Evaluationformservice";
-import { userInfo } from "../../../../utilities/hooks/RoleContext";
+import { userInfo, useRoleContext } from "../../../../utilities/hooks/RoleContext";
 import { useRecruitmentDetails } from "../../RecruitmentTable/Hooks/useRecruitmentDetails";
 import { ISelectedCandidate } from "../../RecruitmentTable/RecruitmentTable.types";
 import { ReviewDocument } from "../../OfferRelease/ReviewDocument/ReviewDocument";
@@ -102,7 +100,9 @@ const Mytracker: React.FC<DashboardProps> = () => {
   const { items: trackerData, loading: trackerLoading } =
     useRecruitmentDetails(refreshKey);
 
-  const martics = useDashboardMetrics(refreshKey);
+      const { MatricData } = useRoleContext();
+
+  // const martics = useDashboardMetrics(refreshKey);
 
   const items = trackerData || [];
 
@@ -301,7 +301,6 @@ const Mytracker: React.FC<DashboardProps> = () => {
           selectedAdvertID.current = item.ItemID;
           return;
         }
-        debugger;
         if (isEvaluationFlow) {
           const today = new Date();
           today.setHours(0, 0, 0, 0);
@@ -332,9 +331,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
             showModal({
               type: "warning",
               title: strings.InterviewDateNotReached,
-              message: `You can only fill the scorecard after the interview date. ${moment(
-                item.interviewDate,
-              ).format("YYYY-MM-DD")}`,
+              message: `You can only fill the scorecard after the interview date. {item.interviewDate}`,
               confirmLabel: "OK",
               onConfirm: closeModal,
             });
@@ -415,6 +412,14 @@ const Mytracker: React.FC<DashboardProps> = () => {
     ],
   );
 
+
+const shouldShowProfile =
+           activeMetric === MatricID.ReviewProfileHR ||
+           activeMetric === MatricID.ReviewProfileLM ||
+           activeMetric === MatricID.AssignInterviewPanel || 
+           activeMetric === MatricID.ReviewScoreCard;
+
+
   const columns = useRecruitmentColumns({
     role:
       activeMetric === MatricID.EvalutionHR ||
@@ -436,11 +441,12 @@ const Mytracker: React.FC<DashboardProps> = () => {
         activeMetric === MatricID.MySubmissionBGV
         ? handleActionOffer
         : handleAction,
+    hasProfileCount : shouldShowProfile
   });
 
   const loading =
-    martics.loading || trackerLoading || martics.metrics.length === 0 || assignmentLoading || advertLoading;
-  const hasMetrics = martics.metrics.length > 0;
+    MatricData.length === 0 || trackerLoading || assignmentLoading || advertLoading;
+  const hasMetrics = MatricData.length > 0;
   const showAssignmentBar =
     (activeMetric === MatricID.AssignHr || activeMetric === MatricID.AssignAgencies) && selectedIds.length > 0 && members.length > 0;
 
@@ -490,7 +496,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
                   animate="visible"
                 >
                   <MetricDashboard
-                    metrics={martics.metrics}
+                    metrics={MatricData}
                     onCardClick={onMetricChange}
                     loading={loading}
                     handleRefresh={handleRefresh}
@@ -514,7 +520,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
                         <h2 className={styles["tracker__title"]}>
                           {strings.RecruitmentBacklog}</h2>
                         <p className={styles["tracker__subtitle"]}>
-                          {strings.Showing}<strong>{trackerData?.length ?? 0}</strong>{" "}
+                          {/* {strings.Showing}<strong>{trackerData?.length ?? 0}</strong>{" "} */}
                           {strings.ResultsFor}{" "}
                           <span className={styles["tracker__highlight"]}>
                             {selectedmatricId ?? "—"}

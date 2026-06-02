@@ -2,33 +2,24 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var react_1 = require("react");
-var ServiceExport_1 = require("../../../../services/ServiceExport");
-var ApiConfig_1 = require("../../../../utilities/ApiConfig");
+var RoleContext_1 = require("../../../../utilities/hooks/RoleContext");
 var useDepartmentChart = function (_a) {
     var itemsPerPage = _a.itemsPerPage, refreshKey = _a.refreshKey;
     var _b = (0, react_1.useState)(0), startIndex = _b[0], setStartIndex = _b[1];
     var _c = (0, react_1.useState)([]), data = _c[0], setData = _c[1];
+    var DepartmentData = (0, RoleContext_1.useRoleContext)().DepartmentData;
     var fetchDepartmentPosition = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var res, data_1, error_1;
         return tslib_1.__generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 2, 3, 4]);
-                    return [4 /*yield*/, ServiceExport_1.DashboardServices.GetDepartmentDetails()];
-                case 1:
-                    res = _a.sent();
-                    data_1 = res.data || [];
-                    if (res.status === ApiConfig_1.ResponeStatus.SUCCESS) {
-                        setData(data_1);
-                    }
-                    return [3 /*break*/, 4];
-                case 2:
-                    error_1 = _a.sent();
-                    console.error("Dashboard urgent tasks error", error_1);
-                    return [3 /*break*/, 4];
-                case 3: return [7 /*endfinally*/];
-                case 4: return [2 /*return*/];
+            try {
+                // const res = await DashboardServices.GetDepartmentDetails();
+                setData(DepartmentData);
             }
+            catch (error) {
+                console.error("Dashboard urgent tasks error", error);
+            }
+            finally {
+            }
+            return [2 /*return*/];
         });
     }); }, [refreshKey]);
     (0, react_1.useEffect)(function () {

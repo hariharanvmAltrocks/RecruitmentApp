@@ -82,6 +82,17 @@ var resolveStatusUpdate = function (item, portalItems) {
     }
     return null;
 };
+var mapSelectedCandidate = function (item) {
+    var dept = item.DeptDetails;
+    var candi = item === null || item === void 0 ? void 0 : item.candiDetails;
+    return {
+        StatusID: item === null || item === void 0 ? void 0 : item.StatusId,
+        ID: item === null || item === void 0 ? void 0 : item.ItemID,
+        JobRequestID: candi === null || candi === void 0 ? void 0 : candi.jobrequestID,
+        EmploymentCategory: dept === null || dept === void 0 ? void 0 : dept.EmploymentCategory,
+        IsExpat: candi === null || candi === void 0 ? void 0 : candi.isExpat,
+    };
+};
 var useUpdateListPortal = function (_a) {
     var items = _a.items, _b = _a.refreshKey, refreshKey = _b === void 0 ? 0 : _b;
     var _c = (0, react_1.useState)(false), isLoading = _c[0], setIsLoading = _c[1];
@@ -94,52 +105,60 @@ var useUpdateListPortal = function (_a) {
         setError(null);
     }, []);
     var updateListPortal = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var portalItems_1, jobRequestIDs, updatedStatus, statusList, resolvedItems, err_1, message;
-        var _a, _b, _c;
-        return tslib_1.__generator(this, function (_d) {
-            switch (_d.label) {
+        var filter, selectedCandidates, portalItems_1, jobRequestIDs, updatedStatus, statusList, resolvedItems, err_1, message;
+        var _a, _b, _c, _d, _e;
+        return tslib_1.__generator(this, function (_f) {
+            switch (_f.label) {
                 case 0:
                     setIsLoading(true);
                     setIsSuccess(false);
                     setError(null);
-                    _d.label = 1;
+                    _f.label = 1;
                 case 1:
-                    _d.trys.push([1, 5, 6, 7]);
-                    if (!items) {
-                        setIsLoading(false);
-                        return [2 /*return*/];
-                    }
-                    portalItems_1 = filterPortalItems(items);
+                    _f.trys.push([1, 6, 7, 8]);
+                    filter = [
+                        {
+                            FilterKey: "StatusId",
+                            Operator: "in",
+                            FilterValue: PORTAL_STATUS_IDS,
+                        },
+                    ];
+                    return [4 /*yield*/, ServiceExport_1.DashboardServices.GetSelectedCandidate(filter, "and")];
+                case 2:
+                    selectedCandidates = _f.sent();
+                    portalItems_1 = (_b = (_a = selectedCandidates.data) === null || _a === void 0 ? void 0 : _a.map(function (item) {
+                        return mapSelectedCandidate(item);
+                    })) !== null && _b !== void 0 ? _b : [];
                     if (portalItems_1.length === 0) {
                         setIsSuccess(true);
                         return [2 /*return*/];
                     }
                     jobRequestIDs = portalItems_1.map(function (item) { return item.JobRequestID; });
                     return [4 /*yield*/, ServiceExport_1.OfferServices.GetJobRequestData(jobRequestIDs)];
-                case 2:
-                    updatedStatus = _d.sent();
-                    statusList = (_b = (_a = updatedStatus === null || updatedStatus === void 0 ? void 0 : updatedStatus.data) === null || _a === void 0 ? void 0 : _a.data) !== null && _b !== void 0 ? _b : [];
+                case 3:
+                    updatedStatus = _f.sent();
+                    statusList = (_d = (_c = updatedStatus === null || updatedStatus === void 0 ? void 0 : updatedStatus.data) === null || _c === void 0 ? void 0 : _c.data) !== null && _d !== void 0 ? _d : [];
                     resolvedItems = statusList
                         .map(function (item) { return resolveStatusUpdate(item, portalItems_1); })
                         .filter(function (item) { return item !== null; });
-                    if (!(resolvedItems.length > 0)) return [3 /*break*/, 4];
+                    if (!(resolvedItems.length > 0)) return [3 /*break*/, 5];
                     return [4 /*yield*/, ServiceExport_1.OfferServices.UpdateStatusSelectedHOD(resolvedItems)];
-                case 3:
-                    _d.sent();
-                    _d.label = 4;
                 case 4:
-                    setIsSuccess(true);
-                    return [3 /*break*/, 7];
+                    _f.sent();
+                    _f.label = 5;
                 case 5:
-                    err_1 = _d.sent();
-                    message = (_c = err_1 === null || err_1 === void 0 ? void 0 : err_1.message) !== null && _c !== void 0 ? _c : "An unexpected error occurred.";
+                    setIsSuccess(true);
+                    return [3 /*break*/, 8];
+                case 6:
+                    err_1 = _f.sent();
+                    message = (_e = err_1 === null || err_1 === void 0 ? void 0 : err_1.message) !== null && _e !== void 0 ? _e : "An unexpected error occurred.";
                     setError(message);
                     console.error("[useUpdateListPortal]", err_1);
-                    return [3 /*break*/, 7];
-                case 6:
+                    return [3 /*break*/, 8];
+                case 7:
                     setIsLoading(false);
                     return [7 /*endfinally*/];
-                case 7: return [2 /*return*/];
+                case 8: return [2 /*return*/];
             }
         });
     }); }, [roleIDs, ADGroupData, refreshKey]);

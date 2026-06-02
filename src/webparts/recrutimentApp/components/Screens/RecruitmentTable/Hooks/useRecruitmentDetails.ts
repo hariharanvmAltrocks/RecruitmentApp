@@ -132,10 +132,11 @@ export const useRecruitmentDetails = (
           matricID === MatricID.EvalutionLM ||
           matricID === MatricID.EvalutionEXCO;
 
-        const shouldShowProfile =
-          matricID === MatricID.ReviewProfileHR ||
-          matricID === MatricID.ReviewProfileLM ||
-          matricID === MatricID.AssignInterviewPanel;
+         const shouldShowProfile =
+           matricID === MatricID.ReviewProfileHR ||
+           matricID === MatricID.ReviewProfileLM ||
+           matricID === MatricID.AssignInterviewPanel || 
+           matricID === MatricID.ReviewScoreCard;
 
         const mappedItems: any[] = data.map((item: any) => {
           if (isEvaluation) return mapEvaluationItem(item);

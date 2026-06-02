@@ -39,12 +39,21 @@ var getActionLabel = function (actionMode, item, matricID) {
 };
 var useRecruitmentColumns = function (_a) {
     var _b;
-    var role = _a.role, actionMode = _a.actionMode, onAction = _a.onAction;
+    var role = _a.role, actionMode = _a.actionMode, onAction = _a.onAction, hasProfileCount = _a.hasProfileCount;
     var matricID = (0, UIStateContext_1.useUIState)().MatricID;
     var onActionRef = (0, react_1.useRef)(onAction);
     (0, react_1.useEffect)(function () {
         onActionRef.current = onAction;
     }, [onAction]);
+    var showProfile = (0, react_1.useMemo)(function () {
+        if (hasProfileCount !== undefined) {
+            return hasProfileCount;
+        }
+        return (matricID === ConditionConfig_1.MatricID.ReviewProfileHR ||
+            matricID === ConditionConfig_1.MatricID.ReviewProfileLM ||
+            matricID === ConditionConfig_1.MatricID.AssignInterviewPanel ||
+            matricID === ConditionConfig_1.MatricID.ReviewScoreCard);
+    }, [hasProfileCount, matricID]);
     var actionColumn = (0, react_1.useMemo)(function () { return ({
         id: "actions",
         header: "Actions",
@@ -52,9 +61,6 @@ var useRecruitmentColumns = function (_a) {
         cellClassName: "data-table__cell--actions",
         render: function (item) { return (react_2.default.createElement("button", { className: "data-table__action-btn", onClick: function () { return onActionRef.current(item); }, type: "button", "aria-label": actionMode === strings.Upload ? strings.UploadDocument : strings.ViewVacancy }, getActionLabel(actionMode, item, matricID))); },
     }); }, [actionMode]);
-    var shouldShowProfile = matricID === ConditionConfig_1.MatricID.ReviewProfileHR ||
-        matricID === ConditionConfig_1.MatricID.ReviewProfileLM ||
-        matricID === ConditionConfig_1.MatricID.AssignInterviewPanel;
     var defaultColumns = (0, react_1.useMemo)(function () { return tslib_1.__spreadArray(tslib_1.__spreadArray([
         {
             id: "jobCode",
@@ -69,12 +75,12 @@ var useRecruitmentColumns = function (_a) {
                 react_2.default.createElement("span", null, item.title),
                 react_2.default.createElement("span", { className: "data-table__job-dept" }, item.department))); },
         }
-    ], (shouldShowProfile
+    ], (showProfile
         ? [
             {
                 id: "ProfileCount",
                 header: " Profile Count",
-                render: function (item) { return String(item.ProfileCount).padStart(2, "0"); },
+                render: function (item) { var _a; return String((_a = item.ProfileCount) !== null && _a !== void 0 ? _a : 0).padStart(2, "0"); },
                 cellClassName: "data-table__cell--count",
                 // align: "center",
                 hideOnMobile: true,
@@ -120,7 +126,7 @@ var useRecruitmentColumns = function (_a) {
             },
         },
         actionColumn,
-    ], false); }, [actionColumn]);
+    ], false); }, [actionColumn, showProfile]);
     var evaluationColumns = (0, react_1.useMemo)(function () { return [
         {
             id: "applicantName",

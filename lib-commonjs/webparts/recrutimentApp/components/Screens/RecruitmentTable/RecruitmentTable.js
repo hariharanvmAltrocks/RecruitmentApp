@@ -270,6 +270,10 @@ var RecruitmentTable = function () {
         ADGroupData.EmailId,
     ]);
     var showAssignmentBar = (activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.tableMode) === "checkbox" && selectedIds.length > 0;
+    var shouldShowProfile = matricID === ConditionConfig_1.MatricID.ReviewProfileHR ||
+        matricID === ConditionConfig_1.MatricID.ReviewProfileLM ||
+        matricID === ConditionConfig_1.MatricID.AssignInterviewPanel ||
+        matricID === ConditionConfig_1.MatricID.ReviewScoreCard;
     var columns = (0, config_1.useRecruitmentColumns)({
         role: matricID === ConditionConfig_1.MatricID.EvalutionHR ||
             matricID === ConditionConfig_1.MatricID.EvalutionLM ||
@@ -279,6 +283,7 @@ var RecruitmentTable = function () {
             : "default",
         actionMode: (_a = activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.actionMode) !== null && _a !== void 0 ? _a : "View",
         onAction: handleAction,
+        hasProfileCount: shouldShowProfile,
     });
     var loading = assignmentLoading || advertLoading;
     return (react_1.default.createElement("section", { className: "recruitment-table" },

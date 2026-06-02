@@ -329,13 +329,13 @@ var DashboardService = /** @class */ (function () {
         });
     };
     DashboardService.prototype._getCandidateCountByMatric = function (jobCodeId, MatricId, RecID) {
-        var _a, _b;
+        var _a, _b, _c, _d;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var level1Promise, level2Promise, _c, level1, level2, error_3;
-            return tslib_1.__generator(this, function (_d) {
-                switch (_d.label) {
+            var level1Promise, level2Promise, _e, level1, level2, ReviewScoreCard, error_3;
+            return tslib_1.__generator(this, function (_f) {
+                switch (_f.label) {
                     case 0:
-                        _d.trys.push([0, 3, , 4]);
+                        _f.trys.push([0, 5, , 6]);
                         if (MatricId === ConditionConfig_1.MatricID.ReviewProfileHR) {
                             return [2 /*return*/, this._fetchCandidateCounts(jobCodeId, [
                                     Config_1.workflowStatusApi.HRPending,
@@ -370,26 +370,49 @@ var DashboardService = /** @class */ (function () {
                                 level2Promise,
                             ])];
                     case 1:
-                        _c = _d.sent(), level1 = _c[0], level2 = _c[1];
+                        _e = _f.sent(), level1 = _e[0], level2 = _e[1];
                         return [2 /*return*/, level1 + ((_b = (_a = level2 === null || level2 === void 0 ? void 0 : level2.data) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0)];
-                    case 2: return [2 /*return*/, 0];
+                    case 2:
+                        if (!(MatricId === ConditionConfig_1.MatricID.ReviewScoreCard)) return [3 /*break*/, 4];
+                        return [4 /*yield*/, this.GetCandidateDetails([
+                                {
+                                    FilterKey: "StatusId",
+                                    Operator: "in",
+                                    FilterValue: [
+                                        Config_1.StatusId.PendingwithpositionIDAssignmentWithHOD,
+                                        Config_1.StatusId.pendingL2shorlistingwithHOD,
+                                        Config_1.StatusId.CandidateOnHoldbyHODLevel1,
+                                        Config_1.StatusId.CandidateOnHoldbyHODLevel2,
+                                        Config_1.StatusId.OnHoldbyHOD
+                                    ],
+                                },
+                                {
+                                    FilterKey: "RecruitmentID/ID",
+                                    Operator: "eq",
+                                    FilterValue: RecID,
+                                },
+                            ], "and")];
                     case 3:
-                        error_3 = _d.sent();
+                        ReviewScoreCard = _f.sent();
+                        return [2 /*return*/, (_d = (_c = ReviewScoreCard === null || ReviewScoreCard === void 0 ? void 0 : ReviewScoreCard.data) === null || _c === void 0 ? void 0 : _c.length) !== null && _d !== void 0 ? _d : 0];
+                    case 4: return [2 /*return*/, 0];
+                    case 5:
+                        error_3 = _f.sent();
                         console.error("_getCandidateCountByMatric Error:", error_3);
                         return [2 /*return*/, 0];
-                    case 4: return [2 /*return*/];
+                    case 6: return [2 /*return*/];
                 }
             });
         });
     };
     DashboardService.prototype.GetRecruitmentDetails = function (filterParam, filterConditions, MatricId) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var recruitmentResponse, uniqueBusinessUnitIds, jdeResponse, jdeMap_1, userCache_1, getCachedUserName_1, GridResult, error_4;
+            var recruitmentResponse, uniqueBusinessUnitIds, jdeResponse, jdeMap_1, userCache_1, getCachedUserName_1, shouldCheckCandidateCount, filteredResponse, _i, recruitmentResponse_1, item, candidateCount, GridResult, error_4;
             var _this = this;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 4, , 5]);
+                        _a.trys.push([0, 9, , 10]);
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,
                                 Select: "\n        *,\n        Status/StatusDescription,\n        JobCode/JobCode,\n        JobCode/ID,\n        JobCode/JobTitleInEnglish,\n        BusinessUnitCode/BusineesUnitCode,\n        Department/DepartmentName\n      ",
@@ -464,90 +487,113 @@ var DashboardService = /** @class */ (function () {
                                 }
                             });
                         }); };
-                        return [4 /*yield*/, Promise.all(recruitmentResponse.map(function (item, index) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                var candidateCount, jdeData, _a, LineManager, HOD, Exco, HR, HRLead, StatusTooltip;
-                                var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
-                                return tslib_1.__generator(this, function (_w) {
-                                    switch (_w.label) {
-                                        case 0: return [4 /*yield*/, this._getCandidateCountByMatric(item.JobCodeId, MatricId !== null && MatricId !== void 0 ? MatricId : 0, item.ID)];
-                                        case 1:
-                                            candidateCount = _w.sent();
-                                            jdeData = jdeMap_1.get(item.BusinessUnitCodeId);
-                                            return [4 /*yield*/, Promise.all([
-                                                    getCachedUserName_1((_b = jdeData === null || jdeData === void 0 ? void 0 : jdeData.LineManager) === null || _b === void 0 ? void 0 : _b.EMail, (_c = jdeData === null || jdeData === void 0 ? void 0 : jdeData.LineManager) === null || _c === void 0 ? void 0 : _c.Title),
-                                                    getCachedUserName_1((_d = jdeData === null || jdeData === void 0 ? void 0 : jdeData.HOD) === null || _d === void 0 ? void 0 : _d.EMail, (_e = jdeData === null || jdeData === void 0 ? void 0 : jdeData.HOD) === null || _e === void 0 ? void 0 : _e.Title),
-                                                    getCachedUserName_1((_f = jdeData === null || jdeData === void 0 ? void 0 : jdeData.EXCO) === null || _f === void 0 ? void 0 : _f.EMail, (_g = jdeData === null || jdeData === void 0 ? void 0 : jdeData.EXCO) === null || _g === void 0 ? void 0 : _g.Title),
-                                                    getCachedUserName_1(item === null || item === void 0 ? void 0 : item.AssignedHR),
-                                                    getCachedUserName_1(item === null || item === void 0 ? void 0 : item.RecruitmentHRLead),
-                                                ])];
-                                        case 2:
-                                            _a = _w.sent(), LineManager = _a[0], HOD = _a[1], Exco = _a[2], HR = _a[3], HRLead = _a[4];
-                                            StatusTooltip = {
-                                                LineManager: LineManager
-                                                    ? {
-                                                        Role: ConditionConfig_1.RoleName.LineManager,
-                                                        Name: LineManager,
-                                                    }
-                                                    : {},
-                                                HOD: HOD
-                                                    ? {
-                                                        Role: ConditionConfig_1.RoleName.HOD,
-                                                        Name: HOD,
-                                                    }
-                                                    : {},
-                                                Exco: Exco
-                                                    ? {
-                                                        Role: ConditionConfig_1.RoleName.EXCO,
-                                                        Name: Exco,
-                                                    }
-                                                    : {},
-                                                HR: HR
-                                                    ? {
-                                                        Role: ConditionConfig_1.RoleName.RecruitmentHR,
-                                                        Name: HR,
-                                                    }
-                                                    : {},
-                                                HRLead: HRLead
-                                                    ? {
-                                                        Role: ConditionConfig_1.RoleName.RecruitmentHRLead,
-                                                        Name: HRLead,
-                                                    }
-                                                    : {},
-                                            };
-                                            return [2 /*return*/, {
-                                                    ID: item.ID,
-                                                    RecordID: index + 1,
-                                                    BusinessUnitCode: (_j = (_h = item === null || item === void 0 ? void 0 : item.BusinessUnitCode) === null || _h === void 0 ? void 0 : _h.BusineesUnitCode) !== null && _j !== void 0 ? _j : "",
-                                                    Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
-                                                    NumberOfPersonNeeded: item === null || item === void 0 ? void 0 : item.NumberOfPersonNeeded,
-                                                    Type: (_k = item === null || item === void 0 ? void 0 : item.DataFrom) !== null && _k !== void 0 ? _k : "",
-                                                    Status: (_m = (_l = item === null || item === void 0 ? void 0 : item.Status) === null || _l === void 0 ? void 0 : _l.StatusDescription) !== null && _m !== void 0 ? _m : "",
-                                                    StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
-                                                    JobCodeId: (_p = (_o = item === null || item === void 0 ? void 0 : item.JobCode) === null || _o === void 0 ? void 0 : _o.ID) !== null && _p !== void 0 ? _p : 0,
-                                                    JobCode: (_r = (_q = item === null || item === void 0 ? void 0 : item.JobCode) === null || _q === void 0 ? void 0 : _q.JobCode) !== null && _r !== void 0 ? _r : "",
-                                                    JobTitleEnglish: (_t = (_s = item === null || item === void 0 ? void 0 : item.JobCode) === null || _s === void 0 ? void 0 : _s.JobTitleInEnglish) !== null && _t !== void 0 ? _t : "",
-                                                    ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
-                                                        ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
-                                                        : undefined,
-                                                    CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
-                                                        ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
-                                                        : undefined,
-                                                    Department: (_v = (_u = item === null || item === void 0 ? void 0 : item.Department) === null || _u === void 0 ? void 0 : _u.DepartmentName) !== null && _v !== void 0 ? _v : "",
-                                                    EmploymentCategory: item === null || item === void 0 ? void 0 : item.EmploymentCategory,
-                                                    CandidateCount: candidateCount,
-                                                    StatusTooltip: StatusTooltip,
-                                                }];
-                                    }
-                                });
-                            }); }))];
+                        shouldCheckCandidateCount = MatricId === ConditionConfig_1.MatricID.ReviewProfileHR ||
+                            MatricId === ConditionConfig_1.MatricID.AssignInterviewPanel ||
+                            MatricId === ConditionConfig_1.MatricID.ReviewProfileLM ||
+                            MatricId === ConditionConfig_1.MatricID.ReviewScoreCard;
+                        filteredResponse = [];
+                        _i = 0, recruitmentResponse_1 = recruitmentResponse;
+                        _a.label = 3;
                     case 3:
+                        if (!(_i < recruitmentResponse_1.length)) return [3 /*break*/, 7];
+                        item = recruitmentResponse_1[_i];
+                        if (!shouldCheckCandidateCount) return [3 /*break*/, 5];
+                        return [4 /*yield*/, this._getCandidateCountByMatric(item.JobCodeId, MatricId !== null && MatricId !== void 0 ? MatricId : 0, item.ID)];
+                    case 4:
+                        candidateCount = _a.sent();
+                        if (candidateCount === 0) {
+                            return [3 /*break*/, 6];
+                        }
+                        item.candidateCount = candidateCount;
+                        _a.label = 5;
+                    case 5:
+                        filteredResponse.push(item);
+                        _a.label = 6;
+                    case 6:
+                        _i++;
+                        return [3 /*break*/, 3];
+                    case 7: return [4 /*yield*/, Promise.all(filteredResponse.map(function (item, index) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                            var jdeData, _a, LineManager, HOD, Exco, HR, HRLead, StatusTooltip;
+                            var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w;
+                            return tslib_1.__generator(this, function (_x) {
+                                switch (_x.label) {
+                                    case 0:
+                                        jdeData = jdeMap_1.get(item.BusinessUnitCodeId);
+                                        return [4 /*yield*/, Promise.all([
+                                                getCachedUserName_1((_b = jdeData === null || jdeData === void 0 ? void 0 : jdeData.LineManager) === null || _b === void 0 ? void 0 : _b.EMail, (_c = jdeData === null || jdeData === void 0 ? void 0 : jdeData.LineManager) === null || _c === void 0 ? void 0 : _c.Title),
+                                                getCachedUserName_1((_d = jdeData === null || jdeData === void 0 ? void 0 : jdeData.HOD) === null || _d === void 0 ? void 0 : _d.EMail, (_e = jdeData === null || jdeData === void 0 ? void 0 : jdeData.HOD) === null || _e === void 0 ? void 0 : _e.Title),
+                                                getCachedUserName_1((_f = jdeData === null || jdeData === void 0 ? void 0 : jdeData.EXCO) === null || _f === void 0 ? void 0 : _f.EMail, (_g = jdeData === null || jdeData === void 0 ? void 0 : jdeData.EXCO) === null || _g === void 0 ? void 0 : _g.Title),
+                                                getCachedUserName_1(item === null || item === void 0 ? void 0 : item.AssignedHR),
+                                                getCachedUserName_1(item === null || item === void 0 ? void 0 : item.RecruitmentHRLead),
+                                            ])];
+                                    case 1:
+                                        _a = _x.sent(), LineManager = _a[0], HOD = _a[1], Exco = _a[2], HR = _a[3], HRLead = _a[4];
+                                        StatusTooltip = {
+                                            LineManager: LineManager
+                                                ? {
+                                                    Role: ConditionConfig_1.RoleName.LineManager,
+                                                    Name: LineManager,
+                                                }
+                                                : {},
+                                            HOD: HOD
+                                                ? {
+                                                    Role: ConditionConfig_1.RoleName.HOD,
+                                                    Name: HOD,
+                                                }
+                                                : {},
+                                            Exco: Exco
+                                                ? {
+                                                    Role: ConditionConfig_1.RoleName.EXCO,
+                                                    Name: Exco,
+                                                }
+                                                : {},
+                                            HR: HR
+                                                ? {
+                                                    Role: ConditionConfig_1.RoleName.RecruitmentHR,
+                                                    Name: HR,
+                                                }
+                                                : {},
+                                            HRLead: HRLead
+                                                ? {
+                                                    Role: ConditionConfig_1.RoleName.RecruitmentHRLead,
+                                                    Name: HRLead,
+                                                }
+                                                : {},
+                                        };
+                                        return [2 /*return*/, {
+                                                ID: item.ID,
+                                                RecordID: index + 1,
+                                                BusinessUnitCode: (_j = (_h = item === null || item === void 0 ? void 0 : item.BusinessUnitCode) === null || _h === void 0 ? void 0 : _h.BusineesUnitCode) !== null && _j !== void 0 ? _j : "",
+                                                Nationality: item === null || item === void 0 ? void 0 : item.Nationality,
+                                                NumberOfPersonNeeded: item === null || item === void 0 ? void 0 : item.NumberOfPersonNeeded,
+                                                Type: (_k = item === null || item === void 0 ? void 0 : item.DataFrom) !== null && _k !== void 0 ? _k : "",
+                                                Status: (_m = (_l = item === null || item === void 0 ? void 0 : item.Status) === null || _l === void 0 ? void 0 : _l.StatusDescription) !== null && _m !== void 0 ? _m : "",
+                                                StatusId: item === null || item === void 0 ? void 0 : item.StatusId,
+                                                JobCodeId: (_p = (_o = item === null || item === void 0 ? void 0 : item.JobCode) === null || _o === void 0 ? void 0 : _o.ID) !== null && _p !== void 0 ? _p : 0,
+                                                JobCode: (_r = (_q = item === null || item === void 0 ? void 0 : item.JobCode) === null || _q === void 0 ? void 0 : _q.JobCode) !== null && _r !== void 0 ? _r : "",
+                                                JobTitleEnglish: (_t = (_s = item === null || item === void 0 ? void 0 : item.JobCode) === null || _s === void 0 ? void 0 : _s.JobTitleInEnglish) !== null && _t !== void 0 ? _t : "",
+                                                ModifiedDate: (item === null || item === void 0 ? void 0 : item.Modified)
+                                                    ? (0, moment_1.default)(item.Modified).format("YYYY-MM-DD")
+                                                    : undefined,
+                                                CreatedDate: (item === null || item === void 0 ? void 0 : item.Created)
+                                                    ? (0, moment_1.default)(item.Created).format("YYYY-MM-DD")
+                                                    : undefined,
+                                                Department: (_v = (_u = item === null || item === void 0 ? void 0 : item.Department) === null || _u === void 0 ? void 0 : _u.DepartmentName) !== null && _v !== void 0 ? _v : "",
+                                                EmploymentCategory: item === null || item === void 0 ? void 0 : item.EmploymentCategory,
+                                                StatusTooltip: StatusTooltip,
+                                                CandidateCount: (_w = item === null || item === void 0 ? void 0 : item.candidateCount) !== null && _w !== void 0 ? _w : 0,
+                                            }];
+                                }
+                            });
+                        }); }))];
+                    case 8:
                         GridResult = _a.sent();
                         return [2 /*return*/, {
                                 data: GridResult,
                                 status: 200,
                                 message: "GetRecruitmentDetails fetched successfully",
                             }];
-                    case 4:
+                    case 9:
                         error_4 = _a.sent();
                         console.error("Error fetching GetRecruitmentDetails:", error_4);
                         return [2 /*return*/, {
@@ -555,7 +601,7 @@ var DashboardService = /** @class */ (function () {
                                 status: 500,
                                 message: "Error fetching data",
                             }];
-                    case 5: return [2 /*return*/];
+                    case 10: return [2 /*return*/];
                 }
             });
         });

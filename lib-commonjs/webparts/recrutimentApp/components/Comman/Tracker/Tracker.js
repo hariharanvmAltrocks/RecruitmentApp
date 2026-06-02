@@ -7,10 +7,10 @@ var lucide_react_1 = require("lucide-react");
 var framer_motion_1 = require("framer-motion");
 var DataTable_1 = require("../DataTable/DataTable");
 var Tracker = function (_a) {
-    var _b, _c;
+    var _b;
     var rows = _a.rows, selectedMetric = _a.selectedMetric, activeMetric = _a.activeMetric, onRowClick = _a.onRowClick;
-    var _d = (0, react_1.useState)(1), currentPage = _d[0], setCurrentPage = _d[1];
-    var _e = (0, react_1.useState)(10), pageSize = _e[0], setPageSize = _e[1];
+    var _c = (0, react_1.useState)(1), currentPage = _c[0], setCurrentPage = _c[1];
+    var _d = (0, react_1.useState)(10), pageSize = _d[0], setPageSize = _d[1];
     // 🔹 Exclude unwanted columns (optional)
     var excludeColumns = (0, react_1.useMemo)(function () { return ["ID"]; }, []);
     // 🔹 Format header (camelCase → Proper Text)
@@ -95,11 +95,9 @@ var Tracker = function (_a) {
             react_1.default.createElement("div", null,
                 react_1.default.createElement("h2", null, "RECRUITMENT BACKLOG"),
                 react_1.default.createElement("p", null,
-                    "Showing ",
-                    react_1.default.createElement("b", null, (_b = selectedMetric === null || selectedMetric === void 0 ? void 0 : selectedMetric.value) !== null && _b !== void 0 ? _b : 0),
-                    " results for",
+                    "results for",
                     " ",
-                    react_1.default.createElement("span", { className: "highlight" }, (_c = selectedMetric === null || selectedMetric === void 0 ? void 0 : selectedMetric.label) !== null && _c !== void 0 ? _c : "-")))),
+                    react_1.default.createElement("span", { className: "highlight" }, (_b = selectedMetric === null || selectedMetric === void 0 ? void 0 : selectedMetric.label) !== null && _b !== void 0 ? _b : "-")))),
         react_1.default.createElement("div", { className: "tracker__table-wrapper" },
             react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: rows, loading: false, pageSize: pageSize, currentPage: currentPage, totalCount: rows.length, emptyMessage: "No data available", onPageChange: setCurrentPage, onPageSizeChange: setPageSize, onRowClick: onRowClick }))));
 };

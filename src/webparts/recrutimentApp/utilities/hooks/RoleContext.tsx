@@ -11,7 +11,7 @@ import {
 import "@pnp/sp/webs";
 import "@pnp/sp/site-users/web";
 import { getSP } from "../../services/SPService/spservice";
-import { masterService } from "../../services/ServiceExport";
+import { DashboardServices, masterService } from "../../services/ServiceExport";
 import { ResponeStatus } from "../ApiConfig";
 import GraphService from "../../services/GraphService/GraphService";
 import CustomLoader from "../../services/Loader/CustomLoader";
@@ -23,6 +23,9 @@ import {
   ADGroupData,
 } from "./IRoleContext";
 import { InternalSign } from "../../services/AxiosService/CareerPortalAPI";
+import { Metric } from "../../models/IDashboard";
+import { useDashboardMetrics } from "../../components/Screens/Dashboard/Hooks/useDashboardMetrics";
+import { DepartmentDataItem } from "../../components/Screens/Dashboard/Hooks/Usedepartmentchart";
 
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
@@ -34,6 +37,8 @@ interface ProviderState {
   isLoading: boolean;
   error: Error | null;
   apiUrlsError: string | null;
+  MatricData: Metric[];
+  DepartmentData: DepartmentDataItem[];
 }
 
 type ProviderAction =
@@ -42,7 +47,9 @@ type ProviderAction =
   | { type: "SET_API_URLS_READY" }
   | { type: "SET_ERROR"; error: Error }
   | { type: "SET_LOADING"; isLoading: boolean }
-  | { type: "SET_API_URLS_ERROR"; message: string };
+  | { type: "SET_API_URLS_ERROR"; message: string }
+  | { type: "SET_MATRIC_DATA"; MatricData: Metric[] }
+  | { type: "SET_DEPARTMENT_DATA"; DepartmentData: DepartmentDataItem[] };
 
 const initialState: ProviderState = {
   userName: "",
@@ -52,6 +59,8 @@ const initialState: ProviderState = {
   isLoading: true,
   error: null,
   apiUrlsError: null,
+  MatricData: [],
+  DepartmentData: []
 };
 
 function providerReducer(
@@ -75,6 +84,10 @@ function providerReducer(
       return { ...state, isLoading: action.isLoading };
     case "SET_API_URLS_ERROR":
       return { ...state, apiUrlsError: action.message };
+    case "SET_MATRIC_DATA":
+      return { ...state, MatricData: action.MatricData };
+    case "SET_DEPARTMENT_DATA":
+      return { ...state, DepartmentData: action.DepartmentData };
     default:
       return state;
   }
@@ -88,6 +101,7 @@ async function fetchCurrentUser(): Promise<{
   const user = await sp.web.currentUser();
   return { displayName: user.Title, email: user.Email };
 }
+
 
 async function fetchAllRoles(): Promise<UserRoleData[]> {
   const result = await masterService.userRole();
@@ -325,6 +339,21 @@ export const RoleProvider = ({
   const [state, dispatch] = useReducer(providerReducer, initialState);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
 
+  const roleIDs = React.useMemo(() => {
+    return state.resolvedRoles.map((r) => r.ID);
+  }, [state.resolvedRoles]);
+
+  const { metrics: matricData, loading: metricsLoading } = useDashboardMetrics(
+    roleIDs,
+    state.userEmail,
+  );
+
+  useEffect(() => {
+    if (state.resolvedRoles.length > 0) {
+      dispatch({ type: "SET_MATRIC_DATA", MatricData: matricData });
+    }
+  }, [matricData, state.resolvedRoles.length]);
+
   const initialise = useCallback(async (): Promise<void> => {
     dispatch({ type: "SET_LOADING", isLoading: true });
 
@@ -384,6 +413,13 @@ export const RoleProvider = ({
       });
     }
 
+    try {
+      const res = await DashboardServices.GetDepartmentDetails();
+      dispatch({ type: "SET_DEPARTMENT_DATA", DepartmentData: res.data });
+    } catch (error) {
+      console.error("[RoleProvider] Failed to fetch department details:", error);
+    }
+
     dispatch({ type: "SET_LOADING", isLoading: false });
   }, []);
 
@@ -393,33 +429,38 @@ export const RoleProvider = ({
 
   const ADGroupData = buildADGroupData(state.resolvedRoles, state.userName);
 
+  const combinedLoading =
+    state.isLoading || (state.resolvedRoles.length > 0 && metricsLoading);
+
   const contextValue: RoleContextType = {
     roleIDs: ADGroupData.roleIDs,
     userName: state.userName,
     userRole: ADGroupData.userRole,
     ADGroupData,
-    isLoading: state.isLoading,
+    isLoading: combinedLoading,
     error: state.error,
     showRoleSelector,
     setShowRoleSelector,
+    MatricData: state.MatricData,
+    DepartmentData: state.DepartmentData
   };
 
   const isFullyReady =
-    !state.isLoading &&
+    !combinedLoading &&
     !state.error &&
     state.userName !== "" &&
     state.resolvedRoles.length > 0 &&
     state.apiUrlsReady;
 
   const hasNoRoles =
-    !state.isLoading &&
+    !combinedLoading &&
     !state.error &&
     state.userName !== "" &&
     state.resolvedRoles.length === 0;
 
   return (
     <RoleContext.Provider value={contextValue}>
-      <CustomLoader isLoading={state.isLoading}>
+      <CustomLoader isLoading={combinedLoading}>
         {state.apiUrlsError ? ( // ← check this first
           // <ServerDownError message={state.apiUrlsError} />
           <></>

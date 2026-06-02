@@ -163,7 +163,7 @@ const Tracker: React.FC<Props> = ({
         <div>
           <h2>RECRUITMENT BACKLOG</h2>
           <p>
-            Showing <b>{selectedMetric?.value ?? 0}</b> results for{" "}
+          results for{" "}
             <span className="highlight">{selectedMetric?.label ?? "-"}</span>
           </p>
         </div>

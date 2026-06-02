@@ -5,16 +5,16 @@ import { DashboardServices } from "../../../../services/ServiceExport";
 import { useRoleContext } from "../../../../utilities/hooks/RoleContext";
 import { ResponeStatus } from "../../../../utilities/ApiConfig";
 
-export const useDashboardMetrics = (refreshKey: number) => {
-  const { roleIDs, ADGroupData } = useRoleContext();
+export const useDashboardMetrics = (roleIDs: number[], EmailID: string, refreshKey?: number) => {
+  // const { roleIDs, ADGroupData } = useRoleContext();
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   // console.log(ADGroupData.EmailId, "EmailId");
 
   const queries = useMemo(() => {
-    return getRoleBasedFilters(roleIDs, ADGroupData.EmailId[0]);
-  }, [roleIDs]);
+    return getRoleBasedFilters(roleIDs, EmailID);
+  }, [roleIDs, EmailID]);
 
   const fetchMetrics = useCallback(async () => {
     try {
@@ -22,7 +22,7 @@ export const useDashboardMetrics = (refreshKey: number) => {
       const data = await DashboardServices.GetDashboardCount(
         queries,
         roleIDs,
-        ADGroupData.EmailId[0],
+        EmailID,
       );
       if (data.status === ResponeStatus.SUCCESS) {
         setMetrics(data.data);
