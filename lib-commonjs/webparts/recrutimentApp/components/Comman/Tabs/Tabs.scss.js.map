@@ -1,0 +1,1 @@
+{"version":3,"file":"Tabs.scss.js","sourceRoot":"","sources":["../../../../../../src/webparts/recrutimentApp/components/Comman/Tabs/Tabs.scss.ts"],"names":[],"mappings":";;AACA,OAAO,CAAC,YAAY,CAAC,CAAC;AACtB,IAAM,MAAM,GAAG,EAEd,CAAC;AAEF,kBAAe,MAAM,CAAC","sourcesContent":["\r\nrequire(\"./Tabs.css\");\r\nconst styles = {\r\n\r\n};\r\n\r\nexport default styles;\r\n"]}

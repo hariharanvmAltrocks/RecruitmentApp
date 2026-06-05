@@ -241,10 +241,6 @@
   height: 2rem !important
 }
 
-.h-\[80vh\] {
-  height: 80vh !important
-}
-
 .min-h-\[120px\] {
   min-height: 120px !important
 }
@@ -275,16 +271,6 @@
 
 .transform {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)) !important
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg)
-  }
-}
-
-.animate-\[spin_1s_steps\(10\)_infinite\] {
-  animation: spin 1s steps(10) infinite !important
 }
 
 .resize-none {
@@ -509,10 +495,6 @@
 
 .p-8 {
   padding: 2rem !important
-}
-
-.p-\[1px\] {
-  padding: 1px !important
 }
 
 .px-3 {

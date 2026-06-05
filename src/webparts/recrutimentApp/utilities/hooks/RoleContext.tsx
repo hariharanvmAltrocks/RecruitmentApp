@@ -460,7 +460,7 @@ export const RoleProvider = ({
 
   return (
     <RoleContext.Provider value={contextValue}>
-      <CustomLoader isLoading={combinedLoading}>
+      <CustomLoader isLoading={combinedLoading} userName={state.userName}>
         {state.apiUrlsError ? ( // ← check this first
           // <ServerDownError message={state.apiUrlsError} />
           <></>
@@ -468,7 +468,7 @@ export const RoleProvider = ({
           // <ErrorScreen message={state.error.message} />
           <></>
         ) : isFullyReady ? (
-          <React.Suspense fallback={<CustomLoader isLoading />}>
+          <React.Suspense fallback={<CustomLoader isLoading userName={state.userName} />}>
             {children}
           </React.Suspense>
         ) : hasNoRoles ? (
