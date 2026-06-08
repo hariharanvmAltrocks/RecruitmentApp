@@ -607,7 +607,7 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
 
       case RoleID.HOD:
         roleColumns = [
-          buildCol(MatricID.AdvertReviewHOD, { showArrow: true }),
+          // buildCol(MatricID.AdvertReviewHOD, { showArrow: true }),
           buildCol(MatricID.EvalutionHOD, { showArrow: true }),
           buildCol(MatricID.ReviewScoreCard, {
             showArrow: true,
@@ -1282,7 +1282,7 @@ const RoleMetricFilters: Record<number, number[]> = {
   ],
 
   [RoleID.HOD]: [
-    MatricID.AdvertReviewHOD,
+    // MatricID.AdvertReviewHOD,
     MatricID.ReviewScoreCard,
     MatricID.EvalutionHOD,
     MatricID.advertExtension,

@@ -208,7 +208,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
         </section>
 
         <Section
-          title={Text.format(strings.KeyResponsibilities, )}
+          title={strings.KeyResponsibilities}
           icon={<CheckCircle2 size={12} />}
           isLoading={isLoading}
           isEmpty={isEmpty(advertContent?.responsibilities)}
@@ -217,7 +217,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
         </Section>
 
         <Section
-          title={Text.format(strings.Experience, )}
+          title={strings.Experience}
           icon={<Activity size={12} />}
           isLoading={isLoading}
           skeletonLines={2}
@@ -228,7 +228,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
 
         <div className="advert-review-drawer__grid advert-review-drawer__grid--split">
           <Section
-            title={Text.format(strings.MinimumQualification, )}
+            title={strings.MinimumQualification}
             icon={<Award size={12} />}
             isLoading={isLoading}
             skeletonLines={2}
@@ -238,7 +238,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
           </Section>
 
           <Section
-            title={Text.format(strings.PreferredQualification, )}
+            title={strings.PreferredQualification}
             icon={<Star size={12} />}
             isLoading={isLoading}
             skeletonLines={2}
@@ -248,7 +248,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
           </Section>
 
           <Section
-            title={Text.format(strings.RoleSpecificKnowledge, )}
+            title={strings.RoleSpecificKnowledge}
             icon={<BookOpen size={12} />}
             isLoading={isLoading}
             skeletonLines={2}
@@ -258,7 +258,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
           </Section>
 
           <Section
-            title={Text.format(strings.RequiredLevel, )}
+            title={strings.RequiredLevel}
             icon={<TrendingUp size={12} />}
             isLoading={isLoading}
             skeletonLines={2}
@@ -268,7 +268,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
           </Section>
 
           <Section
-            title={Text.format(strings.TechnicalSkillsAbilityToApplyKnowledge, )}
+            title={strings.TechnicalSkillsAbilityToApplyKnowledge}
             icon={<Wrench size={12} />}
             isLoading={isLoading}
             skeletonLines={2}
@@ -278,7 +278,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
           </Section>
 
           <Section
-            title={Text.format(strings.LevelOfProficiency, )}
+            title={strings.LevelOfProficiency}
             icon={<Zap size={12} />}
             isLoading={isLoading}
             skeletonLines={2}
@@ -288,7 +288,7 @@ export const AdvertLanguageToggle: React.FC<AdvertLanguageToggleProps> = ({
           </Section>
 
           <Section
-            title={Text.format(strings.JobFunctionalType, )}
+            title={strings.JobFunctionalType}
             icon={<Briefcase size={12} />}
             isLoading={isLoading}
             skeletonLines={2}

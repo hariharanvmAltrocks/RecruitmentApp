@@ -17,7 +17,8 @@ export const WorkflowConfig = (StatusID: number) => {
       return StatusId.CareerPortalQuestions;
 
     case StatusId.CareerPortalQuestions:
-      return StatusId.PendingReviewAdvertHOD;
+       return StatusId.PendingUploadONEM;
+      // return StatusId.PendingReviewAdvertHOD;
 
     case StatusId.PendingReviewAdvertHOD:
       return StatusId.PendingUploadONEM;

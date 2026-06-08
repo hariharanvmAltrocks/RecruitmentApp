@@ -131,7 +131,7 @@ const QuestionCreation: React.FC = (props: any) => {
       return;
     }
     setLoading(true);
-    let StatusIDs = positionDetails?.AssignHOD.toLowerCase() === positionDetails?.AssignLineManager.toLowerCase() ? StatusId.PendingReviewAdvertHOD : StatusId.CareerPortalQuestions
+    let StatusIDs =  StatusId.CareerPortalQuestions;  //positionDetails?.AssignHOD.toLowerCase() === positionDetails?.AssignLineManager.toLowerCase() ? StatusId.PendingReviewAdvertHOD : StatusId.CareerPortalQuestions
     const success = await save({
       positionId: props.ID,
       mode,
@@ -157,6 +157,7 @@ const QuestionCreation: React.FC = (props: any) => {
         },
       });
     } else {
+       setLoading(false);
       showModal({
         type: "error",
         title: "Error",

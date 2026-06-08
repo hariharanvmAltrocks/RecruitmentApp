@@ -542,7 +542,7 @@ var MatricColums = function (roles) {
                     break;
                 case Config_1.RoleID.HOD:
                     roleColumns = [
-                        buildCol(ConditionConfig_1.MatricID.AdvertReviewHOD, { showArrow: true }),
+                        // buildCol(MatricID.AdvertReviewHOD, { showArrow: true }),
                         buildCol(ConditionConfig_1.MatricID.EvalutionHOD, { showArrow: true }),
                         buildCol(ConditionConfig_1.MatricID.ReviewScoreCard, {
                             showArrow: true,
@@ -1005,7 +1005,7 @@ var RoleMetricFilters = (_b = {},
         ConditionConfig_1.MatricID.MySubmissionLM,
     ],
     _b[Config_1.RoleID.HOD] = [
-        ConditionConfig_1.MatricID.AdvertReviewHOD,
+        // MatricID.AdvertReviewHOD,
         ConditionConfig_1.MatricID.ReviewScoreCard,
         ConditionConfig_1.MatricID.EvalutionHOD,
         ConditionConfig_1.MatricID.advertExtension,

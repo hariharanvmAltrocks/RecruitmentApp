@@ -8,7 +8,7 @@ exports.stages = [
     { label: "Upload Advert", icon: lucide_react_1.ClipboardCheck },
     { label: "Review Advert LM", icon: lucide_react_1.Send },
     { label: "Create Minimum Criteria Question", icon: lucide_react_1.Play },
-    { label: "Review Advert HOD", icon: lucide_react_1.Filter },
+    // { label: "Review Advert HOD", icon: Filter },
     { label: "Upload ONEM Signed and Stamped", icon: lucide_react_1.ShieldCheck },
     { label: "Recruitment In Process", icon: lucide_react_1.Network },
     { label: "Onboarded", icon: lucide_react_1.CheckCircle2 },
@@ -34,16 +34,15 @@ var getStageIndex = function (statusId) {
         return 2;
     if (statusId == Config_1.StatusId.CareerPortalQuestions)
         return 3;
-    if (statusId == Config_1.StatusId.PendingReviewAdvertHOD)
-        return 4;
+    // if (statusId == StatusId.PendingReviewAdvertHOD) return 4;
     if (statusId == Config_1.StatusId.PendingUploadONEM)
-        return 5;
+        return 4;
     if (statusId == Config_1.StatusId.RecruitmentInProgress)
-        return 6;
+        return 5;
     if (statusId == Config_1.StatusId.RESProcessInitiated)
-        return 7;
+        return 6;
     if (statusId == Config_1.StatusId.Onboarded)
-        return 8;
+        return 7;
     return 0;
 };
 exports.getStageIndex = getStageIndex;

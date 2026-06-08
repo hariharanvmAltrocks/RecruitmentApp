@@ -16,7 +16,7 @@ export const stages = [
   { label: "Upload Advert", icon: ClipboardCheck },
   { label: "Review Advert LM", icon: Send },
   { label: "Create Minimum Criteria Question", icon: Play },
-  { label: "Review Advert HOD", icon: Filter },
+  // { label: "Review Advert HOD", icon: Filter },
   { label: "Upload ONEM Signed and Stamped", icon: ShieldCheck },
   { label: "Recruitment In Process", icon: Network },
   { label: "Onboarded", icon: CheckCircle2 },
@@ -39,11 +39,11 @@ export const getStageIndex = (statusId: number) => {
   if (statusId == StatusId.PendingUploadAdvert) return 1;
   if (statusId == StatusId.PendingwithLineManagereviewAdv) return 2;
   if (statusId == StatusId.CareerPortalQuestions) return 3;
-  if (statusId == StatusId.PendingReviewAdvertHOD) return 4;
-  if (statusId == StatusId.PendingUploadONEM) return 5;
-  if (statusId == StatusId.RecruitmentInProgress) return 6;
-  if (statusId == StatusId.RESProcessInitiated) return 7;
-  if (statusId == StatusId.Onboarded) return 8;
+  // if (statusId == StatusId.PendingReviewAdvertHOD) return 4;
+  if (statusId == StatusId.PendingUploadONEM) return 4;
+  if (statusId == StatusId.RecruitmentInProgress) return 5;
+  if (statusId == StatusId.RESProcessInitiated) return 6;
+  if (statusId == StatusId.Onboarded) return 7;
   return 0;
 };
 

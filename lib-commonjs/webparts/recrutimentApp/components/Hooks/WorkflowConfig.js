@@ -12,7 +12,8 @@ var WorkflowConfig = function (StatusID) {
         case Config_1.StatusId.PendingwithLineManagereviewAdv:
             return Config_1.StatusId.CareerPortalQuestions;
         case Config_1.StatusId.CareerPortalQuestions:
-            return Config_1.StatusId.PendingReviewAdvertHOD;
+            return Config_1.StatusId.PendingUploadONEM;
+        // return StatusId.PendingReviewAdvertHOD;
         case Config_1.StatusId.PendingReviewAdvertHOD:
             return Config_1.StatusId.PendingUploadONEM;
         case Config_1.StatusId.PendingUploadONEM:
