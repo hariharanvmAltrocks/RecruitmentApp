@@ -47,11 +47,11 @@
 }
 .iq-bank__list {
   flex: 1;
-  min-height: 0;
-  height: 100%;
+  height: auto;
+  max-height: 500px;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 20px;
+  padding: 11px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -690,7 +690,7 @@
 .iq-prepared__remove {
   background: transparent;
   border: none;
-  color: var(--qc-slate-600);
+  color: var(--qc-blue-hover);
   cursor: pointer;
   padding: 7px;
   border-radius: 10px;
@@ -699,7 +699,7 @@
   flex-shrink: 0;
 }
 .iq-prepared__remove:hover {
-  background: rgba(239, 68, 68, 0.18);
+  background: transparent;
   border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #f87171;
+  color: var(--qc-blue-hover);
 }

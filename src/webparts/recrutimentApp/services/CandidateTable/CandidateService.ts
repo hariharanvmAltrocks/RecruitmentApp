@@ -65,6 +65,7 @@ import {
 } from "../../utilities/Config";
 import { COIAttach } from "../CareerPortal/ICareerPortal";
 import { count } from "../../utilities/ApiConfig";
+import { GetEmployeeDictionary } from "../SageData/SageService";
 
 export default class CandidateService implements ICandidateService {
   async getCandidateDetailsInJobCode(
@@ -221,6 +222,51 @@ export default class CandidateService implements ICandidateService {
         .getCandidateProfile(CandidateID)
         .then(async (res) => {
           const op = res.data.data;
+//  const employeeMap = await GetEmployeeDictionary(emails);
+//   const employee =
+//         employeeMap.get(item.Author?.EMail?.toLowerCase()) || null;
+
+            let CommentsData: CommentsData[] = op?.profileJobsComments.map((item: any, index: number) => {
+          let updatedData: CommentsData;
+
+          if (item?.createdBy === RoleName.RecruitmentHR || item?.createdBy === "Recrutiment HR") {
+            updatedData = {
+              Id: index + 1,
+              comments: item?.comments || "",
+              Date: item.createdOn ? new Date(item.createdOn) : null,
+              RoleName: RoleName.RecruitmentHR,
+            };
+          } else if (item?.createdBy === RoleName.LineManager || item?.createdBy === "Line Manager") {
+            updatedData = {
+              Id: index + 1,
+              // JobTitleInEnglish: EmployeeLM?.JobTitle ?? "",
+              // JobTitleInFrench: EmployeeLM?.JobTitleInFrench ?? "",
+              comments: item?.comments || "",
+              // Department: EmployeeLM?.Department ?? "",
+              Date: item.createdOn ? new Date(item.createdOn) : null,
+              // JobTitle: EmployeeLM?.JobTitle ?? "",
+              RoleName: RoleName.LineManager,
+              // Name: `${EmployeeLM?.FirstName ?? ""} ${EmployeeLM?.MiddleName ?? ""} ${EmployeeLM?.LastName ?? ""}`.trim()
+            };
+          } else {
+            // Provide a fallback to ensure `updatedData` is always assigned
+            updatedData = {
+              Id: index + 1,
+              // JobTitleInEnglish: "",
+              // JobTitleInFrench: "",
+              comments: item?.comments || "",
+              // Department: "",
+              Date: item.createdOn ? new Date(item.createdOn) : null,
+              // JobTitle: "",
+              RoleName: item?.createdBy ?? "Unknown",
+              // Name: "",
+            };
+          }
+
+          return updatedData;
+        }) || [];
+
+
           const CandidateCV = await CommonServices.GetDocumentinUrl(
             op?.document?.filePath,
           );
@@ -425,7 +471,7 @@ export default class CandidateService implements ICandidateService {
             StatusId: op?.workflowStatusId,
             Agencies: AgenName,
             CandidateResume: CandidateCV.data,
-            Comments: [], // CommentsData,
+            Comments: CommentsData,
             workflowStatusId: op?.workflowStatusId,
             hrComments: op?.hrComments,
             JobVaildFromDate: op?.jobDetail?.validFrom,

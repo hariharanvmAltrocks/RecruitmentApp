@@ -9,19 +9,11 @@ import styles from "./CommentsModal.module.scss";
 interface Props {
   open:     boolean;
   loading:  boolean;
-  Comments: CommentsData[];
+  Comments: any[];
   onClose:  () => void;
 }
 
 const CustomComments: React.FC<Props> = ({ open, loading, Comments, onClose }) => {
-  const allComments = React.useMemo(() => [
-    ...(Comments || []).map(c => ({ ...c, _level: "Level 1" })),
-  ].sort((a, b) => {
-    const d1 = a.Date ? new Date(a.Date).getTime() : 0;
-    const d2 = b.Date ? new Date(b.Date).getTime() : 0;
-    return d1 - d2;
-  }), [Comments]);
-
   return (
     <AnimatePresence>
       {open && (
@@ -33,18 +25,18 @@ const CustomComments: React.FC<Props> = ({ open, loading, Comments, onClose }) =
           >
             <div className={styles.mCommentsHeader}>
               <h3><FileText size={20} color="#2563eb" /> View Justification</h3>
-              <button onClick={onClose} aria-label="Close comments modal"><X size={20} /></button>
+              {/* <button onClick={onClose} aria-label="Close comments modal"><X size={20} /></button> */}
             </div>
 
             <div className={styles.mCommentsBody}>
               {loading ? (
                 <div className={styles.mCommentsLoading}>Loading comments...</div>
-              ) : allComments.length === 0 ? (
+              ) : Comments.length === 0 ? (
                 <div className={styles.mCommentsNoData}>No Comments Found</div>
-              ) : allComments.map((c, i) => (
-                <div key={i} className={c._level === "Level 1" ? styles.mCommentItemL1 : styles.mCommentItemL2}>
+              ) : Comments.map((c, i) => (
+                <div key={i} className={styles.mCommentItemL1}>
                   <div className={styles.mCommentRole}>
-                    Submitted by {c.RoleName || c.Name || ""} ({c._level})
+                    Submitted by {c.RoleName || c.Name || ""}
                   </div>
                   {c.comments && (
                     <div className={styles.mCommentText}>

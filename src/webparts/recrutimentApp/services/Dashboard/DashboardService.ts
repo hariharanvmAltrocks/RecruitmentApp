@@ -82,13 +82,13 @@ export default class DashboardService implements IDashboard {
                         status !== StatusId.PendingHROfferInitiate &&
                         status !== StatusId.PendingHROfferReview &&
                         status !==
-                          StatusId.PendingHRReviewOfferWorkPermitInit &&
+                        StatusId.PendingHRReviewOfferWorkPermitInit &&
                         status !==
-                          StatusId.PendingHRReviewOfferuploadEmploymentInit &&
+                        StatusId.PendingHRReviewOfferuploadEmploymentInit &&
                         status !== StatusId.PendingHREmploymentContractInit &&
                         status !== StatusId.PendingHREmploymentContractReview &&
                         status !==
-                          StatusId.PendingHREmploymentContractVerification &&
+                        StatusId.PendingHREmploymentContractVerification &&
                         status !== StatusId.PendingHRpreonboardingchecklist,
                     ),
                   };
@@ -291,51 +291,82 @@ export default class DashboardService implements IDashboard {
           .map((item: any) => item.JobCodeId)
           .filter(Boolean);
 
-        const jobUniqueKeys = jobCodeIds
-          .map((id) => jobCodeIdToUniqueKey.get(id))
-          .filter((key): key is string => !!key);
+        if (metric.id === MatricID.ReviewScoreCard) {
 
-        if (!jobUniqueKeys.length) {
-          result.set(String(metric.id), 0);
-          return;
-        }
+          const uniqueJobCodeCount = (spCounts[metric.id] ?? [])
+            .map((item: any) => item.JobCodeId)
+            .filter(Boolean)
+            .filter(
+              (jobCodeId: number, index: number, arr: number[]) =>
+                arr.indexOf(jobCodeId) === index
+            ).length;
+          return result.set(String(metric.id), uniqueJobCodeCount);
+        } else {
 
-        const params: ExternalApiParams = {
-          jobCodes: jobUniqueKeys,
-          workflowStatus: metric.externalApi!.workflowStatuses,
-        };
-        try {
-          const response = await getProfileData.GetJobAppliedCount(params);
-          let total: number = Array.isArray(response?.data?.data)
-            ? response?.data?.data?.reduce(
-                (sum: number, item: ExternalApiCountItem) =>
-                  sum + (item.count ?? 0),
-                0,
-              )
-            : (response?.data?.data?.count ?? 0);
 
-          if (metric.id === MatricID.AssignInterviewPanel) {
-            const level2Filter = [
-              {
-                FilterKey: "StatusId",
-                Operator: "eq",
-                FilterValue:
-                  StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
-              },
-              {
-                FilterKey: "JobCodeId",
-                Operator: "in",
-                FilterValue: jobCodeIds,
-              },
-            ];
-            const level2 = await this.GetCandidateDetails(level2Filter, "and");
-            total += level2?.data?.length ?? 0;
+          const jobUniqueKeys = jobCodeIds
+            .map((id) => jobCodeIdToUniqueKey.get(id))
+            .filter((key): key is string => !!key);
+
+          if (!jobUniqueKeys.length) {
+            result.set(String(metric.id), 0);
+            return;
           }
 
-          result.set(String(metric.id), total);
-        } catch {
-          // eslint-disable-line
-          result.set(String(metric.id), 0);
+          const params: ExternalApiParams = {
+            jobCodes: jobUniqueKeys,
+            workflowStatus: metric.externalApi!.workflowStatuses,
+          };
+          try {
+            const response = await getProfileData.GetJobAppliedCount(params);
+            // let total: number = Array.isArray(response?.data?.data)
+            //   ? response?.data?.data?.reduce(
+            //       (sum: number, item: ExternalApiCountItem) =>
+            //         sum + (item.count ?? 0),
+            //       0,
+            //     )
+            //   : (response?.data?.data?.count ?? 0);
+
+            let total = Array.isArray(response?.data?.data)
+              ? response.data.data.filter(
+                (item: ExternalApiCountItem) => (item.count ?? 0) > 0
+              ).length
+              : (response?.data?.data?.count ?? 0) > 0
+                ? 1
+                : 0;
+
+
+            if (metric.id === MatricID.AssignInterviewPanel) {
+              const level2Filter = [
+                {
+                  FilterKey: "StatusId",
+                  Operator: "eq",
+                  FilterValue:
+                    StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel,
+                },
+                {
+                  FilterKey: "JobCodeId",
+                  Operator: "in",
+                  FilterValue: jobCodeIds,
+                },
+              ];
+              const level2 = await this.GetCandidateDetails(level2Filter, "and");
+              const uniqueLevel2JobCodes = new Set(
+                (level2?.data ?? [])
+                  .map((item: any) => item.JobCodeId)
+                  .filter(Boolean)
+              );
+
+              total += uniqueLevel2JobCodes.size;
+            }
+
+            result.set(String(metric.id), total);
+          } catch {
+            // eslint-disable-line
+            result.set(String(metric.id), 0);
+          }
+
+
         }
       }),
     );
@@ -436,20 +467,20 @@ export default class DashboardService implements IDashboard {
         return level1 + (level2?.data?.length ?? 0);
       }
 
-      if(MatricId === MatricID.ReviewScoreCard){
-           const ReviewScoreCard = await this.GetCandidateDetails(
+      if (MatricId === MatricID.ReviewScoreCard) {
+        const ReviewScoreCard = await this.GetCandidateDetails(
           [
             {
               FilterKey: "StatusId",
               Operator: "in",
               FilterValue:
                 [
-        StatusId.PendingwithpositionIDAssignmentWithHOD,
-        StatusId.pendingL2shorlistingwithHOD,
-        StatusId.CandidateOnHoldbyHODLevel1,
-        StatusId.CandidateOnHoldbyHODLevel2,
-        StatusId.OnHoldbyHOD
-      ],
+                  StatusId.PendingwithpositionIDAssignmentWithHOD,
+                  StatusId.pendingL2shorlistingwithHOD,
+                  StatusId.CandidateOnHoldbyHODLevel1,
+                  StatusId.CandidateOnHoldbyHODLevel2,
+                  StatusId.OnHoldbyHOD
+                ],
             },
             {
               FilterKey: "RecruitmentID/ID",
@@ -562,31 +593,31 @@ export default class DashboardService implements IDashboard {
           return "";
         }
       };
-       const shouldCheckCandidateCount =
-      MatricId === MatricID.ReviewProfileHR ||
-      MatricId === MatricID.AssignInterviewPanel ||
-      MatricId === MatricID.ReviewProfileLM ||
-      MatricId === MatricID.ReviewScoreCard;
+      const shouldCheckCandidateCount =
+        MatricId === MatricID.ReviewProfileHR ||
+        MatricId === MatricID.AssignInterviewPanel ||
+        MatricId === MatricID.ReviewProfileLM ||
+        MatricId === MatricID.ReviewScoreCard;
       const filteredResponse = [];
-     for (const item of recruitmentResponse) {
-  if (shouldCheckCandidateCount) {
-    const candidateCount = await this._getCandidateCountByMatric(
-      item.JobCodeId,
-      MatricId ?? 0,
-      item.ID
-    );
+      for (const item of recruitmentResponse) {
+        if (shouldCheckCandidateCount) {
+          const candidateCount = await this._getCandidateCountByMatric(
+            item.JobCodeId,
+            MatricId ?? 0,
+            item.ID
+          );
 
-    if (candidateCount === 0) {
-      continue;
-    }
+          if (candidateCount === 0) {
+            continue;
+          }
 
-    item.candidateCount = candidateCount;
-  }
-  filteredResponse.push(item);
-}
+          item.candidateCount = candidateCount;
+        }
+        filteredResponse.push(item);
+      }
       const GridResult: DashboardData[] = await Promise.all(
         filteredResponse.map(async (item: any, index: number) => {
-         
+
           const jdeData = jdeMap.get(item.BusinessUnitCodeId);
           const [LineManager, HOD, Exco, HR, HRLead] = await Promise.all([
             getCachedUserName(
@@ -602,33 +633,33 @@ export default class DashboardService implements IDashboard {
           const StatusTooltip: tooltipInterviewPanel = {
             LineManager: LineManager
               ? {
-                  Role: RoleName.LineManager,
-                  Name: LineManager,
-                }
+                Role: RoleName.LineManager,
+                Name: LineManager,
+              }
               : ({} as tooltipData),
             HOD: HOD
               ? {
-                  Role: RoleName.HOD,
-                  Name: HOD,
-                }
+                Role: RoleName.HOD,
+                Name: HOD,
+              }
               : ({} as tooltipData),
             Exco: Exco
               ? {
-                  Role: RoleName.EXCO,
-                  Name: Exco,
-                }
+                Role: RoleName.EXCO,
+                Name: Exco,
+              }
               : ({} as tooltipData),
             HR: HR
               ? {
-                  Role: RoleName.RecruitmentHR,
-                  Name: HR,
-                }
+                Role: RoleName.RecruitmentHR,
+                Name: HR,
+              }
               : ({} as tooltipData),
             HRLead: HRLead
               ? {
-                  Role: RoleName.RecruitmentHRLead,
-                  Name: HRLead,
-                }
+                Role: RoleName.RecruitmentHRLead,
+                Name: HRLead,
+              }
               : ({} as tooltipData),
           };
           return {
@@ -652,10 +683,10 @@ export default class DashboardService implements IDashboard {
             Department: item?.Department?.DepartmentName ?? "",
             EmploymentCategory: item?.EmploymentCategory,
             StatusTooltip,
-            CandidateCount: item?.candidateCount ?? 0, 
+            CandidateCount: item?.candidateCount ?? 0,
           };
         })
-      ) 
+      )
       return {
         data: GridResult,
         status: 200,
@@ -671,7 +702,7 @@ export default class DashboardService implements IDashboard {
     }
   }
 
-    async GetDepartmentDetails(): Promise<ApiResponse<IDashboardDepartment[]>> {
+  async GetDepartmentDetails(): Promise<ApiResponse<IDashboardDepartment[]>> {
     try {
       const recruitmentResponse: any[] = await SPServices.SPReadItems({
         Listname: ListNames.HRMSRecruitmentDeptOpenings,
@@ -700,8 +731,8 @@ export default class DashboardService implements IDashboard {
         name,
         value,
       }));
-      
-      
+
+
       return {
         data: GridResult,
         status: 200,
@@ -1198,30 +1229,30 @@ export default class DashboardService implements IDashboard {
       const [additionalPositionRes, newPositionRes] = await Promise.all([
         additionalIds.length > 0
           ? this.GetAdditionalPosition(
-              [
-                {
-                  FilterKey: "LookupIDId",
-                  Operator: "in",
-                  FilterValue: additionalIds,
-                },
-              ],
-              undefined,
-              ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails,
-            )
+            [
+              {
+                FilterKey: "LookupIDId",
+                Operator: "in",
+                FilterValue: additionalIds,
+              },
+            ],
+            undefined,
+            ListNames.HRMSAdditionalHCForExisitingPositionWithHeadCountDetails,
+          )
           : Promise.resolve({ data: [], status: 200, message: "" }),
 
         newPositionIds.length > 0
           ? this.GetPositionDetails(
-              [
-                {
-                  FilterKey: "PositionRequestID",
-                  Operator: "in",
-                  FilterValue: newPositionIds,
-                },
-              ],
-              undefined,
-              ListNames.HRMSNewPositionRequestPositionDetails,
-            )
+            [
+              {
+                FilterKey: "PositionRequestID",
+                Operator: "in",
+                FilterValue: newPositionIds,
+              },
+            ],
+            undefined,
+            ListNames.HRMSNewPositionRequestPositionDetails,
+          )
           : Promise.resolve({ data: [], status: 200, message: "" }),
       ]);
 
@@ -1433,7 +1464,6 @@ export default class DashboardService implements IDashboard {
       })) as IInterviewPanel[];
 
       //  const [firstItem] = resdata;
-
       // const IsSubmitted = firstItem?.IsScoreSheetUploaded === "Yes";
       const IsSubmitted = true;
       return {

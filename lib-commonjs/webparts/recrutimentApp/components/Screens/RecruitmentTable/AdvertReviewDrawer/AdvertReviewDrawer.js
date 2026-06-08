@@ -27,11 +27,10 @@ var react_router_dom_1 = require("react-router-dom");
 var ModalPopup_1 = require("../../../Comman/ModalPopup/ModalPopup");
 var useModalPopup_1 = require("../../../Comman/ModalPopup/useModalPopup");
 var loading_1 = tslib_1.__importDefault(require("../../../Comman/Loading/loading"));
-var PositionStatusConfig_1 = require("../../../../utilities/PositionStatusConfig");
-var CandidateProgress_1 = require("./Components/CandidateProgress/CandidateProgress");
 var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var CommentsModal_1 = tslib_1.__importDefault(require("../Components/CommentsModel/CommentsModal"));
 var getCommentsDetails_1 = require("./Hooks/getCommentsDetails");
+var PositionRoadmap_1 = require("./Components/PositionRoadmap");
 var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
     return (react_1.default.createElement("div", { className: "advert-review-drawer__skeleton", style: { width: width, height: height } }));
@@ -326,7 +325,7 @@ var AdvertReviewDrawer = function (_a) {
                                 react_1.default.createElement("h3", { className: "advert-roadmap__header-title" },
                                     react_1.default.createElement("div", { className: "advert-roadmap__header-title-bar" }),
                                     strings.RecruitmentLifecycleRoadmap)),
-                            react_1.default.createElement(PositionRoadmap, { statusId: (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusId) || 0, recId: (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.ID) || selectedJobId || 0 }))))),
+                            react_1.default.createElement(PositionRoadmap_1.PositionRoadmap, { statusId: (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusId) || 0, recId: (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.ID) || selectedJobId || 0 }))))),
                     react_1.default.createElement(PositionFramework_1.PositionFramework, { positionDetails: mappedData, isLoading: isLoading, headerCode: headerMeta.code }),
                     react_1.default.createElement(AdvertLanguageToggle_1.AdvertLanguageToggle, { advertLanguage: advertLanguage, advertContent: advertContent, isLoading: isLoading, onLanguageChange: onLanguageChange }),
                     react_1.default.createElement(RequiredAttachments_1.RequiredAttachments, { attachments: attachments, isLoading: isLoading }),
@@ -360,33 +359,4 @@ var AdvertReviewDrawer = function (_a) {
         react_1.default.createElement(CommentsModal_1.default, { open: commentsflag, loading: commentsLoading, Comments: commentsData || [], onClose: function () { return setCommentsflag(false); } })))));
 };
 exports.AdvertReviewDrawer = AdvertReviewDrawer;
-var PositionRoadmap = function (_a) {
-    var statusId = _a.statusId, recId = _a.recId;
-    var currentStage = (0, PositionStatusConfig_1.getStageIndex)(statusId);
-    return (react_1.default.createElement("div", { className: "advert-roadmap" },
-        react_1.default.createElement("div", { className: "advert-roadmap__container" }, PositionStatusConfig_1.stages.map(function (stage, index) {
-            var Icon = stage.icon;
-            var isCompleted = index < currentStage;
-            var isCurrent = index === currentStage;
-            return (react_1.default.createElement(framer_motion_1.motion.div, { key: index, initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { delay: index * 0.05 }, className: "advert-roadmap__stage" },
-                index < PositionStatusConfig_1.stages.length - 1 && (react_1.default.createElement("div", { className: "advert-roadmap__connector" },
-                    react_1.default.createElement(framer_motion_1.motion.div, { initial: { width: 0 }, animate: { width: isCompleted ? "100%" : "0%" }, className: "advert-roadmap__connector-fill", transition: { duration: 0.8, delay: index * 0.1 } }))),
-                react_1.default.createElement("div", { className: "advert-roadmap__node-wrapper" },
-                    react_1.default.createElement(framer_motion_1.motion.div, { whileHover: { scale: 1.15 }, className: "advert-roadmap__node ".concat(isCompleted
-                            ? "advert-roadmap__node--completed"
-                            : isCurrent
-                                ? "advert-roadmap__node--current"
-                                : "advert-roadmap__node--pending") }, isCompleted ? (react_1.default.createElement(lucide_react_1.Check, { size: 18, strokeWidth: 3 })) : (react_1.default.createElement(Icon, { size: 18, strokeWidth: 2 }))),
-                    isCurrent && (react_1.default.createElement("div", { className: "advert-roadmap__ping-wrapper" },
-                        react_1.default.createElement("span", { className: "advert-roadmap__ping" })))),
-                react_1.default.createElement("div", { className: "advert-roadmap__label-wrapper" },
-                    react_1.default.createElement("span", { className: "advert-roadmap__label ".concat(isCompleted
-                            ? "advert-roadmap__label--completed"
-                            : isCurrent
-                                ? "advert-roadmap__label--current"
-                                : "advert-roadmap__label--pending") }, stage.label),
-                    isCompleted && (react_1.default.createElement("span", { className: "advert-roadmap__status-done" }, strings.Done)))));
-        })),
-        react_1.default.createElement(CandidateProgress_1.CandidateProgress, { RecID: recId })));
-};
 //# sourceMappingURL=AdvertReviewDrawer.js.map

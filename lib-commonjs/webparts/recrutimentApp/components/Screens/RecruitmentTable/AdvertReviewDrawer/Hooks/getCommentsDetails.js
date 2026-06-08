@@ -32,7 +32,7 @@ var useCommentsDetails = function (RecId) {
                     case 1:
                         response = _a.sent();
                         if (response.status === ApiConfig_1.ResponeStatus.SUCCESS) {
-                            data_1 = response.data[0];
+                            data_1 = response.data;
                             setData(data_1);
                             setLoading(false);
                             return [2 /*return*/];

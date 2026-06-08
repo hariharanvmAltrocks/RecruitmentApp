@@ -53,6 +53,46 @@ export const panelVariants = {
 //   jobId: number;
 // }
 
+const getActionConfig = (item: CandidateDashboardItem) => {
+  if (
+    item.workflowStatusId === workflowStatusApi.HRPending ||
+    item.workflowStatusId === workflowStatusApi.LineManagerL1Pending ||
+    item.workflowStatusId === workflowStatusApi.LineManagerL2Pending
+  ) {
+    return {
+      label: "Review",
+      icon: <Eye size={14} />,
+    };
+  }
+
+  if (
+    item.workflowStatusId === workflowStatusApi.LineManagerLevel1OnHold ||
+    item.workflowStatusId === workflowStatusApi.LineManagerLevel2OnHold
+  ) {
+    return {
+      label: strings.OnHold,
+      icon: <PauseCircle size={14} />,
+    };
+  }
+
+  if (
+    item.workflowStatusId ===
+      workflowStatusApi.PendingRecruitmentHRscheduleInterview ||
+    Number(item.workflowStatusId) ===
+      StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
+  ) {
+    return {
+      label: "Schedule",
+      icon: <Calendar size={14} />,
+    };
+  }
+
+  return {
+    label: "View",
+    icon: <CheckCircle size={14} />,
+  };
+};
+
 export const CandidateTable: React.FC = (props: any) => {
   const navigate = useNavigate();
   const [activeCandidateId, setActiveCandidateId] = useState<string | null>(
@@ -221,45 +261,7 @@ export const CandidateTable: React.FC = (props: any) => {
     [data],
   );
 
-  const getActionConfig = (item: CandidateDashboardItem) => {
-    if (
-      item.workflowStatusId === workflowStatusApi.HRPending ||
-      item.workflowStatusId === workflowStatusApi.LineManagerL1Pending ||
-      item.workflowStatusId === workflowStatusApi.LineManagerL2Pending
-    ) {
-      return {
-        label: "Review",
-        icon: <Eye size={14} />,
-      };
-    }
 
-    if (
-      item.workflowStatusId === workflowStatusApi.LineManagerLevel1OnHold ||
-      item.workflowStatusId === workflowStatusApi.LineManagerLevel2OnHold
-    ) {
-      return {
-        label: strings.OnHold,
-        icon: <PauseCircle size={14} />,
-      };
-    }
-
-    if (
-      item.workflowStatusId ===
-        workflowStatusApi.PendingRecruitmentHRscheduleInterview ||
-      Number(item.workflowStatusId) ===
-        StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel
-    ) {
-      return {
-        label: "Schedule",
-        icon: <Calendar size={14} />,
-      };
-    }
-
-    return {
-      label: "View",
-      icon: <CheckCircle size={14} />,
-    };
-  };
 
   const columns: DataTableColumn<CandidateDashboardItem>[] = useMemo(
     () => [
@@ -331,7 +333,7 @@ export const CandidateTable: React.FC = (props: any) => {
         },
       },
     ],
-    [],
+    [handleAction],
   );
 
   return (

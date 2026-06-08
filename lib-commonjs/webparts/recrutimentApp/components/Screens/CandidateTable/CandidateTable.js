@@ -29,6 +29,36 @@ exports.panelVariants = {
 // interface CandidateTableProps {
 //   jobId: number;
 // }
+var getActionConfig = function (item) {
+    if (item.workflowStatusId === Config_1.workflowStatusApi.HRPending ||
+        item.workflowStatusId === Config_1.workflowStatusApi.LineManagerL1Pending ||
+        item.workflowStatusId === Config_1.workflowStatusApi.LineManagerL2Pending) {
+        return {
+            label: "Review",
+            icon: react_1.default.createElement(lucide_react_1.Eye, { size: 14 }),
+        };
+    }
+    if (item.workflowStatusId === Config_1.workflowStatusApi.LineManagerLevel1OnHold ||
+        item.workflowStatusId === Config_1.workflowStatusApi.LineManagerLevel2OnHold) {
+        return {
+            label: strings.OnHold,
+            icon: react_1.default.createElement(lucide_react_1.PauseCircle, { size: 14 }),
+        };
+    }
+    if (item.workflowStatusId ===
+        Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview ||
+        Number(item.workflowStatusId) ===
+            Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel) {
+        return {
+            label: "Schedule",
+            icon: react_1.default.createElement(lucide_react_1.Calendar, { size: 14 }),
+        };
+    }
+    return {
+        label: "View",
+        icon: react_1.default.createElement(lucide_react_1.CheckCircle, { size: 14 }),
+    };
+};
 var CandidateTable = function (props) {
     var _a;
     var navigate = (0, react_router_dom_1.useNavigate)();
@@ -152,36 +182,6 @@ var CandidateTable = function (props) {
             RecruitmentID: item.CandidateID,
         });
     }, [data]);
-    var getActionConfig = function (item) {
-        if (item.workflowStatusId === Config_1.workflowStatusApi.HRPending ||
-            item.workflowStatusId === Config_1.workflowStatusApi.LineManagerL1Pending ||
-            item.workflowStatusId === Config_1.workflowStatusApi.LineManagerL2Pending) {
-            return {
-                label: "Review",
-                icon: react_1.default.createElement(lucide_react_1.Eye, { size: 14 }),
-            };
-        }
-        if (item.workflowStatusId === Config_1.workflowStatusApi.LineManagerLevel1OnHold ||
-            item.workflowStatusId === Config_1.workflowStatusApi.LineManagerLevel2OnHold) {
-            return {
-                label: strings.OnHold,
-                icon: react_1.default.createElement(lucide_react_1.PauseCircle, { size: 14 }),
-            };
-        }
-        if (item.workflowStatusId ===
-            Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview ||
-            Number(item.workflowStatusId) ===
-                Config_1.StatusId.PendingwithRecruitmentHRtoassignLevel2InterviewPanel) {
-            return {
-                label: "Schedule",
-                icon: react_1.default.createElement(lucide_react_1.Calendar, { size: 14 }),
-            };
-        }
-        return {
-            label: "View",
-            icon: react_1.default.createElement(lucide_react_1.CheckCircle, { size: 14 }),
-        };
-    };
     var columns = (0, react_1.useMemo)(function () { return [
         {
             id: "ApplicantName",
@@ -224,7 +224,7 @@ var CandidateTable = function (props) {
                     react_1.default.createElement("span", { style: { display: "flex", alignItems: "center", gap: 6 } }, label)));
             },
         },
-    ]; }, []);
+    ]; }, [handleAction]);
     return (react_1.default.createElement(framer_motion_1.AnimatePresence, null,
         react_1.default.createElement("div", { className: "candidate-table" },
             loading || positionLoading ? react_1.default.createElement(loading_1.default, null) : react_1.default.createElement(react_1.default.Fragment, null),

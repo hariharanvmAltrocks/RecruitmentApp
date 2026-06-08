@@ -19,6 +19,7 @@ var ServiceExport_1 = require("../../../../services/ServiceExport");
 var loading_1 = tslib_1.__importDefault(require("../../../Comman/Loading/loading"));
 var InterviewScheduleInput_1 = require("./InterviewSchedule/InterviewScheduleInput");
 var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
+var CommentsModal_1 = tslib_1.__importDefault(require("../../RecruitmentTable/Components/CommentsModel/CommentsModal"));
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants
 // ─────────────────────────────────────────────────────────────────────────────
@@ -61,7 +62,7 @@ var FilePreviewModal = function (_a) {
 // ─────────────────────────────────────────────────────────────────────────────
 var ShowCandidateDetailsPopup = function (_a) {
     // ── Derived flags ──────────────────────────────────────────────────────────
-    var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+    var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
     var isOpen = _a.isOpen, onClose = _a.onClose, candidateId = _a.candidateId, panelParams = _a.panelParams, positionDetails = _a.positionDetails, handleRefresh = _a.handleRefresh;
     var statusId = (_b = panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) !== null && _b !== void 0 ? _b : "";
     var ReviewHRFlag = statusId === Config_1.workflowStatusApi.HRPending;
@@ -83,21 +84,22 @@ var ShowCandidateDetailsPopup = function (_a) {
         statusId === Config_1.workflowStatusApi.LineManagerLevel1Rejected ||
         statusId === Config_1.workflowStatusApi.LineManagerLevel2Rejected;
     // ── Data hooks ─────────────────────────────────────────────────────────────
-    var _s = (0, fetchPanelMembers_1.useFetchPanelMembers)((_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.BusinessUnitCodeId) !== null && _c !== void 0 ? _c : 0, (_d = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.AssignEMail) !== null && _d !== void 0 ? _d : "", (_e = panelParams === null || panelParams === void 0 ? void 0 : panelParams.candidateId) !== null && _e !== void 0 ? _e : 0, statusId, isEnabled), paneloptions = _s.data, panelLoading = _s.loading;
-    var _t = (0, fetchCandidateDetails_1.useFetchCandidateDetails)(candidateId, statusId), data = _t.data, recordLoading = _t.loading;
-    var _u = (0, Usesubmitcandidatereview_1.useSubmitCandidateReview)(onClose, handleRefresh), submitting = _u.submitting, submit = _u.submit, pageLoading = _u.pageLoading, submitModalState = _u.modalState, submitCloseModal = _u.closeModal;
-    var _v = (0, useModalPopup_1.useModalPopup)(), modalState = _v.modalState, showModal = _v.showModal, closeModal = _v.closeModal;
+    var _q = (0, fetchPanelMembers_1.useFetchPanelMembers)((_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.BusinessUnitCodeId) !== null && _c !== void 0 ? _c : 0, (_d = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.AssignEMail) !== null && _d !== void 0 ? _d : "", (_e = panelParams === null || panelParams === void 0 ? void 0 : panelParams.candidateId) !== null && _e !== void 0 ? _e : 0, statusId, isEnabled), paneloptions = _q.data, panelLoading = _q.loading;
+    var _r = (0, fetchCandidateDetails_1.useFetchCandidateDetails)(candidateId, statusId), data = _r.data, recordLoading = _r.loading;
+    var _s = (0, Usesubmitcandidatereview_1.useSubmitCandidateReview)(onClose, handleRefresh), submitting = _s.submitting, submit = _s.submit, pageLoading = _s.pageLoading, submitModalState = _s.modalState, submitCloseModal = _s.closeModal;
+    var _t = (0, useModalPopup_1.useModalPopup)(), modalState = _t.modalState, showModal = _t.showModal, closeModal = _t.closeModal;
     // ── Local state ────────────────────────────────────────────────────────────
     var fileInputRef = (0, react_1.useRef)(null);
-    var _w = (0, react_1.useState)(null), decision = _w[0], setDecision = _w[1];
-    var _x = (0, react_1.useState)(""), decisionComments = _x[0], setDecisionComments = _x[1];
-    var _y = (0, react_1.useState)([]), consultoptions = _y[0], setConsultOptions = _y[1];
-    var _z = (0, react_1.useState)(null), previewFile = _z[0], setPreviewFile = _z[1];
-    var _0 = (0, react_1.useState)(""), HRReview = _0[0], setHRReview = _0[1];
-    var _1 = (0, react_1.useState)(false), dropdownOpen = _1[0], setDropdownOpen = _1[1];
-    var _2 = (0, react_1.useState)(EMPTY_COI), coi = _2[0], setCoi = _2[1];
-    var _3 = (0, react_1.useState)(EMPTY_SCHEDULE), level1 = _3[0], setLevel1 = _3[1];
-    var _4 = (0, react_1.useState)(EMPTY_SCHEDULE), level2 = _4[0], setLevel2 = _4[1];
+    var _u = (0, react_1.useState)(null), decision = _u[0], setDecision = _u[1];
+    var _v = (0, react_1.useState)(""), decisionComments = _v[0], setDecisionComments = _v[1];
+    var _w = (0, react_1.useState)([]), consultoptions = _w[0], setConsultOptions = _w[1];
+    var _x = (0, react_1.useState)(null), previewFile = _x[0], setPreviewFile = _x[1];
+    var _y = (0, react_1.useState)(""), HRReview = _y[0], setHRReview = _y[1];
+    var _z = (0, react_1.useState)(false), dropdownOpen = _z[0], setDropdownOpen = _z[1];
+    var _0 = (0, react_1.useState)(EMPTY_COI), coi = _0[0], setCoi = _0[1];
+    var _1 = (0, react_1.useState)(EMPTY_SCHEDULE), level1 = _1[0], setLevel1 = _1[1];
+    var _2 = (0, react_1.useState)(EMPTY_SCHEDULE), level2 = _2[0], setLevel2 = _2[1];
+    var _3 = (0, react_1.useState)(false), commentsflag = _3[0], setCommentsflag = _3[1];
     var loading = recordLoading || panelLoading;
     // ── Memoised panel values ──────────────────────────────────────────────────
     var panelValue = (0, react_1.useMemo)(function () {
@@ -117,6 +119,20 @@ var ShowCandidateDetailsPopup = function (_a) {
         var level2Members = Level2.filter(function (item) { return item.Role !== ConditionConfig_1.RoleName.InterviewPanel; }).map(function (item) { return String(item.value); });
         return { level1Members: level1Members, level2Members: level2Members, consultOption: consultOption };
     }, [paneloptions]);
+    var level1PanelOptions = (0, react_1.useMemo)(function () {
+        var _a;
+        return ((_a = paneloptions === null || paneloptions === void 0 ? void 0 : paneloptions.Level1) !== null && _a !== void 0 ? _a : []).map(function (item) { return ({
+            value: String(item.value),
+            label: item.label,
+        }); });
+    }, [paneloptions === null || paneloptions === void 0 ? void 0 : paneloptions.Level1]);
+    var level2PanelOptions = (0, react_1.useMemo)(function () {
+        var _a;
+        return ((_a = paneloptions === null || paneloptions === void 0 ? void 0 : paneloptions.Level2) !== null && _a !== void 0 ? _a : []).map(function (item) { return ({
+            value: String(item.value),
+            label: item.label,
+        }); });
+    }, [paneloptions === null || paneloptions === void 0 ? void 0 : paneloptions.Level2]);
     // ── Effects ────────────────────────────────────────────────────────────────
     // Reset all state when popup closes
     (0, react_1.useEffect)(function () {
@@ -259,11 +275,16 @@ var ShowCandidateDetailsPopup = function (_a) {
         if (fileInputRef.current)
             fileInputRef.current.value = "";
     }, []);
-    var handlePanelToggle = function (setter, val) {
-        setter(function (p) { return (tslib_1.__assign(tslib_1.__assign({}, p), { panelMembers: p.panelMembers.includes(val)
+    var handleToggleLevel1Member = (0, react_1.useCallback)(function (val) {
+        setLevel1(function (p) { return (tslib_1.__assign(tslib_1.__assign({}, p), { panelMembers: p.panelMembers.includes(val)
                 ? p.panelMembers.filter(function (v) { return v !== val; })
                 : tslib_1.__spreadArray(tslib_1.__spreadArray([], p.panelMembers, true), [val], false) })); });
-    };
+    }, []);
+    var handleToggleLevel2Member = (0, react_1.useCallback)(function (val) {
+        setLevel2(function (p) { return (tslib_1.__assign(tslib_1.__assign({}, p), { panelMembers: p.panelMembers.includes(val)
+                ? p.panelMembers.filter(function (v) { return v !== val; })
+                : tslib_1.__spreadArray(tslib_1.__spreadArray([], p.panelMembers, true), [val], false) })); });
+    }, []);
     var handleSubmit = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         var toPanel;
         return tslib_1.__generator(this, function (_a) {
@@ -483,20 +504,10 @@ var ShowCandidateDetailsPopup = function (_a) {
                                                         .join(" ") }, option)); })))))))))),
                             PanelMember && (react_1.default.createElement(framer_motion_1.motion.section, { className: ShowCandidateDetailsPopup_module_scss_1.default.section, custom: 3, variants: reuseUI_1.sectionVariants, initial: "hidden", animate: "visible" },
                                 react_1.default.createElement(reuseUI_1.SectionHeader, { title: strings.InterviewScheduleLevel1, accent: "blue" }),
-                                react_1.default.createElement(InterviewScheduleInput_1.InterviewScheduleInput, { form: level1, onChange: setLevel1, panelOptions: ((_q = paneloptions === null || paneloptions === void 0 ? void 0 : paneloptions.Level1) !== null && _q !== void 0 ? _q : []).map(function (item) { return ({
-                                        value: String(item.value),
-                                        label: item.label,
-                                    }); }), onToggleMember: function (val) {
-                                        return handlePanelToggle(setLevel1, val);
-                                    }, minPanelCount: 3, Disable: isLevel2Panel }))),
+                                react_1.default.createElement(InterviewScheduleInput_1.InterviewScheduleInput, { form: level1, onChange: setLevel1, panelOptions: level1PanelOptions, onToggleMember: handleToggleLevel1Member, minPanelCount: 3, Disable: isLevel2Panel }))),
                             isLevel2Panel && (react_1.default.createElement(framer_motion_1.motion.section, { className: ShowCandidateDetailsPopup_module_scss_1.default.section, custom: 4, variants: reuseUI_1.sectionVariants, initial: "hidden", animate: "visible" },
                                 react_1.default.createElement(reuseUI_1.SectionHeader, { title: strings.InterviewScheduleLevel2, accent: "green" }),
-                                react_1.default.createElement(InterviewScheduleInput_1.InterviewScheduleInput, { form: level2, onChange: setLevel2, panelOptions: ((_r = paneloptions === null || paneloptions === void 0 ? void 0 : paneloptions.Level2) !== null && _r !== void 0 ? _r : []).map(function (item) { return ({
-                                        value: String(item.value),
-                                        label: item.label,
-                                    }); }), onToggleMember: function (val) {
-                                        return handlePanelToggle(setLevel2, val);
-                                    }, minPanelCount: 3, Disable: false }))),
+                                react_1.default.createElement(InterviewScheduleInput_1.InterviewScheduleInput, { form: level2, onChange: setLevel2, panelOptions: level2PanelOptions, onToggleMember: handleToggleLevel2Member, minPanelCount: 3, Disable: false }))),
                             !ReviewHRFlag && !PanelMember && !rejectedFlag && (react_1.default.createElement(framer_motion_1.motion.section, { className: ShowCandidateDetailsPopup_module_scss_1.default.section, custom: 5, variants: reuseUI_1.sectionVariants, initial: "hidden", animate: "visible" },
                                 react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.lmDecisionCard },
                                     react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.lmDecisionHeader },
@@ -539,6 +550,10 @@ var ShowCandidateDetailsPopup = function (_a) {
                                             react_1.default.createElement(Icon, { size: 36, strokeWidth: 2, className: decision === value ? activeIcon : inactiveIcon }),
                                             react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnLabel }, label)));
                                     }))))),
+                            react_1.default.createElement("div", { className: "mFormGroup" },
+                                react_1.default.createElement("button", { onClick: function () { return setCommentsflag(true); }, className: "mSubmitBtn", type: "button" },
+                                    react_1.default.createElement(lucide_react_1.FileText, { size: 16 }),
+                                    strings.ViewComments)),
                             !rejectedFlag && (react_1.default.createElement(framer_motion_1.motion.section, { custom: 6, variants: reuseUI_1.sectionVariants, initial: "hidden", animate: "visible" },
                                 react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.lmCommentsCard },
                                     react_1.default.createElement(reuseUI_1.SectionHeader, { title: "Comments", accent: "blue" }),
@@ -561,7 +576,8 @@ var ShowCandidateDetailsPopup = function (_a) {
                     pageLoading && react_1.default.createElement(loading_1.default, null),
                     react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal })),
                     react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, submitModalState, { onClose: submitCloseModal }))))),
-        react_1.default.createElement(FilePreviewModal, { file: previewFile, onClose: function () { return setPreviewFile(null); } })));
+        react_1.default.createElement(FilePreviewModal, { file: previewFile, onClose: function () { return setPreviewFile(null); } }),
+        react_1.default.createElement(CommentsModal_1.default, { open: commentsflag, loading: recordLoading, Comments: (data === null || data === void 0 ? void 0 : data.Comments) || [], onClose: function () { return setCommentsflag(false); } })));
 };
 exports.ShowCandidateDetailsPopup = ShowCandidateDetailsPopup;
 var AttachmentRow = react_1.default.memo(function (_a) {

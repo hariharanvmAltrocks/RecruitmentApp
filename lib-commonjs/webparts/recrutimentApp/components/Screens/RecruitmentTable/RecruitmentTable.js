@@ -35,6 +35,7 @@ var AdvertExtension = react_1.default.lazy(function () {
         default: module.AdvertExtension,
     }); });
 });
+var getRowId = function (item) { return item.id; };
 var RecruitmentTable = function () {
     var _a;
     var _b = (0, useTabDetails_1.useTabDetails)(), tabs = _b.tabs, tabsLoading = _b.loading;
@@ -140,27 +141,13 @@ var RecruitmentTable = function () {
         });
     }, [selectedNationality, items, showModal, closeModal]);
     var handleToggleAll = (0, react_1.useCallback)(function () {
+        var pageIds = paginatedItems.map(function (item) { return item.id; });
+        var allSelected = pageIds.length > 0 && pageIds.every(function (id) { return selectedIds.includes(id); });
         setSelectedIds(function (prev) {
             return allSelected
                 ? prev.filter(function (id) { return !pageIds.includes(id); })
                 : Array.from(new Set(tslib_1.__spreadArray(tslib_1.__spreadArray([], prev, true), pageIds, true)));
         });
-        // const allSameNationality = (items: typeof selectedItems): boolean => {
-        //   if (items.length === 0) return false;
-        //   return items.every((item) => item.nationality === items[0].nationality);
-        // };
-        // if (!allSameNationality(selectedItems)) {
-        //   showModal({
-        //     type: "warning",
-        //     title: "Nationality Mismatch",
-        //     message: "You cannot assign HR for different nationality.",
-        //     confirmLabel: "OK",
-        //     onConfirm: closeModal,
-        //   });
-        //   return;
-        // }
-        var pageIds = paginatedItems.map(function (item) { return item.id; });
-        var allSelected = pageIds.length > 0 && pageIds.every(function (id) { return selectedIds.includes(id); });
     }, [paginatedItems, selectedIds]);
     var processingRef = (0, react_1.useRef)(false);
     var selectedAdvertID = (0, react_1.useRef)(0);
@@ -302,7 +289,7 @@ var RecruitmentTable = function () {
                         }, className: "submission-header__button" },
                         react_1.default.createElement(lucide_react_1.RotateCcw, { size: 14 }),
                         "Back to Dashboard"))),
-            react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: paginatedItems, enableCheckbox: (activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.tableMode) === "checkbox", selectedRowIds: selectedIds, getRowId: function (item) { return item.id; }, onToggleRow: handleToggleRow, onToggleAll: handleToggleAll, pageSize: pageSize, currentPage: currentPage, totalCount: totalCount, onPageChange: setCurrentPage, onPageSizeChange: function (size) {
+            react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: paginatedItems, enableCheckbox: (activeTabs === null || activeTabs === void 0 ? void 0 : activeTabs.tableMode) === "checkbox", selectedRowIds: selectedIds, getRowId: getRowId, onToggleRow: handleToggleRow, onToggleAll: handleToggleAll, pageSize: pageSize, currentPage: currentPage, totalCount: totalCount, onPageChange: setCurrentPage, onPageSizeChange: function (size) {
                     setPageSize(size);
                     setCurrentPage(1);
                 }, loading: tableLoading })),

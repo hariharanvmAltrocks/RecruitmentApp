@@ -54,14 +54,20 @@ var useRecruitmentColumns = function (_a) {
             matricID === ConditionConfig_1.MatricID.AssignInterviewPanel ||
             matricID === ConditionConfig_1.MatricID.ReviewScoreCard);
     }, [hasProfileCount, matricID]);
-    var actionColumn = (0, react_1.useMemo)(function () { return ({
-        id: "actions",
-        header: "Actions",
-        align: "left",
-        cellClassName: "data-table__cell--actions",
-        render: function (item) { return (react_2.default.createElement("button", { className: "data-table__action-btn", onClick: function () { return onActionRef.current(item); }, type: "button", "aria-label": actionMode === strings.Upload ? strings.UploadDocument : strings.ViewVacancy }, getActionLabel(actionMode, item, matricID))); },
-    }); }, [actionMode]);
-    var defaultColumns = (0, react_1.useMemo)(function () { return tslib_1.__spreadArray(tslib_1.__spreadArray([
+    var actionColumn = (0, react_1.useMemo)(function () {
+        return onAction
+            ? {
+                id: "actions",
+                header: "Actions",
+                align: "left",
+                cellClassName: "data-table__cell--actions",
+                render: function (item) { return (react_2.default.createElement("button", { className: "data-table__action-btn", onClick: function () { var _a; return (_a = onActionRef.current) === null || _a === void 0 ? void 0 : _a.call(onActionRef, item); }, type: "button", "aria-label": actionMode === strings.Upload
+                        ? strings.UploadDocument
+                        : strings.ViewVacancy }, getActionLabel(actionMode, item, matricID))); },
+            }
+            : null;
+    }, [actionMode, matricID, onAction]);
+    var defaultColumns = (0, react_1.useMemo)(function () { return tslib_1.__spreadArray(tslib_1.__spreadArray(tslib_1.__spreadArray([
         {
             id: "jobCode",
             header: strings.JobCode,
@@ -124,10 +130,9 @@ var useRecruitmentColumns = function (_a) {
                 return (react_2.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8 } },
                     react_2.default.createElement("span", { className: "data-table__status-badge status-badge" }, item.status)));
             },
-        },
-        actionColumn,
-    ], false); }, [actionColumn, showProfile]);
-    var evaluationColumns = (0, react_1.useMemo)(function () { return [
+        }
+    ], false), (actionColumn ? [actionColumn] : []), true); }, [actionColumn, showProfile]);
+    var evaluationColumns = (0, react_1.useMemo)(function () { return tslib_1.__spreadArray([
         {
             id: "applicantName",
             header: strings.ApplicantName,
@@ -168,9 +173,8 @@ var useRecruitmentColumns = function (_a) {
             id: "status",
             header: "Status",
             render: function (item) { return (react_2.default.createElement("span", { className: "data-table__status-badge status-badge" }, item.status)); },
-        },
-        actionColumn,
-    ]; }, [actionColumn]);
+        }
+    ], (actionColumn ? [actionColumn] : []), true); }, [actionColumn]);
     function resolveActionMode(statusID) {
         if (Config_2.Initiate_STAUES.has(statusID))
             return "Initiate";
@@ -189,7 +193,16 @@ var useRecruitmentColumns = function (_a) {
         var actionLabel = isInitiate ? "INITIATE" : isReview ? "REVIEW" : "VIEW";
         return (react_2.default.createElement("button", { className: "data-table__action-btn", onClick: function () { return onAction(item); }, type: "button", "aria-label": "".concat(actionLabel, " action") }, actionLabel));
     });
-    var offerReleaseColumns = (0, react_1.useMemo)(function () { return [
+    var offerReleaseActionColumn = onAction
+        ? {
+            id: "actions",
+            header: "Actions",
+            align: "right",
+            cellClassName: "data-table__cell--actions",
+            render: function (item) { return (react_2.default.createElement(ActionCell, { item: item, StatusId: item.statusId, onAction: function () { var _a; return (_a = onActionRef.current) === null || _a === void 0 ? void 0 : _a.call(onActionRef, item); } })); },
+        }
+        : null;
+    var offerReleaseColumns = (0, react_1.useMemo)(function () { return tslib_1.__spreadArray([
         {
             id: "PositionID",
             header: strings.PositionId,
@@ -223,15 +236,10 @@ var useRecruitmentColumns = function (_a) {
             id: "status",
             header: "Status",
             render: function (item) { return (react_2.default.createElement("span", { className: "data-table__status-badge status-badge" }, item.status)); },
-        },
-        {
-            id: "actions",
-            header: "Actions",
-            align: "right",
-            cellClassName: "data-table__cell--actions",
-            render: function (item) { return (react_2.default.createElement(ActionCell, { item: item, StatusId: item.statusId, onAction: function () { return onActionRef.current(item); } })); },
-        },
-    ]; }, [onActionRef]);
+        }
+    ], (offerReleaseActionColumn
+        ? [offerReleaseActionColumn]
+        : []), true); }, [onActionRef]);
     var columnMap = {
         default: defaultColumns,
         evaluation: evaluationColumns,

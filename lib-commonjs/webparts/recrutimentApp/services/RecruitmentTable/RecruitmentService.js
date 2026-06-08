@@ -11,6 +11,7 @@ var ServiceExport_1 = require("../ServiceExport");
 var ConditionConfig_1 = require("../../utilities/ConditionConfig");
 var dateConfigfn_1 = require("../../components/Hooks/dateConfigfn");
 var PositionStatusConfig_1 = require("../../utilities/PositionStatusConfig");
+var SageService_1 = require("../SageData/SageService");
 var RecruitmentService = /** @class */ (function () {
     function RecruitmentService() {
     }
@@ -1262,77 +1263,64 @@ var RecruitmentService = /** @class */ (function () {
     };
     RecruitmentService.prototype.GetCommentsData = function (filter) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var CommentsData, listItems, error_15;
-            var _this = this;
+            var listItems, emails, employeeMap_1, commentsData, error_15;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        CommentsData = [];
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        listItems = void 0;
+                        _a.trys.push([0, 3, , 4]);
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSRecruitmentComments,
-                                Select: "*, Author/EMail,Author/Title,Role/RoleTitle,RecruitmentID/ID",
+                                Select: "*,Author/EMail,Author/Title,Role/RoleTitle,RecruitmentID/ID",
                                 Expand: "Author,Role,RecruitmentID",
                                 Filter: filter,
                                 Orderby: "ID",
                                 Orderbydecorasc: false,
                             })];
-                    case 2:
+                    case 1:
                         listItems = _a.sent();
-                        listItems.forEach(function (objresult) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                            var EmployeeFilter, Employee, d;
-                            var _a, _b, _c, _d;
-                            return tslib_1.__generator(this, function (_e) {
-                                switch (_e.label) {
-                                    case 0:
-                                        EmployeeFilter = [
-                                            {
-                                                FilterKey: "EmailId",
-                                                Operator: "eq",
-                                                FilterValue: ((_a = objresult.Author) === null || _a === void 0 ? void 0 : _a.EMail) || "",
-                                            }
-                                        ];
-                                        return [4 /*yield*/, ServiceExport_1.masterService.GetUserDetails(EmployeeFilter, "and")];
-                                    case 1:
-                                        Employee = _e.sent();
-                                        d = {
-                                            Id: objresult.ApprovedID ? objresult.ApprovedID.ID : "",
-                                            JobTitleInEnglish: Employee ? Employee.data.JopTitleEnglish : "",
-                                            JobTitleInFrench: Employee ? Employee.data.JopTitleFrench : "",
-                                            comments: objresult.Comments || "",
-                                            Department: objresult.Department
-                                                ? objresult.Department.DepartmentName
-                                                : "",
-                                            Date: objresult.Created ? new Date(objresult.Created) : null,
-                                            JobTitle: objresult.JobTitle || "",
-                                            RoleName: objresult.Role ? objresult.Role.RoleTitle : "",
-                                            Name: Employee
-                                                ? ((_b = Employee.data.FirstName) !== null && _b !== void 0 ? _b : "") +
-                                                    " " +
-                                                    ((_c = Employee.data.MiddleName) !== null && _c !== void 0 ? _c : "") +
-                                                    " " +
-                                                    ((_d = Employee.data.LastName) !== null && _d !== void 0 ? _d : "")
-                                                : "",
-                                        };
-                                        CommentsData.push(d);
-                                        return [2 /*return*/];
-                                }
-                            });
-                        }); });
+                        if (!(listItems === null || listItems === void 0 ? void 0 : listItems.length)) {
+                            return [2 /*return*/, {
+                                    data: [],
+                                    status: 200,
+                                    message: "No comments found",
+                                }];
+                        }
+                        emails = Array.from(new Set(listItems
+                            .map(function (item) { var _a; return (_a = item.Author) === null || _a === void 0 ? void 0 : _a.EMail; })
+                            .filter(function (email) { return !!email; })));
+                        return [4 /*yield*/, (0, SageService_1.GetEmployeeDictionary)(emails)];
+                    case 2:
+                        employeeMap_1 = _a.sent();
+                        commentsData = listItems.map(function (item) {
+                            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+                            var employee = employeeMap_1.get((_b = (_a = item.Author) === null || _a === void 0 ? void 0 : _a.EMail) === null || _b === void 0 ? void 0 : _b.toLowerCase()) || null;
+                            return {
+                                Id: ((_c = item.ApprovedID) === null || _c === void 0 ? void 0 : _c.ID) || "",
+                                JobTitleInEnglish: (employee === null || employee === void 0 ? void 0 : employee.JopTitleEnglish) || "",
+                                JobTitleInFrench: (employee === null || employee === void 0 ? void 0 : employee.JopTitleFrench) || "",
+                                comments: item.Comments || "",
+                                Department: ((_d = item.Department) === null || _d === void 0 ? void 0 : _d.DepartmentName) || "",
+                                Date: item.Created
+                                    ? new Date(item.Created)
+                                    : null,
+                                JobTitle: item.JobTitle || "",
+                                RoleName: ((_e = item.Role) === null || _e === void 0 ? void 0 : _e.RoleTitle) || "",
+                                Name: employee
+                                    ? "".concat((_f = employee.FirstName) !== null && _f !== void 0 ? _f : "", " ").concat((_g = employee.MiddleName) !== null && _g !== void 0 ? _g : "", " ").concat((_h = employee.LastName) !== null && _h !== void 0 ? _h : "").replace(/\s+/g, " ").trim()
+                                    : ((_j = item.Author) === null || _j === void 0 ? void 0 : _j.Title) || "",
+                            };
+                        });
                         return [2 /*return*/, {
-                                data: CommentsData,
+                                data: commentsData,
                                 status: 200,
                                 message: "Data fetched successfully",
                             }];
                     case 3:
                         error_15 = _a.sent();
-                        console.error("Error fetching user data:", error_15);
+                        console.error("Error fetching comments:", error_15);
                         return [2 /*return*/, {
                                 data: [],
-                                status: 400,
+                                status: 500,
                                 message: "Error fetching data",
                             }];
                     case 4: return [2 /*return*/];

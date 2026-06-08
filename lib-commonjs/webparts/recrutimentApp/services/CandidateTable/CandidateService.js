@@ -179,12 +179,52 @@ var CandidateService = /** @class */ (function () {
                         return [4 /*yield*/, CareerPortalAPI_1.getProfileData
                                 .getCandidateProfile(CandidateID)
                                 .then(function (res) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                var op, CandidateCV, BusinessLinkPath, BusinessDocument, FamilyLinkPath, FamilyDocument, ProofIdentity, totalExperienceYears, CountryCode, profileExperiance, dob, today, age, monthDiff, dayDiff, getOptAnswers, profileXAgent, AgenName, IdentityID, familyDetails, emergencyContacts, employeeReferenceDetail, companyDetails, PPEData, PPEMaster, ppeMap_1, JobCode, willingRelocated, code, PreviousEmployer, candidateLanguages, _a, years, months, formattedExperience, ContactNumber, OverallAttachment, GetProfileDahboard;
+                                var op, CommentsData, CandidateCV, BusinessLinkPath, BusinessDocument, FamilyLinkPath, FamilyDocument, ProofIdentity, totalExperienceYears, CountryCode, profileExperiance, dob, today, age, monthDiff, dayDiff, getOptAnswers, profileXAgent, AgenName, IdentityID, familyDetails, emergencyContacts, employeeReferenceDetail, companyDetails, PPEData, PPEMaster, ppeMap_1, JobCode, willingRelocated, code, PreviousEmployer, candidateLanguages, _a, years, months, formattedExperience, ContactNumber, OverallAttachment, GetProfileDahboard;
                                 var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, _31, _32, _33, _34, _35, _36, _37, _38, _39, _40, _41, _42, _43, _44, _45, _46, _47, _48, _49, _50, _51, _52, _53, _54, _55, _56, _57, _58, _59, _60, _61, _62, _63, _64, _65, _66, _67, _68, _69, _70, _71, _72, _73, _74, _75, _76, _77, _78, _79, _80, _81, _82, _83, _84, _85, _86, _87, _88, _89, _90, _91, _92, _93, _94, _95, _96, _97, _98, _99, _100, _101, _102, _103, _104, _105, _106, _107, _108, _109, _110, _111;
                                 return tslib_1.__generator(this, function (_112) {
                                     switch (_112.label) {
                                         case 0:
                                             op = res.data.data;
+                                            CommentsData = (op === null || op === void 0 ? void 0 : op.profileJobsComments.map(function (item, index) {
+                                                var _a;
+                                                var updatedData;
+                                                if ((item === null || item === void 0 ? void 0 : item.createdBy) === ConditionConfig_1.RoleName.RecruitmentHR || (item === null || item === void 0 ? void 0 : item.createdBy) === "Recrutiment HR") {
+                                                    updatedData = {
+                                                        Id: index + 1,
+                                                        comments: (item === null || item === void 0 ? void 0 : item.comments) || "",
+                                                        Date: item.createdOn ? new Date(item.createdOn) : null,
+                                                        RoleName: ConditionConfig_1.RoleName.RecruitmentHR,
+                                                    };
+                                                }
+                                                else if ((item === null || item === void 0 ? void 0 : item.createdBy) === ConditionConfig_1.RoleName.LineManager || (item === null || item === void 0 ? void 0 : item.createdBy) === "Line Manager") {
+                                                    updatedData = {
+                                                        Id: index + 1,
+                                                        // JobTitleInEnglish: EmployeeLM?.JobTitle ?? "",
+                                                        // JobTitleInFrench: EmployeeLM?.JobTitleInFrench ?? "",
+                                                        comments: (item === null || item === void 0 ? void 0 : item.comments) || "",
+                                                        // Department: EmployeeLM?.Department ?? "",
+                                                        Date: item.createdOn ? new Date(item.createdOn) : null,
+                                                        // JobTitle: EmployeeLM?.JobTitle ?? "",
+                                                        RoleName: ConditionConfig_1.RoleName.LineManager,
+                                                        // Name: `${EmployeeLM?.FirstName ?? ""} ${EmployeeLM?.MiddleName ?? ""} ${EmployeeLM?.LastName ?? ""}`.trim()
+                                                    };
+                                                }
+                                                else {
+                                                    // Provide a fallback to ensure `updatedData` is always assigned
+                                                    updatedData = {
+                                                        Id: index + 1,
+                                                        // JobTitleInEnglish: "",
+                                                        // JobTitleInFrench: "",
+                                                        comments: (item === null || item === void 0 ? void 0 : item.comments) || "",
+                                                        // Department: "",
+                                                        Date: item.createdOn ? new Date(item.createdOn) : null,
+                                                        // JobTitle: "",
+                                                        RoleName: (_a = item === null || item === void 0 ? void 0 : item.createdBy) !== null && _a !== void 0 ? _a : "Unknown",
+                                                        // Name: "",
+                                                    };
+                                                }
+                                                return updatedData;
+                                            })) || [];
                                             return [4 /*yield*/, ServiceExport_1.CommonServices.GetDocumentinUrl((_b = op === null || op === void 0 ? void 0 : op.document) === null || _b === void 0 ? void 0 : _b.filePath)];
                                         case 1:
                                             CandidateCV = _112.sent();
@@ -329,7 +369,7 @@ var CandidateService = /** @class */ (function () {
                                                 StatusId: op === null || op === void 0 ? void 0 : op.workflowStatusId,
                                                 Agencies: AgenName,
                                                 CandidateResume: CandidateCV.data,
-                                                Comments: [], // CommentsData,
+                                                Comments: CommentsData,
                                                 workflowStatusId: op === null || op === void 0 ? void 0 : op.workflowStatusId,
                                                 hrComments: op === null || op === void 0 ? void 0 : op.hrComments,
                                                 JobVaildFromDate: (_48 = op === null || op === void 0 ? void 0 : op.jobDetail) === null || _48 === void 0 ? void 0 : _48.validFrom,

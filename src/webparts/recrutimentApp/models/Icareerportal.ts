@@ -4,13 +4,13 @@ import { AutoCompleteItem } from "./fieldmodels";
 
 export type CommentsData = {
   Id: number | null;
-  Name: string;
-  JobTitleInEnglish: string;
-  JobTitleInFrench: string;
+  // Name: string;
+  // JobTitleInEnglish: string;
+  // JobTitleInFrench: string;
   comments: string;
-  Department: string;
+  // Department: string;
   Date: any | null;
-  JobTitle: string;
+  // JobTitle: string;
   RoleName: string;
   CandidateID?: any;
   RoleId?: number;

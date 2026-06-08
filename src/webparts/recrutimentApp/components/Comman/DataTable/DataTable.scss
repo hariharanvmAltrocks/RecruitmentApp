@@ -44,7 +44,7 @@
     transition: background $transition-base;
 
     &:hover {
-      background: #f8fbff;
+      background: $header-bg-color;
     }
   }
 

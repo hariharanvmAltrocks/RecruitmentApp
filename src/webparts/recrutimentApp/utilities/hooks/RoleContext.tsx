@@ -343,10 +343,17 @@ export const RoleProvider = ({
     return state.resolvedRoles.map((r) => r.ID);
   }, [state.resolvedRoles]);
 
-  const { metrics: matricData, loading: metricsLoading } = useDashboardMetrics(
+  const { metrics: matricData, loading: metricsLoading, refresh } = useDashboardMetrics(
     roleIDs,
     state.userEmail,
   );
+
+  const refreshMetrics = useCallback(async (): Promise<void> => {
+    if (roleIDs.length === 0 || !state.userEmail) {
+      return;
+    }
+    await refresh();
+  }, [refresh, roleIDs, state.userEmail]);
 
   useEffect(() => {
     if (state.resolvedRoles.length > 0) {
@@ -430,7 +437,7 @@ export const RoleProvider = ({
   const ADGroupData = buildADGroupData(state.resolvedRoles, state.userName);
 
   const combinedLoading =
-    state.isLoading || (state.resolvedRoles.length > 0 && metricsLoading);
+    state.isLoading || (state.resolvedRoles.length > 0 && metricsLoading && state.MatricData.length === 0);
 
   const contextValue: RoleContextType = {
     roleIDs: ADGroupData.roleIDs,
@@ -442,7 +449,8 @@ export const RoleProvider = ({
     showRoleSelector,
     setShowRoleSelector,
     MatricData: state.MatricData,
-    DepartmentData: state.DepartmentData
+    DepartmentData: state.DepartmentData,
+    refreshMetrics
   };
 
   const isFullyReady =

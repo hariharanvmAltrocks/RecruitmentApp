@@ -44,5 +44,6 @@ export type RoleContextType = {
   setShowRoleSelector: React.Dispatch<React.SetStateAction<boolean>>;
   MatricData: Metric[];
   DepartmentData: DepartmentDataItem[];
+  refreshMetrics: () => Promise<void>;
 }
 

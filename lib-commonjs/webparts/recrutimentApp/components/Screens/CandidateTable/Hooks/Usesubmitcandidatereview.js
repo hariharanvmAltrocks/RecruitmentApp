@@ -466,6 +466,7 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                                 message: "This is the COI profile. Are you sure you're ready to proceed?",
                                 confirmLabel: "Yes",
                                 cancelLabel: "No",
+                                isCOIFlag: true,
                                 onConfirm: function () {
                                     closeModal();
                                     void executeSubmit(payload, COIButtonAction); // pageLoading starts inside executeSubmit

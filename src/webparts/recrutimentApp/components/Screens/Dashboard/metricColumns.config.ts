@@ -609,7 +609,15 @@ export const MatricColums = (roles: number[]): MetricConfig[] => {
         roleColumns = [
           buildCol(MatricID.AdvertReviewHOD, { showArrow: true }),
           buildCol(MatricID.EvalutionHOD, { showArrow: true }),
-          buildCol(MatricID.ReviewScoreCard, { showArrow: true }),
+          buildCol(MatricID.ReviewScoreCard, {
+            showArrow: true,
+            externalApi: {
+              workflowStatuses: [
+                workflowStatusApi.pendingHODSelection,
+              ],
+            },
+          }),
+          // buildCol(MatricID., { showArrow: true }),
           buildCol(MatricID.advertExtension, { showArrow: true }),
           buildCol(MatricID.interviewSchedule, { showArrow: false }),
           buildCol(MatricID.OfferRelease, { showArrow: false }),
@@ -710,7 +718,7 @@ const DataSyncFilter = [
 type SingleQuery = Omit<FilterQuery, "StateValue">;
 
 type IOrFilter = {
-  Operator: "or";
+  Operator: "or" | "and";
   OrFilters: IFilter[][];
 };
 
@@ -849,8 +857,6 @@ export const MetricQueryConfig = (
     }),
   ),
 
-  // ✅ Advert Review LM
-  // ✅ Advert Review HOD + LM Combined (when same person)
   [MatricID.AdvertReviewLM]: (() => {
     const isHODandLM =
       roles.includes(RoleID.HOD) && roles.includes(RoleID.LineManager);
@@ -867,14 +873,14 @@ export const MetricQueryConfig = (
                   {
                     FilterKey: "StatusId",
                     Operator: "eq",
-                    FilterValue: 26,
+                    FilterValue: StatusId.PendingReviewAdvertHOD,
                   },
                 ],
                 [
                   {
                     FilterKey: "StatusId",
                     Operator: "eq",
-                    FilterValue: 125,
+                    FilterValue: StatusId.PendingwithLineManagereviewAdv,
                   },
                 ],
               ],

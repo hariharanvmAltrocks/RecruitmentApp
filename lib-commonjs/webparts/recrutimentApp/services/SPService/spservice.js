@@ -41,6 +41,7 @@ var _formatInputs = function (data) {
     });
 };
 var _buildODataFilter = function (filters, filterCondition) {
+    var _a;
     if (!(filters === null || filters === void 0 ? void 0 : filters.length))
         return "";
     var MAX_BATCH = 100;
@@ -48,51 +49,31 @@ var _buildODataFilter = function (filters, filterCondition) {
     var _loop_1 = function (f) {
         // NEW LOGIC FOR OrFilters
         if (f.OrFilters && Array.isArray(f.OrFilters)) {
-            var orParts = f.OrFilters.map(function (group) {
+            var operator = (_a = f.Operator) === null || _a === void 0 ? void 0 : _a.toLowerCase();
+            var groups = f.OrFilters.map(function (group) {
                 var andParts = [];
-                var _loop_2 = function (item) {
-                    if (!item.FilterKey)
-                        return "continue";
-                    var op_1 = item.Operator.toLowerCase();
-                    var values_1 = Array.isArray(item.FilterValue)
-                        ? item.FilterValue
-                        : [item.FilterValue];
-                    if (["eq", "ne", "gt", "lt", "ge", "le"].includes(op_1)) {
-                        andParts.push("".concat(item.FilterKey, " ").concat(item.Operator, " '").concat(item.FilterValue, "'"));
-                    }
-                    else if (op_1 === "substringof") {
-                        andParts.push("substringof('".concat(item.FilterValue, "','").concat(item.FilterKey, "')"));
-                    }
-                    else if (op_1 === "in") {
-                        var chunks = [];
-                        for (var j = 0; j < values_1.length; j += MAX_BATCH) {
-                            var slice = values_1.slice(j, j + MAX_BATCH);
-                            chunks.push("(" +
-                                slice.map(function (v) { return "".concat(item.FilterKey, " eq '").concat(v, "'"); }).join(" or ") +
-                                ")");
-                        }
-                        andParts.push(chunks.join(" or "));
-                    }
-                    else if (op_1 === "nin") {
-                        var chunks = [];
-                        for (var j = 0; j < values_1.length; j += MAX_BATCH) {
-                            var slice = values_1.slice(j, j + MAX_BATCH);
-                            chunks.push("(" +
-                                slice
-                                    .map(function (v) { return "".concat(item.FilterKey, " ne '").concat(v, "'"); })
-                                    .join(" and ") +
-                                ")");
-                        }
-                        andParts.push(chunks.join(" and "));
-                    }
-                };
                 for (var _i = 0, group_1 = group; _i < group_1.length; _i++) {
                     var item = group_1[_i];
-                    _loop_2(item);
+                    if (!item.FilterKey)
+                        continue;
+                    var op_1 = item.Operator.toLowerCase();
+                    var value = item.FilterValue;
+                    if (["eq", "ne", "gt", "lt", "ge", "le"].includes(op_1)) {
+                        andParts.push("".concat(item.FilterKey, " ").concat(item.Operator, " '").concat(value, "'"));
+                    }
                 }
-                return "(".concat(andParts.join(" and "), ")");
+                // INNER GROUP = AND
+                return andParts.length > 1
+                    ? "(".concat(andParts.join(" and "), ")")
+                    : andParts[0];
             });
-            parts.push("(".concat(orParts.join(" or "), ")"));
+            // 🔥 KEY FIX HERE
+            if (operator === "and") {
+                parts.push("(".concat(groups.join(" and "), ")"));
+            }
+            else {
+                parts.push("(".concat(groups.join(" or "), ")"));
+            }
             return "continue";
         }
         // EXISTING LOGIC
@@ -388,6 +369,7 @@ var batchGet = function (queries) { return tslib_1.__awaiter(void 0, void 0, voi
                     var _a;
                     var _b, _c, _d;
                     var flatFilters = (q.Filter && q.Filter.flat()) || [];
+                    console.log(flatFilters);
                     var filterStr = _buildODataFilter(flatFilters, (_b = q.FilterCondition) !== null && _b !== void 0 ? _b : "and");
                     var request = (_a = batchedSP_1.web.lists
                         .getByTitle(q.ListName)

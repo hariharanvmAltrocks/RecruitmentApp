@@ -275,7 +275,7 @@ var CareerPortalService = /** @class */ (function () {
                         return [4 /*yield*/, CareerPortalAPI_1.getProfileData
                                 .getCandidateProfile(CandidateID)
                                 .then(function (res) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                var op, _a, RoleProfileDocment, AdvertismentDocment, RoleProfileDoc, AdvertismentDocPromises, EmployeeHR, EmployeeLM, CommentsData, CandidateCV, BusinessLinkPath, BusinessDocument, FamilyLinkPath, FamilyDocument, ProofIdentity, totalExperienceYears, CountryCode, profileExperiance, dob, today, age, monthDiff, dayDiff, getOptAnswers, profileXAgent, AgenName, IdentityID, familyDetails, emergencyContacts, employeeReferenceDetail, companyDetails, PPEData, PPEMaster, ppeMap_1, JobCode, willingRelocated, code, PreviousEmployer, candidateLanguages, _b, years, months, formattedExperience, ContactNumber, GetProfileDahboard;
+                                var op, _a, RoleProfileDocment, AdvertismentDocment, RoleProfileDoc, AdvertismentDocPromises, EmployeeHR, EmployeeLM, CandidateCV, BusinessLinkPath, BusinessDocument, FamilyLinkPath, FamilyDocument, ProofIdentity, totalExperienceYears, CountryCode, profileExperiance, dob, today, age, monthDiff, dayDiff, getOptAnswers, profileXAgent, AgenName, IdentityID, familyDetails, emergencyContacts, employeeReferenceDetail, companyDetails, PPEData, PPEMaster, ppeMap_1, JobCode, willingRelocated, code, PreviousEmployer, candidateLanguages, _b, years, months, formattedExperience, ContactNumber, GetProfileDahboard;
                                 var _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, _31, _32, _33, _34, _35, _36, _37, _38, _39, _40, _41, _42, _43, _44, _45, _46, _47, _48, _49, _50, _51, _52, _53, _54, _55, _56, _57, _58, _59, _60, _61, _62, _63, _64, _65, _66, _67, _68, _69, _70, _71, _72, _73, _74, _75, _76, _77, _78, _79, _80, _81, _82, _83, _84, _85, _86, _87, _88, _89, _90, _91, _92, _93, _94, _95, _96, _97, _98, _99, _100, _101, _102, _103, _104, _105, _106, _107, _108, _109, _110;
                                 return tslib_1.__generator(this, function (_111) {
                                     switch (_111.label) {
@@ -299,53 +299,6 @@ var CareerPortalService = /** @class */ (function () {
                                                 return (((_a = options.Email) === null || _a === void 0 ? void 0 : _a.toLowerCase()) ===
                                                     (RecrutimentData === null || RecrutimentData === void 0 ? void 0 : RecrutimentData.AssignLineManager));
                                             });
-                                            CommentsData = (op === null || op === void 0 ? void 0 : op.profileJobsComments.map(function (item, index) {
-                                                var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
-                                                var updatedData;
-                                                if ((item === null || item === void 0 ? void 0 : item.createdBy) === ConditionConfig_1.RoleName.RecruitmentHR ||
-                                                    (item === null || item === void 0 ? void 0 : item.createdBy) === "Recrutiment HR") {
-                                                    updatedData = {
-                                                        Id: index + 1,
-                                                        JobTitleInEnglish: (_a = EmployeeHR === null || EmployeeHR === void 0 ? void 0 : EmployeeHR.JobTitle) !== null && _a !== void 0 ? _a : "",
-                                                        JobTitleInFrench: (_b = EmployeeHR === null || EmployeeHR === void 0 ? void 0 : EmployeeHR.JobTitleInFrench) !== null && _b !== void 0 ? _b : "",
-                                                        comments: (item === null || item === void 0 ? void 0 : item.comments) || "",
-                                                        Department: (_c = EmployeeHR === null || EmployeeHR === void 0 ? void 0 : EmployeeHR.Department) !== null && _c !== void 0 ? _c : "",
-                                                        Date: item.createdOn ? new Date(item.createdOn) : null,
-                                                        JobTitle: (_d = EmployeeHR === null || EmployeeHR === void 0 ? void 0 : EmployeeHR.JobTitle) !== null && _d !== void 0 ? _d : "",
-                                                        RoleName: ConditionConfig_1.RoleName.RecruitmentHR,
-                                                        Name: "".concat((_e = EmployeeHR === null || EmployeeHR === void 0 ? void 0 : EmployeeHR.FirstName) !== null && _e !== void 0 ? _e : "", " ").concat((_f = EmployeeHR === null || EmployeeHR === void 0 ? void 0 : EmployeeHR.MiddleName) !== null && _f !== void 0 ? _f : "", " ").concat((_g = EmployeeHR === null || EmployeeHR === void 0 ? void 0 : EmployeeHR.LastName) !== null && _g !== void 0 ? _g : "").trim(),
-                                                    };
-                                                }
-                                                else if ((item === null || item === void 0 ? void 0 : item.createdBy) === ConditionConfig_1.RoleName.LineManager ||
-                                                    (item === null || item === void 0 ? void 0 : item.createdBy) === "Line Manager") {
-                                                    updatedData = {
-                                                        Id: index + 1,
-                                                        JobTitleInEnglish: (_h = EmployeeLM === null || EmployeeLM === void 0 ? void 0 : EmployeeLM.JobTitle) !== null && _h !== void 0 ? _h : "",
-                                                        JobTitleInFrench: (_j = EmployeeLM === null || EmployeeLM === void 0 ? void 0 : EmployeeLM.JobTitleInFrench) !== null && _j !== void 0 ? _j : "",
-                                                        comments: (item === null || item === void 0 ? void 0 : item.comments) || "",
-                                                        Department: (_k = EmployeeLM === null || EmployeeLM === void 0 ? void 0 : EmployeeLM.Department) !== null && _k !== void 0 ? _k : "",
-                                                        Date: item.createdOn ? new Date(item.createdOn) : null,
-                                                        JobTitle: (_l = EmployeeLM === null || EmployeeLM === void 0 ? void 0 : EmployeeLM.JobTitle) !== null && _l !== void 0 ? _l : "",
-                                                        RoleName: ConditionConfig_1.RoleName.LineManager,
-                                                        Name: "".concat((_m = EmployeeLM === null || EmployeeLM === void 0 ? void 0 : EmployeeLM.FirstName) !== null && _m !== void 0 ? _m : "", " ").concat((_o = EmployeeLM === null || EmployeeLM === void 0 ? void 0 : EmployeeLM.MiddleName) !== null && _o !== void 0 ? _o : "", " ").concat((_p = EmployeeLM === null || EmployeeLM === void 0 ? void 0 : EmployeeLM.LastName) !== null && _p !== void 0 ? _p : "").trim(),
-                                                    };
-                                                }
-                                                else {
-                                                    // Provide a fallback to ensure `updatedData` is always assigned
-                                                    updatedData = {
-                                                        Id: index + 1,
-                                                        JobTitleInEnglish: "",
-                                                        JobTitleInFrench: "",
-                                                        comments: (item === null || item === void 0 ? void 0 : item.comments) || "",
-                                                        Department: "",
-                                                        Date: item.createdOn ? new Date(item.createdOn) : null,
-                                                        JobTitle: "",
-                                                        RoleName: (_q = item === null || item === void 0 ? void 0 : item.createdBy) !== null && _q !== void 0 ? _q : "Unknown",
-                                                        Name: "",
-                                                    };
-                                                }
-                                                return updatedData;
-                                            })) || [];
                                             return [4 /*yield*/, ServiceExport_1.CommonServices.GetDocumentinUrl((_c = op === null || op === void 0 ? void 0 : op.document) === null || _c === void 0 ? void 0 : _c.filePath)];
                                         case 2:
                                             CandidateCV = _111.sent();
@@ -485,7 +438,7 @@ var CareerPortalService = /** @class */ (function () {
                                                 CandidateResume: CandidateCV.data,
                                                 RoleProfile: RoleProfileDoc,
                                                 // Advertisement: AdvertismentDocPromises,
-                                                Comments: CommentsData,
+                                                Comments: [],
                                                 workflowStatusId: op === null || op === void 0 ? void 0 : op.workflowStatusId,
                                                 hrComments: op === null || op === void 0 ? void 0 : op.hrComments,
                                                 JobVaildFromDate: (_47 = op === null || op === void 0 ? void 0 : op.jobDetail) === null || _47 === void 0 ? void 0 : _47.validFrom,

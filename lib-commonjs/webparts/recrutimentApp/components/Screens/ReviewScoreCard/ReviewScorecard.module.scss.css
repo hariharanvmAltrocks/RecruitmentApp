@@ -4145,7 +4145,7 @@
 .mCommentsModalOverlay {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 2147483647;
   background-color: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(12px);
   display: flex;

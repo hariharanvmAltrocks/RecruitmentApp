@@ -112,7 +112,7 @@ export const InterviewPreparedSet: React.FC<InterviewPreparedProps> = ({
 
                {!q.fromBank && EditFlag && (
               <button
-                className="qc-prepared__remove"
+                className="iq-prepared__remove"
                 onClick={() => onEdit(q.id)}
                 title={strings.Edit}
               >

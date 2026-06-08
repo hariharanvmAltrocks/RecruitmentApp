@@ -36,7 +36,7 @@
   transition: background 0.2s ease;
 }
 .data-table__row:hover {
-  background: #f8fbff;
+  background: var(--app-header-color, #ffffff);
 }
 .data-table__row--selected {
   background: #f3f7ff;

@@ -47,6 +47,7 @@ export interface ModalProps {
   closeOnOutsideClick?: boolean;
   autoClose?: boolean;
   autoCloseDuration?: number;
+  isCOIFlag?: boolean;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -163,6 +164,7 @@ export const ModalPopup: React.FC<ModalProps> = ({
   closeOnOutsideClick = true,
   autoClose = false,
   autoCloseDuration = 3000,
+  isCOIFlag 
 }) => {
   const cfg = CONFIG[type];
 
@@ -235,6 +237,13 @@ export const ModalPopup: React.FC<ModalProps> = ({
             />
 
             {/* Icon */}
+            {isCOIFlag && (
+              <>
+               <div className="popupHeader">
+               <button onClick={onClose} aria-label="Close comments modal"><X size={20} /></button>
+               </div>
+              </>
+            )}
             <div className="modal-popup__icon-wrap">
               <div
                 className="modal-popup__icon-circle"

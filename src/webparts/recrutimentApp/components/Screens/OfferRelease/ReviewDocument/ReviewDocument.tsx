@@ -223,6 +223,13 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
     isPreOnboarding,
   );
 
+  const handleChecklistToggle = useCallback(
+    (id: number, value: boolean) => {
+      updateCheckItem(id, value);
+    },
+    [updateCheckItem],
+  );
+
   const isLoading = signatureLoading;
   const isPageLoading = positionLoading || signatureLoading || bgvStatusLoading;
 
@@ -736,9 +743,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
                         nationalItems={checklist}
                         expatItems={[]}
                         isExpat={isExpat}
-                        onToggle={(id: number, value: boolean) =>
-                          updateCheckItem(id, value)
-                        }
+                        onToggle={handleChecklistToggle}
                         allChecked={allChecked}
                       />
                     )}
@@ -924,7 +929,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = ({
   );
 };
 
-const CandidateRoadmap = ({ statusId }: { statusId: number }) => {
+const CandidateRoadmap = React.memo(({ statusId }: { statusId: number }) => {
   const currentStage = getStageIndexinCandidate(statusId);
 
   return (
@@ -1005,4 +1010,6 @@ const CandidateRoadmap = ({ statusId }: { statusId: number }) => {
       </div>
     </div>
   );
-};
+});
+
+CandidateRoadmap.displayName = "CandidateRoadmap";

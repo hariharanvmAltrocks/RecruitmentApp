@@ -25,7 +25,7 @@ export type ColumnRole = "default" | "evaluation" | "OfferRelease";
 interface UseRecruitmentColumnsOptions {
   role: ColumnRole;
   actionMode: "Upload" | "View";
-  onAction: (item: any) => void;
+  onAction?: (item: any) => void;
   hasProfileCount?: boolean;  
 }
 
@@ -84,27 +84,32 @@ export const useRecruitmentColumns = ({
     );
   }, [hasProfileCount, matricID]);
 
-  const actionColumn: DataTableColumn<RecruitmentItem> = useMemo(
-    () => ({
-      id: "actions",
-      header: "Actions",
-      align: "left",
-      cellClassName: "data-table__cell--actions",
-      render: (item) => (
-        <button
-          className="data-table__action-btn"
-          onClick={() => onActionRef.current(item)}
-          type="button"
-          aria-label={
-            actionMode === strings.Upload ? strings.UploadDocument : strings.ViewVacancy
-          }
-        >
-          {getActionLabel(actionMode, item, matricID)}
-        </button>
-      ),
-    }),
-    [actionMode],
-  );
+const actionColumn = useMemo<DataTableColumn<RecruitmentItem> | null>(
+  () =>
+    onAction
+      ? {
+          id: "actions",
+          header: "Actions",
+          align: "left",
+          cellClassName: "data-table__cell--actions",
+          render: (item) => (
+            <button
+              className="data-table__action-btn"
+              onClick={() => onActionRef.current?.(item)}
+              type="button"
+              aria-label={
+                actionMode === strings.Upload
+                  ? strings.UploadDocument
+                  : strings.ViewVacancy
+              }
+            >
+              {getActionLabel(actionMode, item, matricID)}
+            </button>
+          ),
+        }
+      : null,
+  [actionMode, matricID, onAction]
+);
 
   const defaultColumns: DataTableColumn<RecruitmentItem>[] = useMemo(
     () => [
@@ -185,7 +190,7 @@ export const useRecruitmentColumns = ({
           );
         },
       },
-      actionColumn,
+      ...(actionColumn ? [actionColumn] : []),
     ],
     [actionColumn, showProfile],
   );
@@ -240,7 +245,7 @@ export const useRecruitmentColumns = ({
           </span>
         ),
       },
-      actionColumn,
+      ...(actionColumn ? [actionColumn] : []),
     ],
     [actionColumn],
   );
@@ -276,6 +281,22 @@ export const useRecruitmentColumns = ({
       </button>
     );
   });
+
+  const offerReleaseActionColumn: DataTableColumn<any> | null = onAction
+  ? {
+      id: "actions",
+      header: "Actions",
+      align: "right",
+      cellClassName: "data-table__cell--actions",
+      render: (item: any) => (
+        <ActionCell
+          item={item}
+          StatusId={item.statusId}
+          onAction={() => onActionRef.current?.(item)}
+        />
+      ),
+    }
+  : null;
 
   const offerReleaseColumns: DataTableColumn<any>[] = useMemo(
     () => [
@@ -320,19 +341,9 @@ export const useRecruitmentColumns = ({
           </span>
         ),
       },
-      {
-        id: "actions",
-        header: "Actions",
-        align: "right",
-        cellClassName: "data-table__cell--actions",
-        render: (item: any) => (
-          <ActionCell
-            item={item}
-            StatusId={item.statusId}
-            onAction={() => onActionRef.current(item)}
-          />
-        ),
-      },
+      ...(offerReleaseActionColumn
+      ? [offerReleaseActionColumn]
+      : []),
     ],
     [onActionRef],
   );

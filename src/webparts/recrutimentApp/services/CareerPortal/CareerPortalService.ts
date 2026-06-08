@@ -280,57 +280,57 @@ export default class CareerPortalService implements Icareerportal {
             );
           });
 
-          const CommentsData: CommentsData[] =
-            op?.profileJobsComments.map((item: any, index: number) => {
-              let updatedData: CommentsData;
+          // const CommentsData: CommentsData[] =
+          //   op?.profileJobsComments.map((item: any, index: number) => {
+          //     let updatedData: CommentsData;
 
-              if (
-                item?.createdBy === RoleName.RecruitmentHR ||
-                item?.createdBy === "Recrutiment HR"
-              ) {
-                updatedData = {
-                  Id: index + 1,
-                  JobTitleInEnglish: EmployeeHR?.JobTitle ?? "",
-                  JobTitleInFrench: EmployeeHR?.JobTitleInFrench ?? "",
-                  comments: item?.comments || "",
-                  Department: EmployeeHR?.Department ?? "",
-                  Date: item.createdOn ? new Date(item.createdOn) : null,
-                  JobTitle: EmployeeHR?.JobTitle ?? "",
-                  RoleName: RoleName.RecruitmentHR,
-                  Name: `${EmployeeHR?.FirstName ?? ""} ${EmployeeHR?.MiddleName ?? ""} ${EmployeeHR?.LastName ?? ""}`.trim(),
-                };
-              } else if (
-                item?.createdBy === RoleName.LineManager ||
-                item?.createdBy === "Line Manager"
-              ) {
-                updatedData = {
-                  Id: index + 1,
-                  JobTitleInEnglish: EmployeeLM?.JobTitle ?? "",
-                  JobTitleInFrench: EmployeeLM?.JobTitleInFrench ?? "",
-                  comments: item?.comments || "",
-                  Department: EmployeeLM?.Department ?? "",
-                  Date: item.createdOn ? new Date(item.createdOn) : null,
-                  JobTitle: EmployeeLM?.JobTitle ?? "",
-                  RoleName: RoleName.LineManager,
-                  Name: `${EmployeeLM?.FirstName ?? ""} ${EmployeeLM?.MiddleName ?? ""} ${EmployeeLM?.LastName ?? ""}`.trim(),
-                };
-              } else {
-                // Provide a fallback to ensure `updatedData` is always assigned
-                updatedData = {
-                  Id: index + 1,
-                  JobTitleInEnglish: "",
-                  JobTitleInFrench: "",
-                  comments: item?.comments || "",
-                  Department: "",
-                  Date: item.createdOn ? new Date(item.createdOn) : null,
-                  JobTitle: "",
-                  RoleName: item?.createdBy ?? "Unknown",
-                  Name: "",
-                };
-              }
+          //     if (
+          //       item?.createdBy === RoleName.RecruitmentHR ||
+          //       item?.createdBy === "Recrutiment HR"
+          //     ) {
+          //       updatedData = {
+          //         Id: index + 1,
+          //         JobTitleInEnglish: EmployeeHR?.JobTitle ?? "",
+          //         JobTitleInFrench: EmployeeHR?.JobTitleInFrench ?? "",
+          //         comments: item?.comments || "",
+          //         Department: EmployeeHR?.Department ?? "",
+          //         Date: item.createdOn ? new Date(item.createdOn) : null,
+          //         JobTitle: EmployeeHR?.JobTitle ?? "",
+          //         RoleName: RoleName.RecruitmentHR,
+          //         Name: `${EmployeeHR?.FirstName ?? ""} ${EmployeeHR?.MiddleName ?? ""} ${EmployeeHR?.LastName ?? ""}`.trim(),
+          //       };
+          //     } else if (
+          //       item?.createdBy === RoleName.LineManager ||
+          //       item?.createdBy === "Line Manager"
+          //     ) {
+          //       updatedData = {
+          //         Id: index + 1,
+          //         JobTitleInEnglish: EmployeeLM?.JobTitle ?? "",
+          //         JobTitleInFrench: EmployeeLM?.JobTitleInFrench ?? "",
+          //         comments: item?.comments || "",
+          //         Department: EmployeeLM?.Department ?? "",
+          //         Date: item.createdOn ? new Date(item.createdOn) : null,
+          //         JobTitle: EmployeeLM?.JobTitle ?? "",
+          //         RoleName: RoleName.LineManager,
+          //         Name: `${EmployeeLM?.FirstName ?? ""} ${EmployeeLM?.MiddleName ?? ""} ${EmployeeLM?.LastName ?? ""}`.trim(),
+          //       };
+          //     } else {
+          //       // Provide a fallback to ensure `updatedData` is always assigned
+          //       updatedData = {
+          //         Id: index + 1,
+          //         JobTitleInEnglish: "",
+          //         JobTitleInFrench: "",
+          //         comments: item?.comments || "",
+          //         Department: "",
+          //         Date: item.createdOn ? new Date(item.createdOn) : null,
+          //         JobTitle: "",
+          //         RoleName: item?.createdBy ?? "Unknown",
+          //         Name: "",
+          //       };
+          //     }
 
-              return updatedData;
-            }) || [];
+          //     return updatedData;
+          //   }) || [];
 
           const CandidateCV = await CommonServices.GetDocumentinUrl(
             op?.document?.filePath,
@@ -524,7 +524,7 @@ export default class CareerPortalService implements Icareerportal {
             CandidateResume: CandidateCV.data,
             RoleProfile: RoleProfileDoc,
             // Advertisement: AdvertismentDocPromises,
-            Comments: CommentsData,
+            Comments: [],
             workflowStatusId: op?.workflowStatusId,
             hrComments: op?.hrComments,
             JobVaildFromDate: op?.jobDetail?.validFrom,

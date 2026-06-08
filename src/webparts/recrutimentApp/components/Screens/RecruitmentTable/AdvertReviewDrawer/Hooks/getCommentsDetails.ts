@@ -33,7 +33,7 @@ export const useCommentsDetails = (RecId: number | null) => {
         );
 
       if (response.status === ResponeStatus.SUCCESS) {
-        const data = response.data[0];
+        const data = response.data;
         setData(data);
         setLoading(false);
         return;

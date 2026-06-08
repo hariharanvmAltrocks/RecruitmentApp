@@ -12,6 +12,7 @@ export interface ModalState {
   confirmLabel?: string;
   cancelLabel?: string;
   isLoading?: boolean;
+  isCOIFlag? :boolean;
 }
 
 export const useModalPopup = () => {

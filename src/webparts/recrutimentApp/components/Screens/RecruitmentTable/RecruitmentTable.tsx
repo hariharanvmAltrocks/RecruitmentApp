@@ -53,6 +53,8 @@ const AdvertExtension = React.lazy(() =>
   })),
 );
 
+const getRowId = (item: any) => item.id;
+
 export const RecruitmentTable: React.FC = () => {
   const { tabs, loading: tabsLoading } = useTabDetails();
   const { activeTab } = useUIState();
@@ -237,28 +239,15 @@ export const RecruitmentTable: React.FC = () => {
   );
 
   const handleToggleAll = useCallback(() => {
+    const pageIds = paginatedItems.map((item) => item.id);
+    const allSelected =
+      pageIds.length > 0 && pageIds.every((id) => selectedIds.includes(id));
+
     setSelectedIds((prev) =>
       allSelected
         ? prev.filter((id) => !pageIds.includes(id))
         : Array.from(new Set([...prev, ...pageIds])),
     );
-    // const allSameNationality = (items: typeof selectedItems): boolean => {
-    //   if (items.length === 0) return false;
-    //   return items.every((item) => item.nationality === items[0].nationality);
-    // };
-    // if (!allSameNationality(selectedItems)) {
-    //   showModal({
-    //     type: "warning",
-    //     title: "Nationality Mismatch",
-    //     message: "You cannot assign HR for different nationality.",
-    //     confirmLabel: "OK",
-    //     onConfirm: closeModal,
-    //   });
-    //   return;
-    // }
-    const pageIds = paginatedItems.map((item) => item.id);
-    const allSelected =
-      pageIds.length > 0 && pageIds.every((id) => selectedIds.includes(id));
   }, [paginatedItems, selectedIds]);
 
   const processingRef = useRef(false);
@@ -463,7 +452,7 @@ export const RecruitmentTable: React.FC = () => {
           data={paginatedItems}
           enableCheckbox={activeTabs?.tableMode === "checkbox"}
           selectedRowIds={selectedIds}
-          getRowId={(item) => item.id}
+          getRowId={getRowId}
           onToggleRow={handleToggleRow}
           onToggleAll={handleToggleAll}
           pageSize={pageSize}

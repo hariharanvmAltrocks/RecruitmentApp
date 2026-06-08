@@ -59,6 +59,8 @@ interface DashboardProps {
   props: any;
 }
 
+const getRowId = (item: any) => item.id;
+
 const Mytracker: React.FC<DashboardProps> = () => {
   const navigate = useNavigate();
 
@@ -100,7 +102,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
   const { items: trackerData, loading: trackerLoading } =
     useRecruitmentDetails(refreshKey);
 
-      const { MatricData } = useRoleContext();
+      const { MatricData, refreshMetrics } = useRoleContext();
 
   // const martics = useDashboardMetrics(refreshKey);
 
@@ -160,9 +162,10 @@ const Mytracker: React.FC<DashboardProps> = () => {
     [setNavigationPath, setActiveTab, setCurrentTabName, setMatricID],
   );
 
-  const handleRefresh = useCallback(() => {
+  const handleRefresh = useCallback(async () => {
     setRefreshKey((prev) => prev + 1);
-  }, []);
+    await refreshMetrics();
+  }, [refreshMetrics]);
 
   const totalCount = items.length;
 
@@ -219,28 +222,15 @@ const Mytracker: React.FC<DashboardProps> = () => {
   );
 
   const handleToggleAll = useCallback(() => {
+    const pageIds = paginatedItems.map((item) => item.id);
+    const allSelected =
+      pageIds.length > 0 && pageIds.every((id) => selectedIds.includes(id));
+
     setSelectedIds((prev) =>
       allSelected
         ? prev.filter((id) => !pageIds.includes(id))
         : Array.from(new Set([...prev, ...pageIds])),
     );
-    // const allSameNationality = (items: typeof selectedItems): boolean => {
-    //   if (items.length === 0) return false;
-    //   return items.every((item) => item.nationality === items[0].nationality);
-    // };
-    // if (!allSameNationality(selectedItems)) {
-    //   showModal({
-    //     type: "warning",
-    //     title: "Nationality Mismatch",
-    //     message: "You cannot assign HR for different nationality.",
-    //     confirmLabel: "OK",
-    //     onConfirm: closeModal,
-    //   });
-    //   return;
-    // }
-    const pageIds = paginatedItems.map((item) => item.id);
-    const allSelected =
-      pageIds.length > 0 && pageIds.every((id) => selectedIds.includes(id));
   }, [paginatedItems, selectedIds]);
 
   const handleClosePopup = useCallback(() => {
@@ -430,12 +420,17 @@ const shouldShowProfile =
       activeMetric === MatricID.EvalutionHR ||
         activeMetric === MatricID.EvalutionLM ||
         activeMetric === MatricID.EvalutionHOD ||
-        activeMetric === MatricID.EvalutionEXCO
+        activeMetric === MatricID.EvalutionEXCO ||
+        activeMetric === MatricID.interviewSchedule
         ? "evaluation"
         : activeMetric === MatricID.LabourHire ||
           activeMetric === MatricID.Kcsa ||
           activeMetric === MatricID.BackgroundCheck ||
-          activeMetric === MatricID.MySubmissionBGV
+          activeMetric === MatricID.MySubmissionBGV ||
+          activeMetric === MatricID.OfferRelease ||
+          activeMetric === MatricID.OfferAccepted ||
+          activeMetric === MatricID.OfferRejected ||
+           activeMetric === MatricID.Onbording
           ? "OfferRelease"
           : "default",
     actionMode: "View",
@@ -443,9 +438,15 @@ const shouldShowProfile =
       activeMetric === MatricID.LabourHire ||
         activeMetric === MatricID.Kcsa ||
         activeMetric === MatricID.BackgroundCheck ||
-        activeMetric === MatricID.MySubmissionBGV
+        activeMetric === MatricID.MySubmissionBGV 
         ? handleActionOffer
-        : handleAction,
+        : activeMetric === MatricID.OfferRelease ||
+          activeMetric === MatricID.OfferAccepted ||
+          activeMetric === MatricID.OfferRejected ||
+           activeMetric === MatricID.interviewSchedule ||
+           activeMetric === MatricID.Onbording
+           ? undefined 
+           : handleAction,
     hasProfileCount : shouldShowProfile
   });
 
@@ -568,7 +569,7 @@ const shouldShowProfile =
                         data={paginatedItems}
                         enableCheckbox={activeMetric === MatricID.AssignHr || activeMetric === MatricID.AssignAgencies}
                         selectedRowIds={selectedIds}
-                        getRowId={(item) => item.id}
+                        getRowId={getRowId}
                         onToggleRow={handleToggleRow}
                         onToggleAll={handleToggleAll}
                         pageSize={pageSize}

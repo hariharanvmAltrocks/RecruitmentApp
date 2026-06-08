@@ -211,7 +211,21 @@ var RoleProvider = function (_a) {
     var roleIDs = React.useMemo(function () {
         return state.resolvedRoles.map(function (r) { return r.ID; });
     }, [state.resolvedRoles]);
-    var _d = (0, useDashboardMetrics_1.useDashboardMetrics)(roleIDs, state.userEmail), matricData = _d.metrics, metricsLoading = _d.loading;
+    var _d = (0, useDashboardMetrics_1.useDashboardMetrics)(roleIDs, state.userEmail), matricData = _d.metrics, metricsLoading = _d.loading, refresh = _d.refresh;
+    var refreshMetrics = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+        return tslib_1.__generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (roleIDs.length === 0 || !state.userEmail) {
+                        return [2 /*return*/];
+                    }
+                    return [4 /*yield*/, refresh()];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    }); }, [refresh, roleIDs, state.userEmail]);
     (0, react_1.useEffect)(function () {
         if (state.resolvedRoles.length > 0) {
             dispatch({ type: "SET_MATRIC_DATA", MatricData: matricData });
@@ -312,7 +326,7 @@ var RoleProvider = function (_a) {
         void initialise();
     }, [initialise]);
     var ADGroupData = buildADGroupData(state.resolvedRoles, state.userName);
-    var combinedLoading = state.isLoading || (state.resolvedRoles.length > 0 && metricsLoading);
+    var combinedLoading = state.isLoading || (state.resolvedRoles.length > 0 && metricsLoading && state.MatricData.length === 0);
     var contextValue = {
         roleIDs: ADGroupData.roleIDs,
         userName: state.userName,
@@ -323,7 +337,8 @@ var RoleProvider = function (_a) {
         showRoleSelector: showRoleSelector,
         setShowRoleSelector: setShowRoleSelector,
         MatricData: state.MatricData,
-        DepartmentData: state.DepartmentData
+        DepartmentData: state.DepartmentData,
+        refreshMetrics: refreshMetrics
     };
     var isFullyReady = !combinedLoading &&
         !state.error &&

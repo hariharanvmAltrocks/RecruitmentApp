@@ -73,6 +73,25 @@
   }
 }
 
+.popupHeader {
+  width: 93%;
+  padding: 10px;
+  // border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  // background: #f8fafc;
+  button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #64748b;
+    padding: 0;
+    display: flex;
+    &:hover { color: #1e293b; }
+  }
+}
+
 // ── Circular gradient icon ────────────────────────────────────────────────────
 .modal-popup__icon-wrap {
   display: flex;

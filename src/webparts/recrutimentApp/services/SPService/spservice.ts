@@ -70,66 +70,40 @@ const _buildODataFilter = (
 
   for (const f of filters) {
     // NEW LOGIC FOR OrFilters
-    if (f.OrFilters && Array.isArray(f.OrFilters)) {
-      const orParts = f.OrFilters.map((group: IFilter[]) => {
-        const andParts: string[] = [];
+   if (f.OrFilters && Array.isArray(f.OrFilters)) {
+  const operator = f.Operator?.toLowerCase();
 
-        for (const item of group) {
-          if (!item.FilterKey) continue;
+  const groups = f.OrFilters.map((group: IFilter[]) => {
+    const andParts: string[] = [];
 
-          const op = item.Operator.toLowerCase();
-          const values = Array.isArray(item.FilterValue)
-            ? item.FilterValue
-            : [item.FilterValue];
+    for (const item of group) {
+      if (!item.FilterKey) continue;
 
-          if (["eq", "ne", "gt", "lt", "ge", "le"].includes(op)) {
-            andParts.push(
-              `${item.FilterKey} ${item.Operator} '${item.FilterValue}'`,
-            );
-          } else if (op === "substringof") {
-            andParts.push(
-              `substringof('${item.FilterValue}','${item.FilterKey}')`,
-            );
-          } else if (op === "in") {
-            const chunks: string[] = [];
+      const op = item.Operator.toLowerCase();
+      const value = item.FilterValue;
 
-            for (let j = 0; j < values.length; j += MAX_BATCH) {
-              const slice = values.slice(j, j + MAX_BATCH);
-
-              chunks.push(
-                "(" +
-                  slice.map((v) => `${item.FilterKey} eq '${v}'`).join(" or ") +
-                  ")",
-              );
-            }
-
-            andParts.push(chunks.join(" or "));
-          } else if (op === "nin") {
-            const chunks: string[] = [];
-
-            for (let j = 0; j < values.length; j += MAX_BATCH) {
-              const slice = values.slice(j, j + MAX_BATCH);
-
-              chunks.push(
-                "(" +
-                  slice
-                    .map((v) => `${item.FilterKey} ne '${v}'`)
-                    .join(" and ") +
-                  ")",
-              );
-            }
-
-            andParts.push(chunks.join(" and "));
-          }
-        }
-
-        return `(${andParts.join(" and ")})`;
-      });
-
-      parts.push(`(${orParts.join(" or ")})`);
-
-      continue;
+      if (["eq", "ne", "gt", "lt", "ge", "le"].includes(op)) {
+        andParts.push(
+          `${item.FilterKey} ${item.Operator} '${value}'`,
+        );
+      }
     }
+
+    // INNER GROUP = AND
+    return andParts.length > 1
+      ? `(${andParts.join(" and ")})`
+      : andParts[0];
+  });
+
+  // 🔥 KEY FIX HERE
+  if (operator === "and") {
+    parts.push(`(${groups.join(" and ")})`);
+  } else {
+    parts.push(`(${groups.join(" or ")})`);
+  }
+
+  continue;
+}
 
     // EXISTING LOGIC
     if (!f.FilterKey) continue;
@@ -401,6 +375,8 @@ const batchGet = async (
     const results: Record<number, any> = {};
     const promises = queries.map((q: any) => {
       const flatFilters = (q.Filter && q.Filter.flat()) || [];
+      console.log(flatFilters);
+      
       const filterStr = _buildODataFilter(
         flatFilters,
         q.FilterCondition ?? "and",

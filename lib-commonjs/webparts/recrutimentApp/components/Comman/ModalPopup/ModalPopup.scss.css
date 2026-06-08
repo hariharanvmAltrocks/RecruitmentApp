@@ -59,6 +59,25 @@
   opacity: 0.5;
 }
 
+.popupHeader {
+  width: 93%;
+  padding: 10px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+.popupHeader button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  padding: 0;
+  display: flex;
+}
+.popupHeader button:hover {
+  color: #1e293b;
+}
+
 .modal-popup__icon-wrap {
   display: flex;
   justify-content: center;

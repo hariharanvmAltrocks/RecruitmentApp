@@ -544,7 +544,15 @@ var MatricColums = function (roles) {
                     roleColumns = [
                         buildCol(ConditionConfig_1.MatricID.AdvertReviewHOD, { showArrow: true }),
                         buildCol(ConditionConfig_1.MatricID.EvalutionHOD, { showArrow: true }),
-                        buildCol(ConditionConfig_1.MatricID.ReviewScoreCard, { showArrow: true }),
+                        buildCol(ConditionConfig_1.MatricID.ReviewScoreCard, {
+                            showArrow: true,
+                            externalApi: {
+                                workflowStatuses: [
+                                    Config_1.workflowStatusApi.pendingHODSelection,
+                                ],
+                            },
+                        }),
+                        // buildCol(MatricID., { showArrow: true }),
                         buildCol(ConditionConfig_1.MatricID.advertExtension, { showArrow: true }),
                         buildCol(ConditionConfig_1.MatricID.interviewSchedule, { showArrow: false }),
                         buildCol(ConditionConfig_1.MatricID.OfferRelease, { showArrow: false }),
@@ -699,8 +707,6 @@ var MetricQueryConfig = function (EmailId, roles) {
             columnName: "HOD",
             emailId: EmailId,
         })),
-        // ✅ Advert Review LM
-        // ✅ Advert Review HOD + LM Combined (when same person)
         _a[ConditionConfig_1.MatricID.AdvertReviewLM] = (function () {
             var isHODandLM = roles.includes(Config_1.RoleID.HOD) && roles.includes(Config_1.RoleID.LineManager);
             if (isHODandLM) {
@@ -713,14 +719,14 @@ var MetricQueryConfig = function (EmailId, roles) {
                                     {
                                         FilterKey: "StatusId",
                                         Operator: "eq",
-                                        FilterValue: 26,
+                                        FilterValue: Config_1.StatusId.PendingReviewAdvertHOD,
                                     },
                                 ],
                                 [
                                     {
                                         FilterKey: "StatusId",
                                         Operator: "eq",
-                                        FilterValue: 125,
+                                        FilterValue: Config_1.StatusId.PendingwithLineManagereviewAdv,
                                     },
                                 ],
                             ],

@@ -216,14 +216,23 @@ var DashboardService = /** @class */ (function () {
                         portalItems = _a.sent();
                         jobCodeIdToUniqueKey = new Map(portalItems.map(function (item) { return [item.JobCodeId, item.JobUniqueKey]; }));
                         return [4 /*yield*/, Promise.all(externalMetrics.map(function (metric) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                var jobCodeIds, jobUniqueKeys, params, response, total, level2Filter, level2, _a;
-                                var _b, _c, _d, _e, _f, _g, _h, _j, _k;
-                                return tslib_1.__generator(this, function (_l) {
-                                    switch (_l.label) {
+                                var jobCodeIds, uniqueJobCodeCount, jobUniqueKeys, params, response, total, level2Filter, level2, uniqueLevel2JobCodes, _a;
+                                var _b, _c, _d, _e, _f, _g, _h;
+                                return tslib_1.__generator(this, function (_j) {
+                                    switch (_j.label) {
                                         case 0:
                                             jobCodeIds = ((_b = spCounts[metric.id]) !== null && _b !== void 0 ? _b : [])
                                                 .map(function (item) { return item.JobCodeId; })
                                                 .filter(Boolean);
+                                            if (!(metric.id === ConditionConfig_1.MatricID.ReviewScoreCard)) return [3 /*break*/, 1];
+                                            uniqueJobCodeCount = ((_c = spCounts[metric.id]) !== null && _c !== void 0 ? _c : [])
+                                                .map(function (item) { return item.JobCodeId; })
+                                                .filter(Boolean)
+                                                .filter(function (jobCodeId, index, arr) {
+                                                return arr.indexOf(jobCodeId) === index;
+                                            }).length;
+                                            return [2 /*return*/, result.set(String(metric.id), uniqueJobCodeCount)];
+                                        case 1:
                                             jobUniqueKeys = jobCodeIds
                                                 .map(function (id) { return jobCodeIdToUniqueKey.get(id); })
                                                 .filter(function (key) { return !!key; });
@@ -235,16 +244,18 @@ var DashboardService = /** @class */ (function () {
                                                 jobCodes: jobUniqueKeys,
                                                 workflowStatus: metric.externalApi.workflowStatuses,
                                             };
-                                            _l.label = 1;
-                                        case 1:
-                                            _l.trys.push([1, 5, , 6]);
-                                            return [4 /*yield*/, CareerPortalAPI_1.getProfileData.GetJobAppliedCount(params)];
+                                            _j.label = 2;
                                         case 2:
-                                            response = _l.sent();
-                                            total = Array.isArray((_c = response === null || response === void 0 ? void 0 : response.data) === null || _c === void 0 ? void 0 : _c.data)
-                                                ? (_e = (_d = response === null || response === void 0 ? void 0 : response.data) === null || _d === void 0 ? void 0 : _d.data) === null || _e === void 0 ? void 0 : _e.reduce(function (sum, item) { var _a; return sum + ((_a = item.count) !== null && _a !== void 0 ? _a : 0); }, 0)
-                                                : ((_h = (_g = (_f = response === null || response === void 0 ? void 0 : response.data) === null || _f === void 0 ? void 0 : _f.data) === null || _g === void 0 ? void 0 : _g.count) !== null && _h !== void 0 ? _h : 0);
-                                            if (!(metric.id === ConditionConfig_1.MatricID.AssignInterviewPanel)) return [3 /*break*/, 4];
+                                            _j.trys.push([2, 6, , 7]);
+                                            return [4 /*yield*/, CareerPortalAPI_1.getProfileData.GetJobAppliedCount(params)];
+                                        case 3:
+                                            response = _j.sent();
+                                            total = Array.isArray((_d = response === null || response === void 0 ? void 0 : response.data) === null || _d === void 0 ? void 0 : _d.data)
+                                                ? response.data.data.filter(function (item) { var _a; return ((_a = item.count) !== null && _a !== void 0 ? _a : 0) > 0; }).length
+                                                : ((_g = (_f = (_e = response === null || response === void 0 ? void 0 : response.data) === null || _e === void 0 ? void 0 : _e.data) === null || _f === void 0 ? void 0 : _f.count) !== null && _g !== void 0 ? _g : 0) > 0
+                                                    ? 1
+                                                    : 0;
+                                            if (!(metric.id === ConditionConfig_1.MatricID.AssignInterviewPanel)) return [3 /*break*/, 5];
                                             level2Filter = [
                                                 {
                                                     FilterKey: "StatusId",
@@ -258,19 +269,22 @@ var DashboardService = /** @class */ (function () {
                                                 },
                                             ];
                                             return [4 /*yield*/, this.GetCandidateDetails(level2Filter, "and")];
-                                        case 3:
-                                            level2 = _l.sent();
-                                            total += (_k = (_j = level2 === null || level2 === void 0 ? void 0 : level2.data) === null || _j === void 0 ? void 0 : _j.length) !== null && _k !== void 0 ? _k : 0;
-                                            _l.label = 4;
                                         case 4:
-                                            result.set(String(metric.id), total);
-                                            return [3 /*break*/, 6];
+                                            level2 = _j.sent();
+                                            uniqueLevel2JobCodes = new Set(((_h = level2 === null || level2 === void 0 ? void 0 : level2.data) !== null && _h !== void 0 ? _h : [])
+                                                .map(function (item) { return item.JobCodeId; })
+                                                .filter(Boolean));
+                                            total += uniqueLevel2JobCodes.size;
+                                            _j.label = 5;
                                         case 5:
-                                            _a = _l.sent();
+                                            result.set(String(metric.id), total);
+                                            return [3 /*break*/, 7];
+                                        case 6:
+                                            _a = _j.sent();
                                             // eslint-disable-line
                                             result.set(String(metric.id), 0);
-                                            return [3 /*break*/, 6];
-                                        case 6: return [2 /*return*/];
+                                            return [3 /*break*/, 7];
+                                        case 7: return [2 /*return*/];
                                     }
                                 });
                             }); }))];

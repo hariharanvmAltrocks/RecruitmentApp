@@ -86,6 +86,9 @@ var ReviewDocument = function (_a) {
     var isExpat = (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.NationalityCode) !== ConditionConfig_1.NationalityCode.Nationals;
     var isPreOnboarding = (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) === Config_1.StatusId.PendingHRpreonboardingchecklist;
     var _s = (0, fetchPreChecklist_1.usePreChecklist)(isExpat, (_e = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.PreChecklist) !== null && _e !== void 0 ? _e : undefined, isPreOnboarding), checklist = _s.checklist, allChecked = _s.allChecked, loading = _s.loading, updateCheckItem = _s.updateCheckItem;
+    var handleChecklistToggle = (0, react_1.useCallback)(function (id, value) {
+        updateCheckItem(id, value);
+    }, [updateCheckItem]);
     var isLoading = signatureLoading;
     var isPageLoading = positionLoading || signatureLoading || bgvStatusLoading;
     (0, react_1.useEffect)(function () {
@@ -465,9 +468,7 @@ var ReviewDocument = function (_a) {
                     vis.showWorkPermitUpload && (react_1.default.createElement(Workpermituploadbox_1.WorkPermitUploadBox, { fileInputRef: fileInputRef, selectedFile: selectedFile, isReading: isReading, hasFileError: validationError.workPermit, disabled: isAnySubmitting, onUploadClick: handleUploadClick, onFileChange: handleFileChange, onClearFile: clearFile })),
                     vis.showUploadDocument && (react_1.default.createElement(UploadDocument_1.UploadDocument, { multiple: false, acceptedFormats: ".pdf", label: vis.uploadDocLabel, required: true, onChange: handleDocumnetUpload, disabled: isAnySubmitting, hasError: validationError.uploadError })),
                     (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) ===
-                        Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement(Prechecklist_1.default, { nationalItems: checklist, expatItems: [], isExpat: isExpat, onToggle: function (id, value) {
-                            return updateCheckItem(id, value);
-                        }, allChecked: allChecked })),
+                        Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement(Prechecklist_1.default, { nationalItems: checklist, expatItems: [], isExpat: isExpat, onToggle: handleChecklistToggle, allChecked: allChecked })),
                     !vis.ViewFlag &&
                         (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusID) !=
                             Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, disabled: isAnySubmitting, commentError: validationError.comments, checkboxError: validationError.acknowledgement, acknowledgementLabel: ConditionConfig_1.CheckboxContent.PostRecrutimentCheckboxContent })),
@@ -516,7 +517,7 @@ var ReviewDocument = function (_a) {
         react_1.default.createElement(commentsPopup_1.ViewCommentsModal, { isOpen: showComments, onClose: function () { return setshowComments(false); }, comments: bgvComments, title: "View BGV Comments", isLoading: false })))));
 };
 exports.ReviewDocument = ReviewDocument;
-var CandidateRoadmap = function (_a) {
+var CandidateRoadmap = react_1.default.memo(function (_a) {
     var statusId = _a.statusId;
     var currentStage = (0, PositionStatusConfig_1.getStageIndexinCandidate)(statusId);
     return (react_1.default.createElement("div", { className: "advert-roadmap" },
@@ -543,5 +544,6 @@ var CandidateRoadmap = function (_a) {
                                 : "advert-roadmap__label--pending") }, stage.label),
                     isCompleted && (react_1.default.createElement("span", { className: "advert-roadmap__status-done" }, strings.Done)))));
         }))));
-};
+});
+CandidateRoadmap.displayName = "CandidateRoadmap";
 //# sourceMappingURL=ReviewDocument.js.map

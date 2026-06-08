@@ -61,6 +61,7 @@ import {
   ScheduleForm,
 } from "./InterviewSchedule/InterviewScheduleInput";
 import * as strings from 'RecrutimentAppWebPartStrings';
+import CustomComments from "../../RecruitmentTable/Components/CommentsModel/CommentsModal";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -290,6 +291,7 @@ export const ShowCandidateDetailsPopup: React.FC<
   const [coi, setCoi] = useState<ConflictOfInterestForm>(EMPTY_COI);
   const [level1, setLevel1] = useState<ScheduleForm>(EMPTY_SCHEDULE);
   const [level2, setLevel2] = useState<ScheduleForm>(EMPTY_SCHEDULE);
+  const [commentsflag, setCommentsflag] = useState(false);
 
   const loading = recordLoading || panelLoading;
 
@@ -320,6 +322,20 @@ export const ShowCandidateDetailsPopup: React.FC<
 
     return { level1Members, level2Members, consultOption };
   }, [paneloptions]);
+
+  const level1PanelOptions = useMemo(() => {
+    return (paneloptions?.Level1 ?? []).map((item) => ({
+      value: String(item.value),
+      label: item.label,
+    }));
+  }, [paneloptions?.Level1]);
+
+  const level2PanelOptions = useMemo(() => {
+    return (paneloptions?.Level2 ?? []).map((item) => ({
+      value: String(item.value),
+      label: item.label,
+    }));
+  }, [paneloptions?.Level2]);
 
   // ── Effects ────────────────────────────────────────────────────────────────
 
@@ -477,17 +493,23 @@ export const ShowCandidateDetailsPopup: React.FC<
     if (fileInputRef.current) fileInputRef.current.value = "";
   }, []);
 
-  const handlePanelToggle = (
-    setter: React.Dispatch<React.SetStateAction<ScheduleForm>>,
-    val: string,
-  ) => {
-    setter((p) => ({
+  const handleToggleLevel1Member = useCallback((val: string) => {
+    setLevel1((p) => ({
       ...p,
       panelMembers: p.panelMembers.includes(val)
         ? p.panelMembers.filter((v) => v !== val)
         : [...p.panelMembers, val],
     }));
-  };
+  }, []);
+
+  const handleToggleLevel2Member = useCallback((val: string) => {
+    setLevel2((p) => ({
+      ...p,
+      panelMembers: p.panelMembers.includes(val)
+        ? p.panelMembers.filter((v) => v !== val)
+        : [...p.panelMembers, val],
+    }));
+  }, []);
 
   const handleSubmit = useCallback(async () => {
     if (!canSubmit) {
@@ -1031,15 +1053,8 @@ export const ShowCandidateDetailsPopup: React.FC<
                     <InterviewScheduleInput
                       form={level1}
                       onChange={setLevel1}
-                      panelOptions={(paneloptions?.Level1 ?? []).map(
-                        (item) => ({
-                          value: String(item.value),
-                          label: item.label,
-                        }),
-                      )}
-                      onToggleMember={(val) =>
-                        handlePanelToggle(setLevel1, val)
-                      }
+                      panelOptions={level1PanelOptions}
+                      onToggleMember={handleToggleLevel1Member}
                       minPanelCount={3}
                       Disable={isLevel2Panel}
                     />
@@ -1062,15 +1077,8 @@ export const ShowCandidateDetailsPopup: React.FC<
                     <InterviewScheduleInput
                       form={level2}
                       onChange={setLevel2}
-                      panelOptions={(paneloptions?.Level2 ?? []).map(
-                        (item) => ({
-                          value: String(item.value),
-                          label: item.label,
-                        }),
-                      )}
-                      onToggleMember={(val) =>
-                        handlePanelToggle(setLevel2, val)
-                      }
+                      panelOptions={level2PanelOptions}
+                      onToggleMember={handleToggleLevel2Member}
                       minPanelCount={3}
                       Disable={false}
                     />
@@ -1166,9 +1174,17 @@ export const ShowCandidateDetailsPopup: React.FC<
                   </motion.section>
                 )}
 
-                {/* <hr className={styles.sectionDivider} /> */}
+                 <div className="mFormGroup">
+              <button
+                onClick={() => setCommentsflag(true)}
+                className="mSubmitBtn"
+                type="button"
+                // disabled={submitHook.submitting}
+              >
+                <FileText size={16} />
+                {strings.ViewComments}</button>
+            </div>
 
-                {/* Comments */}
                 {!rejectedFlag && (
                   <motion.section
                     custom={6}
@@ -1248,6 +1264,12 @@ export const ShowCandidateDetailsPopup: React.FC<
       <FilePreviewModal
         file={previewFile}
         onClose={() => setPreviewFile(null)}
+      />
+       <CustomComments
+        open={commentsflag}
+        loading={recordLoading}
+        Comments={data?.Comments || []}
+        onClose={() => setCommentsflag(false)}
       />
     </>
   );
