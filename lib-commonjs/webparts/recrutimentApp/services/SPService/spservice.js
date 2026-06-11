@@ -239,6 +239,58 @@ var SPReadItems = function (params) { return tslib_1.__awaiter(void 0, void 0, v
         }
     });
 }); };
+/**
+ * Reads a single page of items from a list, using ID-first paging.
+ * This is highly optimized for large lists where server-side pagination ($skip) is unsupported.
+ */
+var SPReadItemsPaged = function (params) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+    var p, filterStr, pageNumber, pageSize, selectFields, selectStr, lightweightItems, totalCount, start, slicedLightweight, pageIds, idFilter, items, itemsMap, sortedItems;
+    var _a, _b;
+    return tslib_1.__generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                p = _formatInputs(params);
+                filterStr = _buildODataFilter(p.Filter, p.FilterCondition);
+                pageNumber = (_a = p.PageNumber) !== null && _a !== void 0 ? _a : 1;
+                pageSize = (_b = p.PageCount) !== null && _b !== void 0 ? _b : 10;
+                selectFields = ["ID"];
+                if (p.Orderby && p.Orderby !== "ID" && !p.Orderby.includes("/")) {
+                    selectFields.push(p.Orderby);
+                }
+                selectStr = selectFields.join(",");
+                return [4 /*yield*/, (0, exports.getSP)()
+                        .web.lists.getByTitle(p.Listname)
+                        .items.select(selectStr)
+                        .filter(filterStr)
+                        .orderBy(p.Orderby, p.Orderbydecorasc)
+                        .top(5000)()];
+            case 1:
+                lightweightItems = _c.sent();
+                totalCount = lightweightItems.length;
+                if (totalCount === 0) {
+                    return [2 /*return*/, { items: [], totalCount: 0 }];
+                }
+                start = (pageNumber - 1) * pageSize;
+                slicedLightweight = lightweightItems.slice(start, start + pageSize);
+                if (slicedLightweight.length === 0) {
+                    return [2 /*return*/, { items: [], totalCount: totalCount }];
+                }
+                pageIds = slicedLightweight.map(function (item) { return item.ID; });
+                idFilter = pageIds.map(function (id) { return "ID eq ".concat(id); }).join(" or ");
+                return [4 /*yield*/, (0, exports.getSP)()
+                        .web.lists.getByTitle(p.Listname)
+                        .items.select(p.Select)
+                        .filter(idFilter)
+                        .expand(p.Expand)
+                        .orderBy(p.Orderby, p.Orderbydecorasc)()];
+            case 2:
+                items = _c.sent();
+                itemsMap = new Map(items.map(function (item) { return [item.ID, item]; }));
+                sortedItems = pageIds.map(function (id) { return itemsMap.get(id); }).filter(Boolean);
+                return [2 /*return*/, { items: sortedItems, totalCount: totalCount }];
+        }
+    });
+}); };
 var SPGetItems = SPReadItems;
 /**
  * Reads a single item by its numeric ID with optional field selection/expand.
@@ -799,6 +851,7 @@ var SPServices = {
     getDocLibFiles: getDocLibFiles,
     addDocLibFiles: addDocLibFiles,
     SPReadItemsCamelQuery: SPReadItemsCamelQuery,
+    SPReadItemsPaged: SPReadItemsPaged,
 };
 exports.default = SPServices;
 // ─── React Hook Example (useSPList.ts) ───────────────────────────────────────

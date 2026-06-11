@@ -1,3 +1,4 @@
+import { SubmitAdvert } from "../../components/Screens/RecruitmentTable/AdvertReviewDrawer/Components/CreateAdvert/CreateAdvert";
 import { ApiResponse } from "../../models/apimodels";
 import { AutoCompleteItem } from "../../models/fieldmodels";
 import { profileXagent, UpsertBGV } from "../../models/Icareerportal";
@@ -237,6 +238,13 @@ export type IRecruitmentService = {
    GetCommentsData(
     filter: any,
   ): Promise<ApiResponse<CommentsData[]>>;
+  PostAdvertisementData(
+      obj: SubmitAdvert,
+    ): Promise<ApiResponse<SubmitAdvert | null>>;
+    UpsertList(
+    obj: any,
+    ListName: string
+  ): Promise<ApiResponse<null>>;
 };
 
 export const stripHtml = (html: string | null | undefined): string => {

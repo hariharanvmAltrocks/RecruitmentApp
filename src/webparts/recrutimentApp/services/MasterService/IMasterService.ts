@@ -1,4 +1,5 @@
 import { ApiResponse } from "../../models/apimodels";
+import { AutoCompleteItem } from "../../models/fieldmodels";
 import { GetAllMaster, GetMasterByCountry } from "../../models/Icareerportal";
 import {
   CareerPortalLink,
@@ -41,6 +42,19 @@ export type IMasterService = {
     JobCodeId: number,
   ): Promise<ApiResponse<IUniqueJobCode>>;
   GetAllMaster(id: number): Promise<ApiResponse<GetAllMaster[] | null>>;
+  GetMasterRoleProfile (ListName: string): Promise<ApiResponse<any[]>>;
   GetCountryMaster(): Promise<ApiResponse<GetMasterByCountry[] | null>>;
   fetchJDEEmailIDs(BUCodeID: number): Promise<ApiResponse<IBUCodeEmailIDs>>;
 };
+
+export const buildOptions = (
+  data: any[],
+  keyField: string,
+  textField: string
+): AutoCompleteItem[] =>
+  data
+    .map((item) => ({
+      key: item[keyField],
+      text: item[textField],
+    }))
+    .sort((a, b) => String(a.text).localeCompare(String(b.text)));

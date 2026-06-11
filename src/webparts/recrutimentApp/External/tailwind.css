@@ -160,6 +160,10 @@
   position: relative !important
 }
 
+.sticky {
+  position: sticky !important
+}
+
 .inset-0 {
   inset: 0px !important
 }

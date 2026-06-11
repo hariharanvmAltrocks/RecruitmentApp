@@ -11,10 +11,10 @@ var ConditionConfig_1 = require("../../../../../../utilities/ConditionConfig");
 var serialize = function (arr, mapFn) {
     return arr && arr.length > 0 ? JSON.stringify(arr.map(mapFn)) : "[]";
 };
-var useHRProcess = function (form, currentRoleID, docs) {
+var useHRProcess = function (form, currentRoleID, docs, createAdvert) {
     var updateMainRecord = (0, useUpdateMainRecord_1.useUpdateMainRecord)(form, currentRoleID).updateMainRecord;
     var handleHRProcess = (0, react_1.useCallback)(function (finalize) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var filterConditions, Conditions, IsActive, IsExtened, portalRes;
+        var filterConditions, Conditions, IsActive, IsExtened, advData, portalRes;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -28,8 +28,31 @@ var useHRProcess = function (form, currentRoleID, docs) {
                     Conditions = "";
                     IsActive = 0;
                     IsExtened = 0;
-                    return [4 /*yield*/, ServiceExport_1.RecruitmentServices.UploadAdvertisementInPortal(filterConditions, Conditions, form, IsActive, IsExtened)];
+                    if (!createAdvert) return [3 /*break*/, 2];
+                    advData = {
+                        Qualification: createAdvert.Qualification,
+                        PreferredQualification: createAdvert.PreferredQualification,
+                        RoleSpecificKnowledgeJson: createAdvert.RoleSpecificKnowledgeJson,
+                        TechnicalSkillsKnowledgeJson: createAdvert.TechnicalSkillsKnowledgeJson,
+                        JobDescription: createAdvert.JobDescription,
+                        RoleProfile: createAdvert.RoleProfile,
+                        JobCodeId: form.JobCodeId,
+                        TotalPreferredExperienceId: createAdvert.TotalPreferredExperienceId,
+                        PreferredExperienceId: Number(createAdvert.PreferredExperienceId),
+                        FunctionTypeId: createAdvert.FunctionTypeId,
+                        JobTitleofFunctionalManagerId: createAdvert.JobTitleofFunctionalManagerId,
+                        JobTitleofLMorSupervisorId: createAdvert.JobTitleofLMorSupervisorId,
+                        FunctionalManagerName: createAdvert.FunctionalManagerName || "",
+                        LineManagerorSupervisorName: createAdvert.LineManagerorSupervisorName,
+                        JobDescriptionFrench: createAdvert.JobDescriptionFrench,
+                        RoleProfileFrench: createAdvert.RoleProfileFrench,
+                    };
+                    return [4 /*yield*/, ServiceExport_1.RecruitmentServices.PostAdvertisementData(advData)];
                 case 1:
+                    _a.sent();
+                    _a.label = 2;
+                case 2: return [4 /*yield*/, ServiceExport_1.RecruitmentServices.UploadAdvertisementInPortal(filterConditions, Conditions, form, IsActive, IsExtened)];
+                case 3:
                     portalRes = _a.sent();
                     if (portalRes.status !== ApiConfig_1.ResponeStatus.SUCCESS)
                         throw new Error("Portal Error");
@@ -37,7 +60,7 @@ var useHRProcess = function (form, currentRoleID, docs) {
                             updateMainRecord(),
                             ServiceExport_1.CommonServices.uploadAttachmentToLibrary(form.JobCode, docs || [], Config_1.DocumentLibraray.RecruitmentAdvertisementDocument),
                         ])];
-                case 2:
+                case 4:
                     _a.sent();
                     //   finalize(
                     //     formState?.AdvertisementDocument?.length === 0

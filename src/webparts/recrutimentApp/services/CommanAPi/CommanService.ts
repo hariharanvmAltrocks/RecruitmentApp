@@ -266,8 +266,35 @@ export default class CommonService implements ICommonService {
     try {
       const listItems: any[] = await SPServices.SPReadItems({
         Listname: ListName,
-        Select: "*",
+        Select:  "*",
         Filter: Filter || [],
+      });
+      return {
+        data: listItems,
+        status: 200,
+        message: "HRMSRecruitmentCandidateDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error(
+        "Error fetching data HRMSRecruitmentCandidateDetails:",
+        error,
+      );
+      return {
+        data: [],
+        status: 500,
+        message: "Error fetching data from HRMSRecruitmentCandidateDetails",
+      };
+    }
+  };
+
+  GetSageMasterData = async (
+    ListName: string,
+  ): Promise<ApiResponse<any[]>> => {
+    try {
+      const listItems: any[] = await SPServices.SPReadItems({
+        Listname: ListName,
+        Select:  `*,JobTitleInEnglish/JobTitleInEnglish,JobTitleInFrench/JobTitleInFrench`,
+        Expand: "JobTitleInEnglish,JobTitleInFrench"
       });
       return {
         data: listItems,

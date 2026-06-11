@@ -7,10 +7,53 @@ var CareerPortalAPI_1 = require("../AxiosService/CareerPortalAPI");
 var spservice_1 = tslib_1.__importDefault(require("../SPService/spservice"));
 var MasterService = /** @class */ (function () {
     function MasterService() {
+        var _this = this;
+        this._masterDataCache = new Map();
+        this.GetMasterRoleProfile = function (listName, selectFields) {
+            if (selectFields === void 0) { selectFields = "*"; }
+            return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                var cacheKey, listItems, error_1;
+                return tslib_1.__generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            _a.trys.push([0, 2, , 3]);
+                            cacheKey = "".concat(listName, "_").concat(selectFields);
+                            if (this._masterDataCache.has(cacheKey)) {
+                                return [2 /*return*/, {
+                                        data: this._masterDataCache.get(cacheKey) || [],
+                                        status: 200,
+                                        message: "Data fetched from cache",
+                                    }];
+                            }
+                            return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                    Listname: listName,
+                                    Select: selectFields,
+                                })];
+                        case 1:
+                            listItems = _a.sent();
+                            this._masterDataCache.set(cacheKey, listItems);
+                            return [2 /*return*/, {
+                                    data: listItems,
+                                    status: 200,
+                                    message: "Data fetched successfully",
+                                }];
+                        case 2:
+                            error_1 = _a.sent();
+                            console.error("Error fetching ".concat(listName), error_1);
+                            return [2 /*return*/, {
+                                    data: [],
+                                    status: 500,
+                                    message: "Error fetching ".concat(listName),
+                                }];
+                        case 3: return [2 /*return*/];
+                    }
+                });
+            });
+        };
     }
     MasterService.prototype.userRole = function () {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var getjsonUserRole, items, error_1;
+            var getjsonUserRole, items, error_2;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -28,8 +71,8 @@ var MasterService = /** @class */ (function () {
                                 message: "Data Fetched Success",
                             }];
                     case 2:
-                        error_1 = _a.sent();
-                        console.log("userRole error", error_1);
+                        error_2 = _a.sent();
+                        console.log("userRole error", error_2);
                         return [2 /*return*/, {
                                 data: undefined,
                                 status: ApiConfig_1.ResponeStatus.FAILED,
@@ -461,7 +504,7 @@ var MasterService = /** @class */ (function () {
     // }
     MasterService.prototype.GetCareerPortalIntergLink = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var GridResult, res, error_2;
+            var GridResult, res, error_3;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -496,8 +539,8 @@ var MasterService = /** @class */ (function () {
                                 message: "GetRecruitmentDetails fetched successfully",
                             }];
                     case 2:
-                        error_2 = _a.sent();
-                        console.error("Error fetching data in GetRecruitmentDetails:", error_2);
+                        error_3 = _a.sent();
+                        console.error("Error fetching data in GetRecruitmentDetails:", error_3);
                         return [2 /*return*/, {
                                 data: {},
                                 status: 500,
@@ -510,7 +553,7 @@ var MasterService = /** @class */ (function () {
     };
     MasterService.prototype.GetTabDetails = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var GridResult, res, error_3;
+            var GridResult, res, error_4;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -543,8 +586,8 @@ var MasterService = /** @class */ (function () {
                                 message: "GetRecruitmentDetails fetched successfully",
                             }];
                     case 2:
-                        error_3 = _a.sent();
-                        console.error("Error fetching data in GetRecruitmentDetails:", error_3);
+                        error_4 = _a.sent();
+                        console.error("Error fetching data in GetRecruitmentDetails:", error_4);
                         return [2 /*return*/, {
                                 data: {},
                                 status: 500,
@@ -557,7 +600,7 @@ var MasterService = /** @class */ (function () {
     };
     MasterService.prototype.GetUserDetails = function (filterParam, filterConditions) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var GridResult, res, error_4;
+            var GridResult, res, error_5;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -626,8 +669,8 @@ var MasterService = /** @class */ (function () {
                                 message: "GetRecruitmentDetails fetched successfully",
                             }];
                     case 3:
-                        error_4 = _a.sent();
-                        console.error("Error fetching data in GetRecruitmentDetails:", error_4);
+                        error_5 = _a.sent();
+                        console.error("Error fetching data in GetRecruitmentDetails:", error_5);
                         return [2 /*return*/, {
                                 data: {},
                                 status: 500,
@@ -640,7 +683,7 @@ var MasterService = /** @class */ (function () {
     };
     MasterService.prototype.GetGradeLevel = function (gradeId) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var GridResult_1, error_5;
+            var GridResult_1, error_6;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -672,8 +715,8 @@ var MasterService = /** @class */ (function () {
                             message: "GetRecruitmentDetails fetched successfully",
                         }];
                     case 3:
-                        error_5 = _a.sent();
-                        console.error("Error fetching data in GetRecruitmentDetails:", error_5);
+                        error_6 = _a.sent();
+                        console.error("Error fetching data in GetRecruitmentDetails:", error_6);
                         return [2 /*return*/, {
                                 data: {},
                                 status: 500,
@@ -686,7 +729,7 @@ var MasterService = /** @class */ (function () {
     };
     MasterService.prototype.GetJobUniqueDataValue = function (JobCodeId) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var GridResult_2, portalItems, error_6;
+            var GridResult_2, portalItems, error_7;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -718,8 +761,8 @@ var MasterService = /** @class */ (function () {
                             message: "GetRecruitmentDetails fetched successfully",
                         }];
                     case 3:
-                        error_6 = _a.sent();
-                        console.error("Error fetching data in GetRecruitmentDetails:", error_6);
+                        error_7 = _a.sent();
+                        console.error("Error fetching data in GetRecruitmentDetails:", error_7);
                         return [2 /*return*/, {
                                 data: {},
                                 status: 500,
@@ -732,7 +775,7 @@ var MasterService = /** @class */ (function () {
     };
     MasterService.prototype.GetAllMaster = function (id) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, GetAllMasterData, error_7;
+            var response, GetAllMasterData, error_8;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -753,8 +796,8 @@ var MasterService = /** @class */ (function () {
                                 message: "Get Candidate details",
                             }];
                     case 2:
-                        error_7 = _a.sent();
-                        console.error("Error Get Candidate details:", error_7);
+                        error_8 = _a.sent();
+                        console.error("Error Get Candidate details:", error_8);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -768,7 +811,7 @@ var MasterService = /** @class */ (function () {
     MasterService.prototype.GetCountryMaster = function () {
         var _a, _b;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var response, GetAllMasterData, error_8;
+            var response, GetAllMasterData, error_9;
             return tslib_1.__generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -788,8 +831,8 @@ var MasterService = /** @class */ (function () {
                                 message: "Get Candidate details",
                             }];
                     case 2:
-                        error_8 = _c.sent();
-                        console.error("Error Get Candidate details:", error_8);
+                        error_9 = _c.sent();
+                        console.error("Error Get Candidate details:", error_9);
                         return [2 /*return*/, {
                                 data: [],
                                 status: 500,
@@ -802,7 +845,7 @@ var MasterService = /** @class */ (function () {
     };
     MasterService.prototype.fetchJDEEmailIDs = function (BUCodeID) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var GridResult_3, error_9;
+            var GridResult_3, error_10;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -841,8 +884,8 @@ var MasterService = /** @class */ (function () {
                             message: "GetRecruitmentDetails fetched successfully",
                         }];
                     case 3:
-                        error_9 = _a.sent();
-                        console.error("Error fetching data in GetRecruitmentDetails:", error_9);
+                        error_10 = _a.sent();
+                        console.error("Error fetching data in GetRecruitmentDetails:", error_10);
                         return [2 /*return*/, {
                                 data: {},
                                 status: 500,

@@ -4,6 +4,8 @@ import {
   CheckboxGroupOption,
   MandatoryCheck,
 } from "../../Components/BGVerification/BGVerification";
+import { StatusId } from "../../../../../utilities/Config";
+import { Nationality } from "../../../../../utilities/ConditionConfig";
 
 export interface AdvertLanguageDetails {
   description: string;
@@ -37,6 +39,8 @@ export interface IBGVData {
 
 export const useAdvertismentDetails = (
   selectedJobCode: number | null,
+  selectedStatusID: number,
+  selectedNationality: string,
   options?: UseAdvertismentDetailsOptions,
 ) => {
   const [data, setData] = useState<AdvertismentDetails | null>(null);
@@ -48,6 +52,8 @@ export const useAdvertismentDetails = (
     checkboxBGV: [],
     mantoryChecks: [],
   });
+
+  const [AdvertFlag, setadvertFlag] = useState<boolean>(false);
 
   // const mockMap = useMemo(
   //   () => ({
@@ -124,10 +130,13 @@ export const useAdvertismentDetails = (
     if (!selectedJobCode || !enabled) {
       setData(null);
       setLoading(false);
+      setadvertFlag(false);
       return;
     }
 
     setLoading(true);
+    setData(null);
+    setadvertFlag(false);
     const timer = setTimeout(async () => {
       try {
         const filterConditions = [
@@ -149,6 +158,7 @@ export const useAdvertismentDetails = (
           response.data.length > 0
         ) {
           const items = response.data[0];
+          setadvertFlag(true);
           const mappedData: AdvertismentDetails = {
             jobId: selectedJobCode.toString(),
             english: {
@@ -236,10 +246,14 @@ export const useAdvertismentDetails = (
           };
 
           setData(mappedData);
-
+          if(selectedStatusID === StatusId.PendingUploadONEM && selectedNationality === Nationality.Expatriate){
           void fetchBVData(response.data);
+          }
+        } else {
+          setadvertFlag(false);
+          setData(null);
         }
-        void fetchBVData(response.data);
+        // void fetchBVData(response.data);
       } catch (error) {
         console.error("Error fetching job details:", error);
       }
@@ -264,5 +278,5 @@ export const useAdvertismentDetails = (
     [BGVValue],
   );
 
-  return { data, BGVValue, loading, handleBvgToggle };
+  return { data, BGVValue, loading, handleBvgToggle, AdvertFlag };
 };

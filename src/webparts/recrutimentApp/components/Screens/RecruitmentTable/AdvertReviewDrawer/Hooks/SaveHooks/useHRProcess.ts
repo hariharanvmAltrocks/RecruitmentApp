@@ -6,55 +6,16 @@ import { ResponeStatus } from "../../../../../../utilities/ApiConfig";
 import { IDptData } from "../../../../../../services/RecruitmentTable/IRecruitmentService";
 import { IDocFiles } from "../../../../../../services/SPService/Ispservice";
 import { RecuritmentHRMsg } from "../../../../../../utilities/ConditionConfig";
+import { SubmitAdvert } from "../../Components/CreateAdvert/CreateAdvert";
 
 const serialize = (arr: any[], mapFn: (item: any) => object) =>
   arr && arr.length > 0 ? JSON.stringify(arr.map(mapFn)) : "[]";
 
-export const useHRProcess = (form: IDptData, currentRoleID: number, docs: IDocFiles[]) => {
+export const useHRProcess = (form: IDptData, currentRoleID: number, docs: IDocFiles[],createAdvert: SubmitAdvert | null) => {
   const { updateMainRecord } = useUpdateMainRecord(form, currentRoleID);
 
   const handleHRProcess = useCallback(
     async (finalize: (msg: string, type?: string) => void) => {
-
-      // const advData = {
-      //   Qualification: serialize(
-      //     qualificationValue.MinQualification,
-      //     (i) => ({ MinQualification: String(i.key) })
-      //   ),
-      //   PreferredQualification: serialize(
-      //     qualificationValue.PrefeQualification,
-      //     (i) => ({ PrefeQualification: String(i.key) })
-      //   ),
-      //   RoleSpecificKnowledgeJson: serialize(roleSpeKnowledgeValue, (i) => ({
-      //     RoleSpeKnowledge: String(i.RoleSpeKnowledge.key),
-      //     RequiredLevel: String(i.RequiredLevel.key),
-      //   })),
-      //   TechnicalSkillsKnowledgeJson: serialize(technicalSkillValue, (i) => ({
-      //     TechnicalSkills: String(i.TechnicalSkills.key),
-      //     LevelProficiency: String(i.LevelProficiency.key),
-      //   })),
-      //   JobDescription: advDetails.JobDescription,
-      //   RoleProfile: advDetails.RolePurpose,
-      //   JobCodeId: formState.JobCodeId,
-      //   TotalPreferredExperienceId: Number(advDetails.TotalExperience.key),
-      //   PreferredExperienceId: Number(advDetails.ExperienceinMiningIndustry.key),
-      //   FunctionTypeId: advDetails.JobFunctionalType.key,
-      //   JobTitleofFunctionalManagerId: advDetails.JobTitleofFunctionalManager.key,
-      //   JobTitleofLMorSupervisorId: advDetails.JobTitleofLineManagerSupervisor.key,
-      //   FunctionalManagerName: advDetails.FunctionalManagerName?.text || "",
-      //   LineManagerorSupervisorName: advDetails.LineManagerSupervisorName?.text || "",
-      //   JobDescriptionFrench: advDetails.JobDescription_fr,
-      //   RoleProfileFrench: advDetails.RolePurpose_fr,
-      // };
-
-      // if (!advDetails.JobcodeChecked) {
-      //   const roleRes = await CommonServices.PostCommanDataInsert(
-      //     advData,
-      //     ListNames.HRMSRecruitmentRoleProfileDetails
-      //   );
-      //   if (roleRes?.status !== ResponeStatus.SUCCESS)
-      //     throw new Error("Role Profile Error");
-      // }
 
       const filterConditions = [
         {
@@ -66,6 +27,28 @@ export const useHRProcess = (form: IDptData, currentRoleID: number, docs: IDocFi
       const Conditions = "";
       const IsActive = 0
       const IsExtened = 0
+      
+      if(createAdvert){
+    const advData = {
+        Qualification: createAdvert.Qualification,
+        PreferredQualification: createAdvert.PreferredQualification,
+        RoleSpecificKnowledgeJson: createAdvert.RoleSpecificKnowledgeJson,
+        TechnicalSkillsKnowledgeJson:createAdvert.TechnicalSkillsKnowledgeJson,
+        JobDescription: createAdvert.JobDescription,
+        RoleProfile: createAdvert.RoleProfile,
+        JobCodeId: form.JobCodeId,
+        TotalPreferredExperienceId: createAdvert.TotalPreferredExperienceId,
+        PreferredExperienceId: Number(createAdvert.PreferredExperienceId),
+        FunctionTypeId: createAdvert.FunctionTypeId,
+        JobTitleofFunctionalManagerId: createAdvert.JobTitleofFunctionalManagerId,
+        JobTitleofLMorSupervisorId: createAdvert.JobTitleofLMorSupervisorId,
+        FunctionalManagerName: createAdvert.FunctionalManagerName || "",
+        LineManagerorSupervisorName: createAdvert.LineManagerorSupervisorName,
+        JobDescriptionFrench: createAdvert.JobDescriptionFrench,
+        RoleProfileFrench: createAdvert.RoleProfileFrench,
+      };
+        await RecruitmentServices.PostAdvertisementData(advData);
+      }
       const portalRes = await RecruitmentServices.UploadAdvertisementInPortal(
         filterConditions,
         Conditions,

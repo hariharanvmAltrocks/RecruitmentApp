@@ -1328,6 +1328,68 @@ var RecruitmentService = /** @class */ (function () {
             });
         });
     };
+    RecruitmentService.prototype.PostAdvertisementData = function (obj) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var error_16;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, spservice_1.default.SPAddItem({
+                                Listname: Config_1.ListNames.HRMSRecruitmentRoleProfileDetails,
+                                RequestJSON: obj,
+                            })];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, {
+                                data: null,
+                                status: 200,
+                                message: "Data Submitted successfully",
+                            }];
+                    case 2:
+                        error_16 = _a.sent();
+                        console.error("Error posting user data:", error_16);
+                        return [2 /*return*/, {
+                                data: null,
+                                status: 400,
+                                message: "Error On Posting Data",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    RecruitmentService.prototype.UpsertList = function (obj, ListName) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var response, error_17;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, spservice_1.default.SPAddItem({
+                                Listname: ListName,
+                                RequestJSON: obj,
+                            })];
+                    case 1:
+                        response = _a.sent();
+                        return [2 /*return*/, {
+                                data: null,
+                                status: 200,
+                                message: "Data Submitted successfully",
+                            }];
+                    case 2:
+                        error_17 = _a.sent();
+                        console.error("Error posting user data:", error_17);
+                        return [2 /*return*/, {
+                                data: null,
+                                status: 400,
+                                message: "Error On Posting Data",
+                            }];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
     return RecruitmentService;
 }());
 exports.default = RecruitmentService;

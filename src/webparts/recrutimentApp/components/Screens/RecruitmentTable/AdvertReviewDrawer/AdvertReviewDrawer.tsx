@@ -15,15 +15,27 @@ import {
   ChevronRight,
   Check,
   FileText,
+  Plus,
+  Target,
+  Zap,
+  UserCheck,
+  BookOpen,
+  FilePlus2,
+  Trash2,
+  MoreVertical,
+  Calendar,
+  Clock,
+  Globe,
 } from "lucide-react";
 import {
   PositionDetails,
   usePositionDetails,
 } from "./Hooks/getPositionDetails";
-import { useAdvertismentDetails } from "./Hooks/getAdvertismentDetails";
+import { useAdvertismentDetails, AdvertismentDetails } from "./Hooks/getAdvertismentDetails";
 import { useAttachmentDetails } from "./Hooks/getAttachmentDetails";
 import { useSignatureDetails } from "./Hooks/getSignatureDetails";
 import { AdvertLanguage } from "./StateManage/useStateFromManage";
+import { CreateAdvert, SubmitAdvert } from "./Components/CreateAdvert/CreateAdvert";
 import "./AdvertReviewDrawer.scss";
 import { PositionFramework } from "../Components/PositionFramework";
 import { AdvertLanguageToggle } from "../Components/AdvertLanguageToggle";
@@ -150,13 +162,16 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
 
   const jobCodeId = positionDetails?.JobCodeId ?? 0;
   const jobCode = positionDetails?.JobCode ?? selectedJobCode;
+  const statusID = positionDetails?.StatusId ?? 0;
+  const selectedNationality = positionDetails?.Nationality ?? ""
 
   const {
     data: advertDetails,
     BGVValue: BGVData,
     handleBvgToggle,
     loading: advertLoading,
-  } = useAdvertismentDetails(jobCodeId, { enabled: !!jobCodeId });
+    AdvertFlag
+  } = useAdvertismentDetails(jobCodeId, statusID, selectedNationality, { enabled: !!jobCodeId });
 
   const { data: attachments, loading: attachmentLoading } =
     useAttachmentDetails(jobCode, { enabled: !!jobCode });
@@ -165,6 +180,18 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
     positionLoading || advertLoading || attachmentLoading || signatureLoading;
 
   const [uploadDocument, setUploadDocument] = useState<UploadedFile[]>([]);
+
+  // Local states for custom Empty State & Create Modal
+  const [localAdvertDetails, setLocalAdvertDetails] = useState<AdvertismentDetails | null>(null);
+  const [createAdvert, setCreateAdvert] = useState<SubmitAdvert | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showFullDetails, setShowFullDetails] = useState(false);
+  const [showMoreActions, setShowMoreActions] = useState(false);
+  
+  // useEffect(() => {
+  //   setLocalAdvertDetails(advertDetails);
+  // }, [advertDetails]);
+
 
   const showValidationRef = useRef(false);
   const isSubmittingRef = useRef(false);
@@ -217,6 +244,16 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
           : advertDetails.french
         : null,
     [advertDetails, advertLanguage],
+  );
+
+    const localadvertContent = useMemo(
+    () =>
+      localAdvertDetails
+        ? advertLanguage === "EN"
+          ? localAdvertDetails.english
+          : localAdvertDetails.french
+        : null,
+    [localAdvertDetails, advertLanguage],
   );
 
   const headerMeta = useMemo(
@@ -284,6 +321,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
     formData,
     RoleID.RecruitmentHR,
     docFiles,
+    createAdvert,
   );
 
   const showSuccessModal = useCallback(
@@ -521,12 +559,96 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                   headerCode={headerMeta.code}
                 />
 
-                <AdvertLanguageToggle
-                  advertLanguage={advertLanguage}
-                  advertContent={advertContent}
-                  isLoading={isLoading}
-                  onLanguageChange={onLanguageChange}
-                />
+                {!isLoading && AdvertFlag ? (
+                  <AdvertLanguageToggle
+                    advertLanguage={advertLanguage}
+                    advertContent={advertContent}
+                    isLoading={isLoading}
+                    onLanguageChange={onLanguageChange}
+                  />
+                ) : !isLoading && !AdvertFlag && !localAdvertDetails ? (
+                  <div className="advert-empty-state-card">
+                    <div className="advert-empty-state-card__icon-wrapper">
+                      <FilePlus2 size={28} />
+                    </div>
+                    <h3 className="advert-empty-state-card__title">
+                      No Advertisement Created
+                    </h3>
+                    <p className="advert-empty-state-card__description">
+                      Create a job advertisement to attract qualified candidates for this position.
+                    </p>
+                    <div className="advert-empty-state-card__actions">
+                      <button
+                        type="button"
+                        className="advert-empty-state-card__cta-btn"
+                        onClick={() => setShowCreateModal(true)}
+                      >
+                        <Plus size={16} />
+                        Create Advertisement
+                      </button>
+                      <a
+                        href="#"
+                        className="advert-empty-state-card__guide-link"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          showModal({
+                            type: "info",
+                            title: "Job Advertisement Guide",
+                            message: "A guide to creating high-impact job advertisements will be displayed here.",
+                            confirmLabel: "Understood",
+                            onConfirm: closeModal
+                          });
+                        }}
+                      >
+                        <BookOpen size={14} />
+                        View Advertisement Guide
+                      </a>
+                    </div>
+                  </div>
+                ) : localAdvertDetails ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%", flexShrink: 0 }}>
+                    <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                      {/* <button
+                        type="button"
+                        className="advert-success-card__action-btn"
+                        onClick={() => {
+                          showModal({
+                            type: "info",
+                            title: "Export Advertisement",
+                            message: "Exporting advertisement details to PDF...",
+                            confirmLabel: "OK",
+                            onConfirm: closeModal
+                          });
+                        }}
+                      >
+                        Export to PDF
+                      </button> */}
+                      <button
+                        type="button"
+                        className="advert-success-card__action-btn advert-success-card__action-btn--primary"
+                        onClick={() => setShowCreateModal(true)}
+                      >
+                        Edit Advertisement
+                      </button>
+                      <button
+                        type="button"
+                        className="advert-success-card__action-btn"
+                        onClick={() => {
+                          setLocalAdvertDetails(null);
+                        }}
+                        style={{ color: "#ef4444", borderColor: "#fca5a5" }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                    <AdvertLanguageToggle
+                      advertLanguage={advertLanguage}
+                      advertContent={localadvertContent}
+                      isLoading={isLoading}
+                      onLanguageChange={onLanguageChange}
+                    />
+                  </div>
+                ) : (<></>)}
 
                 <RequiredAttachments
                   attachments={attachments}
@@ -639,6 +761,26 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
         Comments={commentsData || []}
         onClose={() => setCommentsflag(false)}
       />
+
+          <CreateAdvert
+            isOpen={showCreateModal}
+            onClose={() => setShowCreateModal(false)}
+            jobCodeId={jobCodeId}
+            SubmitKey={(advert) => setCreateAdvert(advert)}
+            onPublish={(advert) => {
+              setLocalAdvertDetails(advert);
+              setShowCreateModal(false);
+              showModal({
+                type: "success",
+                title: "Create Advertisement ",
+                message: "The job advertisement has been Created successfully.",
+                confirmLabel: "OK",
+                onConfirm: closeModal
+              });
+            }}
+            showModal={showModal}
+            closeModal={closeModal}
+          />
         </>
       )}
     </AnimatePresence>

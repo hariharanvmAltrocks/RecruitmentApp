@@ -1174,7 +1174,8 @@ export const ShowCandidateDetailsPopup: React.FC<
                   </motion.section>
                 )}
 
-                 <div className="mFormGroup">
+                {!ReviewHRFlag && (
+<div className="mFormGroup">
               <button
                 onClick={() => setCommentsflag(true)}
                 className="mSubmitBtn"
@@ -1184,6 +1185,9 @@ export const ShowCandidateDetailsPopup: React.FC<
                 <FileText size={16} />
                 {strings.ViewComments}</button>
             </div>
+                )}
+
+                 
 
                 {!rejectedFlag && (
                   <motion.section

@@ -11,9 +11,9 @@
 
 .header-container {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   margin: auto;
+  width: 100%;
 }
 
 .header-left {

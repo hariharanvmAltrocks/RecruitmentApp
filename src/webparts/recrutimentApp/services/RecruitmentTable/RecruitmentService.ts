@@ -46,6 +46,7 @@ import { AddCalculateDate } from "../../components/Hooks/dateConfigfn";
 import { getStageCandidateindex } from "../../utilities/PositionStatusConfig";
 import { IUserDetails } from "../../models/master";
 import { GetEmployeeDictionary } from "../SageData/SageService";
+import { SubmitAdvert } from "../../components/Screens/RecruitmentTable/AdvertReviewDrawer/Components/CreateAdvert/CreateAdvert";
 
 export default class RecruitmentService implements IRecruitmentService {
   async GetNPAEPVRRDetails(
@@ -1480,4 +1481,53 @@ async GetCommentsData(
     };
   }
 }
+
+  async PostAdvertisementData(
+    obj: SubmitAdvert,
+  ): Promise<ApiResponse<SubmitAdvert | null>> {
+    try {
+      await SPServices.SPAddItem({
+        Listname: ListNames.HRMSRecruitmentRoleProfileDetails,
+        RequestJSON: obj,
+      });
+
+      return {
+        data: null,
+        status: 200,
+        message: "Data Submitted successfully",
+      };
+    } catch (error) {
+      console.error("Error posting user data:", error);
+      return {
+        data: null,
+        status: 400,
+        message: "Error On Posting Data",
+      };
+    }
+  }
+
+  async UpsertList(
+    obj: any,
+    ListName: string
+  ): Promise<ApiResponse<null>> {
+    try {
+      let response: any = await SPServices.SPAddItem({
+        Listname: ListName,
+        RequestJSON: obj,
+      });
+
+      return {
+        data: null,
+        status: 200,
+        message: "Data Submitted successfully",
+      };
+    } catch (error) {
+      console.error("Error posting user data:", error);
+      return {
+        data: null,
+        status: 400,
+        message: "Error On Posting Data",
+      };
+    }
+  }
 }

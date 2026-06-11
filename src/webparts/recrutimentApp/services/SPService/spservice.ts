@@ -266,6 +266,65 @@ const SPReadItems = async (params: IListItems): Promise<unknown[]> => {
   return allItems;
 };
 
+/**
+ * Reads a single page of items from a list, using ID-first paging.
+ * This is highly optimized for large lists where server-side pagination ($skip) is unsupported.
+ */
+const SPReadItemsPaged = async (
+  params: IListItems,
+): Promise<{ items: unknown[]; totalCount: number }> => {
+  const p = _formatInputs(params);
+  const filterStr = _buildODataFilter(p.Filter, p.FilterCondition);
+  const pageNumber = p.PageNumber ?? 1;
+  const pageSize = p.PageCount ?? 10;
+
+  // 1. Fetch lightweight items (selecting only ID and sorting fields)
+  const selectFields = ["ID"];
+  if (p.Orderby && p.Orderby !== "ID" && !p.Orderby.includes("/")) {
+    selectFields.push(p.Orderby);
+  }
+
+  const selectStr = selectFields.join(",");
+
+  const lightweightItems = await getSP()
+    .web.lists.getByTitle(p.Listname)
+    .items.select(selectStr)
+    .filter(filterStr)
+    .orderBy(p.Orderby, p.Orderbydecorasc)
+    .top(5000)();
+
+  const totalCount = lightweightItems.length;
+
+  if (totalCount === 0) {
+    return { items: [], totalCount: 0 };
+  }
+
+  // 2. Slice items to page size
+  const start = (pageNumber - 1) * pageSize;
+  const slicedLightweight = lightweightItems.slice(start, start + pageSize);
+
+  if (slicedLightweight.length === 0) {
+    return { items: [], totalCount };
+  }
+
+  // 3. Fetch full details for the sliced IDs
+  const pageIds = slicedLightweight.map((item: any) => item.ID);
+  const idFilter = pageIds.map((id) => `ID eq ${id}`).join(" or ");
+
+  const items = await getSP()
+    .web.lists.getByTitle(p.Listname)
+    .items.select(p.Select)
+    .filter(idFilter)
+    .expand(p.Expand)
+    .orderBy(p.Orderby, p.Orderbydecorasc)();
+
+  // 4. Sort the resolved full details to match the order of pageIds
+  const itemsMap = new Map(items.map((item: any) => [item.ID, item]));
+  const sortedItems = pageIds.map((id) => itemsMap.get(id)).filter(Boolean);
+
+  return { items: sortedItems, totalCount };
+};
+
 const SPGetItems = SPReadItems;
 
 /**
@@ -780,6 +839,7 @@ const SPServices = {
   getDocLibFiles,
   addDocLibFiles,
   SPReadItemsCamelQuery,
+  SPReadItemsPaged,
 } as const;
 
 export default SPServices;

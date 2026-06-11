@@ -4,7 +4,9 @@ exports.useAdvertismentDetails = void 0;
 var tslib_1 = require("tslib");
 var react_1 = require("react");
 var ServiceExport_1 = require("../../../../../services/ServiceExport");
-var useAdvertismentDetails = function (selectedJobCode, options) {
+var Config_1 = require("../../../../../utilities/Config");
+var ConditionConfig_1 = require("../../../../../utilities/ConditionConfig");
+var useAdvertismentDetails = function (selectedJobCode, selectedStatusID, selectedNationality, options) {
     var _a;
     var _b = (0, react_1.useState)(null), data = _b[0], setData = _b[1];
     var _c = (0, react_1.useState)(false), loading = _c[0], setLoading = _c[1];
@@ -14,6 +16,7 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
         checkboxBGV: [],
         mantoryChecks: [],
     }), BGVValue = _d[0], setBGVValue = _d[1];
+    var _e = (0, react_1.useState)(false), AdvertFlag = _e[0], setadvertFlag = _e[1];
     // const mockMap = useMemo(
     //   () => ({
     //     "JOB-001": {
@@ -90,9 +93,12 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
         if (!selectedJobCode || !enabled) {
             setData(null);
             setLoading(false);
+            setadvertFlag(false);
             return;
         }
         setLoading(true);
+        setData(null);
+        setadvertFlag(false);
         var timer = setTimeout(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
             var filterConditions, response, items, mappedData, error_2;
             var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
@@ -114,6 +120,7 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
                             response.data &&
                             response.data.length > 0) {
                             items = response.data[0];
+                            setadvertFlag(true);
                             mappedData = {
                                 jobId: selectedJobCode.toString(),
                                 english: {
@@ -162,9 +169,14 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
                                 },
                             };
                             setData(mappedData);
-                            void fetchBVData(response.data);
+                            if (selectedStatusID === Config_1.StatusId.PendingUploadONEM && selectedNationality === ConditionConfig_1.Nationality.Expatriate) {
+                                void fetchBVData(response.data);
+                            }
                         }
-                        void fetchBVData(response.data);
+                        else {
+                            setadvertFlag(false);
+                            setData(null);
+                        }
                         return [3 /*break*/, 3];
                     case 2:
                         error_2 = _s.sent();
@@ -184,7 +196,7 @@ var useAdvertismentDetails = function (selectedJobCode, options) {
                     ? tslib_1.__assign(tslib_1.__assign({}, check), { checked: !check.checked }) : check;
             }) })); });
     }, [BGVValue]);
-    return { data: data, BGVValue: BGVValue, loading: loading, handleBvgToggle: handleBvgToggle };
+    return { data: data, BGVValue: BGVValue, loading: loading, handleBvgToggle: handleBvgToggle, AdvertFlag: AdvertFlag };
 };
 exports.useAdvertismentDetails = useAdvertismentDetails;
 //# sourceMappingURL=getAdvertismentDetails.js.map

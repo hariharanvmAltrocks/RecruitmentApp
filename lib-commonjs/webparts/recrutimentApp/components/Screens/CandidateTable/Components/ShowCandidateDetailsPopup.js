@@ -550,10 +550,10 @@ var ShowCandidateDetailsPopup = function (_a) {
                                             react_1.default.createElement(Icon, { size: 36, strokeWidth: 2, className: decision === value ? activeIcon : inactiveIcon }),
                                             react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.decisionBtnLabel }, label)));
                                     }))))),
-                            react_1.default.createElement("div", { className: "mFormGroup" },
+                            !ReviewHRFlag && (react_1.default.createElement("div", { className: "mFormGroup" },
                                 react_1.default.createElement("button", { onClick: function () { return setCommentsflag(true); }, className: "mSubmitBtn", type: "button" },
                                     react_1.default.createElement(lucide_react_1.FileText, { size: 16 }),
-                                    strings.ViewComments)),
+                                    strings.ViewComments))),
                             !rejectedFlag && (react_1.default.createElement(framer_motion_1.motion.section, { custom: 6, variants: reuseUI_1.sectionVariants, initial: "hidden", animate: "visible" },
                                 react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.lmCommentsCard },
                                     react_1.default.createElement(reuseUI_1.SectionHeader, { title: "Comments", accent: "blue" }),

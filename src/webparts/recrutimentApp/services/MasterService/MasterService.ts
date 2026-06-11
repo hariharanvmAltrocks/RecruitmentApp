@@ -733,6 +733,47 @@ export default class MasterService implements IMasterService {
     }
   }
 
+private _masterDataCache = new Map<string, any[]>();
+
+public GetMasterRoleProfile = async (
+  listName: string,
+  selectFields: string = "*"
+): Promise<ApiResponse<any[]>> => {
+  try {
+    const cacheKey = `${listName}_${selectFields}`;
+
+    if (this._masterDataCache.has(cacheKey)) {
+      return {
+        data: this._masterDataCache.get(cacheKey) || [],
+        status: 200,
+        message: "Data fetched from cache",
+      };
+    }
+
+    const listItems: any[] = await SPServices.SPReadItems({
+      Listname: listName,
+      Select: selectFields,
+    });
+
+    this._masterDataCache.set(cacheKey, listItems);
+
+    return {
+      data: listItems,
+      status: 200,
+      message: "Data fetched successfully",
+    };
+  } catch (error) {
+    console.error(`Error fetching ${listName}`, error);
+
+    return {
+      data: [],
+      status: 500,
+      message: `Error fetching ${listName}`,
+    };
+  }
+};
+
+
   async GetCountryMaster(): Promise<ApiResponse<GetMasterByCountry[] | null>> {
     try {
       const response = await GetStateByCountryApi.GetCountryApi();

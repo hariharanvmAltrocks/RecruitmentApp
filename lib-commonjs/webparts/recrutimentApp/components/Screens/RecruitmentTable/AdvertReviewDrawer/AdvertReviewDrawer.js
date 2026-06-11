@@ -9,6 +9,7 @@ var getPositionDetails_1 = require("./Hooks/getPositionDetails");
 var getAdvertismentDetails_1 = require("./Hooks/getAdvertismentDetails");
 var getAttachmentDetails_1 = require("./Hooks/getAttachmentDetails");
 var getSignatureDetails_1 = require("./Hooks/getSignatureDetails");
+var CreateAdvert_1 = require("./Components/CreateAdvert/CreateAdvert");
 require("./AdvertReviewDrawer.scss");
 var PositionFramework_1 = require("../Components/PositionFramework");
 var AdvertLanguageToggle_1 = require("../Components/AdvertLanguageToggle");
@@ -63,24 +64,35 @@ var toPositionDetails = function (p) { return ({
     JobCodeID: p.JobCodeId,
 }); };
 var AdvertReviewDrawer = function (_a) {
-    var _b, _c, _d;
+    var _b, _c, _d, _e, _f;
     var drawerOpen = _a.drawerOpen, selectedJobId = _a.selectedJobId, selectedJobCode = _a.selectedJobCode, selectedType = _a.selectedType, advertLanguage = _a.advertLanguage, reviewerComments = _a.reviewerComments, acknowledgementCheckbox = _a.acknowledgementCheckbox, loadingState = _a.loadingState, onClose = _a.onClose, onLanguageChange = _a.onLanguageChange, onCommentsChange = _a.onCommentsChange, onToggleAcknowledgement = _a.onToggleAcknowledgement, setLoadingState = _a.setLoadingState, refreshKey = _a.refreshKey;
     var metricId = (0, UIStateContext_1.useUIState)().MatricID;
     var roleIDs = (0, RoleContext_1.userInfo)().roleIDs;
     var navigate = (0, react_router_dom_1.useNavigate)();
-    var _e = (0, useModalPopup_1.useModalPopup)(), modalState = _e.modalState, showModal = _e.showModal, closeModal = _e.closeModal;
-    var _f = (0, react_1.useState)(false), loading = _f[0], setLoading = _f[1];
-    var _g = (0, react_1.useState)(false), showRoadmap = _g[0], setShowRoadmap = _g[1];
-    var _h = (0, react_1.useState)(false), commentsflag = _h[0], setCommentsflag = _h[1];
-    var _j = (0, getPositionDetails_1.usePositionDetails)(selectedJobId, selectedType), positionDetails = _j.data, positionLoading = _j.loading;
-    var _k = (0, getCommentsDetails_1.useCommentsDetails)(selectedJobId), commentsData = _k.data, commentsLoading = _k.loading;
-    var _l = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _l.data, signatureLoading = _l.loading;
+    var _g = (0, useModalPopup_1.useModalPopup)(), modalState = _g.modalState, showModal = _g.showModal, closeModal = _g.closeModal;
+    var _h = (0, react_1.useState)(false), loading = _h[0], setLoading = _h[1];
+    var _j = (0, react_1.useState)(false), showRoadmap = _j[0], setShowRoadmap = _j[1];
+    var _k = (0, react_1.useState)(false), commentsflag = _k[0], setCommentsflag = _k[1];
+    var _l = (0, getPositionDetails_1.usePositionDetails)(selectedJobId, selectedType), positionDetails = _l.data, positionLoading = _l.loading;
+    var _m = (0, getCommentsDetails_1.useCommentsDetails)(selectedJobId), commentsData = _m.data, commentsLoading = _m.loading;
+    var _o = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _o.data, signatureLoading = _o.loading;
     var jobCodeId = (_b = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCodeId) !== null && _b !== void 0 ? _b : 0;
     var jobCode = (_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.JobCode) !== null && _c !== void 0 ? _c : selectedJobCode;
-    var _m = (0, getAdvertismentDetails_1.useAdvertismentDetails)(jobCodeId, { enabled: !!jobCodeId }), advertDetails = _m.data, BGVData = _m.BGVValue, handleBvgToggle = _m.handleBvgToggle, advertLoading = _m.loading;
-    var _o = (0, getAttachmentDetails_1.useAttachmentDetails)(jobCode, { enabled: !!jobCode }), attachments = _o.data, attachmentLoading = _o.loading;
+    var statusID = (_d = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusId) !== null && _d !== void 0 ? _d : 0;
+    var selectedNationality = (_e = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.Nationality) !== null && _e !== void 0 ? _e : "";
+    var _p = (0, getAdvertismentDetails_1.useAdvertismentDetails)(jobCodeId, statusID, selectedNationality, { enabled: !!jobCodeId }), advertDetails = _p.data, BGVData = _p.BGVValue, handleBvgToggle = _p.handleBvgToggle, advertLoading = _p.loading, AdvertFlag = _p.AdvertFlag;
+    var _q = (0, getAttachmentDetails_1.useAttachmentDetails)(jobCode, { enabled: !!jobCode }), attachments = _q.data, attachmentLoading = _q.loading;
     var isLoading = positionLoading || advertLoading || attachmentLoading || signatureLoading;
-    var _p = (0, react_1.useState)([]), uploadDocument = _p[0], setUploadDocument = _p[1];
+    var _r = (0, react_1.useState)([]), uploadDocument = _r[0], setUploadDocument = _r[1];
+    // Local states for custom Empty State & Create Modal
+    var _s = (0, react_1.useState)(null), localAdvertDetails = _s[0], setLocalAdvertDetails = _s[1];
+    var _t = (0, react_1.useState)(null), createAdvert = _t[0], setCreateAdvert = _t[1];
+    var _u = (0, react_1.useState)(false), showCreateModal = _u[0], setShowCreateModal = _u[1];
+    var _v = (0, react_1.useState)(false), showFullDetails = _v[0], setShowFullDetails = _v[1];
+    var _w = (0, react_1.useState)(false), showMoreActions = _w[0], setShowMoreActions = _w[1];
+    // useEffect(() => {
+    //   setLocalAdvertDetails(advertDetails);
+    // }, [advertDetails]);
     var showValidationRef = (0, react_1.useRef)(false);
     var isSubmittingRef = (0, react_1.useRef)(false);
     (0, react_1.useEffect)(function () {
@@ -118,6 +130,13 @@ var AdvertReviewDrawer = function (_a) {
                 : advertDetails.french
             : null;
     }, [advertDetails, advertLanguage]);
+    var localadvertContent = (0, react_1.useMemo)(function () {
+        return localAdvertDetails
+            ? advertLanguage === "EN"
+                ? localAdvertDetails.english
+                : localAdvertDetails.french
+            : null;
+    }, [localAdvertDetails, advertLanguage]);
     var headerMeta = (0, react_1.useMemo)(function () {
         var _a, _b, _c;
         return ({
@@ -166,8 +185,8 @@ var AdvertReviewDrawer = function (_a) {
         roleIDs,
     ]);
     var updateMainRecord = (0, useUpdateMainRecord_1.useUpdateMainRecord)(formData, roleID).updateMainRecord;
-    var handleHRLeadProcess = (0, useHRLeadProcess_1.useHRLeadProcess)(formData, Config_1.RoleID.RecruitmentHRLead, docFiles, (_d = BGVData === null || BGVData === void 0 ? void 0 : BGVData.checkboxBGVOption) !== null && _d !== void 0 ? _d : []).handleHRLeadProcess;
-    var handleHRProcess = (0, useHRProcess_1.useHRProcess)(formData, Config_1.RoleID.RecruitmentHR, docFiles).handleHRProcess;
+    var handleHRLeadProcess = (0, useHRLeadProcess_1.useHRLeadProcess)(formData, Config_1.RoleID.RecruitmentHRLead, docFiles, (_f = BGVData === null || BGVData === void 0 ? void 0 : BGVData.checkboxBGVOption) !== null && _f !== void 0 ? _f : []).handleHRLeadProcess;
+    var handleHRProcess = (0, useHRProcess_1.useHRProcess)(formData, Config_1.RoleID.RecruitmentHR, docFiles, createAdvert).handleHRProcess;
     var showSuccessModal = (0, react_1.useCallback)(function (msg) {
         showModal({
             type: "success",
@@ -327,7 +346,33 @@ var AdvertReviewDrawer = function (_a) {
                                     strings.RecruitmentLifecycleRoadmap)),
                             react_1.default.createElement(PositionRoadmap_1.PositionRoadmap, { statusId: (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusId) || 0, recId: (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.ID) || selectedJobId || 0 }))))),
                     react_1.default.createElement(PositionFramework_1.PositionFramework, { positionDetails: mappedData, isLoading: isLoading, headerCode: headerMeta.code }),
-                    react_1.default.createElement(AdvertLanguageToggle_1.AdvertLanguageToggle, { advertLanguage: advertLanguage, advertContent: advertContent, isLoading: isLoading, onLanguageChange: onLanguageChange }),
+                    !isLoading && AdvertFlag ? (react_1.default.createElement(AdvertLanguageToggle_1.AdvertLanguageToggle, { advertLanguage: advertLanguage, advertContent: advertContent, isLoading: isLoading, onLanguageChange: onLanguageChange })) : !isLoading && !AdvertFlag && !localAdvertDetails ? (react_1.default.createElement("div", { className: "advert-empty-state-card" },
+                        react_1.default.createElement("div", { className: "advert-empty-state-card__icon-wrapper" },
+                            react_1.default.createElement(lucide_react_1.FilePlus2, { size: 28 })),
+                        react_1.default.createElement("h3", { className: "advert-empty-state-card__title" }, "No Advertisement Created"),
+                        react_1.default.createElement("p", { className: "advert-empty-state-card__description" }, "Create a job advertisement to attract qualified candidates for this position."),
+                        react_1.default.createElement("div", { className: "advert-empty-state-card__actions" },
+                            react_1.default.createElement("button", { type: "button", className: "advert-empty-state-card__cta-btn", onClick: function () { return setShowCreateModal(true); } },
+                                react_1.default.createElement(lucide_react_1.Plus, { size: 16 }),
+                                "Create Advertisement"),
+                            react_1.default.createElement("a", { href: "#", className: "advert-empty-state-card__guide-link", onClick: function (e) {
+                                    e.preventDefault();
+                                    showModal({
+                                        type: "info",
+                                        title: "Job Advertisement Guide",
+                                        message: "A guide to creating high-impact job advertisements will be displayed here.",
+                                        confirmLabel: "Understood",
+                                        onConfirm: closeModal
+                                    });
+                                } },
+                                react_1.default.createElement(lucide_react_1.BookOpen, { size: 14 }),
+                                "View Advertisement Guide")))) : localAdvertDetails ? (react_1.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: "16px", width: "100%", flexShrink: 0 } },
+                        react_1.default.createElement("div", { style: { display: "flex", justifyContent: "flex-end", gap: "10px" } },
+                            react_1.default.createElement("button", { type: "button", className: "advert-success-card__action-btn advert-success-card__action-btn--primary", onClick: function () { return setShowCreateModal(true); } }, "Edit Advertisement"),
+                            react_1.default.createElement("button", { type: "button", className: "advert-success-card__action-btn", onClick: function () {
+                                    setLocalAdvertDetails(null);
+                                }, style: { color: "#ef4444", borderColor: "#fca5a5" } }, "Delete")),
+                        react_1.default.createElement(AdvertLanguageToggle_1.AdvertLanguageToggle, { advertLanguage: advertLanguage, advertContent: localadvertContent, isLoading: isLoading, onLanguageChange: onLanguageChange }))) : (react_1.default.createElement(react_1.default.Fragment, null)),
                     react_1.default.createElement(RequiredAttachments_1.RequiredAttachments, { attachments: attachments, isLoading: isLoading }),
                     showUploadONEMSection && (react_1.default.createElement(UploadDocument_1.UploadDocument, { multiple: false, acceptedFormats: ".pdf", label: metricId === ConditionConfig_1.MatricID.UploadONEM
                             ? strings.OnemSignedAndStampedDocumentOnlyPdf
@@ -356,7 +401,18 @@ var AdvertReviewDrawer = function (_a) {
                                     react_1.default.createElement(lucide_react_1.Send, { size: 16, style: { marginRight: 8 } }),
                                     strings.Submit)))))))))),
         react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal })),
-        react_1.default.createElement(CommentsModal_1.default, { open: commentsflag, loading: commentsLoading, Comments: commentsData || [], onClose: function () { return setCommentsflag(false); } })))));
+        react_1.default.createElement(CommentsModal_1.default, { open: commentsflag, loading: commentsLoading, Comments: commentsData || [], onClose: function () { return setCommentsflag(false); } }),
+        react_1.default.createElement(CreateAdvert_1.CreateAdvert, { isOpen: showCreateModal, onClose: function () { return setShowCreateModal(false); }, jobCodeId: jobCodeId, SubmitKey: function (advert) { return setCreateAdvert(advert); }, onPublish: function (advert) {
+                setLocalAdvertDetails(advert);
+                setShowCreateModal(false);
+                showModal({
+                    type: "success",
+                    title: "Create Advertisement ",
+                    message: "The job advertisement has been Created successfully.",
+                    confirmLabel: "OK",
+                    onConfirm: closeModal
+                });
+            }, showModal: showModal, closeModal: closeModal })))));
 };
 exports.AdvertReviewDrawer = AdvertReviewDrawer;
 //# sourceMappingURL=AdvertReviewDrawer.js.map

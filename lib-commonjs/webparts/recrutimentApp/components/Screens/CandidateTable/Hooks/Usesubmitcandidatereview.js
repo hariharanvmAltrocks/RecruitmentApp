@@ -61,6 +61,7 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                 InterviewTime: interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startTime,
                 CandidateResumeLink: (_a = cp.CandidateResumeLink) !== null && _a !== void 0 ? _a : "",
                 ActionId: Config_1.WorkflowAction.Approved,
+                StatusId: Config_1.StatusId.InterviewScheduled,
                 ConflictsOfInterest: cp.ConflictsOfInterest,
                 Disability: cp.disability,
                 DisabilityDetails: cp.disabilityReason,
