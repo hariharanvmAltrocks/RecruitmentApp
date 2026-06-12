@@ -60,8 +60,7 @@ export const useMasterData = (): UseMasterDataResult => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchAllData = async () => {
+   const fetchAllData = async () => {
       setLoading(true);
       setError(null);
 
@@ -82,10 +81,10 @@ export const useMasterData = (): UseMasterDataResult => {
           qualRes,
           techSkillsRes,
           roleKnowledgeRes,
-          managersRes,
+          // managersRes,
           levelres,
           functionalType,
-          jobTitleres,
+          // jobTitleres,
         ] = await Promise.all([
           // safeFetch(masterService.GetAllMaster(CategoryID.Experience)),
           safeFetch(CommonServices.GetMasterData(ListNames.HRMSExperienceMaster)),
@@ -93,11 +92,11 @@ export const useMasterData = (): UseMasterDataResult => {
           safeFetch(masterService.GetAllMaster(CategoryID.Qualification)),
           safeFetch(masterService.GetAllMaster(CategoryID.TechnicalSkills)),
           safeFetch(masterService.GetAllMaster(CategoryID.RoleSpecificKnowledge)),
-          safeFetch(CommonServices.GetSageMasterData(ListNames.HRMSSageList)),
+          // safeFetch(CommonServices.GetSageMasterData(ListNames.HRMSSageList)),
           safeFetch(masterService.GetAllMaster(CategoryID.Level)),
           safeFetch(CommonServices.GetMasterData(ListNames.HRMSJobTitleFunctionType)),
           // safeFetch(masterService.GetAllMaster(CategoryID.Function))
-          safeFetch(CommonServices.GetMasterData(ListNames.HRMSJobTitleMaster)),
+          // safeFetch(CommonServices.GetMasterData(ListNames.HRMSJobTitleMaster)),
         ]);
 
         const processResult = (
@@ -166,39 +165,41 @@ export const useMasterData = (): UseMasterDataResult => {
           } 
         } 
 
-           if (jobTitleres && jobTitleres.status === 200 && jobTitleres.data) {
-          const list = jobTitleres.data;
-          if (Array.isArray(list) && list.length > 0) {
-            const mappedMgrs: MasterItem[] = list.map((item) => {
-              return {
-                id: item.ID ?? 0,
-                value: String(item.ID),
-                displayText: item.JobTitleInEnglish,
-              };
-            });
+        //    if (jobTitleres && jobTitleres.status === 200 && jobTitleres.data) {
+        //   const list = jobTitleres.data;
+        //   if (Array.isArray(list) && list.length > 0) {
+        //     const mappedMgrs: MasterItem[] = list.map((item) => {
+        //       return {
+        //         id: item.ID ?? 0,
+        //         value: String(item.ID),
+        //         displayText: item.JobTitleInEnglish,
+        //       };
+        //     });
 
-            const mergedMgrs = [...mappedMgrs];
-            setJobTitles(mergedMgrs);
-          } 
-        } 
+        //     const mergedMgrs = [...mappedMgrs];
+        //     setJobTitles(mergedMgrs);
+        //   } 
+        // } 
 
-        if (managersRes && managersRes.status === 200 && managersRes.data) {
-          const list = managersRes.data;
-          if (Array.isArray(list) && list.length > 0) {
-            const mappedMgrs: MasterItem[] = list.map((item) => {
-              const fullName = [item.FirstName, item.MiddleName, item.LastName]
-                .filter(Boolean)
-                .join(" ");
-              return {
-                id: item.JobTitleInEnglishId,
-                value: String(item.JobTitleInEnglishId),
-                displayText: fullName,
-              };
-            });
-            const mergedMgrs = [...mappedMgrs];
-            setManagers(mergedMgrs);
-          } 
-        } 
+        // if (managersRes && managersRes.status === 200 && managersRes.data) {
+        //   const list = managersRes.data;
+        //   if (Array.isArray(list) && list.length > 0) {
+        //     const mappedMgrs: MasterItem[] = list.map((item) => {
+        //       const fullName = [item.FirstName, item.MiddleName, item.LastName]
+        //         .filter(Boolean)
+        //         .join(" ");
+        //       return {
+        //         id: item.JobTitleInEnglishId,
+        //         value: String(item.JobTitleInEnglishId),
+        //         displayText: fullName,
+        //       };
+        //     });
+        //     const mergedMgrs = [...mappedMgrs];
+        //     setManagers(mergedMgrs);
+        //   } 
+        // } 
+
+      
 
       } catch (err) {
         console.error("Error fetching master data, using default fallbacks:", err);
@@ -208,9 +209,79 @@ export const useMasterData = (): UseMasterDataResult => {
       }
     };
 
+
+  useEffect(() => {
     void fetchAllData();
   }, []);
 
+
+//   useEffect(() => {
+//   const fetchManagers = async () => {
+//     try {
+//       const managersRes =
+//         await CommonServices.GetSageMasterData(
+//           ListNames.HRMSSageList
+//         );
+
+//       if (
+//         managersRes?.status === 200 &&
+//         Array.isArray(managersRes.data)
+//       ) {
+//         const mappedManagers: MasterItem[] =
+//           managersRes.data.map((item: any) => ({
+//             id: item.JobTitleInEnglish?.ID ?? item.ID,
+//             value: String(
+//               item.JobTitleInEnglish?.ID ?? item.ID
+//             ),
+//             displayText: [
+//               item.FirstName,
+//               item.MiddleName,
+//               item.LastName,
+//             ]
+//               .filter(Boolean)
+//               .join(" "),
+//           }));
+
+//         setManagers(mappedManagers);
+//       }
+//     } catch (error) {
+//       console.error("Manager Load Error", error);
+//     }
+//   };
+
+//   fetchManagers();
+// }, []);
+
+useEffect(() => {
+  const fetchJobTitles = async () => {
+    try {
+      const jobTitleres =
+        await CommonServices.GetMasterData(
+          ListNames.HRMSJobTitleMaster
+        );
+
+      if (
+        jobTitleres?.status === 200 &&
+        Array.isArray(jobTitleres.data)
+      ) {
+        const mappedTitles: MasterItem[] =
+          jobTitleres.data.map((item: any) => ({
+            id: item.ID,
+            value: String(item.ID),
+            displayText: item.JobTitleInEnglish,
+          }));
+
+        setJobTitles(mappedTitles);
+      }
+    } catch (error) {
+      console.error("Job Title Load Error", error);
+    }
+  };
+
+  fetchJobTitles();
+}, []);
+
+  
   return {
     totalExperience,
     // miningExperience,

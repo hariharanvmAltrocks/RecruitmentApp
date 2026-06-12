@@ -434,8 +434,6 @@ const batchGet = async (
     const results: Record<number, any> = {};
     const promises = queries.map((q: any) => {
       const flatFilters = (q.Filter && q.Filter.flat()) || [];
-      console.log(flatFilters);
-      
       const filterStr = _buildODataFilter(
         flatFilters,
         q.FilterCondition ?? "and",

@@ -105,7 +105,7 @@ var SearchableDropdown = function (_a) {
                         bottom: 0,
                     } },
                     react_1.default.createElement(lucide_react_1.Plus, { size: 14 }),
-                    " + Add Custom")))))));
+                    " Add Custom")))))));
 };
 var MultiSelectSearchableDropdown = function (_a) {
     var options = _a.options, value = _a.value, onChange = _a.onChange, placeholder = _a.placeholder, error = _a.error, onAddCustom = _a.onAddCustom;
@@ -284,13 +284,24 @@ var CreateAdvert = function (_a) {
     var isOpen = _a.isOpen, onClose = _a.onClose, jobCodeId = _a.jobCodeId, onPublish = _a.onPublish, SubmitKey = _a.SubmitKey, showModal = _a.showModal, closeModal = _a.closeModal;
     var _b = (0, useMasterData_1.useMasterData)(), totalExperience = _b.totalExperience, 
     // miningExperience,
-    dbQualifications = _b.qualifications, dbTechnicalSkills = _b.technicalSkills, dbRoleSpecificKnowledge = _b.roleSpecificKnowledge, dbLevel = _b.Level, managers = _b.managers, jobTitles = _b.jobTitles, functionalType = _b.functionalType, masterLoading = _b.loading;
+    dbQualifications = _b.qualifications, dbTechnicalSkills = _b.technicalSkills, dbRoleSpecificKnowledge = _b.roleSpecificKnowledge, dbLevel = _b.Level, 
+    // managers,
+    jobTitles = _b.jobTitles, functionalType = _b.functionalType, masterLoading = _b.loading;
+    (0, react_1.useEffect)(function () {
+    }, [dbQualifications]);
+    (0, react_1.useEffect)(function () {
+        if (!masterLoading) {
+            setLocalJobTitles(jobTitles);
+            setLocalFunctionalType(functionalType);
+        }
+    }, [masterLoading, jobTitles, functionalType]);
     // Local master data states for dynamic updates
     var _c = (0, react_1.useState)([]), localQualifications = _c[0], setLocalQualifications = _c[1];
     var _d = (0, react_1.useState)([]), localTechnicalSkills = _d[0], setLocalTechnicalSkills = _d[1];
     var _e = (0, react_1.useState)([]), localRoleSpecificKnowledge = _e[0], setLocalRoleSpecificKnowledge = _e[1];
     var _f = (0, react_1.useState)([]), localJobTitles = _f[0], setLocalJobTitles = _f[1];
     var _g = (0, react_1.useState)([]), localFunctionalType = _g[0], setLocalFunctionalType = _g[1];
+    var _h = (0, react_1.useState)([]), managers = _h[0], setmangers = _h[1];
     (0, react_1.useEffect)(function () {
         if (!masterLoading) {
             setLocalQualifications(dbQualifications);
@@ -300,48 +311,48 @@ var CreateAdvert = function (_a) {
             setLocalFunctionalType(functionalType);
         }
     }, [masterLoading, dbQualifications, dbTechnicalSkills, dbRoleSpecificKnowledge, jobTitles, functionalType]);
-    var _h = (0, react_1.useState)({
+    var _j = (0, react_1.useState)({
         isOpen: false,
         fieldKey: null,
         category: { id: 0, name: "" },
         title: "",
-    }), customModal = _h[0], setCustomModal = _h[1];
-    var _j = (0, react_1.useState)(1), currentStep = _j[0], setCurrentStep = _j[1];
-    var _k = (0, react_1.useState)("EN"), advertLang = _k[0], setAdvertLang = _k[1];
+    }), customModal = _j[0], setCustomModal = _j[1];
+    var _k = (0, react_1.useState)(1), currentStep = _k[0], setCurrentStep = _k[1];
+    var _l = (0, react_1.useState)("EN"), advertLang = _l[0], setAdvertLang = _l[1];
     // Step 1 Form States
-    var _l = (0, react_1.useState)(""), rolePurposeEn = _l[0], setRolePurposeEn = _l[1];
-    var _m = (0, react_1.useState)(""), rolePurposeFr = _m[0], setRolePurposeFr = _m[1];
-    var _o = (0, react_1.useState)(""), jobDescEn = _o[0], setJobDescEn = _o[1];
-    var _p = (0, react_1.useState)(""), jobDescFr = _p[0], setJobDescFr = _p[1];
+    var _m = (0, react_1.useState)(""), rolePurposeEn = _m[0], setRolePurposeEn = _m[1];
+    var _o = (0, react_1.useState)(""), rolePurposeFr = _o[0], setRolePurposeFr = _o[1];
+    var _p = (0, react_1.useState)(""), jobDescEn = _p[0], setJobDescEn = _p[1];
+    var _q = (0, react_1.useState)(""), jobDescFr = _q[0], setJobDescFr = _q[1];
     // const [responsibilitiesEn, setResponsibilitiesEn] = useState<string[]>([""]);
     // const [responsibilitiesFr, setResponsibilitiesFr] = useState<string[]>([""]);
     // Step 2 Form States
-    var _q = (0, react_1.useState)(null), prefTotalExp = _q[0], setPrefTotalExp = _q[1];
-    var _r = (0, react_1.useState)(null), prefMiningExp = _r[0], setPrefMiningExp = _r[1];
-    var _s = (0, react_1.useState)([]), minQual = _s[0], setMinQual = _s[1];
-    var _t = (0, react_1.useState)([]), prefQual = _t[0], setPrefQual = _t[1];
-    var _u = (0, react_1.useState)(null), functionalMgr = _u[0], setFunctionalMgr = _u[1];
-    var _v = (0, react_1.useState)(null), lineMgr = _v[0], setLineMgr = _v[1];
+    var _r = (0, react_1.useState)(null), prefTotalExp = _r[0], setPrefTotalExp = _r[1];
+    var _s = (0, react_1.useState)(null), prefMiningExp = _s[0], setPrefMiningExp = _s[1];
+    var _t = (0, react_1.useState)([]), minQual = _t[0], setMinQual = _t[1];
+    var _u = (0, react_1.useState)([]), prefQual = _u[0], setPrefQual = _u[1];
+    var _v = (0, react_1.useState)(null), functionalMgr = _v[0], setFunctionalMgr = _v[1];
+    var _w = (0, react_1.useState)(null), lineMgr = _w[0], setLineMgr = _w[1];
     // Step 3 Form States
-    var _w = (0, react_1.useState)(null), selectedKnowledge = _w[0], setSelectedKnowledge = _w[1];
-    var _x = (0, react_1.useState)(null), knowledgeLevel = _x[0], setKnowledgeLevel = _x[1];
-    var _y = (0, react_1.useState)(null), selectedTechSkill = _y[0], setSelectedTechSkill = _y[1];
-    var _z = (0, react_1.useState)(null), techSkillLevel = _z[0], setTechSkillLevel = _z[1];
-    var _0 = (0, react_1.useState)(null), functionalMgrJobTitle = _0[0], setFunctionalMgrJobTitle = _0[1];
-    var _1 = (0, react_1.useState)(null), lineMgrJobTitle = _1[0], setLineMgrJobTitle = _1[1];
-    var _2 = (0, react_1.useState)(null), jobFunctionalType = _2[0], setJobFunctionalType = _2[1];
-    var _3 = (0, useModalPopup_1.useModalPopup)(), modalState = _3.modalState, insideModelshow = _3.showModal, insideModalClose = _3.closeModal;
+    var _x = (0, react_1.useState)(null), selectedKnowledge = _x[0], setSelectedKnowledge = _x[1];
+    var _y = (0, react_1.useState)(null), knowledgeLevel = _y[0], setKnowledgeLevel = _y[1];
+    var _z = (0, react_1.useState)(null), selectedTechSkill = _z[0], setSelectedTechSkill = _z[1];
+    var _0 = (0, react_1.useState)(null), techSkillLevel = _0[0], setTechSkillLevel = _0[1];
+    var _1 = (0, react_1.useState)(null), functionalMgrJobTitle = _1[0], setFunctionalMgrJobTitle = _1[1];
+    var _2 = (0, react_1.useState)(null), lineMgrJobTitle = _2[0], setLineMgrJobTitle = _2[1];
+    var _3 = (0, react_1.useState)(null), jobFunctionalType = _3[0], setJobFunctionalType = _3[1];
+    var _4 = (0, useModalPopup_1.useModalPopup)(), modalState = _4.modalState, insideModelshow = _4.showModal, insideModalClose = _4.closeModal;
     // Added items (chips lists)
-    var _4 = (0, react_1.useState)([]), roleKnowledgeChips = _4[0], setRoleKnowledgeChips = _4[1];
-    var _5 = (0, react_1.useState)([]), techSkillChips = _5[0], setTechSkillChips = _5[1];
+    var _5 = (0, react_1.useState)([]), roleKnowledgeChips = _5[0], setRoleKnowledgeChips = _5[1];
+    var _6 = (0, react_1.useState)([]), techSkillChips = _6[0], setTechSkillChips = _6[1];
     // Validation States
-    var _6 = (0, react_1.useState)({}), errors = _6[0], setErrors = _6[1];
-    var _7 = (0, react_1.useState)(false), showErrorBanner = _7[0], setShowErrorBanner = _7[1];
+    var _7 = (0, react_1.useState)({}), errors = _7[0], setErrors = _7[1];
+    var _8 = (0, react_1.useState)(false), showErrorBanner = _8[0], setShowErrorBanner = _8[1];
     var contentRef = (0, react_1.useRef)(null);
     // Formatting toggles (for editor toolbar aesthetic feedback)
-    var _8 = (0, react_1.useState)(false), boldActive = _8[0], setBoldActive = _8[1];
-    var _9 = (0, react_1.useState)(false), italicActive = _9[0], setItalicActive = _9[1];
-    var _10 = (0, react_1.useState)(false), underlineActive = _10[0], setUnderlineActive = _10[1];
+    var _9 = (0, react_1.useState)(false), boldActive = _9[0], setBoldActive = _9[1];
+    var _10 = (0, react_1.useState)(false), italicActive = _10[0], setItalicActive = _10[1];
+    var _11 = (0, react_1.useState)(false), underlineActive = _11[0], setUnderlineActive = _11[1];
     // Clear states when closed
     (0, react_1.useEffect)(function () {
         if (!isOpen) {
@@ -528,18 +539,51 @@ var CreateAdvert = function (_a) {
         var minKeys = new Set(minQual.map(function (q) { return String(q.key); }));
         return localQualifications.filter(function (opt) { return !minKeys.has(String(opt.id)); });
     }, [minQual, localQualifications]);
-    var handleFunctionalJobTitleChange = function (val) {
-        setFunctionalMgrJobTitle(val);
-        if (val) {
-            var matchedManager = managers.find(function (m) { return String(m.id) === String(val.key); });
-            if (matchedManager) {
-                setFunctionalMgr({ key: matchedManager.id, text: matchedManager.displayText });
+    var handleFunctionalJobTitleChange = function (val) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+        var Filter, managersRes, displayText, mappedManagers, ManagersOption;
+        var _a, _b, _c, _d, _e, _f, _g;
+        return tslib_1.__generator(this, function (_h) {
+            switch (_h.label) {
+                case 0:
+                    setFunctionalMgrJobTitle(val);
+                    if (!val) return [3 /*break*/, 2];
+                    Filter = [
+                        {
+                            FilterKey: "ID",
+                            Operator: "eq",
+                            FilterValue: 55
+                        }
+                    ];
+                    return [4 /*yield*/, ServiceExport_1.masterService.GetUserDetails(Filter, "and")];
+                case 1:
+                    managersRes = _h.sent();
+                    if ((managersRes === null || managersRes === void 0 ? void 0 : managersRes.status) === 200) {
+                        displayText = [
+                            (_a = managersRes === null || managersRes === void 0 ? void 0 : managersRes.data) === null || _a === void 0 ? void 0 : _a.FirstName,
+                            (_b = managersRes === null || managersRes === void 0 ? void 0 : managersRes.data) === null || _b === void 0 ? void 0 : _b.MiddleName,
+                            (_c = managersRes === null || managersRes === void 0 ? void 0 : managersRes.data) === null || _c === void 0 ? void 0 : _c.LastName
+                        ].filter(Boolean)
+                            .join(" ");
+                        mappedManagers = {
+                            key: (_d = managersRes.data) === null || _d === void 0 ? void 0 : _d.ID,
+                            text: displayText
+                        };
+                        ManagersOption = {
+                            id: (_e = managersRes.data) === null || _e === void 0 ? void 0 : _e.ID,
+                            value: (_g = String((_f = managersRes.data) === null || _f === void 0 ? void 0 : _f.ID)) !== null && _g !== void 0 ? _g : "",
+                            displayText: displayText
+                        };
+                        setFunctionalMgr(mappedManagers);
+                        setmangers([ManagersOption]);
+                    }
+                    return [3 /*break*/, 3];
+                case 2:
+                    setFunctionalMgr(null);
+                    _h.label = 3;
+                case 3: return [2 /*return*/];
             }
-        }
-        else {
-            setFunctionalMgr(null);
-        }
-    };
+        });
+    }); };
     var handleFunctionalMgrChange = function (val) {
         setFunctionalMgr(val);
         if (val) {
@@ -552,18 +596,57 @@ var CreateAdvert = function (_a) {
             setFunctionalMgrJobTitle(null);
         }
     };
-    var handleLineJobTitleChange = function (val) {
-        setLineMgrJobTitle(val);
-        if (val) {
-            var matchedManager = managers.find(function (m) { return String(m.id) === String(val.key); });
-            if (matchedManager) {
-                setLineMgr({ key: matchedManager.id, text: matchedManager.displayText });
+    var handleLineJobTitleChange = function (val) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+        var Filter, managersRes, displayText, mappedManagers, ManagersOption;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        return tslib_1.__generator(this, function (_k) {
+            switch (_k.label) {
+                case 0:
+                    setLineMgrJobTitle(val);
+                    if (!val) return [3 /*break*/, 2];
+                    Filter = [
+                        {
+                            FilterKey: "ID",
+                            Operator: "eq",
+                            FilterValue: 70
+                        }
+                    ];
+                    return [4 /*yield*/, ServiceExport_1.masterService.GetUserDetails(Filter, "and")];
+                case 1:
+                    managersRes = _k.sent();
+                    if ((managersRes === null || managersRes === void 0 ? void 0 : managersRes.status) === 200) {
+                        displayText = [
+                            (_a = managersRes === null || managersRes === void 0 ? void 0 : managersRes.data) === null || _a === void 0 ? void 0 : _a.FirstName,
+                            (_b = managersRes === null || managersRes === void 0 ? void 0 : managersRes.data) === null || _b === void 0 ? void 0 : _b.MiddleName,
+                            (_c = managersRes === null || managersRes === void 0 ? void 0 : managersRes.data) === null || _c === void 0 ? void 0 : _c.LastName
+                        ].filter(Boolean)
+                            .join(" ");
+                        mappedManagers = {
+                            key: (_d = managersRes.data) === null || _d === void 0 ? void 0 : _d.ID,
+                            text: displayText
+                        };
+                        ManagersOption = [{
+                                id: (_e = managersRes.data) === null || _e === void 0 ? void 0 : _e.ID,
+                                value: (_g = String((_f = managersRes.data) === null || _f === void 0 ? void 0 : _f.ID)) !== null && _g !== void 0 ? _g : "",
+                                displayText: displayText
+                            },
+                            {
+                                id: Number(functionalMgr === null || functionalMgr === void 0 ? void 0 : functionalMgr.key),
+                                value: (_h = String(functionalMgr === null || functionalMgr === void 0 ? void 0 : functionalMgr.key)) !== null && _h !== void 0 ? _h : "",
+                                displayText: (_j = functionalMgr === null || functionalMgr === void 0 ? void 0 : functionalMgr.text) !== null && _j !== void 0 ? _j : ""
+                            }
+                        ];
+                        setLineMgr(mappedManagers);
+                        setmangers(ManagersOption);
+                    }
+                    return [3 /*break*/, 3];
+                case 2:
+                    setLineMgr(null);
+                    _k.label = 3;
+                case 3: return [2 /*return*/];
             }
-        }
-        else {
-            setLineMgr(null);
-        }
-    };
+        });
+    }); };
     var handleLineMgrChange = function (val) {
         setLineMgr(val);
         if (val) {

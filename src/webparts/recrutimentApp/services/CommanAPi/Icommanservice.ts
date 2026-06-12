@@ -19,7 +19,7 @@ export type ICommonService = {
   ): Promise<ApiResponse<AutoCompleteItem | null>>;
   getUserIDByEmail(userId: number): Promise<ApiResponse<any | null>>;
   GetMasterData(ListName: string,Filter?: any[]): Promise<ApiResponse<any[]>>;
-  GetSageMasterData(ListName: string): Promise<ApiResponse<any[]>>;
+  GetSageMasterData(ListName: string, Filter: any[]): Promise<ApiResponse<any[]>>;
   GetGradeLevel(PatersonGrade: string): Promise<ApiResponse<any | null>>;
   GetAttachmentLink(
     PositionCode: string,

@@ -421,7 +421,6 @@ var batchGet = function (queries) { return tslib_1.__awaiter(void 0, void 0, voi
                     var _a;
                     var _b, _c, _d;
                     var flatFilters = (q.Filter && q.Filter.flat()) || [];
-                    console.log(flatFilters);
                     var filterStr = _buildODataFilter(flatFilters, (_b = q.FilterCondition) !== null && _b !== void 0 ? _b : "and");
                     var request = (_a = batchedSP_1.web.lists
                         .getByTitle(q.ListName)

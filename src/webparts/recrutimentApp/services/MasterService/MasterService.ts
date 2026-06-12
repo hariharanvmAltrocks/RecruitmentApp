@@ -583,7 +583,7 @@ export default class MasterService implements IMasterService {
     try {
       const res = await SPServices.SPReadItems({
         Listname: ListNames.HRMSSageList,
-        Select: `*,JobTitleInEnglish/JobTitleInEnglish,JobTitleInFrench/JobTitleInFrench,Department/DepartmentName,PatersonGrade/PatersonGrade,DRCGrade/DRCGrade`,
+        Select: `*,JobTitleInEnglish/JobTitleInEnglish,JobTitleInEnglish/ID,JobTitleInFrench/JobTitleInFrench,Department/DepartmentName,PatersonGrade/PatersonGrade,DRCGrade/DRCGrade`,
         Expand: "JobTitleInEnglish,JobTitleInFrench,Department,PatersonGrade,DRCGrade",
         Filter: filterParam,
         FilterCondition: filterConditions,

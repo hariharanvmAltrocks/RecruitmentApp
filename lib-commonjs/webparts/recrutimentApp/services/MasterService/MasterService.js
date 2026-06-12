@@ -629,7 +629,7 @@ var MasterService = /** @class */ (function () {
                         _a.trys.push([1, 3, , 4]);
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: Config_1.ListNames.HRMSSageList,
-                                Select: "*,JobTitleInEnglish/JobTitleInEnglish,JobTitleInFrench/JobTitleInFrench,Department/DepartmentName,PatersonGrade/PatersonGrade,DRCGrade/DRCGrade",
+                                Select: "*,JobTitleInEnglish/JobTitleInEnglish,JobTitleInEnglish/ID,JobTitleInFrench/JobTitleInFrench,Department/DepartmentName,PatersonGrade/PatersonGrade,DRCGrade/DRCGrade",
                                 Expand: "JobTitleInEnglish,JobTitleInFrench,Department,PatersonGrade,DRCGrade",
                                 Filter: filterParam,
                                 FilterCondition: filterConditions,

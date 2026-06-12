@@ -201,8 +201,9 @@ var AdvertReviewDrawer = function (_a) {
             },
         });
     }, [showModal, closeModal, onClose, navigate, refreshKey]);
+    var isHRLead = roleIDs.includes(Config_1.RoleID.RecruitmentHRLead);
     var handleApprove = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var isHRLead, isHR, isHODorLM, error_1;
+        var isHR, isHODorLM, error_1;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -224,7 +225,6 @@ var AdvertReviewDrawer = function (_a) {
                 case 1:
                     _a.trys.push([1, 9, 10, 11]);
                     setLoading(true);
-                    isHRLead = roleIDs.includes(Config_1.RoleID.RecruitmentHRLead);
                     isHR = roleIDs.includes(Config_1.RoleID.RecruitmentHR);
                     isHODorLM = [Config_1.RoleID.HOD, Config_1.RoleID.LineManager].some(function (role) {
                         return roleIDs.includes(role);
@@ -346,7 +346,7 @@ var AdvertReviewDrawer = function (_a) {
                                     strings.RecruitmentLifecycleRoadmap)),
                             react_1.default.createElement(PositionRoadmap_1.PositionRoadmap, { statusId: (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusId) || 0, recId: (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.ID) || selectedJobId || 0 }))))),
                     react_1.default.createElement(PositionFramework_1.PositionFramework, { positionDetails: mappedData, isLoading: isLoading, headerCode: headerMeta.code }),
-                    !isLoading && AdvertFlag ? (react_1.default.createElement(AdvertLanguageToggle_1.AdvertLanguageToggle, { advertLanguage: advertLanguage, advertContent: advertContent, isLoading: isLoading, onLanguageChange: onLanguageChange })) : !isLoading && !AdvertFlag && !localAdvertDetails ? (react_1.default.createElement("div", { className: "advert-empty-state-card" },
+                    !isLoading && AdvertFlag ? (react_1.default.createElement(AdvertLanguageToggle_1.AdvertLanguageToggle, { advertLanguage: advertLanguage, advertContent: advertContent, isLoading: isLoading, onLanguageChange: onLanguageChange })) : !isLoading && !AdvertFlag && !localAdvertDetails && !isHRLead ? (react_1.default.createElement("div", { className: "advert-empty-state-card" },
                         react_1.default.createElement("div", { className: "advert-empty-state-card__icon-wrapper" },
                             react_1.default.createElement(lucide_react_1.FilePlus2, { size: 28 })),
                         react_1.default.createElement("h3", { className: "advert-empty-state-card__title" }, "No Advertisement Created"),
@@ -366,7 +366,7 @@ var AdvertReviewDrawer = function (_a) {
                                     });
                                 } },
                                 react_1.default.createElement(lucide_react_1.BookOpen, { size: 14 }),
-                                "View Advertisement Guide")))) : localAdvertDetails ? (react_1.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: "16px", width: "100%", flexShrink: 0 } },
+                                "View Advertisement Guide")))) : localAdvertDetails && !isHRLead ? (react_1.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: "16px", width: "100%", flexShrink: 0 } },
                         react_1.default.createElement("div", { style: { display: "flex", justifyContent: "flex-end", gap: "10px" } },
                             react_1.default.createElement("button", { type: "button", className: "advert-success-card__action-btn advert-success-card__action-btn--primary", onClick: function () { return setShowCreateModal(true); } }, "Edit Advertisement"),
                             react_1.default.createElement("button", { type: "button", className: "advert-success-card__action-btn", onClick: function () {

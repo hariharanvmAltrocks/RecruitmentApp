@@ -342,6 +342,9 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
     [showModal, closeModal, onClose, navigate, refreshKey],
   );
 
+      const isHRLead = roleIDs.includes(RoleID.RecruitmentHRLead);
+
+
   const handleApprove = useCallback(async () => {
     showValidationRef.current = true;
 
@@ -362,7 +365,6 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
 
     try {
       setLoading(true);
-      const isHRLead = roleIDs.includes(RoleID.RecruitmentHRLead);
       const isHR = roleIDs.includes(RoleID.RecruitmentHR);
       const isHODorLM = [RoleID.HOD, RoleID.LineManager].some((role) =>
         roleIDs.includes(role),
@@ -566,7 +568,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                     isLoading={isLoading}
                     onLanguageChange={onLanguageChange}
                   />
-                ) : !isLoading && !AdvertFlag && !localAdvertDetails ? (
+                ) : !isLoading && !AdvertFlag && !localAdvertDetails && !isHRLead ? (
                   <div className="advert-empty-state-card">
                     <div className="advert-empty-state-card__icon-wrapper">
                       <FilePlus2 size={28} />
@@ -605,7 +607,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                       </a>
                     </div>
                   </div>
-                ) : localAdvertDetails ? (
+                ) : localAdvertDetails && !isHRLead ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%", flexShrink: 0 }}>
                     <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
                       {/* <button

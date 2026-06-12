@@ -21,6 +21,7 @@ exports.CandidateStages = [
     { label: "Work Permit Process", icon: lucide_react_1.ClipboardCheck },
     { label: "Employment Contract", icon: lucide_react_1.Send },
     { label: "Pre-Onboarding", icon: lucide_react_1.Play },
+    { label: "Onboarding In Progress", icon: lucide_react_1.CheckCircle2 },
     { label: "Onboarding", icon: lucide_react_1.Filter },
 ];
 var getStageIndex = function (statusId) {
@@ -145,7 +146,8 @@ var getStageIndexinCandidate = function (statusId) {
         statusId == Config_1.StatusId.PendingLHWorkPermitProcess ||
         statusId ==
             Config_1.StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract ||
-        statusId == Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract)
+        statusId == Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract ||
+        statusId == Config_1.StatusId.PendingHREmploymentContractVerification)
         return 4;
     if (statusId == Config_1.StatusId.PendingHRpreonboardingchecklist)
         return 5;

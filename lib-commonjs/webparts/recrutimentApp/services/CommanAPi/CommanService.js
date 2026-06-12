@@ -322,7 +322,7 @@ var CommonService = /** @class */ (function () {
                 }
             });
         }); };
-        this.GetSageMasterData = function (ListName) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+        this.GetSageMasterData = function (ListName, Filter) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
             var listItems, error_9;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
@@ -330,6 +330,7 @@ var CommonService = /** @class */ (function () {
                         _a.trys.push([0, 2, , 3]);
                         return [4 /*yield*/, spservice_1.default.SPReadItems({
                                 Listname: ListName,
+                                Filter: Filter,
                                 Select: "*,JobTitleInEnglish/JobTitleInEnglish,JobTitleInFrench/JobTitleInFrench",
                                 Expand: "JobTitleInEnglish,JobTitleInFrench"
                             })];

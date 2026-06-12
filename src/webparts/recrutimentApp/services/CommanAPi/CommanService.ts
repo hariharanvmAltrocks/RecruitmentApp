@@ -289,10 +289,12 @@ export default class CommonService implements ICommonService {
 
   GetSageMasterData = async (
     ListName: string,
+    Filter: any[]
   ): Promise<ApiResponse<any[]>> => {
     try {
       const listItems: any[] = await SPServices.SPReadItems({
         Listname: ListName,
+        Filter: Filter,
         Select:  `*,JobTitleInEnglish/JobTitleInEnglish,JobTitleInFrench/JobTitleInFrench`,
         Expand: "JobTitleInEnglish,JobTitleInFrench"
       });

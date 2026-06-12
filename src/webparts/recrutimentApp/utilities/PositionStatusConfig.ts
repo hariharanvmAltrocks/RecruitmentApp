@@ -30,6 +30,7 @@ export const CandidateStages = [
   { label: "Work Permit Process", icon: ClipboardCheck },
   { label: "Employment Contract", icon: Send },
   { label: "Pre-Onboarding", icon: Play },
+  { label: "Onboarding In Progress",icon:CheckCircle2 },
   { label: "Onboarding", icon: Filter },
 ];
 
@@ -173,7 +174,8 @@ export const getStageIndexinCandidate = (statusId: number) => {
     statusId == StatusId.PendingLHWorkPermitProcess ||
     statusId ==
       StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract ||
-    statusId == StatusId.PendingHRReviewOfferanduploadEmployementContract
+    statusId == StatusId.PendingHRReviewOfferanduploadEmployementContract ||
+    statusId == StatusId.PendingHREmploymentContractVerification
   )
     return 4;
    if (

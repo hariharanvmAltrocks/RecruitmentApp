@@ -23,7 +23,7 @@ import {
 import "./CreateAdvert.modules.scss";
 import { AdvertismentDetails } from "../../Hooks/getAdvertismentDetails";
 import { useMasterData, MasterItem } from "../../Hooks/useMasterData";
-import { CareerPotalServices, RecruitmentServices } from "../../../../../../services/ServiceExport";
+import { CareerPotalServices, CommonServices, masterService, RecruitmentServices } from "../../../../../../services/ServiceExport";
 import { CategoryID } from "../../../../../../utilities/ConditionConfig";
 import ModalPopup from "../../../../../Comman/ModalPopup/ModalPopup";
 import { useModalPopup } from "../../../../../Comman/ModalPopup/useModalPopup";
@@ -226,7 +226,7 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
                   bottom: 0,
                 }}
               >
-                <Plus size={14} /> + Add Custom
+                <Plus size={14} /> Add Custom
               </button>
             )}
           </div>
@@ -534,11 +534,22 @@ export const CreateAdvert: React.FC<CreateAdvertProps> = ({
     technicalSkills: dbTechnicalSkills,
     roleSpecificKnowledge: dbRoleSpecificKnowledge,
     Level: dbLevel,
-    managers,
+    // managers,
     jobTitles,
     functionalType,
     loading: masterLoading,
   } = useMasterData();
+
+  useEffect(() => {
+}, [dbQualifications]);
+
+
+useEffect(() => {
+  if (!masterLoading) {
+    setLocalJobTitles(jobTitles);
+    setLocalFunctionalType(functionalType);
+  }
+}, [masterLoading, jobTitles, functionalType]);
 
   // Local master data states for dynamic updates
   const [localQualifications, setLocalQualifications] = useState<MasterItem[]>([]);
@@ -546,6 +557,7 @@ export const CreateAdvert: React.FC<CreateAdvertProps> = ({
   const [localRoleSpecificKnowledge, setLocalRoleSpecificKnowledge] = useState<MasterItem[]>([]);
   const [localJobTitles, setLocalJobTitles] = useState<MasterItem[]>([]);
   const [localFunctionalType, setLocalFunctionalType] = useState<MasterItem[]>([]);
+  const [managers, setmangers] = useState<MasterItem[]>([]);
 
   useEffect(() => {
     if (!masterLoading) {
@@ -800,13 +812,44 @@ export const CreateAdvert: React.FC<CreateAdvertProps> = ({
     return localQualifications.filter((opt) => !minKeys.has(String(opt.id)));
   }, [minQual, localQualifications]);
 
-  const handleFunctionalJobTitleChange = (val: AutoCompleteState | null) => {
+  const handleFunctionalJobTitleChange = async (val: AutoCompleteState | null) => {
     setFunctionalMgrJobTitle(val);
     if (val) {
-      const matchedManager = managers.find((m) => String(m.id) === String(val.key));
-      if (matchedManager) {
-        setFunctionalMgr({ key: matchedManager.id, text: matchedManager.displayText });
-      }
+      let Filter = [
+        {
+           FilterKey: "ID",
+           Operator: "eq",
+           FilterValue: 55
+        }
+      ]
+       const managersRes =
+               await masterService.GetUserDetails(
+                Filter,
+                "and"
+              );
+            if (
+              managersRes?.status === 200 
+            ) {
+              let displayText = [
+                managersRes?.data?.FirstName,
+                managersRes?.data?.MiddleName,
+                managersRes?.data?.LastName
+              ] .filter(Boolean)
+                    .join(" ")
+
+              const mappedManagers: AutoCompleteState ={
+                key: managersRes.data?.ID,
+                text: displayText
+              }
+
+              const ManagersOption: MasterItem ={
+                 id: managersRes.data?.ID,
+  value: String(managersRes.data?.ID) ?? "", 
+  displayText: displayText
+              }
+        setFunctionalMgr(mappedManagers);
+        setmangers([ManagersOption])
+            }
     } else {
       setFunctionalMgr(null);
     }
@@ -824,13 +867,54 @@ export const CreateAdvert: React.FC<CreateAdvertProps> = ({
     }
   };
 
-  const handleLineJobTitleChange = (val: AutoCompleteState | null) => {
+  const handleLineJobTitleChange = async (val: AutoCompleteState | null) => {
     setLineMgrJobTitle(val);
     if (val) {
-      const matchedManager = managers.find((m) => String(m.id) === String(val.key));
-      if (matchedManager) {
-        setLineMgr({ key: matchedManager.id, text: matchedManager.displayText });
-      }
+        let Filter = [
+        {
+           FilterKey: "ID",
+           Operator: "eq",
+           FilterValue: 70
+        }
+      ]
+       const managersRes =
+               await masterService.GetUserDetails(
+                Filter,
+                "and"
+              );
+            if (
+              managersRes?.status === 200 
+            ) {
+              let displayText = [
+                managersRes?.data?.FirstName,
+                managersRes?.data?.MiddleName,
+                managersRes?.data?.LastName
+              ] .filter(Boolean)
+                    .join(" ")
+
+              const mappedManagers: AutoCompleteState ={
+                key: managersRes.data?.ID,
+                text: displayText
+              }
+
+              const ManagersOption: MasterItem[] =[{
+                 id: managersRes.data?.ID,
+  value: String(managersRes.data?.ID) ?? "", 
+  displayText: displayText
+              },
+              {
+                 id: Number(functionalMgr?.key),
+  value: String(functionalMgr?.key)  ?? "", 
+  displayText: functionalMgr?.text ?? ""
+              }
+            ]
+        setLineMgr(mappedManagers);
+        setmangers(ManagersOption)
+            }
+      // const matchedManager = managers.find((m) => String(m.id) === String(val.key));
+      // if (matchedManager) {
+      //   setLineMgr({ key: matchedManager.id, text: matchedManager.displayText });
+      // }
     } else {
       setLineMgr(null);
     }
