@@ -155,7 +155,7 @@ var AdvertReviewDrawer = function (_a) {
         var rules = [
             {
                 roles: [Config_1.RoleID.RecruitmentHR],
-                validate: function () { return commentValid && uploadValid && checkboxValid; },
+                validate: function () { return commentValid && uploadValid && checkboxValid; }, //&& (AdvertFlag || !!localAdvertDetails),
             },
             {
                 roles: [Config_1.RoleID.HOD, Config_1.RoleID.LineManager],
@@ -402,7 +402,7 @@ var AdvertReviewDrawer = function (_a) {
                                     strings.Submit)))))))))),
         react_1.default.createElement(ModalPopup_1.ModalPopup, tslib_1.__assign({}, modalState, { onClose: closeModal })),
         react_1.default.createElement(CommentsModal_1.default, { open: commentsflag, loading: commentsLoading, Comments: commentsData || [], onClose: function () { return setCommentsflag(false); } }),
-        react_1.default.createElement(CreateAdvert_1.CreateAdvert, { isOpen: showCreateModal, onClose: function () { return setShowCreateModal(false); }, jobCodeId: jobCodeId, SubmitKey: function (advert) { return setCreateAdvert(advert); }, onPublish: function (advert) {
+        react_1.default.createElement(CreateAdvert_1.CreateAdvert, { isOpen: showCreateModal, onClose: function () { return setShowCreateModal(false); }, jobCodeId: jobCodeId, advertDetails: localAdvertDetails, SubmitKey: function (advert) { return setCreateAdvert(advert); }, onPublish: function (advert) {
                 setLocalAdvertDetails(advert);
                 setShowCreateModal(false);
                 showModal({

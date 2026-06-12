@@ -57,6 +57,7 @@ export interface CreateAdvertProps {
   SubmitKey?: (advert: SubmitAdvert) => void;
   showModal: (modalState: any) => void;
   closeModal: () => void;
+  advertDetails?: AdvertismentDetails | null;
 }
 
 
@@ -526,6 +527,7 @@ export const CreateAdvert: React.FC<CreateAdvertProps> = ({
   SubmitKey,
   showModal,
   closeModal,
+  advertDetails,
 }) => {
   const {
     totalExperience,
@@ -647,8 +649,328 @@ useEffect(() => {
       setFunctionalMgrJobTitle(null);
       setLineMgrJobTitle(null);
       setJobFunctionalType(null);
+      setRolePurposeEn("");
+      setRolePurposeFr("");
+      setJobDescEn("");
+      setJobDescFr("");
+      setRoleKnowledgeChips([]);
+      setTechSkillChips([]);
+      setmangers([]);
     }
   }, [isOpen]);
+
+  // Fetch and populate existing advertisement data when editing
+  useEffect(() => {
+    const fetchAdvertDetails = async () => {
+      if (!isOpen || masterLoading) return;
+
+      if (advertDetails) {
+        // 1. Populate from local state (passed as prop)
+        // Step 1: Job details
+        setRolePurposeEn(advertDetails.english.responsibilities[0] || "");
+        setRolePurposeFr(advertDetails.french.responsibilities[0] || "");
+        setJobDescEn(advertDetails.english.description || "");
+        setJobDescFr(advertDetails.french.description || "");
+
+        // Step 2: Experience & Qualifications
+        let totalExpText = "";
+        let miningExpText = "";
+        (advertDetails.english.experience || []).forEach((exp) => {
+          if (exp.startsWith("Total Experience:")) {
+            totalExpText = exp.replace("Total Experience:", "").trim();
+          } else if (exp.startsWith("Mining Experience:")) {
+            miningExpText = exp.replace("Mining Experience:", "").trim();
+          }
+        });
+
+        if (totalExpText) {
+          const found = totalExperience.find(
+            (e) => e.displayText.trim().toLowerCase() === totalExpText.toLowerCase()
+          );
+          if (found) {
+            setPrefTotalExp({ key: Number(found.id), text: found.displayText });
+          }
+        }
+        if (miningExpText) {
+          const found = totalExperience.find(
+            (e) => e.displayText.trim().toLowerCase() === miningExpText.toLowerCase()
+          );
+          if (found) {
+            setPrefMiningExp({ key: Number(found.id), text: found.displayText });
+          }
+        }
+
+        const minQuals: AutoCompleteState[] = [];
+        (advertDetails.english.qualifications || []).forEach((qText) => {
+          const found = localQualifications.find(
+            (q) => q.displayText.trim().toLowerCase() === qText.trim().toLowerCase()
+          );
+          if (found) {
+            minQuals.push({ key: found.id, text: found.displayText });
+          }
+        });
+        setMinQual(minQuals);
+
+        const prefQuals: AutoCompleteState[] = [];
+        (advertDetails.english.PrefeQualification || []).forEach((qText) => {
+          const found = localQualifications.find(
+            (q) => q.displayText.trim().toLowerCase() === qText.trim().toLowerCase()
+          );
+          if (found) {
+            prefQuals.push({ key: found.id, text: found.displayText });
+          }
+        });
+        setPrefQual(prefQuals);
+
+        // Job Functional Type
+        const funcTypeText = advertDetails.english.JobFunctionalType[0] || "";
+        if (funcTypeText) {
+          const found = localFunctionalType.find(
+            (f) => f.displayText.trim().toLowerCase() === funcTypeText.trim().toLowerCase()
+          );
+          if (found) {
+            setJobFunctionalType({ key: Number(found.id), text: found.displayText });
+          }
+        }
+
+        // Step 3: Skills & Knowledge Chips
+        const roleChips: { skill: AutoCompleteState; level: AutoCompleteState }[] = [];
+        const rkList = advertDetails.english.RoleSpecificKnowledge || [];
+        const rkLevels = advertDetails.english.RequiredLevel || [];
+        rkList.forEach((skText, idx) => {
+          const foundSkill = localRoleSpecificKnowledge.find(
+            (s) => s.displayText.trim().toLowerCase() === skText.trim().toLowerCase()
+          );
+          const lvlText = rkLevels[idx] || "";
+          const foundLevel = dbLevel.find(
+            (l) => l.displayText.trim().toLowerCase() === lvlText.trim().toLowerCase()
+          );
+          if (foundSkill && foundLevel) {
+            roleChips.push({
+              skill: { key: foundSkill.id, text: foundSkill.displayText },
+              level: { key: foundLevel.id, text: foundLevel.displayText },
+            });
+          }
+        });
+        setRoleKnowledgeChips(roleChips);
+
+        const techChips: { skill: AutoCompleteState; level: AutoCompleteState }[] = [];
+        const tsList = advertDetails.english.TechnicalSkills || [];
+        const tsLevels = advertDetails.english.LevelProficiency || [];
+        tsList.forEach((skText, idx) => {
+          const foundSkill = localTechnicalSkills.find(
+            (s) => s.displayText.trim().toLowerCase() === skText.trim().toLowerCase()
+          );
+          const lvlText = tsLevels[idx] || "";
+          const foundLevel = dbLevel.find(
+            (l) => l.displayText.trim().toLowerCase() === lvlText.trim().toLowerCase()
+          );
+          if (foundSkill && foundLevel) {
+            techChips.push({
+              skill: { key: foundSkill.id, text: foundSkill.displayText },
+              level: { key: foundLevel.id, text: foundLevel.displayText },
+            });
+          }
+        });
+        setTechSkillChips(techChips);
+
+        // Fetch functional manager and line manager (since they aren't stored in localAdvertDetails translation object)
+        if (jobCodeId) {
+          try {
+            const filterConditions = [
+              {
+                FilterKey: "JobCode/ID",
+                Operator: "eq",
+                FilterValue: jobCodeId,
+              },
+            ];
+            const response = await RecruitmentServices.GetHRMSRecruitmentRoleProfileDetails(
+              filterConditions,
+              "",
+            );
+            if (response.status === 200 && response.data && response.data.length > 0) {
+              const items = response.data[0];
+
+              if (items.JobTitleofFunctionalManagerId) {
+                const titleId = Number(items.JobTitleofFunctionalManagerId);
+                const foundTitle = jobTitles.find(t => Number(t.id) === titleId);
+                setFunctionalMgrJobTitle({
+                  key: titleId,
+                  text: foundTitle ? foundTitle.displayText : "",
+                });
+              }
+
+              if (items.JobTitleofLMorSupervisorId) {
+                const titleId = Number(items.JobTitleofLMorSupervisorId);
+                const foundTitle = jobTitles.find(t => Number(t.id) === titleId);
+                setLineMgrJobTitle({
+                  key: titleId,
+                  text: foundTitle ? foundTitle.displayText : "",
+                });
+              }
+
+              const mgrOptions: MasterItem[] = [];
+              const fMgrName = items.FunctionalManagerName || "";
+              const lMgrName = items.LineManagerorSupervisorName || "";
+              
+              const fMgrKey = 55;
+              const lMgrKey = 70;
+              
+              if (fMgrName) {
+                mgrOptions.push({
+                  id: fMgrKey,
+                  value: String(fMgrKey),
+                  displayText: fMgrName
+                });
+                setFunctionalMgr({ key: fMgrKey, text: fMgrName });
+              }
+              if (lMgrName) {
+                mgrOptions.push({
+                  id: lMgrKey,
+                  value: String(lMgrKey),
+                  displayText: lMgrName
+                });
+                setLineMgr({ key: lMgrKey, text: lMgrName });
+              }
+              if (mgrOptions.length > 0) {
+                setmangers(mgrOptions);
+              }
+            }
+          } catch (err) {
+            console.error("Error fetching manager details for local details:", err);
+          }
+        }
+      } else if (jobCodeId) {
+        // Fallback: Fetch completely from DB
+        try {
+          const filterConditions = [
+            {
+              FilterKey: "JobCode/ID",
+              Operator: "eq",
+              FilterValue: jobCodeId,
+            },
+          ];
+          const response = await RecruitmentServices.GetHRMSRecruitmentRoleProfileDetails(
+            filterConditions,
+            "",
+          );
+          if (response.status === 200 && response.data && response.data.length > 0) {
+            const items = response.data[0];
+
+            // 1. Job details (Step 1)
+            setRolePurposeEn(items.RolePurpose || "");
+            setRolePurposeFr(items.RolePurpose_fr || "");
+            setJobDescEn(items.JobDescription || "");
+            setJobDescFr(items.JobDescription_fr || "");
+
+            // 2. Experience & Qualifications (Step 2)
+            if (items.TotalExperience && items.TotalExperience.key) {
+              setPrefTotalExp({
+                key: Number(items.TotalExperience.key),
+                text: items.TotalExperience.text,
+              });
+            }
+            
+            if (items.ExperienceinMiningIndustry && items.ExperienceinMiningIndustry.key) {
+              setPrefMiningExp({
+                key: Number(items.ExperienceinMiningIndustry.key),
+                text: items.ExperienceinMiningIndustry.text,
+              });
+            }
+
+            if (items.qualificationValue) {
+              const minQ = (items.qualificationValue.MinQualification || []).map((q: any) => ({
+                key: q.key,
+                text: q.text,
+              }));
+              setMinQual(minQ);
+
+              const prefQ = (items.qualificationValue.PrefeQualification || []).map((q: any) => ({
+                key: q.key,
+                text: q.text,
+              }));
+              setPrefQual(prefQ);
+            }
+
+            // 3. Job Functional Type
+            if (items.JobFunctionalType && items.JobFunctionalType.key) {
+              setJobFunctionalType({
+                key: Number(items.JobFunctionalType.key),
+                text: items.JobFunctionalType.text || "",
+              });
+            }
+
+            // 4. Managers Titles & Names
+            if (items.JobTitleofFunctionalManagerId) {
+              const titleId = Number(items.JobTitleofFunctionalManagerId);
+              const foundTitle = jobTitles.find(t => Number(t.id) === titleId);
+              setFunctionalMgrJobTitle({
+                key: titleId,
+                text: foundTitle ? foundTitle.displayText : "",
+              });
+            }
+
+            if (items.JobTitleofLMorSupervisorId) {
+              const titleId = Number(items.JobTitleofLMorSupervisorId);
+              const foundTitle = jobTitles.find(t => Number(t.id) === titleId);
+              setLineMgrJobTitle({
+                key: titleId,
+                text: foundTitle ? foundTitle.displayText : "",
+              });
+            }
+
+            const mgrOptions: MasterItem[] = [];
+            const fMgrName = items.FunctionalManagerName || "";
+            const lMgrName = items.LineManagerorSupervisorName || "";
+            
+            const fMgrKey = 55; // Placeholder mock ID matching implementation config
+            const lMgrKey = 70; // Placeholder mock ID matching implementation config
+            
+            if (fMgrName) {
+              mgrOptions.push({
+                id: fMgrKey,
+                value: String(fMgrKey),
+                displayText: fMgrName
+              });
+              setFunctionalMgr({ key: fMgrKey, text: fMgrName });
+            }
+            if (lMgrName) {
+              mgrOptions.push({
+                id: lMgrKey,
+                value: String(lMgrKey),
+                displayText: lMgrName
+              });
+              setLineMgr({ key: lMgrKey, text: lMgrName });
+            }
+            if (mgrOptions.length > 0) {
+              setmangers(mgrOptions);
+            }
+
+            // 5. Skills & Knowledge Chips (Step 3)
+            if (items.RoleSpeKnowledgeValue) {
+              const roleChips = items.RoleSpeKnowledgeValue.map((rk: any) => ({
+                skill: { key: rk.RoleSpeKnowledge.key, text: rk.RoleSpeKnowledge.text },
+                level: { key: rk.RequiredLevel.key, text: rk.RequiredLevel.text }
+              }));
+              setRoleKnowledgeChips(roleChips);
+            }
+
+            if (items.TechnicalSkillValue) {
+              const techChips = items.TechnicalSkillValue.map((ts: any) => ({
+                skill: { key: ts.TechnicalSkills.key, text: ts.TechnicalSkills.text },
+                level: { key: ts.LevelProficiency.key, text: ts.LevelProficiency.text }
+              }));
+              setTechSkillChips(techChips);
+            }
+          }
+        } catch (err) {
+          console.error("Error fetching/populating role profile details:", err);
+        }
+      }
+    };
+
+    fetchAdvertDetails();
+  }, [isOpen, jobCodeId, masterLoading, jobTitles, advertDetails]);
 
   const handleSaveCustom = async (englishText: string, frenchText: string) => {
     if (!customModal.fieldKey || !customModal.category.id) return;
@@ -791,26 +1113,33 @@ useEffect(() => {
     }
   };
 
-  const filteredMiningExperience = useMemo(() => {
-    if (!prefTotalExp) return totalExperience;
-    const maxTotal = getMaxYears(prefTotalExp.text);
-    return totalExperience.filter((opt) => {
-      const maxMining = getMaxYears(opt.displayText);
-      return maxMining < maxTotal;
-    });
-  }, [prefTotalExp, totalExperience]);
+const filteredMiningExperience = useMemo(() => {
+  if (!prefTotalExp) return totalExperience;
+
+  const selectedIndex = totalExperience.findIndex(
+    (item) => item.displayText === prefTotalExp.text
+  );
+
+  return selectedIndex >= 0
+    ? totalExperience.slice(0, selectedIndex + 1)
+    : totalExperience;
+}, [prefTotalExp, totalExperience]);
 
   const filteredMinQualOptions = useMemo(() => {
-    if (prefQual.length === 0) return localQualifications;
-    const prefKeys = new Set(prefQual.map((q) => String(q.key)));
-    return localQualifications.filter((opt) => !prefKeys.has(String(opt.id)));
-  }, [prefQual, localQualifications]);
+    const selectedKeys = new Set([
+      ...minQual.map((q) => String(q.key)),
+      ...prefQual.map((q) => String(q.key))
+    ]);
+    return localQualifications.filter((opt) => !selectedKeys.has(String(opt.id)));
+  }, [minQual, prefQual, localQualifications]);
 
   const filteredPrefQualOptions = useMemo(() => {
-    if (minQual.length === 0) return localQualifications;
-    const minKeys = new Set(minQual.map((q) => String(q.key)));
-    return localQualifications.filter((opt) => !minKeys.has(String(opt.id)));
-  }, [minQual, localQualifications]);
+    const selectedKeys = new Set([
+      ...minQual.map((q) => String(q.key)),
+      ...prefQual.map((q) => String(q.key))
+    ]);
+    return localQualifications.filter((opt) => !selectedKeys.has(String(opt.id)));
+  }, [minQual, prefQual, localQualifications]);
 
   const handleFunctionalJobTitleChange = async (val: AutoCompleteState | null) => {
     setFunctionalMgrJobTitle(val);

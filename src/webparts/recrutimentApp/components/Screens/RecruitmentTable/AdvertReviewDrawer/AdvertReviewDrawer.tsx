@@ -279,7 +279,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
     const rules: { roles: number[]; validate: () => boolean }[] = [
       {
         roles: [RoleID.RecruitmentHR],
-        validate: () => commentValid && uploadValid && checkboxValid,
+        validate: () => commentValid && uploadValid && checkboxValid , //&& (AdvertFlag || !!localAdvertDetails),
       },
       {
         roles: [RoleID.HOD, RoleID.LineManager],
@@ -768,6 +768,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
             isOpen={showCreateModal}
             onClose={() => setShowCreateModal(false)}
             jobCodeId={jobCodeId}
+            advertDetails={localAdvertDetails}
             SubmitKey={(advert) => setCreateAdvert(advert)}
             onPublish={(advert) => {
               setLocalAdvertDetails(advert);

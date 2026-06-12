@@ -438,13 +438,30 @@
 .chipsContainer {
   display: flex;
   flex-wrap: wrap;
+  align-content: flex-start;
   gap: 8px;
   padding: 12px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   min-height: 48px;
+  max-height: 120px;
+  overflow-y: auto;
   box-sizing: border-box;
+  /* Custom scrollbar */
+}
+.chipsContainer::-webkit-scrollbar {
+  width: 6px;
+}
+.chipsContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+.chipsContainer::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+.chipsContainer::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 .chipsContainer .chip {
   display: inline-flex;
