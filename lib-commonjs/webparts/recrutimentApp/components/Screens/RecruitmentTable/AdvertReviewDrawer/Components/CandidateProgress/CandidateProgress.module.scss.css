@@ -225,6 +225,12 @@
   font-size: 13px;
   font-weight: 600;
 }
+.candidateProgress__currentStepBox .stepBadge--onhold {
+  background: #f59e0b;
+}
+.candidateProgress__currentStepBox .stepBadge--rejected {
+  background: #ef4444;
+}
 .candidateProgress__currentStepBox .stepInfo {
   display: flex;
   flex-direction: column;
@@ -247,6 +253,12 @@
   height: 6px;
   border-radius: 50%;
   background: var(--app-primary-color, #7c3aed);
+}
+.candidateProgress__currentStepBox .stepInfo .stepStatus .dot--onhold {
+  background: #f59e0b;
+}
+.candidateProgress__currentStepBox .stepInfo .stepStatus .dot--rejected {
+  background: #ef4444;
 }
 .candidateProgress__progressRow {
   display: flex;
@@ -300,6 +312,16 @@
   background: #ffffff;
   color: #22c55e;
   border: 2px solid #22c55e;
+}
+.candidateProgress__progressRow .node--onhold {
+  background: #ffffff;
+  color: #f59e0b;
+  border: 2px solid #f59e0b;
+}
+.candidateProgress__progressRow .node--rejected {
+  background: #ffffff;
+  color: #ef4444;
+  border: 2px solid #ef4444;
 }
 .candidateProgress__progressRow .node--pending {
   background: #ffffff;

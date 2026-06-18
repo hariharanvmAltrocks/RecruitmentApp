@@ -356,12 +356,14 @@ var Mytracker = function () {
                             react_1.default.createElement("strong", null, selectedIds.length),
                             react_1.default.createElement("span", null, strings.VacanciesSelected))),
                     react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["assignment-bar__controls"] },
-                        react_1.default.createElement("select", { className: MyTracker_module_scss_1.default["assignment-bar__select"], value: selectedMemberId, onChange: function (e) {
-                                return setSelectedMemberId(Number(e.target.value));
-                            }, disabled: membersLoading, placeholder: activeMetric === ConditionConfig_1.MatricID.AssignHr ? strings.ChooseHrMember : strings.ChooseAgencyMember }, members.map(function (member) { return (react_1.default.createElement("option", { key: member.id, value: member.id },
-                            member.name,
-                            " - ",
-                            member.role)); })),
+                        react_1.default.createElement("select", { className: MyTracker_module_scss_1.default["assignment-bar__select"], value: selectedMemberId || "", onChange: function (e) { return setSelectedMemberId(Number(e.target.value)); }, disabled: membersLoading },
+                            react_1.default.createElement("option", { value: "", disabled: true }, activeMetric === ConditionConfig_1.MatricID.AssignHr
+                                ? strings.ChooseHrMember
+                                : strings.ChooseAgencyMember),
+                            members.map(function (member) { return (react_1.default.createElement("option", { key: member.id, value: member.id },
+                                member.name,
+                                " - ",
+                                member.role)); })),
                         react_1.default.createElement("button", { className: MyTracker_module_scss_1.default["assignment-bar__button"], type: "button", onClick: function () { return setIsPopupOpen(true); }, disabled: !selectedMemberId },
                             strings.ExecuteAssignment,
                             react_1.default.createElement(lucide_react_1.ChevronRight, { size: 16 })))))),

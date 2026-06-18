@@ -6,7 +6,8 @@ import {
 } from "../../../../../utilities/ConditionConfig";
 import { OfferServices } from "../../../../../services/ServiceExport";
 import { VerificationStep } from "../../../../Comman/Statusbadge/Statusbadge";
-import { StatusId } from "../../../../../utilities/Config";
+import { StatusId, WorkflowAction } from "../../../../../utilities/Config";
+import { ResponeStatus } from "../../../../../utilities/ApiConfig";
 
 interface BGVRemark {
   id: number;
@@ -17,6 +18,8 @@ interface BGVRemark {
 
 export const useBGVStatusDetails = (
   jobRequestID: string,
+  selectedJobId: number,
+  CandidateID: number,
   isActive: boolean,
 ) => {
   const [data, setData] = useState<any>(null);
@@ -30,7 +33,7 @@ export const useBGVStatusDetails = (
   const { MatricID } = useUIState();
 
   useEffect(() => {
-    if (!jobRequestID && !isActive) return;
+    if (!jobRequestID && !selectedJobId && ! CandidateID && !isActive) return;
 
     const fetchData = async () => {
       setLoading(true);
@@ -118,13 +121,29 @@ export const useBGVStatusDetails = (
         setRevertflag(revertflag);
 
         // ✅ Reject flag
-        const isRejected = bgData.some((item: any) =>
-          [
-            DotAfricaStatus.skipped,
-            DotAfricaStatus.error,
-            DotAfricaStatus.cancelled,
-          ].includes(item.status?.trim().toLowerCase()),
-        );
+        // const isRejected = bgData.some((item: any) =>
+        //   [
+        //     DotAfricaStatus.skipped,
+        //     DotAfricaStatus.error,
+        //     DotAfricaStatus.cancelled,
+        //   ].includes(item.status?.trim().toLowerCase()),
+        // );
+
+          const isRejected = bgData
+              ?.filter((item: any) => item.bgTypeCode !== "IDCS")
+              ?.some(
+                (item: any) =>
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.skipped.trim().toLowerCase() ||
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.skipped.trim().toLowerCase() ||
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.error.trim().toLowerCase() ||
+                  item.status?.trim().toLowerCase() ===
+                    DotAfricaStatus.cancelled.trim().toLowerCase() ||
+                  false,
+              );
+
 
         setRejectFlag(isRejected);
 
@@ -136,8 +155,36 @@ export const useBGVStatusDetails = (
               DotAfricaStatus.Confirmed.toLowerCase(),
         );
         setAllCompleted(allCompleted);
-
         setData(res.data[0]);
+        if(allCompleted){
+              let matchedData = {
+                  ID: selectedJobId,
+                  StatusId: StatusId.RESIProcessInitiatedforExpatriate   // ActionId: WorkflowAction.Approved,
+                };
+                 let UpdateData =
+                  await OfferServices.UpdateStatusSelectedHOD([matchedData]);
+                  if(UpdateData.status === ResponeStatus.SUCCESS){
+                      await OfferServices.InsertRecruitmentCandidateDetails({
+            ID: CandidateID,
+            BackgroundChecksResults:
+              JSON.stringify(mappedStatus) ?? [],
+                      });
+                    }
+        }
+        if(isRejected){
+          let matchedData = {
+                  ID: selectedJobId,
+                  StatusId: StatusId.BackgroundCheckVerificationFailed   // ActionId: WorkflowAction.Approved,
+                };
+               let UpdateData = await OfferServices.UpdateStatusSelectedHOD([matchedData]);
+               if(UpdateData.status === ResponeStatus.SUCCESS){
+                      await OfferServices.InsertRecruitmentCandidateDetails({
+            ID: CandidateID,
+            BackgroundChecksResults:
+              JSON.stringify(mappedStatus) ?? [],
+                      });
+                    }
+          }
       } catch (error) {
         console.error("Error fetching candidate details:", error);
       } finally {
@@ -145,7 +192,9 @@ export const useBGVStatusDetails = (
       }
     };
 
+     if(isActive) {
     void fetchData();
+     }
   }, [jobRequestID, MatricID]);
 
   return {

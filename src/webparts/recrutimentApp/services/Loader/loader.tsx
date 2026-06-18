@@ -3,99 +3,129 @@ import "./loader.scss";
 
 interface LoaderProps {
   isLoading: boolean;
+  progress?: number;
+  statusMessage?: string;
   onComplete?: () => void;
   userName?: string;
 }
 
 const Loader: React.FC<LoaderProps> = ({
   isLoading,
+  progress = 0,
+  statusMessage = "Initializing Application...",
   onComplete,
   userName = "",
 }) => {
-  const [progress, setProgress] = useState(0);
-  const [showTroubleshoot, setShowTroubleshoot] = useState(false);
+  const [displayProgress, setDisplayProgress] = useState(0);
+  const [isFadingOut, setIsFadingOut] = useState(false);
   const [timerPassed, setTimerPassed] = useState(false);
+  const [showTroubleshoot, setShowTroubleshoot] = useState(false);
 
-  // Smooth progress animation logic
+  // Smoothly animate the displayed progress number up to the target progress
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    const stepTime = isLoading ? 120 : 35; // Accelerate speed when background data is ready
-
-    interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          if (onComplete) onComplete();
-          return 100;
+    let animationFrameId: number;
+    
+    const animate = () => {
+      setDisplayProgress((prev) => {
+        if (prev < progress) {
+          // Decelerating step for smooth acceleration catch-up
+          const step = Math.ceil((progress - prev) / 8);
+          const next = prev + step;
+          return next > progress ? progress : next;
         }
-
-        const maxLimit = isLoading ? 98 : 100;
-        // Faster increments if loading is done
-        const increment = isLoading
-          ? Math.floor(Math.random() * 2) + 1
-          : Math.floor(Math.random() * 8) + 4;
-
-        const next = prev + increment;
-        return next > maxLimit ? maxLimit : next;
+        return prev;
       });
-    }, stepTime);
+      animationFrameId = requestAnimationFrame(animate);
+    };
 
-    return () => clearInterval(interval);
-  }, [isLoading, onComplete]);
+    animationFrameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [progress]);
 
-  // Show troubleshooting link if load takes too long (e.g. 8 seconds)
+  // Coordinate the fade-out trigger once loading is done (100% progress achieved)
+  useEffect(() => {
+    if (progress === 100 && displayProgress === 100 && !isLoading) {
+      const fadeOutTimer = setTimeout(() => {
+        setIsFadingOut(true);
+      }, 600); // Keep at 100% for 600ms for visual satisfaction
+      return () => clearTimeout(fadeOutTimer);
+    }
+  }, [progress, displayProgress, isLoading]);
+
+  // Notify parent component when the fade-out animation is complete
+  useEffect(() => {
+    if (isFadingOut) {
+      const unmountTimer = setTimeout(() => {
+        if (onComplete) {
+          onComplete();
+        }
+      }, 750); // Matches the 750ms transition in CSS
+      return () => clearTimeout(unmountTimer);
+    }
+  }, [isFadingOut, onComplete]);
+
+  // Show troubleshooting link if initialization takes longer than 10 seconds
   useEffect(() => {
     const checkTimer = setTimeout(() => {
       setTimerPassed(true);
-    }, 8000);
+    }, 10000);
     return () => clearTimeout(checkTimer);
   }, []);
 
-  // Map progress to status text stages
-  const getStatusText = (p: number) => {
-    if (p <= 20) return "Initializing Application...";
-    if (p <= 40) return "Loading User Profile...";
-    if (p <= 60) return "Fetching Dashboard Data...";
-    if (p <= 80) return "Preparing Recruitment Workspace...";
-    return "Finalizing Setup...";
-  };
-
-  // Circular progress stroke calculation
-  const radius = 54;
-  const circumference = 2 * Math.PI * radius; // ~339.292
-  const strokeDashoffset = circumference - (progress / 100) * circumference;
+  // Circular progress SVG calculations
+  const radius = 52;
+  const circumference = 2 * Math.PI * radius; // ~326.72
+  const strokeDashoffset = circumference - (displayProgress / 100) * circumference;
 
   return (
-    <div className="rms-loader-container">
-      <div className="rms-loader-card">
-        {/* Company Logo: stylized enterprise SVG */}
-        <div className="rms-logo-container">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2L2 6.5V11C2 17.55 6.27 21.74 12 23C17.73 21.74 22 17.55 22 11V6.5L12 2Z" fill="#2563eb" />
-            <path d="M12 4.2L4 7.8V11.2C4 16.3 7.37 19.8 12 20.8V4.2Z" fill="#3b82f6" />
-            <circle cx="12" cy="11" r="3" fill="#ffffff" />
-            <path d="M12 14C9.5 14 7.5 15.5 7.5 17.5H16.5C16.5 15.5 14.5 14 12 14Z" fill="#ffffff" />
+    <div className={`rms-splash-screen ${isFadingOut ? "rms-fade-out" : ""}`}>
+      {/* Subtle modern corporate background grid patterns */}
+      <div className="rms-splash-bg-pattern" />
+
+      <div className="rms-splash-card">
+        {/* Company Logo: stylized professional Fluent SVG */}
+        <div className="rms-splash-logo">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="64" height="64" rx="16" fill="url(#logo-bg-gradient)" />
+            <path
+              d="M18 22C18 20.3431 19.3431 19 21 19H43C44.6569 19 46 20.3431 46 22V42C46 43.6569 44.6569 45 43 45H21C19.3431 45 18 43.6569 18 42V22Z"
+              fill="white"
+              fillOpacity="0.12"
+              stroke="white"
+              strokeWidth="1.5"
+            />
+            {/* Elegant connection nodes symbolizing recruitment / synergy */}
+            <circle cx="27" cy="27" r="4" fill="white" />
+            <circle cx="37" cy="37" r="4" fill="#60a5fa" />
+            <line x1="29.8" y1="29.8" x2="34.2" y2="34.2" stroke="white" strokeWidth="2" strokeDasharray="1 1" />
+            <path d="M22 36C22 33 24.5 31.5 27 31.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M42 28C42 31 39.5 32.5 37 32.5" stroke="#60a5fa" strokeWidth="1.5" strokeLinecap="round" />
+            
+            <defs>
+              <linearGradient id="logo-bg-gradient" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#0078d4" />
+                <stop offset="1" stopColor="#005a9e" />
+              </linearGradient>
+            </defs>
           </svg>
         </div>
 
-        {/* Personalized Welcome */}
-        <h2 className="rms-welcome-text">
-          {userName ? `Welcome, ${userName}` : "Welcome"}
-        </h2>
-        <p className="rms-subtitle">Getting your workspace ready...</p>
+        {/* Product Brand */}
+        <h1 className="rms-splash-brand">HRMS</h1>
+        <p className="rms-splash-app-label">Recruitment & Talent Management</p>
 
-        {/* Circular Progress Loader */}
-        <div className="rms-progress-wrapper">
-          <svg className="rms-circular-progress" viewBox="0 0 120 120">
+        {/* Circular Progress Area */}
+        <div className="rms-splash-progress-wrapper">
+          <svg className="rms-splash-progress-svg" viewBox="0 0 120 120">
             <defs>
-              <linearGradient id="rms-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#2563eb" />
-                <stop offset="100%" stopColor="#60a5fa" />
+              <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#0078d4" />
+                <stop offset="100%" stopColor="#2b88d8" />
               </linearGradient>
             </defs>
-            <circle className="rms-circle-bg" cx="60" cy="60" r={radius} />
+            <circle className="rms-splash-circle-bg" cx="60" cy="60" r={radius} />
             <circle
-              className="rms-circle-fill"
+              className="rms-splash-circle-fill"
               cx="60"
               cy="60"
               r={radius}
@@ -103,42 +133,32 @@ const Loader: React.FC<LoaderProps> = ({
               strokeDashoffset={strokeDashoffset}
             />
           </svg>
-          <div className="rms-percentage-text">{progress}%</div>
+          <div className="rms-splash-percentage">{displayProgress}%</div>
         </div>
 
-        {/* Dynamic Status Text */}
-        <div className="rms-status-container">
-          <p className="rms-status-text">{getStatusText(progress)}</p>
+        {/* Loading status text matching milestones */}
+        <div className="rms-splash-status-container">
+          <p className="rms-splash-status-text">{statusMessage}</p>
+          {userName && <p className="rms-splash-welcome-user">Preparing workspace for {userName}</p>}
         </div>
 
-        {/* Troubleshoot Section for first-time / slow load */}
+        {/* Fluent UI styled troubleshooting panel for slow network */}
         {timerPassed && (
-          <>
+          <div className="rms-splash-troubleshoot">
             <button
               type="button"
-              className="rms-troubleshoot-btn"
+              className="rms-splash-troubleshoot-btn"
               onClick={() => setShowTroubleshoot(!showTroubleshoot)}
             >
-              {showTroubleshoot ? "Hide troubleshooting guide" : "Taking longer than usual? Click here"}
+              {showTroubleshoot ? "Hide details" : "Connection taking longer than usual?"}
             </button>
             
             {showTroubleshoot && (
-              <div className="rms-troubleshoot-content">
-                <h4>First-Time Setup Troubleshooting</h4>
-                <ul>
-                  <li>
-                    <strong>Check API Access Approval:</strong> A tenant admin must approve Graph API permissions in the SharePoint Admin Center (e.g. <code>GroupMember.Read.All</code>).
-                  </li>
-                  <li>
-                    <strong>AD Group & Roles:</strong> Verify that your user account email is mapped to a designated system role inside the SharePoint user role master list.
-                  </li>
-                  <li>
-                    <strong>Empty System Data:</strong> If lists like <code>CareerPortalLink</code> are missing or empty, default links must be provisioned.
-                  </li>
-                </ul>
+              <div className="rms-splash-troubleshoot-details">
+                <p>Ensure you are signed in and have permissions to read M365 resources. If the issue persists, contact IT support.</p>
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
     </div>

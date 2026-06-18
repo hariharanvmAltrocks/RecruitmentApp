@@ -338,6 +338,8 @@ export const RoleProvider = ({
 }): JSX.Element => {
   const [state, dispatch] = useReducer(providerReducer, initialState);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
+   const [progress, setProgress] = useState(0);
+   const [statusMessage, setStatusMessage] = useState("Initializing Application...");
 
   const roleIDs = React.useMemo(() => {
     return state.resolvedRoles.map((r) => r.ID);
@@ -363,6 +365,15 @@ export const RoleProvider = ({
 
   const initialise = useCallback(async (): Promise<void> => {
     dispatch({ type: "SET_LOADING", isLoading: true });
+     setProgress(0);
+    setStatusMessage("Initializing Application...");
+
+     let currentProgress = 0;
+    const updateProgress = (amount: number, message: string) => {
+      currentProgress += amount;
+      setProgress(Math.min(currentProgress, 100));
+      setStatusMessage(message);
+    };
 
     const [, userResult] = await Promise.allSettled([
       initApiUrls()
@@ -386,14 +397,19 @@ export const RoleProvider = ({
                 ? err.message
                 : "Server is currently unavailable. Please try again later.",
           });
+          
         }),
+        
 
       (async () => {
         const { displayName, email } = await fetchCurrentUser();
+          updateProgress(20, "Loading Configuration...");
+
         dispatch({ type: "SET_USER", userName: displayName, userEmail: email });
 
         const allRoles = await fetchAllRoles();
         const resolved = await checkUserRoles(allRoles);
+          updateProgress(15, "Fetching User Details...");
         const Filter = [
           { FilterKey: "EmailId", Operator: "eq", FilterValue: email },
         ];
@@ -405,10 +421,13 @@ export const RoleProvider = ({
           EmailId: email,
           userDetails: userDetails.data,
         }));
+            updateProgress(15, "Loading Master Data...");
         dispatch({
           type: "SET_RESOLVED_ROLES",
           roles: resolvedRoles && resolvedRoles.length > 0 ? resolvedRoles : [],
         });
+        
+        
       })(),
     ]);
 
@@ -425,9 +444,12 @@ export const RoleProvider = ({
       dispatch({ type: "SET_DEPARTMENT_DATA", DepartmentData: res.data });
     } catch (error) {
       console.error("[RoleProvider] Failed to fetch department details:", error);
+    } finally{
+       setProgress(100);
+      setStatusMessage("Preparing Dashboard...");
+    dispatch({ type: "SET_LOADING", isLoading: false });
     }
 
-    dispatch({ type: "SET_LOADING", isLoading: false });
   }, []);
 
   useEffect(() => {
@@ -468,7 +490,7 @@ export const RoleProvider = ({
 
   return (
     <RoleContext.Provider value={contextValue}>
-      <CustomLoader isLoading={combinedLoading} userName={state.userName}>
+      <CustomLoader isLoading={combinedLoading} progress= {progress} statusMessage= {statusMessage} userName={state.userName}>
         {state.apiUrlsError ? ( // ← check this first
           // <ServerDownError message={state.apiUrlsError} />
           <></>
@@ -476,7 +498,7 @@ export const RoleProvider = ({
           // <ErrorScreen message={state.error.message} />
           <></>
         ) : isFullyReady ? (
-          <React.Suspense fallback={<CustomLoader isLoading userName={state.userName} />}>
+          <React.Suspense fallback={<CustomLoader isLoading={combinedLoading} progress= {progress} statusMessage= {statusMessage} userName={state.userName}/>}>
             {children}
           </React.Suspense>
         ) : hasNoRoles ? (

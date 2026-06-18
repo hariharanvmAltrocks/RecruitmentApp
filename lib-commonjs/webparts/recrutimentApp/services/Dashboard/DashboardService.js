@@ -272,7 +272,7 @@ var DashboardService = /** @class */ (function () {
                                         case 4:
                                             level2 = _j.sent();
                                             uniqueLevel2JobCodes = new Set(((_h = level2 === null || level2 === void 0 ? void 0 : level2.data) !== null && _h !== void 0 ? _h : [])
-                                                .map(function (item) { return item.JobCodeId; })
+                                                .map(function (item) { return item.ID; })
                                                 .filter(Boolean));
                                             total += uniqueLevel2JobCodes.size;
                                             _j.label = 5;

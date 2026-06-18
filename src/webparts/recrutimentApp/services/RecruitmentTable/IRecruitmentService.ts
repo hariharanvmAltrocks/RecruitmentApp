@@ -78,6 +78,9 @@ export type RoadMapStatus = {
   appliedDate: string;
   avatarClass: string;
   currentStepIndex: number;
+  StatusId?: number;
+  CandidateId?: number;
+  RecruitmentID?: number;
 };
 
 export type InsertComments = {

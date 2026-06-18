@@ -8,6 +8,7 @@ var CandidateProgress_module_scss_1 = tslib_1.__importDefault(require("./Candida
 var PositionStatusConfig_1 = require("../../../../../../utilities/PositionStatusConfig");
 var getStatusRoadMap_1 = require("../../Hooks/getStatusRoadMap");
 var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
+var Config_1 = require("../../../../../../utilities/Config");
 var CandidateProgress = function (_a) {
     var RecID = _a.RecID;
     var _b = (0, getStatusRoadMap_1.getStatusRoadMap)(RecID), data = _b.data, loading = _b.loading;
@@ -26,6 +27,16 @@ var CandidateProgress = function (_a) {
     };
     var handleNextPage = function () {
         setCurrentPage(function (prev) { return Math.min(prev + 1, totalPages); });
+    };
+    var isOnHoldStatus = function (statusId) {
+        return (statusId === Config_1.StatusId.OnHoldbyHOD ||
+            statusId === Config_1.StatusId.CandidateOnHoldbyHODLevel1 ||
+            statusId === Config_1.StatusId.CandidateOnHoldbyHODLevel2);
+    };
+    var isRejectedStatus = function (statusId) {
+        return (statusId === Config_1.StatusId.RejectedbyHOD ||
+            statusId === Config_1.StatusId.CandidateRejectedbyHODLevel1 ||
+            statusId === Config_1.StatusId.CandidateRejectedbyHODLevel2);
     };
     return (react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.candidateProgress }, data && data.length > 0 && (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.candidateProgress__header },
@@ -65,27 +76,59 @@ var CandidateProgress = function (_a) {
                             react_1.default.createElement("span", { className: CandidateProgress_module_scss_1.default.name }, candidate.name),
                             react_1.default.createElement("span", { className: CandidateProgress_module_scss_1.default.role }, candidate.role),
                             react_1.default.createElement("span", { className: CandidateProgress_module_scss_1.default.date })))),
-                react_1.default.createElement("td", null,
-                    react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.candidateProgress__currentStepBox },
-                        react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.stepBadge }, candidate.currentStepIndex + 1),
+                react_1.default.createElement("td", null, (function () {
+                    var isCandidateOnHold = candidate.StatusId ? isOnHoldStatus(candidate.StatusId) : false;
+                    var isCandidateRejected = candidate.StatusId ? isRejectedStatus(candidate.StatusId) : false;
+                    var badgeClass = CandidateProgress_module_scss_1.default.stepBadge;
+                    if (isCandidateOnHold) {
+                        badgeClass = "".concat(CandidateProgress_module_scss_1.default.stepBadge, " ").concat(CandidateProgress_module_scss_1.default["stepBadge--onhold"]);
+                    }
+                    else if (isCandidateRejected) {
+                        badgeClass = "".concat(CandidateProgress_module_scss_1.default.stepBadge, " ").concat(CandidateProgress_module_scss_1.default["stepBadge--rejected"]);
+                    }
+                    var statusText = strings.InProgress;
+                    var dotClass = CandidateProgress_module_scss_1.default.dot;
+                    if (isCandidateOnHold) {
+                        statusText = strings.OnHold;
+                        dotClass = "".concat(CandidateProgress_module_scss_1.default.dot, " ").concat(CandidateProgress_module_scss_1.default["dot--onhold"]);
+                    }
+                    else if (isCandidateRejected) {
+                        statusText = strings.Rejected;
+                        dotClass = "".concat(CandidateProgress_module_scss_1.default.dot, " ").concat(CandidateProgress_module_scss_1.default["dot--rejected"]);
+                    }
+                    return (react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.candidateProgress__currentStepBox },
+                        react_1.default.createElement("div", { className: badgeClass }, isCandidateOnHold ? (react_1.default.createElement(lucide_react_1.Pause, { size: 12, strokeWidth: 3 })) : isCandidateRejected ? (react_1.default.createElement(lucide_react_1.X, { size: 12, strokeWidth: 3 })) : (candidate.currentStepIndex + 1)),
                         react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.stepInfo },
                             react_1.default.createElement("span", { className: CandidateProgress_module_scss_1.default.stepName }, PositionStatusConfig_1.PROGRESS_STEPS[candidate.currentStepIndex]),
                             react_1.default.createElement("span", { className: CandidateProgress_module_scss_1.default.stepStatus },
-                                strings.InProgress,
-                                react_1.default.createElement("span", { className: CandidateProgress_module_scss_1.default.dot }))))),
+                                statusText,
+                                react_1.default.createElement("span", { className: dotClass })))));
+                })()),
                 react_1.default.createElement("td", { style: { width: "40%" } },
                     react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.candidateProgress__progressRow }, PositionStatusConfig_1.PROGRESS_STEPS.map(function (_, idx) {
                         var isCompleted = idx < candidate.currentStepIndex;
                         var isActive = idx === candidate.currentStepIndex;
                         var hideLine = isCompleted && idx === candidate.currentStepIndex - 1;
+                        var isCandidateOnHold = candidate.StatusId ? isOnHoldStatus(candidate.StatusId) : false;
+                        var isCandidateRejected = candidate.StatusId ? isRejectedStatus(candidate.StatusId) : false;
                         var nodeClass = CandidateProgress_module_scss_1.default["node--pending"];
-                        if (isCompleted)
+                        if (isCompleted) {
                             nodeClass = CandidateProgress_module_scss_1.default["node--completed"];
-                        else if (isActive)
-                            nodeClass = CandidateProgress_module_scss_1.default["node--active"];
+                        }
+                        else if (isActive) {
+                            if (isCandidateOnHold) {
+                                nodeClass = CandidateProgress_module_scss_1.default["node--onhold"];
+                            }
+                            else if (isCandidateRejected) {
+                                nodeClass = CandidateProgress_module_scss_1.default["node--rejected"];
+                            }
+                            else {
+                                nodeClass = CandidateProgress_module_scss_1.default["node--active"];
+                            }
+                        }
                         if (hideLine)
                             nodeClass += " ".concat(CandidateProgress_module_scss_1.default["hide-line"]);
-                        return (react_1.default.createElement("div", { key: idx, className: "".concat(CandidateProgress_module_scss_1.default.node, " ").concat(nodeClass) }, isCompleted ? (react_1.default.createElement(lucide_react_1.Check, { size: 12, strokeWidth: 3 })) : (idx + 1)));
+                        return (react_1.default.createElement("div", { key: idx, className: "".concat(CandidateProgress_module_scss_1.default.node, " ").concat(nodeClass) }, isCompleted ? (react_1.default.createElement(lucide_react_1.Check, { size: 12, strokeWidth: 3 })) : isActive && isCandidateOnHold ? (react_1.default.createElement(lucide_react_1.Pause, { size: 12, strokeWidth: 3 })) : isActive && isCandidateRejected ? (react_1.default.createElement(lucide_react_1.X, { size: 12, strokeWidth: 3 })) : (idx + 1)));
                     }))))); })) : (react_1.default.createElement("tr", null,
                 react_1.default.createElement("td", { colSpan: 4 },
                     react_1.default.createElement("div", { style: {

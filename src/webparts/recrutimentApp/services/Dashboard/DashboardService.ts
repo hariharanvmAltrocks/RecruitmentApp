@@ -353,7 +353,7 @@ export default class DashboardService implements IDashboard {
               const level2 = await this.GetCandidateDetails(level2Filter, "and");
               const uniqueLevel2JobCodes = new Set(
                 (level2?.data ?? [])
-                  .map((item: any) => item.JobCodeId)
+                  .map((item: any) => item.ID)
                   .filter(Boolean)
               );
 

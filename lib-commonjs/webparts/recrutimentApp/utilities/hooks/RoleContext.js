@@ -208,10 +208,12 @@ var RoleProvider = function (_a) {
     var children = _a.children;
     var _b = (0, react_1.useReducer)(providerReducer, initialState), state = _b[0], dispatch = _b[1];
     var _c = (0, react_1.useState)(false), showRoleSelector = _c[0], setShowRoleSelector = _c[1];
+    var _d = (0, react_1.useState)(0), progress = _d[0], setProgress = _d[1];
+    var _e = (0, react_1.useState)("Initializing Application..."), statusMessage = _e[0], setStatusMessage = _e[1];
     var roleIDs = React.useMemo(function () {
         return state.resolvedRoles.map(function (r) { return r.ID; });
     }, [state.resolvedRoles]);
-    var _d = (0, useDashboardMetrics_1.useDashboardMetrics)(roleIDs, state.userEmail), matricData = _d.metrics, metricsLoading = _d.loading, refresh = _d.refresh;
+    var _f = (0, useDashboardMetrics_1.useDashboardMetrics)(roleIDs, state.userEmail), matricData = _f.metrics, metricsLoading = _f.loading, refresh = _f.refresh;
     var refreshMetrics = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
@@ -232,11 +234,19 @@ var RoleProvider = function (_a) {
         }
     }, [matricData, state.resolvedRoles.length]);
     var initialise = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var _a, userResult, raw, res, error_2;
+        var currentProgress, updateProgress, _a, userResult, raw, res, error_2;
         return tslib_1.__generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     dispatch({ type: "SET_LOADING", isLoading: true });
+                    setProgress(0);
+                    setStatusMessage("Initializing Application...");
+                    currentProgress = 0;
+                    updateProgress = function (amount, message) {
+                        currentProgress += amount;
+                        setProgress(Math.min(currentProgress, 100));
+                        setStatusMessage(message);
+                    };
                     return [4 /*yield*/, Promise.allSettled([
                             initApiUrls()
                                 .then(function (success) {
@@ -266,6 +276,7 @@ var RoleProvider = function (_a) {
                                         case 0: return [4 /*yield*/, fetchCurrentUser()];
                                         case 1:
                                             _a = _b.sent(), displayName = _a.displayName, email = _a.email;
+                                            updateProgress(20, "Loading Configuration...");
                                             dispatch({ type: "SET_USER", userName: displayName, userEmail: email });
                                             return [4 /*yield*/, fetchAllRoles()];
                                         case 2:
@@ -273,6 +284,7 @@ var RoleProvider = function (_a) {
                                             return [4 /*yield*/, checkUserRoles(allRoles)];
                                         case 3:
                                             resolved = _b.sent();
+                                            updateProgress(15, "Fetching User Details...");
                                             Filter = [
                                                 { FilterKey: "EmailId", Operator: "eq", FilterValue: email },
                                             ];
@@ -286,6 +298,7 @@ var RoleProvider = function (_a) {
                                                 EmailId: email,
                                                 userDetails: userDetails.data,
                                             }); });
+                                            updateProgress(15, "Loading Master Data...");
                                             dispatch({
                                                 type: "SET_RESOLVED_ROLES",
                                                 roles: resolvedRoles && resolvedRoles.length > 0 ? resolvedRoles : [],
@@ -306,19 +319,22 @@ var RoleProvider = function (_a) {
                     }
                     _b.label = 2;
                 case 2:
-                    _b.trys.push([2, 4, , 5]);
+                    _b.trys.push([2, 4, 5, 6]);
                     return [4 /*yield*/, ServiceExport_1.DashboardServices.GetDepartmentDetails()];
                 case 3:
                     res = _b.sent();
                     dispatch({ type: "SET_DEPARTMENT_DATA", DepartmentData: res.data });
-                    return [3 /*break*/, 5];
+                    return [3 /*break*/, 6];
                 case 4:
                     error_2 = _b.sent();
                     console.error("[RoleProvider] Failed to fetch department details:", error_2);
-                    return [3 /*break*/, 5];
+                    return [3 /*break*/, 6];
                 case 5:
+                    setProgress(100);
+                    setStatusMessage("Preparing Dashboard...");
                     dispatch({ type: "SET_LOADING", isLoading: false });
-                    return [2 /*return*/];
+                    return [7 /*endfinally*/];
+                case 6: return [2 /*return*/];
             }
         });
     }); }, []);
@@ -350,11 +366,11 @@ var RoleProvider = function (_a) {
         state.userName !== "" &&
         state.resolvedRoles.length === 0;
     return (React.createElement(RoleContext.Provider, { value: contextValue },
-        React.createElement(CustomLoader_1.default, { isLoading: combinedLoading, userName: state.userName }, state.apiUrlsError ? ( // ← check this first
+        React.createElement(CustomLoader_1.default, { isLoading: combinedLoading, progress: progress, statusMessage: statusMessage, userName: state.userName }, state.apiUrlsError ? ( // ← check this first
         // <ServerDownError message={state.apiUrlsError} />
         React.createElement(React.Fragment, null)) : state.error ? (
         // <ErrorScreen message={state.error.message} />
-        React.createElement(React.Fragment, null)) : isFullyReady ? (React.createElement(React.Suspense, { fallback: React.createElement(CustomLoader_1.default, { isLoading: true, userName: state.userName }) }, children)) : hasNoRoles ? (React.createElement(NoRoleScreen, null)) : null)));
+        React.createElement(React.Fragment, null)) : isFullyReady ? (React.createElement(React.Suspense, { fallback: React.createElement(CustomLoader_1.default, { isLoading: combinedLoading, progress: progress, statusMessage: statusMessage, userName: state.userName }) }, children)) : hasNoRoles ? (React.createElement(NoRoleScreen, null)) : null)));
 };
 exports.RoleProvider = RoleProvider;
 var useRoleContext = function () {

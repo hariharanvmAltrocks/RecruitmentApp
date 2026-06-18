@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Filter, Search, Calendar, MoreHorizontal, Check } from "lucide-react";
+import { Filter, Search, Calendar, MoreHorizontal, Check, Pause, X } from "lucide-react";
 import styles from "./CandidateProgress.module.scss";
 import { PROGRESS_STEPS } from "../../../../../../utilities/PositionStatusConfig";
 import { getStatusRoadMap } from "../../Hooks/getStatusRoadMap";
 import * as strings from 'RecrutimentAppWebPartStrings';
+import { StatusId } from "../../../../../../utilities/Config";
 
 interface ICandidateProgressProps {
   RecID: number;
@@ -37,6 +38,22 @@ export const CandidateProgress: React.FC<ICandidateProgressProps> = ({
 
   const handleNextPage = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
+  const isOnHoldStatus = (statusId: number) => {
+    return (
+      statusId === StatusId.OnHoldbyHOD ||
+      statusId === StatusId.CandidateOnHoldbyHODLevel1 ||
+      statusId === StatusId.CandidateOnHoldbyHODLevel2
+    );
+  };
+
+  const isRejectedStatus = (statusId: number) => {
+    return (
+      statusId === StatusId.RejectedbyHOD ||
+      statusId === StatusId.CandidateRejectedbyHODLevel1 ||
+      statusId === StatusId.CandidateRejectedbyHODLevel2
+    );
   };
 
   return (
@@ -99,7 +116,6 @@ export const CandidateProgress: React.FC<ICandidateProgressProps> = ({
           ) : currentData && currentData.length > 0 ? (
             currentData.map((candidate) => (
               <tr key={candidate.id}>
-                {/* Candidate Info */}
                 <td>
                   <div className={styles.candidateProgress__candidateInfo}>
                     {/* <div
@@ -118,21 +134,50 @@ export const CandidateProgress: React.FC<ICandidateProgressProps> = ({
                   </div>
                 </td>
 
-                {/* Current Step Box */}
                 <td>
-                  <div className={styles.candidateProgress__currentStepBox}>
-                    <div className={styles.stepBadge}>
-                      {candidate.currentStepIndex + 1}
-                    </div>
-                    <div className={styles.stepInfo}>
-                      <span className={styles.stepName}>
-                        {PROGRESS_STEPS[candidate.currentStepIndex]}
-                      </span>
-                      <span className={styles.stepStatus}>
-                        {strings.InProgress}<span className={styles.dot} />
-                      </span>
-                    </div>
-                  </div>
+                  {(() => {
+                    const isCandidateOnHold = candidate.StatusId ? isOnHoldStatus(candidate.StatusId) : false;
+                    const isCandidateRejected = candidate.StatusId ? isRejectedStatus(candidate.StatusId) : false;
+                    
+                    let badgeClass = styles.stepBadge;
+                    if (isCandidateOnHold) {
+                      badgeClass = `${styles.stepBadge} ${styles["stepBadge--onhold"]}`;
+                    } else if (isCandidateRejected) {
+                      badgeClass = `${styles.stepBadge} ${styles["stepBadge--rejected"]}`;
+                    }
+                    
+                    let statusText = strings.InProgress;
+                    let dotClass = styles.dot;
+                    if (isCandidateOnHold) {
+                      statusText = strings.OnHold;
+                      dotClass = `${styles.dot} ${styles["dot--onhold"]}`;
+                    } else if (isCandidateRejected) {
+                      statusText = strings.Rejected;
+                      dotClass = `${styles.dot} ${styles["dot--rejected"]}`;
+                    }
+
+                    return (
+                      <div className={styles.candidateProgress__currentStepBox}>
+                        <div className={badgeClass}>
+                          {isCandidateOnHold ? (
+                            <Pause size={12} strokeWidth={3} />
+                          ) : isCandidateRejected ? (
+                            <X size={12} strokeWidth={3} />
+                          ) : (
+                            candidate.currentStepIndex + 1
+                          )}
+                        </div>
+                        <div className={styles.stepInfo}>
+                          <span className={styles.stepName}>
+                            {PROGRESS_STEPS[candidate.currentStepIndex]}
+                          </span>
+                          <span className={styles.stepStatus}>
+                            {statusText}<span className={dotClass} />
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </td>
 
                 {/* Progress Line */}
@@ -144,9 +189,21 @@ export const CandidateProgress: React.FC<ICandidateProgressProps> = ({
                       const hideLine =
                         isCompleted && idx === candidate.currentStepIndex - 1;
 
+                      const isCandidateOnHold = candidate.StatusId ? isOnHoldStatus(candidate.StatusId) : false;
+                      const isCandidateRejected = candidate.StatusId ? isRejectedStatus(candidate.StatusId) : false;
+
                       let nodeClass = styles["node--pending"];
-                      if (isCompleted) nodeClass = styles["node--completed"];
-                      else if (isActive) nodeClass = styles["node--active"];
+                      if (isCompleted) {
+                        nodeClass = styles["node--completed"];
+                      } else if (isActive) {
+                        if (isCandidateOnHold) {
+                          nodeClass = styles["node--onhold"];
+                        } else if (isCandidateRejected) {
+                          nodeClass = styles["node--rejected"];
+                        } else {
+                          nodeClass = styles["node--active"];
+                        }
+                      }
 
                       if (hideLine) nodeClass += ` ${styles["hide-line"]}`;
 
@@ -157,6 +214,10 @@ export const CandidateProgress: React.FC<ICandidateProgressProps> = ({
                         >
                           {isCompleted ? (
                             <Check size={12} strokeWidth={3} />
+                          ) : isActive && isCandidateOnHold ? (
+                            <Pause size={12} strokeWidth={3} />
+                          ) : isActive && isCandidateRejected ? (
+                            <X size={12} strokeWidth={3} />
                           ) : (
                             idx + 1
                           )}

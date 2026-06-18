@@ -34,6 +34,17 @@ export const CandidateStages = [
   { label: "Onboarding", icon: Filter },
 ];
 
+export const CandidateStagesDRC = [
+  { label: "Background Check", icon: FileSearch },
+  { label: "Resi Process", icon: ShieldCheck },
+  { label: "Offer Release", icon: Briefcase },
+  { label: "Work Permit Process", icon: ClipboardCheck },
+  { label: "Employment Contract", icon: Send },
+  { label: "Pre-Onboarding", icon: Play },
+  { label: "Onboarding In Progress",icon:CheckCircle2 },
+  { label: "Onboarding", icon: Filter },
+];
+
 export const getStageIndex = (statusId: number) => {
   if (!statusId) return 0;
   if (statusId == StatusId.PendingAssignHR) return 0;
@@ -124,7 +135,8 @@ export const getStageCandidateindex = (statusId: number) => {
     statusId == StatusId.PendingLHECRelease ||
     statusId == StatusId.PendingHREmploymentContractReview || 
     statusId ==
-      StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract
+      StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract ||
+       statusId == StatusId.PendingHREmploymentContractVerification
   )
     return 6;
   if (
@@ -171,13 +183,85 @@ export const getStageIndexinCandidate = (statusId: number) => {
     statusId == StatusId.WorkPermitAcknowledgedContractUploaded ||
     statusId == StatusId.PendingLabourhireWPPayment ||
     statusId == StatusId.PendingFinancePaymentReview ||
-    statusId == StatusId.PendingLHWorkPermitProcess ||
-    statusId ==
-      StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract ||
-    statusId == StatusId.PendingHRReviewOfferanduploadEmployementContract ||
-    statusId == StatusId.PendingHREmploymentContractVerification
-  )
+    statusId == StatusId.PendingLHWorkPermitProcess
+  ){
     return 4;
+  }
+    if (
+       statusId == StatusId.WorkPermitAcknowledgedContractUploaded ||
+    statusId == StatusId.PendingCandidateEmploymentContractUpload ||
+    statusId == StatusId.PendingHREmploymentContractVerification ||
+    statusId == StatusId.PendingHRReviewOfferuploadEmploymentInit ||
+    statusId == StatusId.PendingHREmploymentContractInit ||
+    statusId == StatusId.PendingLHECRelease ||
+    statusId == StatusId.PendingHREmploymentContractReview || 
+    statusId ==
+      StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract || 
+    statusId == StatusId.PendingHREmploymentContractVerification
+    ){
+     return 5
+    }
+   if (
+    statusId == StatusId.PendingHRpreonboardingchecklist
+  )
+    return 6;
+  if (
+    statusId == StatusId.OnboardingProcessinitiatedforDRC ||
+    statusId == StatusId.OnboardingProcessinitiatedforExpat ||
+    statusId == StatusId.onboardingInProcess
+  )
+    return 7;
+     if(statusId == StatusId.Onboarded){
+      return 8;
+    }
+  return 0;
+};
+
+export const getStageIndexinCandidateDRC = (statusId: number) => {
+   if (
+    statusId == StatusId.PendingHRBGVInitiation ||
+    statusId == StatusId.PendingBGdocuploadedbycandidate ||
+    statusId == StatusId.PendingHRReviewBGCheck
+  )
+    return 0;
+  if (
+    statusId == StatusId.RESIProcessInitiatedforDRC ||
+    statusId == StatusId.RESIProcessInitiatedforExpatriate ||
+    statusId == StatusId.RESProcessInitiated
+  )
+    return 1;
+  if (
+    statusId == StatusId.PendingHROfferInitiate ||
+    statusId == StatusId.PendingCandidateOfferLetterUpload ||
+    statusId == StatusId.PendingHRReviewOfferWorkPermitInit ||
+    statusId == StatusId.PendingLabourHireOfferRelease ||
+    statusId == StatusId.PendingHROfferReview
+  )
+    return 2;
+  if (
+    statusId == StatusId.PendingCandidateWorkPermitreleatedDoc ||
+    statusId == StatusId.PendingHRReviewWorkpermitDocs ||
+    statusId == StatusId.WorkPermitAcknowledgedContractUploaded ||
+    statusId == StatusId.PendingLabourhireWPPayment ||
+    statusId == StatusId.PendingFinancePaymentReview ||
+    statusId == StatusId.PendingLHWorkPermitProcess
+  ){
+    return 3;
+  }
+    if (
+       statusId == StatusId.WorkPermitAcknowledgedContractUploaded ||
+    statusId == StatusId.PendingCandidateEmploymentContractUpload ||
+    statusId == StatusId.PendingHREmploymentContractVerification ||
+    statusId == StatusId.PendingHRReviewOfferuploadEmploymentInit ||
+    statusId == StatusId.PendingHREmploymentContractInit ||
+    statusId == StatusId.PendingLHECRelease ||
+    statusId == StatusId.PendingHREmploymentContractReview || 
+    statusId ==
+      StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract || 
+    statusId == StatusId.PendingHREmploymentContractVerification
+    ){
+     return 4
+    }
    if (
     statusId == StatusId.PendingHRpreonboardingchecklist
   )

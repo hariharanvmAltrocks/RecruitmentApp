@@ -603,13 +603,16 @@ const shouldShowProfile =
                       <div className={styles["assignment-bar__controls"]}>
                         <select
                           className={styles["assignment-bar__select"]}
-                          value={selectedMemberId}
-                          onChange={(e) =>
-                            setSelectedMemberId(Number(e.target.value))
-                          }
+                          value={selectedMemberId || ""}
+                          onChange={(e) => setSelectedMemberId(Number(e.target.value))}
                           disabled={membersLoading}
-                          placeholder={activeMetric === MatricID.AssignHr ? strings.ChooseHrMember : strings.ChooseAgencyMember}
                         >
+                          <option value="" disabled>
+                            {activeMetric === MatricID.AssignHr
+                              ? strings.ChooseHrMember
+                              : strings.ChooseAgencyMember}
+                          </option>
+
                           {members.map((member) => (
                             <option key={member.id} value={member.id}>
                               {member.name} - {member.role}

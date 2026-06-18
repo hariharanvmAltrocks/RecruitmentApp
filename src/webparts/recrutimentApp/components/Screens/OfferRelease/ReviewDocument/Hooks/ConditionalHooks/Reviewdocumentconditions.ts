@@ -71,7 +71,14 @@ export const buildStatusFlags = (
     statusID === StatusId.PendingCandidateEmploymentContractUpload ||
     statusID === StatusId.PendingLabourHireOfferRelease ||
     statusID === StatusId.PendingLabourhireWPPayment ||
-    statusID === StatusId.PendingLHECRelease,
+    statusID === StatusId.PendingLHECRelease ||
+    statusID === StatusId.RESIProcessInitiatedforDRC ||
+    statusID === StatusId.RESIProcessInitiatedforExpatriate ||
+    statusID === StatusId.RESProcessInitiated ||
+    statusID === StatusId.OnboardingProcessinitiatedforDRC ||
+    statusID === StatusId.OnboardingProcessinitiatedforExpat||
+    statusID === StatusId.FailedmedicalscreeningUnfit ||
+    statusID === StatusId.BackgroundCheckVerificationFailed,
   // statusID === StatusId.PendingHRpreonboardingchecklist,
   PendingHREmploymentContractReview:
     statusID === StatusId.PendingHREmploymentContractReview,

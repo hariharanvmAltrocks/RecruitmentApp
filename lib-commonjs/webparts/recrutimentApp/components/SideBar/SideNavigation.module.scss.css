@@ -1,8 +1,7 @@
 /*var(--app-text-color, );*/
 /*var(--app-text-color, #94a3b8);*/
 .sidebar {
-  width: 240px;
-  min-height: 100vh;
+  width: 100%;
   height: 100vh;
   background: var(--app-sidenav-color, #1e1b4b);
   border-right: 1px solid var(--app-sidenav-border, #2a2760);
@@ -10,7 +9,7 @@
   flex-direction: column;
   flex-shrink: 0;
   overflow-y: auto;
-  overflow-x: visible;
+  overflow-x: hidden;
   transition: width 0.2s ease;
   position: relative;
   z-index: 100;

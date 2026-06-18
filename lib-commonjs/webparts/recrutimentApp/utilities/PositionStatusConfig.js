@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getStageIndexinCandidate = exports.getStageCandidateindex = exports.PROGRESS_STEPS = exports.getStageIndex = exports.CandidateStages = exports.stages = void 0;
+exports.getStageIndexinCandidateDRC = exports.getStageIndexinCandidate = exports.getStageCandidateindex = exports.PROGRESS_STEPS = exports.getStageIndex = exports.CandidateStagesDRC = exports.CandidateStages = exports.stages = void 0;
 var lucide_react_1 = require("lucide-react");
 var Config_1 = require("./Config");
 exports.stages = [
@@ -16,6 +16,16 @@ exports.stages = [
 exports.CandidateStages = [
     { label: "Background Check", icon: lucide_react_1.FileSearch },
     { label: "Dot's Africa Verification", icon: lucide_react_1.CheckCircle2 },
+    { label: "Resi Process", icon: lucide_react_1.ShieldCheck },
+    { label: "Offer Release", icon: lucide_react_1.Briefcase },
+    { label: "Work Permit Process", icon: lucide_react_1.ClipboardCheck },
+    { label: "Employment Contract", icon: lucide_react_1.Send },
+    { label: "Pre-Onboarding", icon: lucide_react_1.Play },
+    { label: "Onboarding In Progress", icon: lucide_react_1.CheckCircle2 },
+    { label: "Onboarding", icon: lucide_react_1.Filter },
+];
+exports.CandidateStagesDRC = [
+    { label: "Background Check", icon: lucide_react_1.FileSearch },
     { label: "Resi Process", icon: lucide_react_1.ShieldCheck },
     { label: "Offer Release", icon: lucide_react_1.Briefcase },
     { label: "Work Permit Process", icon: lucide_react_1.ClipboardCheck },
@@ -108,7 +118,8 @@ var getStageCandidateindex = function (statusId) {
         statusId == Config_1.StatusId.PendingLHECRelease ||
         statusId == Config_1.StatusId.PendingHREmploymentContractReview ||
         statusId ==
-            Config_1.StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract)
+            Config_1.StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract ||
+        statusId == Config_1.StatusId.PendingHREmploymentContractVerification)
         return 6;
     if (statusId == Config_1.StatusId.OnboardingProcessinitiatedforDRC ||
         statusId == Config_1.StatusId.OnboardingProcessinitiatedforExpat ||
@@ -143,12 +154,68 @@ var getStageIndexinCandidate = function (statusId) {
         statusId == Config_1.StatusId.WorkPermitAcknowledgedContractUploaded ||
         statusId == Config_1.StatusId.PendingLabourhireWPPayment ||
         statusId == Config_1.StatusId.PendingFinancePaymentReview ||
-        statusId == Config_1.StatusId.PendingLHWorkPermitProcess ||
+        statusId == Config_1.StatusId.PendingLHWorkPermitProcess) {
+        return 4;
+    }
+    if (statusId == Config_1.StatusId.WorkPermitAcknowledgedContractUploaded ||
+        statusId == Config_1.StatusId.PendingCandidateEmploymentContractUpload ||
+        statusId == Config_1.StatusId.PendingHREmploymentContractVerification ||
+        statusId == Config_1.StatusId.PendingHRReviewOfferuploadEmploymentInit ||
+        statusId == Config_1.StatusId.PendingHREmploymentContractInit ||
+        statusId == Config_1.StatusId.PendingLHECRelease ||
+        statusId == Config_1.StatusId.PendingHREmploymentContractReview ||
         statusId ==
             Config_1.StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract ||
-        statusId == Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract ||
-        statusId == Config_1.StatusId.PendingHREmploymentContractVerification)
+        statusId == Config_1.StatusId.PendingHREmploymentContractVerification) {
+        return 5;
+    }
+    if (statusId == Config_1.StatusId.PendingHRpreonboardingchecklist)
+        return 6;
+    if (statusId == Config_1.StatusId.OnboardingProcessinitiatedforDRC ||
+        statusId == Config_1.StatusId.OnboardingProcessinitiatedforExpat ||
+        statusId == Config_1.StatusId.onboardingInProcess)
+        return 7;
+    if (statusId == Config_1.StatusId.Onboarded) {
+        return 8;
+    }
+    return 0;
+};
+exports.getStageIndexinCandidate = getStageIndexinCandidate;
+var getStageIndexinCandidateDRC = function (statusId) {
+    if (statusId == Config_1.StatusId.PendingHRBGVInitiation ||
+        statusId == Config_1.StatusId.PendingBGdocuploadedbycandidate ||
+        statusId == Config_1.StatusId.PendingHRReviewBGCheck)
+        return 0;
+    if (statusId == Config_1.StatusId.RESIProcessInitiatedforDRC ||
+        statusId == Config_1.StatusId.RESIProcessInitiatedforExpatriate ||
+        statusId == Config_1.StatusId.RESProcessInitiated)
+        return 1;
+    if (statusId == Config_1.StatusId.PendingHROfferInitiate ||
+        statusId == Config_1.StatusId.PendingCandidateOfferLetterUpload ||
+        statusId == Config_1.StatusId.PendingHRReviewOfferWorkPermitInit ||
+        statusId == Config_1.StatusId.PendingLabourHireOfferRelease ||
+        statusId == Config_1.StatusId.PendingHROfferReview)
+        return 2;
+    if (statusId == Config_1.StatusId.PendingCandidateWorkPermitreleatedDoc ||
+        statusId == Config_1.StatusId.PendingHRReviewWorkpermitDocs ||
+        statusId == Config_1.StatusId.WorkPermitAcknowledgedContractUploaded ||
+        statusId == Config_1.StatusId.PendingLabourhireWPPayment ||
+        statusId == Config_1.StatusId.PendingFinancePaymentReview ||
+        statusId == Config_1.StatusId.PendingLHWorkPermitProcess) {
+        return 3;
+    }
+    if (statusId == Config_1.StatusId.WorkPermitAcknowledgedContractUploaded ||
+        statusId == Config_1.StatusId.PendingCandidateEmploymentContractUpload ||
+        statusId == Config_1.StatusId.PendingHREmploymentContractVerification ||
+        statusId == Config_1.StatusId.PendingHRReviewOfferuploadEmploymentInit ||
+        statusId == Config_1.StatusId.PendingHREmploymentContractInit ||
+        statusId == Config_1.StatusId.PendingLHECRelease ||
+        statusId == Config_1.StatusId.PendingHREmploymentContractReview ||
+        statusId ==
+            Config_1.StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract ||
+        statusId == Config_1.StatusId.PendingHREmploymentContractVerification) {
         return 4;
+    }
     if (statusId == Config_1.StatusId.PendingHRpreonboardingchecklist)
         return 5;
     if (statusId == Config_1.StatusId.OnboardingProcessinitiatedforDRC ||
@@ -160,5 +227,5 @@ var getStageIndexinCandidate = function (statusId) {
     }
     return 0;
 };
-exports.getStageIndexinCandidate = getStageIndexinCandidate;
+exports.getStageIndexinCandidateDRC = getStageIndexinCandidateDRC;
 //# sourceMappingURL=PositionStatusConfig.js.map

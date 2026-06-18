@@ -26,7 +26,14 @@ var buildStatusFlags = function (statusID, empCat, consentVerification, isExpat)
         statusID === EvaluationConfig_1.StatusId.PendingCandidateEmploymentContractUpload ||
         statusID === EvaluationConfig_1.StatusId.PendingLabourHireOfferRelease ||
         statusID === EvaluationConfig_1.StatusId.PendingLabourhireWPPayment ||
-        statusID === EvaluationConfig_1.StatusId.PendingLHECRelease,
+        statusID === EvaluationConfig_1.StatusId.PendingLHECRelease ||
+        statusID === EvaluationConfig_1.StatusId.RESIProcessInitiatedforDRC ||
+        statusID === EvaluationConfig_1.StatusId.RESIProcessInitiatedforExpatriate ||
+        statusID === EvaluationConfig_1.StatusId.RESProcessInitiated ||
+        statusID === EvaluationConfig_1.StatusId.OnboardingProcessinitiatedforDRC ||
+        statusID === EvaluationConfig_1.StatusId.OnboardingProcessinitiatedforExpat ||
+        statusID === EvaluationConfig_1.StatusId.FailedmedicalscreeningUnfit ||
+        statusID === EvaluationConfig_1.StatusId.BackgroundCheckVerificationFailed,
     // statusID === StatusId.PendingHRpreonboardingchecklist,
     PendingHREmploymentContractReview: statusID === EvaluationConfig_1.StatusId.PendingHREmploymentContractReview,
     PreOnboardingChecklist: statusID === EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist,

@@ -1,165 +1,260 @@
-.rms-loader-container {
+.rms-splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999 !important;
+  background: linear-gradient(135deg, #f3f6f9 0%, #eef2f7 50%, #e3ebf5 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  width: 100%;
-  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family: "Inter", "Segoe UI", -apple-system, sans-serif;
   color: #1e293b;
-  padding: 20px;
+  overflow: hidden;
   box-sizing: border-box;
+  padding: 24px;
+  transition: opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
+  visibility: visible;
+}
+.rms-splash-screen.rms-fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
-.rms-loader-card {
+.rms-splash-bg-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.4;
+  background-image: radial-gradient(#0078d4 0.75px, transparent 0.75px), radial-gradient(#0078d4 0.75px, #e3ebf5 0.75px);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+  mask-image: radial-gradient(circle, white 10%, transparent 80%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.rms-splash-card {
+  position: relative;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #ffffff;
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.02);
-  border: 1px solid #e2e8f0;
-  max-width: 480px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 48px;
+  border-radius: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 20px 40px -4px rgba(15, 23, 42, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  max-width: 440px;
   width: 100%;
   text-align: center;
   box-sizing: border-box;
-  animation: rms-slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: rms-card-intro 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.rms-logo-container {
-  margin-bottom: 24px;
-  animation: rms-fade-in 0.8s ease-out forwards;
+.rms-splash-logo {
+  margin-bottom: 20px;
+  filter: drop-shadow(0 8px 16px rgba(0, 120, 212, 0.25));
+  animation: rms-logo-pulse 3s ease-in-out infinite;
 }
 
-.rms-welcome-text {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0 0 8px 0;
-  animation: rms-fade-in 0.8s ease-out 0.1s forwards;
-  opacity: 0;
+.rms-splash-brand {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #005a9e;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
 }
 
-.rms-subtitle {
-  font-size: 0.95rem;
-  color: #64748b;
+.rms-splash-app-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #5b6b79;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   margin: 0 0 32px 0;
-  animation: rms-fade-in 0.8s ease-out 0.2s forwards;
-  opacity: 0;
 }
 
-.rms-progress-wrapper {
+.rms-splash-progress-wrapper {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 140px;
-  height: 140px;
+  width: 132px;
+  height: 132px;
   margin-bottom: 32px;
 }
 
-.rms-circular-progress {
+.rms-splash-progress-svg {
   transform: rotate(-90deg);
-  width: 140px;
-  height: 140px;
+  width: 132px;
+  height: 132px;
 }
-.rms-circular-progress circle {
+.rms-splash-progress-svg circle {
   fill: none;
-  stroke-width: 8px;
+  stroke-width: 7px;
 }
-.rms-circular-progress .rms-circle-bg {
-  stroke: #f1f5f9;
+.rms-splash-progress-svg .rms-splash-circle-bg {
+  stroke: rgba(0, 120, 212, 0.08);
 }
-.rms-circular-progress .rms-circle-fill {
-  stroke: url(#rms-gradient);
+.rms-splash-progress-svg .rms-splash-circle-fill {
+  stroke: url(#progress-gradient);
   stroke-linecap: round;
-  transition: stroke-dashoffset 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: stroke-dashoffset 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.rms-percentage-text {
+.rms-splash-percentage {
   position: absolute;
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: #2563eb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 1.85rem;
+  font-weight: 850;
+  color: #0078d4;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }
 
-.rms-status-container {
-  min-height: 24px;
-  margin-bottom: 24px;
-}
-
-.rms-status-text {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #2563eb;
-  margin: 0;
-  letter-spacing: 0.02em;
-  transition: all 0.3s ease;
-}
-
-.rms-troubleshoot-btn {
-  background: none;
-  border: none;
-  font-size: 0.8rem;
-  color: #64748b;
-  cursor: pointer;
-  padding: 8px 16px;
-  border-radius: 9999px;
-  transition: all 0.2s ease;
-  margin-top: 16px;
-  text-decoration: underline;
-}
-.rms-troubleshoot-btn:hover {
-  color: #2563eb;
-  background: #f1f5f9;
-}
-
-.rms-troubleshoot-content {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #f1f5f9;
-  text-align: left;
-  font-size: 0.78rem;
-  color: #475569;
-  width: 100%;
-  animation: rms-fade-in 0.3s ease-out forwards;
-}
-.rms-troubleshoot-content h4 {
-  margin: 0 0 8px 0;
-  color: #0f172a;
-  font-weight: 600;
-}
-.rms-troubleshoot-content ul {
-  margin: 0;
-  padding-left: 16px;
+.rms-splash-status-container {
+  min-height: 52px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-}
-.rms-troubleshoot-content li {
-  line-height: 1.4;
+  justify-content: center;
+  gap: 4px;
 }
 
-@keyframes rms-slide-up {
+.rms-splash-status-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0078d4;
+  margin: 0;
+  letter-spacing: 0.01em;
+  animation: rms-pulse-text 2s infinite ease-in-out;
+}
+
+.rms-splash-welcome-user {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0;
+  font-weight: 400;
+}
+
+.rms-splash-troubleshoot {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(226, 232, 240, 0.8);
+  width: 100%;
+}
+
+.rms-splash-troubleshoot-btn {
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  color: #64748b;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  text-decoration: underline;
+}
+.rms-splash-troubleshoot-btn:hover {
+  color: #0078d4;
+  background: rgba(0, 120, 212, 0.05);
+  text-decoration: none;
+}
+
+.rms-splash-troubleshoot-details {
+  margin-top: 10px;
+  font-size: 0.72rem;
+  color: #5b6b79;
+  line-height: 1.4;
+  text-align: left;
+  background: rgba(0, 120, 212, 0.03);
+  padding: 10px 14px;
+  border-radius: 8px;
+  border-left: 3px solid #0078d4;
+  animation: rms-fade-in-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* React Application Fade-In Transition container class */
+.rms-app-content-fade-in {
+  opacity: 0;
+  animation: rms-app-fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Core Animations */
+@keyframes rms-card-intro {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes rms-logo-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+@keyframes rms-pulse-text {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes rms-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-@keyframes rms-fade-in {
+@keyframes rms-app-fade-in {
   from {
     opacity: 0;
+    transform: scale(0.995);
   }
   to {
     opacity: 1;
+    transform: scale(1);
+  }
+}
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .rms-splash-card {
+    padding: 32px 24px;
+    border-radius: 16px;
+  }
+  .rms-splash-brand {
+    font-size: 1.85rem;
+  }
+  .rms-splash-progress-wrapper {
+    width: 110px;
+    height: 110px;
+    margin-bottom: 24px;
+  }
+  .rms-splash-progress-svg {
+    width: 110px;
+    height: 110px;
+  }
+  .rms-splash-percentage {
+    font-size: 1.5rem;
   }
 }
