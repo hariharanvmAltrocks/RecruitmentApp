@@ -43,7 +43,7 @@ var MetricDashboard = function (_a) {
     var _c = (0, react_1.useState)(false), oversightOpen = _c[0], setOversightOpen = _c[1];
     var _d = (0, react_1.useState)(false), myTasks = _d[0], setMyTasks = _d[1];
     var btnRef = (0, react_1.useRef)(null);
-    var taskMetrics = metrics.filter(function (m) { return m.showArrow === true; });
+    var taskMetrics = metrics.filter(function (m) { return m.showArrow === true && m.value > 0; });
     var oversightMetrics = metrics.filter(function (m) { return m.showArrow === false; });
     var urgentCount = metrics.filter(function (m) { return m.value > 0 && m.showArrow === true; }).length;
     var handleCardClick = function (metric) {

@@ -102,7 +102,7 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
   const [myTasks, setMyTasks] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
 
-  const taskMetrics = metrics.filter((m) => m.showArrow === true);
+  const taskMetrics = metrics.filter((m) => m.showArrow === true && m.value > 0);
   const oversightMetrics = metrics.filter((m) => m.showArrow === false);
 
   const urgentCount = metrics.filter(

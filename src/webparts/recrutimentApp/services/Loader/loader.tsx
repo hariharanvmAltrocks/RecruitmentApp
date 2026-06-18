@@ -83,8 +83,7 @@ const Loader: React.FC<LoaderProps> = ({
       <div className="rms-splash-bg-pattern" />
 
       <div className="rms-splash-card">
-        {/* Company Logo: stylized professional Fluent SVG */}
-        <div className="rms-splash-logo">
+        {/* <div className="rms-splash-logo">
           <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="64" height="64" rx="16" fill="url(#logo-bg-gradient)" />
             <path
@@ -94,7 +93,6 @@ const Loader: React.FC<LoaderProps> = ({
               stroke="white"
               strokeWidth="1.5"
             />
-            {/* Elegant connection nodes symbolizing recruitment / synergy */}
             <circle cx="27" cy="27" r="4" fill="white" />
             <circle cx="37" cy="37" r="4" fill="#60a5fa" />
             <line x1="29.8" y1="29.8" x2="34.2" y2="34.2" stroke="white" strokeWidth="2" strokeDasharray="1 1" />
@@ -108,11 +106,11 @@ const Loader: React.FC<LoaderProps> = ({
               </linearGradient>
             </defs>
           </svg>
-        </div>
+        </div> */}
 
         {/* Product Brand */}
         <h1 className="rms-splash-brand">HRMS</h1>
-        <p className="rms-splash-app-label">Recruitment & Talent Management</p>
+        <p className="rms-splash-app-label">Recruitment Management</p>
 
         {/* Circular Progress Area */}
         <div className="rms-splash-progress-wrapper">

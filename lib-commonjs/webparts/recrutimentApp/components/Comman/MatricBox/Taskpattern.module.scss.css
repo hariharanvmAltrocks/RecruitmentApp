@@ -90,7 +90,7 @@
   padding: 22px 10px 14px 10px;
   border-radius: 18px;
   position: relative;
-  background: #ffffff;
+  background: var(--app-secondary-color, #f8fafc);
   border: 1px solid #f1f5f9;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
   cursor: pointer;
@@ -147,7 +147,7 @@
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  background: #1e60eb;
+  background: var(--app-primary-color, #7c3aed);
   flex-shrink: 0;
   transition: transform 0.2s ease;
 }
