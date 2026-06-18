@@ -222,7 +222,7 @@ export const RecuritmentHRMsg = {
   HRSuccess: "Recruitment HR Assigned for the Selected Job Titles.",
   SingleHRSuccessMsg: "Recruitment HR Assigned for the Selected Job Title.",
 
-  ONEMDocumentMsg: "Signed and Stamped ONEM Document Uploaded Successfully.",
+  ONEMDocumentMsg: "Job title published successfully on the Career Portal.",
 
   AdvertisementSubmitMsg: "Advertisement Document Uploaded Successfully.",
   AdvertisementReveiwMsg: "Advertisement Reviewed Successfully.",
@@ -248,7 +248,7 @@ export const RecuritmentHRMsg = {
   InterviewQuestionSuccessMsg:
     "Interview Panel  questionnaires has been created successfully.",
   CareerportalSuccessMsg:
-    "Career Portal questionnaires has been created successfully.",
+    "Career Portal evaluation criteria question created successfully.",
 
   ProfileReviewed:
     "Candidate Profile for the Job Title Reviewed and Shortlisted.",

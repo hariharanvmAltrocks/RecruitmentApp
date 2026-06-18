@@ -4,6 +4,7 @@ var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importDefault(require("react"));
 var taskPattern_module_scss_1 = tslib_1.__importDefault(require("./taskPattern.module.scss"));
 var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
+var framer_motion_1 = require("framer-motion");
 var TaskPattern = function (_a) {
     var metrics = _a.metrics, onStepClick = _a.onStepClick, activeId = _a.activeId;
     return (react_1.default.createElement("div", { className: taskPattern_module_scss_1.default.roadmapWrapper },
@@ -16,23 +17,16 @@ var TaskPattern = function (_a) {
         react_1.default.createElement("div", { className: taskPattern_module_scss_1.default.chevronTrack, style: {
                 "--metrics-count": metrics.length,
             } }, metrics.map(function (metric, index) {
+            var _a, _b;
+            var slug = (_b = (_a = metric.id) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : metric.label.toLowerCase().replace(/\s+/g, "_");
             var Icon = metric.icon;
-            var isActive = metric.id === activeId;
-            var isLast = index === metrics.length - 1;
-            return (react_1.default.createElement("div", { key: metric.id, className: "".concat(taskPattern_module_scss_1.default.chevronItem).concat(isActive ? " ".concat(taskPattern_module_scss_1.default.active) : ""), style: {
-                    zIndex: metrics.length - index,
-                    "--step-from": metric.bgColor,
-                    "--step-to": metric.color,
-                }, onClick: function () { return onStepClick === null || onStepClick === void 0 ? void 0 : onStepClick(metric); }, role: "button", tabIndex: 0, onKeyDown: function (e) { return e.key === "Enter" && (onStepClick === null || onStepClick === void 0 ? void 0 : onStepClick(metric)); }, "aria-label": "Step ".concat(String(index + 1).padStart(2, "0"), ": ").concat(metric.label) },
-                react_1.default.createElement("div", { className: taskPattern_module_scss_1.default.chevronBody },
-                    react_1.default.createElement("div", { className: taskPattern_module_scss_1.default.iconBox },
-                        react_1.default.createElement(Icon, { size: 16, strokeWidth: 1.8, color: "#fff" }),
-                        metric.value > 0 && (react_1.default.createElement("span", { className: taskPattern_module_scss_1.default.valueBubble }, metric.value))),
-                    react_1.default.createElement("div", { className: taskPattern_module_scss_1.default.stepText },
-                        react_1.default.createElement("span", { className: taskPattern_module_scss_1.default.stepNum },
-                            strings.Step1,
-                            String(index + 1).padStart(2, "0")),
-                        react_1.default.createElement("span", { className: taskPattern_module_scss_1.default.stepLabel }, metric.label)))));
+            var color = metric.color;
+            return (react_1.default.createElement(framer_motion_1.motion.div, { className: taskPattern_module_scss_1.default.oversightStat, initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0 }, transition: { delay: index * 0.06, duration: 0.2 }, onClick: function () { return onStepClick(metric); } },
+                react_1.default.createElement("div", { className: taskPattern_module_scss_1.default.oversightStatTop },
+                    react_1.default.createElement("div", { className: taskPattern_module_scss_1.default.oversightStatIconWrap },
+                        react_1.default.createElement(Icon, { size: 16, style: { color: color }, strokeWidth: 2.5 })),
+                    react_1.default.createElement("span", { className: taskPattern_module_scss_1.default.oversightStatNum }, metric.value.toString().padStart(2, "0"))),
+                react_1.default.createElement("span", { className: taskPattern_module_scss_1.default.oversightStatLabel }, metric.label.toUpperCase())));
         }))));
 };
 exports.default = TaskPattern;

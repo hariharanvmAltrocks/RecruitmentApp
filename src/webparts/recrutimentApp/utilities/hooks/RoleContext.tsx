@@ -150,6 +150,7 @@ async function initApiUrls(): Promise<boolean> {
   localStorage.setItem("CareerPortalLink", urls.CareerPortalLink);
   localStorage.setItem("MeetingCode", urls.MeetingCode);
   localStorage.setItem("MeetingUrl", urls.MeetingUrl);
+  localStorage.setItem("HRMSAPPLINK", urls.HRMSAppLink);
 
   const signIn = await InternalSign.InternalSignIn();
   if (signIn.status !== ResponeStatus.SUCCESS) {

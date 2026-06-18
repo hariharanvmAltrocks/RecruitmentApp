@@ -1,4 +1,5 @@
 "use strict";
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importStar(require("react"));
@@ -35,6 +36,14 @@ var SidebarItem = function (_a) {
                 (isExpanded ? (react_1.default.createElement(lucide_react_1.ChevronUp, { className: SideNavigation_module_scss_1.default.chevron })) : (react_1.default.createElement(lucide_react_1.ChevronDown, { className: SideNavigation_module_scss_1.default.chevron })))),
         hasChildren && isExpanded && (react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.submenu }, item.Children.map(function (child) { return (react_1.default.createElement(SidebarItem, { key: child.Id, item: child, activeMenuID: activeMenuID, onSelectCallback: onSelectCallback, isCollapsed: isCollapsed })); })))));
 };
+var staticMenu = {
+    Id: 50,
+    DisplayName: "HRMS App",
+    Path: (_a = localStorage.getItem("HRMSAPPLINK")) !== null && _a !== void 0 ? _a : "",
+    Icon: require("../../assets/hrms_icon.png"),
+    ActiveIcon: require("../../assets/hrms_icon.png"),
+    Children: []
+};
 var SideNavigation = function (_a) {
     var menuData = _a.menuData, activeMenuID = _a.activeMenuID, setactiveMenuID = _a.setactiveMenuID, _b = _a.isCollapsed, isCollapsed = _b === void 0 ? false : _b;
     var navigate = (0, react_router_dom_1.useNavigate)();
@@ -69,6 +78,10 @@ var SideNavigation = function (_a) {
         });
     };
     var handleSelect = function (id, path) {
+        if (id === 50) {
+            window.open(path);
+            return;
+        }
         setactiveMenuID(id);
         setSideNavflag(true);
         navigate(path);
@@ -87,7 +100,8 @@ var SideNavigation = function (_a) {
                     } }))),
         react_1.default.createElement("nav", { className: SideNavigation_module_scss_1.default.nav },
             !isCollapsed && react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.sectionLabel }, strings.MainMenu),
-            sortedMenu.map(function (parent) { return (react_1.default.createElement(SidebarItem, { key: parent.Id, item: parent, activeMenuID: activeMenuID, onSelectCallback: handleSelect, isExpanded: expandedMenus.includes(parent.Id), onToggleExpand: function () { return toggleExpand(parent.Id); }, isCollapsed: isCollapsed })); })),
+            sortedMenu.map(function (parent) { return (react_1.default.createElement(SidebarItem, { key: parent.Id, item: parent, activeMenuID: activeMenuID, onSelectCallback: handleSelect, isExpanded: expandedMenus.includes(parent.Id), onToggleExpand: function () { return toggleExpand(parent.Id); }, isCollapsed: isCollapsed })); }),
+            react_1.default.createElement(SidebarItem, { key: staticMenu === null || staticMenu === void 0 ? void 0 : staticMenu.Id, item: staticMenu, activeMenuID: activeMenuID, onSelectCallback: handleSelect, isExpanded: expandedMenus.includes(staticMenu.Id), onToggleExpand: function () { return toggleExpand(staticMenu.Id); }, isCollapsed: isCollapsed })),
         react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.sidebarFooter },
             react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerContent },
                 react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerVersion }, "v-1.2"),

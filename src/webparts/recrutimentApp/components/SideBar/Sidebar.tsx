@@ -112,6 +112,15 @@ interface SideNavigationProps {
   isCollapsed?: boolean;
 }
 
+const staticMenu: MenuItem = {
+  Id: 50,
+  DisplayName: "HRMS App",
+  Path: localStorage.getItem("HRMSAPPLINK") ?? "",
+  Icon:  require("../../assets/hrms_icon.png"),
+  ActiveIcon: require("../../assets/hrms_icon.png"),
+  Children:[]
+};
+
 const SideNavigation: React.FC<SideNavigationProps> = ({
   menuData,
   activeMenuID,
@@ -153,11 +162,16 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
     );
   };
 
-  const handleSelect = (id: number, path: string) => {
-    setactiveMenuID(id);
-    setSideNavflag(true);
-    navigate(path);
-  };
+const handleSelect = (id: number, path: string) => {
+  if (id === 50) {
+   window.open(path);
+    return;
+  }
+
+  setactiveMenuID(id);
+  setSideNavflag(true);
+  navigate(path);
+};
 
   return (
     <aside
@@ -210,7 +224,15 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
           />
         ))}
 
-        
+         <SidebarItem
+  key={staticMenu?.Id}
+  item={staticMenu}
+  activeMenuID={activeMenuID}
+  onSelectCallback={handleSelect}
+  isExpanded={expandedMenus.includes(staticMenu.Id)}
+  onToggleExpand={() => toggleExpand(staticMenu.Id)}
+  isCollapsed={isCollapsed}
+/>
       </nav>
 
       {/* ── Footer ── */}

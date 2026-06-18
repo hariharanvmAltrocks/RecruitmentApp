@@ -98,13 +98,16 @@ export const getStageCandidateindex = (statusId: number) => {
     statusId == StatusId.PendingHRBGVInitiation ||
     statusId == StatusId.PendingBGdocuploadedbycandidate ||
     statusId == StatusId.PendingHRReviewBGCheck ||
-    statusId == StatusId.PendingDOTAficaVerification
+    statusId == StatusId.PendingDOTAficaVerification ||
+    statusId == StatusId.BackgroundCheckVerificationFailed
   )
     return 2;
   if (
     statusId == StatusId.RESIProcessInitiatedforDRC ||
     statusId == StatusId.RESIProcessInitiatedforExpatriate ||
-    statusId == StatusId.RESProcessInitiated
+    statusId == StatusId.RESProcessInitiated ||
+    statusId == StatusId.CandidateRejectfromRESIProcess ||
+    statusId == StatusId.FailedmedicalscreeningUnfit
   )
     return 3;
   if (
@@ -112,7 +115,8 @@ export const getStageCandidateindex = (statusId: number) => {
     statusId == StatusId.PendingCandidateOfferLetterUpload ||
     statusId == StatusId.PendingHRReviewOfferWorkPermitInit ||
     statusId == StatusId.PendingLabourHireOfferRelease ||
-    statusId == StatusId.PendingHROfferReview
+    statusId == StatusId.PendingHROfferReview ||
+    statusId == StatusId.offerdecline
   )
     return 4;
   if (
@@ -160,13 +164,16 @@ export const getStageIndexinCandidate = (statusId: number) => {
   )
     return 0;
     if (
-    statusId == StatusId.PendingDOTAficaVerification
+    statusId == StatusId.PendingDOTAficaVerification ||
+    statusId == StatusId.BackgroundCheckVerificationFailed
   )
     return 1;
   if (
     statusId == StatusId.RESIProcessInitiatedforDRC ||
     statusId == StatusId.RESIProcessInitiatedforExpatriate ||
-    statusId == StatusId.RESProcessInitiated
+    statusId == StatusId.RESProcessInitiated ||
+    statusId == StatusId.CandidateRejectfromRESIProcess ||
+    statusId == StatusId.FailedmedicalscreeningUnfit
   )
     return 2;
   if (
@@ -174,7 +181,8 @@ export const getStageIndexinCandidate = (statusId: number) => {
     statusId == StatusId.PendingCandidateOfferLetterUpload ||
     statusId == StatusId.PendingHRReviewOfferWorkPermitInit ||
     statusId == StatusId.PendingLabourHireOfferRelease ||
-    statusId == StatusId.PendingHROfferReview
+    statusId == StatusId.PendingHROfferReview ||
+    statusId == StatusId.offerdecline
   )
     return 3;
   if (
@@ -227,7 +235,9 @@ export const getStageIndexinCandidateDRC = (statusId: number) => {
   if (
     statusId == StatusId.RESIProcessInitiatedforDRC ||
     statusId == StatusId.RESIProcessInitiatedforExpatriate ||
-    statusId == StatusId.RESProcessInitiated
+    statusId == StatusId.RESProcessInitiated ||
+     statusId == StatusId.CandidateRejectfromRESIProcess ||
+    statusId == StatusId.FailedmedicalscreeningUnfit
   )
     return 1;
   if (
@@ -235,7 +245,8 @@ export const getStageIndexinCandidateDRC = (statusId: number) => {
     statusId == StatusId.PendingCandidateOfferLetterUpload ||
     statusId == StatusId.PendingHRReviewOfferWorkPermitInit ||
     statusId == StatusId.PendingLabourHireOfferRelease ||
-    statusId == StatusId.PendingHROfferReview
+    statusId == StatusId.PendingHROfferReview ||
+     statusId == StatusId.offerdecline
   )
     return 2;
   if (

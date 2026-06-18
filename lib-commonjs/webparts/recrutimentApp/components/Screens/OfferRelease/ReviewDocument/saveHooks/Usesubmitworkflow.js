@@ -8,7 +8,6 @@ var ApiConfig_1 = require("../../../../../utilities/ApiConfig");
 var Config_1 = require("../../../../../utilities/Config");
 var ConditionConfig_1 = require("../../../../../utilities/ConditionConfig");
 var ServiceExport_1 = require("../../../../../services/ServiceExport");
-var useModalPopup_1 = require("../../../../Comman/ModalPopup/useModalPopup");
 var react_router_dom_1 = require("react-router-dom");
 var RoleContext_1 = require("../../../../../utilities/hooks/RoleContext");
 var WorkflowConfig_1 = require("../../../../Hooks/WorkflowConfig");
@@ -386,10 +385,10 @@ function useSubmitWorkflow(data) {
     var ADGroupData = (0, RoleContext_1.userInfo)().ADGroupData;
     var _a = (0, react_1.useState)(false), isLoading = _a[0], setIsLoading = _a[1];
     var navigate = (0, react_router_dom_1.useNavigate)();
-    var _b = (0, useModalPopup_1.useModalPopup)(), modalState = _b.modalState, showModal = _b.showModal, closeModal = _b.closeModal;
+    var showModal = data.showModal, closeModal = data.closeModal, onClose = data.onClose, refreshKey = data.refreshKey;
     var goToList = (0, react_1.useCallback)(function () {
-        navigate("/OfferTable");
-    }, []);
+        navigate("/MyTracker");
+    }, [navigate]);
     var showAlert = (0, react_1.useCallback)(function (message, type, onConfirm) {
         showModal({
             type: type,
@@ -398,11 +397,13 @@ function useSubmitWorkflow(data) {
             confirmLabel: "Go to Dashboard",
             onConfirm: function () {
                 closeModal();
+                onClose === null || onClose === void 0 ? void 0 : onClose();
+                refreshKey === null || refreshKey === void 0 ? void 0 : refreshKey();
                 onConfirm();
-                navigate("/Dashboard");
+                navigate("/MyTracker");
             },
         });
-    }, []);
+    }, [showModal, closeModal, onClose, refreshKey, navigate]);
     var showSuccess = (0, react_1.useCallback)(function (msg) {
         showAlert(msg, "success", goToList);
     }, [showAlert, goToList]);
@@ -478,9 +479,8 @@ function useSubmitWorkflow(data) {
                 case 11: return [2 /*return*/];
             }
         });
-    }); }, [data, showSuccess, showError]);
-    var closeAlert = (0, react_1.useCallback)(function () { return closeModal(); }, []);
-    return { isLoading: isLoading, modalState: modalState, closeModal: closeModal, submit: submit };
+    }); }, [data, showSuccess, showError, ADGroupData.EmailId]);
+    return { isLoading: isLoading, submit: submit };
 }
 exports.useSubmitWorkflow = useSubmitWorkflow;
 //# sourceMappingURL=Usesubmitworkflow.js.map

@@ -31,6 +31,7 @@ export type ApiUrls = {
   CareerPortalLink: string;
   MeetingCode: string;
   MeetingUrl: string;
+  HRMSAppLink: string;
 }
 
 export type RoleContextType = {

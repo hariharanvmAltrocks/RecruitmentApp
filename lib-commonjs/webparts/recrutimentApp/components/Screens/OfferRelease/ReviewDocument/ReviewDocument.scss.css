@@ -1352,6 +1352,14 @@
   transform: scale(1.1);
   box-shadow: 0 0 0 4px #fffbeb;
 }
+.advert-roadmap__node--rejected {
+  background: #e53e3e;
+  border-color: #e53e3e;
+  color: white;
+  box-shadow: 0 20px 25px -5px rgba(229, 62, 62, 0.1), 0 8px 10px -6px rgba(229, 62, 62, 0.1);
+  transform: scale(1.1);
+  box-shadow: 0 0 0 4px rgba(229, 62, 62, 0.05);
+}
 .advert-roadmap__node--pending {
   background: var(--app-card-color, #ffffff);
   border-color: #e4e8f1;
@@ -1396,6 +1404,9 @@
 .advert-roadmap__label--current {
   color: var(--app-text-color, #0f172a);
 }
+.advert-roadmap__label--rejected {
+  color: #e53e3e;
+}
 .advert-roadmap__label--pending {
   color: #64748b;
 }
@@ -1404,6 +1415,14 @@
   font-size: 7px;
   font-weight: 700;
   color: #34d399;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+}
+.advert-roadmap__status-rejected {
+  margin-top: 4px;
+  font-size: 7px;
+  font-weight: 700;
+  color: #e53e3e;
   text-transform: uppercase;
   letter-spacing: -0.05em;
 }

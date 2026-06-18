@@ -1,20 +1,31 @@
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
-import strings, { Nationality } from "RecrutimentAppWebPartStrings";
+import { Check, X } from "lucide-react";
 import { getStageIndexinCandidate, CandidateStages, stages, CandidateStagesDRC, getStageIndexinCandidateDRC } from "../../../../../utilities/PositionStatusConfig";
 import React from "react";
 import { NationalityCode } from "../../../../../utilities/ConditionConfig";
+import strings from "RecrutimentAppWebPartStrings";
+import { StatusId } from "../../../../../utilities/Config";
 
-export const CandidateRoadmap = React.memo(({ statusId }: { statusId: number, Nationality: string }) => {
+export const CandidateRoadmap = React.memo(({ statusId, Nationality }: { statusId: number, Nationality: string }) => {
     let CandidateStage
     let currentStage: any 
     if(Nationality === NationalityCode.Nationals){
          CandidateStage = CandidateStagesDRC
-         currentStage = getStageIndexinCandidate(statusId);
+          currentStage = getStageIndexinCandidateDRC(statusId);
     }else {
         CandidateStage = CandidateStages
-        currentStage = getStageIndexinCandidateDRC(statusId);
+        currentStage = getStageIndexinCandidate(statusId);
     }
+
+    
+      const isRejectedStatus = (statusId: number) => {
+        return (
+          statusId === StatusId.BackgroundCheckVerificationFailed ||
+          statusId === StatusId.CandidateRejectfromRESIProcess ||
+          statusId === StatusId.offerdecline ||
+          statusId === StatusId.FailedmedicalscreeningUnfit
+        );
+      };
 
   return (
     <div className="advert-roadmap">
@@ -23,6 +34,7 @@ export const CandidateRoadmap = React.memo(({ statusId }: { statusId: number, Na
           const Icon = stage.icon;
           const isCompleted = index < currentStage;   
           const isCurrent = index === currentStage;
+          const isRejected = isCurrent && isRejectedStatus(statusId);
 
           return (
             <motion.div
@@ -51,19 +63,23 @@ export const CandidateRoadmap = React.memo(({ statusId }: { statusId: number, Na
                   className={`advert-roadmap__node ${
                     isCompleted
                       ? "advert-roadmap__node--completed"
-                      : isCurrent
-                        ? "advert-roadmap__node--current"
-                        : "advert-roadmap__node--pending"
+                      : isRejected
+                        ? "advert-roadmap__node--rejected"
+                        : isCurrent
+                          ? "advert-roadmap__node--current"
+                          : "advert-roadmap__node--pending"
                   }`}
                 >
                   {isCompleted ? (
                     <Check size={18} strokeWidth={3} />
+                  ) : isRejected ? (
+                    <X size={18} strokeWidth={3} />
                   ) : (
                     <Icon size={18} strokeWidth={2} />
                   )}
                 </motion.div>
 
-                {isCurrent && (
+                {isCurrent && !isRejected && (
                   <div className="advert-roadmap__ping-wrapper">
                     <span className="advert-roadmap__ping" />
                   </div>
@@ -76,9 +92,11 @@ export const CandidateRoadmap = React.memo(({ statusId }: { statusId: number, Na
                   className={`advert-roadmap__label ${
                     isCompleted
                       ? "advert-roadmap__label--completed"
-                      : isCurrent
-                        ? "advert-roadmap__label--current"
-                        : "advert-roadmap__label--pending"
+                      : isRejected
+                        ? "advert-roadmap__label--rejected"
+                        : isCurrent
+                          ? "advert-roadmap__label--current"
+                          : "advert-roadmap__label--pending"
                   }`}
                 >
                   {stage.label}
@@ -86,6 +104,10 @@ export const CandidateRoadmap = React.memo(({ statusId }: { statusId: number, Na
 
                 {isCompleted && (
                   <span className="advert-roadmap__status-done">{strings.Done}</span>
+                )}
+
+                {isRejected && (
+                  <span className="advert-roadmap__status-rejected">{strings.Rejected || "Rejected"}</span>
                 )}
               </div>
             </motion.div>

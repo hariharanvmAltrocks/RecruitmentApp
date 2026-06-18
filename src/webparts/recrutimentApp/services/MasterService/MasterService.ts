@@ -488,14 +488,16 @@ export default class MasterService implements IMasterService {
       GridResult = {
         CareerPortalLink: "",
         MeetingUrl: "",
-        MeetingCode: ""
+        MeetingCode: "",
+        HRMSAppLink: ""
       }
       if (res.length > 0) {
         res.map((item: any) => {
           GridResult = {
             CareerPortalLink: item?.CareerPortalLink,
             MeetingUrl: item?.MeetingUrl,
-            MeetingCode: item?.MeetingCode
+            MeetingCode: item?.MeetingCode,
+            HRMSAppLink: item?.HRMSAppLink
           }
           return GridResult;
         })

@@ -25,6 +25,7 @@ declare interface IRecrutimentAppWebPartStrings {
   PendingLifecycle: string;
   Welcome: string;
   YouHave: string;
+  tasklinkDetails: string;
   UrgentAction: string;
   ToProcess: string;
   MyTasks: string;

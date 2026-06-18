@@ -11,9 +11,6 @@ var ServiceExport_1 = require("../../../../../services/ServiceExport");
 var ApiConfig_1 = require("../../../../../utilities/ApiConfig");
 var ConditionConfig_1 = require("../../../../../utilities/ConditionConfig");
 var commentsPopup_1 = require("../../../../Comman/CommentsPopup/commentsPopup");
-var loading_1 = tslib_1.__importDefault(require("../../../../Comman/Loading/loading"));
-var ModalPopup_1 = tslib_1.__importDefault(require("../../../../Comman/ModalPopup/ModalPopup"));
-var useModalPopup_1 = require("../../../../Comman/ModalPopup/useModalPopup");
 var Statusbadge_1 = tslib_1.__importDefault(require("../../../../Comman/Statusbadge/Statusbadge"));
 var WorkflowConfig_1 = require("../../../../Hooks/WorkflowConfig");
 var getSignatureDetails_1 = require("../../../RecruitmentTable/AdvertReviewDrawer/Hooks/getSignatureDetails");
@@ -54,17 +51,15 @@ var CONSULT_OPTIONS = [
 ];
 var ReviewDocumentInner = function (_a) {
     var _b, _c, _d, _e, _f;
-    var selectedJobId = _a.selectedJobId, CandidateID = _a.CandidateID, selectedcandidateID = _a.selectedcandidateID, jobrequestID = _a.jobrequestID, IsExpat = _a.IsExpat, loadingState = _a.loadingState, onClose = _a.onClose, setLoadingState = _a.setLoadingState, refreshKey = _a.refreshKey, positionDetails = _a.positionDetails;
+    var selectedJobId = _a.selectedJobId, CandidateID = _a.CandidateID, selectedcandidateID = _a.selectedcandidateID, jobrequestID = _a.jobrequestID, IsExpat = _a.IsExpat, loadingState = _a.loadingState, onClose = _a.onClose, setLoadingState = _a.setLoadingState, refreshKey = _a.refreshKey, positionDetails = _a.positionDetails, pageloading = _a.pageloading, setPageLoading = _a.setPageLoading, showModal = _a.showModal, closeModal = _a.closeModal;
     var navigate = (0, react_router_dom_1.useNavigate)();
-    var _g = (0, useModalPopup_1.useModalPopup)(), modalState = _g.modalState, showModal = _g.showModal, closeModal = _g.closeModal;
-    var _h = (0, react_1.useState)(false), pageloading = _h[0], setPageLoading = _h[1];
-    var _j = (0, react_1.useState)(null), activeButton = _j[0], setActiveButton = _j[1];
+    var _g = (0, react_1.useState)(null), activeButton = _g[0], setActiveButton = _g[1];
     var isAnySubmitting = activeButton !== null;
-    var _k = (0, react_1.useState)(false), showRoadmap = _k[0], setShowRoadmap = _k[1];
-    var _l = (0, useReviewDocumentManage_1.useStateOfferRelease)(), consentVerification = _l.consentVerification, consentFile = _l.consentFile, showConsentErrors = _l.showConsentErrors, handleConsentVerification = _l.handleConsentVerification, handleConsentFile = _l.handleConsentFile, coiState = _l.coiState, handleCoiChange = _l.handleCoiChange, fileInputRef = _l.fileInputRef, selectedFile = _l.selectedFile, isReading = _l.isReading, handleUploadClick = _l.handleUploadClick, handleFileChange = _l.handleFileChange, clearFile = _l.clearFile, uploadDocs = _l.uploadDocs, handleDocumnetUpload = _l.handleDocumnetUpload, reviewerComments = _l.reviewerComments, acknowledgementCheckbox = _l.acknowledgementCheckbox, onCommentsChange = _l.onCommentsChange, onToggleAcknowledgement = _l.onToggleAcknowledgement, validateAll = _l.validateAll, validationError = _l.validationError;
-    var _m = (0, react_1.useState)(false), showComments = _m[0], setshowComments = _m[1];
+    var _h = (0, react_1.useState)(false), showRoadmap = _h[0], setShowRoadmap = _h[1];
+    var _j = (0, useReviewDocumentManage_1.useStateOfferRelease)(), consentVerification = _j.consentVerification, consentFile = _j.consentFile, showConsentErrors = _j.showConsentErrors, handleConsentVerification = _j.handleConsentVerification, handleConsentFile = _j.handleConsentFile, coiState = _j.coiState, handleCoiChange = _j.handleCoiChange, fileInputRef = _j.fileInputRef, selectedFile = _j.selectedFile, isReading = _j.isReading, handleUploadClick = _j.handleUploadClick, handleFileChange = _j.handleFileChange, clearFile = _j.clearFile, uploadDocs = _j.uploadDocs, handleDocumnetUpload = _j.handleDocumnetUpload, reviewerComments = _j.reviewerComments, acknowledgementCheckbox = _j.acknowledgementCheckbox, onCommentsChange = _j.onCommentsChange, onToggleAcknowledgement = _j.onToggleAcknowledgement, validateAll = _j.validateAll, validationError = _j.validationError;
+    var _k = (0, react_1.useState)(false), showComments = _k[0], setshowComments = _k[1];
     var isPendingDOTAfrica = positionDetails.StatusID === EvaluationConfig_1.StatusId.PendingDOTAficaVerification;
-    var _o = (0, useStatusDetails_1.useBGVStatusDetails)(jobrequestID, selectedcandidateID !== null && selectedcandidateID !== void 0 ? selectedcandidateID : 0, CandidateID !== null && CandidateID !== void 0 ? CandidateID : 0, isPendingDOTAfrica), bgvStatusDetails = _o.data, bgvStatus = _o.bgvStatus, bgvStatusLoading = _o.loading, bgvComments = _o.bgvComments, allCompleted = _o.allCompleted, rejectFlag = _o.rejectFlag, revertFLag = _o.revertFLag;
+    var _l = (0, useStatusDetails_1.useBGVStatusDetails)(jobrequestID, selectedcandidateID !== null && selectedcandidateID !== void 0 ? selectedcandidateID : 0, CandidateID !== null && CandidateID !== void 0 ? CandidateID : 0, isPendingDOTAfrica), bgvStatusDetails = _l.data, bgvStatus = _l.bgvStatus, bgvStatusLoading = _l.loading, bgvComments = _l.bgvComments, allCompleted = _l.allCompleted, rejectFlag = _l.rejectFlag, revertFLag = _l.revertFLag;
     var isConsentVerified = consentVerification === "verified";
     var docData = (0, Userequireddocuments_1.useRequiredDocuments)((_b = positionDetails.ProfileID) !== null && _b !== void 0 ? _b : "", (_c = positionDetails.JobRequestID) !== null && _c !== void 0 ? _c : "").data;
     var submitDeps = {
@@ -77,12 +72,16 @@ var ReviewDocumentInner = function (_a) {
         reviewerComments: reviewerComments,
         uploadDocs: uploadDocs,
         selectedFile: selectedFile,
+        showModal: showModal,
+        closeModal: closeModal,
+        onClose: onClose,
+        refreshKey: refreshKey,
     };
-    var _p = (0, Usesubmitworkflow_1.useSubmitWorkflow)(submitDeps), SubmitLoading = _p.isLoading, SubmitModalState = _p.modalState, SubmitCloseModal = _p.closeModal, submit = _p.submit;
-    var _q = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _q.data, signatureLoading = _q.loading;
+    var _m = (0, Usesubmitworkflow_1.useSubmitWorkflow)(submitDeps), SubmitLoading = _m.isLoading, submit = _m.submit;
+    var _o = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _o.data, signatureLoading = _o.loading;
     var isExpat = positionDetails.NationalityCode !== ConditionConfig_1.NationalityCode.Nationals;
     var isPreOnboarding = positionDetails.StatusID === EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist;
-    var _r = (0, fetchPreChecklist_1.usePreChecklist)(isExpat, (_e = positionDetails.PreChecklist) !== null && _e !== void 0 ? _e : undefined, isPreOnboarding), checklist = _r.checklist, allChecked = _r.allChecked, loading = _r.loading, updateCheckItem = _r.updateCheckItem;
+    var _p = (0, fetchPreChecklist_1.usePreChecklist)(isExpat, (_e = positionDetails.PreChecklist) !== null && _e !== void 0 ? _e : undefined, isPreOnboarding), checklist = _p.checklist, allChecked = _p.allChecked, loading = _p.loading, updateCheckItem = _p.updateCheckItem;
     var handleChecklistToggle = (0, react_1.useCallback)(function (id, value) {
         updateCheckItem(id, value);
     }, [updateCheckItem]);
@@ -92,7 +91,7 @@ var ReviewDocumentInner = function (_a) {
         if (loadingState !== isLoading)
             setLoadingState(isLoading);
     }, [isLoading, loadingState, setLoadingState]);
-    var _s = (0, Usereviewconditions_1.useReviewConditions)({
+    var _q = (0, Usereviewconditions_1.useReviewConditions)({
         statusID: positionDetails.StatusID,
         empCat: positionDetails.EmploymentCategory,
         consentVerification: consentVerification,
@@ -100,7 +99,7 @@ var ReviewDocumentInner = function (_a) {
         rejectFlag: !!rejectFlag,
         revertFlag: !!revertFLag,
         isExpat: isExpat,
-    }), is = _s.is, vis = _s.vis;
+    }), is = _q.is, vis = _q.vis;
     var headerMeta = (0, react_1.useMemo)(function () {
         var _a, _b, _c;
         return ({
@@ -146,7 +145,7 @@ var ReviewDocumentInner = function (_a) {
             onConfirm: function () {
                 closeModal();
                 onClose();
-                navigate("/OfferTable");
+                navigate("/MyTracker");
                 refreshKey();
             },
         });
@@ -484,9 +483,6 @@ var ReviewDocumentInner = function (_a) {
                         : consentVerification === "rejected"
                             ? "Reverting..."
                             : "Submitting...")))))))),
-        pageloading && react_1.default.createElement(loading_1.default, null),
-        react_1.default.createElement(ModalPopup_1.default, tslib_1.__assign({}, modalState, { onClose: closeModal })),
-        react_1.default.createElement(ModalPopup_1.default, tslib_1.__assign({}, SubmitModalState, { onClose: SubmitCloseModal })),
         react_1.default.createElement(commentsPopup_1.ViewCommentsModal, { isOpen: showComments, onClose: function () { return setshowComments(false); }, comments: bgvComments, title: "View BGV Comments", isLoading: false })));
 };
 exports.ReviewDocumentInner = ReviewDocumentInner;

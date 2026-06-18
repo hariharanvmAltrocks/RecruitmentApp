@@ -278,7 +278,7 @@ const DocumentRow: React.FC<DocumentRowProps> = ({ doc, onView }) => (
     <span className={styles.docRowContent}>
       <span className={styles.docRowName}>{doc.fileName}</span>
       <span className={styles.docRowMeta}>
-        {doc.fileSizeMB} {strings.MbNbspNbsp}{doc.uploadedDate}
+        {doc.fileSizeMB}{doc.uploadedDate}
       </span>
     </span>
 

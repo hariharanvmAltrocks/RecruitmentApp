@@ -164,6 +164,7 @@ exports.StatusId = {
     InterviewLevel2InProgress: 197,
     InterviewLevel1InProgress: 196,
     pendingL2shorlistingwithHOD: 127,
+    CandidateRejectfromRESIProcess: 195,
 };
 exports.workflowStatusApi = {
     HRPending: "WS01",

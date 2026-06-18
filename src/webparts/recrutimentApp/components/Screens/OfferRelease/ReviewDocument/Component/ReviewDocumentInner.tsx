@@ -7,9 +7,6 @@ import { OfferServices } from "../../../../../services/ServiceExport";
 import { ResponeStatus } from "../../../../../utilities/ApiConfig";
 import { NationalityCode, ActionName, RecuritmentHRMsg, ButtonAction, DocumentFolderName, CheckboxContent } from "../../../../../utilities/ConditionConfig";
 import { ViewCommentsModal } from "../../../../Comman/CommentsPopup/commentsPopup";
-import Loading from "../../../../Comman/Loading/loading";
-import ModalPopup from "../../../../Comman/ModalPopup/ModalPopup";
-import { useModalPopup } from "../../../../Comman/ModalPopup/useModalPopup";
 import StatusBadge from "../../../../Comman/Statusbadge/Statusbadge";
 import { WorkflowHODConfig } from "../../../../Hooks/WorkflowConfig";
 import { useSignatureDetails } from "../../../RecruitmentTable/AdvertReviewDrawer/Hooks/getSignatureDetails";
@@ -35,6 +32,10 @@ import CandidateDocumentsRepository from "../../Component/CandidateDocumentsRepo
 
 interface ReviewDocumentInnerProps extends ReviewDocumentProps {
   positionDetails: IselectedPosition;
+  pageloading: boolean;
+  setPageLoading: (value: boolean) => void;
+  showModal: (config: any) => void;
+  closeModal: () => void;
 }
 
 type ActiveButton =
@@ -81,11 +82,13 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
   setLoadingState,
   refreshKey,
   positionDetails,
+  pageloading,
+  setPageLoading,
+  showModal,
+  closeModal,
 }) => {
   const navigate = useNavigate();
-  const { modalState, showModal, closeModal } = useModalPopup();
 
-  const [pageloading, setPageLoading] = useState(false);
   const [activeButton, setActiveButton] = useState<ActiveButton>(null);
   const isAnySubmitting = activeButton !== null;
   const [showRoadmap, setShowRoadmap] = useState(false);
@@ -146,12 +149,14 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
     reviewerComments,
     uploadDocs,
     selectedFile: selectedFile,
+    showModal,
+    closeModal,
+    onClose,
+    refreshKey,
   };
 
   const {
     isLoading: SubmitLoading,
-    modalState: SubmitModalState,
-    closeModal: SubmitCloseModal,
     submit,
   } = useSubmitWorkflow(submitDeps);
 
@@ -242,7 +247,7 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
         onConfirm: () => {
           closeModal();
           onClose();
-          navigate("/OfferTable");
+          navigate("/MyTracker");
           refreshKey();
         },
       });
@@ -785,10 +790,6 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
         )}
       </div>
 
-      {pageloading && <Loading />}
-
-      <ModalPopup {...modalState} onClose={closeModal} />
-      <ModalPopup {...SubmitModalState} onClose={SubmitCloseModal} />
       <ViewCommentsModal
         isOpen={showComments}
         onClose={() => setshowComments(false)}

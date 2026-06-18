@@ -1209,6 +1209,7 @@ export const MetricQueryConfig = (
         StatusId.onboardingInProcess,
         StatusId.OnboardingProcessinitiatedforDRC,
         StatusId.OnboardingProcessinitiatedforExpat,
+        StatusId.CandidateRejectfromRESIProcess
       ],
       columnName: "RecruitmentHR",
       emailId: EmailId,

@@ -52,7 +52,11 @@ export const CandidateProgress: React.FC<ICandidateProgressProps> = ({
     return (
       statusId === StatusId.RejectedbyHOD ||
       statusId === StatusId.CandidateRejectedbyHODLevel1 ||
-      statusId === StatusId.CandidateRejectedbyHODLevel2
+      statusId === StatusId.CandidateRejectedbyHODLevel2 ||
+      statusId === StatusId.BackgroundCheckVerificationFailed ||
+      statusId === StatusId.CandidateRejectfromRESIProcess ||
+      statusId === StatusId.FailedmedicalscreeningUnfit ||
+      statusId === StatusId.offerdecline
     );
   };
 

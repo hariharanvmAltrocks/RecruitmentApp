@@ -745,6 +745,15 @@
       box-shadow: 0 0 0 4px $warning-bg;
     }
 
+    &--rejected {
+      background: #e53e3e;
+      border-color: #e53e3e;
+      color: white;
+      box-shadow: 0 20px 25px -5px rgba(229, 62, 62, 0.1), 0 8px 10px -6px rgba(229, 62, 62, 0.1);
+      transform: scale(1.1);
+      box-shadow: 0 0 0 4px rgba(229, 62, 62, 0.05);
+    }
+
     &--pending {
       background: $dashboard-card-bg;
       border-color: $border-color;
@@ -797,6 +806,10 @@
       color: $text-primary;
     }
 
+    &--rejected {
+      color: #e53e3e;
+    }
+
     &--pending {
       color: $text-muted;
     }
@@ -807,6 +820,15 @@
     font-size: 7px;
     font-weight: 700;
     color: #34d399;
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+  }
+
+  &__status-rejected {
+    margin-top: 4px;
+    font-size: 7px;
+    font-weight: 700;
+    color: #e53e3e;
     text-transform: uppercase;
     letter-spacing: -0.05em;
   }

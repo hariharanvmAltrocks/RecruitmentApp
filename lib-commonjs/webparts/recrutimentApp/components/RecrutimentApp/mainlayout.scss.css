@@ -24,6 +24,7 @@
   overflow-y: auto;
   padding: 24px;
   background: var(--app-secondary-color, #f8fafc);
+  overflow-x: hidden;
 }
 
 /* =========================

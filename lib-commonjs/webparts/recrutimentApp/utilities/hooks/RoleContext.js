@@ -128,6 +128,7 @@ function initApiUrls() {
                     localStorage.setItem("CareerPortalLink", urls.CareerPortalLink);
                     localStorage.setItem("MeetingCode", urls.MeetingCode);
                     localStorage.setItem("MeetingUrl", urls.MeetingUrl);
+                    localStorage.setItem("HRMSAPPLINK", urls.HRMSAppLink);
                     return [4 /*yield*/, CareerPortalAPI_1.InternalSign.InternalSignIn()];
                 case 2:
                     signIn = _a.sent();

@@ -1,9 +1,12 @@
 // ReviewDocument.tsx — conditions moved to config
-import React from "react";
+import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCandidatDetails } from "./Hooks/getCandidateDetails";
 import { FileCheck, X } from "lucide-react";
 import { ReviewDocumentInner } from "./Component/ReviewDocumentInner";
+import Loading from "../../../Comman/Loading/loading";
+import ModalPopup from "../../../Comman/ModalPopup/ModalPopup";
+import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
 
 export interface ReviewDocumentProps {
   drawerOpen: boolean;
@@ -63,6 +66,9 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = (props) => {
       jobrequestID,
       IsExpat,
     );
+
+  const [pageloading, setPageLoading] = useState(false);
+  const { modalState, showModal, closeModal } = useModalPopup();
 
   return (
     <AnimatePresence>
@@ -126,10 +132,16 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = (props) => {
                 <ReviewDocumentInner
                   {...props}
                   positionDetails={positionDetails}
+                  pageloading={pageloading}
+                  setPageLoading={setPageLoading}
+                  showModal={showModal}
+                  closeModal={closeModal}
                 />
               )}
             </motion.div>
           </div>
+          {pageloading && <Loading />}
+          <ModalPopup {...modalState} onClose={closeModal} />
         </>
       )}
     </AnimatePresence>

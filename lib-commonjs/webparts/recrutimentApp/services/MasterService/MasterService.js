@@ -521,14 +521,16 @@ var MasterService = /** @class */ (function () {
                         GridResult = {
                             CareerPortalLink: "",
                             MeetingUrl: "",
-                            MeetingCode: ""
+                            MeetingCode: "",
+                            HRMSAppLink: ""
                         };
                         if (res.length > 0) {
                             res.map(function (item) {
                                 GridResult = {
                                     CareerPortalLink: item === null || item === void 0 ? void 0 : item.CareerPortalLink,
                                     MeetingUrl: item === null || item === void 0 ? void 0 : item.MeetingUrl,
-                                    MeetingCode: item === null || item === void 0 ? void 0 : item.MeetingCode
+                                    MeetingCode: item === null || item === void 0 ? void 0 : item.MeetingCode,
+                                    HRMSAppLink: item === null || item === void 0 ? void 0 : item.HRMSAppLink
                                 };
                                 return GridResult;
                             });

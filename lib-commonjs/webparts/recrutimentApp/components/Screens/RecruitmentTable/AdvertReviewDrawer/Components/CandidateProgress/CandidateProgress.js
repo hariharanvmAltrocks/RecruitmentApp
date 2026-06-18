@@ -36,7 +36,11 @@ var CandidateProgress = function (_a) {
     var isRejectedStatus = function (statusId) {
         return (statusId === Config_1.StatusId.RejectedbyHOD ||
             statusId === Config_1.StatusId.CandidateRejectedbyHODLevel1 ||
-            statusId === Config_1.StatusId.CandidateRejectedbyHODLevel2);
+            statusId === Config_1.StatusId.CandidateRejectedbyHODLevel2 ||
+            statusId === Config_1.StatusId.BackgroundCheckVerificationFailed ||
+            statusId === Config_1.StatusId.CandidateRejectfromRESIProcess ||
+            statusId === Config_1.StatusId.FailedmedicalscreeningUnfit ||
+            statusId === Config_1.StatusId.offerdecline);
     };
     return (react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.candidateProgress }, data && data.length > 0 && (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("div", { className: CandidateProgress_module_scss_1.default.candidateProgress__header },

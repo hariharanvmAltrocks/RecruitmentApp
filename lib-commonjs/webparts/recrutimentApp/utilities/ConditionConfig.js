@@ -197,7 +197,7 @@ exports.EmailTemplateCodes = {
 exports.RecuritmentHRMsg = {
     HRSuccess: "Recruitment HR Assigned for the Selected Job Titles.",
     SingleHRSuccessMsg: "Recruitment HR Assigned for the Selected Job Title.",
-    ONEMDocumentMsg: "Signed and Stamped ONEM Document Uploaded Successfully.",
+    ONEMDocumentMsg: "Job title published successfully on the Career Portal.",
     AdvertisementSubmitMsg: "Advertisement Document Uploaded Successfully.",
     AdvertisementReveiwMsg: "Advertisement Reviewed Successfully.",
     AgencySucess: "Agencies Assigned for the Selected Job Titles.",
@@ -211,7 +211,7 @@ exports.RecuritmentHRMsg = {
     ScoreCardSubmitMsg: "The Candidate has been Interviewed and Scorecard Submitted for successfully ",
     ScoreCardMsgLevel2: "The candidate has successfully completed the Level 2 interview.",
     InterviewQuestionSuccessMsg: "Interview Panel  questionnaires has been created successfully.",
-    CareerportalSuccessMsg: "Career Portal questionnaires has been created successfully.",
+    CareerportalSuccessMsg: "Career Portal evaluation criteria question created successfully.",
     ProfileReviewed: "Candidate Profile for the Job Title Reviewed and Shortlisted.",
     ProfileReviewedNo: "Candidate Profile for the Job Title Reviewed and Rejected.",
     ProfileReviewedWaitingList: "Candidate Profile for the Job Title Reviewed and On - Hold.",

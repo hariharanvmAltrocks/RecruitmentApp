@@ -130,8 +130,8 @@ var CandidateReviewModal = function (_a) {
     var loading = !candidate ||
         reviewLoading ||
         scoreLoading ||
-        !scoreData;
-    // || !submitting; 
+        !scoreData ||
+        submitting;
     return (React.createElement("div", { style: { display: "flex", flexDirection: "column", height: "100%" }, onClick: function (e) { return e.stopPropagation(); } },
         loading && (React.createElement(loading_1.default, null)),
         React.createElement("header", { className: ReviewScorecard_module_scss_1.default.header },

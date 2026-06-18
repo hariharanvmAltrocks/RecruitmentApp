@@ -943,6 +943,7 @@ var MetricQueryConfig = function (EmailId, roles) {
                 Config_1.StatusId.onboardingInProcess,
                 Config_1.StatusId.OnboardingProcessinitiatedforDRC,
                 Config_1.StatusId.OnboardingProcessinitiatedforExpat,
+                Config_1.StatusId.CandidateRejectfromRESIProcess
             ],
             columnName: "RecruitmentHR",
             emailId: EmailId,

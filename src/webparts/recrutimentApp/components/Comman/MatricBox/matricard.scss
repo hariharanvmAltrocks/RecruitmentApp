@@ -6,6 +6,13 @@ $brand-purple:       var(--app-primary-color, #7c3aed);
 $brand-purple-hover: var(--app-primary-color, #6d28d9);
 $brand-purple-light: var(--app-secondary-color, rgba(124, 58, 237, 0.08));
 
+$xs: 480px;   // small phones
+$sm: 640px;   // phones
+$md: 768px;   // tablets
+$lg: 1024px;  // laptops
+$xl: 1280px;  // desktops
+$xxl: 1440px; // large screens
+
 
 .metric-dashboard {
   padding: 0px 0px 0px 17px;
@@ -66,6 +73,107 @@ $brand-purple-light: var(--app-secondary-color, rgba(124, 58, 237, 0.08));
     strong {
       color: $brand-purple !important;
       font-weight: 800;
+    }
+  }
+
+  &__urgent-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.04) 0%, rgba(37, 99, 235, 0.08) 100%);
+    border: 1px solid rgba(37, 99, 235, 0.15);
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin-top: 8px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    outline: none;
+    user-select: none;
+
+    &:hover {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(37, 99, 235, 0.12) 100%);
+      border-color: rgba(37, 99, 235, 0.25);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.05);
+      transform: translateY(-1px);
+
+      .metric-dashboard__urgent-arrow {
+        transform: translateX(4px);
+      }
+    }
+
+    &:focus-visible {
+      border-color: $brand-purple;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+    }
+  }
+
+  &__urgent-banner-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__urgent-icon {
+    color: #ef4444;
+    flex-shrink: 0;
+    animation: pulseIcon 2.2s infinite ease-in-out;
+  }
+
+  &__urgent-text-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: left;
+  }
+
+  &__urgent-title {
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: 0.03em;
+    color: #334155;
+    text-transform: uppercase;
+
+    strong {
+      color: #ef4444 !important;
+      font-weight: 850;
+    }
+  }
+
+  &__urgent-subtitle {
+    font-size: 10px;
+    font-weight: 500;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  &__urgent-arrow {
+    color: $brand-purple;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  &__no-urgent {
+    font-size: 11px;
+    font-weight: 600;
+    color: #10b981;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 8px;
+  }
+
+  @keyframes pulseIcon {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.15);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
     }
   }
 
@@ -141,29 +249,59 @@ $brand-purple-light: var(--app-secondary-color, rgba(124, 58, 237, 0.08));
     background: transparent;
   }
 
-  // ── Floating popup card ───────────────────────────────────────────────────────
-  // Absolutely positioned below the button, right-aligned to anchor edge.
-  // Does NOT affect document flow — overlays the content beneath.
-
   &__oversight-popup {
     position: absolute;
     top: calc(100% + 10px); // 10px gap below button
     right: 0;               // align right edge with button
     z-index: 100;
+    width: max-content;
+    // max-width: 100%;
 
-    // Let content determine min-width; cap max-width for very wide screens
-    min-width: 51vw;
-    max-width: 89vw;
-
-    @media (max-width: 640px) {
-      // On mobile, shift left to stay inside viewport
-      right: auto;
-      left: 0;
-      min-width: calc(100vw - 2rem);
-    }
+    &--wide {
+      width: 60vw;
+      @media (min-width: $xxl) {
+    width: 62vw;
   }
 
-  // ── Section header ────────────────────────────────────────────────────────────
+  @media (max-width: $xl) {
+    width: 65vw;
+  }
+
+  @media (max-width: $lg) {
+    width: 75vw;
+  }
+
+  @media (max-width: $md) {
+    width: 85vw;
+  }
+
+  @media (max-width: $sm) {
+    right: auto;
+    left: 0;
+    width: calc(100vw - 2rem);
+  }
+
+  @media (max-width: $xs) {
+    width: calc(100vw - 1rem);
+  }
+
+    }
+
+    // @media (max-width: 640px) {
+    //   right: auto;
+    //   left: 0;
+    //   min-width: calc(100vw - 2rem);
+    //   width: auto;
+    // }
+  }
+
+  &__oversight-popup_ongoing {
+    position: absolute;
+    top: calc(100% + 10px); // 10px gap below button
+    right: 0;               // align right edge with button
+    z-index: 100;
+    // width: max-content;
+  }
 
   &__section-header {
     display: flex;
@@ -200,8 +338,6 @@ $brand-purple-light: var(--app-secondary-color, rgba(124, 58, 237, 0.08));
     margin-top: 2px;
     text-transform: uppercase;
   }
-
-  // ── Task cards grid ───────────────────────────────────────────────────────────
 
   &__grid {
     display: flex;

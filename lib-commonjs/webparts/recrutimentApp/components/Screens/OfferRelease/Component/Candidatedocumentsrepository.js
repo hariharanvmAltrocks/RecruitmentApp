@@ -100,8 +100,6 @@ var DocumentRow = function (_a) {
             react_1.default.createElement("span", { className: CandidateDocumentsRepository_module_scss_1.default.docRowName }, doc.fileName),
             react_1.default.createElement("span", { className: CandidateDocumentsRepository_module_scss_1.default.docRowMeta },
                 doc.fileSizeMB,
-                " ",
-                strings.MbNbspNbsp,
                 doc.uploadedDate)),
         react_1.default.createElement("span", { className: CandidateDocumentsRepository_module_scss_1.default.docRowActions },
             react_1.default.createElement("button", { className: CandidateDocumentsRepository_module_scss_1.default.docActionBtn, title: strings.PreviewDocument, "aria-label": "Preview ".concat(doc.fileName), onClick: function () { return onView(doc.downloadUrl, doc.fileName); } },

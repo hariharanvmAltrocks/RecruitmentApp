@@ -27,10 +27,6 @@ import { IselectedPosition } from "../PositionFrame";
 import { VerificationStep } from "../../../../Comman/Statusbadge/Statusbadge";
 import { IDocFiles } from "../../../../../services/SPService/Ispservice";
 import { UploadedFile } from "../../../RecruitmentTable/Components/UploadDocument";
-import {
-  ModalState,
-  useModalPopup,
-} from "../../../../Comman/ModalPopup/useModalPopup";
 import { ModalType } from "../../../../Comman/ModalPopup/ModalPopup";
 import { useNavigate } from "react-router-dom";
 import {
@@ -61,12 +57,14 @@ export interface SubmitWorkflowDeps {
   reviewerComments: string;
   uploadDocs: UploadedFile[];
   selectedFile: IDocFiles | null;
+  showModal: (config: any) => void;
+  closeModal: () => void;
+  onClose?: () => void;
+  refreshKey?: () => void;
 }
 
 interface SubmitWorkflowResult {
   isLoading: boolean;
-  closeModal: () => void;
-  modalState: ModalState;
   submit: (btnAction: number) => Promise<void>;
 }
 
@@ -535,11 +533,11 @@ export function useSubmitWorkflow(
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { modalState, showModal, closeModal } = useModalPopup();
+  const { showModal, closeModal, onClose, refreshKey } = data;
 
   const goToList = useCallback(() => {
-    navigate("/OfferTable");
-  }, []);
+    navigate("/MyTracker");
+  }, [navigate]);
 
   const showAlert = useCallback(
     (message: string, type: ModalType, onConfirm: () => void) => {
@@ -550,12 +548,14 @@ export function useSubmitWorkflow(
         confirmLabel: "Go to Dashboard",
         onConfirm: () => {
           closeModal();
+          onClose?.();
+          refreshKey?.();
           onConfirm();
-          navigate("/Dashboard");
+          navigate("/MyTracker");
         },
       });
     },
-    [],
+    [showModal, closeModal, onClose, refreshKey, navigate],
   );
 
   const showSuccess = useCallback(
@@ -650,10 +650,8 @@ export function useSubmitWorkflow(
         setIsLoading(false);
       }
     },
-    [data, showSuccess, showError],
+    [data, showSuccess, showError, ADGroupData.EmailId],
   );
 
-  const closeAlert = useCallback(() => closeModal(), []);
-
-  return { isLoading, modalState, closeModal, submit };
+  return { isLoading, submit };
 }

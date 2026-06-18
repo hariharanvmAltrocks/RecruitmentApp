@@ -98,7 +98,8 @@ refreshKey) {
                         isEvaluation_1 = matricID === ConditionConfig_1.MatricID.EvalutionHR ||
                             matricID === ConditionConfig_1.MatricID.EvalutionHOD ||
                             matricID === ConditionConfig_1.MatricID.EvalutionLM ||
-                            matricID === ConditionConfig_1.MatricID.EvalutionEXCO;
+                            matricID === ConditionConfig_1.MatricID.EvalutionEXCO ||
+                            matricID === ConditionConfig_1.MatricID.interviewSchedule;
                         shouldShowProfile_1 = matricID === ConditionConfig_1.MatricID.ReviewProfileHR ||
                             matricID === ConditionConfig_1.MatricID.ReviewProfileLM ||
                             matricID === ConditionConfig_1.MatricID.AssignInterviewPanel ||

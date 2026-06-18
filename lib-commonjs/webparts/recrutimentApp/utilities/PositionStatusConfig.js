@@ -89,17 +89,21 @@ var getStageCandidateindex = function (statusId) {
     if (statusId == Config_1.StatusId.PendingHRBGVInitiation ||
         statusId == Config_1.StatusId.PendingBGdocuploadedbycandidate ||
         statusId == Config_1.StatusId.PendingHRReviewBGCheck ||
-        statusId == Config_1.StatusId.PendingDOTAficaVerification)
+        statusId == Config_1.StatusId.PendingDOTAficaVerification ||
+        statusId == Config_1.StatusId.BackgroundCheckVerificationFailed)
         return 2;
     if (statusId == Config_1.StatusId.RESIProcessInitiatedforDRC ||
         statusId == Config_1.StatusId.RESIProcessInitiatedforExpatriate ||
-        statusId == Config_1.StatusId.RESProcessInitiated)
+        statusId == Config_1.StatusId.RESProcessInitiated ||
+        statusId == Config_1.StatusId.CandidateRejectfromRESIProcess ||
+        statusId == Config_1.StatusId.FailedmedicalscreeningUnfit)
         return 3;
     if (statusId == Config_1.StatusId.PendingHROfferInitiate ||
         statusId == Config_1.StatusId.PendingCandidateOfferLetterUpload ||
         statusId == Config_1.StatusId.PendingHRReviewOfferWorkPermitInit ||
         statusId == Config_1.StatusId.PendingLabourHireOfferRelease ||
-        statusId == Config_1.StatusId.PendingHROfferReview)
+        statusId == Config_1.StatusId.PendingHROfferReview ||
+        statusId == Config_1.StatusId.offerdecline)
         return 4;
     if (statusId == Config_1.StatusId.PendingCandidateWorkPermitreleatedDoc ||
         statusId == Config_1.StatusId.PendingHRReviewWorkpermitDocs ||
@@ -137,17 +141,21 @@ var getStageIndexinCandidate = function (statusId) {
         statusId == Config_1.StatusId.PendingBGdocuploadedbycandidate ||
         statusId == Config_1.StatusId.PendingHRReviewBGCheck)
         return 0;
-    if (statusId == Config_1.StatusId.PendingDOTAficaVerification)
+    if (statusId == Config_1.StatusId.PendingDOTAficaVerification ||
+        statusId == Config_1.StatusId.BackgroundCheckVerificationFailed)
         return 1;
     if (statusId == Config_1.StatusId.RESIProcessInitiatedforDRC ||
         statusId == Config_1.StatusId.RESIProcessInitiatedforExpatriate ||
-        statusId == Config_1.StatusId.RESProcessInitiated)
+        statusId == Config_1.StatusId.RESProcessInitiated ||
+        statusId == Config_1.StatusId.CandidateRejectfromRESIProcess ||
+        statusId == Config_1.StatusId.FailedmedicalscreeningUnfit)
         return 2;
     if (statusId == Config_1.StatusId.PendingHROfferInitiate ||
         statusId == Config_1.StatusId.PendingCandidateOfferLetterUpload ||
         statusId == Config_1.StatusId.PendingHRReviewOfferWorkPermitInit ||
         statusId == Config_1.StatusId.PendingLabourHireOfferRelease ||
-        statusId == Config_1.StatusId.PendingHROfferReview)
+        statusId == Config_1.StatusId.PendingHROfferReview ||
+        statusId == Config_1.StatusId.offerdecline)
         return 3;
     if (statusId == Config_1.StatusId.PendingCandidateWorkPermitreleatedDoc ||
         statusId == Config_1.StatusId.PendingHRReviewWorkpermitDocs ||
@@ -188,13 +196,16 @@ var getStageIndexinCandidateDRC = function (statusId) {
         return 0;
     if (statusId == Config_1.StatusId.RESIProcessInitiatedforDRC ||
         statusId == Config_1.StatusId.RESIProcessInitiatedforExpatriate ||
-        statusId == Config_1.StatusId.RESProcessInitiated)
+        statusId == Config_1.StatusId.RESProcessInitiated ||
+        statusId == Config_1.StatusId.CandidateRejectfromRESIProcess ||
+        statusId == Config_1.StatusId.FailedmedicalscreeningUnfit)
         return 1;
     if (statusId == Config_1.StatusId.PendingHROfferInitiate ||
         statusId == Config_1.StatusId.PendingCandidateOfferLetterUpload ||
         statusId == Config_1.StatusId.PendingHRReviewOfferWorkPermitInit ||
         statusId == Config_1.StatusId.PendingLabourHireOfferRelease ||
-        statusId == Config_1.StatusId.PendingHROfferReview)
+        statusId == Config_1.StatusId.PendingHROfferReview ||
+        statusId == Config_1.StatusId.offerdecline)
         return 2;
     if (statusId == Config_1.StatusId.PendingCandidateWorkPermitreleatedDoc ||
         statusId == Config_1.StatusId.PendingHRReviewWorkpermitDocs ||

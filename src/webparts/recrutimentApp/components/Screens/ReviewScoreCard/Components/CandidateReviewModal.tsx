@@ -245,8 +245,8 @@ const CandidateReviewModal: React.FC<Props> = ({
     !candidate ||
     reviewLoading || 
     scoreLoading || 
-    !scoreData ;
-    // || !submitting; 
+    !scoreData ||
+    submitting;
 
   return (
     <div

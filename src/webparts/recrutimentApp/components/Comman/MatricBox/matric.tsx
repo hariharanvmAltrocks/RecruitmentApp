@@ -8,6 +8,8 @@ import {
   UserPlus,
   XCircle,
   Zap,
+  AlertCircle,
+  ArrowRight,
 } from "lucide-react";
 import { cn } from "../../../utilities/cn";
 import "./matricard.scss";
@@ -119,12 +121,36 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
             {strings.Welcome}{" "}
             <span className="metric-dashboard__welcome-name">{UserName}</span>
           </h1>
-          <p className="metric-dashboard__urgent">
-            {strings.YouHave}{" "}
-            <strong>
-              {urgentCount} {strings.UrgentAction}{urgentCount !== 1 ? "S" : ""}
-            </strong>{" "}
-            {strings.ToProcess}</p>
+          {urgentCount > 0 ? (
+            <div
+              className="metric-dashboard__urgent-banner"
+              onClick={() => setMyTasks(true)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === "Enter" && setMyTasks(true)}
+            >
+              <div className="metric-dashboard__urgent-banner-left">
+                <AlertCircle className="metric-dashboard__urgent-icon" size={16} />
+                <div className="metric-dashboard__urgent-text-container">
+                  <span className="metric-dashboard__urgent-title">
+                    {strings.YouHave}{" "}
+                    <strong>
+                      {urgentCount} {strings.UrgentAction}{urgentCount !== 1 ? "S" : ""}
+                    </strong>{" "}
+                    {strings.ToProcess}
+                  </span>
+                  <span className="metric-dashboard__urgent-subtitle">
+                    {strings.tasklinkDetails}
+                  </span>
+                </div>
+              </div>
+              <ArrowRight className="metric-dashboard__urgent-arrow" size={16} />
+            </div>
+          ) : (
+            <p className="metric-dashboard__no-urgent">
+              No urgent actions to process today
+            </p>
+          )}
         </div>
         <div style={{ display: "flex", justifyContent: "end", gap: "10px" }}>
           {taskMetrics.length > 0 && (
@@ -159,11 +185,9 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
                 </svg>
               </button>
 
-              {/* ── Floating popup — overlays content, anchored below button ── */}
               <AnimatePresence>
                 {myTasks && (
                   <>
-                    {/* Backdrop to close on outside click */}
                     <div
                       className="metric-dashboard__oversight-backdrop"
                       onClick={() => setMyTasks(false)}
@@ -171,7 +195,10 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
 
                     <motion.div
                       id="oversight-panel"
-                      className="metric-dashboard__oversight-popup"
+                      className={cn(
+                        "metric-dashboard__oversight-popup",
+                        taskMetrics.length > 6 && "metric-dashboard__oversight-popup--wide"
+                      )}
                       initial={{ opacity: 0, y: -8, scale: 0.97 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -8, scale: 0.97 }}
@@ -183,6 +210,14 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
                         onStepClick={(m) => onCardClick(m)}
                         activeId={3}
                       />
+                      {/* {taskMetrics.map((metric, i) => (
+                          <OversightStat
+                            key={metric.id ?? i}
+                            metric={metric}
+                            index={i}
+                            onClick={() => handleCardClick(metric)}
+                          />
+                        ))} */}
                       {/* </div> */}
                     </motion.div>
                   </>
@@ -235,7 +270,7 @@ const MetricDashboard: React.FC<MetricDashboardProps> = ({
 
                     <motion.div
                       id="oversight-panel"
-                      className="metric-dashboard__oversight-popup"
+                      className="metric-dashboard__oversight-popup_ongoing"
                       initial={{ opacity: 0, y: -8, scale: 0.97 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -8, scale: 0.97 }}

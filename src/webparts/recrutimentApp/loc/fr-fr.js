@@ -52,11 +52,12 @@ define([], function() {
 
     "Welcome": "Bienvenue,",
     "YouHave": "VOUS AVEZ",
+    "tasklinkDetails": "Click here to view in details (or) click My tasks at the top",
     "UrgentAction": "ACTION URGENTE",
     "ToProcess": "À TRAITER",
     "MyTasks": "MES TÂCHES",
 
-    "OngoingOversights": "SUPERVISIONS EN COURS",
+    "OngoingOversights": "STATUS OVERVIEW",
 
     "LifecycleRoadmap":
       "Feuille de route du cycle de vie",

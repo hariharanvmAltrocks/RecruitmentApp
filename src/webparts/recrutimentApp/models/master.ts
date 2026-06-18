@@ -163,6 +163,7 @@ export type CareerPortalLink = {
     CareerPortalLink: string;
     MeetingUrl: string;
     MeetingCode: string;
+    HRMSAppLink: string;
 }
 
 export type ITabdetails = {

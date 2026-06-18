@@ -190,6 +190,7 @@ export const StatusId = {
   InterviewLevel1InProgress: 196,
 
   pendingL2shorlistingwithHOD: 127,
+  CandidateRejectfromRESIProcess: 195,
 };
 
 export const workflowStatusApi = {

@@ -1556,6 +1556,15 @@ $error-bg    : rgba(229, 62, 62, 0.05);
       box-shadow: 0 0 0 4px $warning-bg;
     }
 
+    &--rejected {
+      background: $error-color;
+      border-color: $error-color;
+      color: white;
+      box-shadow: 0 20px 25px -5px rgba(229, 62, 62, 0.1), 0 8px 10px -6px rgba(229, 62, 62, 0.1);
+      transform: scale(1.1);
+      box-shadow: 0 0 0 4px $error-bg;
+    }
+
     &--pending {
       background: $dashboard-card-bg;
       border-color: $border-color;
@@ -1608,6 +1617,10 @@ $error-bg    : rgba(229, 62, 62, 0.05);
       color: $text-primary;
     }
 
+    &--rejected {
+      color: $error-color;
+    }
+
     &--pending {
       color: $text-muted;
     }
@@ -1618,6 +1631,15 @@ $error-bg    : rgba(229, 62, 62, 0.05);
     font-size: 7px;
     font-weight: 700;
     color: #34d399;
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+  }
+
+  &__status-rejected {
+    margin-top: 4px;
+    font-size: 7px;
+    font-weight: 700;
+    color: $error-color;
     text-transform: uppercase;
     letter-spacing: -0.05em;
   }
