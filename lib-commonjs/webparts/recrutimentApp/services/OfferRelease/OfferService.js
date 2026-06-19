@@ -569,6 +569,7 @@ var OfferService = /** @class */ (function () {
                             PreChecklist: PreOnboarding,
                             labourHire: (_16 = (_15 = residetails === null || residetails === void 0 ? void 0 : residetails.LabourhireORContractor) === null || _15 === void 0 ? void 0 : _15.AgentName) !== null && _16 !== void 0 ? _16 : "",
                         };
+                        console.log(mappedData, "mappedData");
                         return [2 /*return*/, {
                                 data: mappedData,
                                 status: 200,

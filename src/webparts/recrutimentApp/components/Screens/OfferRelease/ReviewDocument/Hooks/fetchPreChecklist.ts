@@ -139,7 +139,7 @@ export const usePreChecklist = (
   };
 
   useEffect(() => {
-    if (!isExpat || !IsActive || !preChecklist) {
+    if (!IsActive || !preChecklist) {
       setChecklist(mockNationalData);
       setLoading(false);
       return;

@@ -164,7 +164,12 @@ const SideNavigation: React.FC<SideNavigationProps> = ({
 
 const handleSelect = (id: number, path: string) => {
   if (id === 50) {
-   window.open(path);
+    if (!path) {
+      console.error("HRMS URL is missing.");
+      return;
+    }
+
+    window.open(path, "_blank", "noopener,noreferrer");
     return;
   }
 
@@ -238,7 +243,7 @@ const handleSelect = (id: number, path: string) => {
       {/* ── Footer ── */}
       <div className={styles.sidebarFooter}>
         <div className={styles.footerContent}>
-          <div className={styles.footerVersion}>v-1.2</div>
+          <div className={styles.footerVersion}>v-1.3</div>
           <div className={styles.footerLabel}>{strings.KamoaCopperSa}</div>
 
            <div

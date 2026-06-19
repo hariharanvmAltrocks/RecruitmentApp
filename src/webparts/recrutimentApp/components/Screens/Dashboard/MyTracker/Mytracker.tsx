@@ -142,7 +142,7 @@ const Mytracker: React.FC<DashboardProps> = () => {
 
 
   useEffect(() => {
-    if (activeMetric === MatricID.BackgroundCheck || activeMetric === MatricID.LabourHire || activeMetric === MatricID.Kcsa) {
+    if (activeMetric === MatricID.MySubmissionBGV) {
       void updateListPortal();
     }
   }, [activeMetric, refreshKey]);

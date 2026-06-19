@@ -246,7 +246,9 @@ export const getStageIndexinCandidateDRC = (statusId: number) => {
     statusId == StatusId.PendingHRReviewOfferWorkPermitInit ||
     statusId == StatusId.PendingLabourHireOfferRelease ||
     statusId == StatusId.PendingHROfferReview ||
-     statusId == StatusId.offerdecline
+     statusId == StatusId.offerdecline ||
+    statusId == StatusId.PendingHRReviewOfferanduploadEmployementContract
+
   )
     return 2;
   if (
@@ -255,12 +257,13 @@ export const getStageIndexinCandidateDRC = (statusId: number) => {
     statusId == StatusId.WorkPermitAcknowledgedContractUploaded ||
     statusId == StatusId.PendingLabourhireWPPayment ||
     statusId == StatusId.PendingFinancePaymentReview ||
-    statusId == StatusId.PendingLHWorkPermitProcess
+    statusId == StatusId.PendingLHWorkPermitProcess ||
+       statusId == StatusId.WorkPermitAcknowledgedContractUploaded
+
   ){
     return 3;
   }
     if (
-       statusId == StatusId.WorkPermitAcknowledgedContractUploaded ||
     statusId == StatusId.PendingCandidateEmploymentContractUpload ||
     statusId == StatusId.PendingHREmploymentContractVerification ||
     statusId == StatusId.PendingHRReviewOfferuploadEmploymentInit ||
@@ -269,7 +272,7 @@ export const getStageIndexinCandidateDRC = (statusId: number) => {
     statusId == StatusId.PendingHREmploymentContractReview || 
     statusId ==
       StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract || 
-    statusId == StatusId.PendingHREmploymentContractVerification
+    statusId == StatusId.PendingHREmploymentContractVerification 
     ){
      return 4
     }

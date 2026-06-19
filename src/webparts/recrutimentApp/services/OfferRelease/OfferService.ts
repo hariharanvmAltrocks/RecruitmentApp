@@ -258,7 +258,8 @@ export default class OfferService implements IOfferService {
 
         labourHire: residetails?.LabourhireORContractor?.AgentName ?? "",
       };
-
+      console.log(mappedData,"mappedData");
+      
       return {
         data: mappedData,
         status: 200,

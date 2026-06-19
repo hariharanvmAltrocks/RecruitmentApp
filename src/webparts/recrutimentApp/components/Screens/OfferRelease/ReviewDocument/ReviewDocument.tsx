@@ -147,7 +147,3 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = (props) => {
     </AnimatePresence>
   );
 };
-
-
-
-

@@ -79,7 +79,11 @@ var SideNavigation = function (_a) {
     };
     var handleSelect = function (id, path) {
         if (id === 50) {
-            window.open(path);
+            if (!path) {
+                console.error("HRMS URL is missing.");
+                return;
+            }
+            window.open(path, "_blank", "noopener,noreferrer");
             return;
         }
         setactiveMenuID(id);
@@ -104,7 +108,7 @@ var SideNavigation = function (_a) {
             react_1.default.createElement(SidebarItem, { key: staticMenu === null || staticMenu === void 0 ? void 0 : staticMenu.Id, item: staticMenu, activeMenuID: activeMenuID, onSelectCallback: handleSelect, isExpanded: expandedMenus.includes(staticMenu.Id), onToggleExpand: function () { return toggleExpand(staticMenu.Id); }, isCollapsed: isCollapsed })),
         react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.sidebarFooter },
             react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerContent },
-                react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerVersion }, "v-1.2"),
+                react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerVersion }, "v-1.3"),
                 react_1.default.createElement("div", { className: SideNavigation_module_scss_1.default.footerLabel }, strings.KamoaCopperSa),
                 react_1.default.createElement("div", { onClick: function () { return setSwitcherOpen(true); }, className: SideNavigation_module_scss_1.default.sidebarItem, title: isCollapsed ? strings.CustomTheme : undefined },
                     react_1.default.createElement(lucide_react_1.Palette, { className: SideNavigation_module_scss_1.default.icon }),

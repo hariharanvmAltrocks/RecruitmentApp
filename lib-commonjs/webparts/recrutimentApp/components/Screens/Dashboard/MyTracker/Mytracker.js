@@ -78,7 +78,7 @@ var Mytracker = function () {
     var _y = (0, useStateFromManage_1.useStateFromManage)(), drawerOpen = _y.drawerOpen, selectedJobId = _y.selectedJobId, advertLanguage = _y.advertLanguage, reviewerComments = _y.reviewerComments, acknowledgementCheckbox = _y.acknowledgementCheckbox, loadingState = _y.loadingState, openDrawer = _y.openDrawer, closeDrawer = _y.closeDrawer, setAdvertLanguage = _y.setAdvertLanguage, setComments = _y.setComments, toggleAcknowledgement = _y.toggleAcknowledgement, setLoadingState = _y.setLoadingState;
     var _z = (0, useModalPopup_1.useModalPopup)(), modalState = _z.modalState, showModal = _z.showModal, closeModal = _z.closeModal;
     (0, react_1.useEffect)(function () {
-        if (activeMetric === ConditionConfig_1.MatricID.BackgroundCheck || activeMetric === ConditionConfig_1.MatricID.LabourHire || activeMetric === ConditionConfig_1.MatricID.Kcsa) {
+        if (activeMetric === ConditionConfig_1.MatricID.MySubmissionBGV) {
             void updateListPortal();
         }
     }, [activeMetric, refreshKey]);

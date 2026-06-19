@@ -205,18 +205,19 @@ var getStageIndexinCandidateDRC = function (statusId) {
         statusId == Config_1.StatusId.PendingHRReviewOfferWorkPermitInit ||
         statusId == Config_1.StatusId.PendingLabourHireOfferRelease ||
         statusId == Config_1.StatusId.PendingHROfferReview ||
-        statusId == Config_1.StatusId.offerdecline)
+        statusId == Config_1.StatusId.offerdecline ||
+        statusId == Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract)
         return 2;
     if (statusId == Config_1.StatusId.PendingCandidateWorkPermitreleatedDoc ||
         statusId == Config_1.StatusId.PendingHRReviewWorkpermitDocs ||
         statusId == Config_1.StatusId.WorkPermitAcknowledgedContractUploaded ||
         statusId == Config_1.StatusId.PendingLabourhireWPPayment ||
         statusId == Config_1.StatusId.PendingFinancePaymentReview ||
-        statusId == Config_1.StatusId.PendingLHWorkPermitProcess) {
+        statusId == Config_1.StatusId.PendingLHWorkPermitProcess ||
+        statusId == Config_1.StatusId.WorkPermitAcknowledgedContractUploaded) {
         return 3;
     }
-    if (statusId == Config_1.StatusId.WorkPermitAcknowledgedContractUploaded ||
-        statusId == Config_1.StatusId.PendingCandidateEmploymentContractUpload ||
+    if (statusId == Config_1.StatusId.PendingCandidateEmploymentContractUpload ||
         statusId == Config_1.StatusId.PendingHREmploymentContractVerification ||
         statusId == Config_1.StatusId.PendingHRReviewOfferuploadEmploymentInit ||
         statusId == Config_1.StatusId.PendingHREmploymentContractInit ||

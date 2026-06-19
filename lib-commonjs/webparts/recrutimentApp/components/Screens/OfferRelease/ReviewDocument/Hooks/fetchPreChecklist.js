@@ -116,7 +116,7 @@ var usePreChecklist = function (isExpat, preChecklist, IsActive) {
         });
     };
     (0, react_1.useEffect)(function () {
-        if (!isExpat || !IsActive || !preChecklist) {
+        if (!IsActive || !preChecklist) {
             setChecklist(mockNationalData);
             setLoading(false);
             return;
