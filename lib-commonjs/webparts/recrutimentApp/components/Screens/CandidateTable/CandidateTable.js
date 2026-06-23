@@ -192,8 +192,7 @@ var CandidateTable = function (props) {
             id: "PositionTitle",
             header: strings.PositionTitle,
             render: function (item) { return (react_1.default.createElement("div", null,
-                react_1.default.createElement("div", { className: "candidate-table__name" }, item.PositionTitle),
-                react_1.default.createElement("div", { className: "candidate-table__subtext" }, item.JobCode))); },
+                react_1.default.createElement("div", { className: "candidate-table__name" }, item.PositionTitle))); },
         },
         {
             id: "createdBy",

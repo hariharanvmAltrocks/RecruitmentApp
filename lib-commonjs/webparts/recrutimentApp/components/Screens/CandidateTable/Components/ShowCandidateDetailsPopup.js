@@ -286,7 +286,7 @@ var ShowCandidateDetailsPopup = function (_a) {
                 : tslib_1.__spreadArray(tslib_1.__spreadArray([], p.panelMembers, true), [val], false) })); });
     }, []);
     var handleSubmit = (0, react_1.useCallback)(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-        var toPanel;
+        var emailMap, toPanel;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -300,8 +300,20 @@ var ShowCandidateDetailsPopup = function (_a) {
                         });
                         return [2 /*return*/];
                     }
+                    emailMap = new Map(paneloptions === null || paneloptions === void 0 ? void 0 : paneloptions.Level1.map(function (item) { return [item.value, item.Email]; }));
                     toPanel = function (members) {
-                        return members.map(function (item) { return ({ key: Number(item), text: item }); });
+                        return members
+                            .map(function (id) {
+                            var key = Number(id);
+                            var email = emailMap.get(key);
+                            return email
+                                ? {
+                                    key: key,
+                                    text: email,
+                                }
+                                : null;
+                        })
+                            .filter(function (item) { return item !== null; });
                     };
                     return [4 /*yield*/, submit({
                             candidateId: candidateId,

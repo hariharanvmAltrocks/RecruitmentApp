@@ -435,7 +435,7 @@ var DashboardService = /** @class */ (function () {
                                 Expand: "Status,JobCode,BusinessUnitCode,Department",
                                 Topcount: ApiConfig_1.count.Topcount,
                                 Orderby: "ID",
-                                Orderbydecorasc: true,
+                                Orderbydecorasc: false,
                             })];
                     case 1:
                         recruitmentResponse = _a.sent();

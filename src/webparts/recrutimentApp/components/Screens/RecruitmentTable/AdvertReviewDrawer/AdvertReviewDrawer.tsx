@@ -13,19 +13,10 @@ import {
   X,
   Network,
   ChevronRight,
-  Check,
   FileText,
   Plus,
-  Target,
-  Zap,
-  UserCheck,
   BookOpen,
   FilePlus2,
-  Trash2,
-  MoreVertical,
-  Calendar,
-  Clock,
-  Globe,
 } from "lucide-react";
 import {
   PositionDetails,
@@ -51,7 +42,7 @@ import {
 import { useUIState } from "../../../RecrutimentApp/UIStateContext";
 import BGVerification from "../Components/BGVerification/BGVerification";
 import { userInfo } from "../../../../utilities/hooks/RoleContext";
-import { RoleID } from "../../../../utilities/Config";
+import { RoleID, StatusId } from "../../../../utilities/Config";
 import { useUpdateMainRecord } from "./Hooks/SaveHooks/useUpdateMainRecord";
 import { useHRLeadProcess } from "./Hooks/SaveHooks/useHRLeadProcess";
 import { useHRProcess } from "./Hooks/SaveHooks/useHRProcess";
@@ -61,11 +52,6 @@ import { useNavigate } from "react-router-dom";
 import { ModalPopup } from "../../../Comman/ModalPopup/ModalPopup";
 import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
 import Loading from "../../../Comman/Loading/loading";
-import {
-  getStageIndex,
-  stages,
-} from "../../../../utilities/PositionStatusConfig";
-import { CandidateProgress } from "./Components/CandidateProgress/CandidateProgress";
 import * as strings from 'RecrutimentAppWebPartStrings';
 import CustomComments from "../Components/CommentsModel/CommentsModal";
 import { useCommentsDetails } from "./Hooks/getCommentsDetails";
@@ -185,12 +171,6 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
   const [localAdvertDetails, setLocalAdvertDetails] = useState<AdvertismentDetails | null>(null);
   const [createAdvert, setCreateAdvert] = useState<SubmitAdvert | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showFullDetails, setShowFullDetails] = useState(false);
-  const [showMoreActions, setShowMoreActions] = useState(false);
-  
-  // useEffect(() => {
-  //   setLocalAdvertDetails(advertDetails);
-  // }, [advertDetails]);
 
 
   const showValidationRef = useRef(false);
@@ -685,7 +665,8 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                   </div>
                 )}
 
-            <div className="mFormGroup">
+        {positionDetails?.StatusId != StatusId.ReadyforRecruitmentProcess}{
+  <div className="mFormGroup">
               <button
                 onClick={() => setCommentsflag(true)}
                 className="mSubmitBtn"
@@ -695,7 +676,7 @@ export const AdvertReviewDrawer: React.FC<AdvertReviewDrawerProps> = ({
                 <FileText size={16} />
                 {strings.ViewComments}</button>
             </div>
-
+        }
                 {showReviewFooter && (
                   <>
                     <ReviewCommentSignature

@@ -88,11 +88,6 @@ var AdvertReviewDrawer = function (_a) {
     var _s = (0, react_1.useState)(null), localAdvertDetails = _s[0], setLocalAdvertDetails = _s[1];
     var _t = (0, react_1.useState)(null), createAdvert = _t[0], setCreateAdvert = _t[1];
     var _u = (0, react_1.useState)(false), showCreateModal = _u[0], setShowCreateModal = _u[1];
-    var _v = (0, react_1.useState)(false), showFullDetails = _v[0], setShowFullDetails = _v[1];
-    var _w = (0, react_1.useState)(false), showMoreActions = _w[0], setShowMoreActions = _w[1];
-    // useEffect(() => {
-    //   setLocalAdvertDetails(advertDetails);
-    // }, [advertDetails]);
     var showValidationRef = (0, react_1.useRef)(false);
     var isSubmittingRef = (0, react_1.useRef)(false);
     (0, react_1.useEffect)(function () {
@@ -379,6 +374,7 @@ var AdvertReviewDrawer = function (_a) {
                             : strings.DraftOnemAdvertdocFrenchOnlyPdf, required: true, onChange: setUploadDocument, hasError: uploadError, disabled: isSubmittingRef.current })),
                     showBGVSection && (react_1.default.createElement("div", { style: { marginTop: "20px" } },
                         react_1.default.createElement(BGVerification_1.default, { mandatoryChecks: BGVData.mantoryChecks, VerificationChecks: BGVData.checkboxBGVOption, onToggleOption: handleBvgToggle, hasError: bgvError, disabled: isSubmittingRef.current }))),
+                    (positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.StatusId) != Config_1.StatusId.ReadyforRecruitmentProcess,
                     react_1.default.createElement("div", { className: "mFormGroup" },
                         react_1.default.createElement("button", { onClick: function () { return setCommentsflag(true); }, className: "mSubmitBtn", type: "button" },
                             react_1.default.createElement(lucide_react_1.FileText, { size: 16 }),

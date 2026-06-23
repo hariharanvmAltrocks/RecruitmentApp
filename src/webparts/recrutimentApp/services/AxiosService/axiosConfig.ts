@@ -40,6 +40,6 @@ export type ICreateMeeting = {
     requiredAttendees: string[];
     optionalAttendees: string[];
     rooms: string[];
-    categories: string[];
+    // categories: string[];
     isOnlineMeeting: boolean;
 }

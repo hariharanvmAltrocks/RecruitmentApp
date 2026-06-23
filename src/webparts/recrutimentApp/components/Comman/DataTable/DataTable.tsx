@@ -1,5 +1,5 @@
-import React, { ReactNode, useMemo } from "react";
-import { Check, Minus } from "lucide-react";
+import React, { ReactNode, useMemo, useState } from "react";
+import { Check, Minus, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import "./DataTable.scss";
 import * as strings from 'RecrutimentAppWebPartStrings';
 
@@ -15,6 +15,7 @@ export interface DataTableColumn<T> {
   headerClassName?: string;
   cellClassName?: string;
   hideOnMobile?: boolean;
+  sortable?: boolean;
 }
 
 export interface DataTableProps<T> {
@@ -34,6 +35,9 @@ export interface DataTableProps<T> {
   loading?: boolean;
   emptyMessage?: string;
   onRowClick?: (row: T) => void;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc" | null;
+  onSort?: (columnId: string, order: "asc" | "desc" | null) => void;
 }
 
 const getRowIdFallback = <T,>(row: T, index: number): string => {
@@ -71,10 +75,93 @@ export const DataTable = <T,>({
   loading = false,
   emptyMessage = strings.NoRecordsFound,
   onRowClick,
+  sortBy,
+  sortOrder,
+  onSort,
 }: DataTableProps<T>) => {
+  const [localSortConfig, setLocalSortConfig] = useState<{
+    key: string;
+    direction: "asc" | "desc" | null;
+  } | null>(null);
+
+  const isColumnSortable = (column: DataTableColumn<T>): boolean => {
+    if (column.sortable === false) return false;
+    const idLower = column.id.toLowerCase();
+    return !(
+      idLower === "actions" ||
+      idLower === "action" ||
+      idLower === "actionarrow" ||
+      idLower.includes("action") ||
+      !column.header
+    );
+  };
+
+  const compareValues = (aVal: any, bVal: any, direction: "asc" | "desc"): number => {
+    if (aVal === undefined || aVal === null) aVal = "";
+    if (bVal === undefined || bVal === null) bVal = "";
+
+    const aNum = Number(aVal);
+    const bNum = Number(bVal);
+    if (!isNaN(aNum) && !isNaN(bNum) && aVal !== "" && bVal !== "") {
+      return direction === "asc" ? aNum - bNum : bNum - aNum;
+    }
+
+    const aStr = String(aVal).toLowerCase();
+    const bStr = String(bVal).toLowerCase();
+
+    if (aStr < bStr) return direction === "asc" ? -1 : 1;
+    if (aStr > bStr) return direction === "asc" ? 1 : -1;
+    return 0;
+  };
+
+  const sortedData = useMemo(() => {
+    const activeSort = onSort
+      ? { key: sortBy, direction: sortOrder }
+      : localSortConfig;
+
+    if (!activeSort || !activeSort.key || !activeSort.direction) {
+      return data;
+    }
+
+    const { key, direction } = activeSort;
+    const col = columns.find((c) => c.id === key);
+    if (!col) return data;
+
+    return [...data].sort((a, b) => {
+      const aVal = col.accessor ? a[col.accessor] : (a as any)[key];
+      const bVal = col.accessor ? b[col.accessor] : (b as any)[key];
+      return compareValues(aVal, bVal, direction);
+    });
+  }, [data, columns, sortBy, sortOrder, onSort, localSortConfig]);
+
+  const handleSort = (columnId: string) => {
+    let nextDirection: "asc" | "desc" | null = "asc";
+    const currentDirection = onSort
+      ? sortBy === columnId
+        ? sortOrder
+        : null
+      : localSortConfig?.key === columnId
+      ? localSortConfig.direction
+      : null;
+
+    if (currentDirection === "asc") {
+      nextDirection = "desc";
+    } else if (currentDirection === "desc") {
+      nextDirection = null;
+    } else {
+      nextDirection = "asc";
+    }
+
+    if (onSort) {
+      onSort(columnId, nextDirection);
+    } else {
+      setLocalSortConfig(nextDirection ? { key: columnId, direction: nextDirection } : null);
+    }
+  };
+
   const rowIds = useMemo(
-    () => data.map((row, index) => getRowId(row, index)),
-    [data, getRowId],
+    () => sortedData.map((row, index) => getRowId(row, index)),
+    [sortedData, getRowId],
   );
   const allSelected =
     enableCheckbox &&
@@ -131,22 +218,44 @@ export const DataTable = <T,>({
                 </button>
               </th>
             )}
-            {columns.map((column) => (
-              <th
-                key={column.id}
-                className={[
-                  "data-table__head-cell",
-                  column.align ? `data-table__head-cell--${column.align}` : "",
-                  column.hideOnMobile ? "data-table__cell--mobile-hidden" : "",
-                  column.headerClassName ?? "",
-                ]
-                  .join(" ")
-                  .trim()}
-                style={column.width ? { width: column.width } : undefined}
-              >
-                {column.header}
-              </th>
-            ))}
+            {columns.map((column) => {
+              const sortable = isColumnSortable(column);
+              const currentDirection = onSort
+                ? sortBy === column.id
+                  ? sortOrder
+                  : null
+                : localSortConfig?.key === column.id
+                ? localSortConfig.direction
+                : null;
+
+              return (
+                <th
+                  key={column.id}
+                  className={[
+                    "data-table__head-cell",
+                    column.align ? `data-table__head-cell--${column.align}` : "",
+                    column.hideOnMobile ? "data-table__cell--mobile-hidden" : "",
+                    sortable ? "data-table__head-cell--sortable" : "",
+                    column.headerClassName ?? "",
+                  ]
+                    .join(" ")
+                    .trim()}
+                  style={column.width ? { width: column.width } : undefined}
+                  onClick={sortable ? () => handleSort(column.id) : undefined}
+                >
+                  <div className="data-table__header-content">
+                    <span>{column.header}</span>
+                    {sortable && (
+                      <span className={`data-table__sort-icon ${currentDirection ? "data-table__sort-icon--active" : ""}`}>
+                        {currentDirection === "asc" && <ArrowUp size={14} />}
+                        {currentDirection === "desc" && <ArrowDown size={14} />}
+                        {!currentDirection && <ArrowUpDown size={14} />}
+                      </span>
+                    )}
+                  </div>
+                </th>
+              );
+            })}
           </tr>
         </thead>
         <tbody>
@@ -179,7 +288,7 @@ export const DataTable = <T,>({
               ))}
             </>
           )}
-          {!loading && data.length === 0 && (
+          {!loading && sortedData.length === 0 && (
             <tr className="data-table__row">
               <td
                 className="data-table__cell data-table__empty"
@@ -190,7 +299,7 @@ export const DataTable = <T,>({
             </tr>
           )}
           {!loading &&
-            data.map((row, index) => {
+            sortedData.map((row, index) => {
               const rowId = getRowId(row, index);
               const isSelected = selectedRowIds.includes(rowId);
 

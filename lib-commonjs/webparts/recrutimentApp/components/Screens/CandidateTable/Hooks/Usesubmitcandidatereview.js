@@ -114,8 +114,8 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
             cp = payload.CandidateDetails, recrutimentData = payload.recrutimentData, interviewLevel1 = payload.interviewLevel1, interviewLevel2 = payload.interviewLevel2, StatusId = payload.StatusId, interviewPanelL1 = payload.interviewPanelL1;
             if (!cp)
                 throw new Error("CandidateDetails is null");
-            organizer = interviewPanelL1.find(function (i) { return i.Role === ConditionConfig_1.RoleName.RecruitmentHR; });
-            requiredAttendees = interviewPanelL1.map(function (i) { return i.Email; });
+            organizer = interviewPanelL1.find(function (i) { return i.key === 26; });
+            requiredAttendees = interviewPanelL1.map(function (i) { return i.text; });
             startDateL1 = (interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startDate) && (interviewLevel1 === null || interviewLevel1 === void 0 ? void 0 : interviewLevel1.startTime)
                 ? new Date("".concat(interviewLevel1.startDate, "T").concat(interviewLevel1.startTime, ":00")).toISOString()
                 : "";
@@ -141,14 +141,15 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                 subject: "Interview for ".concat(cp.FristName, " ").concat(cp.MiddleName, " - ").concat(recrutimentData === null || recrutimentData === void 0 ? void 0 : recrutimentData.JobTitleEnglish),
                 startUtc: startdate !== null && startdate !== void 0 ? startdate : "",
                 endUtc: enddate !== null && enddate !== void 0 ? enddate : "",
-                location: "",
+                location: "KAMOA",
                 requiredAttendees: requiredAttendees,
                 optionalAttendees: StatusId === Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview
                     ? optionalAttendeeL1
                     : optionalAttendeeL2,
                 rooms: [],
-                categories: ["Internal", "Planning"],
+                // categories: ["Internal", "Planning"],
                 isOnlineMeeting: true,
+                body: "Internal"
             };
             return [2 /*return*/, ServiceExport_1.MeetingSchedules.createMeeting(meetingObj)];
         });

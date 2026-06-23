@@ -25,7 +25,7 @@ const TaskPattern: React.FC<TaskPatternProps> = ({
             <span className={styles.roadmapTitle}>{strings.LifecycleRoadmap}</span>
           </div>
         </div>
-        <span className={styles.roadmapSubtitle}>{strings.OperationalSequence}</span>
+        {/* <span className={styles.roadmapSubtitle}>{strings.OperationalSequence}</span> */}
       </div>
 
       {/* ── Chevron track — only this scrolls ───────────────────────── */}

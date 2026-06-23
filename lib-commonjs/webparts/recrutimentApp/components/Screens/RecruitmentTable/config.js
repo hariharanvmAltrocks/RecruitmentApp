@@ -73,6 +73,7 @@ var useRecruitmentColumns = function (_a) {
             header: strings.JobCode,
             accessor: "jobCode",
             cellClassName: "data-table__job-code",
+            sortable: true
         },
         {
             id: "title",
@@ -80,6 +81,7 @@ var useRecruitmentColumns = function (_a) {
             render: function (item) { return (react_2.default.createElement("div", { className: "data-table__job-title" },
                 react_2.default.createElement("span", null, item.title),
                 react_2.default.createElement("span", { className: "data-table__job-dept" }, item.department))); },
+            sortable: true
         }
     ], (showProfile
         ? [
@@ -90,6 +92,7 @@ var useRecruitmentColumns = function (_a) {
                 cellClassName: "data-table__cell--count",
                 // align: "center",
                 hideOnMobile: true,
+                sortable: true
             },
         ]
         : []), true), [
@@ -100,24 +103,27 @@ var useRecruitmentColumns = function (_a) {
             cellClassName: "data-table__cell--count",
             align: "center",
             hideOnMobile: true,
+            sortable: true
         },
-        {
-            id: "requestType",
-            header: strings.RequestType,
-            accessor: "requestType",
-            cellClassName: "data-table__cell--muted",
-            hideOnMobile: true,
-        },
+        // {
+        //   id: "requestType",
+        //   header: strings.RequestType,
+        //   accessor: "requestType",
+        //   cellClassName: "data-table__cell--muted",
+        //   hideOnMobile: true,
+        // },
         {
             id: "nationality",
             header: "Nationality",
             accessor: "nationality",
             cellClassName: "data-table__cell--muted",
             hideOnMobile: true,
+            sortable: true
         },
         {
             id: "status",
             header: "Status",
+            sortable: true,
             render: function (item) {
                 var _a;
                 var isTooltipStatus;
@@ -139,6 +145,7 @@ var useRecruitmentColumns = function (_a) {
             accessor: "applicantName",
             cellClassName: "data-table__job-code",
             hideOnMobile: true,
+            sortable: true
         },
         {
             id: "title",
@@ -146,6 +153,7 @@ var useRecruitmentColumns = function (_a) {
             render: function (item) { return (react_2.default.createElement("div", { className: "data-table__job-title" },
                 react_2.default.createElement("span", null, item.title),
                 react_2.default.createElement("span", { className: "data-table__job-dept" }, item.department))); },
+            sortable: true
         },
         {
             id: "interviewDate",
@@ -154,6 +162,7 @@ var useRecruitmentColumns = function (_a) {
             align: "center",
             cellClassName: "data-table__cell--count",
             hideOnMobile: true,
+            sortable: true
         },
         {
             id: "interviewLevels",
@@ -161,6 +170,7 @@ var useRecruitmentColumns = function (_a) {
             accessor: "interviewLevels",
             cellClassName: "data-table__cell--muted",
             hideOnMobile: true,
+            sortable: true
         },
         {
             id: "grade",
@@ -168,11 +178,13 @@ var useRecruitmentColumns = function (_a) {
             accessor: "grade",
             cellClassName: "data-table__cell--muted",
             hideOnMobile: true,
+            sortable: true
         },
         {
             id: "status",
             header: "Status",
             render: function (item) { return (react_2.default.createElement("span", { className: "data-table__status-badge status-badge" }, item.status)); },
+            sortable: true
         }
     ], (actionColumn ? [actionColumn] : []), true); }, [actionColumn]);
     function resolveActionMode(statusID) {

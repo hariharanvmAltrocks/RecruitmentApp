@@ -21,8 +21,79 @@ var buildCellValue = function (row, column) {
     return "-";
 };
 var DataTable = function (_a) {
-    var columns = _a.columns, data = _a.data, _b = _a.enableCheckbox, enableCheckbox = _b === void 0 ? false : _b, _c = _a.selectedRowIds, selectedRowIds = _c === void 0 ? [] : _c, _d = _a.getRowId, getRowId = _d === void 0 ? getRowIdFallback : _d, onToggleRow = _a.onToggleRow, onToggleAll = _a.onToggleAll, pageSize = _a.pageSize, currentPage = _a.currentPage, totalCount = _a.totalCount, onPageChange = _a.onPageChange, _e = _a.pageSizeOptions, pageSizeOptions = _e === void 0 ? [10, 20, 50] : _e, onPageSizeChange = _a.onPageSizeChange, _f = _a.loading, loading = _f === void 0 ? false : _f, _g = _a.emptyMessage, emptyMessage = _g === void 0 ? strings.NoRecordsFound : _g, onRowClick = _a.onRowClick;
-    var rowIds = (0, react_1.useMemo)(function () { return data.map(function (row, index) { return getRowId(row, index); }); }, [data, getRowId]);
+    var columns = _a.columns, data = _a.data, _b = _a.enableCheckbox, enableCheckbox = _b === void 0 ? false : _b, _c = _a.selectedRowIds, selectedRowIds = _c === void 0 ? [] : _c, _d = _a.getRowId, getRowId = _d === void 0 ? getRowIdFallback : _d, onToggleRow = _a.onToggleRow, onToggleAll = _a.onToggleAll, pageSize = _a.pageSize, currentPage = _a.currentPage, totalCount = _a.totalCount, onPageChange = _a.onPageChange, _e = _a.pageSizeOptions, pageSizeOptions = _e === void 0 ? [10, 20, 50] : _e, onPageSizeChange = _a.onPageSizeChange, _f = _a.loading, loading = _f === void 0 ? false : _f, _g = _a.emptyMessage, emptyMessage = _g === void 0 ? strings.NoRecordsFound : _g, onRowClick = _a.onRowClick, sortBy = _a.sortBy, sortOrder = _a.sortOrder, onSort = _a.onSort;
+    var _h = (0, react_1.useState)(null), localSortConfig = _h[0], setLocalSortConfig = _h[1];
+    var isColumnSortable = function (column) {
+        if (column.sortable === false)
+            return false;
+        var idLower = column.id.toLowerCase();
+        return !(idLower === "actions" ||
+            idLower === "action" ||
+            idLower === "actionarrow" ||
+            idLower.includes("action") ||
+            !column.header);
+    };
+    var compareValues = function (aVal, bVal, direction) {
+        if (aVal === undefined || aVal === null)
+            aVal = "";
+        if (bVal === undefined || bVal === null)
+            bVal = "";
+        var aNum = Number(aVal);
+        var bNum = Number(bVal);
+        if (!isNaN(aNum) && !isNaN(bNum) && aVal !== "" && bVal !== "") {
+            return direction === "asc" ? aNum - bNum : bNum - aNum;
+        }
+        var aStr = String(aVal).toLowerCase();
+        var bStr = String(bVal).toLowerCase();
+        if (aStr < bStr)
+            return direction === "asc" ? -1 : 1;
+        if (aStr > bStr)
+            return direction === "asc" ? 1 : -1;
+        return 0;
+    };
+    var sortedData = (0, react_1.useMemo)(function () {
+        var activeSort = onSort
+            ? { key: sortBy, direction: sortOrder }
+            : localSortConfig;
+        if (!activeSort || !activeSort.key || !activeSort.direction) {
+            return data;
+        }
+        var key = activeSort.key, direction = activeSort.direction;
+        var col = columns.find(function (c) { return c.id === key; });
+        if (!col)
+            return data;
+        return tslib_1.__spreadArray([], data, true).sort(function (a, b) {
+            var aVal = col.accessor ? a[col.accessor] : a[key];
+            var bVal = col.accessor ? b[col.accessor] : b[key];
+            return compareValues(aVal, bVal, direction);
+        });
+    }, [data, columns, sortBy, sortOrder, onSort, localSortConfig]);
+    var handleSort = function (columnId) {
+        var nextDirection = "asc";
+        var currentDirection = onSort
+            ? sortBy === columnId
+                ? sortOrder
+                : null
+            : (localSortConfig === null || localSortConfig === void 0 ? void 0 : localSortConfig.key) === columnId
+                ? localSortConfig.direction
+                : null;
+        if (currentDirection === "asc") {
+            nextDirection = "desc";
+        }
+        else if (currentDirection === "desc") {
+            nextDirection = null;
+        }
+        else {
+            nextDirection = "asc";
+        }
+        if (onSort) {
+            onSort(columnId, nextDirection);
+        }
+        else {
+            setLocalSortConfig(nextDirection ? { key: columnId, direction: nextDirection } : null);
+        }
+    };
+    var rowIds = (0, react_1.useMemo)(function () { return sortedData.map(function (row, index) { return getRowId(row, index); }); }, [sortedData, getRowId]);
     var allSelected = enableCheckbox &&
         rowIds.length > 0 &&
         rowIds.every(function (id) { return selectedRowIds.includes(id); });
@@ -56,14 +127,29 @@ var DataTable = function (_a) {
                             someSelected && !allSelected ? react_1.default.createElement(lucide_react_1.Minus, { size: 12 }) : null))),
                     columns.map(function (column) {
                         var _a;
+                        var sortable = isColumnSortable(column);
+                        var currentDirection = onSort
+                            ? sortBy === column.id
+                                ? sortOrder
+                                : null
+                            : (localSortConfig === null || localSortConfig === void 0 ? void 0 : localSortConfig.key) === column.id
+                                ? localSortConfig.direction
+                                : null;
                         return (react_1.default.createElement("th", { key: column.id, className: [
                                 "data-table__head-cell",
                                 column.align ? "data-table__head-cell--".concat(column.align) : "",
                                 column.hideOnMobile ? "data-table__cell--mobile-hidden" : "",
+                                sortable ? "data-table__head-cell--sortable" : "",
                                 (_a = column.headerClassName) !== null && _a !== void 0 ? _a : "",
                             ]
                                 .join(" ")
-                                .trim(), style: column.width ? { width: column.width } : undefined }, column.header));
+                                .trim(), style: column.width ? { width: column.width } : undefined, onClick: sortable ? function () { return handleSort(column.id); } : undefined },
+                            react_1.default.createElement("div", { className: "data-table__header-content" },
+                                react_1.default.createElement("span", null, column.header),
+                                sortable && (react_1.default.createElement("span", { className: "data-table__sort-icon ".concat(currentDirection ? "data-table__sort-icon--active" : "") },
+                                    currentDirection === "asc" && react_1.default.createElement(lucide_react_1.ArrowUp, { size: 14 }),
+                                    currentDirection === "desc" && react_1.default.createElement(lucide_react_1.ArrowDown, { size: 14 }),
+                                    !currentDirection && react_1.default.createElement(lucide_react_1.ArrowUpDown, { size: 14 }))))));
                     }))),
             react_1.default.createElement("tbody", null,
                 loading && (react_1.default.createElement(react_1.default.Fragment, null, skeletonRows.map(function (row) { return (react_1.default.createElement("tr", { className: "data-table__row", key: "skeleton-".concat(row) },
@@ -82,10 +168,10 @@ var DataTable = function (_a) {
                                 .trim() },
                             react_1.default.createElement("div", { className: "data-table__skeleton data-table__skeleton--short" })));
                     }))); }))),
-                !loading && data.length === 0 && (react_1.default.createElement("tr", { className: "data-table__row" },
+                !loading && sortedData.length === 0 && (react_1.default.createElement("tr", { className: "data-table__row" },
                     react_1.default.createElement("td", { className: "data-table__cell data-table__empty", colSpan: totalColumns }, emptyMessage))),
                 !loading &&
-                    data.map(function (row, index) {
+                    sortedData.map(function (row, index) {
                         var rowId = getRowId(row, index);
                         var isSelected = selectedRowIds.includes(rowId);
                         return (react_1.default.createElement("tr", { key: rowId, onClick: onRowClick ? function () { return onRowClick(row); } : undefined, style: onRowClick ? { cursor: "pointer" } : undefined, className: "data-table__row ".concat(isSelected ? "data-table__row--selected" : "").trim() },

@@ -278,7 +278,7 @@ export const CandidateTable: React.FC = (props: any) => {
         render: (item) => (
           <div>
             <div className="candidate-table__name">{item.PositionTitle}</div>
-            <div className="candidate-table__subtext">{item.JobCode}</div>
+            {/* <div className="candidate-table__subtext">{item.JobCode}</div> */}
           </div>
         ),
       },

@@ -72,9 +72,9 @@ export const PositionFramework: React.FC<PositionFrameworkProps> = ({
       </div>
     ) : (
       <div className="advert-review-drawer__group">
-        <h4 className="advert-review-drawer__group-title">
+        {/* <h4 className="advert-review-drawer__group-title">
           <Users size={12} />
-          {strings.OrganizationalAlignment}</h4>
+          {strings.OrganizationalAlignment}</h4> */}
         <div className="advert-review-drawer__grid">
           <InfoField
             label={strings.BuCode}
@@ -112,9 +112,9 @@ export const PositionFramework: React.FC<PositionFrameworkProps> = ({
 
         <div className="advert-review-drawer__divider" />
 
-        <h4 className="advert-review-drawer__group-title">
+        {/* <h4 className="advert-review-drawer__group-title">
           <ClipboardList size={12} />
-          {strings.PositionClassification}</h4>
+          {strings.PositionClassification}</h4> */}
         <div className="advert-review-drawer__grid">
           <InfoField
             label={strings.Nationality}

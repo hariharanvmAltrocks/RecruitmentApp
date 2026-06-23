@@ -45,12 +45,16 @@ export const useSignatureDetails = () => {
       const response = await masterService.GetUserDetails(Filter, "and");
       if (response.status === 200 && response.data) {
         const data = response.data;
+         const UserName = [data?.FirstName, data?.LastName]
+    .filter(Boolean)
+    .join(" ");
         const mappedData: SignatureDetails = {
-          reviewerName: data.FirstName + " " + data.MiddleName + " " + data.LastName,
+          reviewerName: UserName,   //data.FirstName + " " + data.MiddleName + " " + data.LastName,
           reviewerInitial: (data.LastName || "").charAt(0).toUpperCase(),
           jobTitleEN: data.JopTitleEnglish || "",
           jobTitleFR: data.JopTitleFrench || "",
         }
+         
         setData(mappedData)
         setLoading(false);
       }

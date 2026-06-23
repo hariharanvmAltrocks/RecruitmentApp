@@ -522,7 +522,7 @@ export default class DashboardService implements IDashboard {
         Expand: `Status,JobCode,BusinessUnitCode,Department`,
         Topcount: count.Topcount,
         Orderby: "ID",
-        Orderbydecorasc: true,
+        Orderbydecorasc: false,
       });
       if (!recruitmentResponse.length) {
         return {

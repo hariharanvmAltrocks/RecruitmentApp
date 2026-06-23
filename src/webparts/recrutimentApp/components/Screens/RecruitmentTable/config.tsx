@@ -118,6 +118,7 @@ const actionColumn = useMemo<DataTableColumn<RecruitmentItem> | null>(
         header: strings.JobCode,
         accessor: "jobCode",
         cellClassName: "data-table__job-code",
+        sortable: true
       },
       {
         id: "title",
@@ -128,6 +129,7 @@ const actionColumn = useMemo<DataTableColumn<RecruitmentItem> | null>(
             <span className="data-table__job-dept">{item.department}</span>
           </div>
         ),
+        sortable: true
       },
       ...(showProfile
         ? [
@@ -138,6 +140,7 @@ const actionColumn = useMemo<DataTableColumn<RecruitmentItem> | null>(
               cellClassName: "data-table__cell--count",
               // align: "center",
               hideOnMobile: true,
+              sortable: true
             },
           ]
         : []),
@@ -148,24 +151,27 @@ const actionColumn = useMemo<DataTableColumn<RecruitmentItem> | null>(
         cellClassName: "data-table__cell--count",
         align: "center",
         hideOnMobile: true,
+        sortable: true
       },
-      {
-        id: "requestType",
-        header: strings.RequestType,
-        accessor: "requestType",
-        cellClassName: "data-table__cell--muted",
-        hideOnMobile: true,
-      },
+      // {
+      //   id: "requestType",
+      //   header: strings.RequestType,
+      //   accessor: "requestType",
+      //   cellClassName: "data-table__cell--muted",
+      //   hideOnMobile: true,
+      // },
       {
         id: "nationality",
         header: "Nationality",
         accessor: "nationality",
         cellClassName: "data-table__cell--muted",
         hideOnMobile: true,
+        sortable: true
       },
       {
         id: "status",
         header: "Status",
+        sortable: true,
         render: (item) => {
           let isTooltipStatus: any;
           isTooltipStatus = [StatusId.ReadyforRecruitmentProcess].includes(
@@ -203,6 +209,7 @@ const actionColumn = useMemo<DataTableColumn<RecruitmentItem> | null>(
         accessor: "applicantName",
         cellClassName: "data-table__job-code",
         hideOnMobile: true,
+        sortable: true
       },
       {
         id: "title",
@@ -213,6 +220,7 @@ const actionColumn = useMemo<DataTableColumn<RecruitmentItem> | null>(
             <span className="data-table__job-dept">{item.department}</span>
           </div>
         ),
+        sortable: true
       },
       {
         id: "interviewDate",
@@ -221,6 +229,7 @@ const actionColumn = useMemo<DataTableColumn<RecruitmentItem> | null>(
         align: "center",
         cellClassName: "data-table__cell--count",
         hideOnMobile: true,
+        sortable: true
       },
       {
         id: "interviewLevels",
@@ -228,6 +237,7 @@ const actionColumn = useMemo<DataTableColumn<RecruitmentItem> | null>(
         accessor: "interviewLevels",
         cellClassName: "data-table__cell--muted",
         hideOnMobile: true,
+        sortable: true
       },
       {
         id: "grade",
@@ -235,6 +245,7 @@ const actionColumn = useMemo<DataTableColumn<RecruitmentItem> | null>(
         accessor: "grade",
         cellClassName: "data-table__cell--muted",
         hideOnMobile: true,
+        sortable: true
       },
       {
         id: "status",
@@ -244,6 +255,7 @@ const actionColumn = useMemo<DataTableColumn<RecruitmentItem> | null>(
             {item.status}
           </span>
         ),
+        sortable: true
       },
       ...(actionColumn ? [actionColumn] : []),
     ],

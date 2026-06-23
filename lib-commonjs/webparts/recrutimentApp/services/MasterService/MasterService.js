@@ -641,20 +641,20 @@ var MasterService = /** @class */ (function () {
                         res = _a.sent();
                         if (res.length > 0) {
                             res.map(function (item) {
-                                var _a, _b, _c, _d, _e;
+                                var _a, _b, _c, _d, _e, _f, _g, _h;
                                 GridResult = {
                                     ID: item.ID,
                                     EmailId: item.EmailId,
                                     DepartmentId: item.DepartmentId,
                                     CurrentPosition: item.CurrentPosition,
                                     DepartmentName: (_a = item.Department) === null || _a === void 0 ? void 0 : _a.DepartmentName,
-                                    FirstName: item.FirstName,
-                                    MiddleName: item.MiddleName,
-                                    LastName: item.LastName,
-                                    JopTitleEnglish: (_b = item.JobTitleInEnglish) === null || _b === void 0 ? void 0 : _b.JobTitleInEnglish,
-                                    JopTitleFrench: (_c = item.JobTitleInFrench) === null || _c === void 0 ? void 0 : _c.JobTitleInFrench,
-                                    DRCGrade: (_d = item.DRCGrade) === null || _d === void 0 ? void 0 : _d.DRCGrade,
-                                    PatersonGrade: (_e = item.PatersonGrade) === null || _e === void 0 ? void 0 : _e.PatersonGrade,
+                                    FirstName: (_b = item.FirstName) !== null && _b !== void 0 ? _b : "",
+                                    MiddleName: (_c = item.MiddleName) !== null && _c !== void 0 ? _c : "",
+                                    LastName: (_d = item.LastName) !== null && _d !== void 0 ? _d : "",
+                                    JopTitleEnglish: (_e = item.JobTitleInEnglish) === null || _e === void 0 ? void 0 : _e.JobTitleInEnglish,
+                                    JopTitleFrench: (_f = item.JobTitleInFrench) === null || _f === void 0 ? void 0 : _f.JobTitleInFrench,
+                                    DRCGrade: (_g = item.DRCGrade) === null || _g === void 0 ? void 0 : _g.DRCGrade,
+                                    PatersonGrade: (_h = item.PatersonGrade) === null || _h === void 0 ? void 0 : _h.PatersonGrade,
                                     BusinessAddress: item.BusinessAddress,
                                     HomeAddress: item.HomeAddress,
                                     ContactNumber: item.ContactNumber,

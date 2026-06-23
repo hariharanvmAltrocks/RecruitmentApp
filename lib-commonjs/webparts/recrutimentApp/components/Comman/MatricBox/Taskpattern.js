@@ -12,8 +12,7 @@ var TaskPattern = function (_a) {
             react_1.default.createElement("div", { className: taskPattern_module_scss_1.default.roadmapHeaderLeft },
                 react_1.default.createElement("div", { className: taskPattern_module_scss_1.default.roadmapHeaderInner },
                     react_1.default.createElement("span", { className: taskPattern_module_scss_1.default.roadmapDot }),
-                    react_1.default.createElement("span", { className: taskPattern_module_scss_1.default.roadmapTitle }, strings.LifecycleRoadmap))),
-            react_1.default.createElement("span", { className: taskPattern_module_scss_1.default.roadmapSubtitle }, strings.OperationalSequence)),
+                    react_1.default.createElement("span", { className: taskPattern_module_scss_1.default.roadmapTitle }, strings.LifecycleRoadmap)))),
         react_1.default.createElement("div", { className: taskPattern_module_scss_1.default.chevronTrack, style: {
                 "--metrics-count": metrics.length,
             } }, metrics.map(function (metric, index) {

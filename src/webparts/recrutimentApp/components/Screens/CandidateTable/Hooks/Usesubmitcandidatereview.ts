@@ -45,7 +45,7 @@ export interface InterviewScheduleForm {
   endDate: string | undefined;
 }
 
-interface panelmembers {
+export interface panelmembers {
   key: number;
   text: string;
 }
@@ -218,14 +218,13 @@ export const useSubmitCandidateReview = (
         StatusId,
         interviewPanelL1,
       } = payload;
-
       if (!cp) throw new Error("CandidateDetails is null");
 
       const organizer = interviewPanelL1.find(
-        (i: any) => i.Role === RoleName.RecruitmentHR,
+        (i: any) => i.key === 26,
       );
       const requiredAttendees = interviewPanelL1.map(
-        (i: any) => i.Email,
+        (i: any) => i.text,
       ) as string[];
 
       const startDateL1 =
@@ -278,15 +277,16 @@ export const useSubmitCandidateReview = (
         subject: `Interview for ${cp.FristName} ${cp.MiddleName} - ${recrutimentData?.JobTitleEnglish}`,
         startUtc: startdate ?? "",
         endUtc: enddate ?? "",
-        location: "",
+        location: "KAMOA",
         requiredAttendees,
         optionalAttendees:
           StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview
             ? optionalAttendeeL1
             : optionalAttendeeL2,
         rooms: [],
-        categories: ["Internal", "Planning"],
+        // categories: ["Internal", "Planning"],
         isOnlineMeeting: true,
+        body: "Internal"
       };
 
       return MeetingSchedules.createMeeting(meetingObj);

@@ -365,3 +365,47 @@
   }
 }
 
+// Sorting styles
+.data-table__head-cell--sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color $transition-base;
+
+  &:hover {
+    color: $primary-color;
+
+    .data-table__sort-icon {
+      color: $primary-color;
+      opacity: 0.8;
+    }
+  }
+}
+
+.data-table__header-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+
+  .data-table__head-cell--center & {
+    justify-content: center;
+  }
+
+  .data-table__head-cell--right & {
+    justify-content: flex-end;
+  }
+}
+
+.data-table__sort-icon {
+  display: inline-flex;
+  align-items: center;
+  color: $text-subtle;
+  opacity: 0.4;
+  transition: all $transition-base;
+
+  &--active {
+    color: $primary-color;
+    opacity: 1;
+  }
+}
+

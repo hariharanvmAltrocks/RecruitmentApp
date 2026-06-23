@@ -33,7 +33,7 @@ var useSignatureDetails = function () {
         }
         setLoading(true);
         var timer = setTimeout(function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-            var Filter, response, data_1, mappedData;
+            var Filter, response, data_1, UserName, mappedData;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -45,8 +45,11 @@ var useSignatureDetails = function () {
                         response = _a.sent();
                         if (response.status === 200 && response.data) {
                             data_1 = response.data;
+                            UserName = [data_1 === null || data_1 === void 0 ? void 0 : data_1.FirstName, data_1 === null || data_1 === void 0 ? void 0 : data_1.LastName]
+                                .filter(Boolean)
+                                .join(" ");
                             mappedData = {
-                                reviewerName: data_1.FirstName + " " + data_1.MiddleName + " " + data_1.LastName,
+                                reviewerName: UserName, //data.FirstName + " " + data.MiddleName + " " + data.LastName,
                                 reviewerInitial: (data_1.LastName || "").charAt(0).toUpperCase(),
                                 jobTitleEN: data_1.JopTitleEnglish || "",
                                 jobTitleFR: data_1.JopTitleFrench || "",

@@ -32,6 +32,7 @@ import {
   ConflictOfInterestForm,
   DecisionType,
   InterviewScheduleForm,
+  panelmembers,
   useSubmitCandidateReview,
 } from "../Hooks/Usesubmitcandidatereview";
 import { useFetchPanelMembers } from "../Hooks/fetchPanelMembers";
@@ -524,8 +525,24 @@ export const ShowCandidateDetailsPopup: React.FC<
       return;
     }
 
-    const toPanel = (members: string[]) =>
-      members.map((item) => ({ key: Number(item), text: item }));
+const emailMap = new Map(
+  paneloptions?.Level1.map((item) => [item.value, item.Email])
+);
+
+const toPanel = (members: string[]): panelmembers[] =>
+  members
+    .map((id) => {
+      const key = Number(id);
+      const email = emailMap.get(key);
+
+      return email
+        ? {
+            key,
+            text: email,
+          }
+        : null;
+    })
+    .filter((item): item is panelmembers => item !== null);
 
     await submit(
       {
