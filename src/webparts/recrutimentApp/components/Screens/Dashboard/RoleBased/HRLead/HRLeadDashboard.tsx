@@ -58,7 +58,7 @@ export const HRLeadDashboard: React.FC<HRLeadDashboardProps> = ({
       <div className={styles.kpiGrid}>
         <KPICard
           title="Total Positions"
-          value="74%"
+          value="64"
           iconName="TrendingUp"
           iconTheme="blue"
           // footerText="View HR breakdown"
