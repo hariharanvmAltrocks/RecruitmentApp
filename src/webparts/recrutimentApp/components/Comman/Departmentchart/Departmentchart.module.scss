@@ -1,73 +1,72 @@
 @import "../../../styles/theme";
 
 .card {
-  background: $dashboard-card-bg;
-  border-radius: 40px;
-  border: 1px solid $border-color;
-  box-shadow:
-    0 20px 60px rgba(148, 163, 184, 0.15),
-    0 4px 16px rgba(148, 163, 184, 0.08);
-  padding: 32px;
-  height: 480px;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.01);
+  padding: 1.25rem;
+  height: 350px;
   position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  }
 }
 
 // ─── Header row ──────────────────────────────────────────────────────────────
 .header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  margin-bottom: 28px;
+  border-bottom: 1px solid #f8fafc;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
   flex-shrink: 0;
 }
 
 .titleGroup {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .titleRow {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: $primary-color;
+  background: #3b82f6;
   flex-shrink: 0;
-  box-shadow: 0 0 12px $primary-shadow;
 }
 
 .title {
-  font-size: 18px;
-  font-weight: 900;
-  color: $text-primary;
-  letter-spacing: 0.12em;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: #1e3a8a;
   text-transform: uppercase;
   margin: 0;
-  line-height: 1;
-
-  // Highlighted title band (matches reference screenshot blue-purple bg on text)
-  background: linear-gradient(135deg, $button-color 0%, $primary-color 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  line-height: 1.2;
+  letter-spacing: 0.5px;
 }
 
 .subtitle {
-  font-size: 10px;
+  font-size: 0.65rem;
   font-weight: 700;
-  color: $text-muted;
-  letter-spacing: 0.14em;
+  color: #64748b;
   text-transform: uppercase;
-  padding-left: 18px;
+  letter-spacing: 0.5px;
+  padding-left: 14px;
   margin: 0;
 }
 
@@ -75,193 +74,136 @@
 .pagination {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: $secondary-color;
-  padding: 6px;
-  border-radius: 16px;
-  border: 1px solid $border-light;
+  gap: 6px;
+  background: #f8fafc;
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
   flex-shrink: 0;
 }
 
 .pageBtn {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
-  font-size: 16px;
-  line-height: 1;
+  background: transparent;
+  color: #475569;
+  transition: all 0.2s ease;
 
   &.active {
-    background: $dashboard-card-bg;
-    color: $text-primary;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
+    color: #3b82f6;
     &:hover {
-      background: $primary-color;
-      color: $white;
-      box-shadow: 0 4px 14px $primary-shadow;
+      background: #eff6ff;
     }
   }
 
   &.disabled {
-    background: transparent;
-    color: $text-subtle;
+    color: #cbd5e1;
     cursor: not-allowed;
-    pointer-events: none;
-  }
-
-  // SVG icon inside
-  svg {
-    display: block;
   }
 }
 
 .pageInfo {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 1px;
-  padding: 0 8px;
+  gap: 4px;
+  padding: 0 4px;
 }
 
 .pageNumbers {
   font-size: 10px;
-  font-weight: 900;
-  color: $text-primary;
-  letter-spacing: 0.04em;
+  font-weight: 800;
+  color: #1e293b;
   white-space: nowrap;
 }
 
 .pageLabel {
   font-size: 8px;
   font-weight: 700;
-  color: $text-muted;
+  color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
 }
 
 // ─── Chart area ───────────────────────────────────────────────────────────────
-.chartArea {
+.cardBody {
   flex: 1;
-  width: 100%;
   min-height: 0;
-  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 0.5rem;
 }
 
-
-// ─── Recharts overrides (applied via :global) ────────────────────────────────
-// These target recharts-generated class names that can't be SCSS-module-scoped.
-.chartArea {
-  :global {
-    // Grid lines
-    .recharts-cartesian-grid-horizontal line {
-      stroke: $border-light;
-      stroke-dasharray: 3 3;
-    }
-
-    // X axis labels — bold, slate, 10px
-    .recharts-xAxis .recharts-cartesian-axis-tick-value {
-      fill: $text-secondary;
-      font-size: 10px;
-      font-weight: 900;
-    }
-
-    // Y axis labels
-    .recharts-yAxis .recharts-cartesian-axis-tick-value {
-      fill: $text-muted;
-      font-size: 10px;
-      font-weight: 900;
-    }
-
-    // Axis lines — hide
-    .recharts-cartesian-axis-line {
-      display: none;
-    }
-
-    // Tick marks — hide
-    .recharts-cartesian-axis-tick-line {
-      display: none;
-    }
-
-    // Tooltip container
-    .recharts-tooltip-wrapper {
-      outline: none;
-    }
-
-    // Cursor highlight
-    .recharts-bar-rectangle:focus {
-      outline: none;
-    }
-  }
-}
-
-// ─── Custom tooltip ───────────────────────────────────────────────────────────
-.tooltip {
-  background: $dashboard-card-bg;
-  border: 1px solid $border-light;
-  border-radius: 20px;
-  box-shadow: 0 20px 48px var(--app-primary-shadow, rgba(0, 0, 0, 0.1));
-  padding: 14px 18px;
-  backdrop-filter: blur(10px);
-  min-width: 140px;
-}
-
-.tooltipLabel {
-  font-size: 11px;
+.bottomLink {
+  font-size: 0.75rem;
   font-weight: 700;
-  color: $text-secondary;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin: 0 0 4px;
+  color: #2563eb;
+  cursor: pointer;
+  text-align: right;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  display: inline-block;
+
+  &:hover {
+    color: #1d4ed8;
+  }
 }
 
-.tooltipValue {
-  font-size: 22px;
-  font-weight: 900;
-  background: linear-gradient(135deg, $button-color 0%, $primary-color 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin: 0;
-  line-height: 1;
+.rankedList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
 }
 
-.tooltipSub {
-  font-size: 9px;
+.rankedRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rowMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
   font-weight: 700;
-  color: $text-muted;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin: 2px 0 0;
+  color: #475569;
 }
 
-// ─── Responsive ───────────────────────────────────────────────────────────────
-@media (max-width: 768px) {
-  .card {
-    border-radius: 24px;
-    padding: 20px 16px;
-    height: auto;
-    min-height: 420px;
-  }
+.deptNameWrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #1e293b;
 
-  .title {
-    font-size: 14px;
+  span {
+    font-weight: 600;
   }
+}
 
-  .header {
-    flex-direction: column;
-    gap: 16px;
-    align-items: flex-start;
-  }
+.deptStats {
+  font-size: 0.7rem;
+  color: #64748b;
+}
 
-  .pagination {
-    align-self: flex-end;
-  }
+.progressBarBg {
+  height: 8px;
+  background-color: #f1f5f9;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progressBarFill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.6s ease;
 }
 
 .emptyState {
@@ -270,51 +212,46 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding: 40px 20px;
+  padding: 20px;
   text-align: center;
 }
 
 .emptyIconContainer {
-  width: 80px;
-  height: 80px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  background: $secondary-color;
-  border: 1.5px solid $border-light;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.03);
-  transition: transform 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.05);
-  }
+  margin-bottom: 12px;
 }
 
 .emptyIcon {
-  color: $primary-color;
-  opacity: 0.8;
+  color: #3b82f6;
 }
 
 .emptyTitle {
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 800;
-  color: $text-primary;
-  letter-spacing: 0.03em;
-  margin: 0 0 8px 0;
+  color: #1e293b;
+  margin: 0 0 4px 0;
   text-transform: uppercase;
-  background: linear-gradient(135deg, $button-color 0%, $primary-color 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 .emptySubtitle {
-  font-size: 11px;
-  font-weight: 700;
-  color: $text-muted;
-  max-width: 320px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748b;
+  max-width: 260px;
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.4;
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .card {
+    height: 320px;
+  }
 }

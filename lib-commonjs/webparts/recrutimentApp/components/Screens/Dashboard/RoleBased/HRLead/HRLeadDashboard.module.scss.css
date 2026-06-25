@@ -1,0 +1,935 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.welcome h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+.welcome h1 span {
+  color: #2563eb;
+  font-weight: 800;
+}
+.welcome p {
+  font-size: 0.8125rem;
+  color: #64748b;
+  margin: 4px 0 0 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.actionButton:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+/* Alert Bar */
+.alertBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #1e40af;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-wrap: wrap;
+}
+.alertBar:hover {
+  background-color: #dbeafe;
+}
+.alertBar .alertBadge {
+  background-color: #ef4444;
+  color: #ffffff;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+/* 6 KPI Cards Grid */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
+  width: 100%;
+}
+@media (max-width: 1440px) {
+  .kpiGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 1024px) {
+  .kpiGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  .kpiGrid {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    gap: 0.75rem;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .kpiGrid > div {
+    flex: 0 0 240px;
+    scroll-snap-align: start;
+  }
+}
+
+.kpiCard {
+  background-color: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 140px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.kpiCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.kpiHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kpiLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.iconWrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconPurple {
+  background-color: #f3e8ff;
+  color: #7c3aed;
+}
+
+.iconBlue {
+  background-color: #eff6ff;
+  color: #3b82f6;
+}
+
+.iconGreen {
+  background-color: #ecfdf5;
+  color: #10b981;
+}
+
+.iconOrange {
+  background-color: #ffedd5;
+  color: #ea580c;
+}
+
+.iconRed {
+  background-color: #fef2f2;
+  color: #ef4444;
+}
+
+.iconGray {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.kpiBody {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.kpiValSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpiValue {
+  font-size: 1.625rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.1;
+}
+
+.trendIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.trendUp {
+  color: #10b981;
+}
+
+.trendDown {
+  color: #ef4444;
+}
+
+.sparklineWrap {
+  width: 70px;
+  height: 35px;
+}
+
+.kpiFooter {
+  font-size: 0.725rem;
+  font-weight: 700;
+  color: #2563eb;
+  border-top: 1px solid #f8fafc;
+  padding-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.kpiFooter:hover {
+  color: #1d4ed8;
+}
+
+/* 12-Column Layout Grids */
+.analyticsRow1 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  width: 100%;
+}
+@media (max-width: 1366px) {
+  .analyticsRow1 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 1024px) {
+  .analyticsRow1 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.analyticsRow2 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.25rem;
+  width: 100%;
+}
+@media (max-width: 1024px) {
+  .analyticsRow2 {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.colFunnel {
+  grid-column: span 5;
+}
+@media (max-width: 1200px) {
+  .colFunnel {
+    grid-column: span 6;
+  }
+}
+@media (max-width: 1024px) {
+  .colFunnel {
+    width: 100%;
+  }
+}
+
+.colRoadmap {
+  grid-column: span 7;
+}
+@media (max-width: 1200px) {
+  .colRoadmap {
+    grid-column: span 6;
+  }
+}
+@media (max-width: 1024px) {
+  .colRoadmap {
+    width: 100%;
+  }
+}
+
+/* Card Styling (420px - 450px Height) */
+.card {
+  background-color: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  padding: 1.25rem;
+  height: 440px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f8fafc;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+  flex-shrink: 0;
+}
+.cardHeader h2 {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  margin: 0;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cardHeader .headerAction {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #2563eb;
+  cursor: pointer;
+}
+.cardHeader .headerAction:hover {
+  color: #1d4ed8;
+}
+
+.cardBody {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cardFooter {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #2563eb;
+  cursor: pointer;
+  text-align: right;
+  border-top: 1px solid #f8fafc;
+  padding-top: 6px;
+  margin-top: auto;
+}
+.cardFooter:hover {
+  color: #1d4ed8;
+}
+
+/* Donut Split Status Analytics Card */
+.splitDonutBody {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 100%;
+  flex: 1;
+}
+@media (max-width: 480px) {
+  .splitDonutBody {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.donutHalf {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  flex-shrink: 0;
+}
+
+.donutCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.donutVal {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.donutLabel {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.splitDetailsHalf {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  padding: 4px 0;
+  border-bottom: 1px dashed #f1f5f9;
+}
+.detailRow:last-child {
+  border-bottom: none;
+}
+
+.detailLeft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detailDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.detailName {
+  font-weight: 600;
+  color: #475569;
+}
+
+.detailVal {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Horizontal Ranked Bar Chart (Department Demand) */
+.rankedList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.rankedRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rowMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.deptNameWrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #1e293b;
+}
+
+.deptStats {
+  font-size: 0.7rem;
+  color: #64748b;
+}
+
+.progressBarBg {
+  height: 8px;
+  background-color: #f1f5f9;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progressBarFill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.6s ease;
+}
+
+/* HR Performer Leaderboard Carousel Grid */
+.leaderboardGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+}
+@media (max-width: 1024px) {
+  .leaderboardGrid {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding-bottom: 6px;
+    scroll-snap-type: x mandatory;
+  }
+  .leaderboardGrid > div {
+    flex: 0 0 240px;
+    scroll-snap-align: start;
+  }
+}
+
+.leaderboardCard {
+  background-color: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+.medalBadge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 14px;
+}
+
+.hrProfileHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hrLeaderAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hrLeaderMeta {
+  display: flex;
+  flex-direction: column;
+}
+
+.hrLeaderName {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.hrLeaderSub {
+  font-size: 0.6rem;
+  color: #64748b;
+}
+
+.hrLeaderStatsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.hrStatCell {
+  display: flex;
+  flex-direction: column;
+}
+
+.statLabel {
+  font-size: 0.6rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.statVal {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Recruitment Pipeline Funnel Chart Card */
+.funnelContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.funnelRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.funnelLabel {
+  width: 80px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+  text-align: right;
+}
+
+.funnelBarContainer {
+  flex: 1;
+  position: relative;
+  height: 28px;
+  display: flex;
+  align-items: center;
+}
+
+.funnelBarFill {
+  height: 100%;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: width 0.6s ease;
+}
+
+.funnelPct {
+  margin-left: auto;
+  margin-right: 12px;
+  opacity: 0.85;
+}
+
+/* Candidate Lifecycle Roadmap Card */
+.roadmapRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  padding: 10px 0;
+}
+.roadmapRow::before {
+  content: "";
+  position: absolute;
+  top: 36px;
+  left: 40px;
+  width: calc(100% - 80px);
+  height: 3px;
+  background-color: #cbd5e1;
+  z-index: 1;
+}
+
+.roadmapStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  flex: 1;
+}
+
+.roadmapNode {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 3px solid #cbd5e1;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.8125rem;
+  transition: all 0.25s ease;
+}
+
+.stepCompleted .roadmapNode {
+  background-color: #10b981;
+  border-color: #10b981;
+  color: #ffffff;
+}
+
+.stepActive .roadmapNode {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+}
+
+.roadmapText {
+  margin-top: 6px;
+  font-size: 0.725rem;
+  font-weight: 700;
+  color: #475569;
+  text-align: center;
+}
+
+.roadmapSub {
+  font-size: 0.6rem;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.tableSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+/* Advanced Filter Toolbar */
+.toolbarCard {
+  background-color: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  margin-bottom: 0.75rem;
+}
+@media (max-width: 1024px) {
+  .toolbarCard {
+    position: sticky;
+    top: 50px;
+    z-index: 40;
+  }
+}
+
+.toolbarGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+@media (max-width: 1200px) {
+  .toolbarGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 900px) {
+  .toolbarGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .toolbarGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filterField {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.filterField label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+.filterField input, .filterField select {
+  padding: 6px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  outline: none;
+  background-color: #ffffff;
+  color: #1e293b;
+}
+.filterField input:focus, .filterField select:focus {
+  border-color: #2563eb;
+}
+
+.toolbarActions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 10px;
+  flex-wrap: wrap;
+}
+
+.actionBtnBlue {
+  background-color: #eff6ff;
+  color: #2563eb;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.actionBtnBlue:hover {
+  background-color: #dbeafe;
+}
+
+.actionBtnGray {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.actionBtnGray:hover {
+  background-color: #e2e8f0;
+}
+
+/* SLA Dashboard Table */
+.tableCard {
+  background-color: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.8125rem;
+}
+.table th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  padding: 10px 12px;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.table tr:hover {
+  background-color: #f8fafc;
+}
+
+/* Status Chips */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.725rem;
+  font-weight: 700;
+}
+
+.chipGreen {
+  background-color: #ecfdf5;
+  color: #047857;
+}
+
+.chipAmber {
+  background-color: #fffbeb;
+  color: #b45309;
+}
+
+.chipRed {
+  background-color: #fef2f2;
+  color: #b91c1c;
+}
+
+.priorityBadge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.priorityHigh {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.priorityMedium {
+  background-color: #ffedd5;
+  color: #d97706;
+}
+
+.priorityLow {
+  background-color: #eff6ff;
+  color: #3b82f6;
+}

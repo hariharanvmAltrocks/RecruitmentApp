@@ -26,6 +26,7 @@ var useDepartmentChart = function (_a) {
         void fetchDepartmentPosition();
     }, [fetchDepartmentPosition, refreshKey]);
     var sortedData = (0, react_1.useMemo)(function () { return tslib_1.__spreadArray([], data, true).sort(function (a, b) { return b.value - a.value; }); }, [data]);
+    var totalPositions = (0, react_1.useMemo)(function () { return data.reduce(function (acc, curr) { return acc + curr.value; }, 0); }, [data]);
     var totalPages = Math.ceil(sortedData.length / itemsPerPage);
     var currentPage = Math.floor(startIndex / itemsPerPage) + 1;
     var hasNext = startIndex + itemsPerPage < sortedData.length;
@@ -54,6 +55,7 @@ var useDepartmentChart = function (_a) {
         goToPage: goToPage,
         startIndex: startIndex,
         totalItems: sortedData.length,
+        totalPositions: totalPositions,
     };
 };
 exports.default = useDepartmentChart;

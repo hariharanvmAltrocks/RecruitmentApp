@@ -25,6 +25,7 @@ export interface UseDepartmentChartReturn {
   goToPage: (page: number) => void;
   startIndex: number;
   totalItems: number;
+  totalPositions: number;
 }
 
 const useDepartmentChart = ({
@@ -37,25 +38,30 @@ const useDepartmentChart = ({
   
     const { DepartmentData } = useRoleContext();
       const fetchDepartmentPosition = useCallback(async () => {
-      try {
+        try {
+    
+          // const res = await DashboardServices.GetDepartmentDetails();
+            setData(DepartmentData);
   
-        // const res = await DashboardServices.GetDepartmentDetails();
-          setData(DepartmentData);
-
-       
-      } catch (error) {
-        console.error("Dashboard urgent tasks error", error);
-      } finally {
-      }
-    }, [refreshKey]);
-  
-    useEffect(() => {
-      void fetchDepartmentPosition();
-    }, [fetchDepartmentPosition, refreshKey]);
+         
+        } catch (error) {
+          console.error("Dashboard urgent tasks error", error);
+        } finally {
+        }
+      }, [refreshKey]);
+    
+      useEffect(() => {
+        void fetchDepartmentPosition();
+      }, [fetchDepartmentPosition, refreshKey]);
 
 
   const sortedData = useMemo(
     () => [...data].sort((a, b) => b.value - a.value),
+    [data],
+  );
+
+  const totalPositions = useMemo(
+    () => data.reduce((acc, curr) => acc + curr.value, 0),
     [data],
   );
 
@@ -97,6 +103,7 @@ const useDepartmentChart = ({
     goToPage,
     startIndex,
     totalItems: sortedData.length,
+    totalPositions,
   };
 };
 

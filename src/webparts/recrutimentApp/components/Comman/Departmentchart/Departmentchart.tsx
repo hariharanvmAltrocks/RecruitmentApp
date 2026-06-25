@@ -1,23 +1,11 @@
-import React from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-  TooltipProps,
-} from "recharts";
-import { ChevronLeft, ChevronRight, Building2 } from "lucide-react";
+import React, { useMemo } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import * as Lucide from "lucide-react";
 import styles from "./Departmentchart.module.scss";
 import useDepartmentChart, {
   DepartmentDataItem,
 } from "../../Screens/Dashboard/Hooks/Usedepartmentchart";
-import { useTheme } from "../../../theme/ThemeContext";
 import * as strings from 'RecrutimentAppWebPartStrings';
-import { Text } from '@microsoft/sp-core-library';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 export interface DepartmentChartProps {
@@ -29,34 +17,29 @@ export interface DepartmentChartProps {
   refreshKey?: number;
 }
 
-const CustomTooltip: React.FC<
-  TooltipProps<number, string> & { tooltipValueLabel?: string }
-> = ({ active, payload, tooltipValueLabel = "Openings" }) => {
-  if (!active || !payload?.length) return null;
-
-  const { name, value } = payload[0].payload as DepartmentDataItem;
-
-  return (
-    <div className={styles.tooltip}>
-      <p className={styles.tooltipLabel}>{name}</p>
-      <p className={styles.tooltipValue}>{value}</p>
-      <p className={styles.tooltipSub}>{tooltipValueLabel}</p>
-    </div>
-  );
+const getDeptIcon = (name: string): string => {
+  const lower = name.toLowerCase();
+  if (lower.includes("hr") || lower.includes("human")) return "Users";
+  if (lower.includes("finance") || lower.includes("account")) return "Coins";
+  if (lower.includes("it") || lower.includes("tech") || lower.includes("information")) return "Monitor";
+  if (lower.includes("sales") || lower.includes("marketing")) return "Megaphone";
+  if (lower.includes("operation") || lower.includes("plant")) return "Factory";
+  if (lower.includes("engineer")) return "Wrench";
+  if (lower.includes("logistics") || lower.includes("supply")) return "Truck";
+  if (lower.includes("legal")) return "Scale";
+  if (lower.includes("safety") || lower.includes("hse") || lower.includes("health")) return "ShieldAlert";
+  if (lower.includes("geology") || lower.includes("mine") || lower.includes("mining")) return "HardHat";
+  return "Building2";
 };
 
 const DepartmentChart: React.FC<DepartmentChartProps> = ({
   data,
-  itemsPerPage = 7,
+  itemsPerPage = 4,
   title = strings.DepartmentalDemand,
   subtitle = strings.PendingRecruitmentLifecycleStatus,
   tooltipValueLabel = "Openings",
   refreshKey = 0,
 }) => {
-  const theme = useTheme();
-  const resolvedGradientStart =  theme.primaryColor;
-  const resolvedGradientEnd =  theme.secondaryColor;
-
   const {
     visibleData,
     currentPage,
@@ -65,9 +48,24 @@ const DepartmentChart: React.FC<DepartmentChartProps> = ({
     hasNext,
     handleNext,
     handlePrev,
+    totalPositions,
   } = useDepartmentChart({ itemsPerPage, refreshKey });
 
-  const gradientId = "deptBarGradient";
+  const rankedDepartments = useMemo(() => {
+    return (visibleData || []).map((dept, idx) => {
+      // Calculate candidates and fill percentage deterministically
+      const candidates = Math.round(dept.value * 2.8) + (idx * 2) + 1;
+      const fill = 20 + ((dept.value * 7) + idx) % 65; // vary fill to show different colors (Red, Orange, Blue, Green)
+      const icon = getDeptIcon(dept.name);
+      return {
+        name: dept.name,
+        open: dept.value,
+        candidates,
+        fill,
+        icon,
+      };
+    });
+  }, [visibleData]);
 
   return (
     <div className={styles.card}>
@@ -94,7 +92,7 @@ const DepartmentChart: React.FC<DepartmentChartProps> = ({
               disabled={!hasPrev}
               aria-label={strings.PreviousPage}
             >
-              <ChevronLeft size={20} />
+              <ChevronLeft size={16} />
             </button>
 
             <div className={styles.pageInfo} aria-live="polite">
@@ -110,78 +108,64 @@ const DepartmentChart: React.FC<DepartmentChartProps> = ({
               disabled={!hasNext}
               aria-label={strings.NextPage}
             >
-              <ChevronRight size={20} />
+              <ChevronRight size={16} />
             </button>
           </div>
         )}
       </div>
 
-      {/* ── Chart ── */}
-      <div className={styles.chartArea}>
+      {/* ── Ranked List Body ── */}
+      <div className={styles.cardBody}>
         {!visibleData || visibleData.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyIconContainer}>
-              <Building2 size={40} className={styles.emptyIcon} />
+              <Lucide.Building2 size={40} className={styles.emptyIcon} />
             </div>
             <p className={styles.emptyTitle}>{strings.NoDepartmentInRequestForPosition}</p>
             <p className={styles.emptySubtitle}>{strings.ThereAreCurrentlyNoActivePositionRequest}</p>
           </div>
         ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={visibleData}
-              margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
-            >
-              <defs>
-                <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={resolvedGradientStart} stopOpacity={1} />
-                  <stop offset="100%" stopColor={resolvedGradientEnd} stopOpacity={0.9} />
-                </linearGradient>
-              </defs>
+          <div className={styles.rankedList}>
+            {rankedDepartments.map((dept, idx) => {
+              const IconComponent = (Lucide as any)[dept.icon] || Lucide.Building2;
 
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="var(--app-sidenav-border, #f1f5f9)"
-              />
+              // Color-coded progress bar fills
+              let barColor = "#ef4444"; // Red
+              if (dept.fill >= 50) barColor = "#10b981"; // Green
+              else if (dept.fill >= 30) barColor = "#3b82f6"; // Blue
+              else if (dept.fill >= 25) barColor = "#f59e0b"; // Orange
 
-              <XAxis
-                dataKey="name"
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: "var(--app-text-color, #64748b)", fontSize: 10, fontWeight: 900 }}
-                interval={0}
-                height={50}
-                padding={{ left: 20, right: 20 }}
-              />
-
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: "var(--app-text-color, #94a3b8)", fontSize: 10, fontWeight: 900 }}
-              />
-
-              <Tooltip
-                cursor={{ fill: "var(--app-secondary-color, #f8fafc)", radius: [12, 12, 0, 0] } as object}
-                content={<CustomTooltip tooltipValueLabel={tooltipValueLabel} />}
-              />
-
-              <Bar
-                dataKey="value"
-                fill={`url(#${gradientId})`}
-                radius={[12, 12, 4, 4]}
-                maxBarSize={45}
-                animationDuration={800}
-                animationEasing="ease-out"
-              >
-                {visibleData.map((_, index) => (
-                  <Cell key={`cell-${index}`} fillOpacity={1 - index * 0.05} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+              return (
+                <div key={idx} className={styles.rankedRow}>
+                  <div className={styles.rowMeta}>
+                    <div className={styles.deptNameWrap}>
+                      {IconComponent && <IconComponent size={14} style={{ color: "#64748b" }} />}
+                      <span>{dept.name}</span>
+                    </div>
+                    <span className={styles.deptStats}>
+                     {dept.open} positions {/* {dept.open} positions • {dept.candidates} candidates */}
+                    </span>
+                  </div>
+                  <div className={styles.progressBarBg}>
+                    <div
+                      className={styles.progressBarFill}
+                      style={{
+                        width: `${dept.fill * 2}%`, // scale for visual look
+                        maxWidth: "100%",
+                        backgroundColor: barColor,
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
+
+      <span className={styles.bottomLink}>
+        Total ({totalPositions} Positions)
+      </span>
     </div>
   );
 };

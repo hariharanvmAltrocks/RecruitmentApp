@@ -4,62 +4,68 @@ var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importStar(require("react"));
 var framer_motion_1 = require("framer-motion");
 require("./Dashboard.scss");
-var react_router_1 = require("react-router");
-var UIStateContext_1 = require("../../RecrutimentApp/UIStateContext");
-var matric_1 = tslib_1.__importDefault(require("../../Comman/MatricBox/matric"));
-var loading_1 = tslib_1.__importDefault(require("../../Comman/Loading/loading"));
-var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
-var Departmentchart_1 = tslib_1.__importDefault(require("../../Comman/Departmentchart/Departmentchart"));
-var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var RoleContext_1 = require("../../../utilities/hooks/RoleContext");
+var loading_1 = tslib_1.__importDefault(require("../../Comman/Loading/loading"));
+// Sub-dashboards
+var AdminDashboard_1 = tslib_1.__importDefault(require("./RoleBased/Admin/AdminDashboard"));
+var HRLeadDashboard_1 = tslib_1.__importDefault(require("./RoleBased/HRLead/HRLeadDashboard"));
+var HRDashboard_1 = tslib_1.__importDefault(require("./RoleBased/HR/HRDashboard"));
+var DepartmentManagerDashboard_1 = tslib_1.__importDefault(require("./RoleBased/DepartmentManager/DepartmentManagerDashboard"));
+var LineManagerDashboard_1 = tslib_1.__importDefault(require("./RoleBased/LineManager/LineManagerDashboard"));
+var NotificationCenter_1 = tslib_1.__importDefault(require("./Common/NotificationCenter"));
+var Config_1 = require("../../../utilities/Config");
 var Dashboard = function (props) {
-    var _a = (0, react_1.useState)(0), activeMetric = _a[0], setActiveMetric = _a[1];
-    var _b = (0, react_1.useState)(0), refreshKey = _b[0], setRefreshKey = _b[1];
-    var MatricData = (0, RoleContext_1.useRoleContext)().MatricData;
-    var navigate = (0, react_router_1.useNavigate)();
-    var _c = (0, UIStateContext_1.useUIState)(), setActiveMenuID = _c.setActiveMenuID, setNavigationPath = _c.setNavigationPath, setActiveTab = _c.setActiveTab, navigationPath = _c.navigationPath, setMatricID = _c.setMatricID, setCurrentTabName = _c.setCurrentTabName;
-    var ref = (0, react_1.useRef)(0);
-    (0, react_1.useEffect)(function () {
-        if (MatricData.length > 0 && !activeMetric) {
-            setActiveMetric(MatricData[0].id);
-            setNavigationPath(MatricData[0].path);
-            ref.current = MatricData[0].menuId;
-            // setActiveMenuID(MatricData[0].menuId);
-            setActiveTab(MatricData[0].TabValue);
-            setCurrentTabName(MatricData[0].TabName);
-            setMatricID(MatricData[0].id);
+    var _a = (0, RoleContext_1.useRoleContext)(), userRole = _a.userRole, userName = _a.userName, isLoading = _a.isLoading, ADGroupData = _a.ADGroupData, roleIDs = _a.roleIDs;
+    var initialRole = (0, react_1.useMemo)(function () {
+        if (!roleIDs || roleIDs.length === 0)
+            return Config_1.RoleID.RecruitmentHRLead;
+        if (roleIDs.includes(Config_1.RoleID.RecruitmentHRLead))
+            return Config_1.RoleID.RecruitmentHRLead;
+        if (roleIDs.includes(Config_1.RoleID.RecruitmentHR))
+            return Config_1.RoleID.RecruitmentHR;
+        if (roleIDs.includes(Config_1.RoleID.HOD))
+            return Config_1.RoleID.HOD;
+        if (roleIDs.includes(Config_1.RoleID.LineManager))
+            return Config_1.RoleID.LineManager;
+        return Config_1.RoleID.RecruitmentHRLead;
+    }, [userRole]);
+    var _b = (0, react_1.useState)(initialRole), activeRole = _b[0], setActiveRole = _b[1];
+    var userEmail = (0, react_1.useMemo)(function () {
+        var _a;
+        return ((_a = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _a === void 0 ? void 0 : _a[0]) || "".concat(userName.toLowerCase().replace(/\s+/g, "."), "@kamoacopper.com");
+    }, [ADGroupData, userName]);
+    if (isLoading) {
+        return react_1.default.createElement(loading_1.default, null);
+    }
+    // const renderRoleSwitcher = (
+    //   <RoleSwitcher currentRole={activeRole} onRoleChange={setActiveRole} />
+    // );
+    var renderNotificationCenter = (react_1.default.createElement(NotificationCenter_1.default, null));
+    var renderActiveDashboard = function () {
+        switch (activeRole) {
+            // case "Admin":
+            //   return (
+            //     <AdminDashboard 
+            //       userName={userName} 
+            //       roleSwitcher={renderRoleSwitcher} 
+            //       notificationCenter={renderNotificationCenter} 
+            //     />
+            //   );
+            case Config_1.RoleID.RecruitmentHRLead:
+                return (react_1.default.createElement(HRLeadDashboard_1.default, { userName: userName, notificationCenter: renderNotificationCenter }));
+            case Config_1.RoleID.RecruitmentHR:
+                return (react_1.default.createElement(HRDashboard_1.default, { userName: userName, notificationCenter: renderNotificationCenter }));
+            case Config_1.RoleID.HOD:
+                return (react_1.default.createElement(DepartmentManagerDashboard_1.default, { userName: userName, notificationCenter: renderNotificationCenter }));
+            case Config_1.RoleID.LineManager:
+                return (react_1.default.createElement(LineManagerDashboard_1.default, { userName: userName, notificationCenter: renderNotificationCenter }));
+            default:
+                return (react_1.default.createElement(AdminDashboard_1.default, { userName: userName, notificationCenter: renderNotificationCenter }));
         }
-    }, [MatricData]);
-    var onMetricChange = function (data) {
-        setActiveMetric(data.id);
-        setNavigationPath(data.path);
-        setActiveMenuID(ConditionConfig_1.menuID.Mytracker);
-        ref.current = data.menuId;
-        setActiveTab(data.TabValue);
-        setCurrentTabName(data.TabName);
-        setMatricID(data.id);
-        navigate("/MyTracker");
-    };
-    var handleRefresh = function () {
-        setRefreshKey(function (prev) { return prev + 1; });
-        setActiveMetric(0);
-    };
-    var loading = MatricData.length === 0;
-    var hasMetrics = MatricData && MatricData.length > 0;
-    var metricsContainer = {
-        hidden: {},
-        visible: { transition: { staggerChildren: 0.1 } },
     };
     return (react_1.default.createElement(framer_motion_1.motion.div, { className: "dashboard", key: "dashboard", initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 10 }, transition: { duration: 0.3 } },
-        react_1.default.createElement(framer_motion_1.AnimatePresence, null, loading ? (
-        // <DashboardSkeleton key="dashboard-skeleton" />
-        react_1.default.createElement(loading_1.default, null)) : (react_1.default.createElement(framer_motion_1.motion.div, { key: "dashboard-content", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 } }, !hasMetrics ? (react_1.default.createElement("div", { className: "dashboard-empty" },
-            react_1.default.createElement("div", { className: "dashboard-empty__title" }, strings.NoDashboardMetricsAvailable),
-            react_1.default.createElement("div", { className: "dashboard-empty__subtitle" }, strings.PleaseCheckYourPermissionsOrTryAgainLate))) : (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement(framer_motion_1.motion.div, { className: "metrics-grid", variants: metricsContainer, initial: "hidden", animate: "visible" },
-                react_1.default.createElement(matric_1.default, { metrics: MatricData, onCardClick: function (metric) { return onMetricChange(metric); }, loading: loading, handleRefresh: handleRefresh, active: activeMetric })),
-            react_1.default.createElement("div", { className: "dashboard-layout" },
-                react_1.default.createElement(Departmentchart_1.default, { itemsPerPage: 7, title: strings.DepartmentalDemand, subtitle: strings.PendingLifecycle, tooltipValueLabel: "Openings" })))))))));
+        react_1.default.createElement(framer_motion_1.AnimatePresence, { exitBeforeEnter: true },
+            react_1.default.createElement(framer_motion_1.motion.div, { key: activeRole, initial: { opacity: 0, x: -10 }, animate: { opacity: 1, x: 0 }, exit: { opacity: 0, x: 10 }, transition: { duration: 0.2 } }, renderActiveDashboard()))));
 };
 exports.default = Dashboard;
 //# sourceMappingURL=Dashboard.js.map
