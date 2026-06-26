@@ -4,16 +4,11 @@ import "./Dashboard.scss";
 import { useRoleContext } from "../../../utilities/hooks/RoleContext";
 import Loading from "../../Comman/Loading/loading";
 
-// Sub-dashboards
-import AdminDashboard from "./RoleBased/Admin/AdminDashboard";
 import HRLeadDashboard from "./RoleBased/HRLead/HRLeadDashboard";
 import HRDashboard from "./RoleBased/HR/HRDashboard";
 import DepartmentManagerDashboard from "./RoleBased/DepartmentManager/DepartmentManagerDashboard";
 import LineManagerDashboard from "./RoleBased/LineManager/LineManagerDashboard";
-import CandidateDashboard from "./RoleBased/Candidate/CandidateDashboard";
 
-// Helpers
-import RoleSwitcher from "./Common/RoleSwitcher";
 import NotificationCenter from "./Common/NotificationCenter";
 import { RoleID } from "../../../utilities/Config";
 
@@ -92,7 +87,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
       
       default:
         return (
-          <AdminDashboard 
+         <HRLeadDashboard 
             userName={userName} 
             notificationCenter={renderNotificationCenter} 
           />

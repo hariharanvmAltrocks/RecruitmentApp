@@ -6,8 +6,6 @@ var framer_motion_1 = require("framer-motion");
 require("./Dashboard.scss");
 var RoleContext_1 = require("../../../utilities/hooks/RoleContext");
 var loading_1 = tslib_1.__importDefault(require("../../Comman/Loading/loading"));
-// Sub-dashboards
-var AdminDashboard_1 = tslib_1.__importDefault(require("./RoleBased/Admin/AdminDashboard"));
 var HRLeadDashboard_1 = tslib_1.__importDefault(require("./RoleBased/HRLead/HRLeadDashboard"));
 var HRDashboard_1 = tslib_1.__importDefault(require("./RoleBased/HR/HRDashboard"));
 var DepartmentManagerDashboard_1 = tslib_1.__importDefault(require("./RoleBased/DepartmentManager/DepartmentManagerDashboard"));
@@ -60,7 +58,7 @@ var Dashboard = function (props) {
             case Config_1.RoleID.LineManager:
                 return (react_1.default.createElement(LineManagerDashboard_1.default, { userName: userName, notificationCenter: renderNotificationCenter }));
             default:
-                return (react_1.default.createElement(AdminDashboard_1.default, { userName: userName, notificationCenter: renderNotificationCenter }));
+                return (react_1.default.createElement(HRLeadDashboard_1.default, { userName: userName, notificationCenter: renderNotificationCenter }));
         }
     };
     return (react_1.default.createElement(framer_motion_1.motion.div, { className: "dashboard", key: "dashboard", initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 10 }, transition: { duration: 0.3 } },

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -52,7 +52,7 @@
   </data>
 
   <data name="AppTitle" xml:space="preserve">
-    <value>Recruitment Process</value>
+    <value>HR Workflow Overview</value>
   </data>
   <data name="HomeLabel" xml:space="preserve">
     <value>Home</value>

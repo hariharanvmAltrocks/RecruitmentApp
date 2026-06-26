@@ -37,8 +37,8 @@ export const CandidateStages = [
 export const CandidateStagesDRC = [
   { label: "Background Check", icon: FileSearch },
   { label: "Resi Process", icon: ShieldCheck },
+   { label: "Medical Process", icon: ClipboardCheck },
   { label: "Offer Release", icon: Briefcase },
-  { label: "Work Permit Process", icon: ClipboardCheck },
   { label: "Employment Contract", icon: Send },
   { label: "Pre-Onboarding", icon: Play },
   { label: "Onboarding In Progress",icon:CheckCircle2 },
@@ -236,10 +236,14 @@ export const getStageIndexinCandidateDRC = (statusId: number) => {
     statusId == StatusId.RESIProcessInitiatedforDRC ||
     statusId == StatusId.RESIProcessInitiatedforExpatriate ||
     statusId == StatusId.RESProcessInitiated ||
-     statusId == StatusId.CandidateRejectfromRESIProcess ||
-    statusId == StatusId.FailedmedicalscreeningUnfit
+     statusId == StatusId.CandidateRejectfromRESIProcess 
   )
     return 1;
+     if (
+      statusId == StatusId.PendingwithTAforMedicalScreening ||
+    statusId == StatusId.FailedmedicalscreeningUnfit
+  )
+    return 2;
   if (
     statusId == StatusId.PendingHROfferInitiate ||
     statusId == StatusId.PendingCandidateOfferLetterUpload ||
@@ -250,19 +254,7 @@ export const getStageIndexinCandidateDRC = (statusId: number) => {
     statusId == StatusId.PendingHRReviewOfferanduploadEmployementContract
 
   )
-    return 2;
-  if (
-    statusId == StatusId.PendingCandidateWorkPermitreleatedDoc ||
-    statusId == StatusId.PendingHRReviewWorkpermitDocs ||
-    statusId == StatusId.WorkPermitAcknowledgedContractUploaded ||
-    statusId == StatusId.PendingLabourhireWPPayment ||
-    statusId == StatusId.PendingFinancePaymentReview ||
-    statusId == StatusId.PendingLHWorkPermitProcess ||
-       statusId == StatusId.WorkPermitAcknowledgedContractUploaded
-
-  ){
     return 3;
-  }
     if (
     statusId == StatusId.PendingCandidateEmploymentContractUpload ||
     statusId == StatusId.PendingHREmploymentContractVerification ||

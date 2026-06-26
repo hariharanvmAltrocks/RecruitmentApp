@@ -153,7 +153,7 @@ export const useSubmitCandidateReview = (
         InterviewDate: startDateTime,
         InterviewTime: interviewLevel1?.startTime,
         CandidateResumeLink: cp.CandidateResumeLink ?? "",
-        ActionId: WorkflowAction.Approved,
+        // ActionId: WorkflowAction.Approved,
         StatusId: StatusId.InterviewScheduled,
         ConflictsOfInterest: cp.ConflictsOfInterest,
         Disability: cp.disability,

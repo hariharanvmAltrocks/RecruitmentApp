@@ -1,0 +1,185 @@
+@import "../../../../../styles/variables";
+@import "../../../../../styles/theme";
+
+.overviewCard {
+  background-color: $dashboard-card-bg;
+  border: 1px solid $dashboard-card-border;
+  border-radius: $radius-lg;
+  padding: 16px;
+  box-shadow: $shadow-sm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 160px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.kpiCard {
+  background-color: $dashboard-card-bg;
+  border: 1px solid $dashboard-card-border;
+  border-radius: $radius-lg;
+  padding: 16px;
+  box-shadow: $shadow-sm;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 160px;
+  text-align: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 8px;
+  border-bottom: 1px solid $border-light;
+  padding-bottom: 8px;
+}
+
+.cardTitle {
+  font-size: 0.725rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.iconBlue {
+  color: #2563eb;
+}
+
+.overviewGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  width: 100%;
+  flex: 1;
+  align-items: center;
+
+  @media (max-width: 600px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.subCard {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: $radius-md;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #f1f5f9;
+  }
+}
+
+.subCardLabel {
+  font-size: 0.575rem;
+  font-weight: 700;
+  color: $text-subtle;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.subCardValue {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: $text-primary;
+}
+
+.kpiCardBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.iconContainerGreen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background-color: #ecfdf5;
+  color: #10b981;
+  margin-bottom: 6px;
+}
+
+.iconContainerRed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background-color: #fef2f2;
+  color: #ef4444;
+  margin-bottom: 6px;
+}
+
+.kpiCardValue {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: $text-primary;
+  line-height: 1.1;
+}
+
+.kpiCardSubtitle {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: $text-subtle;
+  text-transform: uppercase;
+}
+
+.cardHeaderWithNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 8px;
+  border-bottom: 1px solid $border-light;
+  padding-bottom: 8px;
+}
+
+.navBtn {
+  background: none;
+  border: none;
+  color: $text-subtle;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background-color: #f1f5f9;
+    color: #2563eb;
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+}

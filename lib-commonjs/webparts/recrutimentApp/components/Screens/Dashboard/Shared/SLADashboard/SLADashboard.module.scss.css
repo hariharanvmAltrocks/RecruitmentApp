@@ -1,0 +1,114 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
+.slaCard {
+  background-color: var(--app-card-color, #ffffff);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-direction: column;
+  min-height: 160px;
+  height: 100%;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  /* Loading State */
+  /* Error State */
+}
+.slaCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+}
+.slaCard__header {
+  width: 100%;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
+  padding-bottom: 8px;
+}
+.slaCard__title {
+  font-size: 0.725rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.slaCard__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+.slaCard__visual {
+  width: 110px;
+  height: 80px;
+  position: relative;
+}
+.slaCard__gaugeWrapper {
+  position: relative;
+  width: 100%;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+.slaCard__textCenter {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.slaCard__value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--app-text-color, #0f172a);
+  line-height: 1.1;
+}
+.slaCard__label {
+  font-size: 0.45rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.slaCard__loadingBody {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+.slaCard__skeletonHalfRing {
+  width: 80px;
+  height: 40px;
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
+  border: 10px solid #e2e8f0;
+  border-bottom: 0;
+  box-sizing: border-box;
+  animation: skeletonGlow 1.5s infinite ease-in-out;
+}
+.slaCard__errorBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  color: #ef4444;
+  font-size: 0.75rem;
+}
+.slaCard__errorBody p {
+  margin-top: 4px;
+  color: #64748b;
+}
+
+@keyframes skeletonGlow {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}

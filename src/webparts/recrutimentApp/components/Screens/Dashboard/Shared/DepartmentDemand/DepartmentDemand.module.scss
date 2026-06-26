@@ -1,0 +1,194 @@
+@import "../../../../../styles/variables";
+@import "../../../../../styles/theme";
+
+.deptCard {
+  background-color: $dashboard-card-bg;
+  border: 1px solid $dashboard-card-border;
+  border-radius: $radius-lg;
+  padding: clamp(14px, 1.5vw, 20px);
+  box-shadow: $shadow-sm;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  &__titleGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__titleRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: $button-color;
+  }
+
+  &__title {
+    font-size: clamp(0.95rem, 1.2vw, 1.125rem);
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0;
+  }
+
+  &__subtitle {
+    font-size: clamp(0.7rem, 0.85vw, 0.775rem);
+    color: $text-subtle;
+    margin: 0;
+  }
+
+  &__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  &__footer {
+    border-top: 1px solid $border-light;
+    padding-top: 10px;
+    margin-top: 12px;
+  }
+
+  &__total {
+    font-size: clamp(0.725rem, 0.85vw, 0.8125rem);
+    font-weight: 700;
+    color: $text-muted;
+  }
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid $border-base;
+    border-radius: $radius-sm;
+    background-color: $dashboard-card-bg;
+    color: $text-secondary;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &--active:hover {
+      background-color: $surface-muted;
+      border-color: #cbd5e1;
+    }
+
+    &--disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+
+  &__info {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $text-secondary;
+  }
+}
+
+.rankedList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rankedRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: clamp(0.725rem, 0.85vw, 0.8125rem);
+  }
+
+  &__deptWrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__icon {
+    color: $text-subtle;
+  }
+
+  &__name {
+    font-weight: 600;
+    color: $text-primary;
+  }
+
+  &__stats {
+    font-weight: 700;
+    color: $text-secondary;
+  }
+
+  &__progressBg {
+    height: 6px;
+    background-color: $border-light;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  &__progressFill {
+    height: 100%;
+    border-radius: 3px;
+    max-width: 100%;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 0;
+  text-align: center;
+
+  &__icon {
+    color: $text-subtle;
+    margin-bottom: 8px;
+  }
+
+  &__title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0 0 2px 0;
+  }
+
+  &__subtitle {
+    font-size: 0.75rem;
+    color: $text-subtle;
+    margin: 0;
+  }
+}

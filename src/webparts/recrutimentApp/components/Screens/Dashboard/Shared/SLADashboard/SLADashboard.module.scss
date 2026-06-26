@@ -1,0 +1,128 @@
+@import "../../../../../styles/variables";
+@import "../../../../../styles/theme";
+
+.slaCard {
+  background-color: $dashboard-card-bg;
+  border: 1px solid $dashboard-card-border;
+  border-radius: $radius-lg;
+  padding: 16px;
+  box-shadow: $shadow-sm;
+  display: flex;
+  flex-direction: column;
+  min-height: 160px;
+  height: 100%;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+
+  &__header {
+    width: 100%;
+    margin-bottom: 8px;
+    border-bottom: 1px solid $border-light;
+    padding-bottom: 8px;
+  }
+
+  &__title {
+    font-size: 0.725rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+  }
+
+  &__visual {
+    width: 110px;
+    height: 80px;
+    position: relative;
+  }
+
+  &__gaugeWrapper {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  &__textCenter {
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &__value {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: $text-primary;
+    line-height: 1.1;
+  }
+
+  &__label {
+    font-size: 0.45rem;
+    font-weight: 700;
+    color: $text-subtle;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* Loading State */
+  &__loadingBody {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+  }
+
+  &__skeletonHalfRing {
+    width: 80px;
+    height: 40px;
+    border-top-left-radius: 40px;
+    border-top-right-radius: 40px;
+    border: 10px solid #e2e8f0;
+    border-bottom: 0;
+    box-sizing: border-box;
+    animation: skeletonGlow 1.5s infinite ease-in-out;
+  }
+
+  /* Error State */
+  &__errorBody {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    color: $danger;
+    font-size: 0.75rem;
+
+    p {
+      margin-top: 4px;
+      color: $text-muted;
+    }
+  }
+}
+
+@keyframes skeletonGlow {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}

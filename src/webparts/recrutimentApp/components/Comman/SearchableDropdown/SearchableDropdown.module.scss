@@ -1,0 +1,215 @@
+/* Custom Searchable Dropdown Styles */
+.searchableDropdown {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+
+  .dropdownTrigger {
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 13px;
+    color: #0f172a;
+    background-color: #ffffff;
+    transition: all 0.2s ease;
+    width: 100%;
+    height: 42px; /* Set explicit height to align with standard input/select */
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    text-align: left;
+
+    &:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .triggerText {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-right: 8px;
+      font-weight: 500;
+      flex: 1;
+
+      &.placeholder {
+        color: #94a3b8;
+      }
+    }
+
+    .chevronIcon {
+      color: #64748b;
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+  }
+
+  &.open {
+    .dropdownTrigger {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+
+      .chevronIcon {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  &.error {
+    .dropdownTrigger {
+      border-color: #ef4444 !important;
+      background-color: #fffbfa;
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+      }
+    }
+  }
+
+  .dropdownMenu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    overflow: hidden;
+    animation: dropdownFadeIn 0.15s ease-out;
+  }
+
+  .searchWrapper {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    background: #f8fafc;
+    gap: 8px;
+    height: 38px;
+    box-sizing: border-box;
+
+    .searchIcon {
+      color: #64748b;
+      flex-shrink: 0;
+    }
+
+    .searchInput {
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      color: #0f172a;
+      width: 100%;
+      padding: 4px 0;
+      box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    .clearSearchBtn {
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 0 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s ease;
+
+      &:hover {
+        color: #64748b;
+      }
+    }
+  }
+
+  .optionsList {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 4px;
+
+    /* Custom scrollbar */
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+      &:hover {
+        background: #94a3b8;
+      }
+    }
+
+    .noOptions {
+      padding: 12px;
+      font-size: 13px;
+      color: #64748b;
+      text-align: center;
+    }
+
+    .optionItem {
+      width: 100%;
+      border: none;
+      background: transparent;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #334155;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+      box-sizing: border-box;
+
+      &:hover {
+        background-color: #f1f5f9;
+        color: #0f172a;
+      }
+
+      &.selected {
+        background-color: #eff6ff;
+        color: #2563eb;
+        font-weight: 600;
+
+        .checkIcon {
+          color: #2563eb;
+        }
+      }
+
+      .optionText {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-right: 8px;
+        flex: 1;
+      }
+
+      .checkIcon {
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

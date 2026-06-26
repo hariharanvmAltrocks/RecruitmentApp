@@ -27,8 +27,8 @@ exports.CandidateStages = [
 exports.CandidateStagesDRC = [
     { label: "Background Check", icon: lucide_react_1.FileSearch },
     { label: "Resi Process", icon: lucide_react_1.ShieldCheck },
+    { label: "Medical Process", icon: lucide_react_1.ClipboardCheck },
     { label: "Offer Release", icon: lucide_react_1.Briefcase },
-    { label: "Work Permit Process", icon: lucide_react_1.ClipboardCheck },
     { label: "Employment Contract", icon: lucide_react_1.Send },
     { label: "Pre-Onboarding", icon: lucide_react_1.Play },
     { label: "Onboarding In Progress", icon: lucide_react_1.CheckCircle2 },
@@ -197,9 +197,11 @@ var getStageIndexinCandidateDRC = function (statusId) {
     if (statusId == Config_1.StatusId.RESIProcessInitiatedforDRC ||
         statusId == Config_1.StatusId.RESIProcessInitiatedforExpatriate ||
         statusId == Config_1.StatusId.RESProcessInitiated ||
-        statusId == Config_1.StatusId.CandidateRejectfromRESIProcess ||
-        statusId == Config_1.StatusId.FailedmedicalscreeningUnfit)
+        statusId == Config_1.StatusId.CandidateRejectfromRESIProcess)
         return 1;
+    if (statusId == Config_1.StatusId.PendingwithTAforMedicalScreening ||
+        statusId == Config_1.StatusId.FailedmedicalscreeningUnfit)
+        return 2;
     if (statusId == Config_1.StatusId.PendingHROfferInitiate ||
         statusId == Config_1.StatusId.PendingCandidateOfferLetterUpload ||
         statusId == Config_1.StatusId.PendingHRReviewOfferWorkPermitInit ||
@@ -207,16 +209,7 @@ var getStageIndexinCandidateDRC = function (statusId) {
         statusId == Config_1.StatusId.PendingHROfferReview ||
         statusId == Config_1.StatusId.offerdecline ||
         statusId == Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract)
-        return 2;
-    if (statusId == Config_1.StatusId.PendingCandidateWorkPermitreleatedDoc ||
-        statusId == Config_1.StatusId.PendingHRReviewWorkpermitDocs ||
-        statusId == Config_1.StatusId.WorkPermitAcknowledgedContractUploaded ||
-        statusId == Config_1.StatusId.PendingLabourhireWPPayment ||
-        statusId == Config_1.StatusId.PendingFinancePaymentReview ||
-        statusId == Config_1.StatusId.PendingLHWorkPermitProcess ||
-        statusId == Config_1.StatusId.WorkPermitAcknowledgedContractUploaded) {
         return 3;
-    }
     if (statusId == Config_1.StatusId.PendingCandidateEmploymentContractUpload ||
         statusId == Config_1.StatusId.PendingHREmploymentContractVerification ||
         statusId == Config_1.StatusId.PendingHRReviewOfferuploadEmploymentInit ||

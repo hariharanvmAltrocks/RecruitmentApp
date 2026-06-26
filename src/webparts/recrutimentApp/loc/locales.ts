@@ -12,7 +12,7 @@ export const EN: Record<string, string> = {
   "AppOfficeEnvironment": "The app is running in office.com",
   "AppOutlookEnvironment": "The app is running in Outlook",
   "UnknownEnvironment": "The app is running in an unknown environment",
-  "AppTitle": "Recruitment Process",
+  "AppTitle": "HR Workflow Overview",
   "HomeLabel": "Home",
   "LogoutLabel": "Logout",
   "LoadingLabel": "Loading...",
