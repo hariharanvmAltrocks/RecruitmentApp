@@ -243,7 +243,7 @@ const handleSelect = (id: number, path: string) => {
       {/* ── Footer ── */}
       <div className={styles.sidebarFooter}>
         <div className={styles.footerContent}>
-          <div className={styles.footerVersion}>v-1.4</div>
+          <div className={styles.footerVersion}>v-1.4.1</div>
           <div className={styles.footerLabel}>{strings.KamoaCopperSa}</div>
 
            <div
