@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.useUpdateListPortal = void 0;
 var tslib_1 = require("tslib");
 var react_1 = require("react");
-var EvaluationConfig_1 = require("../../../SelectionProcess/config/EvaluationConfig");
 var Config_1 = require("../../../../../utilities/Config");
 var ApiConfig_1 = require("../../../../../utilities/ApiConfig");
 var ConditionConfig_1 = require("../../../../../utilities/ConditionConfig");
@@ -11,14 +10,14 @@ var RoleContext_1 = require("../../../../../utilities/hooks/RoleContext");
 var ServiceExport_1 = require("../../../../../services/ServiceExport");
 var WorkflowConfig_1 = require("../../../../Hooks/WorkflowConfig");
 var PORTAL_STATUS_IDS = [
-    EvaluationConfig_1.StatusId.PendingBGdocuploadedbycandidate,
-    EvaluationConfig_1.StatusId.PendingCandidateOfferLetterUpload,
-    EvaluationConfig_1.StatusId.PendingCandidateWorkPermitreleatedDoc,
-    EvaluationConfig_1.StatusId.PendingCandidateEmploymentContractUpload,
-    EvaluationConfig_1.StatusId.PendingLabourHireOfferRelease,
-    EvaluationConfig_1.StatusId.PendingLabourhireWPPayment,
-    EvaluationConfig_1.StatusId.PendingLHWorkPermitProcess,
-    EvaluationConfig_1.StatusId.PendingLHECRelease,
+    Config_1.StatusId.PendingBGdocuploadedbycandidate,
+    Config_1.StatusId.PendingCandidateOfferLetterUpload,
+    Config_1.StatusId.PendingCandidateWorkPermitreleatedDoc,
+    Config_1.StatusId.PendingCandidateEmploymentContractUpload,
+    Config_1.StatusId.PendingLabourHireOfferRelease,
+    Config_1.StatusId.PendingLabourhireWPPayment,
+    Config_1.StatusId.PendingLHWorkPermitProcess,
+    Config_1.StatusId.PendingLHECRelease,
 ];
 var APPROVED_WORKFLOW_IDS = [
     Config_1.workflowStatusApi.UploadedtheCandidateBGVDocs,

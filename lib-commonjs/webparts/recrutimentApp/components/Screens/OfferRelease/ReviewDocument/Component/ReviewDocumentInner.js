@@ -15,7 +15,6 @@ var Statusbadge_1 = tslib_1.__importDefault(require("../../../../Comman/Statusba
 var WorkflowConfig_1 = require("../../../../Hooks/WorkflowConfig");
 var getSignatureDetails_1 = require("../../../RecruitmentTable/AdvertReviewDrawer/Hooks/getSignatureDetails");
 var ReviewCommentSignature_1 = require("../../../RecruitmentTable/Components/ReviewCommentSignature");
-var EvaluationConfig_1 = require("../../../SelectionProcess/config/EvaluationConfig");
 var Usereviewconditions_1 = require("../Hooks/ConditionalHooks/Usereviewconditions");
 var fetchPreChecklist_1 = require("../Hooks/fetchPreChecklist");
 var Userequireddocuments_1 = require("../Hooks/Userequireddocuments");
@@ -32,6 +31,8 @@ require("../ReviewDocument.scss");
 var CandidateRoadmap_1 = require("./CandidateRoadmap");
 var UploadDocument_1 = require("../../../RecruitmentTable/Components/UploadDocument");
 var CandidateDocumentsRepository_1 = tslib_1.__importDefault(require("../../Component/CandidateDocumentsRepository"));
+var OfferrelaeseNational_1 = require("./OfferrelaeseNational/OfferrelaeseNational");
+var Config_1 = require("../../../../../utilities/Config");
 var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
     return react_1.default.createElement("div", { className: "review-document__skeleton", style: { width: width, height: height } });
@@ -56,9 +57,17 @@ var ReviewDocumentInner = function (_a) {
     var _g = (0, react_1.useState)(null), activeButton = _g[0], setActiveButton = _g[1];
     var isAnySubmitting = activeButton !== null;
     var _h = (0, react_1.useState)(false), showRoadmap = _h[0], setShowRoadmap = _h[1];
-    var _j = (0, useReviewDocumentManage_1.useStateOfferRelease)(), consentVerification = _j.consentVerification, consentFile = _j.consentFile, showConsentErrors = _j.showConsentErrors, handleConsentVerification = _j.handleConsentVerification, handleConsentFile = _j.handleConsentFile, coiState = _j.coiState, handleCoiChange = _j.handleCoiChange, fileInputRef = _j.fileInputRef, selectedFile = _j.selectedFile, isReading = _j.isReading, handleUploadClick = _j.handleUploadClick, handleFileChange = _j.handleFileChange, clearFile = _j.clearFile, uploadDocs = _j.uploadDocs, handleDocumnetUpload = _j.handleDocumnetUpload, reviewerComments = _j.reviewerComments, acknowledgementCheckbox = _j.acknowledgementCheckbox, onCommentsChange = _j.onCommentsChange, onToggleAcknowledgement = _j.onToggleAcknowledgement, validateAll = _j.validateAll, validationError = _j.validationError;
+    var _j = (0, useReviewDocumentManage_1.useStateOfferRelease)(), consentVerification = _j.consentVerification, consentFile = _j.consentFile, showConsentErrors = _j.showConsentErrors, handleConsentVerification = _j.handleConsentVerification, handleConsentFile = _j.handleConsentFile, coiState = _j.coiState, handleCoiChange = _j.handleCoiChange, fileInputRef = _j.fileInputRef, selectedFile = _j.selectedFile, isReading = _j.isReading, handleUploadClick = _j.handleUploadClick, handleFileChange = _j.handleFileChange, clearFile = _j.clearFile, uploadDocs = _j.uploadDocs, handleDocumnetUpload = _j.handleDocumnetUpload, reviewerComments = _j.reviewerComments, acknowledgementCheckbox = _j.acknowledgementCheckbox, onCommentsChange = _j.onCommentsChange, onToggleAcknowledgement = _j.onToggleAcknowledgement, validateAll = _j.validateAll, validationError = _j.validationError, 
+    // National Offer Release & PPE
+    nationalOfferReleased = _j.nationalOfferReleased, 
+    // nationalOfferAccepted,
+    nationalNoticePeriod = _j.nationalNoticePeriod, nationalJoiningDate = _j.nationalJoiningDate, nationalPantsSize = _j.nationalPantsSize, nationalTopSize = _j.nationalTopSize, nationalShoesSize = _j.nationalShoesSize, nationalContractReleased = _j.nationalContractReleased, 
+    // nationalContractAccepted,
+    setNationalOfferReleased = _j.setNationalOfferReleased, 
+    // setNationalOfferAccepted,
+    setNationalNoticePeriod = _j.setNationalNoticePeriod, setNationalJoiningDate = _j.setNationalJoiningDate, setNationalPantsSize = _j.setNationalPantsSize, setNationalTopSize = _j.setNationalTopSize, setNationalShoesSize = _j.setNationalShoesSize, setNationalContractReleased = _j.setNationalContractReleased;
     var _k = (0, react_1.useState)(false), showComments = _k[0], setshowComments = _k[1];
-    var isPendingDOTAfrica = positionDetails.StatusID === EvaluationConfig_1.StatusId.PendingDOTAficaVerification;
+    var isPendingDOTAfrica = positionDetails.StatusID === Config_1.StatusId.PendingDOTAficaVerification;
     var _l = (0, useStatusDetails_1.useBGVStatusDetails)(jobrequestID, selectedcandidateID !== null && selectedcandidateID !== void 0 ? selectedcandidateID : 0, CandidateID !== null && CandidateID !== void 0 ? CandidateID : 0, isPendingDOTAfrica), bgvStatusDetails = _l.data, bgvStatus = _l.bgvStatus, bgvStatusLoading = _l.loading, bgvComments = _l.bgvComments, allCompleted = _l.allCompleted, rejectFlag = _l.rejectFlag, revertFLag = _l.revertFLag;
     var isConsentVerified = consentVerification === "verified";
     var docData = (0, Userequireddocuments_1.useRequiredDocuments)((_b = positionDetails.ProfileID) !== null && _b !== void 0 ? _b : "", (_c = positionDetails.JobRequestID) !== null && _c !== void 0 ? _c : "").data;
@@ -76,11 +85,21 @@ var ReviewDocumentInner = function (_a) {
         closeModal: closeModal,
         onClose: onClose,
         refreshKey: refreshKey,
+        // National Offer Release & PPE
+        nationalOfferReleased: nationalOfferReleased,
+        // nationalOfferAccepted,
+        nationalNoticePeriod: nationalNoticePeriod,
+        nationalJoiningDate: nationalJoiningDate,
+        nationalPantsSize: nationalPantsSize,
+        nationalTopSize: nationalTopSize,
+        nationalShoesSize: nationalShoesSize,
+        nationalContractReleased: nationalContractReleased,
+        // nationalContractAccepted,
     };
     var _m = (0, Usesubmitworkflow_1.useSubmitWorkflow)(submitDeps), SubmitLoading = _m.isLoading, submit = _m.submit;
     var _o = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _o.data, signatureLoading = _o.loading;
     var isExpat = positionDetails.NationalityCode !== ConditionConfig_1.NationalityCode.Nationals;
-    var isPreOnboarding = positionDetails.StatusID === EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist;
+    var isPreOnboarding = positionDetails.StatusID === Config_1.StatusId.PendingHRpreonboardingchecklist;
     var _p = (0, fetchPreChecklist_1.usePreChecklist)(isExpat, (_e = positionDetails.PreChecklist) !== null && _e !== void 0 ? _e : undefined, isPreOnboarding), checklist = _p.checklist, allChecked = _p.allChecked, loading = _p.loading, updateCheckItem = _p.updateCheckItem;
     var handleChecklistToggle = (0, react_1.useCallback)(function (id, value) {
         updateCheckItem(id, value);
@@ -250,7 +269,7 @@ var ReviewDocumentInner = function (_a) {
                     ? ConditionConfig_1.RecuritmentHRMsg.RejectBGVCheckMsg
                     : ConditionConfig_1.RecuritmentHRMsg.ApprvedBGVCheckMsg,
                 statusId: isReject
-                    ? EvaluationConfig_1.StatusId.BackgroundCheckVerificationFailed
+                    ? Config_1.StatusId.BackgroundCheckVerificationFailed
                     : workflowStatus,
             };
             showModal({
@@ -366,8 +385,8 @@ var ReviewDocumentInner = function (_a) {
                         {
                             ID: selectedcandidateID,
                             StatusId: isExpat
-                                ? EvaluationConfig_1.StatusId.OnboardingProcessinitiatedforExpat
-                                : EvaluationConfig_1.StatusId.OnboardingProcessinitiatedforDRC,
+                                ? Config_1.StatusId.OnboardingProcessinitiatedforExpat
+                                : Config_1.StatusId.OnboardingProcessinitiatedforDRC,
                         },
                     ];
                     return [4 /*yield*/, ServiceExport_1.OfferServices.UpdateStatusSelectedHOD(Obj)];
@@ -438,18 +457,25 @@ var ReviewDocumentInner = function (_a) {
             vis.showConsentForm && (react_1.default.createElement(consentform_1.default, { onFileChange: handleConsentFile, downloadUrl: (_f = positionDetails.DotAfricaCF) === null || _f === void 0 ? void 0 : _f.downloadUrl, disabled: isAnySubmitting, hasFileError: validationError.showConsentErrors, consentform: positionDetails.DotAfricaCF })),
             vis.showCOICard && (react_1.default.createElement(Coicard_1.default, { consultOptions: CONSULT_OPTIONS, isReadOnly: isAnySubmitting, hasError: validationError.showCoiErrors, onChange: handleCoiChange })),
             vis.showWorkPermitUpload && (react_1.default.createElement(Workpermituploadbox_1.WorkPermitUploadBox, { fileInputRef: fileInputRef, selectedFile: selectedFile, isReading: isReading, hasFileError: validationError.workPermit, disabled: isAnySubmitting, onUploadClick: handleUploadClick, onFileChange: handleFileChange, onClearFile: clearFile })),
+            vis.NationalOfferLetter && (react_1.default.createElement(OfferrelaeseNational_1.OfferrelaeseNational, { offerReleased: nationalOfferReleased, 
+                // offerAccepted={nationalOfferAccepted}
+                noticePeriod: nationalNoticePeriod, joiningDate: nationalJoiningDate, pantsSize: nationalPantsSize, topSize: nationalTopSize, shoesSize: nationalShoesSize, contractReleased: nationalContractReleased, 
+                // contractAccepted={nationalContractAccepted}
+                validationError: validationError, isReadOnly: isAnySubmitting, StatusID: positionDetails.StatusID, onChangeOfferReleased: setNationalOfferReleased, 
+                // onChangeOfferAccepted={setNationalOfferAccepted}
+                onChangeNoticePeriod: setNationalNoticePeriod, onChangeJoiningDate: setNationalJoiningDate, onChangePantsSize: setNationalPantsSize, onChangeTopSize: setNationalTopSize, onChangeShoesSize: setNationalShoesSize, onChangeContractReleased: setNationalContractReleased })),
             vis.showUploadDocument && (react_1.default.createElement(UploadDocument_1.UploadDocument, { multiple: false, acceptedFormats: ".pdf", label: vis.uploadDocLabel, required: true, onChange: handleDocumnetUpload, disabled: isAnySubmitting, hasError: validationError.uploadError })),
             positionDetails.StatusID ===
-                EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement(Prechecklist_1.default, { nationalItems: checklist, expatItems: [], isExpat: isExpat, onToggle: handleChecklistToggle, allChecked: allChecked })),
+                Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement(Prechecklist_1.default, { nationalItems: checklist, expatItems: [], isExpat: isExpat, onToggle: handleChecklistToggle, allChecked: allChecked })),
             !vis.ViewFlag &&
                 positionDetails.StatusID !=
-                    EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, disabled: isAnySubmitting, commentError: validationError.comments, checkboxError: validationError.acknowledgement, acknowledgementLabel: ConditionConfig_1.CheckboxContent.PostRecrutimentCheckboxContent })),
+                    Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, disabled: isAnySubmitting, commentError: validationError.comments, checkboxError: validationError.acknowledgement, acknowledgementLabel: ConditionConfig_1.CheckboxContent.PostRecrutimentCheckboxContent })),
             allChecked &&
                 positionDetails.StatusID ===
-                    EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, disabled: isAnySubmitting, commentError: validationError.comments, checkboxError: validationError.acknowledgement })),
+                    Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement(ReviewCommentSignature_1.ReviewCommentSignature, { reviewerComments: reviewerComments, acknowledgementCheckbox: acknowledgementCheckbox, signatureDetails: signatureDetails, isLoading: isLoading, onCommentsChange: onCommentsChange, onToggleAcknowledgement: onToggleAcknowledgement, disabled: isAnySubmitting, commentError: validationError.comments, checkboxError: validationError.acknowledgement })),
             bgvComments.length > 0 &&
                 positionDetails.StatusID ===
-                    EvaluationConfig_1.StatusId.PendingDOTAficaVerification && (react_1.default.createElement("div", { className: "review-documnet__BGVCommentBtn" },
+                    Config_1.StatusId.PendingDOTAficaVerification && (react_1.default.createElement("div", { className: "review-documnet__BGVCommentBtn" },
                 react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", onClick: function () { return setshowComments(true); } }, RecrutimentAppWebPartStrings_1.default.ViewBgvComments))),
             react_1.default.createElement("div", { className: "review-document__footer" },
                 react_1.default.createElement("div", { className: "review-document__footer-actions" },
@@ -459,7 +485,7 @@ var ReviewDocumentInner = function (_a) {
                             ? "Back"
                             : "Cancel"),
                     positionDetails.StatusID ===
-                        EvaluationConfig_1.StatusId.PendingDOTAficaVerification && (react_1.default.createElement(react_1.default.Fragment, null,
+                        Config_1.StatusId.PendingDOTAficaVerification && (react_1.default.createElement(react_1.default.Fragment, null,
                         revertFLag && (react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", disabled: isAnySubmitting, onClick: handleReinitiate }, renderBtnContent(RecrutimentAppWebPartStrings_1.default.ReInitiate, "reinitiate", "Processing..."))),
                         rejectFlag && coiState.wishesToProceed && (react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", disabled: isAnySubmitting, onClick: function () {
                                 return handleRejectCheck(coiState.wishesToProceed === "Yes"
@@ -471,10 +497,10 @@ var ReviewDocumentInner = function (_a) {
                             ? "Approving..."
                             : "Rejecting..."))))),
                     positionDetails.StatusID ===
-                        EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", disabled: isAnySubmitting, onClick: handleSaveAsDraft }, renderBtnContent(!allChecked ? RecrutimentAppWebPartStrings_1.default.SaveAsDraft : "Submit", "saveAsDraft", !allChecked ? "Saving..." : "Submitting..."))),
+                        Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", disabled: isAnySubmitting, onClick: handleSaveAsDraft }, renderBtnContent(!allChecked ? RecrutimentAppWebPartStrings_1.default.SaveAsDraft : "Submit", "saveAsDraft", !allChecked ? "Saving..." : "Submitting..."))),
                     !vis.ViewFlag &&
                         positionDetails.StatusID !=
-                            EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", disabled: isAnySubmitting, onClick: handleApprove }, renderBtnContent(consentVerification === "verified"
+                            Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", disabled: isAnySubmitting, onClick: handleApprove }, renderBtnContent(consentVerification === "verified"
                         ? "Reviewed"
                         : consentVerification === "rejected"
                             ? "Revert"

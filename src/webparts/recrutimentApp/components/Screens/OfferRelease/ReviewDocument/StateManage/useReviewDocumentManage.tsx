@@ -28,6 +28,15 @@ export interface ValidationError {
   showCoiErrors: boolean;
   uploadError: boolean;
   verification: boolean;
+  nationalOfferReleased: boolean;
+  nationalOfferAccepted: boolean;
+  nationalNoticePeriod: boolean;
+  nationalJoiningDate: boolean;
+  nationalPantsSize: boolean;
+  nationalTopSize: boolean;
+  nationalShoesSize: boolean;
+  nationalContractReleased: boolean;
+  nationalContractAccepted: boolean;
 }
 
 // Default reset shape — single source of truth
@@ -41,6 +50,15 @@ const DEFAULT_VALIDATION: ValidationError = {
   showCoiErrors: false,
   uploadError: false,
   verification: false,
+  nationalOfferReleased: false,
+  nationalOfferAccepted: false,
+  nationalNoticePeriod: false,
+  nationalJoiningDate: false,
+  nationalPantsSize: false,
+  nationalTopSize: false,
+  nationalShoesSize: false,
+  nationalContractReleased: false,
+  nationalContractAccepted: false,
 };
 
 export interface DrawerStateManager {
@@ -81,6 +99,26 @@ export interface DrawerStateManager {
   // Validation
   validationError: ValidationError;
   validateAll: (vis: ReviewVisibilityFlags) => boolean;
+
+  // National Offer Release & PPE
+  nationalOfferReleased: string;
+  // nationalOfferAccepted: string;
+  nationalNoticePeriod: string;
+  nationalJoiningDate: string;
+  nationalPantsSize: string;
+  nationalTopSize: string;
+  nationalShoesSize: string;
+  nationalContractReleased: string;
+  // nationalContractAccepted: string;
+  setNationalOfferReleased: (val: string) => void;
+  // setNationalOfferAccepted: (val: string) => void;
+  setNationalNoticePeriod: (val: string) => void;
+  setNationalJoiningDate: (val: string) => void;
+  setNationalPantsSize: (val: string) => void;
+  setNationalTopSize: (val: string) => void;
+  setNationalShoesSize: (val: string) => void;
+  setNationalContractReleased: (val: string) => void;
+  // setNationalContractAccepted: (val: string) => void;
 }
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
@@ -113,6 +151,17 @@ export const useStateOfferRelease = (): DrawerStateManager => {
 
   // ── Upload docs ──
   const [uploadDocs, setUploadDocs] = useState<UploadedFile[]>([]);
+
+  // ── National Offer Release & PPE ──
+  const [nationalOfferReleased, setNationalOfferReleased] = useState<string>("");
+  // const [nationalOfferAccepted, setNationalOfferAccepted] = useState<string>("");
+  const [nationalNoticePeriod, setNationalNoticePeriod] = useState<string>("");
+  const [nationalJoiningDate, setNationalJoiningDate] = useState<string>("");
+  const [nationalPantsSize, setNationalPantsSize] = useState<string>("");
+  const [nationalTopSize, setNationalTopSize] = useState<string>("");
+  const [nationalShoesSize, setNationalShoesSize] = useState<string>("");
+  const [nationalContractReleased, setNationalContractReleased] = useState<string>("");
+  // const [nationalContractAccepted, setNationalContractAccepted] = useState<string>("");
 
   // ── Validation error state ──
   const [validationError, setValidationError] =
@@ -167,6 +216,95 @@ export const useStateOfferRelease = (): DrawerStateManager => {
     (show: boolean) => setShowCoiErrors(show),
     [],
   );
+
+  // ─── National Offer Release & PPE handlers ───────────────────────────────
+
+  const handleOfferReleasedChange = useCallback((val: string) => {
+    setNationalOfferReleased(val);
+    setValidationError((prev: ValidationError) => ({
+      ...prev,
+      nationalOfferReleased: false,
+    }));
+  }, []);
+
+  // const handleOfferAcceptedChange = useCallback((val: string) => {
+  //   setNationalOfferAccepted(val);
+  //   setValidationError((prev: ValidationError) => ({
+  //     ...prev,
+  //     nationalOfferAccepted: false,
+  //   }));
+  // }, []);
+
+  const handleNoticePeriodChange = useCallback((val: string) => {
+    setNationalNoticePeriod(val);
+    setValidationError((prev: ValidationError) => ({
+      ...prev,
+      nationalNoticePeriod: false,
+    }));
+    setNationalJoiningDate((current) => {
+      if (!current) return "";
+      const today = new Date();
+      const days = parseInt(val, 10);
+      if (!isNaN(days) && days > 0) {
+        today.setDate(today.getDate() + days);
+      }
+      const selected = new Date(current);
+      today.setHours(0, 0, 0, 0);
+      selected.setHours(0, 0, 0, 0);
+      if (selected < today) {
+        return "";
+      }
+      return current;
+    });
+  }, []);
+
+  const handleJoiningDateChange = useCallback((val: string) => {
+    setNationalJoiningDate(val);
+    setValidationError((prev: ValidationError) => ({
+      ...prev,
+      nationalJoiningDate: false,
+    }));
+  }, []);
+
+  const handlePantsSizeChange = useCallback((val: string) => {
+    setNationalPantsSize(val);
+    setValidationError((prev: ValidationError) => ({
+      ...prev,
+      nationalPantsSize: false,
+    }));
+  }, []);
+
+  const handleTopSizeChange = useCallback((val: string) => {
+    setNationalTopSize(val);
+    setValidationError((prev: ValidationError) => ({
+      ...prev,
+      nationalTopSize: false,
+    }));
+  }, []);
+
+  const handleShoesSizeChange = useCallback((val: string) => {
+    setNationalShoesSize(val);
+    setValidationError((prev: ValidationError) => ({
+      ...prev,
+      nationalShoesSize: false,
+    }));
+  }, []);
+
+  const handleContractReleasedChange = useCallback((val: string) => {
+    setNationalContractReleased(val);
+    setValidationError((prev: ValidationError) => ({
+      ...prev,
+      nationalContractReleased: false,
+    }));
+  }, []);
+
+  // const handleContractAcceptedChange = useCallback((val: string) => {
+  //   setNationalContractAccepted(val);
+  //   setValidationError((prev: ValidationError) => ({
+  //     ...prev,
+  //     nationalContractAccepted: false,
+  //   }));
+  // }, []);
 
   // ─── Work permit file handlers ────────────────────────────────────────────
 
@@ -251,6 +389,69 @@ export const useStateOfferRelease = (): DrawerStateManager => {
       const errors: ValidationError = { ...DEFAULT_VALIDATION };
       let isValid = true;
 
+      // ── National Candidate Offer Release Sizing ──
+      if (vis.NationalOffer) {
+        if (!nationalOfferReleased) {
+          errors.nationalOfferReleased = true;
+          isValid = false;
+        }
+        if (nationalOfferReleased === "Yes") {
+          // if (!nationalOfferAccepted) {
+          //   errors.nationalOfferAccepted = true;
+          //   isValid = false;
+          // }
+           if (!nationalNoticePeriod.trim()) {
+              errors.nationalNoticePeriod = true;
+              isValid = false;
+            }
+            if (!nationalJoiningDate) {
+              errors.nationalJoiningDate = true;
+              isValid = false;
+            } else {
+              const today = new Date();
+              const days = parseInt(nationalNoticePeriod, 10);
+              if (!isNaN(days) && days > 0) {
+                today.setDate(today.getDate() + days);
+              }
+              const selected = new Date(nationalJoiningDate);
+              today.setHours(0, 0, 0, 0);
+              selected.setHours(0, 0, 0, 0);
+              if (selected < today) {
+                errors.nationalJoiningDate = true;
+                isValid = false;
+              }
+            }
+            if (!nationalPantsSize) {
+              errors.nationalPantsSize = true;
+              isValid = false;
+            }
+            if (!nationalTopSize) {
+              errors.nationalTopSize = true;
+              isValid = false;
+            }
+            if (!nationalShoesSize) {
+              errors.nationalShoesSize = true;
+              isValid = false;
+            }
+          // if (nationalOfferAccepted === "Yes") {
+           
+          // }
+        }
+      }
+
+      if(vis.NationalEmploymentContract) {
+  if (!nationalContractReleased) {
+          errors.nationalContractReleased = true;
+          isValid = false;
+        }
+        // if (nationalContractReleased === "Yes") {
+        //   if (!nationalContractAccepted) {
+        //     errors.nationalContractAccepted = true;
+        //     isValid = false;
+        //   }
+        // }
+      }
+
       if (vis.showVerificationToggle && consentVerification === null) {
         errors.verification = true;
         isValid = false;
@@ -304,6 +505,15 @@ export const useStateOfferRelease = (): DrawerStateManager => {
       uploadDocs,
       reviewerComments,
       acknowledgementCheckbox,
+      nationalOfferReleased,
+      // nationalOfferAccepted,
+      nationalNoticePeriod,
+      nationalJoiningDate,
+      nationalPantsSize,
+      nationalTopSize,
+      nationalShoesSize,
+      nationalContractReleased,
+      // nationalContractAccepted,
     ],
   );
 
@@ -345,5 +555,25 @@ export const useStateOfferRelease = (): DrawerStateManager => {
     // Validation
     validationError,
     validateAll,
+
+    // National Offer Release & PPE
+    nationalOfferReleased,
+    // nationalOfferAccepted,
+    nationalNoticePeriod,
+    nationalJoiningDate,
+    nationalPantsSize,
+    nationalTopSize,
+    nationalShoesSize,
+    nationalContractReleased,
+    // nationalContractAccepted,
+    setNationalOfferReleased: handleOfferReleasedChange,
+    // setNationalOfferAccepted: handleOfferAcceptedChange,
+    setNationalNoticePeriod: handleNoticePeriodChange,
+    setNationalJoiningDate: handleJoiningDateChange,
+    setNationalPantsSize: handlePantsSizeChange,
+    setNationalTopSize: handleTopSizeChange,
+    setNationalShoesSize: handleShoesSizeChange,
+    setNationalContractReleased: handleContractReleasedChange,
+    // setNationalContractAccepted: handleContractAcceptedChange,
   };
 };

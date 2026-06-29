@@ -209,7 +209,9 @@ var getStageIndexinCandidateDRC = function (statusId) {
         statusId == Config_1.StatusId.PendingLabourHireOfferRelease ||
         statusId == Config_1.StatusId.PendingHROfferReview ||
         statusId == Config_1.StatusId.offerdecline ||
-        statusId == Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract)
+        statusId == Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract ||
+        statusId == Config_1.StatusId.HROfferLetterProgress ||
+        statusId == Config_1.StatusId.HREmploymentContractProgress)
         return 3;
     if (statusId == Config_1.StatusId.PendingCandidateEmploymentContractUpload ||
         statusId == Config_1.StatusId.PendingHREmploymentContractVerification ||

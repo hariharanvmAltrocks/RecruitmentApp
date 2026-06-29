@@ -1,5 +1,5 @@
 import { EmployeementCategory } from "../../../../../../utilities/ConditionConfig";
-import { StatusId } from "../../../../SelectionProcess/config/EvaluationConfig";
+import { StatusId } from "../../../../../../utilities/Config";
 
 export interface ReviewStatusFlags {
   pendingHRBGVInit: boolean;
@@ -22,6 +22,9 @@ export interface ReviewStatusFlags {
   isExpat: boolean;
   PendingHRReviewOfferuploadEmploymentInit: boolean;
   PendingHRReviewOfferanduploadEmployementContract: boolean;
+  NationalOfferLetter: boolean;
+  NationalEmploymentContract: boolean;
+  NationalOffer: boolean;
 }
 
 export interface ReviewVisibilityFlags {
@@ -35,6 +38,9 @@ export interface ReviewVisibilityFlags {
   uploadDocLabel: string;
   ViewFlag: boolean;
   PreOnboardingChecklist: boolean;
+  NationalOfferLetter: boolean;
+  NationalOffer: boolean;
+  NationalEmploymentContract: boolean;
 }
 
 export const buildStatusFlags = (
@@ -85,11 +91,14 @@ export const buildStatusFlags = (
   PreOnboardingChecklist: statusID === StatusId.PendingHRpreonboardingchecklist,
   isExpat: isExpat === true,
   PendingHRReviewOfferanduploadEmployementContract: statusID === StatusId.PendingHRReviewOfferanduploadEmployementContract,
+  NationalOfferLetter: (statusID === StatusId.HROfferLetterProgress || statusID === StatusId.HREmploymentContractProgress)  && !isExpat,
+  NationalEmploymentContract:  statusID === StatusId.HREmploymentContractProgress  && !isExpat,
+  NationalOffer:  statusID === StatusId.HROfferLetterProgress  && !isExpat,
 });
 
 const resolveVerificationToggle = (is: ReviewStatusFlags): boolean =>
   is.pendingHRReviewBGCheck ||
-  is.pendingHROfferReview ||
+  is.pendingHROfferReview ||  
   is.pendingHRReviewWPInit ||
   is.pendingHRReviewOfferEC ||
   is.pendingHRReviewWPDocs ||
@@ -115,7 +124,7 @@ export const buildVisibilityFlags = (
   revertFlag: boolean,
 ): ReviewVisibilityFlags => {
   const showUploadDocument =
-    (is.pendingHROfferInitiate && is.isKCSAEmployee) ||
+    (is.pendingHROfferInitiate && is.isKCSAEmployee && is.isExpat) ||
     is.wpAckContractUploaded ||
     (is.pendingFinancePayment && is.isVerified && is.isLabourHire) ||
     (is.PendingHRReviewOfferanduploadEmployementContract && is.isVerified);
@@ -133,5 +142,8 @@ export const buildVisibilityFlags = (
     uploadDocLabel,
     ViewFlag: is.ViewFlag,
     PreOnboardingChecklist: is.PreOnboardingChecklist,
+    NationalOfferLetter: is.NationalOfferLetter,
+    NationalEmploymentContract: is.NationalEmploymentContract,
+    NationalOffer: is.NationalOffer
   };
 };

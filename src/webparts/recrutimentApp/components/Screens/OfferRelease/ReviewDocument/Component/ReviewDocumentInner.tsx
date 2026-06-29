@@ -11,7 +11,6 @@ import StatusBadge from "../../../../Comman/Statusbadge/Statusbadge";
 import { WorkflowHODConfig } from "../../../../Hooks/WorkflowConfig";
 import { useSignatureDetails } from "../../../RecruitmentTable/AdvertReviewDrawer/Hooks/getSignatureDetails";
 import { ReviewCommentSignature } from "../../../RecruitmentTable/Components/ReviewCommentSignature";
-import { StatusId } from "../../../SelectionProcess/config/EvaluationConfig";
 import { useReviewConditions } from "../Hooks/ConditionalHooks/Usereviewconditions";
 import { usePreChecklist } from "../Hooks/fetchPreChecklist";
 import { useRequiredDocuments } from "../Hooks/Userequireddocuments";
@@ -29,6 +28,8 @@ import "../ReviewDocument.scss";
 import { CandidateRoadmap } from "./CandidateRoadmap";
 import { UploadDocument } from "../../../RecruitmentTable/Components/UploadDocument";
 import CandidateDocumentsRepository from "../../Component/CandidateDocumentsRepository";
+import { OfferrelaeseNational } from "./OfferrelaeseNational/OfferrelaeseNational";
+import { StatusId } from "../../../../../utilities/Config";
 
 interface ReviewDocumentInnerProps extends ReviewDocumentProps {
   positionDetails: IselectedPosition;
@@ -115,6 +116,26 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
     onToggleAcknowledgement,
     validateAll,
     validationError,
+
+    // National Offer Release & PPE
+    nationalOfferReleased,
+    // nationalOfferAccepted,
+    nationalNoticePeriod,
+    nationalJoiningDate,
+    nationalPantsSize,
+    nationalTopSize,
+    nationalShoesSize,
+    nationalContractReleased,
+    // nationalContractAccepted,
+    setNationalOfferReleased,
+    // setNationalOfferAccepted,
+    setNationalNoticePeriod,
+    setNationalJoiningDate,
+    setNationalPantsSize,
+    setNationalTopSize,
+    setNationalShoesSize,
+    setNationalContractReleased,
+    // setNationalContractAccepted,
   } = useStateOfferRelease();
 
   const [showComments, setshowComments] = useState(false);
@@ -153,6 +174,17 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
     closeModal,
     onClose,
     refreshKey,
+
+    // National Offer Release & PPE
+    nationalOfferReleased,
+    // nationalOfferAccepted,
+    nationalNoticePeriod,
+    nationalJoiningDate,
+    nationalPantsSize,
+    nationalTopSize,
+    nationalShoesSize,
+    nationalContractReleased,
+    // nationalContractAccepted,
   };
 
   const {
@@ -314,7 +346,7 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
           ? ButtonAction.Review
           : consentVerification === "rejected"
             ? ButtonAction.Revert
-            : ButtonAction.Initiated;
+            :  ButtonAction.Initiated;
       await submit(action);
     } catch (error) {
       console.error(error);
@@ -610,6 +642,32 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
                 onUploadClick={handleUploadClick}
                 onFileChange={handleFileChange}
                 onClearFile={clearFile}
+              />
+            )}
+
+            {vis.NationalOfferLetter && (
+              <OfferrelaeseNational
+                  offerReleased={nationalOfferReleased}
+                  // offerAccepted={nationalOfferAccepted}
+                  noticePeriod={nationalNoticePeriod}
+                  joiningDate={nationalJoiningDate}
+                  pantsSize={nationalPantsSize}
+                  topSize={nationalTopSize}
+                  shoesSize={nationalShoesSize}
+                  contractReleased={nationalContractReleased}
+                  // contractAccepted={nationalContractAccepted}
+                  validationError={validationError}
+                  isReadOnly={isAnySubmitting}
+                  StatusID={positionDetails.StatusID}
+                  onChangeOfferReleased={setNationalOfferReleased}
+                  // onChangeOfferAccepted={setNationalOfferAccepted}
+                  onChangeNoticePeriod={setNationalNoticePeriod}
+                  onChangeJoiningDate={setNationalJoiningDate}
+                  onChangePantsSize={setNationalPantsSize}
+                  onChangeTopSize={setNationalTopSize}
+                  onChangeShoesSize={setNationalShoesSize}
+                  onChangeContractReleased={setNationalContractReleased} 
+                  // onChangeContractAccepted={setNationalContractAccepted}
               />
             )}
 

@@ -22,7 +22,6 @@ import { ModalPopup } from "../../Comman/ModalPopup/ModalPopup";
 import { useModalPopup } from "../../Comman/ModalPopup/useModalPopup";
 import Tabs from "../../Comman/Tabs/Tabs";
 import { userInfo } from "../../../utilities/hooks/RoleContext";
-import { StatusId } from "../SelectionProcess/config/EvaluationConfig";
 import { useStateOfferRelease } from "./StateManage/useStateFromManage";
 import { Initiate_STAUES, REVIEW_STATUSES, EDIT_STATUSES } from "./Config";
 import {

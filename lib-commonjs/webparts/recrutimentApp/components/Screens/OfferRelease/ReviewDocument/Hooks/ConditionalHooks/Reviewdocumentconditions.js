@@ -2,43 +2,46 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.buildVisibilityFlags = exports.buildStatusFlags = void 0;
 var ConditionConfig_1 = require("../../../../../../utilities/ConditionConfig");
-var EvaluationConfig_1 = require("../../../../SelectionProcess/config/EvaluationConfig");
+var Config_1 = require("../../../../../../utilities/Config");
 var buildStatusFlags = function (statusID, empCat, consentVerification, isExpat) { return ({
-    pendingHRBGVInit: statusID === EvaluationConfig_1.StatusId.PendingHRBGVInitiation,
-    pendingHRReviewBGCheck: statusID === EvaluationConfig_1.StatusId.PendingHRReviewBGCheck,
-    pendingHROfferReview: statusID === EvaluationConfig_1.StatusId.PendingHROfferReview,
-    pendingHRReviewWPInit: statusID === EvaluationConfig_1.StatusId.PendingHRReviewOfferWorkPermitInit,
-    pendingHRReviewOfferEC: statusID === EvaluationConfig_1.StatusId.PendingHRReviewOfferanduploadEmployementContract,
-    pendingHRReviewWPDocs: statusID === EvaluationConfig_1.StatusId.PendingHRReviewWorkpermitDocs,
-    pendingHRECVerification: statusID === EvaluationConfig_1.StatusId.PendingHREmploymentContractVerification,
-    pendingDOTAficaVerify: statusID === EvaluationConfig_1.StatusId.PendingDOTAficaVerification,
-    pendingHROfferInitiate: statusID === EvaluationConfig_1.StatusId.PendingHROfferInitiate,
-    PendingHRReviewOfferuploadEmploymentInit: statusID === EvaluationConfig_1.StatusId.PendingHRReviewOfferuploadEmploymentInit,
-    wpAckContractUploaded: statusID === EvaluationConfig_1.StatusId.WorkPermitAcknowledgedContractUploaded,
-    pendingFinancePayment: statusID === EvaluationConfig_1.StatusId.PendingFinancePaymentReview,
+    pendingHRBGVInit: statusID === Config_1.StatusId.PendingHRBGVInitiation,
+    pendingHRReviewBGCheck: statusID === Config_1.StatusId.PendingHRReviewBGCheck,
+    pendingHROfferReview: statusID === Config_1.StatusId.PendingHROfferReview,
+    pendingHRReviewWPInit: statusID === Config_1.StatusId.PendingHRReviewOfferWorkPermitInit,
+    pendingHRReviewOfferEC: statusID === Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract,
+    pendingHRReviewWPDocs: statusID === Config_1.StatusId.PendingHRReviewWorkpermitDocs,
+    pendingHRECVerification: statusID === Config_1.StatusId.PendingHREmploymentContractVerification,
+    pendingDOTAficaVerify: statusID === Config_1.StatusId.PendingDOTAficaVerification,
+    pendingHROfferInitiate: statusID === Config_1.StatusId.PendingHROfferInitiate,
+    PendingHRReviewOfferuploadEmploymentInit: statusID === Config_1.StatusId.PendingHRReviewOfferuploadEmploymentInit,
+    wpAckContractUploaded: statusID === Config_1.StatusId.WorkPermitAcknowledgedContractUploaded,
+    pendingFinancePayment: statusID === Config_1.StatusId.PendingFinancePaymentReview,
     isKCSAEmployee: empCat === ConditionConfig_1.EmployeementCategory.KCSAEmployee,
     isLabourHire: empCat === ConditionConfig_1.EmployeementCategory.LaborhireContractor,
     isVerified: consentVerification === "verified",
-    ViewFlag: statusID === EvaluationConfig_1.StatusId.PendingBGdocuploadedbycandidate ||
-        statusID === EvaluationConfig_1.StatusId.PendingDOTAficaVerification ||
-        statusID === EvaluationConfig_1.StatusId.PendingCandidateOfferLetterUpload ||
-        statusID === EvaluationConfig_1.StatusId.PendingCandidateWorkPermitreleatedDoc ||
-        statusID === EvaluationConfig_1.StatusId.PendingCandidateEmploymentContractUpload ||
-        statusID === EvaluationConfig_1.StatusId.PendingLabourHireOfferRelease ||
-        statusID === EvaluationConfig_1.StatusId.PendingLabourhireWPPayment ||
-        statusID === EvaluationConfig_1.StatusId.PendingLHECRelease ||
-        statusID === EvaluationConfig_1.StatusId.RESIProcessInitiatedforDRC ||
-        statusID === EvaluationConfig_1.StatusId.RESIProcessInitiatedforExpatriate ||
-        statusID === EvaluationConfig_1.StatusId.RESProcessInitiated ||
-        statusID === EvaluationConfig_1.StatusId.OnboardingProcessinitiatedforDRC ||
-        statusID === EvaluationConfig_1.StatusId.OnboardingProcessinitiatedforExpat ||
-        statusID === EvaluationConfig_1.StatusId.FailedmedicalscreeningUnfit ||
-        statusID === EvaluationConfig_1.StatusId.BackgroundCheckVerificationFailed,
+    ViewFlag: statusID === Config_1.StatusId.PendingBGdocuploadedbycandidate ||
+        statusID === Config_1.StatusId.PendingDOTAficaVerification ||
+        statusID === Config_1.StatusId.PendingCandidateOfferLetterUpload ||
+        statusID === Config_1.StatusId.PendingCandidateWorkPermitreleatedDoc ||
+        statusID === Config_1.StatusId.PendingCandidateEmploymentContractUpload ||
+        statusID === Config_1.StatusId.PendingLabourHireOfferRelease ||
+        statusID === Config_1.StatusId.PendingLabourhireWPPayment ||
+        statusID === Config_1.StatusId.PendingLHECRelease ||
+        statusID === Config_1.StatusId.RESIProcessInitiatedforDRC ||
+        statusID === Config_1.StatusId.RESIProcessInitiatedforExpatriate ||
+        statusID === Config_1.StatusId.RESProcessInitiated ||
+        statusID === Config_1.StatusId.OnboardingProcessinitiatedforDRC ||
+        statusID === Config_1.StatusId.OnboardingProcessinitiatedforExpat ||
+        statusID === Config_1.StatusId.FailedmedicalscreeningUnfit ||
+        statusID === Config_1.StatusId.BackgroundCheckVerificationFailed,
     // statusID === StatusId.PendingHRpreonboardingchecklist,
-    PendingHREmploymentContractReview: statusID === EvaluationConfig_1.StatusId.PendingHREmploymentContractReview,
-    PreOnboardingChecklist: statusID === EvaluationConfig_1.StatusId.PendingHRpreonboardingchecklist,
+    PendingHREmploymentContractReview: statusID === Config_1.StatusId.PendingHREmploymentContractReview,
+    PreOnboardingChecklist: statusID === Config_1.StatusId.PendingHRpreonboardingchecklist,
     isExpat: isExpat === true,
-    PendingHRReviewOfferanduploadEmployementContract: statusID === EvaluationConfig_1.StatusId.PendingHRReviewOfferanduploadEmployementContract,
+    PendingHRReviewOfferanduploadEmployementContract: statusID === Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract,
+    NationalOfferLetter: (statusID === Config_1.StatusId.HROfferLetterProgress || statusID === Config_1.StatusId.HREmploymentContractProgress) && !isExpat,
+    NationalEmploymentContract: statusID === Config_1.StatusId.HREmploymentContractProgress && !isExpat,
+    NationalOffer: statusID === Config_1.StatusId.HROfferLetterProgress && !isExpat,
 }); };
 exports.buildStatusFlags = buildStatusFlags;
 var resolveVerificationToggle = function (is) {
@@ -65,7 +68,7 @@ var resolveUploadLabel = function (is) {
     return "";
 };
 var buildVisibilityFlags = function (is, hasDetails, rejectFlag, revertFlag) {
-    var showUploadDocument = (is.pendingHROfferInitiate && is.isKCSAEmployee) ||
+    var showUploadDocument = (is.pendingHROfferInitiate && is.isKCSAEmployee && is.isExpat) ||
         is.wpAckContractUploaded ||
         (is.pendingFinancePayment && is.isVerified && is.isLabourHire) ||
         (is.PendingHRReviewOfferanduploadEmployementContract && is.isVerified);
@@ -81,6 +84,9 @@ var buildVisibilityFlags = function (is, hasDetails, rejectFlag, revertFlag) {
         uploadDocLabel: uploadDocLabel,
         ViewFlag: is.ViewFlag,
         PreOnboardingChecklist: is.PreOnboardingChecklist,
+        NationalOfferLetter: is.NationalOfferLetter,
+        NationalEmploymentContract: is.NationalEmploymentContract,
+        NationalOffer: is.NationalOffer
     };
 };
 exports.buildVisibilityFlags = buildVisibilityFlags;

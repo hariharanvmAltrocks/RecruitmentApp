@@ -872,6 +872,8 @@ var MetricQueryConfig = function (EmailId, roles) {
         _a[ConditionConfig_1.MatricID.Kcsa] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter({
             status: [
                 Config_1.StatusId.PendingHROfferInitiate,
+                Config_1.StatusId.HROfferLetterProgress,
+                Config_1.StatusId.HREmploymentContractProgress,
                 Config_1.StatusId.PendingHRReviewOfferWorkPermitInit,
                 Config_1.StatusId.PendingHRReviewWorkpermitDocs,
                 Config_1.StatusId.WorkPermitAcknowledgedContractUploaded,

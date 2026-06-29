@@ -306,6 +306,14 @@ export const RecuritmentHRMsg = {
   RevertWGDocs: "The Background Document Reverted successfully.",
 
   OfferLetterMsg: "The offer letter has been uploaded successfully.",
+
+NationalOfferMsg: "The offer letter has been successfully released and accepted by the candidate.", 
+NationalEmployementContract: "The employment contract has been successfully released and accepted by the candidate.",
+
+RejectOfferNationalMsg: "The candidate has declined the offer letter after it was successfully released.",
+RejectEmploymentContractMsg: "The candidate has declined the employment contract after it was successfully released.",
+
+
   OfferLetterinit:
     "The Offer Letter process has been successfully initiated to the Labour Hire.",
   ReviewLaborHireOffer:

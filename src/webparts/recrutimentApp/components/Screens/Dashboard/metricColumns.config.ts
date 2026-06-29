@@ -1110,6 +1110,8 @@ export const MetricQueryConfig = (
     StatusFilter({
       status: [
         StatusId.PendingHROfferInitiate,
+        StatusId.HROfferLetterProgress,
+        StatusId.HREmploymentContractProgress,
         StatusId.PendingHRReviewOfferWorkPermitInit,
         StatusId.PendingHRReviewWorkpermitDocs,
         StatusId.WorkPermitAcknowledgedContractUploaded,

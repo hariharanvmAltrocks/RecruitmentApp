@@ -1,4 +1,5 @@
-import { StatusId } from "../SelectionProcess/config/EvaluationConfig";
+import { StatusId } from "../../../utilities/Config";
+
 
 export const Initiate_STAUES = new Set([
   StatusId.PendingHRBGVInitiation,

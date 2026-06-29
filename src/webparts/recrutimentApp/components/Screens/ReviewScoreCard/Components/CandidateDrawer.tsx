@@ -25,12 +25,12 @@ import {
   DataTable,
   DataTableColumn,
 } from "../../../Comman/DataTable/DataTable";
-import { StatusId } from "../../SelectionProcess/config/EvaluationConfig";
 import "../../CandidateTable/CandidateTable.scss";
 import CandidateReviewModal from "./CandidateReviewModal";
 import ReactDOM from "react-dom";
 import style from "../../CandidateTable/Components/ShowCandidateDetailsPopup.module.scss";
 import * as strings from 'RecrutimentAppWebPartStrings';
+import { StatusId } from "../../../../utilities/Config";
 
 interface Props {
   candidates: ScorecardCandidateRow[];
@@ -137,8 +137,8 @@ const CandidateDrawer: React.FC<Props> = ({
     }
 
     if (
-      item.statusId === StatusId.PendingwithHODtoAssignPositionID ||
-      item.statusId === StatusId.PendingwithHODtoselectthecandidateLevel2
+      item.statusId === StatusId.PendingwithpositionIDAssignmentWithHOD ||
+      item.statusId === StatusId.pendingL2shorlistingwithHOD
     ) {
       return {
         label: "Review",

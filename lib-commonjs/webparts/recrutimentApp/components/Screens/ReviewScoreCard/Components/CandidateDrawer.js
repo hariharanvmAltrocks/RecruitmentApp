@@ -10,11 +10,11 @@ var useReviewScorecard_1 = require("../Hooks/useReviewScorecard");
 var CandidateTable_1 = require("../../CandidateTable/CandidateTable");
 var react_1 = require("react");
 var DataTable_1 = require("../../../Comman/DataTable/DataTable");
-var EvaluationConfig_1 = require("../../SelectionProcess/config/EvaluationConfig");
 require("../../CandidateTable/CandidateTable.scss");
 var CandidateReviewModal_1 = tslib_1.__importDefault(require("./CandidateReviewModal"));
 var react_dom_1 = tslib_1.__importDefault(require("react-dom"));
 var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
+var Config_1 = require("../../../../utilities/Config");
 var getStatusClass = function (statusId) {
     if (statusId === 122)
         return ReviewScorecard_module_scss_1.default.statusSelected;
@@ -87,16 +87,16 @@ var CandidateDrawer = function (_a) {
         setPagination(function (prev) { return (tslib_1.__assign(tslib_1.__assign({}, prev), { pageSize: size, currentPage: 1 })); });
     };
     var getActionConfig = function (item) {
-        if (item.statusId === EvaluationConfig_1.StatusId.OnHoldbyHOD ||
-            item.statusId === EvaluationConfig_1.StatusId.CandidateOnHoldbyHODLevel1 ||
-            item.statusId === EvaluationConfig_1.StatusId.CandidateOnHoldbyHODLevel2) {
+        if (item.statusId === Config_1.StatusId.OnHoldbyHOD ||
+            item.statusId === Config_1.StatusId.CandidateOnHoldbyHODLevel1 ||
+            item.statusId === Config_1.StatusId.CandidateOnHoldbyHODLevel2) {
             return {
                 label: strings.OnHold,
                 icon: React.createElement(lucide_react_1.PauseCircle, { size: 14 }),
             };
         }
-        if (item.statusId === EvaluationConfig_1.StatusId.PendingwithHODtoAssignPositionID ||
-            item.statusId === EvaluationConfig_1.StatusId.PendingwithHODtoselectthecandidateLevel2) {
+        if (item.statusId === Config_1.StatusId.PendingwithpositionIDAssignmentWithHOD ||
+            item.statusId === Config_1.StatusId.pendingL2shorlistingwithHOD) {
             return {
                 label: "Review",
                 icon: React.createElement(lucide_react_1.Eye, { size: 14 }),

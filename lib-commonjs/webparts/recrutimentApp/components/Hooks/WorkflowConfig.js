@@ -107,7 +107,7 @@ var WorkflowCandidateListConfig = function (StatusID, isLevel2, Action) {
     }
 };
 exports.WorkflowCandidateListConfig = WorkflowCandidateListConfig;
-var WorkflowHODConfig = function (StatusID, isRevet, IsExpat, EmpCat) {
+var WorkflowHODConfig = function (StatusID, isRevet, IsExpat, EmpCat, NationalRejected) {
     switch (StatusID) {
         case Config_1.StatusId.PendingHRBGVInitiation:
             return Config_1.StatusId.PendingBGdocuploadedbycandidate;
@@ -139,6 +139,21 @@ var WorkflowHODConfig = function (StatusID, isRevet, IsExpat, EmpCat) {
             else {
                 return Config_1.StatusId.PendingLabourHireOfferRelease;
             }
+        case Config_1.StatusId.HROfferLetterProgress:
+            if (NationalRejected) {
+                return Config_1.StatusId.offerdecline;
+            }
+            else {
+                return Config_1.StatusId.HREmploymentContractProgress;
+            }
+        case Config_1.StatusId.HREmploymentContractProgress: {
+            if (NationalRejected) {
+                return Config_1.StatusId.EmploymentContractDeclined;
+            }
+            else {
+                return Config_1.StatusId.PendingHRpreonboardingchecklist;
+            }
+        }
         case Config_1.StatusId.PendingCandidateOfferLetterUpload:
             if (EmpCat === ConditionConfig_1.EmployeementCategory.KCSAEmployee) {
                 if (IsExpat) {

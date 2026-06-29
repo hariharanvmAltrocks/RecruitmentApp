@@ -250,9 +250,10 @@ export const getStageIndexinCandidateDRC = (statusId: number) => {
     statusId == StatusId.PendingHRReviewOfferWorkPermitInit ||
     statusId == StatusId.PendingLabourHireOfferRelease ||
     statusId == StatusId.PendingHROfferReview ||
-     statusId == StatusId.offerdecline ||
-    statusId == StatusId.PendingHRReviewOfferanduploadEmployementContract
-
+    statusId == StatusId.offerdecline ||
+    statusId == StatusId.PendingHRReviewOfferanduploadEmployementContract||
+    statusId == StatusId.HROfferLetterProgress ||
+    statusId == StatusId.HREmploymentContractProgress
   )
     return 3;
     if (
