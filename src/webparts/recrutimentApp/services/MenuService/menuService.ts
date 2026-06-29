@@ -8,7 +8,7 @@ export default class MenuService implements IMenuService {
     async getSwitchUserMatrix(RoleID: number[]): Promise<MenuDetailsResponse> {
         try {
             let Conditions = "";
-            let FilterConditions: any[] = [];
+            const FilterConditions: any[] = [];
             // let RoleIDs = RoleID.map((role: any) => Number(role.ID))
             FilterConditions.push({
                 FilterKey: "RoleId",
@@ -21,7 +21,7 @@ export default class MenuService implements IMenuService {
                 FilterValue: "1"
             });
             Conditions = "and";
-            let getjsonUserRole = {
+            const getjsonUserRole = {
                 Listname: ListNames.HRMSRecruitmentSwitchUserMatrix,
                 Select: "*,Menu,Menu/Id,Menu/MenuId,Menu/ShortDescription,Menu/LongDescription,Menu/ParentId,Menu/MenuSorting,Menu/Path,Menu/MenuIcon,Menu/InActiveMenuIcon,IsActive,SubMenu/Id,SubMenu/MenuId,SubMenu/ShortDescription,SubMenu/LongDescription,SubMenu/ParentId,SubMenu/MenuSorting,SubMenu/Path,SubMenu/MenuIcon,SubMenu/InActiveMenuIcon,Tab/Id,Tab/TabName,Tab/Sorting,ButtonAction/Id,ButtonAction/ActionDescription,Status/Id,Status/StatusDescription",
                 Expand: "Menu,SubMenu,Tab,ButtonAction,Status",
@@ -85,7 +85,7 @@ export default class MenuService implements IMenuService {
     async getMenuDetails(MenuId: number): Promise<MenuDetailsResponse> {
         try {
             let Conditions = "";
-            let FilterConditions: any[] = [];
+            const FilterConditions: any[] = [];
             FilterConditions.push({
                 FilterKey: "RoleIdId",
                 Operator: "eq",
@@ -97,7 +97,7 @@ export default class MenuService implements IMenuService {
                 FilterValue: "1"
             });
             Conditions = "and";
-            let getjsonUserRole = {
+            const getjsonUserRole = {
                 Listname: ListNames.HRMSMenuAccess,
                 Select: "*,MenuId,MenuId/Id,MenuId/MenuId, MenuId/ShortDescription ,MenuId/LongDescription, MenuId/ParentId, MenuId/MenuSorting , MenuId/Path, MenuId/MenuIcon, MenuId/InActiveMenuIcon , IsActive",
                 Expand: "MenuId",
@@ -134,7 +134,7 @@ export default class MenuService implements IMenuService {
 
     async getUserAccess(userRoleId: number): Promise<UserAccessDetailsResponse> {
         try {
-            let getjsonUserRole = {
+            const getjsonUserRole = {
                 Listname: ListNames.HRMSMenuAccess,
                 Select: "*,MenuId/MenuId,RoleId/ID",
                 Expand: "MenuId,RoleId",
@@ -197,7 +197,7 @@ export default class MenuService implements IMenuService {
         // Recursively sort children
 
         for (const menuItem of menuItems) {
-            if (menuItem.Children != undefined && menuItem.Children?.length > 0) {
+            if (menuItem.Children !== undefined && menuItem.Children?.length > 0) {
                 menuItem.Children = this.sortMenuItems(menuItem.Children);
             }
 

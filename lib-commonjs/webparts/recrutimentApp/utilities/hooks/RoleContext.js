@@ -20,6 +20,7 @@ var initialState = {
     apiUrlsReady: false,
     isLoading: true,
     error: null,
+    apiUrlsError: null,
 };
 function providerReducer(state, action) {
     switch (action.type) {
@@ -33,6 +34,8 @@ function providerReducer(state, action) {
             return tslib_1.__assign(tslib_1.__assign({}, state), { error: action.error, isLoading: false });
         case "SET_LOADING":
             return tslib_1.__assign(tslib_1.__assign({}, state), { isLoading: action.isLoading });
+        case "SET_API_URLS_ERROR":
+            return tslib_1.__assign(tslib_1.__assign({}, state), { apiUrlsError: action.message });
         default:
             return state;
     }
@@ -69,7 +72,7 @@ function fetchAllRoles() {
 }
 function checkUserRoles(allRoles) {
     return tslib_1.__awaiter(this, void 0, void 0, function () {
-        var graphClient, groupIds, response_1, matchedRole, error_1;
+        var graphClient, groupIds, response, groupSet_1, matchedRole, error_1;
         return tslib_1.__generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -86,11 +89,17 @@ function checkUserRoles(allRoles) {
                             .api("/me/checkMemberGroups")
                             .post({ groupIds: groupIds })];
                 case 2:
-                    response_1 = _a.sent();
-                    matchedRole = allRoles.find(function (role) {
-                        return response_1.value.includes(role.ADGroupID);
-                    });
-                    return [2 /*return*/, matchedRole !== null && matchedRole !== void 0 ? matchedRole : null];
+                    response = _a.sent();
+                    groupSet_1 = new Set(response.value);
+                    matchedRole = allRoles
+                        .filter(function (role) { return groupSet_1.has(role.ADGroupID); })
+                        .map(function (res) { return ({
+                        ID: res.ID,
+                        RoleTitle: res.RoleTitle,
+                        ADGroupID: res.ADGroupID,
+                        EmailId: "",
+                    }); });
+                    return [2 /*return*/, matchedRole.length ? matchedRole : null];
                 case 3:
                     error_1 = _a.sent();
                     console.error("Group membership check failed:", error_1);
@@ -115,7 +124,10 @@ function initApiUrls() {
                     return [4 /*yield*/, CareerPortalAPI_1.InternalSign.InternalSignIn()];
                 case 2:
                     signIn = _a.sent();
-                    return [2 /*return*/, signIn.status === ApiConfig_1.ResponeStatus.SUCCESS];
+                    if (signIn.status !== ApiConfig_1.ResponeStatus.SUCCESS) {
+                        return [2 /*return*/, false];
+                    }
+                    return [2 /*return*/, true];
             }
         });
     });
@@ -127,7 +139,8 @@ function buildADGroupData(resolvedRoles, userName) {
         userRole: resolvedRoles.map(function (r) { return r.RoleTitle; }),
         ADGroupIDs: resolvedRoles.map(function (r) { return r.ADGroupID; }),
         RoleDetails: resolvedRoles,
-        EmailId: resolvedRoles.map(function (r) { return r.EmailId; })
+        EmailId: resolvedRoles.map(function (r) { return r.EmailId; }),
+        userDetails: resolvedRoles.map(function (r) { return r.userDetails; }),
     };
 }
 var NoRoleScreen = function () { return (React.createElement("div", { className: "flex min-h-screen relative bg-gray-100" },
@@ -148,26 +161,42 @@ var NoRoleScreen = function () { return (React.createElement("div", { className:
                 React.createElement("button", { type: "button", className: "inline-flex w-full justify-center rounded-md bg-amber-600 px-3 py-2 text-sm font-semibold  shadow-sm hover:bg-amber-500 sm:ml-3 sm:w-auto transition-colors ", onClick: function () { return window.location.reload(); } }, "Refresh Page")))))); };
 var ErrorScreen = function (_a) {
     var message = _a.message;
-    return (React.createElement("div", { className: "mainPage" },
-        React.createElement(Sidebar, null),
-        React.createElement("div", { style: {
-                width: "85%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                minHeight: "100%",
-                gap: "12px",
-            } },
-            React.createElement("h3", { className: "title", style: { color: "#c0392b" } }, "Initialisation Error"),
-            React.createElement("p", { style: { color: "#7f8c8d", fontSize: "14px", maxWidth: "480px", textAlign: "center" } }, message))));
+    return (React.createElement("div", { className: "flex min-h-screen relative bg-gray-100" },
+        React.createElement("div", { className: "fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm transition-opacity" }),
+        React.createElement("div", { className: "fixed inset-0 z-50 flex items-center justify-center p-4" },
+            React.createElement("div", { className: "relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border-t-4 border-amber-500" },
+                React.createElement("div", { className: "bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4" },
+                    React.createElement("div", { className: "sm:flex sm:items-start" },
+                        React.createElement("div", { className: "mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-amber-100 sm:mx-0 sm:h-12 sm:w-12" },
+                            React.createElement("svg", { className: "h-6 w-6 text-amber-600", fill: "none", viewBox: "0 0 24 24", strokeWidth: "1.5", stroke: "currentColor", "aria-hidden": "true" },
+                                React.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" }))),
+                        React.createElement("div", { className: "mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left" },
+                            React.createElement("h3", { className: "text-xl font-semibold leading-6 text-gray-900" }, "Error: Initialisation Error"),
+                            React.createElement("div", { className: "mt-3" },
+                                React.createElement("p", { className: "text-sm text-gray-500 mb-2" },
+                                    React.createElement("span", { className: "font-semibold text-gray-700" }, message)))))),
+                React.createElement("div", { className: "bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6" },
+                    React.createElement("button", { type: "button", className: "inline-flex w-full justify-center rounded-md bg-amber-600 px-3 py-2 text-sm font-semibold  shadow-sm hover:bg-amber-500 sm:ml-3 sm:w-auto transition-colors ", onClick: function () { return window.location.reload(); } }, "Refresh Page"))))));
 };
-var Sidebar = function () { return (React.createElement("div", { className: "w-[15%]" },
-    React.createElement("div", { className: "overflow-hidden flex flex-col justify-between rounded-r-[30px] transition-all duration-1000 bg-[#597b98] h-[90vh] w-full" },
-        React.createElement("div", null,
-            React.createElement("div", { className: "flex justify-center items-center h-[68px] p-[3px] bg-white rounded-tr-[14px] rounded-br-[14px] w-[90%] my-[20px] transition-all duration-1000" },
-                React.createElement("img", { className: "h-[76px] w-[84%] object-contain", src: require("../../assets/komoa-logo-name.png"), alt: "HRMS Logo" }))),
-        React.createElement("div", { className: "text-white text-[15px] self-center mb-[10px]" }, "Version-1.3")))); };
+var ServerDownError = function (_a) {
+    var message = _a.message;
+    return (React.createElement("div", { className: "flex min-h-screen relative bg-gray-100" },
+        React.createElement("div", { className: "fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm transition-opacity" }),
+        React.createElement("div", { className: "fixed inset-0 z-50 flex items-center justify-center p-4" },
+            React.createElement("div", { className: "relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border-t-4 border-amber-500" },
+                React.createElement("div", { className: "bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4" },
+                    React.createElement("div", { className: "sm:flex sm:items-start" },
+                        React.createElement("div", { className: "mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-amber-100 sm:mx-0 sm:h-12 sm:w-12" },
+                            React.createElement("svg", { className: "h-6 w-6 text-amber-600", fill: "none", viewBox: "0 0 24 24", strokeWidth: "1.5", stroke: "currentColor", "aria-hidden": "true" },
+                                React.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" }))),
+                        React.createElement("div", { className: "mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left" },
+                            React.createElement("h3", { className: "text-xl font-semibold leading-6 text-gray-900" }, "Error: Server Is Not Responding"),
+                            React.createElement("div", { className: "mt-3" },
+                                React.createElement("p", { className: "text-sm text-gray-500 mb-2" },
+                                    React.createElement("span", { className: "font-semibold text-gray-700" }, message)))))),
+                React.createElement("div", { className: "bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6" },
+                    React.createElement("button", { type: "button", className: "inline-flex w-full justify-center rounded-md bg-amber-600 px-3 py-2 text-sm font-semibold  shadow-sm hover:bg-amber-500 sm:ml-3 sm:w-auto transition-colors ", onClick: function () { return window.location.reload(); } }, "Refresh Page"))))));
+};
 var RoleProvider = function (_a) {
     var children = _a.children;
     var _b = (0, react_1.useReducer)(providerReducer, initialState), state = _b[0], dispatch = _b[1];
@@ -180,12 +209,28 @@ var RoleProvider = function (_a) {
                     dispatch({ type: "SET_LOADING", isLoading: true });
                     return [4 /*yield*/, Promise.allSettled([
                             initApiUrls()
-                                .then(function () { return dispatch({ type: "SET_API_URLS_READY" }); })
+                                .then(function (success) {
+                                if (success) {
+                                    dispatch({ type: "SET_API_URLS_READY" });
+                                }
+                                else {
+                                    dispatch({
+                                        type: "SET_API_URLS_ERROR",
+                                        message: "Server is currently unavailable. Please try again later.",
+                                    });
+                                }
+                            })
                                 .catch(function (err) {
                                 console.error("[RoleProvider] API URL init failed:", err);
+                                dispatch({
+                                    type: "SET_API_URLS_ERROR",
+                                    message: err instanceof Error
+                                        ? err.message
+                                        : "Server is currently unavailable. Please try again later.",
+                                });
                             }),
                             (function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-                                var _a, displayName, email, allRoles, resolved, resolvedRoles;
+                                var _a, displayName, email, allRoles, resolved, Filter, userDetails, resolvedRoles;
                                 return tslib_1.__generator(this, function (_b) {
                                     switch (_b.label) {
                                         case 0: return [4 /*yield*/, fetchCurrentUser()];
@@ -198,13 +243,23 @@ var RoleProvider = function (_a) {
                                             return [4 /*yield*/, checkUserRoles(allRoles)];
                                         case 3:
                                             resolved = _b.sent();
-                                            resolvedRoles = resolved ? [{
-                                                    ID: resolved.ID,
-                                                    RoleTitle: resolved.RoleTitle,
-                                                    ADGroupID: resolved.ADGroupID,
-                                                    EmailId: email,
-                                                }] : [];
-                                            dispatch({ type: "SET_RESOLVED_ROLES", roles: resolvedRoles });
+                                            Filter = [
+                                                { FilterKey: "EmailId", Operator: "eq", FilterValue: email },
+                                            ];
+                                            return [4 /*yield*/, ServiceExport_1.masterService.GetUserDetails(Filter, "and")];
+                                        case 4:
+                                            userDetails = _b.sent();
+                                            resolvedRoles = resolved === null || resolved === void 0 ? void 0 : resolved.map(function (res) { return ({
+                                                ID: res.ID,
+                                                RoleTitle: res.RoleTitle,
+                                                ADGroupID: res.ADGroupID,
+                                                EmailId: email,
+                                                userDetails: userDetails.data,
+                                            }); });
+                                            dispatch({
+                                                type: "SET_RESOLVED_ROLES",
+                                                roles: resolvedRoles && resolvedRoles.length > 0 ? resolvedRoles : [],
+                                            });
                                             return [2 /*return*/];
                                     }
                                 });
@@ -248,9 +303,11 @@ var RoleProvider = function (_a) {
         state.userName !== "" &&
         state.resolvedRoles.length === 0;
     return (React.createElement(RoleContext.Provider, { value: contextValue },
-        React.createElement(CustomLoader_1.default, { isLoading: state.isLoading }, state.error ? (React.createElement(ErrorScreen, { message: state.error.message })) : isFullyReady ? (React.createElement(React.Suspense, { fallback: React.createElement(CustomLoader_1.default, { isLoading: true }) }, children)) : hasNoRoles ? (React.createElement(NoRoleScreen, null)) : (
-        // Still initialising — CustomLoader handles the visual
-        null))));
+        React.createElement(CustomLoader_1.default, { isLoading: state.isLoading }, state.apiUrlsError ? ( // ← check this first
+        // <ServerDownError message={state.apiUrlsError} />
+        React.createElement(React.Fragment, null)) : state.error ? (
+        // <ErrorScreen message={state.error.message} />
+        React.createElement(React.Fragment, null)) : isFullyReady ? (React.createElement(React.Suspense, { fallback: React.createElement(CustomLoader_1.default, { isLoading: true }) }, children)) : hasNoRoles ? (React.createElement(NoRoleScreen, null)) : null)));
 };
 exports.RoleProvider = RoleProvider;
 var useRoleContext = function () {

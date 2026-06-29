@@ -1,4 +1,3 @@
-
 import "@pnp/sp/webs";
 import "@pnp/sp/lists";
 import "@pnp/sp/items";
@@ -11,8 +10,26 @@ import "@pnp/sp/site-groups/web";
 import "@pnp/sp/batching";
 
 import { spfi, SPFI, SPFx } from "@pnp/sp";
-import { BatchQuery, IAddDocLibFiles, IAddList, IAttachDelete, ICAMLFilter, ICAMLQuery, IDetailsListGroup, IDocFiles, IFilter, IGetDocLibFiles, IItemAddResult, IItemUpdateResult, IListItems, IListItemUsingId, ISPAttachment, ISPList, ISPListChoiceField, IUpdateList } from "./Ispservice";
-
+import {
+  BatchQuery,
+  IAddDocLibFiles,
+  IAddList,
+  IAttachDelete,
+  ICAMLFilter,
+  ICAMLQuery,
+  IDetailsListGroup,
+  IDocFiles,
+  IFilter,
+  IGetDocLibFiles,
+  IItemAddResult,
+  IItemUpdateResult,
+  IListItems,
+  IListItemUsingId,
+  ISPAttachment,
+  ISPList,
+  ISPListChoiceField,
+  IUpdateList,
+} from "./Ispservice";
 
 let _sp: SPFI;
 
@@ -23,12 +40,11 @@ export const initSP = (context: any): void => {
 export const getSP = (): SPFI => {
   if (!_sp) {
     throw new Error(
-      "PnPjs has not been initialised. Call initSP(this.context) inside onInit()."
+      "PnPjs has not been initialised. Call initSP(this.context) inside onInit().",
     );
   }
   return _sp;
 };
-
 
 const _formatInputs = (data: IListItems): Required<IListItems> => ({
   Listname: data.Listname,
@@ -43,49 +59,126 @@ const _formatInputs = (data: IListItems): Required<IListItems> => ({
   FilterCondition: data.FilterCondition ?? "and",
 });
 
-const _buildODataFilter = (filters: IFilter[], filterCondition: string): string => {
+const _buildODataFilter = (
+  filters: IFilter[],
+  filterCondition: string,
+): string => {
   if (!filters?.length) return "";
 
   const MAX_BATCH = 100;
   const parts: string[] = [];
 
   for (const f of filters) {
+    // NEW LOGIC FOR OrFilters
+    if (f.OrFilters && Array.isArray(f.OrFilters)) {
+      const orParts = f.OrFilters.map((group: IFilter[]) => {
+        const andParts: string[] = [];
+
+        for (const item of group) {
+          if (!item.FilterKey) continue;
+
+          const op = item.Operator.toLowerCase();
+          const values = Array.isArray(item.FilterValue)
+            ? item.FilterValue
+            : [item.FilterValue];
+
+          if (["eq", "ne", "gt", "lt", "ge", "le"].includes(op)) {
+            andParts.push(
+              `${item.FilterKey} ${item.Operator} '${item.FilterValue}'`,
+            );
+          } else if (op === "substringof") {
+            andParts.push(
+              `substringof('${item.FilterValue}','${item.FilterKey}')`,
+            );
+          } else if (op === "in") {
+            const chunks: string[] = [];
+
+            for (let j = 0; j < values.length; j += MAX_BATCH) {
+              const slice = values.slice(j, j + MAX_BATCH);
+
+              chunks.push(
+                "(" +
+                  slice.map((v) => `${item.FilterKey} eq '${v}'`).join(" or ") +
+                  ")",
+              );
+            }
+
+            andParts.push(chunks.join(" or "));
+          } else if (op === "nin") {
+            const chunks: string[] = [];
+
+            for (let j = 0; j < values.length; j += MAX_BATCH) {
+              const slice = values.slice(j, j + MAX_BATCH);
+
+              chunks.push(
+                "(" +
+                  slice
+                    .map((v) => `${item.FilterKey} ne '${v}'`)
+                    .join(" and ") +
+                  ")",
+              );
+            }
+
+            andParts.push(chunks.join(" and "));
+          }
+        }
+
+        return `(${andParts.join(" and ")})`;
+      });
+
+      parts.push(`(${orParts.join(" or ")})`);
+
+      continue;
+    }
+
+    // EXISTING LOGIC
     if (!f.FilterKey) continue;
 
     const op = f.Operator.toLowerCase();
-    const values = Array.isArray(f.FilterValue) ? f.FilterValue : [f.FilterValue];
+
+    const values = Array.isArray(f.FilterValue)
+      ? f.FilterValue
+      : [f.FilterValue];
 
     if (["eq", "ne", "gt", "lt", "ge", "le"].includes(op)) {
       parts.push(`${f.FilterKey} ${f.Operator} '${f.FilterValue}'`);
-
-    } else if (op === "substringof" || op === "contains") {
-      // Some SharePoint setups block function operators, so use exact match as the safest fallback.
-      // If your value is stored as plain string in the field, this still works.
-      parts.push(`${f.FilterKey} eq '${f.FilterValue}'`);
-
+    } else if (op === "substringof") {
+      parts.push(`substringof('${f.FilterValue}','${f.FilterKey}')`);
     } else if (op === "in") {
       const chunks: string[] = [];
+
       for (let j = 0; j < values.length; j += MAX_BATCH) {
         const slice = values.slice(j, j + MAX_BATCH);
-        chunks.push("(" + slice.map((v) => `${f.FilterKey} eq '${v}'`).join(" or ") + ")");
-      }
-      parts.push(chunks.join(" or "));
 
+        chunks.push(
+          "(" + slice.map((v) => `${f.FilterKey} eq '${v}'`).join(" or ") + ")",
+        );
+      }
+
+      parts.push(chunks.join(" or "));
     } else if (op === "nin") {
       const chunks: string[] = [];
+
       for (let j = 0; j < values.length; j += MAX_BATCH) {
         const slice = values.slice(j, j + MAX_BATCH);
-        chunks.push("(" + slice.map((v) => `${f.FilterKey} ne '${v}'`).join(" and ") + ")");
+
+        chunks.push(
+          "(" +
+            slice.map((v) => `${f.FilterKey} ne '${v}'`).join(" and ") +
+            ")",
+        );
       }
+
       parts.push(chunks.join(" and "));
     }
   }
 
-  const glue = (filterCondition === "and" || filterCondition === "or")
-    ? ` ${filterCondition} `
-    : " and ";
+  const glue =
+    filterCondition === "and" || filterCondition === "or"
+      ? ` ${filterCondition} `
+      : " and ";
 
-  return parts.join(glue);
+  return parts.length > 1 ? `(${parts.join(glue)})` : parts[0];
 };
 
 // ─── Users ────────────────────────────────────────────────────────────────────
@@ -108,8 +201,8 @@ const getAllUsers = async (): Promise<unknown[]> => {
  * console.log(result.data.ID);
  */
 const SPAddItem = async (params: IAddList): Promise<IItemAddResult> => {
-  return getSP().web.lists
-    .getByTitle(params.Listname)
+  return getSP()
+    .web.lists.getByTitle(params.Listname)
     .items.add(params.RequestJSON);
 };
 
@@ -123,9 +216,11 @@ const SPAddItem = async (params: IAddList): Promise<IItemAddResult> => {
  *   RequestJSON: { Status: "Closed" }
  * });
  */
-const SPUpdateItem = async (params: IUpdateList): Promise<IItemUpdateResult> => {
-  return getSP().web.lists
-    .getByTitle(params.Listname)
+const SPUpdateItem = async (
+  params: IUpdateList,
+): Promise<IItemUpdateResult> => {
+  return getSP()
+    .web.lists.getByTitle(params.Listname)
     .items.getById(params.ID)
     .update(params.RequestJSON);
 };
@@ -138,8 +233,8 @@ const SPUpdateItem = async (params: IUpdateList): Promise<IItemUpdateResult> => 
  */
 const SPDeleteItem = async (params: ISPList): Promise<boolean> => {
   try {
-    await getSP().web.lists
-      .getByTitle(params.Listname)
+    await getSP()
+      .web.lists.getByTitle(params.Listname)
       .items.getById(params.ID)
       .delete();
     return true;
@@ -167,7 +262,6 @@ const SPDeleteItem = async (params: ISPList): Promise<boolean> => {
  * });
  */
 const SPReadItems = async (params: IListItems): Promise<unknown[]> => {
-
   const p = _formatInputs(params);
   const filterStr = _buildODataFilter(p.Filter, p.FilterCondition);
 
@@ -177,16 +271,14 @@ const SPReadItems = async (params: IListItems): Promise<unknown[]> => {
   let hasMore = true;
 
   while (hasMore) {
-
-    const items = await getSP().web.lists
-      .getByTitle(p.Listname)
-      .items
-      .select(p.Select)
+    const items = await getSP()
+      .web.lists.getByTitle(p.Listname)
+      .items.select(p.Select)
       .filter(filterStr)
       .expand(p.Expand)
       .orderBy(p.Orderby, p.Orderbydecorasc)
-      .top(pageSize)
-      .skip(skip)();   // ✅ correct method
+      .top(pageSize)();
+    // .skip(skip)();
 
     allItems = [...allItems, ...items];
 
@@ -213,10 +305,12 @@ const SPGetItems = SPReadItems;
  *   Expand: "AssignedTo"
  * });
  */
-const SPReadItemUsingId = async (params: IListItemUsingId): Promise<unknown> => {
+const SPReadItemUsingId = async (
+  params: IListItemUsingId,
+): Promise<unknown> => {
   // In PnPjs v3 a chainable IItem is callable — invoking () executes the request.
-  return getSP().web.lists
-    .getByTitle(params.Listname)
+  return getSP()
+    .web.lists.getByTitle(params.Listname)
     .items.getById(params.SelectedId)
     .select(params.Select ?? "*")
     .expand(params.Expand ?? "")();
@@ -239,8 +333,8 @@ const SPReadItemUsingId = async (params: IListItemUsingId): Promise<unknown> => 
  * });
  */
 const SPAddAttachments = async (params: ISPAttachment): Promise<void> => {
-  const item = getSP().web.lists
-    .getByTitle(params.ListName)
+  const item = getSP()
+    .web.lists.getByTitle(params.ListName)
     .items.getById(params.ListID);
 
   for (const att of params.Attachments) {
@@ -250,16 +344,16 @@ const SPAddAttachments = async (params: ISPAttachment): Promise<void> => {
 
 /** Returns attachment metadata for a list item. */
 const SPGetAttachments = async (params: ISPList): Promise<unknown[]> => {
-  return getSP().web.lists
-    .getByTitle(params.Listname)
+  return getSP()
+    .web.lists.getByTitle(params.Listname)
     .items.getById(params.ID)
     .attachmentFiles();
 };
 
 /** Deletes a single named attachment from a list item. */
 const SPDeleteAttachments = async (params: IAttachDelete): Promise<void> => {
-  await getSP().web.lists
-    .getByTitle(params.ListName)
+  await getSP()
+    .web.lists.getByTitle(params.ListName)
     .items.getById(params.ListID)
     .attachmentFiles.getByName(params.AttachmentName)
     .delete();
@@ -275,8 +369,8 @@ const SPDeleteAttachments = async (params: IAttachDelete): Promise<void> => {
  * console.log((fieldInfo as any).Choices);
  */
 const SPGetChoices = async (params: ISPListChoiceField): Promise<unknown> => {
-  return getSP().web.lists
-    .getByTitle(params.Listname)
+  return getSP()
+    .web.lists.getByTitle(params.Listname)
     .fields.getByInternalNameOrTitle(params.FieldName)();
 };
 
@@ -298,25 +392,37 @@ const SPGetChoices = async (params: ISPListChoiceField): Promise<unknown> => {
  *   responseData: [{ Title: "Task A" }, { Title: "Task B" }]
  * });
  */
-const batchGet = async (queries: BatchQuery[]): Promise<Record<string, number>> => {
+const batchGet = async (
+  queries: BatchQuery[],
+): Promise<Record<number, any>> => {
   try {
     const [batchedSP, execute] = getSP().batched();
 
-    const results: Record<string, number> = {};
+    const results: Record<number, any> = {};
     const promises = queries.map((q: any) => {
+      const flatFilters = (q.Filter && q.Filter.flat()) || [];
+      const filterStr = _buildODataFilter(
+        flatFilters,
+        q.FilterCondition ?? "and",
+      );
 
-      const filterStr = _buildODataFilter(q.Filter, "and");
-
-      let request = batchedSP.web.lists
+      const request = batchedSP.web.lists
         .getByTitle(q.ListName)
-        .items
-        .filter(filterStr)
-        .select(...q.select);
+        .items.filter(filterStr)
+        .select(...(q.select ?? ["*"]))
+        .expand(q.expand ?? [])
+        .top(5000);
 
-      return request().then(r => {
-        results[q.StateValue] = r.length;
+      return request().then((r) => {
+        console.log(r, "data");
+
+        if (!results[q.StateValue]) {
+          results[q.StateValue] = [];
+        }
+
+        // concat results
+        results[q.StateValue] = [...results[q.StateValue], ...r];
       });
-
     });
 
     await execute();
@@ -337,7 +443,6 @@ const batchInsert = async (params: {
     const [batchedSP, execute] = getSP().batched();
     const list = batchedSP.web.lists.getByTitle(params.ListName);
 
-    // Queue operations — must happen BEFORE execute().
     const promises = params.responseData.map((data) => list.items.add(data));
 
     await execute();
@@ -367,7 +472,7 @@ const batchUpdate = async (params: {
     const list = batchedSP.web.lists.getByTitle(params.ListName);
 
     const promises = params.responseData.map(({ ID, ...rest }) =>
-      list.items.getById(ID).update(rest)
+      list.items.getById(ID).update(rest),
     );
 
     await execute();
@@ -397,7 +502,7 @@ const batchDelete = async (params: {
     const list = batchedSP.web.lists.getByTitle(params.ListName);
 
     const promises = params.responseData.map(({ ID }) =>
-      list.items.getById(ID).delete()
+      list.items.getById(ID).delete(),
     );
 
     await execute();
@@ -438,7 +543,7 @@ const ArraySpiltInOperator = <T>(ids: T[], chunkSize: number): T[][] => {
  * const groups = SPService.SPDetailsListGroupItems({ Data: items, Column: "Department" });
  */
 const SPDetailsListGroupItems = (
-  params: IDetailsListGroup
+  params: IDetailsListGroup,
 ): { key: unknown; name: unknown; startIndex: number; count: number }[] => {
   // Explicitly type as Record<string,unknown> so `row[params.Column]` compiles.
   type IndexedRow = Record<string, unknown> & { __idx: number };
@@ -476,17 +581,35 @@ const SPDetailsListGroupItems = (
  *   FilePath: "/sites/HR/Shared Documents/Policies"
  * });
  */
-const getDocLibFiles = async (params: IGetDocLibFiles): Promise<IDocFiles[]> => {
+const getDocLibFiles = async (
+  params: IGetDocLibFiles,
+): Promise<IDocFiles[]> => {
   try {
-    const files = await getSP().web
-      .getFolderByServerRelativePath(params.FilePath)
+    const files = await getSP()
+      .web.getFolderByServerRelativePath(params.FilePath)
       .files();
 
-    return files.map((f) => ({
-      name: f.Name,
-      content: f.ServerRelativeUrl,
-      type: "Inlist" as const,
-    }));
+    return files.map((f, index) => {
+      const bytes = Number(f.Length) || 0;
+      const mb = (bytes / (1024 * 1024)).toFixed(2);
+      const dateStr = f.TimeCreated
+        ? new Date(f.TimeCreated).toLocaleDateString()
+        : "Unknown";
+      const modified = f.TimeLastModified
+        ? new Date(f.TimeLastModified).toLocaleString()
+        : "Unknown";
+      return {
+        name: f.Name,
+        content: f.ServerRelativeUrl,
+        type: "Inlist" as const,
+        id: f.UniqueId ?? `file-${index}`,
+        fileSizeBytes: bytes,
+        fileSizeMB: `${mb} MB`,
+        uploadedDate: dateStr,
+        downloadUrl: f.ServerRelativeUrl ?? "#",
+        timeModified: modified,
+      };
+    });
   } catch (err) {
     console.error("getDocLibFiles error:", err);
     return [];
@@ -510,7 +633,9 @@ const getDocLibFiles = async (params: IGetDocLibFiles): Promise<IDocFiles[]> => 
  *   ]
  * });
  */
-const addDocLibFiles = async (params: IAddDocLibFiles): Promise<IDocFiles[]> => {
+const addDocLibFiles = async (
+  params: IAddDocLibFiles,
+): Promise<IDocFiles[]> => {
   const sp = getSP();
   let currentPath = params.FilePath;
 
@@ -545,7 +670,9 @@ const addDocLibFiles = async (params: IAddDocLibFiles): Promise<IDocFiles[]> => 
     try {
       await sp.web
         .getFolderByServerRelativePath(currentPath)
-        .files.addUsingPath(file.name, file.content as string, { Overwrite: true });
+        .files.addUsingPath(file.name, file.content as string, {
+          Overwrite: true,
+        });
     } catch (err) {
       console.error("addDocLibFiles — upload error:", err);
     }
@@ -575,7 +702,9 @@ const _buildCAMLCondition = (filter: ICAMLFilter): string => {
   const lookupAttr = isLookup ? ' LookupId="TRUE"' : "";
 
   if (values.length > 1) {
-    const valueNodes = values.map((v) => `<Value Type="${fieldType}">${v}</Value>`).join("");
+    const valueNodes = values
+      .map((v) => `<Value Type="${fieldType}">${v}</Value>`)
+      .join("");
     return `<In><FieldRef Name="${filter.field}"${lookupAttr} /><Values>${valueNodes}</Values></In>`;
   }
 
@@ -599,7 +728,9 @@ const _buildCAMLCondition = (filter: ICAMLFilter): string => {
  *   FilterCondition: "AND"
  * });
  */
-const SPReadItemsCamelQuery = async (rawParams: ICAMLQuery): Promise<unknown[]> => {
+const SPReadItemsCamelQuery = async (
+  rawParams: ICAMLQuery,
+): Promise<unknown[]> => {
   const params = _formatCamlQuery(rawParams);
 
   const conditions = params.Filter.map(_buildCAMLCondition).filter(Boolean);
@@ -635,7 +766,7 @@ const SPReadItemsCamelQuery = async (rawParams: ICAMLQuery): Promise<unknown[]> 
   const expandFields = params.Expand.join(",");
   if (expandFields && camlResults.length) {
     const idFilter = camlResults
-      .map((i) => `ID eq ${i["ID"] as number}`)
+      .map((i) => `ID eq ${i.ID as number}`)
       .join(" or ");
 
     return sp.web.lists
@@ -648,7 +779,7 @@ const SPReadItemsCamelQuery = async (rawParams: ICAMLQuery): Promise<unknown[]> 
   return camlResults;
 };
 
-// ─── Default Export ───────────────────────────────────────────────────────────
+// ── SPServices.ts ─────────────────────────────────────────────────────────
 
 const SPServices = {
   initSP,

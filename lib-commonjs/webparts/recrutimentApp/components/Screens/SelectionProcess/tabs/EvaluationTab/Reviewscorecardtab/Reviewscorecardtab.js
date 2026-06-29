@@ -1,11 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
-// ReviewScorecard/Reviewscorecardtab.tsx
-// ── Thin orchestrator ──────────────────────────────────────────────────────────
-// All state lives in useReviewScorecard hook.
-// This file only wires props — no business logic here.
-// ──────────────────────────────────────────────────────────────────────────────
 var React = tslib_1.__importStar(require("react"));
 var framer_motion_1 = require("framer-motion");
 var Reviewscorecardtab_module_scss_1 = tslib_1.__importDefault(require("./Reviewscorecardtab.module.scss"));
@@ -21,7 +16,6 @@ var ReviewScorecardTab = function (_a) {
     var effectiveEmail = CurrentUserEmailId || ((_b = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.EmailId) === null || _b === void 0 ? void 0 : _b[0]) || "";
     var currentRoleId = ((_c = ADGroupData === null || ADGroupData === void 0 ? void 0 : ADGroupData.roleIDs) === null || _c === void 0 ? void 0 : _c[0]) || 0;
     var hook = (0, UseReviewScorecard_1.useReviewScorecard)(effectiveEmail);
-    // Notify parent when modal opens/closes (hides sidebar)
     React.useEffect(function () {
         onFormStateChange === null || onFormStateChange === void 0 ? void 0 : onFormStateChange(!!hook.reviewingCandidate);
     }, [hook.reviewingCandidate, onFormStateChange]);

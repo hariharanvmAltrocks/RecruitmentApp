@@ -1,0 +1,159 @@
+
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s, opacity 0.2s, box-shadow 0.2s;
+  outline: none;
+  text-decoration: none;
+
+  &--sm {
+    padding: 6px 14px;
+    font-size: 0.8rem;
+  }
+
+  &--md {
+    padding: 9px 20px;
+    font-size: 0.875rem;
+  }
+
+  &--lg {
+    padding: 12px 26px;
+    font-size: 1rem;
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  &__label {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &--default {
+    background: transparent;
+    color: #4b5563;
+    border: none;
+
+    &:hover:not(.btn--disabled) {
+      color: #111827;
+      background: #f3f4f6;
+      border-radius: 10px;
+    }
+  }
+
+  &--primary {
+    background: #e2e5ea;        
+    color: #374151;
+    border-radius: 10px;
+    font-weight: 600;
+
+    &:hover:not(.btn--disabled) {
+      background: #d1d5db;
+      color: #111827;
+    }
+
+    // when action is available (canApprove = true), switch to blue
+    &.is-active {
+      background: #2563eb;
+      color: #ffffff;
+
+      &:hover {
+        background: #1d4ed8;
+      }
+    }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: #6b7280;
+    border: 1.5px solid #d1d5db;
+    border-radius: 10px;
+
+    &:hover:not(.btn--disabled) {
+      border-color: #9ca3af;
+      color: #111827;
+    }
+  }
+
+  // ── variant: danger ──────────────────────────────────────────────────
+  &--danger {
+    background: #fee2e2;
+    color: #dc2626;
+    border-radius: 10px;
+
+    &:hover:not(.btn--disabled) {
+      background: #fecaca;
+    }
+  }
+
+  // ── disabled state ───────────────────────────────────────────────────
+  &--disabled,
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  // ── loading state ────────────────────────────────────────────────────
+  &--loading {
+    position: relative;
+    pointer-events: none;
+
+    .btn__label {
+      opacity: 0.6;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: btn-spin 0.7s linear infinite;
+    }
+  }
+}
+
+// ── icon-only circular button (History button) ───────────────────────────────
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  flex-shrink: 0;
+
+  &:hover {
+    background: #f3f4f6;
+    color: #111827;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+@keyframes btn-spin {
+  to { transform: rotate(360deg); }
+}

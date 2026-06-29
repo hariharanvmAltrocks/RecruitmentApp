@@ -1,5 +1,4 @@
-// ReviewScorecard/components/QuestionnaireTab.tsx
-// Shows interview questions + individual panel member's scores + scorecard bars
+
 import * as React from "react";
 import styles from "../Reviewscorecardtab.module.scss";
 
@@ -43,12 +42,14 @@ const QuestionnaireTab: React.FC<Props> = ({
       </div>
     </div>
 
-    {/* Questions */}
-    {fetchingQuestions ? (
-      <div className={styles.mNoData}>Loading questions…</div>
-    ) : questions.length === 0 ? (
-      <div className={styles.mNoData}>No questions found for this job.</div>
-    ) : questions.map((q: any, idx: number) => {
+    {/* Combined scrollable content for both sections */}
+    <div style={{ maxHeight: "500px", overflowY: "auto" }}>
+      {/* Questions */}
+      {fetchingQuestions ? (
+        <div className={styles.mNoData}>Loading questions…</div>
+      ) : questions.length === 0 ? (
+        <div className={styles.mNoData}>No questions found for this job.</div>
+      ) : questions.map((q: any, idx: number) => {
       const qScore = activeQJson[idx]
         ? Number(Object.values(activeQJson[idx])[0] || 0) : 0;
       const rl = ratingLabel(qScore);
@@ -132,6 +133,7 @@ const QuestionnaireTab: React.FC<Props> = ({
         </div>
       </div>
     )}
+    </div>
   </div>
 );
 

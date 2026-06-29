@@ -1,4 +1,4 @@
-// ReviewScorecard/components/JobListTable.tsx
+
 import * as React from "react";
 import { RotateCcw, ArrowUpDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -65,9 +65,9 @@ const JobListTable: React.FC<Props> = ({
               <tr key={job.id} onClick={() => onSelectJob(job)}>
                 <td className={styles.jobCode}>{job.jobCode}</td>
                 <td className={styles.jobTitle}>{job.jobTitle}</td>
-                <td className={styles.textMuted}>{job.businessUnitCode || "—"}</td>
-                <td className={styles.textMuted}>{job.positionRequest || "—"}</td>
-                <td className={styles.textMuted}>{job.nationality || "—"}</td>
+                <td className={styles.textMuted}>{job.businessUnitCode || ""}</td>
+                <td className={styles.textMuted}>{job.positionRequest || ""}</td>
+                <td className={styles.textMuted}>{job.nationality || ""}</td>
                 <td>
                   <div className={styles.statusBadge}>
                     <div className={styles.dot} />

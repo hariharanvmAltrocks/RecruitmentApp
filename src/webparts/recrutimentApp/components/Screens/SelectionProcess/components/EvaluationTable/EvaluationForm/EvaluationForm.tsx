@@ -34,6 +34,22 @@ export interface EvaluationFormProps {
   currentRoleIDs: number[];
 }
 
+const LeftField: React.FC<{
+  icon?: string;
+  label: string;
+  value: string;
+}> = ({ icon, label, value }) => (
+  <div className={styles.leftFieldWrapper}>
+    <div className={styles.leftFieldLabelRow}>
+      {icon && <span className={styles.leftFieldIcon}>{icon}</span>}
+      <span className={styles.leftFieldLabel}>{label}</span>
+    </div>
+    <div className={styles.leftFieldValueBox}>
+      {value || ""}
+    </div>
+  </div>
+);
+
 const EvaluationForm: React.FC<EvaluationFormProps> = ({
   candidateId,
   recruitmentId,
@@ -53,10 +69,9 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({
   const [panelMembers,       setPanelMembers]       = React.useState<string[]>([]);
   const [currentUserPanelId, setCurrentUserPanelId] = React.useState<number | null>(null);
 
-  const [reviewerName, setReviewerName] = React.useState("");
   const [currentUserGuid, setCurrentUserGuid] = React.useState<string | null>(null);
-  const [jobTitleEn, setJobTitleEn] = React.useState("—");
-  const [jobTitleFr, setJobTitleFr] = React.useState("—");
+  const [jobTitleEn, setJobTitleEn] = React.useState("");
+  const [jobTitleFr, setJobTitleFr] = React.useState("");
 
   const [questionnaire, setQuestionnaire] = React.useState<
     { id: number; question: string; answer: string; rating: number | null }[]
@@ -67,7 +82,7 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({
     Object.fromEntries(SCORECARD_FIELDS.map(f => [f.key, null])) as Record<ScorecardKey, number | null>
   );
   const [scorecardErrors, setScorecardErrors] = React.useState<Record<string, boolean>>({});
-
+  const [reviewerName, setReviewerName] = React.useState<string | undefined>();
   const [recommendation,  setRecommendation]  = React.useState<"consider" | "doNotConsider" | null>(null);
   const [recError,        setRecError]        = React.useState(false);
   const [overallFeedback, setOverallFeedback] = React.useState("");
@@ -76,7 +91,7 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({
   const [ackError,        setAckError]        = React.useState(false);
 
   React.useEffect(() => {
-    (async () => {
+    void (async () => {
       setLoading(true);
       const result = await evaluationService.getEvaluationFormData(
         candidateId, recruitmentId, currentUserEmail
@@ -86,9 +101,9 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({
         setPanelMembers(result.panelMembers ?? []);
         setCurrentUserPanelId(result.currentUserPanelId);
         
-        setReviewerName(result.reviewerName || userName || "—");
-        setJobTitleEn(result.jobTitleEn || "—");
-        setJobTitleFr(result.jobTitleFr || "—");
+        setReviewerName(result.reviewerName || userName || undefined);
+        setJobTitleEn(result.jobTitleEn || "");
+        setJobTitleFr(result.jobTitleFr || "");
         setCurrentUserGuid(result.currentUserGuid ?? null);
 
         setQuestionnaire(
@@ -96,7 +111,7 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({
             id:       q.ID ?? q.id ?? idx,
             question: q.Question ?? q.question ?? q.header ?? q.Title ?? "",
             answer:   q.ExpectedResponse ?? q.expectedResponse ?? q.Answer ?? q.answer ?? "",
-            rating:   null,
+            rating:   null as number | null,
           }))
         );
       }
@@ -204,14 +219,14 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({
 
   const candidateName = candidateData
     ? `${candidateData.FristName ?? ""}${candidateData.MiddleName ? " " + candidateData.MiddleName : ""} ${candidateData.LastName ?? ""}`.trim()
-    : "—";
+    : "";
 
   const userInitial = (reviewerName || "J").charAt(0).toUpperCase();
 
   const interviewDateDisplay =
     candidateData?.InterviewDateLevel2 || candidateData?.InterviewDate
       ? (candidateData.InterviewDateLevel2 || candidateData.InterviewDate).split("T")[0]
-      : "—";
+      : "";
 
   const alertClass = [
     styles.alert,
@@ -246,27 +261,27 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({
 
           <div style={{ paddingTop: 8 }}>
             <LeftField icon="👤" label="APPLICANT NAME"  value={candidateName} />
-            <LeftField icon="🌐" label="NATIONALITY"     value={candidateData?.Nationality ?? "—"} />
-            <LeftField icon="👤" label="GENDER"          value={candidateData?.Gender ?? "—"} />
-            <LeftField icon="📄" label="QUALIFICATION"   value={candidateData?.Qualification ?? "—"} />
+            <LeftField icon="🌐" label="NATIONALITY"     value={candidateData?.Nationality ?? ""} />
+            <LeftField icon="👤" label="GENDER"          value={candidateData?.Gender ?? ""} />
+            <LeftField icon="📄" label="QUALIFICATION"   value={candidateData?.Qualification ?? ""} />
 
             <div className={styles.twoCol}>
-              <LeftField icon="📈" label="MINING EXP."  value={candidateData?.TotalYearOfExperiance ?? "—"} />
-              <LeftField icon="📈" label="RELATED EXP." value={candidateData?.ReleventExperience ?? "—"} />
+              <LeftField icon="📈" label="MINING EXP."  value={candidateData?.TotalYearOfExperiance ?? ""} />
+              <LeftField icon="📈" label="RELATED EXP." value={candidateData?.ReleventExperience ?? ""  } />
             </div>
             <div className={styles.twoCol}>
               <LeftField icon="📅" label="INTERVIEW DATE" value={interviewDateDisplay} />
-              <LeftField icon="🔲" label="LEVELS"         value={interviewLevel ?? "—"} />
+              <LeftField icon="🔲" label="LEVELS"         value={interviewLevel ?? ""} />
             </div>
             <div className={styles.twoCol}>
-              <LeftField icon="📈" label="GRADE"     value={grade || "—"} />
-              <LeftField icon="⚠️" label="CONFLICTS" value={candidateData?.ConflictsOfInterest ?? "—"} />
+              <LeftField icon="📈" label="GRADE"     value={grade || ""} />
+              <LeftField icon="⚠️" label="CONFLICTS" value={candidateData?.ConflictsOfInterest ?? ""} />
             </div>
 
             <LeftField
               icon="♿"
               label="DISABILITY"
-              value={candidateData?.disability ?? candidateData?.Disability ?? "—"}
+              value={candidateData?.disability ?? candidateData?.Disability ??"" }
             />
 
             {panelMembers.length > 0 && (
@@ -524,20 +539,6 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({
     </div>
   );
 };
-const LeftField: React.FC<{
-  icon?: string;
-  label: string;
-  value: string;
-}> = ({ icon, label, value }) => (
-  <div className={styles.leftFieldWrapper}>
-    <div className={styles.leftFieldLabelRow}>
-      {icon && <span className={styles.leftFieldIcon}>{icon}</span>}
-      <span className={styles.leftFieldLabel}>{label}</span>
-    </div>
-    <div className={styles.leftFieldValueBox}>
-      {value || "—"}
-    </div>
-  </div>
-);
+
 
 export default EvaluationForm;

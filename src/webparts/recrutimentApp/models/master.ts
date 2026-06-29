@@ -151,6 +151,7 @@ export type TabDetails = {
     StatusDetails: StatusDetails[];
     TabName: string;
     Value: string;
+    MatricID: number;
 }
 export type StatusDetails = {
     Action: string[];
@@ -159,8 +160,48 @@ export type StatusDetails = {
     StatusId: string;
 }
 export type CareerPortalLink = {
-  CareerPortalLink: string;
-  MeetingUrl: string;
-  MeetingCode: string;
+    CareerPortalLink: string;
+    MeetingUrl: string;
+    MeetingCode: string;
 }
 
+export type ITabdetails = {
+    ID: number;
+    LabeName: string;
+}
+
+export type IUserDetails = {
+    ID: number;
+    EmailId: string;
+    DepartmentId: number;
+    CurrentPosition: string;
+    DepartmentName: string;
+    FirstName: string;
+    MiddleName: string;
+    LastName: string;
+    JopTitleEnglish: string;
+    JopTitleFrench: string;
+    DRCGrade: string;
+    PatersonGrade: string;
+    BusinessAddress: string;
+    HomeAddress: string;
+    ContactNumber: string;
+    BusinessUnitCode: string;
+    BusinessUnitID: number;
+    Nationality: string;
+}
+
+export type IJobGrade = {
+    GradeLevel: string;
+}
+
+export type IUniqueJobCode = {
+    JobCode: string;
+}
+
+export type IBUCodeEmailIDs = {
+    LineManagerEmail: string;
+    HODEmail: string;
+    HREmail: string;
+    EXCOEmail: string;
+}

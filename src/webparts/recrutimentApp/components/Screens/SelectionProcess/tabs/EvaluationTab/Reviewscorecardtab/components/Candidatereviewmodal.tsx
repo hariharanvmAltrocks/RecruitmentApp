@@ -1,6 +1,4 @@
-// ReviewScorecard/components/CandidateReviewModal.tsx
-// Thin orchestrator — all data comes from useReviewScorecard hook via props.
-// Heavy UI logic is in sub-components (QuestionnaireTab, ScoreTable, HODDecisionPanel).
+
 import * as React from "react";
 import { motion } from "framer-motion";
 import { X, Users, ChevronRight, HelpCircle, BarChart2 } from "lucide-react";
@@ -31,7 +29,7 @@ interface Props {
   scoreData:    any[];
   scoreLoading: boolean;
 
-  // Comments
+
   showComments:    boolean;
   level1Comments:  CommentEntry[];
   level2Comments:  CommentEntry[];
@@ -39,7 +37,7 @@ interface Props {
   onViewComments:  () => void;
   onCloseComments: () => void;
 
-  // HOD Decision (all from hook)
+
   hodDecision:          HODDecision;
   decisionComment:      string;
   confirmed:            boolean;
@@ -68,7 +66,7 @@ type ScorecardTabKey = "questions" | "qEval" | "overall";
 const MField = ({ label, value }: { label: string; value: string }) => (
   <div className={styles.mfField}>
     <span className={styles.mfLabel}>{label}</span>
-    <div className={styles.mfValue}>{value || "—"}</div>
+    <div className={styles.mfValue}>{value ||"" }</div>
   </div>
 );
 
@@ -87,7 +85,7 @@ const CandidateReviewModal: React.FC<Props> = ({
   const [activePanelTab,     setActivePanelTab]     = React.useState(0);
   const [activeScorecardTab, setActiveScorecardTab] = React.useState<ScorecardTabKey>("questions");
 
-  // Panel members: prefer reviewData, fallback to scoreData names
+
   const panelMembers: string[] = React.useMemo(() => {
     const fromReview = reviewData?.panelMembers || [];
     if (fromReview.length > 0) return fromReview;
@@ -96,14 +94,14 @@ const CandidateReviewModal: React.FC<Props> = ({
 
   const activeScore: any = scoreData[activePanelTab] || null;
 
-  // Parse QuestionJson for active panel
+
   const activeQJson: any[] = React.useMemo(() => {
     if (!activeScore?.QuestionJson) return [];
     if (Array.isArray(activeScore.QuestionJson)) return activeScore.QuestionJson;
     try { return JSON.parse(activeScore.QuestionJson); } catch { return []; }
   }, [activeScore]);
 
-  // Question evaluation table rows (all panels)
+
   const questionTableRows = React.useMemo(() => {
     const qMap: Record<string, any> = {};
     scoreData.forEach((s: any, i: number) => {
@@ -118,7 +116,7 @@ const CandidateReviewModal: React.FC<Props> = ({
     return Object.values(qMap);
   }, [scoreData]);
 
-  // Overall evaluation table rows (all panels + total)
+
   const overallTableRows = React.useMemo(() => {
     const rows = SCORE_CRITERIA.map(({ field, label }) => {
       const row: any = { criteria: label, total: 0 };
@@ -143,14 +141,14 @@ const CandidateReviewModal: React.FC<Props> = ({
   }, [scoreData]);
 
   const raw = reviewData?.candidateData || {};
-  const formattedDate = (raw.InterviewDate || raw.InterviewDateLevel2 || candidate.interviewDate || "").split("T")[0] || "—";
+  const formattedDate = (raw.InterviewDate || raw.InterviewDateLevel2 || candidate.interviewDate || "").split("T")[0] || "";
   const nationLabel = (() => {
     const n = (candidate.nationality || "").toLowerCase();
     if (n.includes("expat"))   return "EXPAT";
     if (n.includes("national") || n.includes("congolese") || n.includes("local")) return "LOCAL";
-    return (candidate.nationality || "").toUpperCase() || "—";
+    return (candidate.nationality || "").toUpperCase() || "";
   })();
-  const userInitial = (reviewData?.reviewerName || "H").charAt(0).toUpperCase();
+  const userInitial = (reviewData?.reviewerName || "").charAt(0).toUpperCase();
 
   const SCORECARD_TABS = [
     { key: "questions" as const, icon: HelpCircle, label: "Interview Questionnaires" },
@@ -171,16 +169,16 @@ const CandidateReviewModal: React.FC<Props> = ({
             <div className={styles.mBreadcrumb}>
               <span>CANDIDATE SELECTION</span>
               <ChevronRight size={11} />
-              <span className={styles.mBreadcrumbActive}>EVALUATION PREVIEW</span>
+              <span className={styles.mBreadcrumbActive}>Review Score card  PREVIEW</span>
             </div>
             <div className={styles.mTitleRow}>
               <div className={styles.mIconBox}><Users size={20} /></div>
               <div>
-                <h2 className={styles.mTitle}>Candidate Evaluation Review</h2>
+                <h2 className={styles.mTitle}>Candidate Review Score card </h2>
                 <p className={styles.mSubtitle}>
-                  <span className={styles.mJobCode}>{job?.jobCode || "—"}</span>
+                  <span className={styles.mJobCode}>{job?.jobCode || ""}</span>
                   <span className={styles.mDot}>›</span>
-                  <span>{reviewData?.candidateData?.PositionTitle || candidate.positionTitle || "—"}</span>
+                  <span>{reviewData?.candidateData?.PositionTitle || candidate.positionTitle ||"" }</span>
                 </p>
               </div>
             </div>
@@ -188,7 +186,7 @@ const CandidateReviewModal: React.FC<Props> = ({
           <div className={styles.mHeaderRight}>
             <div className={styles.mGpa}>
               <span className={styles.mGpaLabel}>OVERALL GPA</span>
-              <span className={styles.mGpaValue}>{candidate.gpa || "N/A"}</span>
+              <span className={styles.mGpaValue}>{candidate.gpa || ""}</span>
             </div>
             <button onClick={onClose} className={styles.mCloseBtn}><X size={20} /></button>
           </div>
@@ -199,42 +197,46 @@ const CandidateReviewModal: React.FC<Props> = ({
 
           {/* ── LEFT PANEL (candidate info) ── */}
           <aside className={styles.mLeft}>
-            <div className={styles.mCandidateName}>{candidate.fullName}</div>
-            <div className={styles.mCandidateType}>{nationLabel}</div>
-            {reviewLoading ? (
-              <div className={styles.mNoData}>Loading info…</div>
-            ) : (
-              <div className={styles.mFieldList}>
-                <MField label="NATIONALITY"   value={raw.Nationality  || candidate.nationality || "—"} />
-                <MField label="GENDER"        value={raw.Gender       || candidate.gender      || "—"} />
-                <MField label="QUALIFICATION" value={raw.Qualification || "—"} />
+            <div className={styles.mLeftCard}>
+              <div className={styles.mCandidateName}>{candidate.fullName}</div>
+              <div className={styles.mCandidateType}>{nationLabel}</div>
+              {reviewLoading ? (
+                <div className={styles.mNoData}>Loading info…</div>
+              ) : (
+                <div className={styles.mFieldList}>
+                <MField label="NATIONALITY"   value={raw.Nationality  || candidate.nationality || ""} />
+                <MField label="GENDER"        value={raw.Gender       || candidate.gender      || ""} />
+                <MField label="QUALIFICATION" value={raw.Qualification || ""} />
                 <div className={styles.mTwoCol}>
-                  <MField label="MINING EXP."  value={raw.TotalYearOfExperiance || "—"} />
-                  <MField label="RELATED EXP." value={raw.ReleventExperience    || "—"} />
+                  <MField label="MINING EXP."  value={raw.TotalYearOfExperiance || ""} />
+                  <MField label="RELATED EXP." value={raw.ReleventExperience    || ""} />
                 </div>
                 <div className={styles.mTwoCol}>
                   <MField label="INTERVIEW DATE" value={formattedDate} />
-                  <MField label="LEVELS"         value={candidate.interviewLevel || "—"} />
+                  <MField label="LEVELS"         value={candidate.interviewLevel || ""} />
                 </div>
                 <div className={styles.mTwoCol}>
-                  <MField label="GRADE"     value={candidate.grade || "—"} />
-                  <MField label="CONFLICTS" value={raw.ConflictsOfInterest || "—"} />
+                  <MField label="GRADE"     value={candidate.grade || ""} />
+                  <MField label="CONFLICTS" value={raw.ConflictsOfInterest || ""} />
                 </div>
-                <MField label="DISABILITY" value={raw.Disability || raw.disability || "—"} />
+                <MField label="DISABILITY" value={raw.Disability || raw.disability || ""} />
               </div>
             )}
 
             {panelMembers.length > 0 && (
               <div className={styles.mPanelSection}>
                 <div className={styles.mPanelHeader}><Users size={12} color="#2563eb" /><span>INTERVIEW PANEL</span></div>
-                {panelMembers.map((name, i) => (
-                  <div key={i} className={styles.mPanelRow}>
-                    <span className={styles.mPanelBadge}>{i + 1}</span>
-                    <span className={styles.mPanelName}>{name}</span>
-                  </div>
-                ))}
+                <div className={styles.mPanelList}>
+                  {panelMembers.map((name, i) => (
+                    <div key={i} className={styles.mPanelRow}>
+                      <span className={styles.mPanelBadge}>{i + 1}</span>
+                      <span className={styles.mPanelName}>{name}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
+            </div>
           </aside>
 
           {/* ── RIGHT PANEL ── */}
@@ -313,8 +315,8 @@ const CandidateReviewModal: React.FC<Props> = ({
               submitError={submitError}
               successMessage={successMessage}
               reviewerName={reviewData?.reviewerName || ""}
-              jobTitleEn={reviewData?.jobTitleEn    || "—"}
-              jobTitleFr={reviewData?.jobTitleFr    || "—"}
+              jobTitleEn={reviewData?.jobTitleEn    || ""}
+              jobTitleFr={reviewData?.jobTitleFr    || ""}
               userInitial={userInitial}
               errors={errors}
               shouldShowPositionId={shouldShowPositionId}

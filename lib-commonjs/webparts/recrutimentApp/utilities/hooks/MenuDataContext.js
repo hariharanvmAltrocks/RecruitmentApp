@@ -45,7 +45,7 @@ var MenuDataProvider = function (_a) {
         });
     }); };
     (0, react_1.useEffect)(function () {
-        fetchMenu();
+        void fetchMenu();
     }, [roleIDs]);
     return (react_1.default.createElement(MenuDataContext.Provider, { value: { menuData: menuData, isLoading: isLoading, error: error, refreshMenu: fetchMenu } }, children));
 };

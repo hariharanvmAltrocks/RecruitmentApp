@@ -1,0 +1,16 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/core-build/copy-static-assets.schema.json",
+  "includeExtensions": [
+    "html",
+    "json",
+    "css",
+    "png",
+    "jpg",
+    "svg",
+    "gif",
+    "eot",
+    "woff2",
+    "woff",
+    "ttf"
+  ]
+}

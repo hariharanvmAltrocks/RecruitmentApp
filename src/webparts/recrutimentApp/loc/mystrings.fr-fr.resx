@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="PropertyPaneDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="BasicGroupName" xml:space="preserve">
+    <value>Nom du groupe</value>
+  </data>
+  <data name="DescriptionFieldLabel" xml:space="preserve">
+    <value>Champ de description</value>
+  </data>
+
+  <data name="AppLocalEnvironmentSharePoint" xml:space="preserve">
+    <value>L'application s'exécute dans votre environnement local en tant que composant Web SharePoint</value>
+  </data>
+  <data name="AppLocalEnvironmentTeams" xml:space="preserve">
+    <value>L'application s'exécute dans votre environnement local en tant qu'application Microsoft Teams</value>
+  </data>
+  <data name="AppLocalEnvironmentOffice" xml:space="preserve">
+    <value>L'application s'exécute dans votre environnement local sur office.com</value>
+  </data>
+  <data name="AppLocalEnvironmentOutlook" xml:space="preserve">
+    <value>L'application s'exécute dans votre environnement local dans Outlook</value>
+  </data>
+  <data name="AppSharePointEnvironment" xml:space="preserve">
+    <value>L'application s'exécute sur une page SharePoint</value>
+  </data>
+  <data name="AppTeamsTabEnvironment" xml:space="preserve">
+    <value>L'application s'exécute dans Microsoft Teams</value>
+  </data>
+  <data name="AppOfficeEnvironment" xml:space="preserve">
+    <value>L'application s'exécute sur office.com</value>
+  </data>
+  <data name="AppOutlookEnvironment" xml:space="preserve">
+    <value>L'application s'exécute dans Outlook</value>
+  </data>
+  <data name="UnknownEnvironment" xml:space="preserve">
+    <value>L'application s'exécute dans un environnement inconnu</value>
+  </data>
+
+  <data name="AppTitle" xml:space="preserve">
+    <value>Processus de recrutement</value>
+  </data>
+  <data name="HomeLabel" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
+  <data name="LogoutLabel" xml:space="preserve">
+    <value>Se deconnecter</value>
+  </data>
+  <data name="LoadingLabel" xml:space="preserve">
+    <value>Chargement...</value>
+  </data>
+</root>

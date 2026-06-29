@@ -1,13 +1,5 @@
-// ============================================================
-// components/Screens/SelectionProcess/RecruitmentProcess.tsx
-//
-// Updated from new code structure.
-// "Review Scorecard" tab now renders ReviewScorecardTab instead
-// of the placeholder. All other tabs unchanged.
-// isFormOpen bubbles to MainLayout to hide sidebar + remove padding.
-// ============================================================
 
-import React, { useState } from "react";
+import * as React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./RecruitmentProcess.module.scss";
 import EvaluationTab from "./tabs/EvaluationTab/EvaluationTab";
@@ -25,7 +17,7 @@ type TabId = typeof TABS[number]["id"];
 
 interface RecruitmentProcessProps {
   EmployeeList?:     any[];
-  userDetails?:      any[];   // from props (Sage list user info)
+  userDetails?:      any[];  
   onFormStateChange?: (isOpen: boolean) => void;
   [key: string]: any;
 }
@@ -36,16 +28,14 @@ const RecruitmentProcess: React.FC<RecruitmentProcessProps> = (props) => {
   const { ADGroupData } = useRoleContext();
 
   const defaultTab = ((location.state as any)?.defaultTab as TabId) ?? "my-submission";
-  const [activeTab,  setActiveTab]  = useState<TabId>(defaultTab);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-
-  // Bubbles form-open state up to MainLayout (hides sidebar, removes padding)
+  const [activeTab,  setActiveTab]  = React.useState<TabId>(defaultTab);
+  const [isFormOpen, setIsFormOpen] = React.useState(false);
   const handleFormStateChange = (isOpen: boolean) => {
     setIsFormOpen(isOpen);
     if (props.onFormStateChange) props.onFormStateChange(isOpen);
   };
 
-  const renderContent = () => {
+  const renderContent = (): JSX.Element => {
     switch (activeTab) {
 
       case "Evaluation":
@@ -55,8 +45,6 @@ const RecruitmentProcess: React.FC<RecruitmentProcessProps> = (props) => {
             onFormStateChange={handleFormStateChange}
           />
         );
-
-      // ── NEW: Review Scorecard tab ─────────────────────────
       case "review-scorecard":
         return (
           <ReviewScorecardTab

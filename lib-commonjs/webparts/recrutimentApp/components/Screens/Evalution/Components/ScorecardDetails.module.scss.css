@@ -1,0 +1,301 @@
+.sectionTitle {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.sectionAccentGreen {
+  width: 5px;
+  min-height: 44px;
+  background: #22c55e;
+  border-radius: 3px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.sectionH2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1e3a5f;
+  margin: 0 0 4px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.sectionSub {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.scaleLegend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.scaleLegendItem {
+  font-size: 11px;
+  color: #64748b;
+  white-space: nowrap;
+}
+.scaleLegendItem b {
+  color: #3b82f6;
+  font-weight: 700;
+  margin-right: 3px;
+}
+
+.scorecardCard {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.scorecardGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px 48px;
+  margin-bottom: 36px;
+}
+
+.scorecardField {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fieldLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.errLabel {
+  color: #ef4444;
+}
+
+.req {
+  color: #ef4444;
+}
+
+.fieldErrMsg {
+  color: #ef4444;
+  font-size: 11px;
+  font-weight: 600;
+  font-style: italic;
+  margin-left: 6px;
+}
+
+.btnRow {
+  display: flex;
+  gap: 10px;
+}
+
+.scoreBtn {
+  flex: 1;
+  height: 44px;
+  max-width: 60px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fdfdfd;
+  font-size: 15px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.scoreBtn:hover {
+  border-color: #93c5fd;
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.scoreBtnActive {
+  border-color: #3b82f6;
+  background: #eff6ff;
+  color: #2563eb;
+  box-shadow: 0 0 0 3px #dbeafe;
+}
+
+.evalFeedbackBox {
+  margin-bottom: 28px;
+  padding: 20px 24px;
+  background: #fffbeb;
+  border: 1.5px solid #fde68a;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recRow {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.recLeft {
+  flex: 1;
+  min-width: 260px;
+}
+
+.recRight {
+  flex: 1;
+  min-width: 300px;
+}
+
+.recBtnRow {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.recBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.recBtn:hover {
+  border-color: #cbd5e1;
+}
+
+.recBtnYes {
+  border-color: #22c55e;
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.recBtnNo {
+  border-color: #ef4444;
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.textArea {
+  width: 100%;
+  margin-top: 12px;
+  padding: 14px 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1e293b;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+.textArea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px #eff6ff;
+}
+
+.inputErr {
+  border-color: #ef4444;
+  background: #fffafa;
+}
+
+.ackBox {
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 24px 32px;
+}
+
+.ackBoxErr {
+  border-color: #ef4444;
+  background: #fffafa;
+}
+
+.ackRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.6;
+  cursor: pointer;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.ackChk {
+  margin-top: 4px;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: #3b82f6;
+}
+
+.ackText {
+  flex: 1;
+}
+
+.reviewerCard {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.reviewerAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e0e7ff;
+  color: #3730a3;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.reviewerInfo {
+  display: flex;
+  gap: 64px;
+  flex-wrap: wrap;
+}
+
+.reviewerCol {
+  display: flex;
+  flex-direction: column;
+}
+
+.reviewerMeta {
+  font-size: 10px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin: 0 0 4px;
+}
+
+.reviewerVal {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}

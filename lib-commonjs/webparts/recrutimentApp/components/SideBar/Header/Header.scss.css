@@ -1,7 +1,7 @@
 .header {
-  background: #fff;
+  background: #ffffff;
   border-bottom: 1px solid #e2e8f0;
-  padding: 16px 32px;
+  padding: 19px 14px;
   position: sticky;
   top: 0;
   z-index: 30;
@@ -21,16 +21,15 @@
 }
 
 .menu-btn {
-  display: none;
   padding: 8px;
-  color: #64748b;
+  color: #7c3aed;
   border-radius: 8px;
   border: none;
   background: transparent;
   cursor: pointer;
 }
 .menu-btn:hover {
-  background: #f1f5f9;
+  background: #f8fafc;
 }
 
 .breadcrumb-section {
@@ -41,7 +40,7 @@
 .page-title {
   font-size: 24px;
   font-weight: 700;
-  color: #1e293b;
+  color: #0f172a;
   line-height: 1.2;
 }
 
@@ -62,13 +61,13 @@
   transition: color 0.2s;
 }
 .breadcrumbs a:hover {
-  color: #2563eb;
+  color: #7c3aed;
 }
 .breadcrumbs a.active {
-  color: #2563eb;
+  color: #7c3aed;
 }
 .breadcrumbs .crumb-icon {
-  color: #cbd5f5;
+  color: #94a3b8;
 }
 
 .header-right {
@@ -86,7 +85,7 @@
   cursor: pointer;
 }
 .notification-btn:hover {
-  color: #2563eb;
+  color: #7c3aed;
 }
 
 .notification-dot {
@@ -97,7 +96,7 @@
   height: 8px;
   background: #ef4444;
   border-radius: 50%;
-  border: 2px solid white;
+  border: 2px solid #ffffff;
 }
 
 .divider {
@@ -141,11 +140,11 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #dbeafe;
+  background: #f8fafc;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2563eb;
+  color: #7c3aed;
   font-weight: 700;
   border: 2px solid white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -156,13 +155,13 @@
   position: absolute;
   bottom: -40px;
   right: 0;
-  background: white;
-  border: 1px solid #f1f5f9;
+  background: #0f172a;
+  border: 1px solid #0f172a;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   padding: 6px 12px;
   border-radius: 8px;
   font-size: 12px;
-  color: #dc2626;
+  color: #ffffff;
   display: flex;
   align-items: center;
   gap: 6px;

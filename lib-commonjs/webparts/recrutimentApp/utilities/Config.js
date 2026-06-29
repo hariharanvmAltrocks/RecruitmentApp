@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StatusId = exports.RoleID = exports.DocumentLibraray = exports.ListNames = void 0;
+exports.JobAdvertAlertMsg = exports.PendingCandidateAlertMsg = exports.ExternalUserType = exports.WorkflowAction = exports.DataFrom = exports.ApplicationStatusId = exports.workflowStatusApi = exports.StatusId = exports.RoleID = exports.DocumentLibraray = exports.ListNames = void 0;
 exports.ListNames = {
     HRMSSageList: "HRMS_Sage_List",
     HRMSGradeMaster: "HRMS_Grade_Master",
@@ -64,6 +64,7 @@ exports.ListNames = {
     //Resi
     HRMSRESIDRCDetails: "HRMSRESIDRCDetails",
     HRMSRESIExpatDetails: "HRMSRESIExpatDetails",
+    HRMSRecruitmentTabMaster: "HRMSRecruitmentTabMaster",
 };
 exports.DocumentLibraray = {
     InterviewPanelCandidateCV: "HRMSRecruitmentCandidateCV",
@@ -74,7 +75,7 @@ exports.DocumentLibraray = {
     RoleProfileMaster: "RoleProfileMaster",
     HRMSCareerPortalCandidateCV: "HRMSCareerPortalCandidateCV",
     HRMSCandidateDocs: "HRMSCandidateDocs",
-    DOTAfricaConsentForm: "DOTAfricaConsentForm"
+    DOTAfricaConsentForm: "DOTAfricaConsentForm",
 };
 exports.RoleID = {
     RecruitmentHRLead: 1,
@@ -84,30 +85,29 @@ exports.RoleID = {
     InterviewPanel: 5,
     RecruitmentAppExternalAgency: 6,
     RecruitmentLineManager: 7,
-    FinanceDepartment: 8
+    FinanceDepartment: 8,
 };
 exports.StatusId = {
-    PendingwithHRLeadtoAssignRecruitmentHR: 68,
-    PendingwithRecruitmentHRtouploadAdv: 2,
-    PendingwithHODtoreviewAdv: 26,
-    PendingwithHRLeadtouploadONEMsigneddoc: 118,
-    PendingwithRecruitmentHRtoAssignExternalAgency: 119,
+    HRLeadtoAssignRecruitmentHR: 68,
+    PendingAssignHR: 68,
+    PendingUploadAdvert: 2,
+    PendingReviewAdvertHOD: 26,
+    PendingUploadONEM: 118,
+    PendingAssignAgencies: 119,
     RecruitmentInProgress: 28,
     PendingwithHODtoselectthecandidate: 121,
     Selected: 122,
-    PendingInterviewQuestionwithLineManagerandHR: 39,
-    InterviewScheduled: 40,
+    InterviewQustionHRLM: 39,
     Completed: 13,
     ReadyforRecruitmentProcess: 155,
-    PendingwithHRandLMtocreateinterviewQuestion: 124,
+    PendingInterviewquestion: 124,
     PendingwithLineManagereviewAdv: 125,
-    PendingwithLMcreateDisqualificationQuestion: 126,
+    CareerPortalQuestions: 126,
     OnHoldbyHOD: 123,
     RejectedbyHOD: 15,
-    PendingwithHODtoselectthecandidateLevel2: 127,
     PendingwithRecruitmentHRtoassignLevel2InterviewPanel: 128,
     InterviewScheduledforLevel2: 129,
-    PendingwithHODtoAssignPositionID: 130,
+    PendingwithpositionIDAssignmentWithHOD: 130,
     Rescheduled: 159,
     // BackGorund Verification
     PendingHRBGVInitiation: 134,
@@ -140,21 +140,6 @@ exports.StatusId = {
     RESIProcessInitiatedforDRC: 42,
     RESIProcessInitiatedforExpatriate: 75,
     PendingHRReviewOfferanduploadEmployementContract: 169, //183,//169
-    // PendingHRReviewOfferWorkPermit: 136,
-    // WorkPermitHRReview: 137,
-    // WorkPermitAcknowledgedContractUploaded: 138,
-    // HRReviewContractSigned: 161,
-    // PendingHRPreOnboardingChecklist: 162,
-    // PendingWorkPermituploadedbycandidate: 164,
-    // PendingwithRecruitmentHRtoUploadtheOfferLetter: 132,
-    // PendingwithRecruitmentHRtoreviewthemedicaldocanduploadtheofferLetter: 142,
-    // PendingwithCandidatetoSignOfferLetter: 133,
-    // PendingwithRecruitmentHRtoReviewtheSignedOfferLetterandInitiateforOtherDocuments: 134,
-    // PendingwithCandidatetoUploadOtherDocuments: 135,
-    // PendingwithRecruitmentHRtoReviewtheCandidatePersonalDocs: 136,
-    // PendingwithRecruitmentHRtoUploadtheEmploymentContract: 137,
-    // PendingwithCandidatetoSignEmploymentContract: 138,
-    // pendingwithRecruitmentHRtoReviewtheEmploymentContractForm: 139,
     OnboardingProcessinitiatedforDRC: 23,
     OnboardingProcessinitiatedforExpat: 24,
     //Revert Post Recrutiment
@@ -169,6 +154,96 @@ exports.StatusId = {
     CandidateRejectedbyHODLevel2: 168,
     BackgroundCheckVerificationFailed: 180,
     RESProcessInitiated: 143,
-    FailedmedicalscreeningUnfit: 156
+    FailedmedicalscreeningUnfit: 156,
+    offerdecline: 27,
+    onboardingInProcess: 46,
+    Onboarded: 157,
+    InterviewScheduled: 40,
+    InterviewInProcess: 39,
+    InterviewLevel2InProgress: 197,
+    InterviewLevel1InProgress: 196,
+    pendingL2shorlistingwithHOD: 127,
 };
+exports.workflowStatusApi = {
+    HRPending: "WS01",
+    LineManagerL1Pending: "WS02",
+    LineManagerL2Pending: "WS03",
+    InterviewScheduled: "WS04",
+    pendingHODSelection: "WS05",
+    CandidateSelectedIPanel: "WS06",
+    CandidateOnHoldIPanel: "WS07",
+    CandidateRejectedIPanel: "WS08",
+    PendingRecruitmentHRscheduleInterview: "WS09",
+    HRRejected: "WS10",
+    HROnHold: "WS11",
+    LineManagerLevel1OnHold: "WS12",
+    LineManagerLevel2OnHold: "WS13",
+    LineManagerLevel1Rejected: "WS14",
+    LineManagerLevel2Rejected: "WS15",
+    // post Recrutiment
+    PendingCandidateUploadBGVDocs: "WS37",
+    UploadedtheCandidateBGVDocs: "WS38",
+    initiatetheBGVProcess: "WS39",
+    Offerdecline: "WS25",
+    SysytmeDecline: "WS26",
+    // KCSA
+    Pendingwithcandidatetosignofferletter: "WS16",
+    CandidateuploadedtheSignedOfferLetter: "WS17",
+    PendingwithCandidatetouploadotherDocuments: "WS18",
+    CandidateUploadedcandidatepersonalDocs: "WS19",
+    PendingwithCandidatetosignEmployementContract: "WS20",
+    UploadedthesignedEmployementcontractform: "WS21",
+    // Labor Hire
+    PendingHROfferInitiate: "WS27",
+    PendingLabourHireOfferRelease: "WS28",
+    PendingLabourhireWPPayment: "WS29",
+    PendingFinancePaymentReview: "WS30",
+    PendingLHWorkPermitProcess: "WS31",
+    PendingHREmploymentContractInit: "WS32",
+    PendingLHECRelease: "WS33",
+    OnboardingInprogress: "WS36",
+    RevertedBacktoCandidateforreuploadofferLetter: "WS22",
+    RevertedBacktoCandidateforreuploadDocs: "WS23",
+    RevertedBacktoCandidateforreuploadEmploymentContract: "WS24",
+    RevertedtheLabourHireOfferRelease: "WS34",
+    RevertedtheLabourHireEmployementContract: "WS35",
+    RevetedBacktoBGVDocuments: "WS40",
+};
+exports.ApplicationStatusId = {
+    ApplicationSubmitted: "AS01",
+    ApplicationInProgress: "AS02",
+    InterviewScheduled: "AS03",
+    InterviewCompleted: "AS04",
+    Selected: "AS05",
+    ApplicationRejected: "AS06",
+    ApplicationSuspended: "AS00",
+};
+exports.DataFrom = {
+    NewPosition: "New Position",
+    ExistingPosition: "Existing Position",
+    VacancyRecruitmentProcess: "Vacancy Requirement Process",
+};
+exports.WorkflowAction = {
+    Approved: 1,
+    Reject: 2,
+    Revert: 3,
+    Transfer: 4,
+    Submitted: 5,
+    Closed: 6,
+    ReSubmitted: 7,
+    OnHold: 10,
+    Decline: 12,
+};
+exports.ExternalUserType = {
+    Agent: "Agent",
+    LabourHire: "Labour Hire",
+};
+var PendingCandidateAlertMsg = function (pendingcount) {
+    return "\n          <div style=\"text-align: center;\">\n            <h3>\u26A0\uFE0F Pending Candidate Review.</h3>\n            <p>There is ".concat(pendingcount, " pending candidate currently on hold</p>\n            <p>Please review the candidate and take the necessary action to proceed with interview scheduling.</p>\n          </div>");
+};
+exports.PendingCandidateAlertMsg = PendingCandidateAlertMsg;
+var JobAdvertAlertMsg = function (Dateformat) {
+    return "\n              <div style=\"text-align: center;\">\n                <h3>\u26A0\uFE0F Action cannot be performed.</h3>\n                <p>This job advert is still active and open for recruitment.</p>\n                <p><strong>Expiry Date:</strong> ".concat(Dateformat, "</p>\n                <p>Please try again after it expires.</p>\n              </div>");
+};
+exports.JobAdvertAlertMsg = JobAdvertAlertMsg;
 //# sourceMappingURL=Config.js.map

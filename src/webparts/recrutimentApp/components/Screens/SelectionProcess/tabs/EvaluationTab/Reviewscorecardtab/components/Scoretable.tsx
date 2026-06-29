@@ -39,7 +39,7 @@ const ScoreTable: React.FC<Props> = ({
             {panelMembers.map((name, i) => (
               <th key={i}>
                 Interviewer {i + 1}<br />
-                <span className={styles.interviewerName}>({name || "—"})</span>
+                <span className={styles.interviewerName}>({name || ""})</span>
               </th>
             ))}
             {showTotal && <th>Total</th>}
@@ -54,7 +54,7 @@ const ScoreTable: React.FC<Props> = ({
             }>
               <td><strong>{row.criteria}</strong></td>
               {panelMembers.map((_, j) => (
-                <td key={j}>{row[`panel_${j}`] ?? "—"}</td>
+                <td key={j}>{row[`panel_${j}`] ?? ""}</td>
               ))}
               {showTotal && <td><strong>{row.total}</strong></td>}
             </tr>

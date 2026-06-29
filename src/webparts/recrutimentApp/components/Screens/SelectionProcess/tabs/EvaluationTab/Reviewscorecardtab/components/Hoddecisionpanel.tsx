@@ -1,6 +1,4 @@
-// ReviewScorecard/components/HODDecisionPanel.tsx
-// Edit mode: Yes/No/On Hold + comment + checkbox + position dropdown + submit
-// View mode: shows submitted decision read-only
+
 import * as React from "react";
 import { Zap, CheckCircle2, Activity, Eye, FileText, X } from "lucide-react";
 import styles from "../Reviewscorecardtab.module.scss";
@@ -45,7 +43,6 @@ const HODDecisionPanel: React.FC<Props> = ({
   const feedbackLabel = isLevel2Status ? "Feedback — Level 2" : "Feedback — Level 1";
 
   if (!canEdit) {
-    // ── View mode ─────────────────────────────────────────────────────────────
     return (
       <div className={styles.mDecisionCard} style={{ borderColor: "#e2e8f0", background: "#f8fafc" }}>
         <div className={styles.mDecisionHeader}>
@@ -94,7 +91,6 @@ const HODDecisionPanel: React.FC<Props> = ({
     );
   }
 
-  // ── Edit mode ──────────────────────────────────────────────────────────────
   return (
     <div className={styles.mDecisionCard}>
       <div className={styles.mDecisionHeader}>
@@ -187,17 +183,17 @@ const HODDecisionPanel: React.FC<Props> = ({
       {/* Reviewer card (signature block) */}
       <div className={styles.mFormGroup}>
         <div className={styles.reviewerCard}>
-          <div className={styles.reviewerAvatar}>{userInitial || "H"}</div>
+          <div className={styles.reviewerAvatar}>{userInitial || ""}</div>
           <div className={styles.reviewerInfo}>
             <div className={styles.reviewerCol}>
               <p className={styles.reviewerMeta}>REVIEWER NAME</p>
-              <p className={styles.reviewerVal}>{reviewerName || "—"}</p>
+              <p className={styles.reviewerVal}>{reviewerName || ""}</p>
             </div>
             <div className={styles.reviewerCol}>
               <p className={styles.reviewerMeta}>JOB TITLE (EN)</p>
-              <p className={styles.reviewerVal}>{jobTitleEn || "—"}</p>
+              <p className={styles.reviewerVal}>{jobTitleEn || ""}</p>
               <p className={styles.reviewerMeta} style={{ marginTop: 12 }}>JOB TITLE (FR)</p>
-              <p className={styles.reviewerVal}>{jobTitleFr || "—"}</p>
+              <p className={styles.reviewerVal}>{jobTitleFr || ""}</p>
             </div>
           </div>
         </div>

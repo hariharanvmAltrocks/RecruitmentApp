@@ -259,7 +259,7 @@ var MenuService = /** @class */ (function () {
         // Recursively sort children
         for (var _i = 0, menuItems_1 = menuItems; _i < menuItems_1.length; _i++) {
             var menuItem = menuItems_1[_i];
-            if (menuItem.Children != undefined && ((_a = menuItem.Children) === null || _a === void 0 ? void 0 : _a.length) > 0) {
+            if (menuItem.Children !== undefined && ((_a = menuItem.Children) === null || _a === void 0 ? void 0 : _a.length) > 0) {
                 menuItem.Children = this.sortMenuItems(menuItem.Children);
             }
         }

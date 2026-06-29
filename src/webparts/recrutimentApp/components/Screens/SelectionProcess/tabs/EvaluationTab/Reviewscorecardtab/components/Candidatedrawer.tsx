@@ -21,6 +21,23 @@ const getStatusClass = (statusId: number) => {
   return styles.statusPending;
 };
 
+const getInterviewLevelLabel = (interviewLevel?: string) => {
+  const lvl = (interviewLevel || "").trim();
+  const isLevel1 = /level\s*1/i.test(lvl);
+  const isLevel2 = /level\s*2/i.test(lvl);
+
+  if (isLevel2) {
+    // For level 2 candidates, display both level 1 and level 2
+    return "Level 1 of 1 & Level 2 of 2";
+  }
+
+  if (isLevel1) {
+    return "Level 1 of 1";
+  }
+
+  return lvl || " ";
+};
+
 const CandidateDrawer: React.FC<Props> = ({ job, candidates, loading, onClose, onReview }) => {
   const pendingCount = candidates.filter(c => EDITABLE_STATUS_IDS.includes(c.statusId)).length;
 
@@ -78,15 +95,15 @@ const CandidateDrawer: React.FC<Props> = ({ job, candidates, loading, onClose, o
                     <tr key={c.id}>
                       <td className={styles.textMuted} style={{ fontWeight: "bold" }}>{idx + 1}</td>
                       <td className={styles.jobTitle}>{c.fullName}</td>
-                      <td className={styles.textMuted}>{c.positionTitle || "—"}</td>
-                      <td className={styles.textMuted}>{c.interviewLevel || "—"}</td>
-                      <td className={styles.textMuted}>{c.grade || "—"}</td>
+                      <td className={styles.textMuted}>{c.positionTitle || ""}</td>
+                      <td className={styles.textMuted}>{getInterviewLevelLabel(c.interviewLevel)}</td>
+                      <td className={styles.textMuted}>{c.grade || ""}</td>
                       <td className={styles.center}>
-                        <div className={styles.gpaBadge}>{c.gpa || "—"}</div>
+                        <div className={styles.gpaBadge}>{c.gpa || ""}</div>
                       </td>
                       <td>
                         <span className={`${styles.statusBadgeText} ${getStatusClass(c.statusId)}`}>
-                          {c.status || "—"}
+                          {c.status || ""}
                         </span>
                       </td>
                       <td className={styles.center}>

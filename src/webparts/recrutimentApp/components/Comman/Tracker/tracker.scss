@@ -1,12 +1,15 @@
+@import "../../../styles/theme";
+@import "../../../styles/variables";
+
 .tracker {
-    background: #fff;
+    background: $dashboard-card-bg;
     border-radius: 16px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid $border-base;
     overflow: hidden;
 
     &__header {
         padding: 20px 24px;
-        border-bottom: 1px solid #f1f5f9;
+        border-bottom: 1px solid $border-light;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -14,90 +17,135 @@
         h2 {
             font-size: 18px;
             font-weight: 700;
-            color: #1e293b;
+            color: $text-primary;
         }
 
         p {
             font-size: 12px;
-            color: #94a3b8;
+            color: $text-subtle;
             margin-top: 4px;
         }
 
         .highlight {
-            color: #2563eb;
+            color: $primary-color;
+            font-weight: 600;
         }
 
         .view-btn {
             background: none;
             border: none;
-            color: #2563eb;
+            color: $primary-color;
             font-size: 13px;
+            font-weight: 500;
             cursor: pointer;
+            white-space: nowrap;
+
+            &:hover {
+                text-decoration: underline;
+            }
         }
     }
 
     &__table-wrapper {
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     &__table {
         width: 100%;
+        min-width: 700px;
         border-collapse: collapse;
 
         thead {
-            background: #f8fafc;
+            background: $secondary-color;
+            border-bottom: 1px solid $border-base;
 
             th {
                 font-size: 11px;
                 text-transform: uppercase;
-                color: #94a3b8;
-                padding: 14px 20px;
+                color: $text-muted;
+                padding: 15px 10px;
                 text-align: left;
+                // white-space: nowrap;
+                letter-spacing: 0.4px;
+
+                // Sort arrows only on non-empty, non-last columns
+                &:not(:empty):not(:last-child)::after {
+                    content: "↑↓";
+                    font-size: 10px;
+                    color: $text-subtle;
+                    margin-left: 6px;
+                    letter-spacing: 1px;
+                    opacity: 0.6;
+                }
+
+                &:last-child {
+                    text-align: right;
+                    width: 1%;
+                    white-space: nowrap;
+                }
             }
         }
 
         tbody {
             tr {
-                border-top: 1px solid #f1f5f9;
+                border-top: 1px solid $border-base;
                 cursor: pointer;
-                transition: background 0.2s;
+                transition: background 0.2s ease;
 
                 &:hover {
-                    background: #f8fafc;
+                    background: #f4f7fb;
                 }
 
                 td {
-                    padding: 16px 20px;
+                    padding: 18px 13px;
                     font-size: 14px;
-                    color: #475569;
+                    color: $text-secondary;
+                    vertical-align: middle;
                 }
 
-                .title {
+                // Job Code — bold + primary text color
+                td:nth-child(1) {
                     font-weight: 700;
-                    color: #1e293b;
+                    color: $text-primary;
+                    white-space: nowrap;
                 }
 
-                .jobcode {
-                    font-size: 11px;
-                    color: #94a3b8;
+                // Job Title — bold + primary text color
+                td:nth-child(2) {
+                    font-weight: 700;
+                    color: $text-primary;
                 }
 
-                .center {
+                // Status badge — inline pill, NOT full cell width
+                .status-badge {
+                    display: inline-block;
+                    background: #dde8f5;
+                    color: $primary-color;
+                    padding: 5px 14px;
+                    border-radius: 20px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    white-space: nowrap;
+                    line-height: 1.4;
                     text-align: center;
                 }
 
-                .status {
-                    background: #eff6ff;
-                    color: #2563eb;
-                    padding: 4px 10px;
-                    border-radius: 999px;
-                    font-size: 11px;
-                    font-weight: 600;
-                }
-
+                // Arrow / chevron column
                 .arrow {
                     text-align: right;
-                    color: #94a3b8;
+                    color: $text-muted;
+                    width: 1%;
+                    white-space: nowrap;
+
+                    svg {
+                        display: block;
+                        margin-left: auto;
+                      &:hover {
+                        color: blue;
+                        transform: scale(1,0);
+                      }
+                    }
                 }
             }
         }

@@ -58,7 +58,7 @@ import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import Header from "../SideBar/Header/Header";
 import SideNavigation from "../SideBar/Sidebar";
-import "./MainLayout.scss";
+import "./mainlayout.scss";
 import { useMenuData } from "../../utilities/hooks/MenuDataContext";
 import { userInfo } from "../../utilities/hooks/RoleContext";
 
@@ -79,23 +79,20 @@ const MainLayout: React.FC<MainLayoutProps> = ({
 }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const { menuData } = useMenuData();
-  const { userName } = userInfo();
 
   return (
     <div className="main-layout">
-      {!isFormOpen && (
-        <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
-          <SideNavigation
-            menuData={menuData}
-            activeMenuID={activeMenuID}
-            setactiveMenuID={setactiveMenuID}
-          />
-        </div>
-      )}
+      <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
+        <SideNavigation
+          menuData={menuData}
+          activeMenuID={activeMenuID}
+          setactiveMenuID={setactiveMenuID}
+          isCollapsed={isSidebarOpen}
+        />
+      </div>
 
       <div className="layout-content">
         <Header
-          user={userName}
           menuData={menuData}
           onToggleSidebar={() => setSidebarOpen(!isSidebarOpen)}
           onLogout={() => setSidebarOpen(false)}

@@ -41,7 +41,7 @@ export const MenuDataProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        fetchMenu();
+        void fetchMenu();
     }, [roleIDs]);
 
     return (

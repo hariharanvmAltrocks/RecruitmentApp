@@ -1,5 +1,3 @@
-// ReviewScorecard/types/index.ts
-// All shared types — single source of truth for the entire ReviewScorecard feature
 
 export interface ScorecardJobRow {
   id: string;

@@ -1,0 +1,627 @@
+// ─── Variables ────────────────────────────────────────────────────────────────
+$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+$primary:        #7c3aed;
+$primary-light:  #ede9fe;
+$primary-shadow: rgba(124, 58, 237, 0.2);
+
+$text-primary:   #0f172a;
+$text-secondary: #475569;
+$text-muted:     #94a3b8;
+
+$white:          #ffffff;
+$bg-page:        #f8fafc;
+$bg-surface:     #f1f5f9;
+
+$border-light:   #e2e8f0;
+$border-focus:   #7c3aed;
+
+$success:        #10b981;
+$success-light:  #d1fae5;
+$success-shadow: rgba(16, 185, 129, 0.25);
+
+$danger:         #ef4444;
+$danger-light:   #fee2e2;
+
+$radius-sm:      8px;
+$radius-md:      12px;
+$radius-lg:      20px;
+$radius-xl:      28px;
+$radius-xxl:     32px;
+$radius-full:    9999px;
+
+$shadow-sm:      0 1px 3px rgba(0,0,0,0.06);
+$shadow-primary: 0 8px 24px $primary-shadow;
+
+$transition:     all 0.2s ease;
+$space-sm:       8px;
+$space-md:       16px;
+$space-lg:       24px;
+$space-xl:       32px;
+
+// ─── Backdrop ─────────────────────────────────────────────────────────────────
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+}
+
+// ─── Drawer Panel ─────────────────────────────────────────────────────────────
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  max-width: 680px;
+  background: $bg-page;
+  box-shadow: -8px 0 48px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  z-index: 101;
+  font-family: $font-family;
+}
+
+// ─── Drawer Header ────────────────────────────────────────────────────────────
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-lg $space-xl;
+  background: $white;
+  border-bottom: 1px solid $border-light;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: $space-md;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+}
+
+.headerIcon {
+  width: 48px;
+  height: 48px;
+  background: $primary;
+  border-radius: $radius-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $white;
+  flex-shrink: 0;
+  box-shadow: $shadow-primary;
+}
+
+.headerText {
+  h3 {
+    font-size: 18px;
+    font-weight: 900;
+    color: $text-primary;
+    letter-spacing: -0.02em;
+    margin: 0 0 2px;
+  }
+
+  p {
+    font-size: 10px;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin: 0;
+  }
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: $space-lg;
+}
+
+// ─── Toggle ───────────────────────────────────────────────────────────────────
+.toggleGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.toggleGroupLabel {
+  font-size: 8px;
+  font-weight: 900;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.toggleBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.toggleLabel {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: color 0.2s ease;
+
+  &--active   { color: $success; }
+  &--inactive { color: $text-muted; }
+}
+
+.toggleTrack {
+  width: 44px;
+  height: 24px;
+  border-radius: $radius-full;
+  position: relative;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+
+  &--on {
+    background: $success;
+    box-shadow: 0 4px 12px $success-shadow;
+  }
+
+  &--off {
+    background: $bg-surface;
+  }
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 4px;
+  width: 16px;
+  height: 16px;
+  background: $white;
+  border-radius: $radius-full;
+  box-shadow: $shadow-sm;
+  transition: left 0.3s ease;
+
+  &--on  { left: 24px; }
+  &--off { left: 4px; }
+}
+
+// ─── Divider ──────────────────────────────────────────────────────────────────
+.headerDivider {
+  width: 1px;
+  height: 40px;
+  background: $border-light;
+}
+
+// ─── Close Button ─────────────────────────────────────────────────────────────
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid transparent;
+  border-radius: $radius-lg;
+  background: transparent;
+  color: $text-muted;
+  cursor: pointer;
+  transition: $transition;
+
+  &:hover {
+    background: $bg-surface;
+    border-color: $border-light;
+    color: $text-primary;
+  }
+}
+
+// ─── Drawer Body ──────────────────────────────────────────────────────────────
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: $space-xl;
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+  scrollbar-width: thin;
+  scrollbar-color: $border-light transparent;
+
+  &::-webkit-scrollbar       { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: $border-light; border-radius: 4px; }
+}
+
+// ─── Form Group ───────────────────────────────────────────────────────────────
+.group {
+  position: relative;
+  // CRITICAL: overflow must be visible so tooltip floats above the card border
+  overflow: visible;
+}
+
+.groupBadge {
+  position: absolute;
+  top: -12px;
+  left: $space-lg;
+  padding: 3px 12px;
+  background: $bg-page;
+  border: 1px solid $primary-light;
+  border-radius: $radius-full;
+  font-size: 9px;
+  font-weight: 900;
+  color: $primary;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  z-index: 1;
+  box-shadow: $shadow-sm;
+}
+
+.groupInner {
+  background: $white;
+  border: 1px solid $border-light;
+  border-radius: $radius-xxl;
+  padding: $space-xl $space-xl $space-lg;
+  padding-top: 36px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-lg;
+  // CRITICAL: must be visible so absolute-positioned tooltip is not clipped
+  overflow: visible;
+  // Align grid cells to top so password field (with strength bar) doesn't
+  // stretch the confirm-password cell
+  align-items: start;
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.colSpan2 {
+  grid-column: 1 / -1;
+}
+
+// ─── Form Field ───────────────────────────────────────────────────────────────
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  // Fields themselves must also not clip their children (tooltip)
+  overflow: visible;
+}
+
+.label {
+  font-size: 10px;
+  font-weight: 900;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding-left: 2px;
+}
+
+.errorText {
+  font-size: 10px;
+  font-weight: 700;
+  color: $danger;
+  padding-left: 2px;
+  margin-top: 2px;
+}
+
+// ─── Inputs ───────────────────────────────────────────────────────────────────
+%inputBase {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid $border-light;
+  border-radius: $radius-md;
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-primary;
+  background: $white;
+  outline: none;
+  transition: $transition;
+  font-family: $font-family;
+  box-sizing: border-box;
+
+  &::placeholder { color: $text-muted; font-weight: 500; }
+
+  &:hover:not(:read-only):not(:disabled) {
+    border-color: rgba($primary, 0.4);
+  }
+
+  &:focus:not(:read-only):not(:disabled) {
+    border-color: $border-focus;
+    box-shadow: 0 0 0 3px rgba($primary, 0.1);
+    background: $white;
+  }
+
+  &:read-only,
+  &:disabled {
+    background: $bg-surface;
+    color: $text-muted;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  &.hasError {
+    border-color: $danger;
+    box-shadow: 0 0 0 3px rgba($danger, 0.08);
+  }
+}
+
+.input         { @extend %inputBase; }
+.select        { @extend %inputBase; appearance: none; cursor: pointer; }
+.inputReadonly { @extend %inputBase; }
+
+// ─── Password Input Row ───────────────────────────────────────────────────────
+// This wrapper provides the relative positioning context so the eye button
+// can be absolutely placed inside the input — NOT below it.
+.passwordInputRow {
+  position: relative;   // ← stacking context for the absolute eye button
+  display: block;       // block so it respects full width naturally
+  width: 100%;
+}
+
+// The actual <input> element inside the password row
+.passwordInput {
+  @extend %inputBase;
+  // Right padding reserves space so typed text never slides under the eye icon
+  padding-right: 42px !important;
+  width: 100%;
+  display: block;
+}
+
+// Eye icon button — absolutely positioned inside .passwordInputRow
+.passwordToggleBtn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);  // vertically centred inside the input
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $text-muted;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: $radius-sm;
+  transition: color 0.15s ease;
+  z-index: 2;
+  line-height: 0;   // removes extra inline spacing
+
+  &:hover { color: $primary; }
+}
+
+// ─── Label row (label + info icon side by side) ───────────────────────────────
+// Wraps the <span class="label"> and <span class="tooltipAnchor"> so they sit
+// on the same baseline and the tooltip floats UP from the icon.
+.labelRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+// ─── Tooltip anchor (the ⓘ icon wrapper) ─────────────────────────────────────
+.tooltipAnchor {
+  position: relative;       // tooltip is positioned relative to this element
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  color: $text-muted;
+  // Give the anchor its own stacking context so z-index works correctly
+  z-index: 10;
+
+  // Show tooltip on hover OR keyboard focus
+  &:hover .tooltipBox,
+  &:focus-within .tooltipBox {
+    opacity: 1;
+    // reset the entry-state transform to the centred position
+    transform: translateX(-50%) translateY(0) scale(1);
+    pointer-events: auto;
+  }
+}
+
+.tooltipIcon {
+  width: 14px;
+  height: 14px;
+  color: $text-muted;
+  transition: color 0.15s ease;
+
+  .tooltipAnchor:hover & { color: $primary; }
+}
+
+// ─── Tooltip box ─────────────────────────────────────────────────────────────
+.tooltipBox {
+  // Float above the ⓘ icon
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  // Entry state: slightly lower and scaled down
+  transform: translateX(-50%) translateY(6px) scale(0.96);
+
+  width: 260px;
+  background: #1e293b;
+  border-radius: $radius-md;
+  padding: 14px 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+
+  // Hidden by default
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+
+  // CRITICAL: must be very high so it renders above every sibling card/input
+  z-index: 9999;
+
+  // Downward arrow caret
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #1e293b;
+  }
+}
+
+.tooltipTitle {
+  font-size: 10px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 10px;
+}
+
+.tooltipRuleList {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.tooltipRule {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+  transition: color 0.2s ease;
+  white-space: normal;   // allow text to wrap inside the 260 px box
+
+  &.pass {
+    color: #34d399;
+  }
+}
+
+.tooltipRuleDot {
+  width: 16px;
+  height: 16px;
+  border-radius: $radius-full;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+
+  .pass & {
+    background: #34d399;
+    border-color: #34d399;
+  }
+}
+
+// ─── Password strength bar ────────────────────────────────────────────────────
+.strengthBarWrap {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.strengthSegment {
+  flex: 1;
+  height: 3px;
+  border-radius: $radius-full;
+  background: $border-light;
+  transition: background 0.3s ease;
+
+  &.active0 { background: $danger; }
+  &.active1 { background: #f97316; }
+  &.active2 { background: #eab308; }
+  &.active3 { background: #84cc16; }
+  &.active4 { background: $success; }
+}
+
+// ─── Drawer Footer ────────────────────────────────────────────────────────────
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $space-md;
+  padding: $space-lg $space-xl;
+  background: $white;
+  border-top: 1px solid $border-light;
+  flex-shrink: 0;
+}
+
+.cancelBtn {
+  padding: 12px 24px;
+  background: $bg-surface;
+  border: 1px solid transparent;
+  border-radius: $radius-xl;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: $transition;
+  font-family: $font-family;
+
+  &:hover {
+    background: $border-light;
+    color: $text-primary;
+  }
+}
+
+.submitBtn {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: 14px 28px;
+  background: $primary;
+  border: none;
+  border-radius: $radius-xl;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: $white;
+  cursor: pointer;
+  box-shadow: $shadow-primary;
+  transition: $transition;
+  font-family: $font-family;
+
+  &:hover:not(:disabled) {
+    transform: scale(1.03);
+    box-shadow: 0 12px 28px $primary-shadow;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba($white, 0.3);
+  border-top-color: $white;
+  border-radius: $radius-full;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.select:disabled {
+  background-color: white !important;
+  color: black;           // optional (keeps text readable)
+  opacity: 1;             // remove faded look
+  cursor: not-allowed;    // optional UX
+}
+
+/* OR if you prefer custom class */
+.disabledWhite {
+  background-color: white !important;
+  color: black;
+  opacity: 1;
+}

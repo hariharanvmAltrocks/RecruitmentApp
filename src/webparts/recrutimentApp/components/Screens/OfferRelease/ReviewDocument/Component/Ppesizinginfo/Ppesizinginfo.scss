@@ -1,0 +1,273 @@
+// components/PPESizingInfo/PPESizingInfo.scss
+@import "../../../../../../styles/theme";
+@import "../../../../../../styles/variables";
+
+$ppe-warning-bg:     #FAEEDA;
+$ppe-warning-border: #EF9F27;
+$ppe-warning-text:   #633806;
+$ppe-info-bg:        #E6F1FB;
+$ppe-info-text:      #0C447C;
+$ppe-transition:     0.15s ease;
+
+
+.ppe-trigger-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.ppe-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px 6px 8px;
+  border-radius: $radius-md;
+  border: 1px solid $border-light;
+  background: $white;
+  font-family: $font-family;
+  font-size: 13px;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: background $ppe-transition, border-color $ppe-transition;
+
+  &:hover {
+    background: $secondary-color;
+    border-color: $border-base;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+}
+
+.ppe-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 100;
+  width: 280px;
+  background: $white;
+  border: 1px solid $border-light;
+  border-radius: $radius-xl;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+  overflow: hidden;
+  animation: ppeFadeIn .16s ease;
+}
+
+@keyframes ppeFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ppe-popover__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid $border-light;
+  background: $secondary-color;
+}
+
+.ppe-popover__header-icon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: $radius-md;
+  background: $ppe-warning-bg;
+  color: $ppe-warning-text;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba($ppe-warning-border, 0.3);
+}
+
+.ppe-popover__title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 700;
+  color: $text-primary;
+}
+
+.ppe-popover__close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: $text-subtle;
+  cursor: pointer;
+  padding: 0 2px;
+  transition: color $ppe-transition;
+
+  &:hover { color: $text-primary; }
+}
+
+// ─── Shared table ─────────────────────────────────────────────────────────────
+
+.ppe-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: $text-subtle;
+    text-align: left;
+    border-bottom: 1px solid $border-light;
+    background: rgba(248, 250, 252, 0.7);
+  }
+
+  td {
+    padding: 9px 14px;
+    color: $text-primary;
+    border-bottom: 1px solid $border-light;
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.ppe-size-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: $ppe-info-bg;
+  color: $ppe-info-text;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+// ─── VARIANT B — Always-visible card ──────────────────────────────────────────
+
+.ppe-card {
+  background: $white;
+  border: 1px solid $border-light;
+  border-radius: $radius-xl;
+  overflow: hidden;
+  max-width: 340px;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+}
+
+.ppe-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: $ppe-warning-bg;
+  border-bottom: 1px solid rgba($ppe-warning-border, 0.3);
+  color: $ppe-warning-text;
+}
+
+.ppe-card__header-icon {
+  flex-shrink: 0;
+}
+
+.ppe-card__header-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: $ppe-warning-text;
+}
+
+.ppe-card__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.ppe-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 14px;
+  border-bottom: 1px solid $border-light;
+  transition: background $ppe-transition;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: rgba(248, 250, 252, 0.6); }
+}
+
+.ppe-card__row-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ppe-card__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: $border-base;
+  flex-shrink: 0;
+}
+
+.ppe-card__item-name {
+  font-size: 13px;
+  color: $text-primary;
+}
+
+.ppe-card__size-chip {
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 999px;
+  background: $ppe-info-bg;
+  color: $ppe-info-text;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+// ─── VARIANT C — Inline tag strip ─────────────────────────────────────────────
+
+.ppe-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.ppe-strip__icon {
+  flex-shrink: 0;
+  color: $text-subtle;
+}
+
+.ppe-strip__label {
+  font-size: 12px;
+  font-weight: 700;
+  color: $text-subtle;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ppe-strip__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: $radius-md;
+  background: $secondary-color;
+  border: 1px solid $border-light;
+  font-size: 12px;
+  transition: border-color $ppe-transition;
+
+  &:hover { border-color: $border-base; }
+}
+
+.ppe-strip__tag-name {
+  color: $text-subtle;
+}
+
+.ppe-strip__tag-sep {
+  color: $border-base;
+}
+
+.ppe-strip__tag-size {
+  font-weight: 700;
+  color: $text-primary;
+}

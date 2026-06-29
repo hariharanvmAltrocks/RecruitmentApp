@@ -1,8 +1,4 @@
-// ReviewScorecard/Reviewscorecardtab.tsx
-// ── Thin orchestrator ──────────────────────────────────────────────────────────
-// All state lives in useReviewScorecard hook.
-// This file only wires props — no business logic here.
-// ──────────────────────────────────────────────────────────────────────────────
+
 import * as React from "react";
 import { AnimatePresence } from "framer-motion";
 import styles from "./Reviewscorecardtab.module.scss";
@@ -28,14 +24,12 @@ const ReviewScorecardTab: React.FC<Props> = ({
 
   const hook = useReviewScorecard(effectiveEmail);
 
-  // Notify parent when modal opens/closes (hides sidebar)
   React.useEffect(() => {
     onFormStateChange?.(!!hook.reviewingCandidate);
   }, [hook.reviewingCandidate, onFormStateChange]);
 
   return (
     <div className={styles.container}>
-      {/* ── Job list ─────────────────────────────────────────────────────── */}
       <JobListTable
         jobRows={hook.paginatedJobs}
         totalItems={hook.filteredJobs.length}
@@ -50,7 +44,7 @@ const ReviewScorecardTab: React.FC<Props> = ({
         loading={hook.jobsLoading}
       />
 
-      {/* ── Candidate drawer ─────────────────────────────────────────────── */}
+
       <AnimatePresence>
         {hook.drawerOpen && hook.selectedJob && (
           <CandidateDrawer
@@ -63,7 +57,6 @@ const ReviewScorecardTab: React.FC<Props> = ({
         )}
       </AnimatePresence>
 
-      {/* ── Review modal ─────────────────────────────────────────────────── */}
       <AnimatePresence>
         {hook.reviewingCandidate && (
           <CandidateReviewModal

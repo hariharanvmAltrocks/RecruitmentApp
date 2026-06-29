@@ -1,0 +1,295 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// ModalPopup.scss
+// Visual design from ConfirmationPopup merged into ModalPopup's SCSS structure
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Backdrop ─────────────────────────────────────────────────────────────────
+.modal-popup__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 1rem;
+}
+
+// ── Card container ────────────────────────────────────────────────────────────
+.modal-popup__container {
+  position: relative;
+  background: #ffffff;
+  border-radius: 1rem;                          // matches ConfirmationPopup
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.18),
+    0 4px 16px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+// ── Top accent color bar ──────────────────────────────────────────────────────
+// Color is set inline via style={{ background: cfg.accentColor }}
+.modal-popup__accent-bar {
+  width: 100%;
+  height: 4px;
+  flex-shrink: 0;
+}
+
+// ── Close (X) button ─────────────────────────────────────────────────────────
+.modal-popup__close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  transition: background 0.15s ease, color 0.15s ease;
+  z-index: 1;
+
+  &:hover:not(:disabled) {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+// ── Circular gradient icon ────────────────────────────────────────────────────
+.modal-popup__icon-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.75rem;
+  margin-bottom: 1rem;
+}
+
+.modal-popup__icon-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  // background gradient is set inline via style={{ background: cfg.iconGradient }}
+}
+
+// ── Title ─────────────────────────────────────────────────────────────────────
+.modal-popup__title {
+  margin: 0 1.75rem 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.3;
+  text-align: center;
+}
+
+// ── Message ───────────────────────────────────────────────────────────────────
+.modal-popup__message {
+  margin: 0.5rem 1.75rem 0;
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.55;
+  text-align: center;
+}
+
+// ── Validation error list ─────────────────────────────────────────────────────
+.modal-popup__validation-list {
+  margin: 1rem 1.75rem 0;
+  width: calc(100% - 3.5rem);
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.6rem;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.modal-popup__validation-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: #b91c1c;
+  font-weight: 500;
+  line-height: 1.4;
+
+  & + & {
+    margin-top: 0.4rem;
+  }
+}
+
+.modal-popup__validation-icon {
+  color: #ef4444;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+// ── Success pulse dots ────────────────────────────────────────────────────────
+.modal-popup__pulse-row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 0.75rem;
+}
+
+.modal-popup__pulse-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: modal-pulse-dot 1.2s ease-in-out infinite;
+}
+
+@keyframes modal-pulse-dot {
+  0%, 100% { transform: scale(1);   opacity: 0.5; }
+  50%       { transform: scale(1.5); opacity: 1;   }
+}
+
+// ── Footer button row ─────────────────────────────────────────────────────────
+.modal-popup__actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  padding: 1.25rem 1.75rem 1.75rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+// ── Base button ───────────────────────────────────────────────────────────────
+.modal-popup__btn {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  min-width: 100px;
+  transition: opacity 0.15s ease, background 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}
+
+// ── Secondary (Cancel / Close / Got it / Stay Here) ───────────────────────────
+.btn--secondary {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1.5px solid #e2e8f0;
+
+  &:hover:not(:disabled) {
+    background: #e2e8f0;
+  }
+}
+
+// ── Per-type confirm buttons ──────────────────────────────────────────────────
+.btn--success {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+
+  &:hover:not(:disabled) { opacity: 0.9; }
+}
+
+.btn--error {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+
+  &:hover:not(:disabled) { opacity: 0.9; }
+}
+
+.btn--warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+
+  &:hover:not(:disabled) { opacity: 0.9; }
+}
+
+.btn--info {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+
+  &:hover:not(:disabled) { opacity: 0.9; }
+}
+
+.btn--confirmation {
+  background: linear-gradient(135deg, #9333ea, #7e22ce);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.35);
+
+  &:hover:not(:disabled) { opacity: 0.9; }
+}
+
+// ── Spinner ───────────────────────────────────────────────────────────────────
+.modal-popup__spinner {
+  animation: modal-spin 1s linear infinite;
+}
+
+@keyframes modal-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+@media (max-width: 480px) {
+  .modal-popup__container {
+    border-radius: 0.75rem;
+  }
+
+  .modal-popup__title {
+    font-size: 0.95rem;
+    margin-inline: 1.25rem;
+  }
+
+  .modal-popup__message {
+    font-size: 0.8rem;
+    margin-inline: 1.25rem;
+  }
+
+  .modal-popup__actions {
+    flex-direction: column-reverse;
+    padding: 1rem 1.25rem 1.25rem;
+  }
+
+  .modal-popup__btn {
+    width: 100%;
+    flex: unset;
+  }
+
+  .modal-popup__validation-list {
+    margin-inline: 1.25rem;
+    width: calc(100% - 2.5rem);
+  }
+
+  .modal-popup__icon-circle {
+    width: 52px;
+    height: 52px;
+  }
+}

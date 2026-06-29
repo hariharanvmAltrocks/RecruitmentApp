@@ -1,0 +1,459 @@
+// ── PreChecklist ────────────────────────────────────────────────────────────
+// Tone: refined / corporate-modern. Teal accent, crisp whites, subtle motion.
+// Font pairing: "DM Sans" (body) + system fallbacks
+// ──────────────────────────────────────────────────────────────────────────
+
+$teal-900: #0d3d3a;
+$teal-700: #0f5c54;
+$teal-500: #1a8c7d;
+$teal-400: #22b5a0;
+$teal-100: #d0f5f0;
+$teal-50:  #edfaf8;
+
+$slate-900: #1a2332;
+$slate-700: #2d3a4a;
+$slate-500: #4a5568;
+$slate-300: #94a3b8;
+$slate-100: #f1f5f9;
+$slate-50:  #f8fafc;
+
+$green-500: #22c55e;
+$green-50:  #f0fdf4;
+$green-100: #dcfce7;
+
+$amber-500: #f59e0b;
+$amber-50:  #fffbeb;
+
+$white: #ffffff;
+$shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+$shadow-md: 0 4px 16px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.05);
+$shadow-lg: 0 12px 40px rgba(0,0,0,.12);
+
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$radius-xl: 20px;
+
+$ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+$ease-smooth:   cubic-bezier(0.4, 0, 0.2, 1);
+
+// ── Keyframes ───────────────────────────────────────────────────────────────
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes checkPop {
+  0%   { transform: scale(0.6); opacity: 0; }
+  60%  { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes ripple {
+  from { transform: scale(0); opacity: 0.4; }
+  to   { transform: scale(2.5); opacity: 0; }
+}
+
+@keyframes progressFill {
+  from { width: 0%; }
+  to   { width: var(--progress-width); }
+}
+
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(26,140,125,0.4); }
+  50%       { box-shadow: 0 0 0 6px rgba(26,140,125,0); }
+}
+
+@keyframes sectionReveal {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+// ── Root wrapper ─────────────────────────────────────────────────────────────
+
+.prechecklist {
+  font-family: "DM Sans", "Segoe UI", system-ui, sans-serif;
+  color: $slate-900;
+
+  // ── Section card ────────────────────────────────────────────────────────
+
+  &__section {
+    background: $white;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-sm;
+    border: 1px solid rgba($slate-300, 0.3);
+    overflow: hidden;
+    animation: slideInUp 0.4s $ease-smooth both;
+
+    & + & { margin-top: 12px; }
+
+    &:nth-child(2) { animation-delay: 0.08s; }
+    &:nth-child(3) { animation-delay: 0.16s; }
+  }
+
+  // ── Section header ──────────────────────────────────────────────────────
+
+  &__section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #325b7e, #a3adcd);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M0 0h20v20H0zm20 20h20v20H20z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+  }
+
+  &__section-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba($white, 0.15);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1.5px solid rgba($white, 0.25);
+
+    svg { color: $white; width: 16px; height: 16px; }
+  }
+
+  &__section-info { flex: 1; position: relative; }
+
+  &__section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: $white;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin: 0 0 2px;
+  }
+
+  &__section-subtitle {
+    font-size: 11px;
+    color: rgba($white, 0.65);
+    margin: 0;
+  }
+
+  &__section-badge {
+    position: relative;
+    background: rgba($white, 0.15);
+    border: 1px solid rgba($white, 0.2);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: $white;
+    white-space: nowrap;
+
+    &--complete {
+      background: rgba($green-500, 0.3);
+      border-color: rgba($green-500, 0.5);
+      animation: badgePulse 2s ease-in-out 3;
+    }
+  }
+
+  // ── Progress bar ────────────────────────────────────────────────────────
+
+  &__progress-bar {
+    height: 3px;
+    background: $slate-100;
+    overflow: hidden;
+
+    &-fill {
+      height: 100%;
+      background: linear-gradient(90deg, $teal-400, $teal-500);
+      border-radius: 0 2px 2px 0;
+      transition: width 0.5s $ease-smooth;
+      animation: progressFill 0.6s $ease-smooth both;
+      animation-delay: 0.3s;
+    }
+  }
+
+  // ── Item list ────────────────────────────────────────────────────────────
+
+  &__list {
+    padding: 8px 0;
+  }
+
+  // ── Single checklist item ────────────────────────────────────────────────
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s $ease-smooth;
+    animation: sectionReveal 0.35s $ease-smooth both;
+
+    @for $i from 1 through 10 {
+      &:nth-child(#{$i}) { animation-delay: #{$i * 0.04}s; }
+    }
+
+    &:not(:last-child) {
+      border-bottom: 1px solid rgba($slate-300, 0.15);
+    }
+
+    &:hover {
+      background: $teal-50;
+
+      .prechecklist__avatar {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba($teal-500, 0.25);
+      }
+    }
+
+    &--yes {
+      background: linear-gradient(to right, rgba($green-500,0.04), transparent 60%);
+      .prechecklist__item-label { color: $slate-700; }
+    }
+
+    &--no {
+      background: linear-gradient(to right, rgba($amber-500,0.04), transparent 60%);
+    }
+  }
+
+  // ── Avatar ───────────────────────────────────────────────────────────────
+
+  &__avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #325b7e, #a3adcd);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.2s $ease-out-back, box-shadow 0.2s $ease-smooth;
+    box-shadow: 0 2px 8px rgba($teal-700, 0.2);
+
+    span {
+      font-size: 10px;
+      font-weight: 700;
+      color: $white;
+      letter-spacing: 0.03em;
+    }
+  }
+
+  // ── Item body ────────────────────────────────────────────────────────────
+
+  &__item-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__item-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: $slate-900;
+    line-height: 1.3;
+    display: block;
+    transition: color 0.2s;
+  }
+
+  &__item-id {
+    font-size: 11px;
+    color: $slate-300;
+    margin-top: 2px;
+    display: block;
+  }
+
+  // ── Toggle group ─────────────────────────────────────────────────────────
+
+  &__toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  &__toggle-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1.5px solid transparent;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s $ease-smooth;
+    overflow: hidden;
+    background: transparent;
+    outline: none;
+
+    // Ripple
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: currentColor;
+      opacity: 0;
+      transform: scale(0);
+      transition: none;
+    }
+
+    &:active::after {
+      animation: ripple 0.4s $ease-smooth;
+    }
+
+    // Yes button
+    &--yes {
+      color: $slate-500;
+      border-color: rgba($slate-300, 0.5);
+      background: $white;
+
+      &:hover {
+        border-color: $green-500;
+        color: $green-500;
+        background: $green-50;
+      }
+
+      &.prechecklist__toggle-btn--active {
+        background: $green-500;
+        border-color: $green-500;
+        color: $white;
+        box-shadow: 0 3px 10px rgba($green-500, 0.35);
+
+        .prechecklist__toggle-icon {
+          animation: checkPop 0.3s $ease-out-back both;
+        }
+      }
+    }
+
+    // No button
+    &--no {
+      color: $slate-500;
+      border-color: rgba($slate-300, 0.5);
+      background: $white;
+
+      &:hover {
+        border-color: $amber-500;
+        color: $amber-500;
+        background: $amber-50;
+      }
+
+      &.prechecklist__toggle-btn--active {
+        background: $amber-500;
+        border-color: $amber-500;
+        color: $white;
+        box-shadow: 0 3px 10px rgba($amber-500, 0.35);
+      }
+    }
+  }
+
+  &__toggle-icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    svg { width: 12px; height: 12px; }
+  }
+
+  // ── Status chip (right side) ─────────────────────────────────────────────
+
+  &__status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: $slate-100;
+    border: 1.5px solid $slate-300;
+    transition: all 0.3s $ease-smooth;
+    margin-left: 4px;
+
+    &--yes {
+      background: $green-500;
+      border-color: $green-500;
+      box-shadow: 0 0 0 3px rgba($green-500, 0.15);
+    }
+
+    &--no {
+      background: $amber-500;
+      border-color: $amber-500;
+      box-shadow: 0 0 0 3px rgba($amber-500, 0.15);
+    }
+  }
+
+  // ── Summary footer ───────────────────────────────────────────────────────
+
+  &__summary {
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: $white;
+    border-radius: $radius-md;
+    border: 1px solid rgba($slate-300, 0.25);
+    box-shadow: $shadow-sm;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    animation: slideInUp 0.4s $ease-smooth 0.25s both;
+  }
+
+  &__summary-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: $teal-50;
+    color: $teal-500;
+    transition: all 0.3s $ease-smooth;
+
+    &--complete {
+      background: $green-50;
+      color: $green-500;
+    }
+
+    svg { width: 20px; height: 20px; }
+  }
+
+  &__summary-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__summary-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: $slate-700;
+    display: block;
+  }
+
+  &__summary-desc {
+    font-size: 12px;
+    color: $slate-300;
+    margin-top: 1px;
+    display: block;
+  }
+
+  &__summary-count {
+    font-size: 22px;
+    font-weight: 700;
+    color: $teal-500;
+    flex-shrink: 0;
+    transition: color 0.3s;
+    font-variant-numeric: tabular-nums;
+
+    &--complete { color: $green-500; }
+
+    span {
+      font-size: 13px;
+      font-weight: 500;
+      color: $slate-300;
+    }
+  }
+}

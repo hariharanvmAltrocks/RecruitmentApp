@@ -1,72 +1,50 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { Metric } from "../../../../models";
-import SPServices from "../../../../services/SPService/spservice";
-import { getRoleBasedFilters } from "./useFilterMatricCard";
-import { METRICS } from "../../../MockData/data";
-import { RoleID } from "../../../../utilities/Config";
+import { getRoleBasedFilters } from "../metricColumns.config";
+import { Metric } from "../../../../models/IDashboard";
+import { DashboardServices } from "../../../../services/ServiceExport";
+import { useRoleContext } from "../../../../utilities/hooks/RoleContext";
+import { ResponeStatus } from "../../../../utilities/ApiConfig";
 
-export const useDashboardMetrics = () => {
+export const useDashboardMetrics = (refreshKey: number) => {
+  const { roleIDs, ADGroupData } = useRoleContext();
+  const [metrics, setMetrics] = useState<Metric[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-    const [metrics, setMetrics] = useState<Metric[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+  console.log(ADGroupData.EmailId, "EmailId");
 
-    // ✅ Build queries once
-    const queries = useMemo(() => {
-        return getRoleBasedFilters(RoleID.LineManager);
-    }, []);
+  const queries = useMemo(() => {
+    return getRoleBasedFilters(roleIDs, ADGroupData.EmailId[0]);
+  }, [roleIDs]);
 
-    const mergeMetrics = useCallback(
-        (dbData: Record<string, number> = {}): Metric[] => {
+  const fetchMetrics = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await DashboardServices.GetDashboardCount(
+        queries,
+        roleIDs,
+        ADGroupData.EmailId[0],
+      );
+      if (data.status === ResponeStatus.SUCCESS) {
+        setMetrics(data.data);
+      }
+    } catch (error) {
+      console.error("Dashboard metrics error", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [queries]);
 
-            return METRICS.map((metric) => ({
-                ...metric,
-                value: Number(dbData?.[metric.id] ?? 0)
-            }));
+  useEffect(() => {
+    if (!queries.length) return;
 
-        },
-        []
-    );
+    void fetchMetrics();
+  }, [fetchMetrics, queries, refreshKey]);
 
-    const fetchMetrics = useCallback(async () => {
+  const memoizedMetrics = useMemo(() => metrics, [metrics]);
 
-        try {
-
-            setLoading(true);
-
-            const data = await SPServices.batchGet(queries);
-
-            console.log("DB Data:", data);
-
-            const mergedMetrics = mergeMetrics(data);
-
-            setMetrics(mergedMetrics);
-
-        } catch (error) {
-
-            console.error("Dashboard metrics error", error);
-
-        } finally {
-
-            setLoading(false);
-
-        }
-
-    }, [queries, mergeMetrics]);
-
-    useEffect(() => {
-
-        if (!queries.length) return;
-
-        fetchMetrics();
-
-    }, [fetchMetrics, queries]);
-
-    const memoizedMetrics = useMemo(() => metrics, [metrics]);
-
-    return {
-        metrics: memoizedMetrics,
-        loading,
-        refresh: fetchMetrics
-    };
-
+  return {
+    metrics: memoizedMetrics,
+    loading,
+    refresh: fetchMetrics,
+  };
 };

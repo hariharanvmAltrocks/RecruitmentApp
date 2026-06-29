@@ -1,5 +1,6 @@
+@charset "UTF-8";
 .tracker {
-  background: #fff;
+  background: #ffffff;
   border-radius: 16px;
   border: 1px solid #e2e8f0;
   overflow: hidden;
@@ -14,7 +15,7 @@
 .tracker__header h2 {
   font-size: 18px;
   font-weight: 700;
-  color: #1e293b;
+  color: #0f172a;
 }
 .tracker__header p {
   font-size: 12px;
@@ -22,65 +23,101 @@
   margin-top: 4px;
 }
 .tracker__header .highlight {
-  color: #2563eb;
+  color: #7c3aed;
+  font-weight: 600;
 }
 .tracker__header .view-btn {
   background: none;
   border: none;
-  color: #2563eb;
+  color: #7c3aed;
   font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
+  white-space: nowrap;
+}
+.tracker__header .view-btn:hover {
+  text-decoration: underline;
 }
 .tracker__table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .tracker__table {
   width: 100%;
+  min-width: 700px;
   border-collapse: collapse;
 }
 .tracker__table thead {
   background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
 }
 .tracker__table thead th {
   font-size: 11px;
   text-transform: uppercase;
-  color: #94a3b8;
-  padding: 14px 20px;
+  color: #64748b;
+  padding: 15px 10px;
   text-align: left;
+  letter-spacing: 0.4px;
+}
+.tracker__table thead th:not(:empty):not(:last-child)::after {
+  content: "↑↓";
+  font-size: 10px;
+  color: #94a3b8;
+  margin-left: 6px;
+  letter-spacing: 1px;
+  opacity: 0.6;
+}
+.tracker__table thead th:last-child {
+  text-align: right;
+  width: 1%;
+  white-space: nowrap;
 }
 .tracker__table tbody tr {
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid #e2e8f0;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s ease;
 }
 .tracker__table tbody tr:hover {
-  background: #f8fafc;
+  background: #f4f7fb;
 }
 .tracker__table tbody tr td {
-  padding: 16px 20px;
+  padding: 18px 13px;
   font-size: 14px;
-  color: #475569;
+  color: #334155;
+  vertical-align: middle;
 }
-.tracker__table tbody tr .title {
+.tracker__table tbody tr td:nth-child(1) {
   font-weight: 700;
-  color: #1e293b;
+  color: #0f172a;
+  white-space: nowrap;
 }
-.tracker__table tbody tr .jobcode {
-  font-size: 11px;
-  color: #94a3b8;
+.tracker__table tbody tr td:nth-child(2) {
+  font-weight: 700;
+  color: #0f172a;
 }
-.tracker__table tbody tr .center {
-  text-align: center;
-}
-.tracker__table tbody tr .status {
-  background: #eff6ff;
-  color: #2563eb;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 11px;
+.tracker__table tbody tr .status-badge {
+  display: inline-block;
+  background: #dde8f5;
+  color: #7c3aed;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
+  line-height: 1.4;
+  text-align: center;
 }
 .tracker__table tbody tr .arrow {
   text-align: right;
-  color: #94a3b8;
+  color: #64748b;
+  width: 1%;
+  white-space: nowrap;
+}
+.tracker__table tbody tr .arrow svg {
+  display: block;
+  margin-left: auto;
+}
+.tracker__table tbody tr .arrow svg:hover {
+  color: blue;
+  transform: scale(1, 0);
 }

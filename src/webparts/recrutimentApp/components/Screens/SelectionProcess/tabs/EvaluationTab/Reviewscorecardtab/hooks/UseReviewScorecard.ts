@@ -1,6 +1,3 @@
-// ReviewScorecard/hooks/useReviewScorecard.ts
-// Central hook — owns all state and API calls.
-// Components stay pure (props only). No duplicate fetches.
 
 import * as React from "react";
 
@@ -14,64 +11,63 @@ import {
 } from "../types";
 import { evaluationService } from "../../../../services/EvaluationApiService";
 
-// ─── Status helpers (single definition, imported by components) ──────────────
+
 export const EDITABLE_STATUS_IDS = [
-  121, // PendingwithHODtoselectthecandidate
-  123, // OnHoldbyHOD
-  127, // PendingwithHODtoselectthecandidateLevel2
-  130, // PendingwithHODtoAssignPositionID
-  165, // CandidateOnHoldbyHODLevel1
-  166, // CandidateOnHoldbyHODLevel2
+  121,
+  123, 
+  127, 
+  130, 
+  165,
+  166, 
 ];
 
 export const VIEW_ONLY_STATUS_IDS = [
-  122, // Selected
-  15,  // RejectedbyHOD
-  167, // CandidateRejectedbyHODLevel1
-  168, // CandidateRejectedbyHODLevel2
+  122,
+  15,  
+  167, 
+  168, 
 ];
 
 export const canEdit  = (statusId: number) => EDITABLE_STATUS_IDS.includes(statusId);
 export const canView  = (statusId: number) => VIEW_ONLY_STATUS_IDS.includes(statusId);
 export const isLevel2 = (statusId: number) =>
-  [130, 129, 127, 166].includes(statusId); // PendingwithHODtoAssignPositionID | InterviewScheduledforLevel2 | Level2 variants
+  [130, 129, 127, 166].includes(statusId);
 
-// ─── Hook ────────────────────────────────────────────────────────────────────
 export function useReviewScorecard(currentUserEmail: string) {
-  // ── Job list state ─────────────────────────────────────────────────────────
+
   const [jobRows,   setJobRows]   = React.useState<ScorecardJobRow[]>([]);
   const [jobsLoading, setJobsLoading] = React.useState(true);
 
-  // ── Pagination ─────────────────────────────────────────────────────────────
+ 
   const [currentPage, setCurrentPage] = React.useState(1);
   const [pageSize,    setPageSize]    = React.useState(5);
   const [searchTerm,  setSearchTerm]  = React.useState("");
 
-  // ── Selected job + candidates ──────────────────────────────────────────────
+
   const [selectedJob,       setSelectedJob]       = React.useState<ScorecardJobRow | null>(null);
   const [candidates,        setCandidates]        = React.useState<ScorecardCandidateRow[]>([]);
   const [candidatesLoading, setCandidatesLoading] = React.useState(false);
   const [drawerOpen,        setDrawerOpen]        = React.useState(false);
 
-  // ── Reviewing a candidate ──────────────────────────────────────────────────
+
   const [reviewingCandidate, setReviewingCandidate] = React.useState<ScorecardCandidateRow | null>(null);
   const [reviewData,         setReviewData]         = React.useState<CandidateReviewData | null>(null);
   const [reviewLoading,      setReviewLoading]      = React.useState(false);
 
-  // ── Score data (fetched once per candidateId) ──────────────────────────────
+
   const [scoreData,    setScoreData]    = React.useState<any[]>([]);
   const [scoreLoading, setScoreLoading] = React.useState(false);
 
-  // ── Position options (fetched once per job) ────────────────────────────────
+ 
   const [positionOptions, setPositionOptions] = React.useState<PositionOption[]>([]);
 
-  // ── Comments modal ─────────────────────────────────────────────────────────
+
   const [showComments,   setShowComments]   = React.useState(false);
   const [level1Comments, setLevel1Comments] = React.useState<CommentEntry[]>([]);
   const [level2Comments, setLevel2Comments] = React.useState<CommentEntry[]>([]);
   const [commentsLoading, setCommentsLoading] = React.useState(false);
 
-  // ── HOD Decision form state ────────────────────────────────────────────────
+
   const [hodDecision,          setHodDecision]          = React.useState<HODDecision>("");
   const [decisionComment,      setDecisionComment]      = React.useState("");
   const [confirmed,            setConfirmed]            = React.useState(false);
@@ -81,7 +77,7 @@ export function useReviewScorecard(currentUserEmail: string) {
   const [submitError,          setSubmitError]          = React.useState("");
   const [successMessage,       setSuccessMessage]       = React.useState("");
 
-  // ── Validation errors ──────────────────────────────────────────────────────
+
   const [errors, setErrors] = React.useState({
     decision: false,
     comment: false,
@@ -89,7 +85,7 @@ export function useReviewScorecard(currentUserEmail: string) {
     position: false,
   });
 
-  // ── FETCH: Job list ────────────────────────────────────────────────────────
+
   const loadJobs = React.useCallback(async () => {
     setJobsLoading(true);
     try {
@@ -102,7 +98,6 @@ export function useReviewScorecard(currentUserEmail: string) {
 
   React.useEffect(() => { void loadJobs(); }, [loadJobs]);
 
-  // ── Filtered + paginated jobs ──────────────────────────────────────────────
   const filteredJobs = React.useMemo(() =>
     jobRows.filter(job =>
       searchTerm === "" ||
@@ -115,12 +110,12 @@ export function useReviewScorecard(currentUserEmail: string) {
     return filteredJobs.slice(start, start + pageSize);
   }, [filteredJobs, currentPage, pageSize]);
 
-  // Keep page in range when filter changes
+
   React.useEffect(() => {
     if (currentPage > totalPages) setCurrentPage(1);
   }, [totalPages, currentPage]);
 
-  // ── FETCH: Candidates for selected job ────────────────────────────────────
+
   const openJob = React.useCallback(async (job: ScorecardJobRow) => {
     setSelectedJob(job);
     setDrawerOpen(true);
@@ -162,14 +157,13 @@ export function useReviewScorecard(currentUserEmail: string) {
     }
   }, [selectedJob]);
 
-  // ── FETCH: Review data + score data for a candidate ───────────────────────
-  // Single call — fetches candidateData, panelMembers, questions, scoreData all at once
+
   const openReview = React.useCallback(async (candidate: ScorecardCandidateRow) => {
     setReviewingCandidate(candidate);
     setReviewData(null);
     setScoreData([]);
 
-    // Reset form
+  
     setHodDecision("");
     setDecisionComment("");
     setConfirmed(false);
@@ -184,7 +178,7 @@ export function useReviewScorecard(currentUserEmail: string) {
     setScoreLoading(true);
 
     try {
-      // Parallel fetch: review form data + score data
+   
       const [evalResult, scoreResult] = await Promise.all([
         evaluationService.getEvaluationFormData(candidate.id, candidate.recruitmentID, currentUserEmail),
         evaluationService.fetchScoreData(candidate.id),
@@ -195,16 +189,16 @@ export function useReviewScorecard(currentUserEmail: string) {
         panelMembers:  evalResult.panelMembers  || [],
         questions:     evalResult.questions      || [],
         reviewerName:  evalResult.reviewerName   || "",
-        jobTitleEn:    evalResult.jobTitleEn     || "—",
-        jobTitleFr:    evalResult.jobTitleFr     || "—",
+        jobTitleEn:    evalResult.jobTitleEn     || ""  ,
+        jobTitleFr:    evalResult.jobTitleFr     || "",
       });
       setScoreData(scoreResult || []);
 
-      // Prepopulate HOD decision from saved comment
+  
       try {
         const existing = await evaluationService.fetchExistingHODDecision(
           candidate.id,
-          0, // roleId — service falls back to first match
+          0, 
           isLevel2(candidate.statusId)
         );
         if (existing?.comments) setDecisionComment(existing.comments);
@@ -216,7 +210,7 @@ export function useReviewScorecard(currentUserEmail: string) {
         else if ([15, 167, 168].includes(sid)) setHodDecision("No");
       } catch (_) {}
 
-      // Fetch position options (only when needed)
+
       if (selectedJob?.jobCodeID && selectedJob?.department) {
         evaluationService.fetchPositionOptions(selectedJob.jobCodeID, selectedJob.department)
           .then(setPositionOptions).catch(() => setPositionOptions([]));
@@ -234,7 +228,7 @@ export function useReviewScorecard(currentUserEmail: string) {
     setShowComments(false);
   }, []);
 
-  // ── FETCH: Comments (lazy — only when user clicks VIEW COMMENTS) ──────────
+
   const openComments = React.useCallback(async () => {
     if (!reviewingCandidate) return;
     setShowComments(true);
@@ -248,10 +242,10 @@ export function useReviewScorecard(currentUserEmail: string) {
     }
   }, [reviewingCandidate]);
 
-  // ── SUBMIT: HOD decision ───────────────────────────────────────────────────
+
   const shouldShowPositionId = React.useCallback((statusId: number, decision: HODDecision) => {
-    if (statusId === 130) return true; // PendingwithHODtoAssignPositionID
-    if (statusId === 122) return true; // Selected
+    if (statusId === 130) return true;
+    if (statusId === 122) return true; 
     if (decision === "Yes" && statusId !== 127 && statusId !== 165) return true;
     return false;
   }, []);
@@ -284,7 +278,7 @@ export function useReviewScorecard(currentUserEmail: string) {
         currentRoleId:    roleId,
         gpa:              reviewingCandidate.gpa || "",
         positionId:       selectedPositionId,
-        isLevel2:         false, // HOD always uses Branch 2
+        isLevel2:         false,
         jobCodeID:        reviewingCandidate.jobCodeID || selectedJob?.jobCodeID || 0,
         recruitmentID:    reviewingCandidate.recruitmentID,
         statusId:         reviewingCandidate.statusId,
@@ -313,26 +307,26 @@ export function useReviewScorecard(currentUserEmail: string) {
       selectedPositionId, selectedJob, validate, closeReview, refreshCandidates]);
 
   return {
-    // Job list
+
     jobRows, jobsLoading, paginatedJobs, filteredJobs,
     currentPage, setCurrentPage, pageSize, setPageSize,
     searchTerm, setSearchTerm, totalPages,
     loadJobs,
 
-    // Job drawer
+
     selectedJob, candidates, candidatesLoading, drawerOpen,
     openJob, closeJob, refreshCandidates,
 
-    // Review modal
+
     reviewingCandidate, reviewData, reviewLoading,
     scoreData, scoreLoading,
     openReview, closeReview,
 
-    // Comments
+
     showComments, level1Comments, level2Comments, commentsLoading,
     openComments, setShowComments,
 
-    // HOD decision
+
     hodDecision, setHodDecision,
     decisionComment, setDecisionComment,
     confirmed, setConfirmed,
@@ -344,7 +338,7 @@ export function useReviewScorecard(currentUserEmail: string) {
     shouldShowPositionId,
     submitDecision,
 
-    // Helpers
+ 
     isLevel2,
   };
 }

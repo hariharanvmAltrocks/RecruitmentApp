@@ -1,0 +1,367 @@
+@import "../../../styles/theme";
+@import "../../../styles/variables";
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+
+  &__head {
+    background: $secondary-color;
+  }
+
+  &__head-row {
+    th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: $text-subtle;
+      padding: 16px 20px;
+      text-align: left;
+    }
+  }
+
+  &__head-cell {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $text-subtle;
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 700;
+  }
+
+  &__head-cell--center {
+    text-align: center;
+  }
+
+  &__head-cell--right {
+    text-align: right;
+  }
+
+  &__row {
+    border-top: 1px solid $border-light;
+    transition: background $transition-base;
+
+    &:hover {
+      background: #f8fbff;
+    }
+  }
+
+  &__row--selected {
+    background: #f3f7ff;
+  }
+
+  &__cell {
+    padding: 18px 20px;
+    font-size: 14px;
+    color: $text-secondary;
+    vertical-align: middle;
+  }
+
+  &__cell--center {
+    text-align: center;
+  }
+
+  &__cell--right {
+  text-align: right;
+  vertical-align: middle;   // ← add this
+  white-space: nowrap;      // ← add this
+}
+
+  &__cell--muted {
+    color: $text-muted;
+    font-weight: 600;
+  }
+
+  &__cell--count {
+    font-weight: 700;
+    color: $text-primary;
+  }
+
+  &__cell--actions {
+    text-align: left;
+    width: 80px;
+  }
+
+  &__cell--mobile-hidden {
+    @media (max-width: 900px) {
+      display: none;
+    }
+  }
+
+  &__job-code{
+    font-weight: 700;
+    color: $primary-color;
+  }
+
+  &__job-title {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-weight: bold;
+    color: $text-primary;
+  }
+
+  &__job-dept {
+    font-size: 12px;
+    color: $text-subtle;
+    font-weight: 500;
+  }
+
+  &__status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: #dcfce7;
+    color: #15803d;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .status-badge {
+    @extend .data-table__status-badge;
+  }
+
+  &__action-btn {
+    border: 1px solid $border-base;
+    background: $primary-color ;
+    color: $white;
+    border-radius: 10px;
+    padding: 6px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all $transition-base;
+    font-size: 12px;
+    font-weight: 600;
+
+    &:hover {
+      border-color: $primary-color;
+      box-shadow: $shadow-sm;
+    }
+  }
+
+  &__action-icon {
+    color: $text-subtle;
+  }
+
+  &__checkbox-cell {
+    width: 48px;
+  }
+
+  &__checkbox {
+    width: 25px;
+    height: 25px;
+    border-radius: 5px;
+    border: 1px solid #cbd5f5;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: $white;
+    cursor: pointer;
+    transition: all $transition-base;
+  }
+
+  &__checkbox--checked {
+    background: $primary-color;
+    border-color: $primary-color;
+    color: $white;
+  }
+
+  &__empty {
+    text-align: center;
+    color: $text-subtle;
+    padding: 32px 20px;
+    font-size: 13px;
+  }
+
+  &__skeleton {
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: data-table-shimmer 1.4s infinite;
+  }
+
+  &__skeleton--title {
+    width: 180px;
+    height: 14px;
+  }
+
+  &__skeleton--subtitle {
+    width: 100px;
+    height: 10px;
+  }
+
+  &__skeleton--short {
+    width: 60px;
+  }
+}
+
+.data-table__wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+// Pagination — matches screenshot:
+// LEFT: "Showing 1 to 5 of 10 results"
+// RIGHT: < 1 2 >  (active page = filled blue pill)
+
+.data-table__pagination {
+  margin-top: 16px;
+  padding: 12px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;   // summary left, controls right
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: $text-muted;
+}
+
+// "Showing 1 to 5 of 10 results"
+.data-table__pagination-summary {
+  font-size: 13px;
+  color: $text-muted;
+  font-weight: 400;
+
+  strong {
+    font-weight: 700;
+    color: $text-primary;
+  }
+}
+
+// Wrapper for arrow + page numbers
+.data-table__pagination-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+// Shared base for arrows and numbered buttons
+%page-btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid $border-base;
+  background: $white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $transition-base;
+  color: $text-secondary;
+  line-height: 1;
+  padding: 0;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+// < and > arrow buttons — border-less, just the chevron
+.data-table__page-arrow {
+  @extend %page-btn-base;
+  border-color: $border-base;
+  font-size: 18px;
+  color: $text-muted;
+
+  &:hover:not(:disabled) {
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+}
+
+// Numbered page buttons
+.data-table__page-number {
+  @extend %page-btn-base;
+  border-color: transparent;
+  background: transparent;
+
+  &:hover:not(.data-table__page-number--active) {
+    border-color: $border-base;
+    color: $primary-color;
+  }
+
+  // Active page: solid blue filled circle — matches screenshot
+  &--active {
+    background: $primary-color;
+    border-color: $primary-color;
+    color: $white;
+    font-weight: 700;
+    pointer-events: none;
+
+    &:hover {
+      background: $primary-color;
+    }
+  }
+}
+
+@keyframes data-table-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.data-table__page-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.data-table__page-size-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: $text-muted;
+  white-space: nowrap;
+}
+
+.data-table__page-size-group {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid $border-base;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.data-table__page-size-btn {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-secondary;
+  background: $white;
+  border: none;
+  border-right: 1px solid $border-base;
+  cursor: pointer;
+  transition: all $transition-base;
+  line-height: 1;
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &:hover:not(.data-table__page-size-btn--active) {
+    background: $secondary-color;
+    color: $primary-color;
+  }
+
+  // Active: filled blue — matches your existing pagination active style
+  &--active {
+    background: $primary-color;
+    color: $white;
+    pointer-events: none;
+  }
+}
+

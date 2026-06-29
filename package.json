@@ -6,12 +6,14 @@
     "node": ">=22.14.0 < 23.0.0"
   },
   "scripts": {
+    "prestart": "npm run build:tailwind",
+    "prebuild": "npm run build:tailwind",
     "build:tailwind": "node scripts/build-tailwind.js",
     "build": "heft test --clean --production && heft package-solution --production",
     "start": "heft start --clean",
     "clean": "heft clean",
     "eject-webpack": "heft eject-webpack",
-    "serve": "npx fast-serve"
+   "serve": "gulp serve-deprecated --nobrowser"
   },
   "dependencies": {
     "@fluentui/react": "^8.106.4",
@@ -37,11 +39,13 @@
     "react-router-dom": "^6.3.0",
     "recharts": "^2.15.4",
     "tailwind-merge": "^3.5.0",
-    "tslib": "2.3.1"
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
     "@microsoft/eslint-config-spfx": "1.22.2",
     "@microsoft/eslint-plugin-spfx": "1.22.2",
+    "@microsoft/rush-stack-compiler-4.7": "^0.1.1",
+    "@microsoft/sp-build-web": "^1.22.2",
     "@microsoft/sp-module-interfaces": "1.22.2",
     "@microsoft/spfx-heft-plugins": "1.22.2",
     "@microsoft/spfx-web-build-rig": "1.22.2",
@@ -56,10 +60,11 @@
     "css-loader": "~7.1.2",
     "eslint": "8.57.1",
     "eslint-plugin-react-hooks": "4.3.0",
+    "gulp": "^4.0.2",
     "postcss": "^8.5.8",
     "postcss-loader": "^8.2.1",
-    "spfx-fast-serve": "^4.0.2",
     "tailwindcss": "^3.4.13",
+    "ts-node": "^10.9.2",
     "typescript": "~5.8.0"
   },
   "overrides": {

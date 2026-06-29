@@ -15,13 +15,16 @@ import { masterService } from "../../services/ServiceExport";
 import { ResponeStatus } from "../ApiConfig";
 import GraphService from "../../services/GraphService/GraphService";
 import CustomLoader from "../../services/Loader/CustomLoader";
-import { RoleContextType, ResolvedRole, UserRoleData, ApiUrls, ADGroupData } from "./IRoleContext";
+import {
+  RoleContextType,
+  ResolvedRole,
+  UserRoleData,
+  ApiUrls,
+  ADGroupData,
+} from "./IRoleContext";
 import { InternalSign } from "../../services/AxiosService/CareerPortalAPI";
 
-
-
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
-
 
 interface ProviderState {
   userName: string;
@@ -30,6 +33,7 @@ interface ProviderState {
   apiUrlsReady: boolean;
   isLoading: boolean;
   error: Error | null;
+  apiUrlsError: string | null;
 }
 
 type ProviderAction =
@@ -37,7 +41,8 @@ type ProviderAction =
   | { type: "SET_RESOLVED_ROLES"; roles: ResolvedRole[] }
   | { type: "SET_API_URLS_READY" }
   | { type: "SET_ERROR"; error: Error }
-  | { type: "SET_LOADING"; isLoading: boolean };
+  | { type: "SET_LOADING"; isLoading: boolean }
+  | { type: "SET_API_URLS_ERROR"; message: string };
 
 const initialState: ProviderState = {
   userName: "",
@@ -46,15 +51,20 @@ const initialState: ProviderState = {
   apiUrlsReady: false,
   isLoading: true,
   error: null,
+  apiUrlsError: null,
 };
 
 function providerReducer(
   state: ProviderState,
-  action: ProviderAction
+  action: ProviderAction,
 ): ProviderState {
   switch (action.type) {
     case "SET_USER":
-      return { ...state, userName: action.userName, userEmail: action.userEmail };
+      return {
+        ...state,
+        userName: action.userName,
+        userEmail: action.userEmail,
+      };
     case "SET_RESOLVED_ROLES":
       return { ...state, resolvedRoles: action.roles };
     case "SET_API_URLS_READY":
@@ -63,17 +73,21 @@ function providerReducer(
       return { ...state, error: action.error, isLoading: false };
     case "SET_LOADING":
       return { ...state, isLoading: action.isLoading };
+    case "SET_API_URLS_ERROR":
+      return { ...state, apiUrlsError: action.message };
     default:
       return state;
   }
 }
 
-async function fetchCurrentUser(): Promise<{ displayName: string; email: string }> {
+async function fetchCurrentUser(): Promise<{
+  displayName: string;
+  email: string;
+}> {
   const sp = getSP();
   const user = await sp.web.currentUser();
   return { displayName: user.Title, email: user.Email };
 }
-
 
 async function fetchAllRoles(): Promise<UserRoleData[]> {
   const result = await masterService.userRole();
@@ -81,9 +95,9 @@ async function fetchAllRoles(): Promise<UserRoleData[]> {
   return result.data as UserRoleData[];
 }
 
-
-async function checkUserRoles(allRoles: UserRoleData[]): Promise<UserRoleData | null> {
-
+async function checkUserRoles(
+  allRoles: UserRoleData[],
+): Promise<UserRoleData[] | null> {
   const graphClient = GraphService.getGraphClient();
 
   const groupIds = allRoles
@@ -93,23 +107,27 @@ async function checkUserRoles(allRoles: UserRoleData[]): Promise<UserRoleData | 
   if (groupIds.length === 0) return null;
 
   try {
-
     const response = await graphClient
       .api("/me/checkMemberGroups")
       .post({ groupIds });
 
-    const matchedRole = allRoles.find((role) =>
-      response.value.includes(role.ADGroupID)
-    );
+    const groupSet = new Set(response.value);
 
-    return matchedRole ?? null;
+    const matchedRole = allRoles
+      .filter((role) => groupSet.has(role.ADGroupID))
+      .map((res) => ({
+        ID: res.ID,
+        RoleTitle: res.RoleTitle,
+        ADGroupID: res.ADGroupID,
+        EmailId: "",
+      }));
 
+    return matchedRole.length ? matchedRole : null;
   } catch (error) {
     console.error("Group membership check failed:", error);
     return null;
   }
 }
-
 
 async function initApiUrls(): Promise<boolean> {
   const result = await masterService.GetCareerPortalIntergLink([], "and");
@@ -120,13 +138,15 @@ async function initApiUrls(): Promise<boolean> {
   localStorage.setItem("MeetingUrl", urls.MeetingUrl);
 
   const signIn = await InternalSign.InternalSignIn();
-  return signIn.status === ResponeStatus.SUCCESS;
+  if (signIn.status !== ResponeStatus.SUCCESS) {
+    return false;
+  }
+  return true;
 }
-
 
 function buildADGroupData(
   resolvedRoles: ResolvedRole[],
-  userName: string
+  userName: string,
 ): ADGroupData {
   return {
     roleIDs: resolvedRoles.map((r) => r.ID),
@@ -134,21 +154,33 @@ function buildADGroupData(
     userRole: resolvedRoles.map((r) => r.RoleTitle),
     ADGroupIDs: resolvedRoles.map((r) => r.ADGroupID),
     RoleDetails: resolvedRoles,
-    EmailId: resolvedRoles.map((r) => r.EmailId )
+    EmailId: resolvedRoles.map((r) => r.EmailId),
+    userDetails: resolvedRoles.map((r) => r.userDetails),
   };
 }
 
 const NoRoleScreen = (): JSX.Element => (
   <div className="flex min-h-screen relative bg-gray-100">
-    <div className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm transition-opacity"></div>
+    <div className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm transition-opacity" />
 
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border-t-4 border-amber-500">
         <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
           <div className="sm:flex sm:items-start">
             <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-amber-100 sm:mx-0 sm:h-12 sm:w-12">
-              <svg className="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              <svg
+                className="h-6 w-6 text-amber-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
               </svg>
             </div>
             <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
@@ -157,7 +189,9 @@ const NoRoleScreen = (): JSX.Element => (
               </h3>
               <div className="mt-3">
                 <p className="text-sm text-gray-500 mb-2">
-                  <span className="font-semibold text-gray-700">You are not assigned to any AD Group for Recruitment App.</span>
+                  <span className="font-semibold text-gray-700">
+                    You are not assigned to any AD Group for Recruitment App.
+                  </span>
                 </p>
                 {/* <p className="text-sm text-gray-500">
                   Please contact your IT support or system administrator to request access to this application.
@@ -181,54 +215,107 @@ const NoRoleScreen = (): JSX.Element => (
 );
 
 const ErrorScreen = ({ message }: { message: string }): JSX.Element => (
-  <div className="mainPage">
-    <Sidebar />
-    <div
-      style={{
-        width: "85%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100%",
-        gap: "12px",
-      }}
-    >
-      <h3 className="title" style={{ color: "#c0392b" }}>
-        Initialisation Error
-      </h3>
-      <p style={{ color: "#7f8c8d", fontSize: "14px", maxWidth: "480px", textAlign: "center" }}>
-        {message}
-      </p>
-    </div>
-  </div>
-);
+  <div className="flex min-h-screen relative bg-gray-100">
+    <div className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm transition-opacity" />
 
-const Sidebar = (): JSX.Element => (
-  <div className="w-[15%]">
-    <div className="overflow-hidden flex flex-col justify-between rounded-r-[30px] transition-all duration-1000 bg-[#597b98] h-[90vh] w-full">
-
-      <div>
-        <div className="flex justify-center items-center h-[68px] p-[3px] bg-white rounded-tr-[14px] rounded-br-[14px] w-[90%] my-[20px] transition-all duration-1000">
-
-          {/* eslint-disable-next-line @typescript-eslint/no-var-requires */}
-          <img
-            className="h-[76px] w-[84%] object-contain"
-            src={require("../../assets/komoa-logo-name.png")}
-            alt="HRMS Logo"
-          />
-
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border-t-4 border-amber-500">
+        <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div className="sm:flex sm:items-start">
+            <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-amber-100 sm:mx-0 sm:h-12 sm:w-12">
+              <svg
+                className="h-6 w-6 text-amber-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+            <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+              <h3 className="text-xl font-semibold leading-6 text-gray-900">
+                Error: Initialisation Error
+              </h3>
+              <div className="mt-3">
+                <p className="text-sm text-gray-500 mb-2">
+                  <span className="font-semibold text-gray-700">{message}</span>
+                </p>
+                {/* <p className="text-sm text-gray-500">
+                  Please contact your IT support or system administrator to request access to this application.
+                </p> */}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button
+            type="button"
+            className="inline-flex w-full justify-center rounded-md bg-amber-600 px-3 py-2 text-sm font-semibold  shadow-sm hover:bg-amber-500 sm:ml-3 sm:w-auto transition-colors "
+            onClick={() => window.location.reload()}
+          >
+            Refresh Page
+          </button>
         </div>
       </div>
-
-      <div className="text-white text-[15px] self-center mb-[10px]">
-        Version-1.3
-      </div>
-
     </div>
   </div>
 );
 
+const ServerDownError = ({ message }: { message: string }): JSX.Element => (
+  <div className="flex min-h-screen relative bg-gray-100">
+    <div className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm transition-opacity" />
+
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border-t-4 border-amber-500">
+        <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+          <div className="sm:flex sm:items-start">
+            <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-amber-100 sm:mx-0 sm:h-12 sm:w-12">
+              <svg
+                className="h-6 w-6 text-amber-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+            <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+              <h3 className="text-xl font-semibold leading-6 text-gray-900">
+                Error: Server Is Not Responding
+              </h3>
+              <div className="mt-3">
+                <p className="text-sm text-gray-500 mb-2">
+                  <span className="font-semibold text-gray-700">{message}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+          <button
+            type="button"
+            className="inline-flex w-full justify-center rounded-md bg-amber-600 px-3 py-2 text-sm font-semibold  shadow-sm hover:bg-amber-500 sm:ml-3 sm:w-auto transition-colors "
+            onClick={() => window.location.reload()}
+          >
+            Refresh Page
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 export const RoleProvider = ({
   children,
@@ -238,15 +325,31 @@ export const RoleProvider = ({
   const [state, dispatch] = useReducer(providerReducer, initialState);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
 
-
   const initialise = useCallback(async (): Promise<void> => {
     dispatch({ type: "SET_LOADING", isLoading: true });
 
     const [, userResult] = await Promise.allSettled([
       initApiUrls()
-        .then(() => dispatch({ type: "SET_API_URLS_READY" }))
+        .then((success) => {
+          if (success) {
+            dispatch({ type: "SET_API_URLS_READY" });
+          } else {
+            dispatch({
+              type: "SET_API_URLS_ERROR",
+              message:
+                "Server is currently unavailable. Please try again later.",
+            });
+          }
+        })
         .catch((err: unknown) => {
           console.error("[RoleProvider] API URL init failed:", err);
+          dispatch({
+            type: "SET_API_URLS_ERROR",
+            message:
+              err instanceof Error
+                ? err.message
+                : "Server is currently unavailable. Please try again later.",
+          });
         }),
 
       (async () => {
@@ -255,13 +358,21 @@ export const RoleProvider = ({
 
         const allRoles = await fetchAllRoles();
         const resolved = await checkUserRoles(allRoles);
-        const resolvedRoles = resolved ? [{
-          ID: resolved.ID,
-          RoleTitle: resolved.RoleTitle,
-          ADGroupID: resolved.ADGroupID,
+        const Filter = [
+          { FilterKey: "EmailId", Operator: "eq", FilterValue: email },
+        ];
+        const userDetails = await masterService.GetUserDetails(Filter, "and");
+        const resolvedRoles = resolved?.map((res) => ({
+          ID: res.ID,
+          RoleTitle: res.RoleTitle,
+          ADGroupID: res.ADGroupID,
           EmailId: email,
-        }] : [];
-        dispatch({ type: "SET_RESOLVED_ROLES", roles: resolvedRoles });
+          userDetails: userDetails.data,
+        }));
+        dispatch({
+          type: "SET_RESOLVED_ROLES",
+          roles: resolvedRoles && resolvedRoles.length > 0 ? resolvedRoles : [],
+        });
       })(),
     ]);
 
@@ -280,7 +391,6 @@ export const RoleProvider = ({
     void initialise();
   }, [initialise]);
 
-
   const ADGroupData = buildADGroupData(state.resolvedRoles, state.userName);
 
   const contextValue: RoleContextType = {
@@ -293,7 +403,6 @@ export const RoleProvider = ({
     showRoleSelector,
     setShowRoleSelector,
   };
-
 
   const isFullyReady =
     !state.isLoading &&
@@ -311,23 +420,23 @@ export const RoleProvider = ({
   return (
     <RoleContext.Provider value={contextValue}>
       <CustomLoader isLoading={state.isLoading}>
-        {state.error ? (
-          <ErrorScreen message={state.error.message} />
+        {state.apiUrlsError ? ( // ← check this first
+          // <ServerDownError message={state.apiUrlsError} />
+          <></>
+        ) : state.error ? (
+          // <ErrorScreen message={state.error.message} />
+          <></>
         ) : isFullyReady ? (
           <React.Suspense fallback={<CustomLoader isLoading />}>
             {children}
           </React.Suspense>
         ) : hasNoRoles ? (
           <NoRoleScreen />
-        ) : (
-          // Still initialising — CustomLoader handles the visual
-          null
-        )}
+        ) : null}
       </CustomLoader>
     </RoleContext.Provider>
   );
 };
-
 
 export const useRoleContext = (): RoleContextType => {
   const ctx = useContext(RoleContext);

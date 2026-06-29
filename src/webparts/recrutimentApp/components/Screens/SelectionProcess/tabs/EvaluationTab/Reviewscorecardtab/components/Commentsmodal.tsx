@@ -1,8 +1,8 @@
-// ReviewScorecard/components/CommentsModal.tsx
+
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, FileText } from "lucide-react";
-import moment from "moment";
+import  moment from "moment";
 import styles from "../Reviewscorecardtab.module.scss";
 import { CommentEntry } from "../types";
 
@@ -14,10 +14,10 @@ interface Props {
   onClose:  () => void;
 }
 
-const CommentsModal: React.FC<Props> = ({ open, loading, level1, level2, onClose }) => {
+const CommentsModal: React.FC<Props> = ({ open, loading, level1 = [], level2 = [], onClose }) => {
   const allComments = React.useMemo(() => [
-    ...level1.map(c => ({ ...c, _level: "Level 1" })),
-    ...level2.map(c => ({ ...c, _level: "Level 2" })),
+    ...(level1 || []).map(c => ({ ...c, _level: "Level 1" })),
+    ...(level2 || []).map(c => ({ ...c, _level: "Level 2" })),
   ].sort((a, b) => {
     const d1 = a.Date ? new Date(a.Date).getTime() : 0;
     const d2 = b.Date ? new Date(b.Date).getTime() : 0;
@@ -35,7 +35,7 @@ const CommentsModal: React.FC<Props> = ({ open, loading, level1, level2, onClose
           >
             <div className={styles.mCommentsHeader}>
               <h3><FileText size={20} color="#2563eb" /> View Justification</h3>
-              <button onClick={onClose}><X size={20} /></button>
+              <button onClick={onClose} aria-label="Close comments modal"><X size={20} /></button>
             </div>
 
             <div className={styles.mCommentsBody}>
@@ -46,7 +46,7 @@ const CommentsModal: React.FC<Props> = ({ open, loading, level1, level2, onClose
               ) : allComments.map((c, i) => (
                 <div key={i} className={c._level === "Level 1" ? styles.mCommentItemL1 : styles.mCommentItemL2}>
                   <div className={styles.mCommentRole}>
-                    Submitted by {c.RoleName || c.Name || "Unknown"} ({c._level})
+                    Submitted by {c.RoleName || c.Name || ""} ({c._level})
                   </div>
                   {c.comments && (
                     <div className={styles.mCommentText}>

@@ -20,6 +20,14 @@ var SCORECARD_FIELDS = [
     { key: "ExpatLocal", label: "EXPAT/LOCAL", icon: "🌐" },
     { key: "OtherCriteria", label: "OTHER CRITERIA", icon: "📄" },
 ];
+var LeftField = function (_a) {
+    var icon = _a.icon, label = _a.label, value = _a.value;
+    return (React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftFieldWrapper },
+        React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftFieldLabelRow },
+            icon && React.createElement("span", { className: EvaluationForm_module_scss_1.default.leftFieldIcon }, icon),
+            React.createElement("span", { className: EvaluationForm_module_scss_1.default.leftFieldLabel }, label)),
+        React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftFieldValueBox }, value || "")));
+};
 var EvaluationForm = function (_a) {
     var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
     var candidateId = _a.candidateId, recruitmentId = _a.recruitmentId, interviewLevel = _a.interviewLevel, grade = _a.grade, onBack = _a.onBack, currentRoleIDs = _a.currentRoleIDs;
@@ -32,14 +40,14 @@ var EvaluationForm = function (_a) {
     var _u = React.useState(null), candidateData = _u[0], setCandidateData = _u[1];
     var _v = React.useState([]), panelMembers = _v[0], setPanelMembers = _v[1];
     var _w = React.useState(null), currentUserPanelId = _w[0], setCurrentUserPanelId = _w[1];
-    var _x = React.useState(""), reviewerName = _x[0], setReviewerName = _x[1];
-    var _y = React.useState(null), currentUserGuid = _y[0], setCurrentUserGuid = _y[1];
-    var _z = React.useState("—"), jobTitleEn = _z[0], setJobTitleEn = _z[1];
-    var _0 = React.useState("—"), jobTitleFr = _0[0], setJobTitleFr = _0[1];
-    var _1 = React.useState([]), questionnaire = _1[0], setQuestionnaire = _1[1];
-    var _2 = React.useState({}), ratingErrors = _2[0], setRatingErrors = _2[1];
-    var _3 = React.useState(Object.fromEntries(SCORECARD_FIELDS.map(function (f) { return [f.key, null]; }))), scorecard = _3[0], setScorecard = _3[1];
-    var _4 = React.useState({}), scorecardErrors = _4[0], setScorecardErrors = _4[1];
+    var _x = React.useState(null), currentUserGuid = _x[0], setCurrentUserGuid = _x[1];
+    var _y = React.useState(""), jobTitleEn = _y[0], setJobTitleEn = _y[1];
+    var _z = React.useState(""), jobTitleFr = _z[0], setJobTitleFr = _z[1];
+    var _0 = React.useState([]), questionnaire = _0[0], setQuestionnaire = _0[1];
+    var _1 = React.useState({}), ratingErrors = _1[0], setRatingErrors = _1[1];
+    var _2 = React.useState(Object.fromEntries(SCORECARD_FIELDS.map(function (f) { return [f.key, null]; }))), scorecard = _2[0], setScorecard = _2[1];
+    var _3 = React.useState({}), scorecardErrors = _3[0], setScorecardErrors = _3[1];
+    var _4 = React.useState(), reviewerName = _4[0], setReviewerName = _4[1];
     var _5 = React.useState(null), recommendation = _5[0], setRecommendation = _5[1];
     var _6 = React.useState(false), recError = _6[0], setRecError = _6[1];
     var _7 = React.useState(""), overallFeedback = _7[0], setOverallFeedback = _7[1];
@@ -47,7 +55,7 @@ var EvaluationForm = function (_a) {
     var _9 = React.useState(false), acknowledged = _9[0], setAcknowledged = _9[1];
     var _10 = React.useState(false), ackError = _10[0], setAckError = _10[1];
     React.useEffect(function () {
-        (function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+        void (function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
             var result;
             var _a, _b, _c;
             return tslib_1.__generator(this, function (_d) {
@@ -61,9 +69,9 @@ var EvaluationForm = function (_a) {
                             setCandidateData(result.candidateData);
                             setPanelMembers((_a = result.panelMembers) !== null && _a !== void 0 ? _a : []);
                             setCurrentUserPanelId(result.currentUserPanelId);
-                            setReviewerName(result.reviewerName || userName || "—");
-                            setJobTitleEn(result.jobTitleEn || "—");
-                            setJobTitleFr(result.jobTitleFr || "—");
+                            setReviewerName(result.reviewerName || userName || undefined);
+                            setJobTitleEn(result.jobTitleEn || "");
+                            setJobTitleFr(result.jobTitleFr || "");
                             setCurrentUserGuid((_b = result.currentUserGuid) !== null && _b !== void 0 ? _b : null);
                             setQuestionnaire(((_c = result.questions) !== null && _c !== void 0 ? _c : []).map(function (q, idx) {
                                 var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
@@ -202,11 +210,11 @@ var EvaluationForm = function (_a) {
     }
     var candidateName = candidateData
         ? "".concat((_d = candidateData.FristName) !== null && _d !== void 0 ? _d : "").concat(candidateData.MiddleName ? " " + candidateData.MiddleName : "", " ").concat((_e = candidateData.LastName) !== null && _e !== void 0 ? _e : "").trim()
-        : "—";
+        : "";
     var userInitial = (reviewerName || "J").charAt(0).toUpperCase();
     var interviewDateDisplay = (candidateData === null || candidateData === void 0 ? void 0 : candidateData.InterviewDateLevel2) || (candidateData === null || candidateData === void 0 ? void 0 : candidateData.InterviewDate)
         ? (candidateData.InterviewDateLevel2 || candidateData.InterviewDate).split("T")[0]
-        : "—";
+        : "";
     var alertClass = [
         EvaluationForm_module_scss_1.default.alert,
         alertType === "error" ? EvaluationForm_module_scss_1.default.alertError : "",
@@ -228,19 +236,19 @@ var EvaluationForm = function (_a) {
                             React.createElement("path", { d: "M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" })))),
                 React.createElement("div", { style: { paddingTop: 8 } },
                     React.createElement(LeftField, { icon: "\uD83D\uDC64", label: "APPLICANT NAME", value: candidateName }),
-                    React.createElement(LeftField, { icon: "\uD83C\uDF10", label: "NATIONALITY", value: (_f = candidateData === null || candidateData === void 0 ? void 0 : candidateData.Nationality) !== null && _f !== void 0 ? _f : "—" }),
-                    React.createElement(LeftField, { icon: "\uD83D\uDC64", label: "GENDER", value: (_g = candidateData === null || candidateData === void 0 ? void 0 : candidateData.Gender) !== null && _g !== void 0 ? _g : "—" }),
-                    React.createElement(LeftField, { icon: "\uD83D\uDCC4", label: "QUALIFICATION", value: (_h = candidateData === null || candidateData === void 0 ? void 0 : candidateData.Qualification) !== null && _h !== void 0 ? _h : "—" }),
+                    React.createElement(LeftField, { icon: "\uD83C\uDF10", label: "NATIONALITY", value: (_f = candidateData === null || candidateData === void 0 ? void 0 : candidateData.Nationality) !== null && _f !== void 0 ? _f : "" }),
+                    React.createElement(LeftField, { icon: "\uD83D\uDC64", label: "GENDER", value: (_g = candidateData === null || candidateData === void 0 ? void 0 : candidateData.Gender) !== null && _g !== void 0 ? _g : "" }),
+                    React.createElement(LeftField, { icon: "\uD83D\uDCC4", label: "QUALIFICATION", value: (_h = candidateData === null || candidateData === void 0 ? void 0 : candidateData.Qualification) !== null && _h !== void 0 ? _h : "" }),
                     React.createElement("div", { className: EvaluationForm_module_scss_1.default.twoCol },
-                        React.createElement(LeftField, { icon: "\uD83D\uDCC8", label: "MINING EXP.", value: (_j = candidateData === null || candidateData === void 0 ? void 0 : candidateData.TotalYearOfExperiance) !== null && _j !== void 0 ? _j : "—" }),
-                        React.createElement(LeftField, { icon: "\uD83D\uDCC8", label: "RELATED EXP.", value: (_k = candidateData === null || candidateData === void 0 ? void 0 : candidateData.ReleventExperience) !== null && _k !== void 0 ? _k : "—" })),
+                        React.createElement(LeftField, { icon: "\uD83D\uDCC8", label: "MINING EXP.", value: (_j = candidateData === null || candidateData === void 0 ? void 0 : candidateData.TotalYearOfExperiance) !== null && _j !== void 0 ? _j : "" }),
+                        React.createElement(LeftField, { icon: "\uD83D\uDCC8", label: "RELATED EXP.", value: (_k = candidateData === null || candidateData === void 0 ? void 0 : candidateData.ReleventExperience) !== null && _k !== void 0 ? _k : "" })),
                     React.createElement("div", { className: EvaluationForm_module_scss_1.default.twoCol },
                         React.createElement(LeftField, { icon: "\uD83D\uDCC5", label: "INTERVIEW DATE", value: interviewDateDisplay }),
-                        React.createElement(LeftField, { icon: "\uD83D\uDD32", label: "LEVELS", value: interviewLevel !== null && interviewLevel !== void 0 ? interviewLevel : "—" })),
+                        React.createElement(LeftField, { icon: "\uD83D\uDD32", label: "LEVELS", value: interviewLevel !== null && interviewLevel !== void 0 ? interviewLevel : "" })),
                     React.createElement("div", { className: EvaluationForm_module_scss_1.default.twoCol },
-                        React.createElement(LeftField, { icon: "\uD83D\uDCC8", label: "GRADE", value: grade || "—" }),
-                        React.createElement(LeftField, { icon: "\u26A0\uFE0F", label: "CONFLICTS", value: (_l = candidateData === null || candidateData === void 0 ? void 0 : candidateData.ConflictsOfInterest) !== null && _l !== void 0 ? _l : "—" })),
-                    React.createElement(LeftField, { icon: "\u267F", label: "DISABILITY", value: (_o = (_m = candidateData === null || candidateData === void 0 ? void 0 : candidateData.disability) !== null && _m !== void 0 ? _m : candidateData === null || candidateData === void 0 ? void 0 : candidateData.Disability) !== null && _o !== void 0 ? _o : "—" }),
+                        React.createElement(LeftField, { icon: "\uD83D\uDCC8", label: "GRADE", value: grade || "" }),
+                        React.createElement(LeftField, { icon: "\u26A0\uFE0F", label: "CONFLICTS", value: (_l = candidateData === null || candidateData === void 0 ? void 0 : candidateData.ConflictsOfInterest) !== null && _l !== void 0 ? _l : "" })),
+                    React.createElement(LeftField, { icon: "\u267F", label: "DISABILITY", value: (_o = (_m = candidateData === null || candidateData === void 0 ? void 0 : candidateData.disability) !== null && _m !== void 0 ? _m : candidateData === null || candidateData === void 0 ? void 0 : candidateData.Disability) !== null && _o !== void 0 ? _o : "" }),
                     panelMembers.length > 0 && (React.createElement("div", { className: EvaluationForm_module_scss_1.default.panelSection },
                         React.createElement("div", { className: EvaluationForm_module_scss_1.default.panelHeader },
                             React.createElement("span", { className: EvaluationForm_module_scss_1.default.panelHeaderIcon }, "\uD83D\uDC65"),
@@ -376,14 +384,6 @@ var EvaluationForm = function (_a) {
                 React.createElement("div", { className: EvaluationForm_module_scss_1.default.footer },
                     React.createElement("button", { className: EvaluationForm_module_scss_1.default.cancelBtn, onClick: onBack, disabled: submitting }, "Cancel"),
                     React.createElement("button", { className: EvaluationForm_module_scss_1.default.submitBtn, onClick: handleSubmit, disabled: submitting || !acknowledged }, submitting ? "Submitting…" : "+ Submit Evaluation"))))));
-};
-var LeftField = function (_a) {
-    var icon = _a.icon, label = _a.label, value = _a.value;
-    return (React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftFieldWrapper },
-        React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftFieldLabelRow },
-            icon && React.createElement("span", { className: EvaluationForm_module_scss_1.default.leftFieldIcon }, icon),
-            React.createElement("span", { className: EvaluationForm_module_scss_1.default.leftFieldLabel }, label)),
-        React.createElement("div", { className: EvaluationForm_module_scss_1.default.leftFieldValueBox }, value || "—")));
 };
 exports.default = EvaluationForm;
 //# sourceMappingURL=EvaluationForm.js.map
