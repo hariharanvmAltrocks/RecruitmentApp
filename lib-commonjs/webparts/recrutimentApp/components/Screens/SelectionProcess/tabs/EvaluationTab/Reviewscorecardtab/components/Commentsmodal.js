@@ -1,14 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
+// ReviewScorecard/components/CommentsModal.tsx
 var React = tslib_1.__importStar(require("react"));
 var framer_motion_1 = require("framer-motion");
 var lucide_react_1 = require("lucide-react");
 var moment_1 = tslib_1.__importDefault(require("moment"));
 var Reviewscorecardtab_module_scss_1 = tslib_1.__importDefault(require("../Reviewscorecardtab.module.scss"));
 var CommentsModal = function (_a) {
-    var open = _a.open, loading = _a.loading, _b = _a.level1, level1 = _b === void 0 ? [] : _b, _c = _a.level2, level2 = _c === void 0 ? [] : _c, onClose = _a.onClose;
-    var allComments = React.useMemo(function () { return tslib_1.__spreadArray(tslib_1.__spreadArray([], (level1 || []).map(function (c) { return (tslib_1.__assign(tslib_1.__assign({}, c), { _level: "Level 1" })); }), true), (level2 || []).map(function (c) { return (tslib_1.__assign(tslib_1.__assign({}, c), { _level: "Level 2" })); }), true).sort(function (a, b) {
+    var open = _a.open, loading = _a.loading, level1 = _a.level1, level2 = _a.level2, onClose = _a.onClose;
+    var allComments = React.useMemo(function () { return tslib_1.__spreadArray(tslib_1.__spreadArray([], level1.map(function (c) { return (tslib_1.__assign(tslib_1.__assign({}, c), { _level: "Level 1" })); }), true), level2.map(function (c) { return (tslib_1.__assign(tslib_1.__assign({}, c), { _level: "Level 2" })); }), true).sort(function (a, b) {
         var d1 = a.Date ? new Date(a.Date).getTime() : 0;
         var d2 = b.Date ? new Date(b.Date).getTime() : 0;
         return d1 - d2;
@@ -19,12 +20,12 @@ var CommentsModal = function (_a) {
                 React.createElement("h3", null,
                     React.createElement(lucide_react_1.FileText, { size: 20, color: "#2563eb" }),
                     " View Justification"),
-                React.createElement("button", { onClick: onClose, "aria-label": "Close comments modal" },
+                React.createElement("button", { onClick: onClose },
                     React.createElement(lucide_react_1.X, { size: 20 }))),
             React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentsBody }, loading ? (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentsLoading }, "Loading comments...")) : allComments.length === 0 ? (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentsNoData }, "No Comments Found")) : allComments.map(function (c, i) { return (React.createElement("div", { key: i, className: c._level === "Level 1" ? Reviewscorecardtab_module_scss_1.default.mCommentItemL1 : Reviewscorecardtab_module_scss_1.default.mCommentItemL2 },
                 React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mCommentRole },
                     "Submitted by ",
-                    c.RoleName || c.Name || "",
+                    c.RoleName || c.Name || "Unknown",
                     " (",
                     c._level,
                     ")"),
@@ -54,4 +55,4 @@ var CommentsModal = function (_a) {
                 React.createElement("button", { onClick: onClose, className: Reviewscorecardtab_module_scss_1.default.closeBtn }, "CLOSE")))))));
 };
 exports.default = CommentsModal;
-//# sourceMappingURL=Commentsmodal.js.map
+//# sourceMappingURL=CommentsModal.js.map

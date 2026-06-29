@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
+// ReviewScorecard/components/JobListTable.tsx
 var React = tslib_1.__importStar(require("react"));
 var lucide_react_1 = require("lucide-react");
 var react_router_dom_1 = require("react-router-dom");
@@ -31,9 +32,9 @@ var JobListTable = function (_a) {
                     React.createElement("td", { colSpan: 7, className: Reviewscorecardtab_module_scss_1.default.noData }, "No jobs found."))) : jobRows.map(function (job) { return (React.createElement("tr", { key: job.id, onClick: function () { return onSelectJob(job); } },
                     React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.jobCode }, job.jobCode),
                     React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.jobTitle }, job.jobTitle),
-                    React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.textMuted }, job.businessUnitCode || ""),
-                    React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.textMuted }, job.positionRequest || ""),
-                    React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.textMuted }, job.nationality || ""),
+                    React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.textMuted }, job.businessUnitCode || "—"),
+                    React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.textMuted }, job.positionRequest || "—"),
+                    React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.textMuted }, job.nationality || "—"),
                     React.createElement("td", null,
                         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.statusBadge },
                             React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.dot }),
@@ -65,4 +66,4 @@ var JobListTable = function (_a) {
                 React.createElement("button", { className: "".concat(Reviewscorecardtab_module_scss_1.default.pageBtn, " ").concat(currentPage >= totalPages ? Reviewscorecardtab_module_scss_1.default.disabled : ""), disabled: currentPage >= totalPages, onClick: function () { return onPageChange(currentPage + 1); } }, "\u203A")))));
 };
 exports.default = JobListTable;
-//# sourceMappingURL=Joblisttable.js.map
+//# sourceMappingURL=JobListTable.js.map

@@ -25,7 +25,7 @@ var ScoreTable = function (_a) {
                             React.createElement("br", null),
                             React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.interviewerName },
                                 "(",
-                                name || "",
+                                name || "—",
                                 ")"))); }),
                         showTotal && React.createElement("th", null, "Total"))),
                 React.createElement("tbody", null, rows.length === 0 ? (React.createElement("tr", null,
@@ -34,10 +34,10 @@ var ScoreTable = function (_a) {
                         React.createElement("strong", null, row.criteria)),
                     panelMembers.map(function (_, j) {
                         var _a;
-                        return (React.createElement("td", { key: j }, (_a = row["panel_".concat(j)]) !== null && _a !== void 0 ? _a : ""));
+                        return (React.createElement("td", { key: j }, (_a = row["panel_".concat(j)]) !== null && _a !== void 0 ? _a : "—"));
                     }),
                     showTotal && React.createElement("td", null,
                         React.createElement("strong", null, row.total)))); }))))));
 };
 exports.default = ScoreTable;
-//# sourceMappingURL=Scoretable.js.map
+//# sourceMappingURL=ScoreTable.js.map

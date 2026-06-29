@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
+// ReviewScorecard/components/HODDecisionPanel.tsx
+// Edit mode: Yes/No/On Hold + comment + checkbox + position dropdown + submit
+// View mode: shows submitted decision read-only
 var React = tslib_1.__importStar(require("react"));
 var lucide_react_1 = require("lucide-react");
 var Reviewscorecardtab_module_scss_1 = tslib_1.__importDefault(require("../Reviewscorecardtab.module.scss"));
@@ -8,6 +11,7 @@ var HODDecisionPanel = function (_a) {
     var canEdit = _a.canEdit, isLevel2Status = _a.isLevel2Status, statusId = _a.statusId, hodDecision = _a.hodDecision, decisionComment = _a.decisionComment, confirmed = _a.confirmed, selectedPositionId = _a.selectedPositionId, selectedPositionText = _a.selectedPositionText, positionOptions = _a.positionOptions, submitting = _a.submitting, submitError = _a.submitError, successMessage = _a.successMessage, reviewerName = _a.reviewerName, jobTitleEn = _a.jobTitleEn, jobTitleFr = _a.jobTitleFr, userInitial = _a.userInitial, errors = _a.errors, shouldShowPositionId = _a.shouldShowPositionId, onDecisionChange = _a.onDecisionChange, onCommentChange = _a.onCommentChange, onConfirmChange = _a.onConfirmChange, onPositionChange = _a.onPositionChange, onViewComments = _a.onViewComments, onSubmit = _a.onSubmit, onClose = _a.onClose;
     var feedbackLabel = isLevel2Status ? "Feedback — Level 2" : "Feedback — Level 1";
     if (!canEdit) {
+        // ── View mode ─────────────────────────────────────────────────────────────
         return (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mDecisionCard, style: { borderColor: "#e2e8f0", background: "#f8fafc" } },
             React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mDecisionHeader },
                 React.createElement(lucide_react_1.Eye, { size: 22, color: "#2563eb" }),
@@ -35,6 +39,7 @@ var HODDecisionPanel = function (_a) {
             React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFooter },
                 React.createElement("button", { onClick: onClose, className: Reviewscorecardtab_module_scss_1.default.mCancelBtn }, "CLOSE"))));
     }
+    // ── Edit mode ──────────────────────────────────────────────────────────────
     return (React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mDecisionCard },
         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mDecisionHeader },
             React.createElement(lucide_react_1.Zap, { size: 22, color: "#f59e0b", fill: "#f59e0b" }),
@@ -84,16 +89,16 @@ var HODDecisionPanel = function (_a) {
             errors.checkbox && React.createElement("span", { className: Reviewscorecardtab_module_scss_1.default.mCheckboxErrText }, "\u26A0 You must confirm before submitting.")),
         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFormGroup },
             React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.reviewerCard },
-                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.reviewerAvatar }, userInitial || ""),
+                React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.reviewerAvatar }, userInitial || "H"),
                 React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.reviewerInfo },
                     React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.reviewerCol },
                         React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.reviewerMeta }, "REVIEWER NAME"),
-                        React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.reviewerVal }, reviewerName || "")),
+                        React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.reviewerVal }, reviewerName || "—")),
                     React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.reviewerCol },
                         React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.reviewerMeta }, "JOB TITLE (EN)"),
-                        React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.reviewerVal }, jobTitleEn || ""),
+                        React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.reviewerVal }, jobTitleEn || "—"),
                         React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.reviewerMeta, style: { marginTop: 12 } }, "JOB TITLE (FR)"),
-                        React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.reviewerVal }, jobTitleFr || ""))))),
+                        React.createElement("p", { className: Reviewscorecardtab_module_scss_1.default.reviewerVal }, jobTitleFr || "—"))))),
         submitError && React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mSubmitError }, submitError),
         React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.mFooter },
             React.createElement("button", { onClick: onClose, className: Reviewscorecardtab_module_scss_1.default.mCancelBtn, disabled: submitting }, "CANCEL"),
@@ -102,4 +107,4 @@ var HODDecisionPanel = function (_a) {
                 " SUBMIT ACTION")))));
 };
 exports.default = HODDecisionPanel;
-//# sourceMappingURL=Hoddecisionpanel.js.map
+//# sourceMappingURL=HODDecisionPanel.js.map

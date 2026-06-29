@@ -13,19 +13,6 @@ var getStatusClass = function (statusId) {
         return Reviewscorecardtab_module_scss_1.default.statusRejected;
     return Reviewscorecardtab_module_scss_1.default.statusPending;
 };
-var getInterviewLevelLabel = function (interviewLevel) {
-    var lvl = (interviewLevel || "").trim();
-    var isLevel1 = /level\s*1/i.test(lvl);
-    var isLevel2 = /level\s*2/i.test(lvl);
-    if (isLevel2) {
-        // For level 2 candidates, display both level 1 and level 2
-        return "Level 1 of 1 & Level 2 of 2";
-    }
-    if (isLevel1) {
-        return "Level 1 of 1";
-    }
-    return lvl || " ";
-};
 var CandidateDrawer = function (_a) {
     var job = _a.job, candidates = _a.candidates, loading = _a.loading, onClose = _a.onClose, onReview = _a.onReview;
     var pendingCount = candidates.filter(function (c) { return UseReviewScorecard_1.EDITABLE_STATUS_IDS.includes(c.statusId); }).length;
@@ -68,13 +55,13 @@ var CandidateDrawer = function (_a) {
                             return (React.createElement("tr", { key: c.id },
                                 React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.textMuted, style: { fontWeight: "bold" } }, idx + 1),
                                 React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.jobTitle }, c.fullName),
-                                React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.textMuted }, c.positionTitle || ""),
-                                React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.textMuted }, getInterviewLevelLabel(c.interviewLevel)),
-                                React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.textMuted }, c.grade || ""),
+                                React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.textMuted }, c.positionTitle || "—"),
+                                React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.textMuted }, c.interviewLevel || "—"),
+                                React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.textMuted }, c.grade || "—"),
                                 React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.center },
-                                    React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.gpaBadge }, c.gpa || "")),
+                                    React.createElement("div", { className: Reviewscorecardtab_module_scss_1.default.gpaBadge }, c.gpa || "—")),
                                 React.createElement("td", null,
-                                    React.createElement("span", { className: "".concat(Reviewscorecardtab_module_scss_1.default.statusBadgeText, " ").concat(getStatusClass(c.statusId)) }, c.status || "")),
+                                    React.createElement("span", { className: "".concat(Reviewscorecardtab_module_scss_1.default.statusBadgeText, " ").concat(getStatusClass(c.statusId)) }, c.status || "—")),
                                 React.createElement("td", { className: Reviewscorecardtab_module_scss_1.default.center },
                                     edit && (React.createElement("button", { onClick: function () { return onReview(c); }, className: Reviewscorecardtab_module_scss_1.default.iconButton, title: "Edit" },
                                         React.createElement(lucide_react_1.Pencil, { size: 16 }))),
