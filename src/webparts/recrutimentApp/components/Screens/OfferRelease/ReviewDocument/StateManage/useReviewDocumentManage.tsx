@@ -37,6 +37,9 @@ export interface ValidationError {
   nationalShoesSize: boolean;
   nationalContractReleased: boolean;
   nationalContractAccepted: boolean;
+  nationalBgvPayslip: boolean;
+  nationalBgvBankStatement: boolean;
+  nationalBgvVerified: boolean;
 }
 
 // Default reset shape — single source of truth
@@ -59,6 +62,9 @@ const DEFAULT_VALIDATION: ValidationError = {
   nationalShoesSize: false,
   nationalContractReleased: false,
   nationalContractAccepted: false,
+  nationalBgvPayslip: false,
+  nationalBgvBankStatement: false,
+  nationalBgvVerified: false,
 };
 
 export interface DrawerStateManager {
@@ -119,6 +125,12 @@ export interface DrawerStateManager {
   setNationalShoesSize: (val: string) => void;
   setNationalContractReleased: (val: string) => void;
   // setNationalContractAccepted: (val: string) => void;
+  nationalBgvPayslipChecked: string;
+  nationalBgvBankStatementChecked: string;
+  nationalBgvVerifiedByHR: boolean;
+  setNationalBgvPayslipChecked: (val: string) => void;
+  setNationalBgvBankStatementChecked: (val: string) => void;
+  setNationalBgvVerifiedByHR: (val: boolean) => void;
 }
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
@@ -162,6 +174,9 @@ export const useStateOfferRelease = (): DrawerStateManager => {
   const [nationalShoesSize, setNationalShoesSize] = useState<string>("");
   const [nationalContractReleased, setNationalContractReleased] = useState<string>("");
   // const [nationalContractAccepted, setNationalContractAccepted] = useState<string>("");
+  const [nationalBgvPayslipChecked, setNationalBgvPayslipChecked] = useState<string>("");
+  const [nationalBgvBankStatementChecked, setNationalBgvBankStatementChecked] = useState<string>("");
+  const [nationalBgvVerifiedByHR, setNationalBgvVerifiedByHR] = useState<boolean>(false);
 
   // ── Validation error state ──
   const [validationError, setValidationError] =
@@ -305,6 +320,31 @@ export const useStateOfferRelease = (): DrawerStateManager => {
   //     nationalContractAccepted: false,
   //   }));
   // }, []);
+
+  // ─── National BGV Checklist Handlers ─────────────────────────────────────
+  const handleBgvPayslipChange = useCallback((val: string) => {
+    setNationalBgvPayslipChecked(val);
+    setValidationError((prev: ValidationError) => ({
+      ...prev,
+      nationalBgvPayslip: false,
+    }));
+  }, []);
+
+  const handleBgvBankStatementChange = useCallback((val: string) => {
+    setNationalBgvBankStatementChecked(val);
+    setValidationError((prev: ValidationError) => ({
+      ...prev,
+      nationalBgvBankStatement: false,
+    }));
+  }, []);
+
+  const handleBgvVerifiedChange = useCallback((val: boolean) => {
+    setNationalBgvVerifiedByHR(val);
+    setValidationError((prev: ValidationError) => ({
+      ...prev,
+      nationalBgvVerified: false,
+    }));
+  }, []);
 
   // ─── Work permit file handlers ────────────────────────────────────────────
 
@@ -452,6 +492,22 @@ export const useStateOfferRelease = (): DrawerStateManager => {
         // }
       }
 
+      // ── National BGV Process Card Validation ──
+      if (vis.NaionalBGVProcess) {
+        if (!nationalBgvPayslipChecked) {
+          errors.nationalBgvPayslip = true;
+          isValid = false;
+        }
+        if (!nationalBgvBankStatementChecked) {
+          errors.nationalBgvBankStatement = true;
+          isValid = false;
+        }
+        // if (!nationalBgvVerifiedByHR) {
+        //   errors.nationalBgvVerified = true;
+        //   isValid = false;
+        // }
+      }
+
       if (vis.showVerificationToggle && consentVerification === null) {
         errors.verification = true;
         isValid = false;
@@ -461,7 +517,9 @@ export const useStateOfferRelease = (): DrawerStateManager => {
         isValid = false;
       }
 
-      if (vis.showCOICard) {
+      const hasCoiDiscrepancy = vis.NaionalBGVProcess && (nationalBgvPayslipChecked === "No" || nationalBgvBankStatementChecked === "No");
+
+      if (vis.showCOICard || hasCoiDiscrepancy) {
         const coiInvalid =
           !coiState.consultedWith.trim() ||
           !coiState.comments.trim() ||
@@ -514,6 +572,9 @@ export const useStateOfferRelease = (): DrawerStateManager => {
       nationalShoesSize,
       nationalContractReleased,
       // nationalContractAccepted,
+      nationalBgvPayslipChecked,
+      nationalBgvBankStatementChecked,
+      nationalBgvVerifiedByHR,
     ],
   );
 
@@ -575,5 +636,11 @@ export const useStateOfferRelease = (): DrawerStateManager => {
     setNationalShoesSize: handleShoesSizeChange,
     setNationalContractReleased: handleContractReleasedChange,
     // setNationalContractAccepted: handleContractAcceptedChange,
+    nationalBgvPayslipChecked,
+    nationalBgvBankStatementChecked,
+    nationalBgvVerifiedByHR,
+    setNationalBgvPayslipChecked: handleBgvPayslipChange,
+    setNationalBgvBankStatementChecked: handleBgvBankStatementChange,
+    setNationalBgvVerifiedByHR: handleBgvVerifiedChange,
   };
 };

@@ -24,6 +24,9 @@ var DEFAULT_VALIDATION = {
     nationalShoesSize: false,
     nationalContractReleased: false,
     nationalContractAccepted: false,
+    nationalBgvPayslip: false,
+    nationalBgvBankStatement: false,
+    nationalBgvVerified: false,
 };
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 var useStateOfferRelease = function () {
@@ -59,8 +62,11 @@ var useStateOfferRelease = function () {
     var _s = (0, react_1.useState)(""), nationalShoesSize = _s[0], setNationalShoesSize = _s[1];
     var _t = (0, react_1.useState)(""), nationalContractReleased = _t[0], setNationalContractReleased = _t[1];
     // const [nationalContractAccepted, setNationalContractAccepted] = useState<string>("");
+    var _u = (0, react_1.useState)(""), nationalBgvPayslipChecked = _u[0], setNationalBgvPayslipChecked = _u[1];
+    var _v = (0, react_1.useState)(""), nationalBgvBankStatementChecked = _v[0], setNationalBgvBankStatementChecked = _v[1];
+    var _w = (0, react_1.useState)(false), nationalBgvVerifiedByHR = _w[0], setNationalBgvVerifiedByHR = _w[1];
     // ── Validation error state ──
-    var _u = (0, react_1.useState)(DEFAULT_VALIDATION), validationError = _u[0], setValidationError = _u[1];
+    var _x = (0, react_1.useState)(DEFAULT_VALIDATION), validationError = _x[0], setValidationError = _x[1];
     // ─── Consent handlers ─────────────────────────────────────────────────────
     var handleConsentVerification = (0, react_1.useCallback)(function (value) { return setConsentVerification(value); }, []);
     var handleConsentFile = (0, react_1.useCallback)(function (value) {
@@ -139,6 +145,19 @@ var useStateOfferRelease = function () {
     //     nationalContractAccepted: false,
     //   }));
     // }, []);
+    // ─── National BGV Checklist Handlers ─────────────────────────────────────
+    var handleBgvPayslipChange = (0, react_1.useCallback)(function (val) {
+        setNationalBgvPayslipChecked(val);
+        setValidationError(function (prev) { return (tslib_1.__assign(tslib_1.__assign({}, prev), { nationalBgvPayslip: false })); });
+    }, []);
+    var handleBgvBankStatementChange = (0, react_1.useCallback)(function (val) {
+        setNationalBgvBankStatementChecked(val);
+        setValidationError(function (prev) { return (tslib_1.__assign(tslib_1.__assign({}, prev), { nationalBgvBankStatement: false })); });
+    }, []);
+    var handleBgvVerifiedChange = (0, react_1.useCallback)(function (val) {
+        setNationalBgvVerifiedByHR(val);
+        setValidationError(function (prev) { return (tslib_1.__assign(tslib_1.__assign({}, prev), { nationalBgvVerified: false })); });
+    }, []);
     // ─── Work permit file handlers ────────────────────────────────────────────
     var handleUploadClick = (0, react_1.useCallback)(function () { var _a; return (_a = fileInputRef.current) === null || _a === void 0 ? void 0 : _a.click(); }, []);
     var handleFileChange = (0, react_1.useCallback)(function (e) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
@@ -273,6 +292,21 @@ var useStateOfferRelease = function () {
             //   }
             // }
         }
+        // ── National BGV Process Card Validation ──
+        if (vis.NaionalBGVProcess) {
+            if (!nationalBgvPayslipChecked) {
+                errors.nationalBgvPayslip = true;
+                isValid = false;
+            }
+            if (!nationalBgvBankStatementChecked) {
+                errors.nationalBgvBankStatement = true;
+                isValid = false;
+            }
+            // if (!nationalBgvVerifiedByHR) {
+            //   errors.nationalBgvVerified = true;
+            //   isValid = false;
+            // }
+        }
         if (vis.showVerificationToggle && consentVerification === null) {
             errors.verification = true;
             isValid = false;
@@ -281,7 +315,8 @@ var useStateOfferRelease = function () {
             errors.showConsentErrors = true;
             isValid = false;
         }
-        if (vis.showCOICard) {
+        var hasCoiDiscrepancy = vis.NaionalBGVProcess && (nationalBgvPayslipChecked === "No" || nationalBgvBankStatementChecked === "No");
+        if (vis.showCOICard || hasCoiDiscrepancy) {
             var coiInvalid = !coiState.consultedWith.trim() ||
                 !coiState.comments.trim() ||
                 !coiState.wishesToProceed;
@@ -327,6 +362,9 @@ var useStateOfferRelease = function () {
         nationalShoesSize,
         nationalContractReleased,
         // nationalContractAccepted,
+        nationalBgvPayslipChecked,
+        nationalBgvBankStatementChecked,
+        nationalBgvVerifiedByHR,
     ]);
     return {
         // Consent
@@ -380,6 +418,12 @@ var useStateOfferRelease = function () {
         setNationalShoesSize: handleShoesSizeChange,
         setNationalContractReleased: handleContractReleasedChange,
         // setNationalContractAccepted: handleContractAcceptedChange,
+        nationalBgvPayslipChecked: nationalBgvPayslipChecked,
+        nationalBgvBankStatementChecked: nationalBgvBankStatementChecked,
+        nationalBgvVerifiedByHR: nationalBgvVerifiedByHR,
+        setNationalBgvPayslipChecked: handleBgvPayslipChange,
+        setNationalBgvBankStatementChecked: handleBgvBankStatementChange,
+        setNationalBgvVerifiedByHR: handleBgvVerifiedChange,
     };
 };
 exports.useStateOfferRelease = useStateOfferRelease;

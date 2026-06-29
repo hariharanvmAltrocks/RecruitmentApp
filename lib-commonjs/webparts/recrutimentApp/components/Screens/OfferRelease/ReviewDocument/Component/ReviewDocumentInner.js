@@ -33,6 +33,7 @@ var UploadDocument_1 = require("../../../RecruitmentTable/Components/UploadDocum
 var CandidateDocumentsRepository_1 = tslib_1.__importDefault(require("../../Component/CandidateDocumentsRepository"));
 var OfferrelaeseNational_1 = require("./OfferrelaeseNational/OfferrelaeseNational");
 var Config_1 = require("../../../../../utilities/Config");
+var NationalBGVProcess_1 = require("./NationalBGVProcess/NationalBGVProcess");
 var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
     return react_1.default.createElement("div", { className: "review-document__skeleton", style: { width: width, height: height } });
@@ -65,7 +66,10 @@ var ReviewDocumentInner = function (_a) {
     // nationalContractAccepted,
     setNationalOfferReleased = _j.setNationalOfferReleased, 
     // setNationalOfferAccepted,
-    setNationalNoticePeriod = _j.setNationalNoticePeriod, setNationalJoiningDate = _j.setNationalJoiningDate, setNationalPantsSize = _j.setNationalPantsSize, setNationalTopSize = _j.setNationalTopSize, setNationalShoesSize = _j.setNationalShoesSize, setNationalContractReleased = _j.setNationalContractReleased;
+    setNationalNoticePeriod = _j.setNationalNoticePeriod, setNationalJoiningDate = _j.setNationalJoiningDate, setNationalPantsSize = _j.setNationalPantsSize, setNationalTopSize = _j.setNationalTopSize, setNationalShoesSize = _j.setNationalShoesSize, setNationalContractReleased = _j.setNationalContractReleased, 
+    // setNationalContractAccepted,
+    // National BGV Checklist
+    nationalBgvPayslipChecked = _j.nationalBgvPayslipChecked, nationalBgvBankStatementChecked = _j.nationalBgvBankStatementChecked, nationalBgvVerifiedByHR = _j.nationalBgvVerifiedByHR, setNationalBgvPayslipChecked = _j.setNationalBgvPayslipChecked, setNationalBgvBankStatementChecked = _j.setNationalBgvBankStatementChecked, setNationalBgvVerifiedByHR = _j.setNationalBgvVerifiedByHR;
     var _k = (0, react_1.useState)(false), showComments = _k[0], setshowComments = _k[1];
     var isPendingDOTAfrica = positionDetails.StatusID === Config_1.StatusId.PendingDOTAficaVerification;
     var _l = (0, useStatusDetails_1.useBGVStatusDetails)(jobrequestID, selectedcandidateID !== null && selectedcandidateID !== void 0 ? selectedcandidateID : 0, CandidateID !== null && CandidateID !== void 0 ? CandidateID : 0, isPendingDOTAfrica), bgvStatusDetails = _l.data, bgvStatus = _l.bgvStatus, bgvStatusLoading = _l.loading, bgvComments = _l.bgvComments, allCompleted = _l.allCompleted, rejectFlag = _l.rejectFlag, revertFLag = _l.revertFLag;
@@ -95,6 +99,10 @@ var ReviewDocumentInner = function (_a) {
         nationalShoesSize: nationalShoesSize,
         nationalContractReleased: nationalContractReleased,
         // nationalContractAccepted,
+        // National BGV Checklist
+        nationalBgvPayslipChecked: nationalBgvPayslipChecked,
+        nationalBgvBankStatementChecked: nationalBgvBankStatementChecked,
+        nationalBgvVerifiedByHR: nationalBgvVerifiedByHR,
     };
     var _m = (0, Usesubmitworkflow_1.useSubmitWorkflow)(submitDeps), SubmitLoading = _m.isLoading, submit = _m.submit;
     var _o = (0, getSignatureDetails_1.useSignatureDetails)(), signatureDetails = _o.data, signatureLoading = _o.loading;
@@ -453,9 +461,10 @@ var ReviewDocumentInner = function (_a) {
                     react_1.default.createElement(CandidateRoadmap_1.CandidateRoadmap, { statusId: positionDetails.StatusID, Nationality: positionDetails.NationalityCode }))))),
             react_1.default.createElement(PositionFrame_1.PositionFrame, { positionDetails: positionDetails, isLoading: false, headerCode: headerMeta.code }),
             vis.showCandidateDocs && (react_1.default.createElement(CandidateDocumentsRepository_1.default, { data: docData !== null && docData !== void 0 ? docData : null })),
+            vis.NaionalBGVProcess && (react_1.default.createElement(NationalBGVProcess_1.NationalBGVProcess, { payslipChecked: nationalBgvPayslipChecked, bankStatementChecked: nationalBgvBankStatementChecked, verifiedByHR: nationalBgvVerifiedByHR, validationError: validationError, isReadOnly: isAnySubmitting, onChangePayslipChecked: setNationalBgvPayslipChecked, onChangeBankStatementChecked: setNationalBgvBankStatementChecked, onChangeVerifiedByHR: setNationalBgvVerifiedByHR, coiState: coiState, showCoiErrors: validationError.showCoiErrors, onCoiChange: handleCoiChange, consultOptions: CONSULT_OPTIONS })),
             vis.showVerificationToggle && (react_1.default.createElement(ResueComponent_1.VerificationToggle, { value: consentVerification, onChange: handleConsentVerification, hasError: validationError.verification })),
             vis.showConsentForm && (react_1.default.createElement(consentform_1.default, { onFileChange: handleConsentFile, downloadUrl: (_f = positionDetails.DotAfricaCF) === null || _f === void 0 ? void 0 : _f.downloadUrl, disabled: isAnySubmitting, hasFileError: validationError.showConsentErrors, consentform: positionDetails.DotAfricaCF })),
-            vis.showCOICard && (react_1.default.createElement(Coicard_1.default, { consultOptions: CONSULT_OPTIONS, isReadOnly: isAnySubmitting, hasError: validationError.showCoiErrors, onChange: handleCoiChange })),
+            vis.showCOICard && (react_1.default.createElement(Coicard_1.default, { consultOptions: CONSULT_OPTIONS, isReadOnly: isAnySubmitting, hasError: validationError.showCoiErrors, onChange: handleCoiChange, LabelName: RecrutimentAppWebPartStrings_1.default.BackgroundVerification })),
             vis.showWorkPermitUpload && (react_1.default.createElement(Workpermituploadbox_1.WorkPermitUploadBox, { fileInputRef: fileInputRef, selectedFile: selectedFile, isReading: isReading, hasFileError: validationError.workPermit, disabled: isAnySubmitting, onUploadClick: handleUploadClick, onFileChange: handleFileChange, onClearFile: clearFile })),
             vis.NationalOfferLetter && (react_1.default.createElement(OfferrelaeseNational_1.OfferrelaeseNational, { offerReleased: nationalOfferReleased, 
                 // offerAccepted={nationalOfferAccepted}
@@ -501,10 +510,11 @@ var ReviewDocumentInner = function (_a) {
                     !vis.ViewFlag &&
                         positionDetails.StatusID !=
                             Config_1.StatusId.PendingHRpreonboardingchecklist && (react_1.default.createElement("button", { type: "button", className: "review-document__button review-document__button--primary", disabled: isAnySubmitting, onClick: handleApprove }, renderBtnContent(consentVerification === "verified"
-                        ? "Reviewed"
+                        ? "Review"
                         : consentVerification === "rejected"
                             ? "Revert"
-                            : "Submit", "approve", consentVerification === "verified"
+                            : nationalOfferReleased === "No" || nationalContractReleased === "No"
+                                ? "Reject" : "Submit", "approve", consentVerification === "verified"
                         ? "Reviewing..."
                         : consentVerification === "rejected"
                             ? "Reverting..."

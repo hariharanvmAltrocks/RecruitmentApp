@@ -117,7 +117,8 @@ export const getStageCandidateindex = (statusId: number) => {
     statusId == StatusId.PendingLabourHireOfferRelease ||
     statusId == StatusId.PendingHROfferReview ||
     statusId == StatusId.offerdecline ||
-    statusId == StatusId.PendingHRReviewOfferanduploadEmployementContract
+    statusId == StatusId.PendingHRReviewOfferanduploadEmployementContract||
+    statusId == StatusId.HROfferLetterProgress 
   )
     return 4;
   if (
@@ -141,7 +142,9 @@ export const getStageCandidateindex = (statusId: number) => {
     statusId == StatusId.PendingHREmploymentContractReview || 
     statusId ==
       StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract ||
-       statusId == StatusId.PendingHREmploymentContractVerification
+       statusId == StatusId.PendingHREmploymentContractVerification ||
+    statusId == StatusId.HREmploymentContractProgress
+
   )
     return 6;
   if (
@@ -252,8 +255,7 @@ export const getStageIndexinCandidateDRC = (statusId: number) => {
     statusId == StatusId.PendingHROfferReview ||
     statusId == StatusId.offerdecline ||
     statusId == StatusId.PendingHRReviewOfferanduploadEmployementContract||
-    statusId == StatusId.HROfferLetterProgress ||
-    statusId == StatusId.HREmploymentContractProgress
+    statusId == StatusId.HROfferLetterProgress
   )
     return 3;
     if (
@@ -265,7 +267,8 @@ export const getStageIndexinCandidateDRC = (statusId: number) => {
     statusId == StatusId.PendingHREmploymentContractReview || 
     statusId ==
       StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract || 
-    statusId == StatusId.PendingHREmploymentContractVerification 
+    statusId == StatusId.PendingHREmploymentContractVerification  ||
+    statusId == StatusId.HREmploymentContractProgress
     ){
      return 4;
     }

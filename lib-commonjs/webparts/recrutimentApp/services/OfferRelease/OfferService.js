@@ -495,10 +495,10 @@ var OfferService = /** @class */ (function () {
                         PreOnboarding = {
                             BackgroundChecks: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.BackgroundChecks) === ConditionConfig_1.ActionName.Completed
                                 ? true
-                                : false,
+                                : true,
                             SignedOfferLetterVerified: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.SignedOfferLetterVerified) === ConditionConfig_1.ActionName.Completed
                                 ? true
-                                : false,
+                                : true,
                             VisaProcess: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.VisaProcess) === ConditionConfig_1.ActionName.Completed
                                 ? true
                                 : false,
@@ -507,7 +507,7 @@ var OfferService = /** @class */ (function () {
                                 : false,
                             SignedEmploymentContract: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.SignedEmploymentContract) === ConditionConfig_1.ActionName.Completed
                                 ? true
-                                : false,
+                                : true,
                             WorkPermitApproved: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.WorkPermitApproved) === ConditionConfig_1.ActionName.Completed
                                 ? true
                                 : false,
@@ -516,7 +516,7 @@ var OfferService = /** @class */ (function () {
                                 : false,
                             MedicalCheckStatus: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.MedicalCheckStatus) === ConditionConfig_1.ActionName.Completed
                                 ? true
-                                : false,
+                                : true,
                             ReadyForOnboarding: (candidatePersonal === null || candidatePersonal === void 0 ? void 0 : candidatePersonal.ReadyforOnboarding) === ConditionConfig_1.ActionName.Completed
                                 ? true
                                 : false,

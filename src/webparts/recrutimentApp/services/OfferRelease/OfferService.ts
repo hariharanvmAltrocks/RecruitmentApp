@@ -172,11 +172,11 @@ export default class OfferService implements IOfferService {
         BackgroundChecks:
           candidatePersonal?.BackgroundChecks === ActionName.Completed
             ? true
-            : false,
+            : true,
         SignedOfferLetterVerified:
           candidatePersonal?.SignedOfferLetterVerified === ActionName.Completed
             ? true
-            : false,
+            : true,
         VisaProcess:
           candidatePersonal?.VisaProcess === ActionName.Completed
             ? true
@@ -188,7 +188,7 @@ export default class OfferService implements IOfferService {
         SignedEmploymentContract:
           candidatePersonal?.SignedEmploymentContract === ActionName.Completed
             ? true
-            : false,
+            : true,
         WorkPermitApproved:
           candidatePersonal?.WorkPermitApproved === ActionName.Completed
             ? true
@@ -200,7 +200,7 @@ export default class OfferService implements IOfferService {
         MedicalCheckStatus:
           candidatePersonal?.MedicalCheckStatus === ActionName.Completed
             ? true
-            : false,
+            : true,
         ReadyForOnboarding:
           candidatePersonal?.ReadyforOnboarding === ActionName.Completed
             ? true

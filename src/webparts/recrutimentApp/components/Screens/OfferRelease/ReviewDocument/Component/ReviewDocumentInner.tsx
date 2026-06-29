@@ -30,6 +30,7 @@ import { UploadDocument } from "../../../RecruitmentTable/Components/UploadDocum
 import CandidateDocumentsRepository from "../../Component/CandidateDocumentsRepository";
 import { OfferrelaeseNational } from "./OfferrelaeseNational/OfferrelaeseNational";
 import { StatusId } from "../../../../../utilities/Config";
+import { NationalBGVProcess } from "./NationalBGVProcess/NationalBGVProcess";
 
 interface ReviewDocumentInnerProps extends ReviewDocumentProps {
   positionDetails: IselectedPosition;
@@ -136,6 +137,14 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
     setNationalShoesSize,
     setNationalContractReleased,
     // setNationalContractAccepted,
+
+    // National BGV Checklist
+    nationalBgvPayslipChecked,
+    nationalBgvBankStatementChecked,
+    nationalBgvVerifiedByHR,
+    setNationalBgvPayslipChecked,
+    setNationalBgvBankStatementChecked,
+    setNationalBgvVerifiedByHR,
   } = useStateOfferRelease();
 
   const [showComments, setshowComments] = useState(false);
@@ -185,6 +194,11 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
     nationalShoesSize,
     nationalContractReleased,
     // nationalContractAccepted,
+
+    // National BGV Checklist
+    nationalBgvPayslipChecked,
+    nationalBgvBankStatementChecked,
+    nationalBgvVerifiedByHR,
   };
 
   const {
@@ -605,6 +619,23 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
               <CandidateDocumentsRepository data={docData ?? null} />
             )}
 
+             {vis.NaionalBGVProcess && (
+              <NationalBGVProcess
+                payslipChecked={nationalBgvPayslipChecked}
+                bankStatementChecked={nationalBgvBankStatementChecked}
+                verifiedByHR={nationalBgvVerifiedByHR}
+                validationError={validationError}
+                isReadOnly={isAnySubmitting}
+                onChangePayslipChecked={setNationalBgvPayslipChecked}
+                onChangeBankStatementChecked={setNationalBgvBankStatementChecked}
+                onChangeVerifiedByHR={setNationalBgvVerifiedByHR}
+                coiState={coiState}
+                showCoiErrors={validationError.showCoiErrors}
+                onCoiChange={handleCoiChange}
+                consultOptions={CONSULT_OPTIONS}
+              />
+            )}
+
             {vis.showVerificationToggle && (
               <VerificationToggle
                 value={consentVerification}
@@ -621,7 +652,8 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
                 hasFileError={validationError.showConsentErrors}
                 consentform={positionDetails.DotAfricaCF}
               />
-            )}
+            )} 
+
 
             {vis.showCOICard && (
               <COICard
@@ -629,6 +661,7 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
                 isReadOnly={isAnySubmitting}
                 hasError={validationError.showCoiErrors}
                 onChange={handleCoiChange}
+                LabelName={strings.BackgroundVerification}
               />
             )}
 
@@ -829,10 +862,11 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
                     >
                       {renderBtnContent(
                         consentVerification === "verified"
-                          ? "Reviewed"
+                          ? "Review"
                           : consentVerification === "rejected"
                             ? "Revert"
-                            : "Submit",
+                            :  nationalOfferReleased ==="No" || nationalContractReleased ==="No"
+                              ? "Reject" : "Submit",
                         "approve",
                         consentVerification === "verified"
                           ? "Reviewing..."

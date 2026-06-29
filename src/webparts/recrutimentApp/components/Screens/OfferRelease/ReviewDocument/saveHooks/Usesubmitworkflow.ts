@@ -66,6 +66,9 @@ export interface SubmitWorkflowDeps {
   nationalShoesSize?: string;
   nationalContractReleased?: string;
   nationalContractAccepted?: string;
+  nationalBgvPayslipChecked?: string;
+  nationalBgvBankStatementChecked?: string;
+  nationalBgvVerifiedByHR?: boolean;
 }
 
 interface SubmitWorkflowResult {
@@ -113,6 +116,9 @@ async function resolveStatus(
   nationalShoesSize?: string,
   nationalContractReleased?: string,
   nationalContractAccepted?: string,
+  nationalBgvPayslipChecked?: string,
+  nationalBgvBankStatementChecked?: string,
+  nationalBgvVerifiedByHR?: boolean,
 ): Promise<ResolveResult> {
   const pid = data?.ProfileID;
   const rid = data?.JobRequestID;
@@ -161,7 +167,31 @@ async function resolveStatus(
 
         let documentResponse = ok;
 
-        if (!isNational && consentFile) {
+        if (isNational) {
+          await OfferServices.InsertRecruitmentCandidateDetails({
+            ID: data.CandidateID,
+            payslipVerification: nationalBgvPayslipChecked,
+            bankStatementVerified: nationalBgvBankStatementChecked,
+            BGVConsultedWith: coiState?.consultedWith,
+            BGVComments: coiState?.comments,
+          });
+          if (consentFile){
+             const doc: IDocFiles = {
+            name: consentFile.name,
+            content: String(consentFile.content),
+            type: "New",
+          };
+          documentResponse = await OfferServices.UploadCandidateDocument(
+            makeDocData(pid, rid, DocumentFolderName.BGVConsentform),
+            [doc],
+          );
+          }else{
+documentResponse = ok
+          }
+          
+         
+        } 
+          if (consentFile) {
           const doc: IDocFiles = {
             name: consentFile.name,
             content: String(consentFile.content),
@@ -171,7 +201,9 @@ async function resolveStatus(
             makeDocData(pid, rid, DocumentFolderName.BGVConsentform),
             [doc],
           );
-        }
+        }else{
+documentResponse = ok
+          }
 
         return {
           workflowStatusValue: workflowStatusApi.initiatetheBGVProcess,
@@ -278,6 +310,7 @@ async function resolveStatus(
           documentResponse: ok,
         };
       }
+      break;
     }
 
     case StatusId.HREmploymentContractProgress: {
@@ -293,6 +326,7 @@ async function resolveStatus(
           documentResponse: ok,
         };
       }
+      break;
     }
 
     case StatusId.PendingHROfferReview: {
@@ -666,6 +700,9 @@ export function useSubmitWorkflow(
           data.nationalShoesSize,
           data.nationalContractReleased,
           data.nationalContractAccepted,
+          data.nationalBgvPayslipChecked,
+          data.nationalBgvBankStatementChecked,
+          data.nationalBgvVerifiedByHR,
         );
         let Verified = data.consentVerification;
         if (resolved.documentResponse?.status !== ResponeStatus.SUCCESS) {

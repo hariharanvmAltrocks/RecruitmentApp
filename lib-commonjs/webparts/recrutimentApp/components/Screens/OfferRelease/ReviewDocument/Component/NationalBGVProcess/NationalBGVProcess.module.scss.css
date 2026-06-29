@@ -1,0 +1,237 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
+.bgvCard {
+  background: #ffffff;
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+.bgvCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--app-primary-color, #7c3aed) 0%, #3b82f6 100%);
+}
+.bgvCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.08);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid var(--app-sidenav-border, #f1f5f9);
+  padding-bottom: 16px;
+}
+
+.titleIcon {
+  color: var(--app-primary-color, #7c3aed);
+  background: rgba(37, 99, 235, 0.08);
+  padding: 8px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--app-text-color, #0f172a);
+  margin: 0;
+}
+
+.description {
+  font-size: 13px;
+  color: #94a3b8;
+  margin: -8px 0 8px 0;
+  line-height: 1.5;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+@media (max-width: 768px) {
+  .fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+  transition: all 0.2s ease;
+}
+.field:hover {
+  background: #f1f5f9;
+  border-color: var(--app-sidenav-border, #f1f5f9);
+}
+.field.full {
+  grid-column: 1/-1;
+}
+.field.error {
+  border-color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.02);
+}
+.field.error .label {
+  color: #ef4444;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--app-text-color, #0f172a);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.required {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.radioGroup {
+  display: flex;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.radioLabel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  background: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.radioLabel input[type=radio] {
+  display: none;
+}
+.radioLabel:hover {
+  border-color: var(--app-primary-color, #7c3aed);
+  color: var(--app-primary-color, #7c3aed);
+  background: rgba(37, 99, 235, 0.02);
+}
+.radioLabel.selected {
+  border-color: var(--app-primary-color, #7c3aed);
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--app-primary-color, #7c3aed);
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+}
+
+.verifyContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+.verifyContainer.error {
+  border-color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.02);
+}
+
+.verifyText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.verifyTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #166534;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.verifySubtitle {
+  font-size: 12px;
+  color: #15803d;
+  font-weight: 500;
+}
+
+.verifySwitch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+  cursor: pointer;
+}
+.verifySwitch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.verifySwitch input:checked + .slider {
+  background-color: #22c55e;
+}
+.verifySwitch input:checked + .slider::before {
+  transform: translateX(22px);
+}
+
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: 0.3s;
+  border-radius: 34px;
+}
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.errorMsg {
+  color: #ef4444;
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

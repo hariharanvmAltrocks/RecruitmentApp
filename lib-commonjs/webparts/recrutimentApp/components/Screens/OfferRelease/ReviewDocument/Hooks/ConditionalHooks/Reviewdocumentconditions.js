@@ -42,6 +42,7 @@ var buildStatusFlags = function (statusID, empCat, consentVerification, isExpat)
     NationalOfferLetter: (statusID === Config_1.StatusId.HROfferLetterProgress || statusID === Config_1.StatusId.HREmploymentContractProgress) && !isExpat,
     NationalEmploymentContract: statusID === Config_1.StatusId.HREmploymentContractProgress && !isExpat,
     NationalOffer: statusID === Config_1.StatusId.HROfferLetterProgress && !isExpat,
+    NationalBGVProcess: statusID === Config_1.StatusId.PendingHRReviewBGCheck && !isExpat
 }); };
 exports.buildStatusFlags = buildStatusFlags;
 var resolveVerificationToggle = function (is) {
@@ -86,7 +87,8 @@ var buildVisibilityFlags = function (is, hasDetails, rejectFlag, revertFlag) {
         PreOnboardingChecklist: is.PreOnboardingChecklist,
         NationalOfferLetter: is.NationalOfferLetter,
         NationalEmploymentContract: is.NationalEmploymentContract,
-        NationalOffer: is.NationalOffer
+        NationalOffer: is.NationalOffer,
+        NaionalBGVProcess: is.NationalBGVProcess
     };
 };
 exports.buildVisibilityFlags = buildVisibilityFlags;

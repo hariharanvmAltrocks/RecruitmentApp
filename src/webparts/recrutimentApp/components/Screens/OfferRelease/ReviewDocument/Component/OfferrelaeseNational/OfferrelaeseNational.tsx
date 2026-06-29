@@ -339,7 +339,8 @@ export const OfferrelaeseNational: React.FC<OfferrelaeseNationalProps> = ({
         {StatusID === StatusId.HREmploymentContractProgress && (
 <div className={`national-offer-card__field national-offer-card__field--full ${validationError.nationalContractReleased ? "national-offer-card__field--error" : ""}`}>
           <label className="national-offer-card__label">
-            Has the employment contract been released, and has the candidate accepted it? <span className="national-offer-card__required">*</span>
+           Has the candidate received and accepted the employment contract?
+ <span className="national-offer-card__required">*</span>
           </label>
           <div className="national-offer-card__radio-group-border">
             <div className="national-offer-card__radio-options">

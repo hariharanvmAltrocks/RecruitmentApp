@@ -25,6 +25,7 @@ export interface ReviewStatusFlags {
   NationalOfferLetter: boolean;
   NationalEmploymentContract: boolean;
   NationalOffer: boolean;
+  NationalBGVProcess: boolean;
 }
 
 export interface ReviewVisibilityFlags {
@@ -41,6 +42,7 @@ export interface ReviewVisibilityFlags {
   NationalOfferLetter: boolean;
   NationalOffer: boolean;
   NationalEmploymentContract: boolean;
+  NaionalBGVProcess: boolean;
 }
 
 export const buildStatusFlags = (
@@ -94,6 +96,7 @@ export const buildStatusFlags = (
   NationalOfferLetter: (statusID === StatusId.HROfferLetterProgress || statusID === StatusId.HREmploymentContractProgress)  && !isExpat,
   NationalEmploymentContract:  statusID === StatusId.HREmploymentContractProgress  && !isExpat,
   NationalOffer:  statusID === StatusId.HROfferLetterProgress  && !isExpat,
+  NationalBGVProcess: statusID === StatusId.PendingHRReviewBGCheck && !isExpat
 });
 
 const resolveVerificationToggle = (is: ReviewStatusFlags): boolean =>
@@ -144,6 +147,7 @@ export const buildVisibilityFlags = (
     PreOnboardingChecklist: is.PreOnboardingChecklist,
     NationalOfferLetter: is.NationalOfferLetter,
     NationalEmploymentContract: is.NationalEmploymentContract,
-    NationalOffer: is.NationalOffer
+    NationalOffer: is.NationalOffer,
+    NaionalBGVProcess: is.NationalBGVProcess
   };
 };

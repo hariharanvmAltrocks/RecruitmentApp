@@ -21,10 +21,10 @@ function makeDocData(profileID, requestID, documentName, unsignedDoc) {
     };
 }
 exports.makeDocData = makeDocData;
-function resolveStatus(data, consentFile, documents, btnAction, email, coiState, rejectflag, selectedFile, nationalOfferReleased, nationalOfferAccepted, nationalNoticePeriod, nationalJoiningDate, nationalPantsSize, nationalTopSize, nationalShoesSize, nationalContractReleased, nationalContractAccepted) {
+function resolveStatus(data, consentFile, documents, btnAction, email, coiState, rejectflag, selectedFile, nationalOfferReleased, nationalOfferAccepted, nationalNoticePeriod, nationalJoiningDate, nationalPantsSize, nationalTopSize, nationalShoesSize, nationalContractReleased, nationalContractAccepted, nationalBgvPayslipChecked, nationalBgvBankStatementChecked, nationalBgvVerifiedByHR) {
     var _a;
     return tslib_1.__awaiter(this, void 0, void 0, function () {
-        var pid, rid, ok, documentFile, IsRevert, IsExpat, NationalReject, StatusID, _b, isNational, successMsg, documentResponse, doc, isKCSA, documentResponse, initiateLabour, response, isKCSA, PPTKit, isKCSA, isReview, isReview, documentResponse, DocList, documentResponse, workPermitDocs, isReview, documentResponse, documentResponse, isReview, bgvDocData, documentResponse;
+        var pid, rid, ok, documentFile, IsRevert, IsExpat, NationalReject, StatusID, _b, isNational, successMsg, documentResponse, doc, doc, isKCSA, documentResponse, initiateLabour, response, isKCSA, PPTKit, isKCSA, isReview, isReview, documentResponse, DocList, documentResponse, workPermitDocs, isReview, documentResponse, documentResponse, isReview, bgvDocData, documentResponse;
         return tslib_1.__generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
@@ -46,26 +46,26 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                     switch (_b) {
                         case Config_1.StatusId.PendingHRBGVInitiation: return [3 /*break*/, 1];
                         case Config_1.StatusId.PendingHRReviewBGCheck: return [3 /*break*/, 2];
-                        case Config_1.StatusId.PendingHROfferInitiate: return [3 /*break*/, 6];
-                        case Config_1.StatusId.HROfferLetterProgress: return [3 /*break*/, 10];
-                        case Config_1.StatusId.HREmploymentContractProgress: return [3 /*break*/, 12];
-                        case Config_1.StatusId.PendingHROfferReview: return [3 /*break*/, 13];
-                        case Config_1.StatusId.PendingHRReviewOfferWorkPermitInit: return [3 /*break*/, 14];
-                        case Config_1.StatusId.PendingHRReviewWorkpermitDocs: return [3 /*break*/, 15];
-                        case Config_1.StatusId.PendingFinancePaymentReview: return [3 /*break*/, 16];
-                        case Config_1.StatusId.PendingHREmploymentContractInit: return [3 /*break*/, 18];
-                        case Config_1.StatusId.WorkPermitAcknowledgedContractUploaded: return [3 /*break*/, 19];
-                        case Config_1.StatusId.PendingHREmploymentContractReview: return [3 /*break*/, 22];
-                        case Config_1.StatusId.PendingHREmploymentContractVerification: return [3 /*break*/, 23];
-                        case Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract: return [3 /*break*/, 26];
-                        case Config_1.StatusId.PendingHRReviewOfferuploadEmploymentInit: return [3 /*break*/, 30];
-                        case Config_1.StatusId.PendingDOTAficaVerification: return [3 /*break*/, 31];
+                        case Config_1.StatusId.PendingHROfferInitiate: return [3 /*break*/, 11];
+                        case Config_1.StatusId.HROfferLetterProgress: return [3 /*break*/, 15];
+                        case Config_1.StatusId.HREmploymentContractProgress: return [3 /*break*/, 18];
+                        case Config_1.StatusId.PendingHROfferReview: return [3 /*break*/, 19];
+                        case Config_1.StatusId.PendingHRReviewOfferWorkPermitInit: return [3 /*break*/, 20];
+                        case Config_1.StatusId.PendingHRReviewWorkpermitDocs: return [3 /*break*/, 21];
+                        case Config_1.StatusId.PendingFinancePaymentReview: return [3 /*break*/, 22];
+                        case Config_1.StatusId.PendingHREmploymentContractInit: return [3 /*break*/, 24];
+                        case Config_1.StatusId.WorkPermitAcknowledgedContractUploaded: return [3 /*break*/, 25];
+                        case Config_1.StatusId.PendingHREmploymentContractReview: return [3 /*break*/, 28];
+                        case Config_1.StatusId.PendingHREmploymentContractVerification: return [3 /*break*/, 29];
+                        case Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract: return [3 /*break*/, 32];
+                        case Config_1.StatusId.PendingHRReviewOfferuploadEmploymentInit: return [3 /*break*/, 36];
+                        case Config_1.StatusId.PendingDOTAficaVerification: return [3 /*break*/, 37];
                     }
-                    return [3 /*break*/, 33];
+                    return [3 /*break*/, 39];
                 case 1:
                     {
                         if (btnAction !== ConditionConfig_1.ButtonAction.Initiated)
-                            return [3 /*break*/, 34];
+                            return [3 /*break*/, 40];
                         return [2 /*return*/, {
                                 workflowStatusValue: Config_1.workflowStatusApi.PendingCandidateUploadBGVDocs,
                                 successMsg: ConditionConfig_1.RecuritmentHRMsg.BGverificationMsg,
@@ -76,29 +76,56 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                     }
                     _c.label = 2;
                 case 2:
-                    if (!(btnAction === ConditionConfig_1.ButtonAction.Review)) return [3 /*break*/, 5];
+                    if (!(btnAction === ConditionConfig_1.ButtonAction.Review)) return [3 /*break*/, 10];
                     isNational = (data === null || data === void 0 ? void 0 : data.NationalityCode) === ConditionConfig_1.NationalityCode.Nationals;
                     successMsg = isNational
                         ? ConditionConfig_1.RecuritmentHRMsg.BGReviewedMsg
                         : ConditionConfig_1.RecuritmentHRMsg.BGReviewinitBGV;
                     documentResponse = ok;
-                    if (!(!isNational && consentFile)) return [3 /*break*/, 4];
+                    if (!isNational) return [3 /*break*/, 6];
+                    return [4 /*yield*/, ServiceExport_1.OfferServices.InsertRecruitmentCandidateDetails({
+                            ID: data.CandidateID,
+                            payslipVerification: nationalBgvPayslipChecked,
+                            bankStatementVerified: nationalBgvBankStatementChecked,
+                            BGVConsultedWith: coiState === null || coiState === void 0 ? void 0 : coiState.consultedWith,
+                            BGVComments: coiState === null || coiState === void 0 ? void 0 : coiState.comments,
+                        })];
+                case 3:
+                    _c.sent();
+                    if (!consentFile) return [3 /*break*/, 5];
                     doc = {
                         name: consentFile.name,
                         content: String(consentFile.content),
                         type: "New",
                     };
                     return [4 /*yield*/, ServiceExport_1.OfferServices.UploadCandidateDocument(makeDocData(pid, rid, ConditionConfig_1.DocumentFolderName.BGVConsentform), [doc])];
-                case 3:
+                case 4:
                     documentResponse = _c.sent();
-                    _c.label = 4;
-                case 4: return [2 /*return*/, {
+                    return [3 /*break*/, 6];
+                case 5:
+                    documentResponse = ok;
+                    _c.label = 6;
+                case 6:
+                    if (!consentFile) return [3 /*break*/, 8];
+                    doc = {
+                        name: consentFile.name,
+                        content: String(consentFile.content),
+                        type: "New",
+                    };
+                    return [4 /*yield*/, ServiceExport_1.OfferServices.UploadCandidateDocument(makeDocData(pid, rid, ConditionConfig_1.DocumentFolderName.BGVConsentform), [doc])];
+                case 7:
+                    documentResponse = _c.sent();
+                    return [3 /*break*/, 9];
+                case 8:
+                    documentResponse = ok;
+                    _c.label = 9;
+                case 9: return [2 /*return*/, {
                         workflowStatusValue: Config_1.workflowStatusApi.initiatetheBGVProcess,
                         successMsg: successMsg,
                         StatusId: StatusID,
                         documentResponse: documentResponse,
                     }];
-                case 5:
+                case 10:
                     if (btnAction === ConditionConfig_1.ButtonAction.Revert) {
                         return [2 /*return*/, {
                                 workflowStatusValue: Config_1.workflowStatusApi.RevetedBacktoBGVDocuments,
@@ -107,12 +134,12 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                                 documentResponse: ok,
                             }];
                     }
-                    return [3 /*break*/, 34];
-                case 6:
+                    return [3 /*break*/, 40];
+                case 11:
                     isKCSA = data.EmploymentCategory === ConditionConfig_1.EmployeementCategory.KCSAEmployee;
-                    if (!isKCSA) return [3 /*break*/, 8];
+                    if (!isKCSA) return [3 /*break*/, 13];
                     return [4 /*yield*/, ServiceExport_1.OfferServices.UploadCandidateDocument(makeDocData(pid, rid, ConditionConfig_1.DocumentFolderName.Offerletter, ConditionConfig_1.DocumentFolderName.UnsignedDoc), tslib_1.__spreadArray([], documentFile, true))];
-                case 7:
+                case 12:
                     documentResponse = _c.sent();
                     return [2 /*return*/, {
                             workflowStatusValue: Config_1.workflowStatusApi.Pendingwithcandidatetosignofferletter,
@@ -120,7 +147,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                             StatusId: StatusID,
                             documentResponse: documentResponse,
                         }];
-                case 8:
+                case 13:
                     initiateLabour = {
                         ID: data.ID,
                         IsExpat: data.NationalityCode === ConditionConfig_1.NationalityCode.Nationals ? false : true,
@@ -141,7 +168,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                         createrEmail: email,
                     };
                     return [4 /*yield*/, ServiceExport_1.OfferServices.InitiateLabouHireOfferRelease(initiateLabour, email)];
-                case 9:
+                case 14:
                     response = _c.sent();
                     return [2 /*return*/, {
                             workflowStatusValue: Config_1.workflowStatusApi.PendingHROfferInitiate,
@@ -153,9 +180,9 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                                     : ApiConfig_1.ResponeStatus.FAILED,
                             },
                         }];
-                case 10:
+                case 15:
                     isKCSA = data.EmploymentCategory === ConditionConfig_1.EmployeementCategory.KCSAEmployee;
-                    if (!isKCSA) return [3 /*break*/, 12];
+                    if (!isKCSA) return [3 /*break*/, 17];
                     PPTKit = {
                         ContSuitPants: nationalPantsSize,
                         ContSuitTop: nationalTopSize,
@@ -169,7 +196,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                             PPEKit: (_a = JSON.stringify(PPTKit)) !== null && _a !== void 0 ? _a : [],
                             ID: data.CandidateID,
                         })];
-                case 11:
+                case 16:
                     _c.sent();
                     return [2 /*return*/, {
                             workflowStatusValue: nationalOfferReleased === "Yes" ? Config_1.workflowStatusApi.CandidateuploadedtheSignedOfferLetter : Config_1.workflowStatusApi.Offerdecline,
@@ -177,7 +204,8 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                             StatusId: StatusID,
                             documentResponse: ok,
                         }];
-                case 12:
+                case 17: return [3 /*break*/, 40];
+                case 18:
                     {
                         isKCSA = data.EmploymentCategory === ConditionConfig_1.EmployeementCategory.KCSAEmployee;
                         if (isKCSA) {
@@ -189,9 +217,10 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                                     documentResponse: ok,
                                 }];
                         }
+                        return [3 /*break*/, 40];
                     }
-                    _c.label = 13;
-                case 13:
+                    _c.label = 19;
+                case 19:
                     {
                         isReview = btnAction === ConditionConfig_1.ButtonAction.Review;
                         return [2 /*return*/, {
@@ -205,8 +234,8 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                                 documentResponse: ok,
                             }];
                     }
-                    _c.label = 14;
-                case 14:
+                    _c.label = 20;
+                case 20:
                     {
                         isReview = btnAction === ConditionConfig_1.ButtonAction.Review;
                         return [2 /*return*/, {
@@ -220,8 +249,8 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                                 documentResponse: ok,
                             }];
                     }
-                    _c.label = 15;
-                case 15:
+                    _c.label = 21;
+                case 21:
                     {
                         if (btnAction === ConditionConfig_1.ButtonAction.Review) {
                             return [2 /*return*/, {
@@ -238,12 +267,12 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                                 documentResponse: ok,
                             }];
                     }
-                    _c.label = 16;
-                case 16:
+                    _c.label = 22;
+                case 22:
                     if (btnAction !== ConditionConfig_1.ButtonAction.Review)
-                        return [3 /*break*/, 34];
+                        return [3 /*break*/, 40];
                     return [4 /*yield*/, ServiceExport_1.OfferServices.UploadCandidateDocument(makeDocData(pid, rid, ConditionConfig_1.DocumentFolderName.ProofOfDocument), tslib_1.__spreadArray([], documentFile, true))];
-                case 17:
+                case 23:
                     documentResponse = _c.sent();
                     return [2 /*return*/, {
                             workflowStatusValue: Config_1.workflowStatusApi.PendingFinancePaymentReview,
@@ -251,7 +280,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                             StatusId: StatusID,
                             documentResponse: documentResponse,
                         }];
-                case 18:
+                case 24:
                     {
                         return [2 /*return*/, {
                                 workflowStatusValue: Config_1.workflowStatusApi.PendingHREmploymentContractInit,
@@ -260,14 +289,14 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                                 documentResponse: ok,
                             }];
                     }
-                    _c.label = 19;
-                case 19:
+                    _c.label = 25;
+                case 25:
                     DocList = selectedFile ? [selectedFile] : [];
                     return [4 /*yield*/, ServiceExport_1.OfferServices.UploadCandidateDocument(makeDocData(pid, rid, ConditionConfig_1.DocumentFolderName.EmploymentContractForm, ConditionConfig_1.DocumentFolderName.UnsignedDoc), tslib_1.__spreadArray([], documentFile, true))];
-                case 20:
+                case 26:
                     documentResponse = _c.sent();
                     return [4 /*yield*/, ServiceExport_1.OfferServices.UploadCandidateDocument(makeDocData(pid, rid, ConditionConfig_1.DocumentFolderName.WorkPermit), DocList)];
-                case 21:
+                case 27:
                     workPermitDocs = _c.sent();
                     return [2 /*return*/, {
                             workflowStatusValue: Config_1.workflowStatusApi.PendingwithCandidatetosignEmployementContract,
@@ -276,7 +305,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                             documentResponse: documentResponse,
                             workPermitDocs: workPermitDocs,
                         }];
-                case 22:
+                case 28:
                     {
                         isReview = btnAction === ConditionConfig_1.ButtonAction.Review;
                         return [2 /*return*/, {
@@ -290,9 +319,9 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                                 documentResponse: ok,
                             }];
                     }
-                    _c.label = 23;
-                case 23:
-                    if (!(btnAction === ConditionConfig_1.ButtonAction.Review)) return [3 /*break*/, 25];
+                    _c.label = 29;
+                case 29:
+                    if (!(btnAction === ConditionConfig_1.ButtonAction.Review)) return [3 /*break*/, 31];
                     return [4 /*yield*/, ServiceExport_1.OfferServices.InsertRecruitmentCandidateDetails({
                             // JoiningDate: data.JoiningDate
                             //   ? SpiltDateOnly(new Date(data.JoiningDate))
@@ -300,7 +329,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                             NoticePeriod: String(data.NoticePeriod),
                             ID: data.CandidateID,
                         })];
-                case 24:
+                case 30:
                     documentResponse = _c.sent();
                     return [2 /*return*/, {
                             workflowStatusValue: Config_1.workflowStatusApi.OnboardingInprogress,
@@ -308,16 +337,16 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                             StatusId: StatusID,
                             documentResponse: documentResponse,
                         }];
-                case 25: return [2 /*return*/, {
+                case 31: return [2 /*return*/, {
                         workflowStatusValue: Config_1.workflowStatusApi.RevertedBacktoCandidateforreuploadEmploymentContract,
                         successMsg: ConditionConfig_1.RecuritmentHRMsg.RevertedEmploymentContractMsg,
                         StatusId: StatusID,
                         documentResponse: ok,
                     }];
-                case 26:
-                    if (!(btnAction === ConditionConfig_1.ButtonAction.Review)) return [3 /*break*/, 29];
+                case 32:
+                    if (!(btnAction === ConditionConfig_1.ButtonAction.Review)) return [3 /*break*/, 35];
                     return [4 /*yield*/, ServiceExport_1.OfferServices.UploadCandidateDocument(makeDocData(pid, rid, ConditionConfig_1.DocumentFolderName.EmploymentContractForm, ConditionConfig_1.DocumentFolderName.UnsignedDoc), documentFile)];
-                case 27:
+                case 33:
                     documentResponse = _c.sent();
                     return [4 /*yield*/, ServiceExport_1.OfferServices.InsertRecruitmentCandidateDetails({
                             ID: data.CandidateID,
@@ -326,7 +355,7 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                                 ? (0, dateConfigfn_1.SpiltDateOnly)(new Date(nationalJoiningDate))
                                 : "",
                         })];
-                case 28:
+                case 34:
                     _c.sent();
                     return [2 /*return*/, {
                             workflowStatusValue: Config_1.workflowStatusApi.PendingwithCandidatetosignEmployementContract,
@@ -334,13 +363,13 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                             StatusId: StatusID,
                             documentResponse: documentResponse,
                         }];
-                case 29: return [2 /*return*/, {
+                case 35: return [2 /*return*/, {
                         workflowStatusValue: Config_1.workflowStatusApi.RevertedBacktoCandidateforreuploadofferLetter,
                         successMsg: ConditionConfig_1.RecuritmentHRMsg.RevertedOfferLetter,
                         StatusId: StatusID,
                         documentResponse: ok,
                     }];
-                case 30:
+                case 36:
                     {
                         isReview = btnAction === ConditionConfig_1.ButtonAction.Review;
                         return [2 /*return*/, {
@@ -354,13 +383,13 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                                 documentResponse: ok,
                             }];
                     }
-                    _c.label = 31;
-                case 31:
+                    _c.label = 37;
+                case 37:
                     if (!rejectflag)
-                        return [3 /*break*/, 34];
+                        return [3 /*break*/, 40];
                     bgvDocData = makeDocData(pid, rid, ConditionConfig_1.DocumentFolderName.BGVProofOfDocument);
                     return [4 /*yield*/, ServiceExport_1.OfferServices.UploadCandidateDocument(bgvDocData, coiState.attachment)];
-                case 32:
+                case 38:
                     documentResponse = _c.sent();
                     if (btnAction === ConditionConfig_1.ButtonAction.Revert) {
                         return [2 /*return*/, {
@@ -376,8 +405,8 @@ function resolveStatus(data, consentFile, documents, btnAction, email, coiState,
                             StatusId: StatusID,
                             documentResponse: documentResponse,
                         }];
-                case 33: return [3 /*break*/, 34];
-                case 34: return [2 /*return*/, {
+                case 39: return [3 /*break*/, 40];
+                case 40: return [2 /*return*/, {
                         workflowStatusValue: "",
                         successMsg: "",
                         StatusId: StatusID,
@@ -472,7 +501,7 @@ function useSubmitWorkflow(data) {
                     _d.label = 1;
                 case 1:
                     _d.trys.push([1, 9, 10, 11]);
-                    return [4 /*yield*/, resolveStatus(data.data, data.consentFile, data.uploadDocs, btnAction, ADGroupData.EmailId[0], data.coiState, data.rejectflag, data.selectedFile, data.nationalOfferReleased, data.nationalOfferAccepted, data.nationalNoticePeriod, data.nationalJoiningDate, data.nationalPantsSize, data.nationalTopSize, data.nationalShoesSize, data.nationalContractReleased, data.nationalContractAccepted)];
+                    return [4 /*yield*/, resolveStatus(data.data, data.consentFile, data.uploadDocs, btnAction, ADGroupData.EmailId[0], data.coiState, data.rejectflag, data.selectedFile, data.nationalOfferReleased, data.nationalOfferAccepted, data.nationalNoticePeriod, data.nationalJoiningDate, data.nationalPantsSize, data.nationalTopSize, data.nationalShoesSize, data.nationalContractReleased, data.nationalContractAccepted, data.nationalBgvPayslipChecked, data.nationalBgvBankStatementChecked, data.nationalBgvVerifiedByHR)];
                 case 2:
                     resolved = _d.sent();
                     Verified = data.consentVerification;

@@ -112,7 +112,7 @@ var OfferrelaeseNational = function (_a) {
                             validationError.nationalShoesSize && (react_1.default.createElement("span", { className: "national-offer-card__error-msg" }, "Please select a shoes size."))))))),
             StatusID === Config_1.StatusId.HREmploymentContractProgress && (react_1.default.createElement("div", { className: "national-offer-card__field national-offer-card__field--full ".concat(validationError.nationalContractReleased ? "national-offer-card__field--error" : "") },
                 react_1.default.createElement("label", { className: "national-offer-card__label" },
-                    "Has the employment contract been released, and has the candidate accepted it? ",
+                    "Has the candidate received and accepted the employment contract?",
                     react_1.default.createElement("span", { className: "national-offer-card__required" }, "*")),
                 react_1.default.createElement("div", { className: "national-offer-card__radio-group-border" },
                     react_1.default.createElement("div", { className: "national-offer-card__radio-options" },
