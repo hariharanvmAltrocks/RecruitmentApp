@@ -1,3 +1,4 @@
+import { IConsultOption } from "../../components/Screens/OfferRelease/ReviewDocument/Hooks/useConsultOption";
 import { ApiResponse } from "../../models/apimodels";
 import { AutoCompleteItem } from "../../models/fieldmodels";
 import { GetAllMaster, GetMasterByCountry } from "../../models/Icareerportal";
@@ -45,6 +46,7 @@ export type IMasterService = {
   GetMasterRoleProfile (ListName: string): Promise<ApiResponse<any[]>>;
   GetCountryMaster(): Promise<ApiResponse<GetMasterByCountry[] | null>>;
   fetchJDEEmailIDs(BUCodeID: number): Promise<ApiResponse<IBUCodeEmailIDs>>;
+  GetConsultingOptions(): Promise<ApiResponse<IConsultOption>>
 };
 
 export const buildOptions = (

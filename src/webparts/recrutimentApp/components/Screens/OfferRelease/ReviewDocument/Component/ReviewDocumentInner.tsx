@@ -31,10 +31,12 @@ import CandidateDocumentsRepository from "../../Component/CandidateDocumentsRepo
 import { OfferrelaeseNational } from "./OfferrelaeseNational/OfferrelaeseNational";
 import { StatusId } from "../../../../../utilities/Config";
 import { NationalBGVProcess } from "./NationalBGVProcess/NationalBGVProcess";
+import { IConsultOption } from "../Hooks/useConsultOption";
 
 interface ReviewDocumentInnerProps extends ReviewDocumentProps {
   positionDetails: IselectedPosition;
   pageloading: boolean;
+  ConsultOptions: IConsultOption[];
   setPageLoading: (value: boolean) => void;
   showModal: (config: any) => void;
   closeModal: () => void;
@@ -71,6 +73,7 @@ const PositionSkeleton = () => (
 const CONSULT_OPTIONS = [
   { value: "hr-manager", label: strings.LouisBarendVanWyk },
   { value: "legal", label: strings.EvodieMushiyaKadima },
+  { value: "hod", label: "Anil Udayabhanu"}
 ];
 
 export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
@@ -88,13 +91,15 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
   setPageLoading,
   showModal,
   closeModal,
+  ConsultOptions
 }) => {
   const navigate = useNavigate();
 
   const [activeButton, setActiveButton] = useState<ActiveButton>(null);
   const isAnySubmitting = activeButton !== null;
   const [showRoadmap, setShowRoadmap] = useState(false);
-
+  // console.log(ConsultOptions,"ConsultOptionsConsultOptions");
+  
   const {
     consentVerification,
     consentFile,

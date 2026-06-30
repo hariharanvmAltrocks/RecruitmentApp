@@ -7,6 +7,7 @@ import { ReviewDocumentInner } from "./Component/ReviewDocumentInner";
 import Loading from "../../../Comman/Loading/loading";
 import ModalPopup from "../../../Comman/ModalPopup/ModalPopup";
 import { useModalPopup } from "../../../Comman/ModalPopup/useModalPopup";
+import { useConsultOption } from "./Hooks/useConsultOption";
 
 export interface ReviewDocumentProps {
   drawerOpen: boolean;
@@ -67,8 +68,10 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = (props) => {
       IsExpat,
     );
 
+  const {data: CONSULT_OPTIONS} = useConsultOption();
+
   const [pageloading, setPageLoading] = useState(false);
-  const { modalState, showModal, closeModal } = useModalPopup();
+  const {modalState, showModal, closeModal} = useModalPopup();
 
   return (
     <AnimatePresence>
@@ -134,6 +137,7 @@ export const ReviewDocument: React.FC<ReviewDocumentProps> = (props) => {
                   positionDetails={positionDetails}
                   pageloading={pageloading}
                   setPageLoading={setPageLoading}
+                  ConsultOptions={CONSULT_OPTIONS ?? []}
                   showModal={showModal}
                   closeModal={closeModal}
                 />

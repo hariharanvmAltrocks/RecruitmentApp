@@ -50,14 +50,16 @@ var PositionSkeleton = function () { return (react_1.default.createElement("div"
 var CONSULT_OPTIONS = [
     { value: "hr-manager", label: RecrutimentAppWebPartStrings_1.default.LouisBarendVanWyk },
     { value: "legal", label: RecrutimentAppWebPartStrings_1.default.EvodieMushiyaKadima },
+    { value: "hod", label: "Anil Udayabhanu" }
 ];
 var ReviewDocumentInner = function (_a) {
     var _b, _c, _d, _e, _f;
-    var selectedJobId = _a.selectedJobId, CandidateID = _a.CandidateID, selectedcandidateID = _a.selectedcandidateID, jobrequestID = _a.jobrequestID, IsExpat = _a.IsExpat, loadingState = _a.loadingState, onClose = _a.onClose, setLoadingState = _a.setLoadingState, refreshKey = _a.refreshKey, positionDetails = _a.positionDetails, pageloading = _a.pageloading, setPageLoading = _a.setPageLoading, showModal = _a.showModal, closeModal = _a.closeModal;
+    var selectedJobId = _a.selectedJobId, CandidateID = _a.CandidateID, selectedcandidateID = _a.selectedcandidateID, jobrequestID = _a.jobrequestID, IsExpat = _a.IsExpat, loadingState = _a.loadingState, onClose = _a.onClose, setLoadingState = _a.setLoadingState, refreshKey = _a.refreshKey, positionDetails = _a.positionDetails, pageloading = _a.pageloading, setPageLoading = _a.setPageLoading, showModal = _a.showModal, closeModal = _a.closeModal, ConsultOptions = _a.ConsultOptions;
     var navigate = (0, react_router_dom_1.useNavigate)();
     var _g = (0, react_1.useState)(null), activeButton = _g[0], setActiveButton = _g[1];
     var isAnySubmitting = activeButton !== null;
     var _h = (0, react_1.useState)(false), showRoadmap = _h[0], setShowRoadmap = _h[1];
+    // console.log(ConsultOptions,"ConsultOptionsConsultOptions");
     var _j = (0, useReviewDocumentManage_1.useStateOfferRelease)(), consentVerification = _j.consentVerification, consentFile = _j.consentFile, showConsentErrors = _j.showConsentErrors, handleConsentVerification = _j.handleConsentVerification, handleConsentFile = _j.handleConsentFile, coiState = _j.coiState, handleCoiChange = _j.handleCoiChange, fileInputRef = _j.fileInputRef, selectedFile = _j.selectedFile, isReading = _j.isReading, handleUploadClick = _j.handleUploadClick, handleFileChange = _j.handleFileChange, clearFile = _j.clearFile, uploadDocs = _j.uploadDocs, handleDocumnetUpload = _j.handleDocumnetUpload, reviewerComments = _j.reviewerComments, acknowledgementCheckbox = _j.acknowledgementCheckbox, onCommentsChange = _j.onCommentsChange, onToggleAcknowledgement = _j.onToggleAcknowledgement, validateAll = _j.validateAll, validationError = _j.validationError, 
     // National Offer Release & PPE
     nationalOfferReleased = _j.nationalOfferReleased, 

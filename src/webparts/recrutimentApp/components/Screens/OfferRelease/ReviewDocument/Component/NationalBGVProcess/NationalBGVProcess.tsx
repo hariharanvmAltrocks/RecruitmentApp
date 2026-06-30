@@ -3,6 +3,7 @@ import React from "react";
 import { ShieldCheck, AlertCircle, FileText, Landmark } from "lucide-react";
 import { ValidationError, COIFormState } from "../../StateManage/useReviewDocumentManage";
 import COICard from "../Coicard/Coicard";
+import { IConsultOption } from "../../Hooks/useConsultOption";
 
 export interface NationalBGVProcessProps {
   payslipChecked: string;
@@ -13,7 +14,7 @@ export interface NationalBGVProcessProps {
   coiState: COIFormState;
   showCoiErrors: boolean;
   onCoiChange: (state: any) => void;
-  consultOptions: any[];
+  consultOptions: IConsultOption[];
 
   onChangePayslipChecked: (val: string) => void;
   onChangeBankStatementChecked: (val: string) => void;

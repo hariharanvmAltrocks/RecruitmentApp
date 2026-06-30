@@ -11,6 +11,7 @@ var ReviewDocumentInner_1 = require("./Component/ReviewDocumentInner");
 var loading_1 = tslib_1.__importDefault(require("../../../Comman/Loading/loading"));
 var ModalPopup_1 = tslib_1.__importDefault(require("../../../Comman/ModalPopup/ModalPopup"));
 var useModalPopup_1 = require("../../../Comman/ModalPopup/useModalPopup");
+var useConsultOption_1 = require("./Hooks/useConsultOption");
 var SkeletonBlock = function (_a) {
     var _b = _a.width, width = _b === void 0 ? "100%" : _b, _c = _a.height, height = _c === void 0 ? "14px" : _c;
     return react_1.default.createElement("div", { className: "review-document__skeleton", style: { width: width, height: height } });
@@ -27,6 +28,7 @@ var PositionSkeleton = function () { return (react_1.default.createElement("div"
 var ReviewDocument = function (props) {
     var drawerOpen = props.drawerOpen, selectedJobId = props.selectedJobId, CandidateID = props.CandidateID, selectedcandidateID = props.selectedcandidateID, jobrequestID = props.jobrequestID, IsExpat = props.IsExpat, onClose = props.onClose;
     var _a = (0, getCandidateDetails_1.useCandidatDetails)(selectedJobId, CandidateID, selectedcandidateID, jobrequestID, IsExpat), positionDetails = _a.data, positionLoading = _a.loading;
+    var CONSULT_OPTIONS = (0, useConsultOption_1.useConsultOption)().data;
     var _b = (0, react_1.useState)(false), pageloading = _b[0], setPageLoading = _b[1];
     var _c = (0, useModalPopup_1.useModalPopup)(), modalState = _c.modalState, showModal = _c.showModal, closeModal = _c.closeModal;
     return (react_1.default.createElement(framer_motion_1.AnimatePresence, null, drawerOpen && (react_1.default.createElement(react_1.default.Fragment, null,
@@ -51,7 +53,7 @@ var ReviewDocument = function (props) {
                         react_1.default.createElement("button", { type: "button", className: "review-document__close", onClick: onClose },
                             react_1.default.createElement(lucide_react_1.X, { size: 18 })))),
                 react_1.default.createElement("div", { className: "review-document__content" },
-                    react_1.default.createElement(PositionSkeleton, null)))) : (react_1.default.createElement(ReviewDocumentInner_1.ReviewDocumentInner, tslib_1.__assign({}, props, { positionDetails: positionDetails, pageloading: pageloading, setPageLoading: setPageLoading, showModal: showModal, closeModal: closeModal }))))),
+                    react_1.default.createElement(PositionSkeleton, null)))) : (react_1.default.createElement(ReviewDocumentInner_1.ReviewDocumentInner, tslib_1.__assign({}, props, { positionDetails: positionDetails, pageloading: pageloading, setPageLoading: setPageLoading, ConsultOptions: CONSULT_OPTIONS !== null && CONSULT_OPTIONS !== void 0 ? CONSULT_OPTIONS : [], showModal: showModal, closeModal: closeModal }))))),
         pageloading && react_1.default.createElement(loading_1.default, null),
         react_1.default.createElement(ModalPopup_1.default, tslib_1.__assign({}, modalState, { onClose: closeModal }))))));
 };
