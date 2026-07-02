@@ -179,3 +179,26 @@
     transform: rotate(360deg);
   }
 }
+
+.modal-popup__select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid $border-base;
+  border-radius: 12px;
+  background-color: #ffffff;
+  color: $text-primary;
+  font-family: $font-family;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: #cbd5e1;
+  }
+
+  &:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+}

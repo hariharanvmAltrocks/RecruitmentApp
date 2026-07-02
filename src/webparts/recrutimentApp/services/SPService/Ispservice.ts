@@ -134,3 +134,13 @@ export interface BatchQuery {
   Topcount?: number;
   FilterCondition?: string;
 }
+
+export interface IGetAllItemsOptions {
+  listName: string;
+  select?: string[];
+  expand?: string[];
+  filter?: string;
+  orderBy?: string;
+  ascending?: boolean;
+  top?: number;
+}

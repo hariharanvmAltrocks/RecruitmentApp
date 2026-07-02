@@ -1,17 +1,16 @@
 import React from "react";
 import * as Lucide from "lucide-react";
 import styles from "./SummaryCards.module.scss";
-import useKPICards from "../../Hooks/useKPICards";
+import { IHRLeadDashboard, IDueMonth } from "../../Types";
 
-export const SummaryCards: React.FC = () => {
-  const { data: kpiData } = useKPICards();
+interface ISummaryCardProps {
+  data: IHRLeadDashboard | null | undefined;
+  loading?: boolean;
+}
 
-  const totalPositions = 184;
-  const activePositions = kpiData?.assignedContracts ?? 92;
-  const completedPositions = 8;
-  const totalVacant = 184;
+export const SummaryCards: React.FC<ISummaryCardProps> = ({ data, loading }) => {
 
-  const [selectedDate, setSelectedDate] = React.useState<Date>(() => new Date(2026, 5, 1)); // Default: June 2026
+  const [selectedDate, setSelectedDate] = React.useState<Date>(() => new Date(2026, 6, 1)); // Default: July 2026
 
   const handlePrevMonth = () => {
     setSelectedDate(prev => {
@@ -33,24 +32,70 @@ export const SummaryCards: React.FC = () => {
     return selectedDate.toLocaleString("default", { month: "long" }).toUpperCase();
   }, [selectedDate]);
 
-  const dueThisMonth = React.useMemo(() => {
-    const month = selectedDate.getMonth();
-    const mockNumerators: Record<number, number> = {
-      4: 32, // May
-      5: 25, // June
-      6: 18, // July
-      7: 15, // August
-      8: 22, // September
-    };
-    const numerator = mockNumerators[month] ?? ((month * 5 + 11) % 30 + 5);
-    return `${numerator} / ${activePositions}`;
-  }, [selectedDate, activePositions]);
+  const monthAbbrs: Record<number, keyof IDueMonth> = {
+    0: "Jan", 1: "Feb", 2: "Mar", 3: "Apr", 4: "May", 5: "June", 6: "July", 7: "Aug", 8: "Sep", 9: "Jan", 10: "Nov", 11: "Dec"
+  };
 
-  const overduePositions = kpiData?.overdueContracts ?? 8;
+  const dueThisMonth = React.useMemo(() => {
+    if (!data || !data.Duemonth) return "0 / 0";
+    const m = selectedDate.getMonth();
+    const key = monthAbbrs[m] || "Jan";
+    return data.Duemonth[key] || "0 / 0";
+  }, [selectedDate, data]);
+
+  const totalPositions = data?.TotalOpenPosition ?? 0;
+  const activePositions = data?.RecruitmentInProgress ?? 0;
+  const completedPositions = data?.Onboarding ?? 0;
+  const totalVacant = data?.OnemDocumentStage ?? 0;
+  const overduePositions = data?.OverDuePosition ?? 0;
+
+  if (loading) {
+    return (
+      <>
+        {/* Overview Card Skeleton */}
+        <div className={styles.overviewCard}>
+          <div className={styles.cardHeader}>
+            <div className="dashboard-skeleton__bar" style={{ width: "120px", height: "14px" }} />
+          </div>
+          <div className={styles.overviewGrid}>
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <div key={idx} className={styles.subCard} style={{ borderStyle: "dashed", opacity: 0.7 }}>
+                <div className="dashboard-skeleton__bar" style={{ width: "80%", height: "10px", marginBottom: "8px" }} />
+                <div className="dashboard-skeleton__bar" style={{ width: "40%", height: "24px" }} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Due this month skeleton */}
+        <div className={styles.kpiCard}>
+          <div className={styles.cardHeaderWithNav}>
+            <div className="dashboard-skeleton__bar" style={{ width: "120px", height: "14px" }} />
+          </div>
+          <div className={styles.kpiCardBody}>
+            <div className="dashboard-skeleton__bar" style={{ width: "38px", height: "38px", borderRadius: "8px", marginBottom: "8px" }} />
+            <div className="dashboard-skeleton__bar" style={{ width: "60px", height: "24px", marginBottom: "6px" }} />
+            <div className="dashboard-skeleton__bar" style={{ width: "50px", height: "10px" }} />
+          </div>
+        </div>
+
+        {/* Overdue positions skeleton */}
+        <div className={styles.kpiCard}>
+          <div className={styles.cardHeader}>
+            <div className="dashboard-skeleton__bar" style={{ width: "120px", height: "14px" }} />
+          </div>
+          <div className={styles.kpiCardBody}>
+            <div className="dashboard-skeleton__bar" style={{ width: "38px", height: "38px", borderRadius: "8px", marginBottom: "8px" }} />
+            <div className="dashboard-skeleton__bar" style={{ width: "60px", height: "24px", marginBottom: "6px" }} />
+            <div className="dashboard-skeleton__bar" style={{ width: "50px", height: "10px" }} />
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
-      {/* 1. POSITIONS OVERVIEW */}
       <div className={styles.overviewCard}>
         <div className={styles.cardHeader}>
           <Lucide.TrendingUp size={16} className={styles.iconBlue} />
@@ -89,7 +134,7 @@ export const SummaryCards: React.FC = () => {
             onClick={handlePrevMonth}
             aria-label="Previous Month"
           >
-            <Lucide.ChevronLeft size={14} />
+            <Lucide.ChevronLeft size={16} />
           </button>
           <span className={styles.cardTitle}>DUE {monthName} MONTH</span>
           <button 
@@ -98,7 +143,7 @@ export const SummaryCards: React.FC = () => {
             onClick={handleNextMonth}
             aria-label="Next Month"
           >
-            <Lucide.ChevronRight size={14} />
+            <Lucide.ChevronRight size={16} />
           </button>
         </div>
         <div className={styles.kpiCardBody}>

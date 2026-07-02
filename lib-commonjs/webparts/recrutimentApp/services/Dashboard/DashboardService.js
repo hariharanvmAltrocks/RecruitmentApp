@@ -10,6 +10,7 @@ var metricColumns_config_1 = require("../../components/Screens/Dashboard/metricC
 var ConditionConfig_1 = require("../../utilities/ConditionConfig");
 var ServiceExport_1 = require("../ServiceExport");
 var EvaluationConfig_1 = require("../../components/Screens/SelectionProcess/config/EvaluationConfig");
+var DashboardConfig_1 = require("./DashboardConfig");
 var DashboardService = /** @class */ (function () {
     function DashboardService() {
     }
@@ -1317,6 +1318,497 @@ var DashboardService = /** @class */ (function () {
                                 message: "Error fetching validation",
                             }];
                     case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    DashboardService.prototype.GetHRLeadDashboard = function (EmailId) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var result, openPosition, recruitmentProcess, candidateDetails_1, OnTrackCount_1, atRiskCount_1, overduecountCount_1, dueLast7daysCount_1, currentMonthOpenings, TotalOpenPosition, RecruitmentInProgress, Onboarding, OnemDocumentStage, Duemonth, PositionByStatus, filterBasedHRLead, groupedHR, PositionSource, activeRecruitments, positionDetails, OverDuePosition, GridResult, error_13;
+            var _this = this;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 4, , 5]);
+                        return [4 /*yield*/, spservice_1.default.batchGet([
+                                {
+                                    StateValue: 1,
+                                    ListName: Config_1.ListNames.HRMSRecruitmentDeptOpenings,
+                                    select: ["*", "Department/DepartmentName"],
+                                    expand: ["Department"],
+                                },
+                                {
+                                    StateValue: 2,
+                                    ListName: Config_1.ListNames.HRMSRecruitmentDptDetails,
+                                    select: [
+                                        "*",
+                                        "JobCode/JobCode",
+                                        "JobCode/JobTitleInEnglish",
+                                        "JobCode/ID",
+                                        "Department/DepartmentName",
+                                        "Status/StatusDescription",
+                                    ],
+                                    expand: ["JobCode", "Department", "Status"]
+                                },
+                                {
+                                    StateValue: 3,
+                                    ListName: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                                    select: ["*"],
+                                }
+                            ])];
+                    case 1:
+                        result = _a.sent();
+                        openPosition = result[1] || [];
+                        recruitmentProcess = result[2] || [];
+                        candidateDetails_1 = result[3] || [];
+                        OnTrackCount_1 = 0;
+                        atRiskCount_1 = 0;
+                        overduecountCount_1 = 0;
+                        dueLast7daysCount_1 = 0;
+                        currentMonthOpenings = openPosition.filter(function (item) {
+                            return (0, DashboardConfig_1.isFiveMonthsBeforeCurrent)(item === null || item === void 0 ? void 0 : item.DateRequried);
+                        });
+                        TotalOpenPosition = currentMonthOpenings.length;
+                        RecruitmentInProgress = recruitmentProcess.filter(function (item) { return Number(item.StatusId) !== Config_1.StatusId.Onboarded; }).length;
+                        Onboarding = recruitmentProcess.filter(function (item) { return Number(item.StatusId) === Config_1.StatusId.Onboarded; }).length;
+                        OnemDocumentStage = recruitmentProcess.filter(function (item) { return Number(item.StatusId) === Config_1.StatusId.PendingUploadONEM; }).length;
+                        Duemonth = {
+                            Jan: (0, DashboardConfig_1.getDueMonthRatio)(0, recruitmentProcess),
+                            Feb: (0, DashboardConfig_1.getDueMonthRatio)(1, recruitmentProcess),
+                            Mar: (0, DashboardConfig_1.getDueMonthRatio)(2, recruitmentProcess),
+                            Apr: (0, DashboardConfig_1.getDueMonthRatio)(3, recruitmentProcess),
+                            May: (0, DashboardConfig_1.getDueMonthRatio)(4, recruitmentProcess),
+                            June: (0, DashboardConfig_1.getDueMonthRatio)(5, recruitmentProcess),
+                            July: (0, DashboardConfig_1.getDueMonthRatio)(6, recruitmentProcess),
+                            Aug: (0, DashboardConfig_1.getDueMonthRatio)(7, recruitmentProcess),
+                            Sep: (0, DashboardConfig_1.getDueMonthRatio)(8, recruitmentProcess),
+                            Oct: (0, DashboardConfig_1.getDueMonthRatio)(9, recruitmentProcess),
+                            Nov: (0, DashboardConfig_1.getDueMonthRatio)(10, recruitmentProcess),
+                            Dec: (0, DashboardConfig_1.getDueMonthRatio)(11, recruitmentProcess),
+                        };
+                        recruitmentProcess.forEach(function (item) {
+                            if (Number(item.StatusId) === Config_1.StatusId.Onboarded)
+                                return;
+                            var dateValue = item.DateRequried;
+                            if (!dateValue) {
+                                OnTrackCount_1++;
+                                return;
+                            }
+                            var targetDate = new Date(dateValue);
+                            if (isNaN(targetDate.getTime())) {
+                                OnTrackCount_1++;
+                                return;
+                            }
+                            var diffMonths = (0, DashboardConfig_1.getMonthDifference)(DashboardConfig_1.currentDate, targetDate);
+                            if (diffMonths < 0) {
+                                overduecountCount_1++;
+                            }
+                            else if (diffMonths === 0) {
+                                atRiskCount_1++;
+                                dueLast7daysCount_1++;
+                            }
+                            else if (diffMonths <= 2) {
+                                atRiskCount_1++;
+                            }
+                            else {
+                                OnTrackCount_1++;
+                            }
+                        });
+                        PositionByStatus = {
+                            OnTrack: OnTrackCount_1,
+                            atRisk: atRiskCount_1,
+                            overduecount: overduecountCount_1,
+                            dueLast7days: dueLast7daysCount_1,
+                            total: OnTrackCount_1 + atRiskCount_1 + overduecountCount_1,
+                        };
+                        filterBasedHRLead = recruitmentProcess.filter(function (item) { return item.RecruitmentHRLead === EmailId; });
+                        groupedHR = filterBasedHRLead.reduce(function (acc, item) {
+                            var email = item.AssignedHR;
+                            if (!acc[email]) {
+                                acc[email] = [];
+                            }
+                            acc[email].push(item);
+                            return acc;
+                        }, {});
+                        return [4 /*yield*/, Promise.all(Object.entries(groupedHR).map(function (_a) {
+                                var email = _a[0], records = _a[1];
+                                return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                    var total, done, pending, hr;
+                                    return tslib_1.__generator(this, function (_b) {
+                                        switch (_b.label) {
+                                            case 0:
+                                                total = records.length;
+                                                done = records.filter(function (x) { return x.Status === "Completed"; }).length;
+                                                pending = total - done;
+                                                return [4 /*yield*/, ServiceExport_1.CommonServices.GetUserName(email)];
+                                            case 1:
+                                                hr = _b.sent();
+                                                return [2 /*return*/, {
+                                                        name: hr.data,
+                                                        avatarText: hr.data.substring(0, 2).toUpperCase(),
+                                                        avatarTheme: "blue",
+                                                        positionsCount: total,
+                                                        percentage: total ? Math.round(done * 100 / total) : 0,
+                                                        pending: pending,
+                                                        done: done,
+                                                        total: total
+                                                    }];
+                                        }
+                                    });
+                                });
+                            }))];
+                    case 2:
+                        PositionSource = _a.sent();
+                        activeRecruitments = recruitmentProcess.filter(function (item) { return Number(item.StatusId) !== Config_1.StatusId.Onboarded; });
+                        return [4 /*yield*/, Promise.all(activeRecruitments.map(function (item, index) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                var dateValue, dayaLeft, target, diffMs, diffDays, onboardedCandidatesCount, vacant, Positionstatus, target, diff, hr;
+                                var _a, _b, _c, _d, _e, _f, _g;
+                                return tslib_1.__generator(this, function (_h) {
+                                    switch (_h.label) {
+                                        case 0:
+                                            dateValue = item.DateRequried;
+                                            dayaLeft = "0";
+                                            if (dateValue) {
+                                                target = new Date(dateValue);
+                                                if (!isNaN(target.getTime())) {
+                                                    diffMs = target.getTime() - DashboardConfig_1.currentDate.getTime();
+                                                    diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+                                                    dayaLeft = diffDays > 0 ? "".concat(diffDays) : "0";
+                                                }
+                                            }
+                                            onboardedCandidatesCount = candidateDetails_1.filter(function (c) {
+                                                return c.JobCodeId === item.JobCodeId &&
+                                                    Number(c.StatusId) === Config_1.StatusId.Onboarded;
+                                            }).length;
+                                            vacant = String(Math.max(0, (item.NumberOfPersonNeeded || 1) - onboardedCandidatesCount));
+                                            Positionstatus = "On Track";
+                                            if (dateValue) {
+                                                target = new Date(dateValue);
+                                                if (!isNaN(target.getTime())) {
+                                                    diff = (0, DashboardConfig_1.getMonthDifference)(DashboardConfig_1.currentDate, target);
+                                                    if (diff < 0)
+                                                        Positionstatus = "Overdue";
+                                                    else if (diff <= 2)
+                                                        Positionstatus = "At Risk";
+                                                }
+                                            }
+                                            return [4 /*yield*/, ServiceExport_1.CommonServices.GetUserName(item.AssignedHR)];
+                                        case 1:
+                                            hr = _h.sent();
+                                            return [2 /*return*/, {
+                                                    id: index + 1,
+                                                    JobCode: (_b = (_a = item.JobCode) === null || _a === void 0 ? void 0 : _a.JobCode) !== null && _b !== void 0 ? _b : "",
+                                                    Jobtitle: (_d = (_c = item.JobCode) === null || _c === void 0 ? void 0 : _c.JobTitleInEnglish) !== null && _d !== void 0 ? _d : "",
+                                                    department: (_f = (_e = item.Department) === null || _e === void 0 ? void 0 : _e.DepartmentName) !== null && _f !== void 0 ? _f : "",
+                                                    dateRequired: dateValue
+                                                        ? new Date(dateValue).toLocaleDateString("en-GB")
+                                                        : "",
+                                                    headcount: String(item.NumberOfPersonNeeded || 1),
+                                                    vacant: vacant,
+                                                    assignHR: (_g = hr.data) !== null && _g !== void 0 ? _g : "",
+                                                    dayaLeft: dayaLeft,
+                                                    Positionstatus: Positionstatus,
+                                                }];
+                                    }
+                                });
+                            }); }))];
+                    case 3:
+                        positionDetails = _a.sent();
+                        OverDuePosition = overduecountCount_1;
+                        GridResult = {
+                            TotalOpenPosition: TotalOpenPosition,
+                            RecruitmentInProgress: RecruitmentInProgress,
+                            Onboarding: Onboarding,
+                            OnemDocumentStage: OnemDocumentStage,
+                            Duemonth: Duemonth,
+                            OverDuePosition: OverDuePosition,
+                            PositionByStatus: PositionByStatus,
+                            PositionSource: PositionSource,
+                            positionDetails: positionDetails,
+                        };
+                        return [2 /*return*/, {
+                                data: GridResult,
+                                status: 200,
+                                message: "GetHRLeadDashboard fetched successfully",
+                            }];
+                    case 4:
+                        error_13 = _a.sent();
+                        console.error("Error fetching GetHRLeadDashboard:", error_13);
+                        return [2 /*return*/, {
+                                data: {},
+                                status: 500,
+                                message: "Error fetching dashboard data",
+                            }];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    DashboardService.prototype.GetHRDashboardData = function (EmailId) {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var recruitmentProcess, RecID, candidates_1, candidateId, Selectedcandidate, myTotalPositions, onboardedCandidates_1, myFilledPositions, myOpenPositions, activeCandidatesCount, SelectedcandidateCount, interviewsThisMonthCount, screeningCount, interviewCount, offerCount, verificationCount, taskItems, tasksPendingCount, summary, monthlyTracker, _loop_1, i, departmentMap_1, departmentPositions, pipelineStages, totalCandidates_1, candidatePipeline, error_14;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 6, , 7]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,
+                                Select: "\n          *,\n          JobCode/JobCode,\n          JobCode/JobTitleInEnglish,\n          JobCode/ID,\n          Department/DepartmentName,\n          Status/StatusDescription\n        ",
+                                Filter: [
+                                    { FilterKey: "AssignedHR", Operator: "eq", FilterValue: EmailId }
+                                ],
+                                Expand: "JobCode,Department,Status",
+                                Topcount: 5000,
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            })];
+                    case 1:
+                        recruitmentProcess = (_a.sent());
+                        if (!recruitmentProcess || recruitmentProcess.length === 0) {
+                            return [2 /*return*/, {
+                                    data: {
+                                        summary: {
+                                            myOpenPositions: 0,
+                                            myOpenPositionsTrend: "▼ 2 from last month",
+                                            myOpenPositionsTrendColor: "neutral",
+                                            myFilledPositions: 0,
+                                            myFilledPositionsTrend: "▲ 5 from last month",
+                                            myFilledPositionsTrendColor: "neutral",
+                                            myTotalPositions: 0,
+                                            myTotalPositionsTrend: "0% filled",
+                                            activeCandidates: 0,
+                                            activeCandidatesTrend: "In Process",
+                                            tasksPending: 0,
+                                            tasksPendingTrend: "Requires Action",
+                                            tasksPendingTrendColor: "neutral",
+                                            interviewsThisMonth: 0,
+                                            interviewsThisMonthTrend: "Scheduled"
+                                        },
+                                        monthlyTracker: [],
+                                        departmentPositions: [],
+                                        candidatePipeline: [],
+                                        tasks: []
+                                    },
+                                    status: 200,
+                                    message: "No assigned positions found for this HR User"
+                                }];
+                        }
+                        RecID = recruitmentProcess.map(function (item) { return item.ID; }).filter(Boolean);
+                        candidates_1 = [];
+                        if (!(RecID.length > 0)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                                Select: "*,StatusId",
+                                Filter: [
+                                    { FilterKey: "RecruitmentIDId", Operator: "in", FilterValue: RecID }
+                                ],
+                                Topcount: 5000,
+                            })];
+                    case 2:
+                        candidates_1 = (_a.sent());
+                        _a.label = 3;
+                    case 3:
+                        candidateId = candidates_1.map(function (item) { return item.JobCodeId; }).filter(Boolean);
+                        Selectedcandidate = [];
+                        if (!(candidateId.length > 0)) return [3 /*break*/, 5];
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                                Select: "*,StatusId",
+                                Filter: [
+                                    { FilterKey: "JobCodeId", Operator: "in", FilterValue: candidateId }
+                                ],
+                                Topcount: 5000,
+                            })];
+                    case 4:
+                        Selectedcandidate = (_a.sent());
+                        _a.label = 5;
+                    case 5:
+                        myTotalPositions = recruitmentProcess.reduce(function (sum, item) { return sum + (Number(item.NumberOfPersonNeeded) || 1); }, 0);
+                        onboardedCandidates_1 = candidates_1.filter(function (c) { return Number(c.StatusId) === Config_1.StatusId.Onboarded; });
+                        myFilledPositions = onboardedCandidates_1.length;
+                        myOpenPositions = Math.max(0, myTotalPositions - myFilledPositions);
+                        activeCandidatesCount = candidates_1.filter(function (c) {
+                            return Number(c.StatusId) !== Config_1.StatusId.Onboarded &&
+                                Number(c.StatusId) !== Config_1.StatusId.RejectedbyHOD &&
+                                Number(c.StatusId) !== Config_1.StatusId.CandidateRejectedbyHODLevel1 &&
+                                Number(c.StatusId) !== Config_1.StatusId.CandidateRejectedbyHODLevel2;
+                        }).length;
+                        SelectedcandidateCount = Selectedcandidate.filter(function (c) {
+                            return Number(c.StatusId) !== Config_1.StatusId.BackgroundCheckVerificationFailed &&
+                                Number(c.StatusId) !== Config_1.StatusId.CandidateRejectfromRESIProcess &&
+                                Number(c.StatusId) !== Config_1.StatusId.FailedmedicalscreeningUnfit &&
+                                Number(c.StatusId) !== Config_1.StatusId.offerdecline;
+                        }).length;
+                        interviewsThisMonthCount = candidates_1.filter(function (c) {
+                            return [
+                                Config_1.StatusId.InterviewInProcess,
+                                Config_1.StatusId.InterviewLevel2InProgress,
+                                Config_1.StatusId.InterviewLevel1InProgress
+                            ].includes(Number(c.StatusId));
+                        }).length;
+                        screeningCount = candidates_1.filter(function (c) {
+                            return [Config_1.StatusId.HRLeadtoAssignRecruitmentHR, Config_1.StatusId.PendingAssignHR, Config_1.StatusId.PendingwithLineManagereviewAdv, Config_1.StatusId.Pending].includes(Number(c.StatusId));
+                        }).length;
+                        interviewCount = candidates_1.filter(function (c) {
+                            return [Config_1.StatusId.InterviewScheduled, Config_1.StatusId.InterviewInProcess, Config_1.StatusId.InterviewScheduledforLevel2, Config_1.StatusId.InterviewLevel2InProgress, Config_1.StatusId.InterviewLevel1InProgress].includes(Number(c.StatusId));
+                        }).length;
+                        offerCount = candidates_1.filter(function (c) {
+                            return [Config_1.StatusId.PendingHROfferInitiate, Config_1.StatusId.PendingCandidateOfferLetterUpload, Config_1.StatusId.PendingHREmploymentContractVerification].includes(Number(c.StatusId));
+                        }).length;
+                        verificationCount = candidates_1.filter(function (c) {
+                            return [Config_1.StatusId.RESProcessInitiated, Config_1.StatusId.PendingHRBGVInitiation, Config_1.StatusId.PendingwithTAforMedicalScreening].includes(Number(c.StatusId));
+                        }).length;
+                        taskItems = [];
+                        if (screeningCount > 0) {
+                            taskItems.push({
+                                id: "T-01",
+                                task: "Review Applications",
+                                priority: "High",
+                                dueDate: (0, moment_1.default)().add(2, "days").format("DD-MM-YYYY"),
+                                status: "Pending"
+                            });
+                        }
+                        if (interviewCount > 0) {
+                            taskItems.push({
+                                id: "T-02",
+                                task: "Interview Schedule",
+                                priority: "Medium",
+                                dueDate: (0, moment_1.default)().add(3, "days").format("DD-MM-YYYY"),
+                                status: "In Progress"
+                            });
+                        }
+                        if (offerCount > 0) {
+                            taskItems.push({
+                                id: "T-03",
+                                task: "Offer Preparation",
+                                priority: "High",
+                                dueDate: (0, moment_1.default)().add(5, "days").format("DD-MM-YYYY"),
+                                status: "Pending"
+                            });
+                        }
+                        if (verificationCount > 0) {
+                            taskItems.push({
+                                id: "T-04",
+                                task: "Document Verification",
+                                priority: "Low",
+                                dueDate: (0, moment_1.default)().add(7, "days").format("DD-MM-YYYY"),
+                                status: "Pending"
+                            });
+                        }
+                        if (taskItems.length === 0) {
+                            taskItems.push({
+                                id: "T-DEFAULT",
+                                task: "General Recruitment Clean-up",
+                                priority: "Low",
+                                dueDate: (0, moment_1.default)().add(1, "day").format("DD-MM-YYYY"),
+                                status: "Completed"
+                            });
+                        }
+                        tasksPendingCount = taskItems.filter(function (t) { return t.status === "Pending"; }).length;
+                        summary = {
+                            myOpenPositions: myOpenPositions,
+                            myOpenPositionsTrend: "▼ 2 from last month",
+                            myOpenPositionsTrendColor: "success",
+                            myFilledPositions: myFilledPositions,
+                            myFilledPositionsTrend: "▲ 5 from last month",
+                            myFilledPositionsTrendColor: "success",
+                            myTotalPositions: myTotalPositions,
+                            myTotalPositionsTrend: "".concat(myTotalPositions ? Math.round((myFilledPositions / myTotalPositions) * 100) : 0, "% filled"),
+                            activeCandidates: activeCandidatesCount,
+                            activeCandidatesTrend: "In Process",
+                            tasksPending: tasksPendingCount,
+                            tasksPendingTrend: tasksPendingCount > 0 ? "Requires Action" : "Up to Date",
+                            tasksPendingTrendColor: tasksPendingCount > 0 ? "danger" : "neutral",
+                            interviewsThisMonth: interviewsThisMonthCount,
+                            interviewsThisMonthTrend: "Scheduled"
+                        };
+                        monthlyTracker = [];
+                        _loop_1 = function (i) {
+                            var targetMonth = (0, moment_1.default)().subtract(i, "months");
+                            var monthLabel = targetMonth.format("MMM YYYY");
+                            // Total positions created up to targetMonth
+                            var totalInMonth = recruitmentProcess.filter(function (item) {
+                                return item.Created && (0, moment_1.default)(item.Created).isSameOrBefore(targetMonth, "month");
+                            }).reduce(function (sum, item) { return sum + (Number(item.NumberOfPersonNeeded) || 1); }, 0);
+                            // Filled positions (onboarded up to targetMonth)
+                            var filledInMonth = onboardedCandidates_1.filter(function (c) {
+                                return c.Modified && (0, moment_1.default)(c.Modified).isSameOrBefore(targetMonth, "month");
+                            }).length;
+                            var openInMonth = Math.max(0, totalInMonth - filledInMonth);
+                            monthlyTracker.push({
+                                month: monthLabel,
+                                totalPositions: totalInMonth,
+                                positionsFilled: filledInMonth,
+                                openPositions: openInMonth
+                            });
+                        };
+                        for (i = 5; i >= 0; i--) {
+                            _loop_1(i);
+                        }
+                        departmentMap_1 = new Map();
+                        recruitmentProcess.forEach(function (item) {
+                            var _a;
+                            var deptName = ((_a = item.Department) === null || _a === void 0 ? void 0 : _a.DepartmentName) || "General";
+                            if (!departmentMap_1.has(deptName)) {
+                                departmentMap_1.set(deptName, { total: 0, filled: 0 });
+                            }
+                            var currentDept = departmentMap_1.get(deptName);
+                            currentDept.total += (Number(item.NumberOfPersonNeeded) || 1);
+                            var deptFilled = onboardedCandidates_1.filter(function (c) { return c.JobCodeId === item.JobCodeId; }).length;
+                            currentDept.filled += deptFilled;
+                        });
+                        departmentPositions = Array.from(departmentMap_1.entries()).map(function (_a) {
+                            var deptName = _a[0], counts = _a[1];
+                            var total = Number(counts.total);
+                            var filled = Number(counts.filled);
+                            var open = Math.max(0, total - filled);
+                            var filledPercentage = total ? Math.round((filled / total) * 100 * 10) / 10 : 0;
+                            return {
+                                department: deptName,
+                                total: total,
+                                filled: filled,
+                                open: open,
+                                filledPercentage: filledPercentage
+                            };
+                        });
+                        pipelineStages = [
+                            { name: "Applied", statusIds: [Config_1.StatusId.HRLeadtoAssignRecruitmentHR, Config_1.StatusId.PendingAssignHR] },
+                            { name: "Screening", statusIds: [Config_1.StatusId.PendingwithLineManagereviewAdv, Config_1.StatusId.Pending] },
+                            { name: "Interview", statusIds: [Config_1.StatusId.InterviewScheduled, Config_1.StatusId.InterviewInProcess, Config_1.StatusId.InterviewScheduledforLevel2, Config_1.StatusId.InterviewLevel2InProgress, Config_1.StatusId.InterviewLevel1InProgress] },
+                            { name: "Assessment", statusIds: [Config_1.StatusId.RESProcessInitiated, Config_1.StatusId.PendingHRBGVInitiation, Config_1.StatusId.PendingwithTAforMedicalScreening] },
+                            { name: "Offer", statusIds: [Config_1.StatusId.PendingHROfferInitiate, Config_1.StatusId.PendingCandidateOfferLetterUpload, Config_1.StatusId.PendingHREmploymentContractVerification] },
+                            { name: "Hired", statusIds: [Config_1.StatusId.Onboarded] }
+                        ];
+                        totalCandidates_1 = candidates_1.length;
+                        candidatePipeline = pipelineStages.map(function (stage) {
+                            var count = candidates_1.filter(function (c) { return stage.statusIds.includes(Number(c.StatusId)); }).length;
+                            var percentage = totalCandidates_1 ? Math.round((count / totalCandidates_1) * 100 * 10) / 10 : 0;
+                            return {
+                                stage: stage.name,
+                                count: count,
+                                percentage: percentage
+                            };
+                        });
+                        return [2 /*return*/, {
+                                data: {
+                                    summary: summary,
+                                    monthlyTracker: monthlyTracker,
+                                    departmentPositions: departmentPositions,
+                                    candidatePipeline: candidatePipeline,
+                                    tasks: taskItems
+                                },
+                                status: 200,
+                                message: "HR Dashboard data retrieved and aggregated successfully"
+                            }];
+                    case 6:
+                        error_14 = _a.sent();
+                        console.error("GetHRDashboardData Error:", error_14);
+                        return [2 /*return*/, {
+                                data: {},
+                                status: 500,
+                                message: "Error retrieving HR Dashboard data"
+                            }];
+                    case 7: return [2 /*return*/];
                 }
             });
         });

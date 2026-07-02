@@ -1,6 +1,7 @@
 import React from "react";
 import * as Lucide from "lucide-react";
 import styles from "./HRWorkflowOverview.module.scss";
+import { IPositionDetails, IPositionSource } from "../../Types";
 
 interface RecruiterSourceData {
   name: string;
@@ -13,60 +14,59 @@ interface RecruiterSourceData {
   total: number;
 }
 
-const MOCK_SOURCES: RecruiterSourceData[] = [
-  {
-    name: "Jiressa Positions",
-    avatarText: "J",
-    avatarTheme: "blue",
-    positionsCount: 5,
-    percentage: 36,
-    pending: 5,
-    done: 0,
-    total: 14
-  },
-  {
-    name: "Evoide Positions",
-    avatarText: "E",
-    avatarTheme: "green",
-    positionsCount: 0,
-    percentage: 0,
-    pending: 0,
-    done: 0,
-    total: 14
-  },
-  {
-    name: "Altkamoa02",
-    avatarText: "A",
-    avatarTheme: "purple",
-    positionsCount: 0,
-    percentage: 0,
-    pending: 0,
-    done: 0,
-    total: 14
-  },
-  {
-    name: "Altkamoa04",
-    avatarText: "B",
-    avatarTheme: "orange",
-    positionsCount: 0,
-    percentage: 0,
-    pending: 0,
-    done: 0,
-    total: 14
-  },
-  {
-    name: "Altkamoa09",
-    avatarText: "C",
-    avatarTheme: "teal",
-    positionsCount: 0,
-    percentage: 0,
-    pending: 0,
-    done: 0,
-    total: 14
-  }
-];
+interface IHRWorkflowOverviewProps {
+  data: IPositionSource[] | null | undefined;
+  loading?: boolean;
+}
 
-export const HRWorkflowOverview: React.FC = () => {
+export const HRWorkflowOverview: React.FC<IHRWorkflowOverviewProps> = ({ data, loading }) => {
+  const sources = data || [];
+
+  if (loading) {
+    return (
+      <div className={styles.containerCard} aria-label="Positions by Source Overview Loading">
+        {/* Header */}
+        <div className={styles.header}>
+          <div className="dashboard-skeleton__bar" style={{ width: "150px", height: "14px" }} />
+        </div>
+
+        {/* Grid containing the skeleton cards */}
+        <div className={styles.bodyGrid}>
+          {Array.from({ length: 5 }).map((_, idx) => (
+            <div key={idx} className={styles.sourceCard} style={{ opacity: 0.8 }}>
+              {/* Header row: Avatar, metadata, percentage */}
+              <div className={styles.sourceCard__header}>
+                <div className={styles.sourceCard__info}>
+                  <div className="dashboard-skeleton__bar" style={{ width: "32px", height: "32px", borderRadius: "50%", marginRight: "8px" }} />
+                  <div className={styles.sourceCard__meta}>
+                    <div className="dashboard-skeleton__bar" style={{ width: "80px", height: "12px", marginBottom: "6px" }} />
+                    <div className="dashboard-skeleton__bar" style={{ width: "60px", height: "10px" }} />
+                  </div>
+                </div>
+                <div className="dashboard-skeleton__bar" style={{ width: "35px", height: "16px", borderRadius: "4px" }} />
+              </div>
+
+              {/* Metrics Grid at bottom */}
+              <div className={styles.sourceCard__metrics}>
+                {Array.from({ length: 3 }).map((_, mIdx) => (
+                  <div key={mIdx} className={styles.metricBox}>
+                    <div className="dashboard-skeleton__bar" style={{ width: "20px", height: "16px", marginBottom: "6px" }} />
+                    <div className="dashboard-skeleton__bar" style={{ width: "35px", height: "8px" }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer link */}
+        <div className={styles.footer}>
+          <div className="dashboard-skeleton__bar" style={{ width: "100px", height: "12px" }} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.containerCard} aria-label="Positions by Source Overview">
       {/* Header */}
@@ -76,7 +76,7 @@ export const HRWorkflowOverview: React.FC = () => {
 
       {/* Grid containing the 5 cards */}
       <div className={styles.bodyGrid}>
-        {MOCK_SOURCES.map((wf) => {
+        {sources.map((wf) => {
           const avatarClass = (styles as any)[`avatar--${wf.avatarTheme}`] || (styles as any)["avatar--blue"];
           const pctClass = (styles as any)[`pct--${wf.avatarTheme}`] || (styles as any)["pct--blue"];
 
@@ -129,11 +129,11 @@ export const HRWorkflowOverview: React.FC = () => {
       </div>
 
       {/* Footer link */}
-      <div className={styles.footer}>
+      {/* <div className={styles.footer}>
         <span className={styles.footerLink}>
           View all sources <Lucide.ChevronRight size={14} style={{ marginLeft: "4px" }} />
         </span>
-      </div>
+      </div> */}
     </div>
   );
 };

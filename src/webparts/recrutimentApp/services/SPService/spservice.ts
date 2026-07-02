@@ -20,6 +20,7 @@ import {
   IDetailsListGroup,
   IDocFiles,
   IFilter,
+  IGetAllItemsOptions,
   IGetDocLibFiles,
   IItemAddResult,
   IItemUpdateResult,
@@ -425,45 +426,47 @@ const SPGetChoices = async (params: ISPListChoiceField): Promise<unknown> => {
  *   responseData: [{ Title: "Task A" }, { Title: "Task B" }]
  * });
  */
-const batchGet = async (
-  queries: BatchQuery[],
-): Promise<Record<number, any>> => {
+export const batchGet = async (
+  queries: BatchQuery[]
+): Promise<Record<number, any[]>> => {
   try {
-    const [batchedSP, execute] = getSP().batched();
+    const sp = getSP();
 
-    const results: Record<number, any> = {};
-    const promises = queries.map((q: any) => {
-      const flatFilters = (q.Filter && q.Filter.flat()) || [];
-      const filterStr = _buildODataFilter(
-        flatFilters,
-        q.FilterCondition ?? "and",
-      );
+    const results: Record<number, any[]> = {};
 
-      const request = batchedSP.web.lists
-        .getByTitle(q.ListName)
-        .items.filter(filterStr)
-        .select(...(q.select ?? ["*"]))
-        .expand(q.expand ?? [])
-        .top(5000);
+    await Promise.all(
+      queries.map(async (q) => {
+        const flatFilters = (q.Filter && q.Filter.flat()) || [];
 
-      return request().then((r) => {
-        // console.log(r, "data");
+        const filterStr = _buildODataFilter(
+          flatFilters,
+          q.FilterCondition ?? "and"
+        );
 
-        if (!results[q.StateValue]) {
-          results[q.StateValue] = [];
+        let query = sp.web.lists
+          .getByTitle(q.ListName)
+          .items
+          .select(...(q.select ?? ["*"]))
+          .expand(...(q.expand ?? []));
+
+        if (filterStr) {
+          query = query.filter(filterStr);
         }
 
-        // concat results
-        results[q.StateValue] = [...results[q.StateValue], ...r];
-      });
-    });
+        const data: any[] = [];
 
-    await execute();
-    await Promise.all(promises);
+        // Automatically retrieves all pages (PnPjs v4)
+        for await (const items of query.top(5000)) {
+          data.push(...items);
+        }
+
+        results[q.StateValue] = data;
+      })
+    );
 
     return results;
   } catch (error) {
-    console.error("batchInsert failed:", error);
+    console.error("batchGetAll failed:", error);
     return {};
   }
 };
@@ -812,6 +815,38 @@ const SPReadItemsCamelQuery = async (
   return camlResults;
 };
 
+export const getAllItems = async <T = any>(
+  options: IGetAllItemsOptions
+): Promise<T[]> => {
+
+  const results: T[] = [];
+
+  let query = getSP().web.lists
+    .getByTitle(options.listName)
+    .items
+    .select(...(options.select ?? ["*"]))
+    .expand(...(options.expand ?? []));
+
+  if (options.filter) {
+    query = query.filter(options.filter);
+  }
+
+  if (options.orderBy) {
+    query = query.orderBy(
+      options.orderBy,
+      options.ascending ?? true
+    );
+  }
+
+  const pageSize = options.top ?? 5000;
+
+  for await (const items of query.top(pageSize)) {
+    results.push(...(items as T[]));
+  }
+
+  return results;
+};
+
 // ── SPServices.ts ─────────────────────────────────────────────────────────
 
 const SPServices = {
@@ -838,6 +873,7 @@ const SPServices = {
   addDocLibFiles,
   SPReadItemsCamelQuery,
   SPReadItemsPaged,
+  getAllItems
 } as const;
 
 export default SPServices;

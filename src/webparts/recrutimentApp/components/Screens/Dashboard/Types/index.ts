@@ -82,3 +82,123 @@ export interface CandidateDashboardData {
   timeline: TimelineStep[];
   uploadedDocuments: Array<{ name: string; status: string; date: string }>;
 }
+
+export type IHRLeadDashboard = {
+  TotalOpenPosition: number;
+  RecruitmentInProgress: number;
+  Onboarding: number;
+  OnemDocumentStage: number;
+  Duemonth: IDueMonth;
+  OverDuePosition: number;
+  PositionByStatus: IPositionStatus;
+  PositionSource:IPositionSource[];
+  positionDetails: IPositionDetails[];
+}
+
+export type IPositionSource = {
+   name: string;
+    avatarText: string;
+    avatarTheme: string;
+    positionsCount: number;
+    percentage: number;
+    pending: number;
+    done: number;
+    total: number;
+}
+
+
+export type IPositionDetails = {
+  id: number;
+  JobCode: string;
+  Jobtitle: string;
+  department: string;
+  dateRequired: string;
+  headcount: string;
+  vacant: string;
+  assignHR: string;
+  dayaLeft: string;
+  Positionstatus: "Overdue" | "At Risk" | "On Track";
+}
+
+export type IPositionStatus = {
+  OnTrack: number;
+  atRisk: number;
+  overduecount: number;
+  dueLast7days: number;
+  total: number;
+}
+
+export type IDueMonth = {
+  Jan: string;
+  Feb: string;
+  Mar: string;
+  Apr: string;
+  May: string;
+  June: string;
+  July: string;
+  Aug: string;
+  Sep: string;
+  Oct: string;
+  Nov: string;
+  Dec: string;
+}
+
+export interface IHRDashboardSummary {
+  myOpenPositions: number;
+  myOpenPositionsTrend: string;
+  myOpenPositionsTrendColor: "success" | "danger" | "neutral";
+  
+  myFilledPositions: number;
+  myFilledPositionsTrend: string;
+  myFilledPositionsTrendColor: "success" | "danger" | "neutral";
+  
+  myTotalPositions: number;
+  myTotalPositionsTrend: string;
+  
+  activeCandidates: number;
+  activeCandidatesTrend: string;
+  
+  tasksPending: number;
+  tasksPendingTrend: string;
+  tasksPendingTrendColor: "warning" | "danger" | "neutral";
+  
+  interviewsThisMonth: number;
+  interviewsThisMonthTrend: string;
+}
+
+export interface IMonthlyTrackerItem {
+  month: string;
+  totalPositions: number;
+  positionsFilled: number;
+  openPositions: number;
+}
+
+export interface IDepartmentPosition {
+  department: string;
+  total: number;
+  filled: number;
+  open: number;
+  filledPercentage: number;
+}
+
+export interface ICandidatePipelineStage {
+  stage: string;
+  count: number;
+  percentage: number;
+}
+
+export interface IHRTask {
+  id: string;
+  task: string;
+  priority: "High" | "Medium" | "Low";
+  dueDate: string;
+  status: "Pending" | "In Progress" | "Completed";
+}
+
+export interface IHRDashboardData {
+  summary: IHRDashboardSummary;
+  monthlyTracker: IMonthlyTrackerItem[];
+  departmentPositions: IDepartmentPosition[];
+  candidatePipeline: ICandidatePipelineStage[];
+  tasks: IHRTask[];
+}

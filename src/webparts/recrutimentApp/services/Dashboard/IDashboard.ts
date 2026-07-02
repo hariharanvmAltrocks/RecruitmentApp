@@ -1,6 +1,7 @@
 import { ApiResponse } from "../../models/apimodels";
 import { Metric } from "../../models/IDashboard";
 import { BatchQuery } from "../SPService/Ispservice";
+import { IHRLeadDashboard, IHRDashboardData } from "../../components/Screens/Dashboard/Types";
 
 export type DataSyncToRecruitmentResponse = {
   ID: number;
@@ -172,4 +173,6 @@ export type IDashboard = {
   ): Promise<ApiResponse<DashboardData[]>>;
   GetDepartmentDetails(): Promise<ApiResponse<IDashboardDepartment[]>>;
   EvalutionValidation(data: IEvaluValidate): Promise<ApiResponse<boolean>>;
+  GetHRLeadDashboard(EmailId: string): Promise<ApiResponse<IHRLeadDashboard>>;
+  GetHRDashboardData(EmailId: string): Promise<ApiResponse<IHRDashboardData>>;
 };

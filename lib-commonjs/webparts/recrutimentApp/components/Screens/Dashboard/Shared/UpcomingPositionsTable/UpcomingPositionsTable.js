@@ -8,88 +8,43 @@ var UpcomingPositionsTable_module_scss_1 = tslib_1.__importDefault(require("./Up
 var DataTable_1 = require("../../../../Comman/DataTable/DataTable");
 var useAssignMembers_1 = require("../../../RecruitmentTable/Hooks/useAssignMembers");
 var SearchableDropdown_1 = require("../../../../Comman/SearchableDropdown/SearchableDropdown");
-var INITIAL_POSITIONS = [
-    {
-        id: "POS-001",
-        jobCode: "1013-CT-14-010",
-        jobTitle: "Cyber Security Analyst",
-        department: "SENIOR MANAGEMENT",
-        dateRequired: "25-05-2026",
-        headcount: 5,
-        vacant: 3,
-        assignedHR: "Altkamoa01",
-        daysLeft: 5,
-        status: "Overdue"
-    },
-    {
-        id: "POS-002",
-        jobCode: "1013-CT-14-011",
-        jobTitle: "ERP Functional Consultant",
-        department: "MINING OPERATIONS",
-        dateRequired: "25-06-2026",
-        headcount: 4,
-        vacant: 2,
-        assignedHR: "Altkamoa01",
-        daysLeft: 5,
-        status: "Overdue"
-    },
-    {
-        id: "POS-003",
-        jobCode: "1013-CT-14-006",
-        jobTitle: "Network Engineer",
-        department: "TECH & INNOVATION",
-        dateRequired: "02-06-2026",
-        headcount: 6,
-        vacant: 4,
-        assignedHR: "Altkamoa02",
-        daysLeft: 13,
-        status: "At Risk"
-    },
-    {
-        id: "POS-004",
-        jobCode: "1013-CT-14-016",
-        jobTitle: "Mobile Developer",
-        department: "TECH & INNOVATION",
-        dateRequired: "14-06-2026",
-        headcount: 4,
-        vacant: 1,
-        assignedHR: "Altkamoa02",
-        daysLeft: 25,
-        status: "At Risk"
-    },
-    {
-        id: "POS-005",
-        jobCode: "1013-CT-14-017",
-        jobTitle: "Data Analyst",
-        department: "FINANCE",
-        dateRequired: "30-07-2026",
-        headcount: 3,
-        vacant: 2,
-        assignedHR: "Altkamoa03",
-        daysLeft: 71,
-        status: "On Track"
-    },
-    {
-        id: "POS-006",
-        jobCode: "1013-CT-14-018",
-        jobTitle: "HR Business Partner",
-        department: "HUMAN RESOURCES",
-        dateRequired: "10-06-2026",
-        headcount: 2,
-        vacant: 1,
-        assignedHR: "Altkamoa04",
-        daysLeft: 16,
-        status: "At Risk"
-    }
-];
-var UpcomingPositionsTable = function () {
-    var _a = (0, react_1.useState)(INITIAL_POSITIONS), positions = _a[0], setPositions = _a[1];
-    var _b = (0, react_1.useState)(""), searchTerm = _b[0], setSearchTerm = _b[1];
-    var _c = (0, react_1.useState)("All"), selectedDept = _c[0], setSelectedDept = _c[1];
-    var _d = (0, react_1.useState)("All"), selectedStatus = _d[0], setSelectedStatus = _d[1];
-    var _e = (0, react_1.useState)(1), currentPage = _e[0], setCurrentPage = _e[1];
-    var _f = (0, react_1.useState)(6), pageSize = _f[0], setPageSize = _f[1];
-    var _g = (0, react_1.useState)(false), isLoading = _g[0], setIsLoading = _g[1];
+var spservice_1 = tslib_1.__importDefault(require("../../../../../services/SPService/spservice"));
+var Config_1 = require("../../../../../utilities/Config");
+var AssignHRPopup = react_1.default.lazy(function () {
+    return Promise.resolve().then(function () { return tslib_1.__importStar(require("../../../RecruitmentTable/Components/AssignHRPopup/AssignHRPopup")); }).then(function (module) { return ({
+        default: module.AssignHRPopup,
+    }); });
+});
+var UpcomingPositionsTable = function (_a) {
+    var data = _a.data, onRefresh = _a.onRefresh, loading = _a.loading;
+    var _b = (0, react_1.useState)([]), positions = _b[0], setPositions = _b[1];
+    var _c = (0, react_1.useState)(""), searchTerm = _c[0], setSearchTerm = _c[1];
+    var _d = (0, react_1.useState)("All"), selectedDept = _d[0], setSelectedDept = _d[1];
+    var _e = (0, react_1.useState)("All"), selectedStatus = _e[0], setSelectedStatus = _e[1];
+    var _f = (0, react_1.useState)(1), currentPage = _f[0], setCurrentPage = _f[1];
+    var _g = (0, react_1.useState)(6), pageSize = _g[0], setPageSize = _g[1];
+    var _h = (0, react_1.useState)(false), isLoading = _h[0], setIsLoading = _h[1];
+    var _j = (0, react_1.useState)(false), isUpdating = _j[0], setIsUpdating = _j[1];
+    react_1.default.useEffect(function () {
+        if (data && data.length > 0) {
+            var mapped = data.map(function (pos) { return ({
+                id: String(pos.id || ""),
+                jobCode: pos.JobCode || "",
+                jobTitle: pos.Jobtitle || "",
+                department: pos.department || "",
+                dateRequired: pos.dateRequired || "",
+                headcount: Number(pos.headcount) || 1,
+                vacant: Number(pos.vacant) || 0,
+                assignedHR: pos.assignHR || "Unassigned",
+                daysLeft: Number(pos.dayaLeft) || 0,
+                status: pos.Positionstatus || "On Track",
+            }); });
+            setPositions(mapped);
+        }
+        else {
+            setPositions([]);
+        }
+    }, [data]);
     var handleResetFilters = function () {
         setSearchTerm("");
         setSelectedDept("All");
@@ -98,45 +53,98 @@ var UpcomingPositionsTable = function () {
     };
     var handleRefresh = function () {
         setIsLoading(true);
+        if (onRefresh) {
+            onRefresh();
+        }
         setTimeout(function () {
-            setPositions(INITIAL_POSITIONS);
             setIsLoading(false);
         }, 600);
     };
     // Change HR Dialog State
-    var _h = (0, react_1.useState)(false), isChangeHrOpen = _h[0], setIsChangeHrOpen = _h[1];
-    var _j = (0, react_1.useState)(null), selectedPosition = _j[0], setSelectedPosition = _j[1];
-    var _k = (0, react_1.useState)(0), selectedHrId = _k[0], setSelectedHrId = _k[1];
-    var _l = (0, react_1.useState)(""), comments = _l[0], setComments = _l[1];
+    var _k = (0, react_1.useState)(false), isChangeHrOpen = _k[0], setIsChangeHrOpen = _k[1];
+    var _l = (0, react_1.useState)(null), selectedPosition = _l[0], setSelectedPosition = _l[1];
     // Fetch HR Members list
     var members = (0, useAssignMembers_1.useAssignMembers)("Congolese").members;
+    var selectedItems = (0, react_1.useMemo)(function () {
+        if (!selectedPosition)
+            return [];
+        return [
+            {
+                id: selectedPosition.id,
+                ItemID: Number(selectedPosition.id.replace("POS-", "")) || 0,
+                jobCode: selectedPosition.jobCode,
+                title: selectedPosition.jobTitle,
+                department: selectedPosition.department,
+                count: selectedPosition.headcount,
+                requestType: "Position",
+                nationality: "Congolese",
+                status: selectedPosition.status,
+                statusId: 0,
+                jobCodeID: 0,
+            },
+        ];
+    }, [selectedPosition]);
+    var selectedMember = (0, react_1.useMemo)(function () {
+        var _a;
+        if (!selectedPosition)
+            return null;
+        return (_a = members.find(function (m) { return m.name.toLowerCase() === selectedPosition.assignedHR.toLowerCase(); })) !== null && _a !== void 0 ? _a : null;
+    }, [selectedPosition, members]);
     var handleOpenChangeHR = function (row) {
         setSelectedPosition(row);
-        // Find pre-selected HR member ID if any
-        var existingHr = members.find(function (m) { return m.name.toLowerCase() === row.assignedHR.toLowerCase(); });
-        setSelectedHrId(existingHr ? existingHr.id : 0);
-        setComments("");
         setIsChangeHrOpen(true);
     };
-    var handleConfirmChangeHR = function () {
-        if (!selectedPosition || !selectedHrId)
-            return;
-        var selectedHr = members.find(function (m) { return m.id === selectedHrId; });
-        if (!selectedHr)
-            return;
-        setPositions(function (prev) {
-            return prev.map(function (p) {
-                return p.id === selectedPosition.id
-                    ? tslib_1.__assign(tslib_1.__assign({}, p), { assignedHR: selectedHr.name }) : p;
-            });
+    var handleConfirmChangeHR = function (payload) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+        var itemId, err_1;
+        return tslib_1.__generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!selectedPosition || !payload.member)
+                        return [2 /*return*/];
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 4, 5, 6]);
+                    setIsUpdating(true);
+                    itemId = Number(selectedPosition.id.replace("POS-", "")) || Number(selectedPosition.id) || 0;
+                    if (!(itemId > 0)) return [3 /*break*/, 3];
+                    return [4 /*yield*/, spservice_1.default.SPUpdateItem({
+                            Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,
+                            ID: itemId,
+                            RequestJSON: {
+                                AssignedHRId: Number(payload.member.id)
+                            }
+                        })];
+                case 2:
+                    _a.sent();
+                    _a.label = 3;
+                case 3:
+                    setPositions(function (prev) {
+                        return prev.map(function (p) {
+                            return p.id === selectedPosition.id
+                                ? tslib_1.__assign(tslib_1.__assign({}, p), { assignedHR: payload.member.name }) : p;
+                        });
+                    });
+                    if (onRefresh) {
+                        onRefresh();
+                    }
+                    return [3 /*break*/, 6];
+                case 4:
+                    err_1 = _a.sent();
+                    console.error("Error reassigning HR:", err_1);
+                    return [3 /*break*/, 6];
+                case 5:
+                    setIsUpdating(false);
+                    setIsChangeHrOpen(false);
+                    return [7 /*endfinally*/];
+                case 6: return [2 /*return*/];
+            }
         });
-        setIsChangeHrOpen(false);
-    };
+    }); };
     // Unique lists for filters
     var departments = (0, react_1.useMemo)(function () {
-        var depts = new Set(INITIAL_POSITIONS.map(function (p) { return p.department; }));
+        var depts = new Set(positions.map(function (p) { return p.department; }).filter(Boolean));
         return tslib_1.__spreadArray(["All"], Array.from(depts), true);
-    }, []);
+    }, [positions]);
     var statuses = ["All", "On Track", "At Risk", "Overdue"];
     // Filter items
     var filteredItems = (0, react_1.useMemo)(function () {
@@ -194,14 +202,16 @@ var UpcomingPositionsTable = function () {
         {
             id: "department",
             header: "Department",
-            accessor: "department",
-            sortable: true,
-            cellClassName: UpcomingPositionsTable_module_scss_1.default.deptCell
+            render: function (item) { return (react_1.default.createElement("div", { className: "data-table__job-title" },
+                react_1.default.createElement("span", null, item.department))); },
+            sortable: true
         },
         {
             id: "dateRequired",
             header: "Date Required",
             accessor: "dateRequired",
+            cellClassName: "data-table__cell--muted",
+            hideOnMobile: true,
             sortable: true
         },
         {
@@ -254,11 +264,33 @@ var UpcomingPositionsTable = function () {
         }
     ]; }, [members]);
     var getRowId = function (row) { return row.id; };
+    if (loading) {
+        return (react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.tableCard, "aria-label": "Positions Table Loading" },
+            react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.tableCard__header },
+                react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.tableCard__titleRow },
+                    react_1.default.createElement(Lucide.AlertTriangle, { size: 18, className: UpcomingPositionsTable_module_scss_1.default.warningIcon, style: { opacity: 0.5 } }),
+                    react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "220px", height: "16px" } })),
+                react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.toolbar, style: { opacity: 0.6 } },
+                    react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.filtersGroup },
+                        react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "180px", height: "35px", borderRadius: "8px" } }),
+                        react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "150px", height: "35px", borderRadius: "8px" } }),
+                        react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "150px", height: "35px", borderRadius: "8px" } })),
+                    react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.actionsGroup },
+                        react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "80px", height: "35px", borderRadius: "8px" } }),
+                        react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "80px", height: "35px", borderRadius: "8px" } })))),
+            react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.tableWrapper },
+                react_1.default.createElement("div", { className: "dashboard-skeleton__table", style: { padding: "10px 0" } }, Array.from({ length: 5 }).map(function (_, idx) { return (react_1.default.createElement("div", { key: "row-skel-".concat(idx), className: "dashboard-skeleton__row", style: { display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr 1fr", gap: "20px", padding: "16px 0", borderBottom: "1px solid #f1f5f9" } },
+                    react_1.default.createElement("div", { className: "dashboard-skeleton__line", style: { height: "12px", borderRadius: "4px" } }),
+                    react_1.default.createElement("div", { className: "dashboard-skeleton__line", style: { height: "12px", borderRadius: "4px" } }),
+                    react_1.default.createElement("div", { className: "dashboard-skeleton__line", style: { height: "12px", borderRadius: "4px" } }),
+                    react_1.default.createElement("div", { className: "dashboard-skeleton__line", style: { height: "12px", borderRadius: "4px" } }),
+                    react_1.default.createElement("div", { className: "dashboard-skeleton__line", style: { height: "12px", borderRadius: "4px" } }),
+                    react_1.default.createElement("div", { className: "dashboard-skeleton__line", style: { height: "12px", borderRadius: "4px" } }))); })))));
+    }
     return (react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.tableCard, "aria-label": "Positions Table" },
         react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.tableCard__header },
             react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.tableCard__titleRow },
-                react_1.default.createElement(Lucide.AlertTriangle, { size: 18, className: UpcomingPositionsTable_module_scss_1.default.warningIcon }),
-                react_1.default.createElement("h2", { className: UpcomingPositionsTable_module_scss_1.default.tableCard__title }, "POSITIONG & OVERDUE POSITIONS")),
+                react_1.default.createElement("h2", { className: UpcomingPositionsTable_module_scss_1.default.tableCard__title }, " Positions Details")),
             react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.toolbar },
                 react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.filtersGroup },
                     react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.searchWrap },
@@ -285,38 +317,16 @@ var UpcomingPositionsTable = function () {
                     react_1.default.createElement("button", { type: "button", className: UpcomingPositionsTable_module_scss_1.default.actionBtn, onClick: handleResetFilters, title: "Reset Filters" },
                         react_1.default.createElement(Lucide.RotateCcw, { size: 14 }),
                         react_1.default.createElement("span", null, "Reset")),
-                    react_1.default.createElement("button", { type: "button", className: UpcomingPositionsTable_module_scss_1.default.actionBtnPrimary, onClick: handleRefresh, disabled: isLoading, title: "Refresh Data" },
-                        react_1.default.createElement(Lucide.RefreshCw, { size: 14, className: isLoading ? UpcomingPositionsTable_module_scss_1.default.spin : "" }),
+                    react_1.default.createElement("button", { type: "button", className: UpcomingPositionsTable_module_scss_1.default.actionBtnPrimary, onClick: handleRefresh, disabled: isLoading || loading, title: "Refresh Data" },
+                        react_1.default.createElement(Lucide.RefreshCw, { size: 14, className: (isLoading || loading) ? UpcomingPositionsTable_module_scss_1.default.spin : "" }),
                         react_1.default.createElement("span", null, "Refresh"))))),
         react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.tableWrapper },
             react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: paginatedItems, getRowId: getRowId, pageSize: pageSize, currentPage: currentPage, totalCount: filteredItems.length, onPageChange: setCurrentPage, onPageSizeChange: function (size) {
                     setPageSize(size);
                     setCurrentPage(1);
-                }, loading: isLoading })),
-        isChangeHrOpen && selectedPosition && (react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.modalOverlay, role: "dialog", "aria-modal": "true" },
-            react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.modalCard },
-                react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.modalHeader },
-                    react_1.default.createElement("span", { className: UpcomingPositionsTable_module_scss_1.default.modalHeaderTitle }, "Change HR Assignee"),
-                    react_1.default.createElement("button", { type: "button", onClick: function () { return setIsChangeHrOpen(false); }, className: UpcomingPositionsTable_module_scss_1.default.modalCloseBtn, "aria-label": "Close dialog" },
-                        react_1.default.createElement(Lucide.X, { size: 18 }))),
-                react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.modalBody },
-                    react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.detailRow },
-                        react_1.default.createElement("span", { className: UpcomingPositionsTable_module_scss_1.default.detailRowLabel }, "Selected Position:"),
-                        react_1.default.createElement("span", { className: UpcomingPositionsTable_module_scss_1.default.detailRowValue }, selectedPosition.jobTitle)),
-                    react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.detailRow },
-                        react_1.default.createElement("span", { className: UpcomingPositionsTable_module_scss_1.default.detailRowLabel }, "Current HR:"),
-                        react_1.default.createElement("span", { className: UpcomingPositionsTable_module_scss_1.default.detailRowValue }, selectedPosition.assignedHR)),
-                    react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.formField },
-                        react_1.default.createElement("label", { className: UpcomingPositionsTable_module_scss_1.default.formFieldLabel }, "Select HR Member"),
-                        react_1.default.createElement("select", { value: selectedHrId, onChange: function (e) { return setSelectedHrId(Number(e.target.value)); }, className: UpcomingPositionsTable_module_scss_1.default.formSelect },
-                            react_1.default.createElement("option", { value: 0 }, "Select HR Member"),
-                            members.map(function (m) { return (react_1.default.createElement("option", { key: m.id, value: m.id }, m.name)); }))),
-                    react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.formField },
-                        react_1.default.createElement("label", { className: UpcomingPositionsTable_module_scss_1.default.formFieldLabel }, "Instructions / Comments"),
-                        react_1.default.createElement("textarea", { placeholder: "Enter comments or instructions for the recruiter...", value: comments, onChange: function (e) { return setComments(e.target.value); }, className: UpcomingPositionsTable_module_scss_1.default.formTextarea }))),
-                react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.modalFooter },
-                    react_1.default.createElement("button", { type: "button", onClick: function () { return setIsChangeHrOpen(false); }, className: UpcomingPositionsTable_module_scss_1.default.modalBtnCancel }, "Cancel"),
-                    react_1.default.createElement("button", { type: "button", onClick: handleConfirmChangeHR, disabled: !selectedHrId, className: UpcomingPositionsTable_module_scss_1.default.modalBtnConfirm }, "Confirm & Save")))))));
+                }, loading: isLoading || loading })),
+        isChangeHrOpen && selectedPosition && (react_1.default.createElement(react_1.Suspense, { fallback: null },
+            react_1.default.createElement(AssignHRPopup, { isOpen: isChangeHrOpen, selectedItems: selectedItems, assignedMember: selectedMember, onClose: function () { return setIsChangeHrOpen(false); }, oncancel: function () { return setIsChangeHrOpen(false); }, onConfirm: handleConfirmChangeHR, changeHR: true, members: members })))));
 };
 exports.UpcomingPositionsTable = UpcomingPositionsTable;
 exports.default = exports.UpcomingPositionsTable;

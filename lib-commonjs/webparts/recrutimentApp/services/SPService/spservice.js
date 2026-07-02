@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSP = exports.initSP = void 0;
+exports.getAllItems = exports.batchGet = exports.getSP = exports.initSP = void 0;
 var tslib_1 = require("tslib");
 require("@pnp/sp/webs");
 require("@pnp/sp/lists");
@@ -410,47 +410,83 @@ var SPGetChoices = function (params) { return tslib_1.__awaiter(void 0, void 0, 
  * });
  */
 var batchGet = function (queries) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-    var _a, batchedSP_1, execute, results_1, promises, error_2;
-    return tslib_1.__generator(this, function (_b) {
-        switch (_b.label) {
+    var sp_2, results_1, error_2;
+    return tslib_1.__generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                _b.trys.push([0, 3, , 4]);
-                _a = (0, exports.getSP)().batched(), batchedSP_1 = _a[0], execute = _a[1];
+                _a.trys.push([0, 2, , 3]);
+                sp_2 = (0, exports.getSP)();
                 results_1 = {};
-                promises = queries.map(function (q) {
-                    var _a;
-                    var _b, _c, _d;
-                    var flatFilters = (q.Filter && q.Filter.flat()) || [];
-                    var filterStr = _buildODataFilter(flatFilters, (_b = q.FilterCondition) !== null && _b !== void 0 ? _b : "and");
-                    var request = (_a = batchedSP_1.web.lists
-                        .getByTitle(q.ListName)
-                        .items.filter(filterStr))
-                        .select.apply(_a, ((_c = q.select) !== null && _c !== void 0 ? _c : ["*"])).expand((_d = q.expand) !== null && _d !== void 0 ? _d : [])
-                        .top(5000);
-                    return request().then(function (r) {
-                        // console.log(r, "data");
-                        if (!results_1[q.StateValue]) {
-                            results_1[q.StateValue] = [];
-                        }
-                        // concat results
-                        results_1[q.StateValue] = tslib_1.__spreadArray(tslib_1.__spreadArray([], results_1[q.StateValue], true), r, true);
-                    });
-                });
-                return [4 /*yield*/, execute()];
+                return [4 /*yield*/, Promise.all(queries.map(function (q) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+                        var flatFilters, filterStr, query, data, _a, _b, _c, items, e_1_1;
+                        var _d, _e;
+                        var _f, e_1, _g, _h;
+                        var _j, _k, _l;
+                        return tslib_1.__generator(this, function (_m) {
+                            switch (_m.label) {
+                                case 0:
+                                    flatFilters = (q.Filter && q.Filter.flat()) || [];
+                                    filterStr = _buildODataFilter(flatFilters, (_j = q.FilterCondition) !== null && _j !== void 0 ? _j : "and");
+                                    query = (_d = (_e = sp_2.web.lists
+                                        .getByTitle(q.ListName)
+                                        .items)
+                                        .select.apply(_e, ((_k = q.select) !== null && _k !== void 0 ? _k : ["*"])))
+                                        .expand.apply(_d, ((_l = q.expand) !== null && _l !== void 0 ? _l : []));
+                                    if (filterStr) {
+                                        query = query.filter(filterStr);
+                                    }
+                                    data = [];
+                                    _m.label = 1;
+                                case 1:
+                                    _m.trys.push([1, 6, 7, 12]);
+                                    _a = true, _b = tslib_1.__asyncValues(query.top(5000));
+                                    _m.label = 2;
+                                case 2: return [4 /*yield*/, _b.next()];
+                                case 3:
+                                    if (!(_c = _m.sent(), _f = _c.done, !_f)) return [3 /*break*/, 5];
+                                    _h = _c.value;
+                                    _a = false;
+                                    items = _h;
+                                    data.push.apply(data, items);
+                                    _m.label = 4;
+                                case 4:
+                                    _a = true;
+                                    return [3 /*break*/, 2];
+                                case 5: return [3 /*break*/, 12];
+                                case 6:
+                                    e_1_1 = _m.sent();
+                                    e_1 = { error: e_1_1 };
+                                    return [3 /*break*/, 12];
+                                case 7:
+                                    _m.trys.push([7, , 10, 11]);
+                                    if (!(!_a && !_f && (_g = _b.return))) return [3 /*break*/, 9];
+                                    return [4 /*yield*/, _g.call(_b)];
+                                case 8:
+                                    _m.sent();
+                                    _m.label = 9;
+                                case 9: return [3 /*break*/, 11];
+                                case 10:
+                                    if (e_1) throw e_1.error;
+                                    return [7 /*endfinally*/];
+                                case 11: return [7 /*endfinally*/];
+                                case 12:
+                                    results_1[q.StateValue] = data;
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); }))];
             case 1:
-                _b.sent();
-                return [4 /*yield*/, Promise.all(promises)];
-            case 2:
-                _b.sent();
+                _a.sent();
                 return [2 /*return*/, results_1];
-            case 3:
-                error_2 = _b.sent();
-                console.error("batchInsert failed:", error_2);
+            case 2:
+                error_2 = _a.sent();
+                console.error("batchGetAll failed:", error_2);
                 return [2 /*return*/, {}];
-            case 4: return [2 /*return*/];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
+exports.batchGet = batchGet;
 var batchInsert = function (params) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
     var _a, batchedSP, execute, list_1, promises, error_3;
     return tslib_1.__generator(this, function (_b) {
@@ -826,6 +862,65 @@ var SPReadItemsCamelQuery = function (rawParams) { return tslib_1.__awaiter(void
         }
     });
 }); };
+var getAllItems = function (options) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
+    var results, query, pageSize, _a, _b, _c, items, e_2_1;
+    var _d, _e;
+    var _f, e_2, _g, _h;
+    var _j, _k, _l, _m;
+    return tslib_1.__generator(this, function (_o) {
+        switch (_o.label) {
+            case 0:
+                results = [];
+                query = (_d = (_e = (0, exports.getSP)().web.lists
+                    .getByTitle(options.listName)
+                    .items)
+                    .select.apply(_e, ((_j = options.select) !== null && _j !== void 0 ? _j : ["*"])))
+                    .expand.apply(_d, ((_k = options.expand) !== null && _k !== void 0 ? _k : []));
+                if (options.filter) {
+                    query = query.filter(options.filter);
+                }
+                if (options.orderBy) {
+                    query = query.orderBy(options.orderBy, (_l = options.ascending) !== null && _l !== void 0 ? _l : true);
+                }
+                pageSize = (_m = options.top) !== null && _m !== void 0 ? _m : 5000;
+                _o.label = 1;
+            case 1:
+                _o.trys.push([1, 6, 7, 12]);
+                _a = true, _b = tslib_1.__asyncValues(query.top(pageSize));
+                _o.label = 2;
+            case 2: return [4 /*yield*/, _b.next()];
+            case 3:
+                if (!(_c = _o.sent(), _f = _c.done, !_f)) return [3 /*break*/, 5];
+                _h = _c.value;
+                _a = false;
+                items = _h;
+                results.push.apply(results, items);
+                _o.label = 4;
+            case 4:
+                _a = true;
+                return [3 /*break*/, 2];
+            case 5: return [3 /*break*/, 12];
+            case 6:
+                e_2_1 = _o.sent();
+                e_2 = { error: e_2_1 };
+                return [3 /*break*/, 12];
+            case 7:
+                _o.trys.push([7, , 10, 11]);
+                if (!(!_a && !_f && (_g = _b.return))) return [3 /*break*/, 9];
+                return [4 /*yield*/, _g.call(_b)];
+            case 8:
+                _o.sent();
+                _o.label = 9;
+            case 9: return [3 /*break*/, 11];
+            case 10:
+                if (e_2) throw e_2.error;
+                return [7 /*endfinally*/];
+            case 11: return [7 /*endfinally*/];
+            case 12: return [2 /*return*/, results];
+        }
+    });
+}); };
+exports.getAllItems = getAllItems;
 // ── SPServices.ts ─────────────────────────────────────────────────────────
 var SPServices = {
     initSP: exports.initSP,
@@ -841,7 +936,7 @@ var SPServices = {
     SPGetAttachments: SPGetAttachments,
     SPDeleteAttachments: SPDeleteAttachments,
     SPGetChoices: SPGetChoices,
-    batchGet: batchGet,
+    batchGet: exports.batchGet,
     batchInsert: batchInsert,
     batchUpdate: batchUpdate,
     batchDelete: batchDelete,
@@ -851,6 +946,7 @@ var SPServices = {
     addDocLibFiles: addDocLibFiles,
     SPReadItemsCamelQuery: SPReadItemsCamelQuery,
     SPReadItemsPaged: SPReadItemsPaged,
+    getAllItems: exports.getAllItems
 };
 exports.default = SPServices;
 // ─── React Hook Example (useSPList.ts) ───────────────────────────────────────

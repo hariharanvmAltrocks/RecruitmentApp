@@ -1,5 +1,6 @@
-@import "../../../../../styles/variables";
 @import "../../../../../styles/theme";
+@import "../../../../../styles/variables";
+@import "../../../../../styles/responsive";
 
 .containerCard {
   background-color: $dashboard-card-bg;
@@ -68,6 +69,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 4%
   }
 
   &__info {

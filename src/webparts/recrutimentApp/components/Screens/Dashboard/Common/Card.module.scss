@@ -1,0 +1,28 @@
+@import "../../../../styles/theme";
+
+.card {
+  background-color: $dashboard-card-bg;
+  border: 1px solid $dashboard-card-border;
+  border-radius: $radius-lg;
+  padding: $space-md;
+  box-shadow: $shadow-sm;
+  transition: all $transition-base;
+  position: relative;
+  overflow: hidden;
+
+  &--hoverable {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $shadow-md;
+      border-color: darken(#e2e8f0, 8%);
+    }
+  }
+
+  &--clickable {
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}

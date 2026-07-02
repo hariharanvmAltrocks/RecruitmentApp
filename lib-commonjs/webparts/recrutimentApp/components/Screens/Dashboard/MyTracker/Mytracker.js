@@ -26,6 +26,7 @@ var useRecruitmentDetails_1 = require("../../RecruitmentTable/Hooks/useRecruitme
 var ReviewDocument_1 = require("../../OfferRelease/ReviewDocument/ReviewDocument");
 var Useupdatelistportal_1 = require("../../OfferRelease/ReviewDocument/Hooks/Useupdatelistportal");
 var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
+var Dashboard_1 = require("../Dashboard");
 var AssignHRPopup = react_1.default.lazy(function () {
     return Promise.resolve().then(function () { return tslib_1.__importStar(require("../../RecruitmentTable/Components/AssignHRPopup/AssignHRPopup")); }).then(function (module) { return ({
         default: module.AssignHRPopup,
@@ -308,19 +309,11 @@ var Mytracker = function () {
     var loading = MatricData.length === 0 || trackerLoading || assignmentLoading || advertLoading;
     var hasMetrics = MatricData.length > 0;
     var showAssignmentBar = (activeMetric === ConditionConfig_1.MatricID.AssignHr || activeMetric === ConditionConfig_1.MatricID.AssignAgencies) && selectedIds.length > 0 && members.length > 0;
-    var metricsContainer = {
-        hidden: {},
-        visible: {
-            transition: {
-                staggerChildren: 0.1,
-            },
-        },
-    };
     return (react_1.default.createElement(framer_motion_1.motion.div, { className: MyTracker_module_scss_1.default.dashboard, key: "dashboard", initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 10 }, transition: { duration: 0.3 } },
         react_1.default.createElement(framer_motion_1.AnimatePresence, null, loading ? (react_1.default.createElement(loading_1.default, null)) : (react_1.default.createElement(framer_motion_1.motion.div, { key: "dashboard-content", initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 } }, !hasMetrics ? (react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["dashboard-empty"] },
             react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["dashboard-empty__title"] }, strings.NoDashboardMetricsAvailable),
             react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["dashboard-empty__subtitle"] }, strings.PleaseCheckYourPermissionsOrTryAgainLate))) : (react_1.default.createElement(react_1.default.Fragment, null,
-            react_1.default.createElement(framer_motion_1.motion.div, { className: MyTracker_module_scss_1.default["metrics-grid"], variants: metricsContainer, initial: "hidden", animate: "visible" },
+            react_1.default.createElement(framer_motion_1.motion.div, { className: MyTracker_module_scss_1.default["metrics-grid"], variants: Dashboard_1.metricsContainer, initial: "hidden", animate: "visible" },
                 react_1.default.createElement(matric_1.default, { metrics: MatricData, onCardClick: onMetricChange, loading: loading, handleRefresh: handleRefresh, active: activeMetric })),
             react_1.default.createElement("div", { className: MyTracker_module_scss_1.default["tracker-panel"] },
                 react_1.default.createElement(framer_motion_1.motion.div, { className: MyTracker_module_scss_1.default.tracker, key: "tracker", initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 12 }, transition: { duration: 0.3 } },
@@ -368,7 +361,7 @@ var Mytracker = function () {
                             strings.ExecuteAssignment,
                             react_1.default.createElement(lucide_react_1.ChevronRight, { size: 16 })))))),
             isPopupOpen && (react_1.default.createElement(react_1.Suspense, { fallback: null },
-                react_1.default.createElement(AssignHRPopup, { isOpen: isPopupOpen, selectedItems: selectedItems, assignedMember: selectedMember, onClose: handleClosePopup, oncancel: handleClosePopup, onConfirm: handleConfirmAssignment }))),
+                react_1.default.createElement(AssignHRPopup, { isOpen: isPopupOpen, selectedItems: selectedItems, assignedMember: selectedMember, onClose: handleClosePopup, oncancel: handleClosePopup, onConfirm: handleConfirmAssignment, changeHR: false }))),
             isadvertPopupOpen && (react_1.default.createElement(react_1.Suspense, { fallback: null },
                 react_1.default.createElement(AdvertExtension, { RecruitmentID: selectedAdvertID.current, onClose: function () { return setAdvertPopupOpen(false); }, useDataExtension: function (payload) { return ({
                         triggerExtension: function () {

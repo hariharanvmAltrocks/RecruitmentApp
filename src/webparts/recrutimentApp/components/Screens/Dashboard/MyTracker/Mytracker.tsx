@@ -38,6 +38,7 @@ import { ISelectedCandidate } from "../../RecruitmentTable/RecruitmentTable.type
 import { ReviewDocument } from "../../OfferRelease/ReviewDocument/ReviewDocument";
 import { PortalItem, useUpdateListPortal } from "../../OfferRelease/ReviewDocument/Hooks/Useupdatelistportal";
 import * as strings from 'RecrutimentAppWebPartStrings';
+import { metricsContainer } from "../Dashboard";
 
 const AssignHRPopup = React.lazy(() =>
   import("../../RecruitmentTable/Components/AssignHRPopup/AssignHRPopup").then(
@@ -456,15 +457,6 @@ const shouldShowProfile =
   const showAssignmentBar =
     (activeMetric === MatricID.AssignHr || activeMetric === MatricID.AssignAgencies) && selectedIds.length > 0 && members.length > 0;
 
-  const metricsContainer = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
   return (
     <motion.div
       className={styles.dashboard}
@@ -643,6 +635,7 @@ const shouldShowProfile =
                       onClose={handleClosePopup}
                       oncancel={handleClosePopup}
                       onConfirm={handleConfirmAssignment}
+                      changeHR={false}
                     />
                   </Suspense>
                 )}

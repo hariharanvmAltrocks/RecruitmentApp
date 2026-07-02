@@ -15,6 +15,8 @@ interface AssignHRPopupProps {
   onClose: () => void;
   oncancel: () => void;
   onConfirm: (payload: AssignmentPayload) => void;
+  changeHR?: boolean;
+  members?: HrMember[];
 }
 
 export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
@@ -24,10 +26,21 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
   onClose,
   oncancel,
   onConfirm,
+  changeHR = false,
+  members = [],
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [comments, setComments] = useState<string>("");
   const [commentsTouched, setCommentsTouched] = useState<boolean>(false);
+
+  // Local state to track the selected assignee inside the popup
+  const [localMember, setLocalMember] = useState<HrMember | null>(assignedMember);
+
+  // Sync state if assignedMember changes
+  React.useEffect(() => {
+    setLocalMember(assignedMember);
+  }, [assignedMember]);
+
   const isCommentsValid = useMemo(() => comments.trim().length > 0, [comments]);
   const showCommentsError = commentsTouched && !isCommentsValid;
 
@@ -43,7 +56,7 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
     try {
       await onConfirm({
         vacancies: selectedItems,
-        member: assignedMember,
+        member: localMember,
         comments,
       });
     } finally {
@@ -52,7 +65,7 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
   }, [
     comments,
     onConfirm,
-    assignedMember,
+    localMember,
     selectedItems,
     isSubmitting,
     isCommentsValid,
@@ -90,19 +103,41 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
 
         <div className="modal-popup__section">
           <div className="modal-popup__section-title">{strings.AssigningTo}</div>
-          <div className="modal-popup__assignee">
-            <span className="modal-popup__avatar">
-              {assignedMember?.initials ?? "HR"}
-            </span>
-            <div>
-              <div className="modal-popup__assignee-name">
-                {assignedMember?.name ?? strings.NoMemberSelected}
-              </div>
-              <div className="modal-popup__assignee-role">
-                {assignedMember?.role ?? strings.SelectAMemberToProceed}
+          {changeHR ? (
+            <div className="modal-popup__change-hr">
+              <select
+                value={localMember?.id ?? ""}
+                onChange={(e) => {
+                  const id = Number(e.target.value);
+                  const found = members.find((m) => m.id === id);
+                  setLocalMember(found ?? null);
+                }}
+                className="modal-popup__select"
+                disabled={isSubmitting}
+              >
+                <option value="">{strings.ChooseHrMember}</option>
+                {members.map((member) => (
+                  <option key={member.id} value={member.id}>
+                    {member.name} - {member.role}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <div className="modal-popup__assignee">
+              <span className="modal-popup__avatar">
+                {localMember?.initials ?? "HR"}
+              </span>
+              <div>
+                <div className="modal-popup__assignee-name">
+                  {localMember?.name ?? strings.NoMemberSelected}
+                </div>
+                <div className="modal-popup__assignee-role">
+                  {localMember?.role ?? strings.SelectAMemberToProceed}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="modal-popup__section">
@@ -129,7 +164,7 @@ export const AssignHRPopup: React.FC<AssignHRPopupProps> = ({
           <button
             className="modal-popup__btn modal-popup__btn--primary"
             type="button"
-            disabled={isSubmitting || !isCommentsValid}
+            disabled={isSubmitting || !isCommentsValid || (changeHR && !localMember)}
             onClick={handleConfirm}
           >
             {isSubmitting ? (

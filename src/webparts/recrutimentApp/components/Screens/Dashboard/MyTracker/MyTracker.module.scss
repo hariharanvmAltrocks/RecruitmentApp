@@ -41,7 +41,7 @@
 
 .metrics-grid {
   display: ruby;
-  margin-bottom: 28px;
+  // margin-bottom: 28px;
 
   @media (min-width: 480px) {
     grid-template-columns: repeat(2, 1fr);

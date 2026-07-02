@@ -1,5 +1,6 @@
-@import "../../../../../styles/variables";
 @import "../../../../../styles/theme";
+@import "../../../../../styles/variables";
+@import "../../../../../styles/responsive";
 
 .chartCard {
   background-color: $dashboard-card-bg;
@@ -9,8 +10,8 @@
   box-shadow: $shadow-sm;
   display: flex;
   flex-direction: column;
-  min-height: 160px;
-  height: 82%;
+  min-height: 180px;
+  height: 85%;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 
   &:hover {

@@ -1,51 +1,59 @@
 import React from "react";
 import { ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-import * as Lucide from "lucide-react";
 import styles from "./PositionStatusChart.module.scss";
-import useContractsByEndDate from "../../Hooks/useContractsByEndDate";
+import { IPositionStatus } from "../../Types";
 
-export const PositionStatusChart: React.FC = () => {
-  const { data, loading, error } = useContractsByEndDate();
+interface IPositionStatusChartProps {
+  data: IPositionStatus | null | undefined;
+  loading?: boolean;
+}
 
-  if (loading) {
-    return (
-      <div className={styles.chartCard} aria-busy="true" aria-label="Loading Position Status Chart">
-        <div className={styles.chartCard__header}>
-          <span className={styles.chartCard__title}>POSITIONS BY STATUS</span>
-        </div>
-        <div className={styles.chartCard__loadingBody}>
-          <div className={styles.chartCard__skeletonCircle} />
-        </div>
-      </div>
-    );
-  }
+export const PositionStatusChart: React.FC<IPositionStatusChartProps> = ({ data, loading }) => {
 
-  if (error || !data) {
-    return (
-      <div className={styles.chartCard}>
-        <div className={styles.chartCard__header}>
-          <span className={styles.chartCard__title}>POSITIONS BY STATUS</span>
-        </div>
-        <div className={styles.chartCard__errorBody}>
-          <Lucide.AlertCircle size={32} />
-          <p>Error loading chart</p>
-        </div>
-      </div>
-    );
-  }
+  const onTrackCount = data?.OnTrack ?? 0;
+  const atRiskCount = data?.atRisk ?? 0;
+  const overdueCount = data?.overduecount ?? 0;
+  const dueIn7DaysCount = data?.dueLast7days ?? 0;
+  const total = data?.total ?? 0;
 
-  // Exact mockup fallback values
-  const total = 6;
-  const onTrackCount = 2;
-  const atRiskCount = 2;
-  const overdueCount = 2;
-  const dueIn7DaysCount = 0;
+  const getPercentageStr = (count: number) => {
+    if (total === 0) return "0%";
+    return `${Math.round((count / total) * 100)}%`;
+  };
 
   const pieChartData = [
     { name: "On Track", value: onTrackCount, color: "#10b981" },
     { name: "At Risk", value: atRiskCount, color: "#f59e0b" },
     { name: "Overdue", value: overdueCount, color: "#ef4444" },
   ];
+
+  if (loading) {
+    return (
+      <div className={styles.chartCard} aria-label="Position Status Distribution Loading">
+        <div className={styles.chartCard__header}>
+          <div className="dashboard-skeleton__bar" style={{ width: "130px", height: "14px" }} />
+        </div>
+        <div className={styles.chartCard__body}>
+          {/* Left: Donut Chart Placeholder */}
+          <div className={styles.chartCard__visual} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div className="dashboard-skeleton__bar" style={{ width: "90px", height: "90px", borderRadius: "50%" }} />
+          </div>
+          {/* Right: Legend Placeholder */}
+          <div className={styles.chartCard__legend} style={{ display: "flex", flexDirection: "column", gap: "10px", justifyContent: "center" }}>
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <div key={idx} className={styles.legendRow}>
+                <div className={styles.legendRow__left}>
+                  <div className="dashboard-skeleton__bar" style={{ width: "10px", height: "10px", borderRadius: "50%", marginRight: "8px" }} />
+                  <div className="dashboard-skeleton__bar" style={{ width: "70px", height: "10px" }} />
+                </div>
+                <div className="dashboard-skeleton__bar" style={{ width: "40px", height: "10px" }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.chartCard} aria-label="Position Status Distribution">
@@ -85,7 +93,7 @@ export const PositionStatusChart: React.FC = () => {
               <span className={styles.legendRow__name}>On Track</span>
             </div>
             <span className={styles.legendRow__val}>
-              {onTrackCount} (33%)
+              {onTrackCount} ({getPercentageStr(onTrackCount)})
             </span>
           </div>
 
@@ -95,7 +103,7 @@ export const PositionStatusChart: React.FC = () => {
               <span className={styles.legendRow__name}>At Risk</span>
             </div>
             <span className={styles.legendRow__val}>
-              {atRiskCount} (33%)
+              {atRiskCount} ({getPercentageStr(atRiskCount)})
             </span>
           </div>
 
@@ -105,7 +113,7 @@ export const PositionStatusChart: React.FC = () => {
               <span className={styles.legendRow__name}>Overdue</span>
             </div>
             <span className={styles.legendRow__val}>
-              {overdueCount} (33%)
+              {overdueCount} ({getPercentageStr(overdueCount)})
             </span>
           </div>
 
@@ -115,7 +123,7 @@ export const PositionStatusChart: React.FC = () => {
               <span className={styles.legendRow__name}>Due in 7 Days</span>
             </div>
             <span className={styles.legendRow__val}>
-              {dueIn7DaysCount} (0%)
+              {dueIn7DaysCount} ({getPercentageStr(dueIn7DaysCount)})
             </span>
           </div>
         </div>

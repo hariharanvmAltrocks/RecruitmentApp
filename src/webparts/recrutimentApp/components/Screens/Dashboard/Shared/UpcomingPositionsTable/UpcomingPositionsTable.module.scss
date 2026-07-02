@@ -1,5 +1,6 @@
-@import "../../../../../styles/variables";
 @import "../../../../../styles/theme";
+@import "../../../../../styles/variables";
+@import "../../../../../styles/responsive";
 
 .tableCard {
   background-color: $dashboard-card-bg;
@@ -60,10 +61,11 @@
 
 .searchWrap {
   position: relative;
-  width: 250px;
+  width: 34%;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  margin-right: 4%;
 
   @media (max-width: 480px) {
     width: 100%;
@@ -105,7 +107,7 @@
 
 .selectWrap {
   position: relative;
-  min-width: 160px;
+  min-width: 24%;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -309,124 +311,18 @@
   }
 }
 
-/* Modal Popup Styles */
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 16px;
-  animation: fadeIn 0.2s ease-out;
-}
-
-.modalCard {
-  background-color: #ffffff;
-  border-radius: $radius-md;
-  box-shadow: $shadow-lg;
+.rowSelect {
   width: 100%;
-  max-width: 480px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 4px 8px;
   border: 1px solid $border-base;
-}
-
-.modalHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid $border-light;
-  background-color: #f8fafc;
-}
-
-.modalHeaderTitle {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #1e3a8a;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.modalCloseBtn {
-  background: none;
-  border: none;
-  color: $text-subtle;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s ease;
-
-  &:hover {
-    background-color: #f1f5f9;
-    color: $text-primary;
-  }
-}
-
-.modalBody {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.detailRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 12px;
-  background-color: #f8fafc;
-  border-radius: $radius-sm;
-  border: 1px dashed $border-base;
-  font-size: 0.725rem;
-}
-
-.detailRowLabel {
-  font-weight: 600;
-  color: $text-secondary;
-}
-
-.detailRowValue {
-  font-weight: 700;
-  color: $text-primary;
-}
-
-.formField {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.formFieldLabel {
+  border-radius: $radius-xs;
   font-size: 0.7rem;
-  font-weight: 600;
-  color: $text-secondary;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.formSelect {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid $border-base;
-  border-radius: $radius-sm;
-  font-size: 0.75rem;
   background-color: #ffffff;
   color: $text-primary;
   outline: none;
   cursor: pointer;
-  transition: border-color 0.2s;
+  height: 28px;
+  transition: all 0.2s ease;
 
   &:hover {
     border-color: #cbd5e1;
@@ -434,93 +330,8 @@
 
   &:focus {
     border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
   }
 }
 
-.formTextarea {
-  width: 100%;
-  height: 80px;
-  padding: 8px 12px;
-  border: 1px solid $border-base;
-  border-radius: $radius-sm;
-  font-size: 0.75rem;
-  background-color: #ffffff;
-  color: $text-primary;
-  outline: none;
-  resize: none;
-  transition: border-color 0.2s;
-
-  &:hover {
-    border-color: #cbd5e1;
-  }
-
-  &:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  }
-}
-
-.modalFooter {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 20px;
-  border-top: 1px solid $border-light;
-  background-color: #f8fafc;
-}
-
-.modalBtnCancel {
-  padding: 8px 16px;
-  background-color: #ffffff;
-  border: 1px solid $border-base;
-  border-radius: $radius-sm;
-  color: $text-secondary;
-  font-size: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-
-  &:hover {
-    background-color: #f1f5f9;
-    border-color: #cbd5e1;
-  }
-}
-
-.modalBtnConfirm {
-  padding: 8px 16px;
-  background-color: #2563eb;
-  border: 1px solid #1d4ed8;
-  border-radius: $radius-sm;
-  color: #ffffff;
-  font-size: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-
-  &:hover:not(:disabled) {
-    background-color: #1d4ed8;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* Modal popup styles removed as we now use the shared AssignHRPopup component */

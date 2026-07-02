@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 160px;
+  min-height: 180px;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 .overviewCard:hover {
@@ -27,7 +27,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  min-height: 160px;
+  min-height: 180px;
   text-align: center;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
@@ -49,7 +49,7 @@
 .cardTitle {
   font-size: 0.725rem;
   font-weight: 700;
-  color: #1e3a8a;
+  color: var(--app-text-color, #0f172a);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -81,7 +81,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: 61%;
   transition: background-color 0.2s ease;
 }
 .subCard:hover {
@@ -91,7 +91,7 @@
 .subCardLabel {
   font-size: 0.575rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: var(--app-text-color, #0f172a);
   text-align: center;
   margin-bottom: 4px;
 }
@@ -99,7 +99,7 @@
 .subCardValue {
   font-size: 1.5rem;
   font-weight: 800;
-  color: var(--app-text-color, #0f172a);
+  color: var(--app-primary-color, #7c3aed);
 }
 
 .kpiCardBody {
@@ -160,20 +160,22 @@
 }
 
 .navBtn {
-  background: none;
-  border: none;
-  color: #94a3b8;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.15s ease;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
 }
 .navBtn:hover {
-  background-color: #f1f5f9;
-  color: #2563eb;
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
 }
 .navBtn:active {
   transform: scale(0.9);
