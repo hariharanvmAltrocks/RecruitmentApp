@@ -119,6 +119,7 @@ export const WorkflowHODConfig = (
   isRevet?: boolean,
   IsExpat?: boolean,
   EmpCat?: string,
+  NationalRejected? : boolean
 ) => {
   switch (StatusID) {
     case StatusId.PendingHRBGVInitiation:
@@ -149,6 +150,22 @@ export const WorkflowHODConfig = (
       } else {
         return StatusId.PendingLabourHireOfferRelease;
       }
+
+    case StatusId.HROfferLetterProgress:
+      if(NationalRejected){
+        return StatusId.offerdecline
+      }else {
+        return StatusId.HREmploymentContractProgress
+      }
+
+    case StatusId.HREmploymentContractProgress:{
+      if(NationalRejected){
+        return StatusId.EmploymentContractDeclined
+      }else {
+        return StatusId.PendingHRpreonboardingchecklist
+      }
+      
+    }
 
     case StatusId.PendingCandidateOfferLetterUpload:
       if (EmpCat === EmployeementCategory.KCSAEmployee) {

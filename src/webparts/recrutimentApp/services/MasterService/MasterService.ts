@@ -1,3 +1,4 @@
+import { IConsultOption } from "../../components/Screens/OfferRelease/ReviewDocument/Hooks/useConsultOption";
 import { ApiResponse } from "../../models/apimodels";
 import { GetAllMaster, GetMasterByCountry } from "../../models/Icareerportal";
 import { UserRoleResponseDetails, CareerPortalLink, ITabdetails, IUserDetails, IJobGrade, IUniqueJobCode, IBUCodeEmailIDs } from "../../models/master";
@@ -785,8 +786,6 @@ public GetMasterRoleProfile = async (
         text: item.countryName,
       }));
 
-      // console.log(GetAllMasterData, "GetCountryMaster");
-
       return {
         data: GetAllMasterData,
         status: response.status,
@@ -843,6 +842,44 @@ public GetMasterRoleProfile = async (
       console.error("Error fetching data in GetRecruitmentDetails:", error);
       return {
         data: {} as IBUCodeEmailIDs,
+        status: 500,
+        message: "Error fetching data from GetRecruitmentDetails",
+      };
+    }
+  }
+
+  async GetConsultingOptions(): Promise<ApiResponse<IConsultOption>> {
+      let GridResult: IConsultOption = {
+         value: "",
+    label: ""
+      }
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: ListNames.HRMSSageList,
+        Select: `*`,
+        Topcount: 5000
+      });
+
+      if (res.length > 0) {
+        res.map((item: any) => {
+        GridResult = {
+  value: item.EmailId,
+  label: [item.FirstName, item.MiddleName, item.LastName]
+    .filter(Boolean)
+    .join(" ")
+};
+          return GridResult;
+        })
+      }
+      return {
+        data: GridResult,
+        status: 200,
+        message: "GetRecruitmentDetails fetched successfully",
+      };
+    } catch (error) {
+      console.error("Error fetching data in GetRecruitmentDetails:", error);
+      return {
+        data: {} as IConsultOption,
         status: 500,
         message: "Error fetching data from GetRecruitmentDetails",
       };

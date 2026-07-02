@@ -37,7 +37,7 @@ export const CandidateStages = [
 export const CandidateStagesDRC = [
   { label: "Background Check", icon: FileSearch },
   { label: "Resi Process", icon: ShieldCheck },
-   { label: "Medical Process", icon: ClipboardCheck },
+  { label: "Medical Process", icon: ClipboardCheck },
   { label: "Offer Release", icon: Briefcase },
   { label: "Employment Contract", icon: Send },
   { label: "Pre-Onboarding", icon: Play },
@@ -116,7 +116,9 @@ export const getStageCandidateindex = (statusId: number) => {
     statusId == StatusId.PendingHRReviewOfferWorkPermitInit ||
     statusId == StatusId.PendingLabourHireOfferRelease ||
     statusId == StatusId.PendingHROfferReview ||
-    statusId == StatusId.offerdecline
+    statusId == StatusId.offerdecline ||
+    statusId == StatusId.PendingHRReviewOfferanduploadEmployementContract||
+    statusId == StatusId.HROfferLetterProgress 
   )
     return 4;
   if (
@@ -140,7 +142,9 @@ export const getStageCandidateindex = (statusId: number) => {
     statusId == StatusId.PendingHREmploymentContractReview || 
     statusId ==
       StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract ||
-       statusId == StatusId.PendingHREmploymentContractVerification
+       statusId == StatusId.PendingHREmploymentContractVerification ||
+    statusId == StatusId.HREmploymentContractProgress
+
   )
     return 6;
   if (
@@ -236,12 +240,11 @@ export const getStageIndexinCandidateDRC = (statusId: number) => {
     statusId == StatusId.RESIProcessInitiatedforDRC ||
     statusId == StatusId.RESIProcessInitiatedforExpatriate ||
     statusId == StatusId.RESProcessInitiated ||
-     statusId == StatusId.CandidateRejectfromRESIProcess 
+     statusId == StatusId.CandidateRejectfromRESIProcess
   )
     return 1;
-     if (
-      statusId == StatusId.PendingwithTAforMedicalScreening ||
-    statusId == StatusId.FailedmedicalscreeningUnfit
+     if (statusId == StatusId.PendingwithTAforMedicalScreening  ||
+    statusId == StatusId.FailedmedicalscreeningUnfit 
   )
     return 2;
   if (
@@ -250,9 +253,9 @@ export const getStageIndexinCandidateDRC = (statusId: number) => {
     statusId == StatusId.PendingHRReviewOfferWorkPermitInit ||
     statusId == StatusId.PendingLabourHireOfferRelease ||
     statusId == StatusId.PendingHROfferReview ||
-     statusId == StatusId.offerdecline ||
-    statusId == StatusId.PendingHRReviewOfferanduploadEmployementContract
-
+    statusId == StatusId.offerdecline ||
+    statusId == StatusId.PendingHRReviewOfferanduploadEmployementContract||
+    statusId == StatusId.HROfferLetterProgress
   )
     return 3;
     if (
@@ -264,9 +267,10 @@ export const getStageIndexinCandidateDRC = (statusId: number) => {
     statusId == StatusId.PendingHREmploymentContractReview || 
     statusId ==
       StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract || 
-    statusId == StatusId.PendingHREmploymentContractVerification 
+    statusId == StatusId.PendingHREmploymentContractVerification  ||
+    statusId == StatusId.HREmploymentContractProgress
     ){
-     return 4
+     return 4;
     }
    if (
     statusId == StatusId.PendingHRpreonboardingchecklist

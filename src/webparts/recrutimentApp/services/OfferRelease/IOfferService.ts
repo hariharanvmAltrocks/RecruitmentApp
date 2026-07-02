@@ -91,6 +91,9 @@ export type IUpdateCandidate = {
   BackgroundChecksResults?: string;
   BGVConsultedWith?: string;
   BGVComments?: string;
+  PPEKit?: string;
+  payslipVerification?: string;
+  bankStatementVerified?: string;
 };
 
 export type IUpdateStatusSelectedHOD = {

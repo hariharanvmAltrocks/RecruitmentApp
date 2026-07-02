@@ -29,6 +29,7 @@ export interface COICardProps {
   isReadOnly?: boolean;
   hasError?: boolean;
   onChange?: (state: COIState) => void;
+  LabelName: string
 }
 
 const MAX_COMMENT_LENGTH = 256;
@@ -38,6 +39,7 @@ export const COICard: React.FC<COICardProps> = ({
   isReadOnly = false,
   hasError = false,
   onChange,
+  LabelName
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -103,7 +105,7 @@ export const COICard: React.FC<COICardProps> = ({
     <div className="coi-card">
       <div className="coi-card__titleRow">
         <span className="coi-card__titleBar" />
-        <h2 className="coi-card__title">{strings.BackgroundVerification}</h2>
+        <h2 className="coi-card__title">{LabelName}</h2>
       </div>
       <div className="coi-card__fields">
         <div

@@ -145,9 +145,9 @@ export const PositionFrame: React.FC<PositionFrameworkProps> = ({
     ) : (
       <>
         <div className="review-document__group">
-          <h4 className="review-document__group-title">
+          {/* <h4 className="review-document__group-title">
             <Users size={12} />
-            {strings.OrganizationalAlignment}</h4>
+            {strings.OrganizationalAlignment}</h4> */}
           <div className="review-document__grid">
             <InfoField
               label={strings.ApplicantName}
@@ -188,9 +188,9 @@ export const PositionFrame: React.FC<PositionFrameworkProps> = ({
 
           <div className="review-document__divider" />
 
-          <h4 className="review-document__group-title">
+          {/* <h4 className="review-document__group-title">
             <ClipboardList size={12} />
-            {strings.PositionClassification}</h4>
+            {strings.PositionClassification}</h4> */}
           <div className="review-document__grid">
             <InfoField
               label={strings.BusinessUnitCode}

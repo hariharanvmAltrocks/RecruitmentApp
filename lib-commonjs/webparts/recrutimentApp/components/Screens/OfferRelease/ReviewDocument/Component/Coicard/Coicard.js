@@ -9,7 +9,7 @@ require("./Coicard.modules.scss");
 var strings = tslib_1.__importStar(require("RecrutimentAppWebPartStrings"));
 var MAX_COMMENT_LENGTH = 256;
 var COICard = function (_a) {
-    var consultOptions = _a.consultOptions, _b = _a.isReadOnly, isReadOnly = _b === void 0 ? false : _b, _c = _a.hasError, hasError = _c === void 0 ? false : _c, onChange = _a.onChange;
+    var consultOptions = _a.consultOptions, _b = _a.isReadOnly, isReadOnly = _b === void 0 ? false : _b, _c = _a.hasError, hasError = _c === void 0 ? false : _c, onChange = _a.onChange, LabelName = _a.LabelName;
     var fileInputRef = (0, react_1.useRef)(null);
     var _d = (0, react_1.useState)({
         consultedWith: "",
@@ -75,7 +75,7 @@ var COICard = function (_a) {
     return (react_1.default.createElement("div", { className: "coi-card" },
         react_1.default.createElement("div", { className: "coi-card__titleRow" },
             react_1.default.createElement("span", { className: "coi-card__titleBar" }),
-            react_1.default.createElement("h2", { className: "coi-card__title" }, strings.BackgroundVerification)),
+            react_1.default.createElement("h2", { className: "coi-card__title" }, LabelName)),
         react_1.default.createElement("div", { className: "coi-card__fields" },
             react_1.default.createElement("div", { className: "coi-card__field ".concat(consultedWithError ? "coi-card__field--error" : "") },
                 react_1.default.createElement("label", { className: "coi-card__label" },

@@ -11,7 +11,6 @@ import StatusBadge from "../../../../Comman/Statusbadge/Statusbadge";
 import { WorkflowHODConfig } from "../../../../Hooks/WorkflowConfig";
 import { useSignatureDetails } from "../../../RecruitmentTable/AdvertReviewDrawer/Hooks/getSignatureDetails";
 import { ReviewCommentSignature } from "../../../RecruitmentTable/Components/ReviewCommentSignature";
-import { StatusId } from "../../../SelectionProcess/config/EvaluationConfig";
 import { useReviewConditions } from "../Hooks/ConditionalHooks/Usereviewconditions";
 import { usePreChecklist } from "../Hooks/fetchPreChecklist";
 import { useRequiredDocuments } from "../Hooks/Userequireddocuments";
@@ -29,10 +28,15 @@ import "../ReviewDocument.scss";
 import { CandidateRoadmap } from "./CandidateRoadmap";
 import { UploadDocument } from "../../../RecruitmentTable/Components/UploadDocument";
 import CandidateDocumentsRepository from "../../Component/CandidateDocumentsRepository";
+import { OfferrelaeseNational } from "./OfferrelaeseNational/OfferrelaeseNational";
+import { StatusId } from "../../../../../utilities/Config";
+import { NationalBGVProcess } from "./NationalBGVProcess/NationalBGVProcess";
+import { IConsultOption } from "../Hooks/useConsultOption";
 
 interface ReviewDocumentInnerProps extends ReviewDocumentProps {
   positionDetails: IselectedPosition;
   pageloading: boolean;
+  ConsultOptions: IConsultOption[];
   setPageLoading: (value: boolean) => void;
   showModal: (config: any) => void;
   closeModal: () => void;
@@ -69,6 +73,7 @@ const PositionSkeleton = () => (
 const CONSULT_OPTIONS = [
   { value: "hr-manager", label: strings.LouisBarendVanWyk },
   { value: "legal", label: strings.EvodieMushiyaKadima },
+  { value: "hod", label: "Anil Udayabhanu"}
 ];
 
 export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
@@ -86,13 +91,15 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
   setPageLoading,
   showModal,
   closeModal,
+  ConsultOptions
 }) => {
   const navigate = useNavigate();
 
   const [activeButton, setActiveButton] = useState<ActiveButton>(null);
   const isAnySubmitting = activeButton !== null;
   const [showRoadmap, setShowRoadmap] = useState(false);
-
+  // console.log(ConsultOptions,"ConsultOptionsConsultOptions");
+  
   const {
     consentVerification,
     consentFile,
@@ -115,6 +122,34 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
     onToggleAcknowledgement,
     validateAll,
     validationError,
+
+    // National Offer Release & PPE
+    nationalOfferReleased,
+    // nationalOfferAccepted,
+    nationalNoticePeriod,
+    nationalJoiningDate,
+    nationalPantsSize,
+    nationalTopSize,
+    nationalShoesSize,
+    nationalContractReleased,
+    // nationalContractAccepted,
+    setNationalOfferReleased,
+    // setNationalOfferAccepted,
+    setNationalNoticePeriod,
+    setNationalJoiningDate,
+    setNationalPantsSize,
+    setNationalTopSize,
+    setNationalShoesSize,
+    setNationalContractReleased,
+    // setNationalContractAccepted,
+
+    // National BGV Checklist
+    nationalBgvPayslipChecked,
+    nationalBgvBankStatementChecked,
+    nationalBgvVerifiedByHR,
+    setNationalBgvPayslipChecked,
+    setNationalBgvBankStatementChecked,
+    setNationalBgvVerifiedByHR,
   } = useStateOfferRelease();
 
   const [showComments, setshowComments] = useState(false);
@@ -153,6 +188,22 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
     closeModal,
     onClose,
     refreshKey,
+
+    // National Offer Release & PPE
+    nationalOfferReleased,
+    // nationalOfferAccepted,
+    nationalNoticePeriod,
+    nationalJoiningDate,
+    nationalPantsSize,
+    nationalTopSize,
+    nationalShoesSize,
+    nationalContractReleased,
+    // nationalContractAccepted,
+
+    // National BGV Checklist
+    nationalBgvPayslipChecked,
+    nationalBgvBankStatementChecked,
+    nationalBgvVerifiedByHR,
   };
 
   const {
@@ -314,7 +365,7 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
           ? ButtonAction.Review
           : consentVerification === "rejected"
             ? ButtonAction.Revert
-            : ButtonAction.Initiated;
+            :  ButtonAction.Initiated;
       await submit(action);
     } catch (error) {
       console.error(error);
@@ -573,6 +624,23 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
               <CandidateDocumentsRepository data={docData ?? null} />
             )}
 
+             {vis.NaionalBGVProcess && (
+              <NationalBGVProcess
+                payslipChecked={nationalBgvPayslipChecked}
+                bankStatementChecked={nationalBgvBankStatementChecked}
+                verifiedByHR={nationalBgvVerifiedByHR}
+                validationError={validationError}
+                isReadOnly={isAnySubmitting}
+                onChangePayslipChecked={setNationalBgvPayslipChecked}
+                onChangeBankStatementChecked={setNationalBgvBankStatementChecked}
+                onChangeVerifiedByHR={setNationalBgvVerifiedByHR}
+                coiState={coiState}
+                showCoiErrors={validationError.showCoiErrors}
+                onCoiChange={handleCoiChange}
+                consultOptions={CONSULT_OPTIONS}
+              />
+            )}
+
             {vis.showVerificationToggle && (
               <VerificationToggle
                 value={consentVerification}
@@ -589,7 +657,8 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
                 hasFileError={validationError.showConsentErrors}
                 consentform={positionDetails.DotAfricaCF}
               />
-            )}
+            )} 
+
 
             {vis.showCOICard && (
               <COICard
@@ -597,6 +666,7 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
                 isReadOnly={isAnySubmitting}
                 hasError={validationError.showCoiErrors}
                 onChange={handleCoiChange}
+                LabelName={strings.BackgroundVerification}
               />
             )}
 
@@ -610,6 +680,32 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
                 onUploadClick={handleUploadClick}
                 onFileChange={handleFileChange}
                 onClearFile={clearFile}
+              />
+            )}
+
+            {vis.NationalOfferLetter && (
+              <OfferrelaeseNational
+                  offerReleased={nationalOfferReleased}
+                  // offerAccepted={nationalOfferAccepted}
+                  noticePeriod={nationalNoticePeriod}
+                  joiningDate={nationalJoiningDate}
+                  pantsSize={nationalPantsSize}
+                  topSize={nationalTopSize}
+                  shoesSize={nationalShoesSize}
+                  contractReleased={nationalContractReleased}
+                  // contractAccepted={nationalContractAccepted}
+                  validationError={validationError}
+                  isReadOnly={isAnySubmitting}
+                  StatusID={positionDetails.StatusID}
+                  onChangeOfferReleased={setNationalOfferReleased}
+                  // onChangeOfferAccepted={setNationalOfferAccepted}
+                  onChangeNoticePeriod={setNationalNoticePeriod}
+                  onChangeJoiningDate={setNationalJoiningDate}
+                  onChangePantsSize={setNationalPantsSize}
+                  onChangeTopSize={setNationalTopSize}
+                  onChangeShoesSize={setNationalShoesSize}
+                  onChangeContractReleased={setNationalContractReleased} 
+                  // onChangeContractAccepted={setNationalContractAccepted}
               />
             )}
 
@@ -771,10 +867,11 @@ export const ReviewDocumentInner: React.FC<ReviewDocumentInnerProps> = ({
                     >
                       {renderBtnContent(
                         consentVerification === "verified"
-                          ? "Reviewed"
+                          ? "Review"
                           : consentVerification === "rejected"
                             ? "Revert"
-                            : "Submit",
+                            :  nationalOfferReleased ==="No" || nationalContractReleased ==="No"
+                              ? "Reject" : "Submit",
                         "approve",
                         consentVerification === "verified"
                           ? "Reviewing..."

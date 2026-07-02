@@ -3,12 +3,8 @@ import type {
   DocumentName,
   InitiateLaborHire,
 } from "../../../../../services/OfferRelease/IOfferService";
-import {
-  StatusId,
-  WorkflowAction,
-} from "../../../SelectionProcess/config/EvaluationConfig";
 import { ResponeStatus } from "../../../../../utilities/ApiConfig";
-import { workflowStatusApi } from "../../../../../utilities/Config";
+import { StatusId, workflowStatusApi } from "../../../../../utilities/Config";
 import {
   ButtonAction,
   DisplayFolderName,
@@ -61,6 +57,18 @@ export interface SubmitWorkflowDeps {
   closeModal: () => void;
   onClose?: () => void;
   refreshKey?: () => void;
+  nationalOfferReleased?: string;
+  nationalOfferAccepted?: string;
+  nationalNoticePeriod?: string;
+  nationalJoiningDate?: string;
+  nationalPantsSize?: string;
+  nationalTopSize?: string;
+  nationalShoesSize?: string;
+  nationalContractReleased?: string;
+  nationalContractAccepted?: string;
+  nationalBgvPayslipChecked?: string;
+  nationalBgvBankStatementChecked?: string;
+  nationalBgvVerifiedByHR?: boolean;
 }
 
 interface SubmitWorkflowResult {
@@ -99,6 +107,18 @@ async function resolveStatus(
   coiState: COIFormState,
   rejectflag: boolean,
   selectedFile: IDocFiles | null,
+  nationalOfferReleased?: string,
+  nationalOfferAccepted?: string,
+  nationalNoticePeriod?: string,
+  nationalJoiningDate?: string,
+  nationalPantsSize?: string,
+  nationalTopSize?: string,
+  nationalShoesSize?: string,
+  nationalContractReleased?: string,
+  nationalContractAccepted?: string,
+  nationalBgvPayslipChecked?: string,
+  nationalBgvBankStatementChecked?: string,
+  nationalBgvVerifiedByHR?: boolean,
 ): Promise<ResolveResult> {
   const pid = data?.ProfileID;
   const rid = data?.JobRequestID;
@@ -115,11 +135,14 @@ async function resolveStatus(
   let IsRevert = btnAction === ButtonAction.Revert;
   let IsExpat = data?.NationalityCode != NationalityCode.Nationals;
 
+  let NationalReject = nationalOfferReleased === "No" || nationalContractReleased === "No"
+
   let StatusID = WorkflowHODConfig(
     data?.StatusID,
     IsRevert,
     IsExpat,
     data?.EmploymentCategory,
+    NationalReject
   );
 
   switch (data?.StatusID) {
@@ -144,7 +167,31 @@ async function resolveStatus(
 
         let documentResponse = ok;
 
-        if (!isNational && consentFile) {
+        if (isNational) {
+          await OfferServices.InsertRecruitmentCandidateDetails({
+            ID: data.CandidateID,
+            payslipVerification: nationalBgvPayslipChecked,
+            bankStatementVerified: nationalBgvBankStatementChecked,
+            BGVConsultedWith: coiState?.consultedWith,
+            BGVComments: coiState?.comments,
+          });
+          if (consentFile){
+             const doc: IDocFiles = {
+            name: consentFile.name,
+            content: String(consentFile.content),
+            type: "New",
+          };
+          documentResponse = await OfferServices.UploadCandidateDocument(
+            makeDocData(pid, rid, DocumentFolderName.BGVConsentform),
+            [doc],
+          );
+          }else{
+documentResponse = ok
+          }
+          
+         
+        } 
+          if (consentFile) {
           const doc: IDocFiles = {
             name: consentFile.name,
             content: String(consentFile.content),
@@ -154,7 +201,9 @@ async function resolveStatus(
             makeDocData(pid, rid, DocumentFolderName.BGVConsentform),
             [doc],
           );
-        }
+        }else{
+documentResponse = ok
+          }
 
         return {
           workflowStatusValue: workflowStatusApi.initiatetheBGVProcess,
@@ -234,6 +283,50 @@ async function resolveStatus(
           },
         };
       }
+    }
+
+    case StatusId.HROfferLetterProgress: {
+      const isKCSA =
+        data.EmploymentCategory === EmployeementCategory.KCSAEmployee;
+
+      if (isKCSA) {
+        let PPTKit = {
+          ContSuitPants: nationalPantsSize,
+          ContSuitTop: nationalTopSize,
+          SafetyShoes: nationalShoesSize,
+        } 
+         await OfferServices.InsertRecruitmentCandidateDetails({
+            JoiningDate:  nationalJoiningDate
+              ? SpiltDateOnly(new Date(nationalJoiningDate))
+              : "",
+            NoticePeriod: nationalNoticePeriod,
+            PPEKit: JSON.stringify(PPTKit) ?? [],
+            ID: data.CandidateID,
+          });
+        return {
+          workflowStatusValue: nationalOfferReleased === "Yes" ? workflowStatusApi.CandidateuploadedtheSignedOfferLetter : workflowStatusApi.Offerdecline,
+          successMsg: nationalOfferReleased === "Yes" ? RecuritmentHRMsg.NationalOfferMsg : RecuritmentHRMsg.RejectOfferNationalMsg,
+          StatusId: StatusID,
+          documentResponse: ok,
+        };
+      }
+      break;
+    }
+
+    case StatusId.HREmploymentContractProgress: {
+      const isKCSA =
+        data.EmploymentCategory === EmployeementCategory.KCSAEmployee;
+
+      if (isKCSA) {
+        return {
+          workflowStatusValue: nationalContractReleased === "Yes" ?
+            workflowStatusApi.UploadedthesignedEmployementcontractform : workflowStatusApi.SysytmeDecline ,
+          successMsg: nationalContractReleased === "Yes"  ? RecuritmentHRMsg.NationalEmployementContract : RecuritmentHRMsg.RejectEmploymentContractMsg,
+          StatusId: StatusID,
+          documentResponse: ok,
+        };
+      }
+      break;
     }
 
     case StatusId.PendingHROfferReview: {
@@ -370,7 +463,6 @@ async function resolveStatus(
       };
     }
 
-    // ── Offer Review + Upload Employment Contract ─────────────────────────────
     case StatusId.PendingHRReviewOfferanduploadEmployementContract: {
       if (btnAction === ButtonAction.Review) {
         const documentResponse = await OfferServices.UploadCandidateDocument(
@@ -382,6 +474,15 @@ async function resolveStatus(
           ),
           documentFile,
         );
+
+       await OfferServices.InsertRecruitmentCandidateDetails({
+            ID: data.CandidateID,
+            NoticePeriod: nationalNoticePeriod,
+            JoiningDate: nationalJoiningDate
+              ? SpiltDateOnly(new Date(nationalJoiningDate))
+              : "",
+          });
+
         return {
           workflowStatusValue:
             workflowStatusApi.PendingwithCandidatetosignEmployementContract,
@@ -590,6 +691,18 @@ export function useSubmitWorkflow(
           data.coiState,
           data.rejectflag,
           data.selectedFile,
+          data.nationalOfferReleased,
+          data.nationalOfferAccepted,
+          data.nationalNoticePeriod,
+          data.nationalJoiningDate,
+          data.nationalPantsSize,
+          data.nationalTopSize,
+          data.nationalShoesSize,
+          data.nationalContractReleased,
+          data.nationalContractAccepted,
+          data.nationalBgvPayslipChecked,
+          data.nationalBgvBankStatementChecked,
+          data.nationalBgvVerifiedByHR,
         );
         let Verified = data.consentVerification;
         if (resolved.documentResponse?.status !== ResponeStatus.SUCCESS) {

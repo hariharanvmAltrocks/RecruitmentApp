@@ -126,6 +126,8 @@ export const StatusId = {
   InterviewScheduledforLevel2: 129,
   PendingwithpositionIDAssignmentWithHOD: 130,
   Rescheduled: 159,
+  //  PendingwithHODtoAssignPositionID: 130,
+  //  PendingwithHODtoselectthecandidateLevel2: 127,
 
   // BackGorund Verification
   PendingHRBGVInitiation: 134,
@@ -191,6 +193,10 @@ export const StatusId = {
 
   pendingL2shorlistingwithHOD: 127,
   CandidateRejectfromRESIProcess: 195,
+
+  HROfferLetterProgress: 207,
+  HREmploymentContractProgress: 208,
+  EmploymentContractDeclined: 209
 };
 
 export const workflowStatusApi = {
@@ -219,11 +225,14 @@ export const workflowStatusApi = {
   SysytmeDecline: "WS26",
   // KCSA
   Pendingwithcandidatetosignofferletter: "WS16",
+  // OfferLetterSigned: "WS17",
+  // EmployeeContractSigned: "WS21",
   CandidateuploadedtheSignedOfferLetter: "WS17",
   PendingwithCandidatetouploadotherDocuments: "WS18",
   CandidateUploadedcandidatepersonalDocs: "WS19",
   PendingwithCandidatetosignEmployementContract: "WS20",
   UploadedthesignedEmployementcontractform: "WS21",
+
   // Labor Hire
   PendingHROfferInitiate: "WS27",
   PendingLabourHireOfferRelease: "WS28",

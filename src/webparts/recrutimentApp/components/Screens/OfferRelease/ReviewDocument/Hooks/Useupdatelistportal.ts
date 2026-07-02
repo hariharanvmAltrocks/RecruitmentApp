@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react";
-import { StatusId } from "../../../SelectionProcess/config/EvaluationConfig";
-import { RoleID, workflowStatusApi } from "../../../../../utilities/Config";
+import { RoleID, StatusId, workflowStatusApi } from "../../../../../utilities/Config";
 import { Choices } from "../../../../../utilities/ApiConfig";
 import { EmployeementCategory } from "../../../../../utilities/ConditionConfig";
 import { userInfo } from "../../../../../utilities/hooks/RoleContext";

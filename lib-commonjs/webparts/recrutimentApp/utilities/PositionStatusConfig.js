@@ -103,7 +103,9 @@ var getStageCandidateindex = function (statusId) {
         statusId == Config_1.StatusId.PendingHRReviewOfferWorkPermitInit ||
         statusId == Config_1.StatusId.PendingLabourHireOfferRelease ||
         statusId == Config_1.StatusId.PendingHROfferReview ||
-        statusId == Config_1.StatusId.offerdecline)
+        statusId == Config_1.StatusId.offerdecline ||
+        statusId == Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract ||
+        statusId == Config_1.StatusId.HROfferLetterProgress)
         return 4;
     if (statusId == Config_1.StatusId.PendingCandidateWorkPermitreleatedDoc ||
         statusId == Config_1.StatusId.PendingHRReviewWorkpermitDocs ||
@@ -123,7 +125,8 @@ var getStageCandidateindex = function (statusId) {
         statusId == Config_1.StatusId.PendingHREmploymentContractReview ||
         statusId ==
             Config_1.StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract ||
-        statusId == Config_1.StatusId.PendingHREmploymentContractVerification)
+        statusId == Config_1.StatusId.PendingHREmploymentContractVerification ||
+        statusId == Config_1.StatusId.HREmploymentContractProgress)
         return 6;
     if (statusId == Config_1.StatusId.OnboardingProcessinitiatedforDRC ||
         statusId == Config_1.StatusId.OnboardingProcessinitiatedforExpat ||
@@ -208,7 +211,8 @@ var getStageIndexinCandidateDRC = function (statusId) {
         statusId == Config_1.StatusId.PendingLabourHireOfferRelease ||
         statusId == Config_1.StatusId.PendingHROfferReview ||
         statusId == Config_1.StatusId.offerdecline ||
-        statusId == Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract)
+        statusId == Config_1.StatusId.PendingHRReviewOfferanduploadEmployementContract ||
+        statusId == Config_1.StatusId.HROfferLetterProgress)
         return 3;
     if (statusId == Config_1.StatusId.PendingCandidateEmploymentContractUpload ||
         statusId == Config_1.StatusId.PendingHREmploymentContractVerification ||
@@ -218,7 +222,8 @@ var getStageIndexinCandidateDRC = function (statusId) {
         statusId == Config_1.StatusId.PendingHREmploymentContractReview ||
         statusId ==
             Config_1.StatusId.PendingwithRecruitmentHRtoreviewtheCandidatePersonalDocsanduploadEmployementContract ||
-        statusId == Config_1.StatusId.PendingHREmploymentContractVerification) {
+        statusId == Config_1.StatusId.PendingHREmploymentContractVerification ||
+        statusId == Config_1.StatusId.HREmploymentContractProgress) {
         return 4;
     }
     if (statusId == Config_1.StatusId.PendingHRpreonboardingchecklist)

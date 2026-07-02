@@ -826,7 +826,6 @@ var MasterService = /** @class */ (function () {
                             code: item.countryCode,
                             text: item.countryName,
                         }); });
-                        // console.log(GetAllMasterData, "GetCountryMaster");
                         return [2 /*return*/, {
                                 data: GetAllMasterData,
                                 status: response.status,
@@ -888,6 +887,55 @@ var MasterService = /** @class */ (function () {
                     case 3:
                         error_10 = _a.sent();
                         console.error("Error fetching data in GetRecruitmentDetails:", error_10);
+                        return [2 /*return*/, {
+                                data: {},
+                                status: 500,
+                                message: "Error fetching data from GetRecruitmentDetails",
+                            }];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    MasterService.prototype.GetConsultingOptions = function () {
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var GridResult, res, error_11;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        GridResult = {
+                            value: "",
+                            label: ""
+                        };
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSSageList,
+                                Select: "*",
+                                Topcount: 5000
+                            })];
+                    case 2:
+                        res = _a.sent();
+                        if (res.length > 0) {
+                            res.map(function (item) {
+                                GridResult = {
+                                    value: item.EmailId,
+                                    label: [item.FirstName, item.MiddleName, item.LastName]
+                                        .filter(Boolean)
+                                        .join(" ")
+                                };
+                                return GridResult;
+                            });
+                        }
+                        return [2 /*return*/, {
+                                data: GridResult,
+                                status: 200,
+                                message: "GetRecruitmentDetails fetched successfully",
+                            }];
+                    case 3:
+                        error_11 = _a.sent();
+                        console.error("Error fetching data in GetRecruitmentDetails:", error_11);
                         return [2 /*return*/, {
                                 data: {},
                                 status: 500,
