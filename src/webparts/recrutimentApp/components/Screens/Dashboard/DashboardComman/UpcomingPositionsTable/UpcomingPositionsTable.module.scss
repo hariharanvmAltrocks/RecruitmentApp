@@ -1,0 +1,339 @@
+@import "../../../../../styles/theme";
+@import "../../../../../styles/variables";
+@import "../../../../../styles/responsive";
+
+.tableCard {
+  background-color: $dashboard-card-bg;
+  border: 1px solid $dashboard-card-border;
+  border-radius: $radius-lg;
+  padding: 16px;
+  box-shadow: $shadow-sm;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 98%;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  &__titleRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 700;
+    color: $header-text-color;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+  }
+}
+
+.warningIcon {
+  color: #ef4444;
+}
+
+/* Toolbar Filters */
+.toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.filtersGroup {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.searchWrap {
+  position: relative;
+  width: 34%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-right: 4%;
+
+  @media (max-width: 480px) {
+    width: 100%;
+  }
+}
+
+.inputInnerWrap {
+  position: relative;
+  width: 100%;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 6px 12px 6px 32px;
+  border: 1px solid $border-base;
+  border-radius: $radius-sm;
+  font-size: 0.75rem;
+  background-color: #f8fafc;
+  color: $text-primary;
+  outline: none;
+  transition: all 0.2s ease;
+  height: 32px;
+
+  &:focus {
+    border-color: #3b82f6;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $text-subtle;
+  pointer-events: none;
+}
+
+.selectWrap {
+  position: relative;
+  min-width: 24%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  @media (max-width: 480px) {
+    width: 100%;
+  }
+}
+
+.label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: $text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+  margin-left: 2%;
+}
+
+.actionsGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* Action Buttons */
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 6px 12px;
+  background-color: #ffffff;
+  border: 1px solid $border-base;
+  border-radius: $radius-sm;
+  color: $text-secondary;
+  font-size: 0.725rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+    color: $text-primary;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.actionBtnPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 6px 12px;
+  background-color: #2563eb;
+  border: 1px solid #1d4ed8;
+  border-radius: $radius-sm;
+  color: #ffffff;
+  font-size: 0.725rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #1d4ed8;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+
+/* Spin animation for refresh icon */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+.filterSelect {
+  width: 100%;
+  padding: 6px 12px;
+  border: 1px solid $border-base;
+  border-radius: $radius-sm;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: #f8fafc;
+  color: $text-secondary;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: 32px;
+
+  &:hover {
+    border-color: #cbd5e1;
+  }
+
+  &:focus {
+    border-color: #3b82f6;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+}
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid $border-light;
+  border-radius: $radius-md;
+  background-color: $dashboard-card-bg;
+}
+
+.jobTitleCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &__name {
+    font-weight: 600;
+    color: $text-primary;
+    font-size: 0.725rem;
+  }
+
+  &__id {
+    font-size: 0.65rem;
+    color: $text-subtle;
+    font-weight: 400;
+  }
+}
+
+.deptCell {
+  color: $text-secondary;
+}
+
+.weight600 {
+  font-weight: 600 !important;
+}
+
+/* Status Badges */
+.statusBadge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  text-align: center;
+}
+
+.statusOverdue {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.statusAtRisk {
+  background-color: #fffbeb;
+  color: #d97706;
+}
+
+.statusOnTrack {
+  background-color: #ecfdf5;
+  color: #047857;
+}
+
+/* Change HR Button */
+.changeHrBtn {
+ border: 1px solid $border-base;
+    background: $primary-color ;
+    color: $white;
+    border-radius: 10px;
+    padding: 6px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all $transition-base;
+    font-size: 12px;
+    font-weight: 600;
+
+    &:hover {
+      border-color: $primary-color;
+      box-shadow: $shadow-sm;
+    }
+}
+
+.rowSelect {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid $border-base;
+  border-radius: $radius-xs;
+  font-size: 0.7rem;
+  background-color: #ffffff;
+  color: $text-primary;
+  outline: none;
+  cursor: pointer;
+  height: 28px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #cbd5e1;
+  }
+
+  &:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  }
+}
+
+
+/* Modal popup styles removed as we now use the shared AssignHRPopup component */

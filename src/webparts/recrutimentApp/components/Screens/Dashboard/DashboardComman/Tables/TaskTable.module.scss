@@ -1,0 +1,112 @@
+@import "../../../../../styles/theme";
+
+.container {
+  background-color: $dashboard-card-bg;
+  border: 1px solid $dashboard-card-border;
+  border-radius: $radius-lg;
+  padding: $space-md;
+  box-shadow: $shadow-sm;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  margin-bottom: $space-md;
+}
+
+.title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: $header-text-color;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.tableWrapper {
+  flex: 1;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.jobTitleCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &__name {
+    font-weight: 600;
+    color: $text-primary;
+    font-size: 0.725rem;
+  }
+
+  &__id {
+    font-size: 0.65rem;
+    color: $text-subtle;
+    font-weight: 400;
+  }
+}
+
+.deptCell {
+  color: $text-secondary;
+}
+
+.weight600 {
+  font-weight: 600 !important;
+}
+
+/* Status Badges */
+.statusBadge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  text-align: center;
+}
+
+.statusOverdue {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.statusAtRisk {
+  background-color: #fffbeb;
+  color: #d97706;
+}
+
+.statusOnTrack {
+  background-color: #ecfdf5;
+  color: #047857;
+}
+
+
+.taskText {
+  font-weight: 700;
+  color: $text-primary;
+  font-size: 0.8125rem;
+}
+
+.dueDateCell {
+  font-weight: 600;
+  color: #64748b;
+}
+
+.footer {
+  margin-top: $space-md;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.viewLink {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #2563eb;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

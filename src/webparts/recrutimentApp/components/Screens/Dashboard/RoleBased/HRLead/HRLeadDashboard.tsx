@@ -1,9 +1,8 @@
 import React from "react";
-import SummaryCards from "../../Shared/SummaryCards/SummaryCards";
-import PositionStatusChart from "../../Shared/PositionStatusChart/PositionStatusChart";
-import SLADashboard from "../../Shared/SLADashboard/SLADashboard";
-import HRWorkflowOverview from "../../Shared/HRWorkflowOverview/HRWorkflowOverview";
-import UpcomingPositionsTable from "../../Shared/UpcomingPositionsTable/UpcomingPositionsTable";
+import SummaryCards from "../../DashboardComman/SummaryCards";
+import PositionStatusChart from "../../DashboardComman/PositionStatusChart/PositionStatusChart";
+import HRWorkflowOverview from "../../DashboardComman/HRWorkflowOverview/HRWorkflowOverview";
+import UpcomingPositionsTable from "../../DashboardComman/UpcomingPositionsTable/UpcomingPositionsTable";
 import styles from "../../Dashboard.module.scss";
 import { motion } from "framer-motion";
 import MetricDashboard from "../../../../Comman/MatricBox/matric";

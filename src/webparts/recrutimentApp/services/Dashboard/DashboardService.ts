@@ -41,7 +41,7 @@ import {
 import { CommonServices, masterService } from "../ServiceExport";
 import { EvalQueryConfig } from "../../components/Screens/SelectionProcess/config/EvaluationConfig";
 import { IJobGrade } from "../../models/master";
-import { IHRLeadDashboard, IDueMonth, IPositionDetails, IPositionStatus, IPositionSource, IHRDashboardData } from "../../components/Screens/Dashboard/Types";
+import { IHRLeadDashboard, IDueMonth, IPositionDetails, IPositionStatus, IPositionSource, IHRDashboardData, IHRTask } from "../../components/Screens/Dashboard/Types";
 import { isCurrentMonthAndYear, isCurrentMonthAndYear2, getMonthDifference, currentDate, getDueMonthRatio, isFiveMonthsBeforeCurrent } from "./DashboardConfig";
 
 export default class DashboardService implements IDashboard {
@@ -1689,6 +1689,7 @@ export default class DashboardService implements IDashboard {
 
     return {
       id: index + 1,
+      ItemID: item.ID,
       JobCode: item.JobCode?.JobCode ?? "",
       Jobtitle: item.JobCode?.JobTitleInEnglish ?? "",
       department: item.Department?.DepartmentName ?? "",
@@ -1705,6 +1706,35 @@ export default class DashboardService implements IDashboard {
 );
       const OverDuePosition = overduecountCount
 
+         const onboardedCandidates = recruitmentProcess.filter(c => Number(c.StatusId) === StatusId.Onboarded);
+
+      const departmentMap = new Map<string, { total: number, filled: number }>();
+      recruitmentProcess.forEach((item: any) => {
+        const deptName = item.Department?.DepartmentName || "General";
+        if (!departmentMap.has(deptName)) {
+          departmentMap.set(deptName, { total: 0, filled: 0 });
+        }
+        const currentDept = departmentMap.get(deptName)!;
+        currentDept.total += (Number(item.NumberOfPersonNeeded) || 1);
+
+        const deptFilled = onboardedCandidates.filter((c: any) => c.JobCodeId === item.JobCodeId).length;
+        currentDept.filled += deptFilled;
+      });
+
+      const departmentPositions = Array.from(departmentMap.entries()).map(([deptName, counts]) => {
+        const total = Number(counts.total);
+        const filled = Number(counts.filled);
+        const open = Math.max(0, total - filled);
+        const filledPercentage = total ? Math.round((filled / total) * 100 * 10) / 10 : 0;
+        return {
+          department: deptName,
+          total,
+          filled,
+          open,
+          filledPercentage
+        };
+      });
+
       const GridResult: IHRLeadDashboard = {
         TotalOpenPosition,
         RecruitmentInProgress,
@@ -1715,6 +1745,7 @@ export default class DashboardService implements IDashboard {
         PositionByStatus,
         PositionSource,
         positionDetails,
+        departmentPositions
       };
 
       return {
@@ -1767,9 +1798,7 @@ export default class DashboardService implements IDashboard {
               myTotalPositionsTrend: "0% filled",
               activeCandidates: 0,
               activeCandidatesTrend: "In Process",
-              tasksPending: 0,
-              tasksPendingTrend: "Requires Action",
-              tasksPendingTrendColor: "neutral",
+             
               interviewsThisMonth: 0,
               interviewsThisMonthTrend: "Scheduled"
             },
@@ -1796,8 +1825,8 @@ export default class DashboardService implements IDashboard {
         })) as any[];
       }
 
-       const candidateId = candidates.map(item => item.JobCodeId).filter(Boolean);
-       let Selectedcandidate: any[] = [];
+      const candidateId = candidates.map(item => item.JobCodeId).filter(Boolean);
+      let Selectedcandidate: any[] = [];
       if (candidateId.length > 0) {
         Selectedcandidate = (await SPServices.SPReadItems({
           Listname: ListNames.HRMSRecruitmentCandidatePersonalDetails,
@@ -1809,9 +1838,8 @@ export default class DashboardService implements IDashboard {
         })) as any[];
       }
 
-      const myTotalPositions = recruitmentProcess.reduce((sum: number, item: any) => sum + (Number(item.NumberOfPersonNeeded) || 1), 0);
-      
-      const onboardedCandidates = candidates.filter(c => Number(c.StatusId) === StatusId.Onboarded);
+      const myTotalPositions = recruitmentProcess.length;
+      const onboardedCandidates = recruitmentProcess.filter(c => Number(c.StatusId) === StatusId.Onboarded);
       const myFilledPositions = onboardedCandidates.length;
       const myOpenPositions = Math.max(0, myTotalPositions - myFilledPositions);
       
@@ -1826,117 +1854,58 @@ export default class DashboardService implements IDashboard {
         Number(c.StatusId) !== StatusId.BackgroundCheckVerificationFailed && 
         Number(c.StatusId) !== StatusId.CandidateRejectfromRESIProcess &&
         Number(c.StatusId) !== StatusId.FailedmedicalscreeningUnfit &&
-        Number(c.StatusId) !== StatusId.offerdecline 
+        Number(c.StatusId) !== StatusId.offerdecline &&
+        Number(c.StatusId) !== StatusId.EmploymentContractDeclined
       ).length;
 
+      const activeCandidate = activeCandidatesCount + SelectedcandidateCount;
 
-      const interviewsThisMonthCount = candidates.filter(c => 
-        [
-          StatusId.InterviewInProcess, 
-          StatusId.InterviewLevel2InProgress, 
-          StatusId.InterviewLevel1InProgress
-        ].includes(Number(c.StatusId))
-      ).length;
+      const interviewsThisMonthCount = candidates.filter((c) => {
+        const isCurrentMonth =
+          (c.InterviewDate && moment(c.InterviewDate).isSame(moment(), "month")) ||
+          (c.InterviewDateLevel2 && moment(c.InterviewDateLevel2).isSame(moment(), "month"));
 
-      const screeningCount = candidates.filter(c => 
-        [StatusId.HRLeadtoAssignRecruitmentHR, StatusId.PendingAssignHR, StatusId.PendingwithLineManagereviewAdv, StatusId.Pending].includes(Number(c.StatusId))
-      ).length;
+        const isValidStatus = [
+          StatusId.InterviewInProcess,
+          StatusId.InterviewLevel1InProgress,
+          StatusId.InterviewLevel2InProgress,
+        ].includes(Number(c.StatusId));
 
-      const interviewCount = candidates.filter(c => 
-        [StatusId.InterviewScheduled, StatusId.InterviewInProcess, StatusId.InterviewScheduledforLevel2, StatusId.InterviewLevel2InProgress, StatusId.InterviewLevel1InProgress].includes(Number(c.StatusId))
-      ).length;
-
-      const offerCount = candidates.filter(c => 
-        [StatusId.PendingHROfferInitiate, StatusId.PendingCandidateOfferLetterUpload, StatusId.PendingHREmploymentContractVerification].includes(Number(c.StatusId))
-      ).length;
-
-      const verificationCount = candidates.filter(c => 
-        [StatusId.RESProcessInitiated, StatusId.PendingHRBGVInitiation, StatusId.PendingwithTAforMedicalScreening].includes(Number(c.StatusId))
-      ).length;
-
-      const taskItems = [];
-      if (screeningCount > 0) {
-        taskItems.push({
-          id: "T-01",
-          task: "Review Applications",
-          priority: "High" as const,
-          dueDate: moment().add(2, "days").format("DD-MM-YYYY"),
-          status: "Pending" as const
-        });
-      }
-      if (interviewCount > 0) {
-        taskItems.push({
-          id: "T-02",
-          task: "Interview Schedule",
-          priority: "Medium" as const,
-          dueDate: moment().add(3, "days").format("DD-MM-YYYY"),
-          status: "In Progress" as const
-        });
-      }
-      if (offerCount > 0) {
-        taskItems.push({
-          id: "T-03",
-          task: "Offer Preparation",
-          priority: "High" as const,
-          dueDate: moment().add(5, "days").format("DD-MM-YYYY"),
-          status: "Pending" as const
-        });
-      }
-      if (verificationCount > 0) {
-        taskItems.push({
-          id: "T-04",
-          task: "Document Verification",
-          priority: "Low" as const,
-          dueDate: moment().add(7, "days").format("DD-MM-YYYY"),
-          status: "Pending" as const
-        });
-      }
-      if (taskItems.length === 0) {
-        taskItems.push({
-          id: "T-DEFAULT",
-          task: "General Recruitment Clean-up",
-          priority: "Low" as const,
-          dueDate: moment().add(1, "day").format("DD-MM-YYYY"),
-          status: "Completed" as const
-        });
-      }
-
-      const tasksPendingCount = taskItems.filter(t => t.status === "Pending").length;
+        return isCurrentMonth && isValidStatus;
+      }).length;
 
       const summary = {
         myOpenPositions,
-        myOpenPositionsTrend: "▼ 2 from last month",
+        myOpenPositionsTrend: `${myOpenPositions ? Math.round((myOpenPositions / myFilledPositions) * 100) : 0}% open`,
         myOpenPositionsTrendColor: "success" as const,
         myFilledPositions,
-        myFilledPositionsTrend: "▲ 5 from last month",
+        myFilledPositionsTrend: `${myFilledPositions ? Math.round((myFilledPositions / myTotalPositions) * 100) : 0}% filled`,
         myFilledPositionsTrendColor: "success" as const,
         myTotalPositions,
-        myTotalPositionsTrend: `${myTotalPositions ? Math.round((myFilledPositions / myTotalPositions) * 100) : 0}% filled`,
-        activeCandidates: activeCandidatesCount,
+        myTotalPositionsTrend: `${myTotalPositions ? Math.round((myFilledPositions / myTotalPositions) * 100) : 0}% total filled`,
+        activeCandidates: activeCandidate,
         activeCandidatesTrend: "In Process",
-        tasksPending: tasksPendingCount,
-        tasksPendingTrend: tasksPendingCount > 0 ? "Requires Action" : "Up to Date",
-        tasksPendingTrendColor: tasksPendingCount > 0 ? ("danger" as const) : ("neutral" as const),
         interviewsThisMonth: interviewsThisMonthCount,
         interviewsThisMonthTrend: "Scheduled"
       };
 
-      // 5. Monthly Tracker Calculation (last 6 months)
       const monthlyTracker = [];
       for (let i = 5; i >= 0; i--) {
         const targetMonth = moment().subtract(i, "months");
         const monthLabel = targetMonth.format("MMM YYYY");
 
-        // Total positions created up to targetMonth
         const totalInMonth = recruitmentProcess.filter((item: any) => 
-          item.Created && moment(item.Created).isSameOrBefore(targetMonth, "month")
-        ).reduce((sum: number, item: any) => sum + (Number(item.NumberOfPersonNeeded) || 1), 0);
-
-        // Filled positions (onboarded up to targetMonth)
-        const filledInMonth = onboardedCandidates.filter((c: any) => 
-          c.Modified && moment(c.Modified).isSameOrBefore(targetMonth, "month")
+          item.Created && moment(item.DateRequried).isSameOrBefore(targetMonth, "month")
         ).length;
 
+        // const filledInMonth = onboardedCandidates.filter((c: any) => 
+        //   c.Modified && moment(c.Modified).isSameOrBefore(targetMonth, "month")
+        // ).length;
+
+         const filledInMonth = recruitmentProcess.filter((c: any) => 
+          c.statusId === StatusId.Onboarded && c.Modified && moment(c.Modified).isSameOrBefore(targetMonth, "month")
+        ).length;
+        
         const openInMonth = Math.max(0, totalInMonth - filledInMonth);
 
         monthlyTracker.push({
@@ -1947,7 +1916,6 @@ export default class DashboardService implements IDashboard {
         });
       }
 
-      // 6. Department Positions Grouping
       const departmentMap = new Map<string, { total: number, filled: number }>();
       recruitmentProcess.forEach((item: any) => {
         const deptName = item.Department?.DepartmentName || "General";
@@ -1975,30 +1943,209 @@ export default class DashboardService implements IDashboard {
         };
       });
 
-      // 7. Candidate Pipeline Grouping
+      let allJobCodeIds: number[] = recruitmentProcess.map((item: any) => item.JobCodeId).filter(Boolean);
+      let portalItems: any[] = [];
+      if (allJobCodeIds.length > 0) {
+        portalItems = (await SPServices.SPReadItems({
+          Listname: ListNames.RecruitAppCareerPortalIntegration,
+          Select: `*,JobCode/JobCode`,
+          Filter: [
+            { FilterKey: "JobCodeId", Operator: "in", FilterValue: allJobCodeIds },
+          ],
+          FilterCondition: "and",
+          Expand: `JobCode`,
+          Topcount: 5000,
+          Orderby: "ID",
+          Orderbydecorasc: true,
+        })) as any[];
+      }
+
+      const jobCodeIdToUniqueKey = portalItems.map((item: any) => item.JobUniqueKey).filter(Boolean);
+      let ScreeningCount = 0;
+      let AppliedCount = 0;
+      if (jobCodeIdToUniqueKey.length > 0) {
+        const params: ExternalApiParams = {
+          jobCodes: jobCodeIdToUniqueKey,
+          workflowStatus: [
+            workflowStatusApi.HRPending,
+            workflowStatusApi.LineManagerL1Pending,
+            workflowStatusApi.LineManagerL2Pending,
+          ],
+        };
+        const response = await getProfileData.GetJobAppliedCount(params);
+        const data = Array.isArray(response?.data?.data) ? response.data.data : [];
+
+       AppliedCount = data.reduce((total: number, item: ExternalApiCountItem) => {
+  return item.workflowStatus?.includes(workflowStatusApi.HRPending)
+    ? total + (item.count ?? 0)
+    : total;
+}, 0);
+
+ ScreeningCount = data.reduce((total: number, item: ExternalApiCountItem) => {
+  return item.workflowStatus?.some(status => [
+    workflowStatusApi.LineManagerL1Pending,
+    workflowStatusApi.LineManagerL2Pending,
+    workflowStatusApi. LineManagerLevel1OnHold,
+    workflowStatusApi.LineManagerLevel2OnHold,
+  ].includes(status))
+    ? total + (item.count ?? 0)
+    : total;
+}, 0);
+
+console.log("Applied Count:", AppliedCount);
+console.log("Screen Count:", ScreeningCount);
+      }
+
+      const InterviewCount = candidates.filter((item: any) =>
+        [
+          StatusId.InterviewScheduled,
+          StatusId.InterviewInProcess,
+          StatusId.InterviewScheduledforLevel2,
+          StatusId.InterviewLevel2InProgress,
+          StatusId.InterviewLevel1InProgress
+        ].includes(Number(item.StatusId))
+      ).length;
+
+      const BackgroundCheckCount = Selectedcandidate.filter((item: any) =>
+        [
+          StatusId.PendingHRBGVInitiation,
+          StatusId.PendingBGdocuploadedbycandidate,
+          StatusId.PendingHRReviewBGCheck
+        ].includes(Number(item.StatusId))
+      ).length;
+
+      const ResiProcessCount = Selectedcandidate.filter((item: any) =>
+        [
+          StatusId.RESIProcessInitiatedforDRC,
+          StatusId.RESIProcessInitiatedforExpatriate,
+          StatusId.RESProcessInitiated
+        ].includes(Number(item.StatusId))
+      ).length;
+
+      const MedicalScreeningCount = Selectedcandidate.filter((item: any) =>
+        [
+          StatusId.PendingwithTAforMedicalScreening,
+        ].includes(Number(item.StatusId))
+      ).length;
+
+      const OfferCount = Selectedcandidate.filter((item: any) =>
+        [
+          StatusId.PendingHROfferInitiate,
+          StatusId.PendingCandidateOfferLetterUpload,
+          StatusId.PendingHRReviewOfferWorkPermitInit,
+          StatusId.PendingLabourHireOfferRelease,
+          StatusId.PendingHROfferReview,
+          StatusId.HROfferLetterProgress
+        ].includes(Number(item.StatusId))
+      ).length;
+
+      const EmploymentContractCount = Selectedcandidate.filter((item: any) =>
+        [
+          StatusId.PendingCandidateEmploymentContractUpload,
+          StatusId.PendingHREmploymentContractVerification,
+          StatusId.PendingHREmploymentContractInit,
+          StatusId.PendingLHECRelease,
+          StatusId.PendingHREmploymentContractReview,
+        ].includes(Number(item.StatusId))
+      ).length;
+
+      const OnboardingInProcessCount = Selectedcandidate.filter((item: any) =>
+        [
+          StatusId.onboardingInProcess,
+          StatusId.OnboardingProcessinitiatedforDRC,
+          StatusId.OnboardingProcessinitiatedforExpat,
+        ].includes(Number(item.StatusId))
+      ).length;
+
+      const OnboardingCompletedCount = recruitmentProcess.filter((item: any) =>
+        [
+          StatusId.Onboarded,
+        ].includes(Number(item.StatusId))
+      ).length;
+
       const pipelineStages = [
-        { name: "Applied", statusIds: [StatusId.HRLeadtoAssignRecruitmentHR, StatusId.PendingAssignHR] },
-        { name: "Screening", statusIds: [StatusId.PendingwithLineManagereviewAdv, StatusId.Pending] },
-        { name: "Interview", statusIds: [StatusId.InterviewScheduled, StatusId.InterviewInProcess, StatusId.InterviewScheduledforLevel2, StatusId.InterviewLevel2InProgress, StatusId.InterviewLevel1InProgress] },
-        { name: "Assessment", statusIds: [StatusId.RESProcessInitiated, StatusId.PendingHRBGVInitiation, StatusId.PendingwithTAforMedicalScreening] },
-        { name: "Offer", statusIds: [StatusId.PendingHROfferInitiate, StatusId.PendingCandidateOfferLetterUpload, StatusId.PendingHREmploymentContractVerification] },
-        { name: "Hired", statusIds: [StatusId.Onboarded] }
+        { name: "Applied", count: AppliedCount },
+        { name: "Screening", count: ScreeningCount },
+        { name: "Interview", count: InterviewCount },
+        { name: "Background Checks", count: BackgroundCheckCount},
+        { name: "RESI Process", count: ResiProcessCount },
+        { name: "Medical Screening", count: MedicalScreeningCount },
+        { name: "Offer & Employment Contract", count: OfferCount + EmploymentContractCount },
+        {name : "Onboarding In Process", count: OnboardingInProcessCount },
+        { name: "Onboarding", count:  OnboardingCompletedCount }
       ];
 
-      const totalCandidates = candidates.length;
+      const totalCandidates = pipelineStages.reduce((sum, stage) => sum + stage.count, 0);
       const candidatePipeline = pipelineStages.map(stage => {
-        const count = candidates.filter(c => stage.statusIds.includes(Number(c.StatusId))).length;
-        const percentage = totalCandidates ? Math.round((count / totalCandidates) * 100 * 10) / 10 : 0;
+        const percentage = totalCandidates ? Math.round((stage.count / totalCandidates) * 100 * 10) / 10 : 0;
         return {
           stage: stage.name,
-          count,
+          count: stage.count,
           percentage
         };
       });
 
+       const activeRecruitments = recruitmentProcess.filter(
+        (item) => Number(item.StatusId) !== StatusId.Onboarded
+      );
+
+     const taskItems: IHRTask[] = await Promise.all(
+  activeRecruitments.map(async (item, index) => {
+    const dateValue = item.DateRequried;
+
+    let dayaLeft = "0";
+
+    if (dateValue) {
+      const target = new Date(dateValue);
+
+      if (!isNaN(target.getTime())) {
+        const diffMs = target.getTime() - currentDate.getTime();
+        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        dayaLeft = diffDays > 0 ? `${diffDays}` : "0";
+      }
+    }
+
+    const onboardedCandidatesCount = Selectedcandidate.filter(
+      (c: any) =>
+        Number(c.StatusId) === StatusId.Onboarded
+    ).length;
+
+    const vacant = String(
+      Math.max(0, (item.NumberOfPersonNeeded) - onboardedCandidatesCount)
+    );
+
+    let Positionstatus: "Overdue" | "At Risk" | "On Track" = "On Track";
+
+    if (dateValue) {
+      const target = new Date(dateValue);
+
+      if (!isNaN(target.getTime())) {
+        const diff = getMonthDifference(currentDate, target);
+
+        if (diff < 0) Positionstatus = "Overdue";
+        else if (diff <= 2) Positionstatus = "At Risk";
+      }
+    }
+    return {
+      id: index + 1,
+      JobCode: item.JobCode?.JobCode ?? "",
+      Jobtitle: item.JobCode?.JobTitleInEnglish ?? "",
+      department: item.Department?.DepartmentName ?? "",
+      dateRequired: dateValue
+        ? new Date(dateValue).toLocaleDateString("en-GB")
+        : "",
+      headcount: String(item.NumberOfPersonNeeded || 1),
+      filledcount: String(onboardedCandidatesCount),
+      vacant,
+      dayaLeft,
+      Positionstatus,
+    };
+  })
+);
+
       return {
         data: {
-          summary,
+          summary: summary,
           monthlyTracker,
           departmentPositions,
           candidatePipeline,

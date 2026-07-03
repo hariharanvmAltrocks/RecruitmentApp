@@ -1,0 +1,321 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
+.tableCard {
+  background-color: var(--app-card-color, #ffffff);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 98%;
+}
+.tableCard__header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+.tableCard__titleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tableCard__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--app-text-color, #0f172a);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.warningIcon {
+  color: #ef4444;
+}
+
+/* Toolbar Filters */
+.toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.filtersGroup {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.searchWrap {
+  position: relative;
+  width: 34%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-right: 4%;
+}
+@media (max-width: 480px) {
+  .searchWrap {
+    width: 100%;
+  }
+}
+
+.inputInnerWrap {
+  position: relative;
+  width: 100%;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 6px 12px 6px 32px;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  background-color: #f8fafc;
+  color: var(--app-text-color, #0f172a);
+  outline: none;
+  transition: all 0.2s ease;
+  height: 32px;
+}
+.searchInput:focus {
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.selectWrap {
+  position: relative;
+  min-width: 24%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+@media (max-width: 480px) {
+  .selectWrap {
+    width: 100%;
+  }
+}
+
+.label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--app-text-color, #334155);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+  margin-left: 2%;
+}
+
+.actionsGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* Action Buttons */
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 6px 12px;
+  background-color: #ffffff;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border-radius: 8px;
+  color: var(--app-text-color, #334155);
+  font-size: 0.725rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.actionBtn:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+  color: var(--app-text-color, #0f172a);
+}
+.actionBtn:active {
+  transform: scale(0.97);
+}
+
+.actionBtnPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 6px 12px;
+  background-color: #2563eb;
+  border: 1px solid #1d4ed8;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 0.725rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.actionBtnPrimary:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+.actionBtnPrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.actionBtnPrimary:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* Spin animation for refresh icon */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+.filterSelect {
+  width: 100%;
+  padding: 6px 12px;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: #f8fafc;
+  color: var(--app-text-color, #334155);
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: 32px;
+}
+.filterSelect:hover {
+  border-color: #cbd5e1;
+}
+.filterSelect:focus {
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--app-sidenav-border, #f1f5f9);
+  border-radius: 12px;
+  background-color: var(--app-card-color, #ffffff);
+}
+
+.jobTitleCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.jobTitleCell__name {
+  font-weight: 600;
+  color: var(--app-text-color, #0f172a);
+  font-size: 0.725rem;
+}
+.jobTitleCell__id {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.deptCell {
+  color: var(--app-text-color, #334155);
+}
+
+.weight600 {
+  font-weight: 600 !important;
+}
+
+/* Status Badges */
+.statusBadge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  text-align: center;
+}
+
+.statusOverdue {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.statusAtRisk {
+  background-color: #fffbeb;
+  color: #d97706;
+}
+
+.statusOnTrack {
+  background-color: #ecfdf5;
+  color: #047857;
+}
+
+/* Change HR Button */
+.changeHrBtn {
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  background: var(--app-primary-color, #7c3aed);
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 6px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 12px;
+  font-weight: 600;
+}
+.changeHrBtn:hover {
+  border-color: var(--app-primary-color, #7c3aed);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.rowSelect {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border-radius: 6px;
+  font-size: 0.7rem;
+  background-color: #ffffff;
+  color: var(--app-text-color, #0f172a);
+  outline: none;
+  cursor: pointer;
+  height: 28px;
+  transition: all 0.2s ease;
+}
+.rowSelect:hover {
+  border-color: #cbd5e1;
+}
+.rowSelect:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+/* Modal popup styles removed as we now use the shared AssignHRPopup component */

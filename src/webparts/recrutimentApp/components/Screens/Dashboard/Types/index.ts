@@ -91,8 +91,9 @@ export type IHRLeadDashboard = {
   Duemonth: IDueMonth;
   OverDuePosition: number;
   PositionByStatus: IPositionStatus;
-  PositionSource:IPositionSource[];
+  PositionSource: IPositionSource[];
   positionDetails: IPositionDetails[];
+  departmentPositions?: IDepartmentPosition[];
 }
 
 export type IPositionSource = {
@@ -109,6 +110,7 @@ export type IPositionSource = {
 
 export type IPositionDetails = {
   id: number;
+  ItemID: number;
   JobCode: string;
   Jobtitle: string;
   department: string;
@@ -158,12 +160,12 @@ export interface IHRDashboardSummary {
   activeCandidates: number;
   activeCandidatesTrend: string;
   
-  tasksPending: number;
-  tasksPendingTrend: string;
-  tasksPendingTrendColor: "warning" | "danger" | "neutral";
+  tasksPending?: number;
+  tasksPendingTrend?: string;
+  tasksPendingTrendColor?: "warning" | "danger" | "neutral";
   
-  interviewsThisMonth: number;
-  interviewsThisMonthTrend: string;
+  interviewsThisMonth?: number;
+  interviewsThisMonthTrend?: string;
 }
 
 export interface IMonthlyTrackerItem {
@@ -188,11 +190,16 @@ export interface ICandidatePipelineStage {
 }
 
 export interface IHRTask {
-  id: string;
-  task: string;
-  priority: "High" | "Medium" | "Low";
-  dueDate: string;
-  status: "Pending" | "In Progress" | "Completed";
+ id: number;
+      JobCode: string;
+      Jobtitle: string;
+      department: string;
+      dateRequired: string;
+      headcount: string;
+      filledcount: string;
+      vacant: string;
+      dayaLeft: string;
+      Positionstatus: "Overdue" | "At Risk" | "On Track";
 }
 
 export interface IHRDashboardData {

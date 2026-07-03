@@ -1324,7 +1324,7 @@ var DashboardService = /** @class */ (function () {
     };
     DashboardService.prototype.GetHRLeadDashboard = function (EmailId) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var result, openPosition, recruitmentProcess, candidateDetails_1, OnTrackCount_1, atRiskCount_1, overduecountCount_1, dueLast7daysCount_1, currentMonthOpenings, TotalOpenPosition, RecruitmentInProgress, Onboarding, OnemDocumentStage, Duemonth, PositionByStatus, filterBasedHRLead, groupedHR, PositionSource, activeRecruitments, positionDetails, OverDuePosition, GridResult, error_13;
+            var result, openPosition, recruitmentProcess, candidateDetails_1, OnTrackCount_1, atRiskCount_1, overduecountCount_1, dueLast7daysCount_1, currentMonthOpenings, TotalOpenPosition, RecruitmentInProgress, Onboarding, OnemDocumentStage, Duemonth, PositionByStatus, filterBasedHRLead, groupedHR, PositionSource, activeRecruitments, positionDetails, OverDuePosition, onboardedCandidates_1, departmentMap_1, departmentPositions, GridResult, error_13;
             var _this = this;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
@@ -1497,6 +1497,7 @@ var DashboardService = /** @class */ (function () {
                                             hr = _h.sent();
                                             return [2 /*return*/, {
                                                     id: index + 1,
+                                                    ItemID: item.ID,
                                                     JobCode: (_b = (_a = item.JobCode) === null || _a === void 0 ? void 0 : _a.JobCode) !== null && _b !== void 0 ? _b : "",
                                                     Jobtitle: (_d = (_c = item.JobCode) === null || _c === void 0 ? void 0 : _c.JobTitleInEnglish) !== null && _d !== void 0 ? _d : "",
                                                     department: (_f = (_e = item.Department) === null || _e === void 0 ? void 0 : _e.DepartmentName) !== null && _f !== void 0 ? _f : "",
@@ -1515,236 +1516,7 @@ var DashboardService = /** @class */ (function () {
                     case 3:
                         positionDetails = _a.sent();
                         OverDuePosition = overduecountCount_1;
-                        GridResult = {
-                            TotalOpenPosition: TotalOpenPosition,
-                            RecruitmentInProgress: RecruitmentInProgress,
-                            Onboarding: Onboarding,
-                            OnemDocumentStage: OnemDocumentStage,
-                            Duemonth: Duemonth,
-                            OverDuePosition: OverDuePosition,
-                            PositionByStatus: PositionByStatus,
-                            PositionSource: PositionSource,
-                            positionDetails: positionDetails,
-                        };
-                        return [2 /*return*/, {
-                                data: GridResult,
-                                status: 200,
-                                message: "GetHRLeadDashboard fetched successfully",
-                            }];
-                    case 4:
-                        error_13 = _a.sent();
-                        console.error("Error fetching GetHRLeadDashboard:", error_13);
-                        return [2 /*return*/, {
-                                data: {},
-                                status: 500,
-                                message: "Error fetching dashboard data",
-                            }];
-                    case 5: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    DashboardService.prototype.GetHRDashboardData = function (EmailId) {
-        return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var recruitmentProcess, RecID, candidates_1, candidateId, Selectedcandidate, myTotalPositions, onboardedCandidates_1, myFilledPositions, myOpenPositions, activeCandidatesCount, SelectedcandidateCount, interviewsThisMonthCount, screeningCount, interviewCount, offerCount, verificationCount, taskItems, tasksPendingCount, summary, monthlyTracker, _loop_1, i, departmentMap_1, departmentPositions, pipelineStages, totalCandidates_1, candidatePipeline, error_14;
-            return tslib_1.__generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 6, , 7]);
-                        return [4 /*yield*/, spservice_1.default.SPReadItems({
-                                Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,
-                                Select: "\n          *,\n          JobCode/JobCode,\n          JobCode/JobTitleInEnglish,\n          JobCode/ID,\n          Department/DepartmentName,\n          Status/StatusDescription\n        ",
-                                Filter: [
-                                    { FilterKey: "AssignedHR", Operator: "eq", FilterValue: EmailId }
-                                ],
-                                Expand: "JobCode,Department,Status",
-                                Topcount: 5000,
-                                Orderby: "ID",
-                                Orderbydecorasc: true,
-                            })];
-                    case 1:
-                        recruitmentProcess = (_a.sent());
-                        if (!recruitmentProcess || recruitmentProcess.length === 0) {
-                            return [2 /*return*/, {
-                                    data: {
-                                        summary: {
-                                            myOpenPositions: 0,
-                                            myOpenPositionsTrend: "▼ 2 from last month",
-                                            myOpenPositionsTrendColor: "neutral",
-                                            myFilledPositions: 0,
-                                            myFilledPositionsTrend: "▲ 5 from last month",
-                                            myFilledPositionsTrendColor: "neutral",
-                                            myTotalPositions: 0,
-                                            myTotalPositionsTrend: "0% filled",
-                                            activeCandidates: 0,
-                                            activeCandidatesTrend: "In Process",
-                                            tasksPending: 0,
-                                            tasksPendingTrend: "Requires Action",
-                                            tasksPendingTrendColor: "neutral",
-                                            interviewsThisMonth: 0,
-                                            interviewsThisMonthTrend: "Scheduled"
-                                        },
-                                        monthlyTracker: [],
-                                        departmentPositions: [],
-                                        candidatePipeline: [],
-                                        tasks: []
-                                    },
-                                    status: 200,
-                                    message: "No assigned positions found for this HR User"
-                                }];
-                        }
-                        RecID = recruitmentProcess.map(function (item) { return item.ID; }).filter(Boolean);
-                        candidates_1 = [];
-                        if (!(RecID.length > 0)) return [3 /*break*/, 3];
-                        return [4 /*yield*/, spservice_1.default.SPReadItems({
-                                Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-                                Select: "*,StatusId",
-                                Filter: [
-                                    { FilterKey: "RecruitmentIDId", Operator: "in", FilterValue: RecID }
-                                ],
-                                Topcount: 5000,
-                            })];
-                    case 2:
-                        candidates_1 = (_a.sent());
-                        _a.label = 3;
-                    case 3:
-                        candidateId = candidates_1.map(function (item) { return item.JobCodeId; }).filter(Boolean);
-                        Selectedcandidate = [];
-                        if (!(candidateId.length > 0)) return [3 /*break*/, 5];
-                        return [4 /*yield*/, spservice_1.default.SPReadItems({
-                                Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
-                                Select: "*,StatusId",
-                                Filter: [
-                                    { FilterKey: "JobCodeId", Operator: "in", FilterValue: candidateId }
-                                ],
-                                Topcount: 5000,
-                            })];
-                    case 4:
-                        Selectedcandidate = (_a.sent());
-                        _a.label = 5;
-                    case 5:
-                        myTotalPositions = recruitmentProcess.reduce(function (sum, item) { return sum + (Number(item.NumberOfPersonNeeded) || 1); }, 0);
-                        onboardedCandidates_1 = candidates_1.filter(function (c) { return Number(c.StatusId) === Config_1.StatusId.Onboarded; });
-                        myFilledPositions = onboardedCandidates_1.length;
-                        myOpenPositions = Math.max(0, myTotalPositions - myFilledPositions);
-                        activeCandidatesCount = candidates_1.filter(function (c) {
-                            return Number(c.StatusId) !== Config_1.StatusId.Onboarded &&
-                                Number(c.StatusId) !== Config_1.StatusId.RejectedbyHOD &&
-                                Number(c.StatusId) !== Config_1.StatusId.CandidateRejectedbyHODLevel1 &&
-                                Number(c.StatusId) !== Config_1.StatusId.CandidateRejectedbyHODLevel2;
-                        }).length;
-                        SelectedcandidateCount = Selectedcandidate.filter(function (c) {
-                            return Number(c.StatusId) !== Config_1.StatusId.BackgroundCheckVerificationFailed &&
-                                Number(c.StatusId) !== Config_1.StatusId.CandidateRejectfromRESIProcess &&
-                                Number(c.StatusId) !== Config_1.StatusId.FailedmedicalscreeningUnfit &&
-                                Number(c.StatusId) !== Config_1.StatusId.offerdecline;
-                        }).length;
-                        interviewsThisMonthCount = candidates_1.filter(function (c) {
-                            return [
-                                Config_1.StatusId.InterviewInProcess,
-                                Config_1.StatusId.InterviewLevel2InProgress,
-                                Config_1.StatusId.InterviewLevel1InProgress
-                            ].includes(Number(c.StatusId));
-                        }).length;
-                        screeningCount = candidates_1.filter(function (c) {
-                            return [Config_1.StatusId.HRLeadtoAssignRecruitmentHR, Config_1.StatusId.PendingAssignHR, Config_1.StatusId.PendingwithLineManagereviewAdv, Config_1.StatusId.Pending].includes(Number(c.StatusId));
-                        }).length;
-                        interviewCount = candidates_1.filter(function (c) {
-                            return [Config_1.StatusId.InterviewScheduled, Config_1.StatusId.InterviewInProcess, Config_1.StatusId.InterviewScheduledforLevel2, Config_1.StatusId.InterviewLevel2InProgress, Config_1.StatusId.InterviewLevel1InProgress].includes(Number(c.StatusId));
-                        }).length;
-                        offerCount = candidates_1.filter(function (c) {
-                            return [Config_1.StatusId.PendingHROfferInitiate, Config_1.StatusId.PendingCandidateOfferLetterUpload, Config_1.StatusId.PendingHREmploymentContractVerification].includes(Number(c.StatusId));
-                        }).length;
-                        verificationCount = candidates_1.filter(function (c) {
-                            return [Config_1.StatusId.RESProcessInitiated, Config_1.StatusId.PendingHRBGVInitiation, Config_1.StatusId.PendingwithTAforMedicalScreening].includes(Number(c.StatusId));
-                        }).length;
-                        taskItems = [];
-                        if (screeningCount > 0) {
-                            taskItems.push({
-                                id: "T-01",
-                                task: "Review Applications",
-                                priority: "High",
-                                dueDate: (0, moment_1.default)().add(2, "days").format("DD-MM-YYYY"),
-                                status: "Pending"
-                            });
-                        }
-                        if (interviewCount > 0) {
-                            taskItems.push({
-                                id: "T-02",
-                                task: "Interview Schedule",
-                                priority: "Medium",
-                                dueDate: (0, moment_1.default)().add(3, "days").format("DD-MM-YYYY"),
-                                status: "In Progress"
-                            });
-                        }
-                        if (offerCount > 0) {
-                            taskItems.push({
-                                id: "T-03",
-                                task: "Offer Preparation",
-                                priority: "High",
-                                dueDate: (0, moment_1.default)().add(5, "days").format("DD-MM-YYYY"),
-                                status: "Pending"
-                            });
-                        }
-                        if (verificationCount > 0) {
-                            taskItems.push({
-                                id: "T-04",
-                                task: "Document Verification",
-                                priority: "Low",
-                                dueDate: (0, moment_1.default)().add(7, "days").format("DD-MM-YYYY"),
-                                status: "Pending"
-                            });
-                        }
-                        if (taskItems.length === 0) {
-                            taskItems.push({
-                                id: "T-DEFAULT",
-                                task: "General Recruitment Clean-up",
-                                priority: "Low",
-                                dueDate: (0, moment_1.default)().add(1, "day").format("DD-MM-YYYY"),
-                                status: "Completed"
-                            });
-                        }
-                        tasksPendingCount = taskItems.filter(function (t) { return t.status === "Pending"; }).length;
-                        summary = {
-                            myOpenPositions: myOpenPositions,
-                            myOpenPositionsTrend: "▼ 2 from last month",
-                            myOpenPositionsTrendColor: "success",
-                            myFilledPositions: myFilledPositions,
-                            myFilledPositionsTrend: "▲ 5 from last month",
-                            myFilledPositionsTrendColor: "success",
-                            myTotalPositions: myTotalPositions,
-                            myTotalPositionsTrend: "".concat(myTotalPositions ? Math.round((myFilledPositions / myTotalPositions) * 100) : 0, "% filled"),
-                            activeCandidates: activeCandidatesCount,
-                            activeCandidatesTrend: "In Process",
-                            tasksPending: tasksPendingCount,
-                            tasksPendingTrend: tasksPendingCount > 0 ? "Requires Action" : "Up to Date",
-                            tasksPendingTrendColor: tasksPendingCount > 0 ? "danger" : "neutral",
-                            interviewsThisMonth: interviewsThisMonthCount,
-                            interviewsThisMonthTrend: "Scheduled"
-                        };
-                        monthlyTracker = [];
-                        _loop_1 = function (i) {
-                            var targetMonth = (0, moment_1.default)().subtract(i, "months");
-                            var monthLabel = targetMonth.format("MMM YYYY");
-                            // Total positions created up to targetMonth
-                            var totalInMonth = recruitmentProcess.filter(function (item) {
-                                return item.Created && (0, moment_1.default)(item.Created).isSameOrBefore(targetMonth, "month");
-                            }).reduce(function (sum, item) { return sum + (Number(item.NumberOfPersonNeeded) || 1); }, 0);
-                            // Filled positions (onboarded up to targetMonth)
-                            var filledInMonth = onboardedCandidates_1.filter(function (c) {
-                                return c.Modified && (0, moment_1.default)(c.Modified).isSameOrBefore(targetMonth, "month");
-                            }).length;
-                            var openInMonth = Math.max(0, totalInMonth - filledInMonth);
-                            monthlyTracker.push({
-                                month: monthLabel,
-                                totalPositions: totalInMonth,
-                                positionsFilled: filledInMonth,
-                                openPositions: openInMonth
-                            });
-                        };
-                        for (i = 5; i >= 0; i--) {
-                            _loop_1(i);
-                        }
+                        onboardedCandidates_1 = recruitmentProcess.filter(function (c) { return Number(c.StatusId) === Config_1.StatusId.Onboarded; });
                         departmentMap_1 = new Map();
                         recruitmentProcess.forEach(function (item) {
                             var _a;
@@ -1771,24 +1543,389 @@ var DashboardService = /** @class */ (function () {
                                 filledPercentage: filledPercentage
                             };
                         });
+                        GridResult = {
+                            TotalOpenPosition: TotalOpenPosition,
+                            RecruitmentInProgress: RecruitmentInProgress,
+                            Onboarding: Onboarding,
+                            OnemDocumentStage: OnemDocumentStage,
+                            Duemonth: Duemonth,
+                            OverDuePosition: OverDuePosition,
+                            PositionByStatus: PositionByStatus,
+                            PositionSource: PositionSource,
+                            positionDetails: positionDetails,
+                            departmentPositions: departmentPositions
+                        };
+                        return [2 /*return*/, {
+                                data: GridResult,
+                                status: 200,
+                                message: "GetHRLeadDashboard fetched successfully",
+                            }];
+                    case 4:
+                        error_13 = _a.sent();
+                        console.error("Error fetching GetHRLeadDashboard:", error_13);
+                        return [2 /*return*/, {
+                                data: {},
+                                status: 500,
+                                message: "Error fetching dashboard data",
+                            }];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    DashboardService.prototype.GetHRDashboardData = function (EmailId) {
+        var _a;
+        return tslib_1.__awaiter(this, void 0, void 0, function () {
+            var recruitmentProcess, RecID, candidates, candidateId, Selectedcandidate_1, myTotalPositions, onboardedCandidates_2, myFilledPositions, myOpenPositions, activeCandidatesCount, SelectedcandidateCount, activeCandidate, interviewsThisMonthCount, summary, monthlyTracker, _loop_1, i, departmentMap_2, departmentPositions, allJobCodeIds, portalItems, jobCodeIdToUniqueKey, ScreeningCount, AppliedCount, params, response, data, InterviewCount, BackgroundCheckCount, ResiProcessCount, MedicalScreeningCount, OfferCount, EmploymentContractCount, OnboardingInProcessCount, OnboardingCompletedCount, pipelineStages, totalCandidates_1, candidatePipeline, activeRecruitments, taskItems, error_14;
+            var _this = this;
+            return tslib_1.__generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 11, , 12]);
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,
+                                Select: "\n          *,\n          JobCode/JobCode,\n          JobCode/JobTitleInEnglish,\n          JobCode/ID,\n          Department/DepartmentName,\n          Status/StatusDescription\n        ",
+                                Filter: [
+                                    { FilterKey: "AssignedHR", Operator: "eq", FilterValue: EmailId }
+                                ],
+                                Expand: "JobCode,Department,Status",
+                                Topcount: 5000,
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            })];
+                    case 1:
+                        recruitmentProcess = (_b.sent());
+                        if (!recruitmentProcess || recruitmentProcess.length === 0) {
+                            return [2 /*return*/, {
+                                    data: {
+                                        summary: {
+                                            myOpenPositions: 0,
+                                            myOpenPositionsTrend: "▼ 2 from last month",
+                                            myOpenPositionsTrendColor: "neutral",
+                                            myFilledPositions: 0,
+                                            myFilledPositionsTrend: "▲ 5 from last month",
+                                            myFilledPositionsTrendColor: "neutral",
+                                            myTotalPositions: 0,
+                                            myTotalPositionsTrend: "0% filled",
+                                            activeCandidates: 0,
+                                            activeCandidatesTrend: "In Process",
+                                            interviewsThisMonth: 0,
+                                            interviewsThisMonthTrend: "Scheduled"
+                                        },
+                                        monthlyTracker: [],
+                                        departmentPositions: [],
+                                        candidatePipeline: [],
+                                        tasks: []
+                                    },
+                                    status: 200,
+                                    message: "No assigned positions found for this HR User"
+                                }];
+                        }
+                        RecID = recruitmentProcess.map(function (item) { return item.ID; }).filter(Boolean);
+                        candidates = [];
+                        if (!(RecID.length > 0)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                                Select: "*,StatusId",
+                                Filter: [
+                                    { FilterKey: "RecruitmentIDId", Operator: "in", FilterValue: RecID }
+                                ],
+                                Topcount: 5000,
+                            })];
+                    case 2:
+                        candidates = (_b.sent());
+                        _b.label = 3;
+                    case 3:
+                        candidateId = candidates.map(function (item) { return item.JobCodeId; }).filter(Boolean);
+                        Selectedcandidate_1 = [];
+                        if (!(candidateId.length > 0)) return [3 /*break*/, 5];
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.HRMSRecruitmentCandidatePersonalDetails,
+                                Select: "*,StatusId",
+                                Filter: [
+                                    { FilterKey: "JobCodeId", Operator: "in", FilterValue: candidateId }
+                                ],
+                                Topcount: 5000,
+                            })];
+                    case 4:
+                        Selectedcandidate_1 = (_b.sent());
+                        _b.label = 5;
+                    case 5:
+                        myTotalPositions = recruitmentProcess.length;
+                        onboardedCandidates_2 = recruitmentProcess.filter(function (c) { return Number(c.StatusId) === Config_1.StatusId.Onboarded; });
+                        myFilledPositions = onboardedCandidates_2.length;
+                        myOpenPositions = Math.max(0, myTotalPositions - myFilledPositions);
+                        activeCandidatesCount = candidates.filter(function (c) {
+                            return Number(c.StatusId) !== Config_1.StatusId.Onboarded &&
+                                Number(c.StatusId) !== Config_1.StatusId.RejectedbyHOD &&
+                                Number(c.StatusId) !== Config_1.StatusId.CandidateRejectedbyHODLevel1 &&
+                                Number(c.StatusId) !== Config_1.StatusId.CandidateRejectedbyHODLevel2;
+                        }).length;
+                        SelectedcandidateCount = Selectedcandidate_1.filter(function (c) {
+                            return Number(c.StatusId) !== Config_1.StatusId.BackgroundCheckVerificationFailed &&
+                                Number(c.StatusId) !== Config_1.StatusId.CandidateRejectfromRESIProcess &&
+                                Number(c.StatusId) !== Config_1.StatusId.FailedmedicalscreeningUnfit &&
+                                Number(c.StatusId) !== Config_1.StatusId.offerdecline &&
+                                Number(c.StatusId) !== Config_1.StatusId.EmploymentContractDeclined;
+                        }).length;
+                        activeCandidate = activeCandidatesCount + SelectedcandidateCount;
+                        interviewsThisMonthCount = candidates.filter(function (c) {
+                            var isCurrentMonth = (c.InterviewDate && (0, moment_1.default)(c.InterviewDate).isSame((0, moment_1.default)(), "month")) ||
+                                (c.InterviewDateLevel2 && (0, moment_1.default)(c.InterviewDateLevel2).isSame((0, moment_1.default)(), "month"));
+                            var isValidStatus = [
+                                Config_1.StatusId.InterviewInProcess,
+                                Config_1.StatusId.InterviewLevel1InProgress,
+                                Config_1.StatusId.InterviewLevel2InProgress,
+                            ].includes(Number(c.StatusId));
+                            return isCurrentMonth && isValidStatus;
+                        }).length;
+                        summary = {
+                            myOpenPositions: myOpenPositions,
+                            myOpenPositionsTrend: "".concat(myOpenPositions ? Math.round((myOpenPositions / myFilledPositions) * 100) : 0, "% open"),
+                            myOpenPositionsTrendColor: "success",
+                            myFilledPositions: myFilledPositions,
+                            myFilledPositionsTrend: "".concat(myFilledPositions ? Math.round((myFilledPositions / myTotalPositions) * 100) : 0, "% filled"),
+                            myFilledPositionsTrendColor: "success",
+                            myTotalPositions: myTotalPositions,
+                            myTotalPositionsTrend: "".concat(myTotalPositions ? Math.round((myFilledPositions / myTotalPositions) * 100) : 0, "% total filled"),
+                            activeCandidates: activeCandidate,
+                            activeCandidatesTrend: "In Process",
+                            interviewsThisMonth: interviewsThisMonthCount,
+                            interviewsThisMonthTrend: "Scheduled"
+                        };
+                        monthlyTracker = [];
+                        _loop_1 = function (i) {
+                            var targetMonth = (0, moment_1.default)().subtract(i, "months");
+                            var monthLabel = targetMonth.format("MMM YYYY");
+                            var totalInMonth = recruitmentProcess.filter(function (item) {
+                                return item.Created && (0, moment_1.default)(item.DateRequried).isSameOrBefore(targetMonth, "month");
+                            }).length;
+                            // const filledInMonth = onboardedCandidates.filter((c: any) => 
+                            //   c.Modified && moment(c.Modified).isSameOrBefore(targetMonth, "month")
+                            // ).length;
+                            var filledInMonth = recruitmentProcess.filter(function (c) {
+                                return c.statusId === Config_1.StatusId.Onboarded && c.Modified && (0, moment_1.default)(c.Modified).isSameOrBefore(targetMonth, "month");
+                            }).length;
+                            var openInMonth = Math.max(0, totalInMonth - filledInMonth);
+                            monthlyTracker.push({
+                                month: monthLabel,
+                                totalPositions: totalInMonth,
+                                positionsFilled: filledInMonth,
+                                openPositions: openInMonth
+                            });
+                        };
+                        for (i = 5; i >= 0; i--) {
+                            _loop_1(i);
+                        }
+                        departmentMap_2 = new Map();
+                        recruitmentProcess.forEach(function (item) {
+                            var _a;
+                            var deptName = ((_a = item.Department) === null || _a === void 0 ? void 0 : _a.DepartmentName) || "General";
+                            if (!departmentMap_2.has(deptName)) {
+                                departmentMap_2.set(deptName, { total: 0, filled: 0 });
+                            }
+                            var currentDept = departmentMap_2.get(deptName);
+                            currentDept.total += (Number(item.NumberOfPersonNeeded) || 1);
+                            var deptFilled = onboardedCandidates_2.filter(function (c) { return c.JobCodeId === item.JobCodeId; }).length;
+                            currentDept.filled += deptFilled;
+                        });
+                        departmentPositions = Array.from(departmentMap_2.entries()).map(function (_a) {
+                            var deptName = _a[0], counts = _a[1];
+                            var total = Number(counts.total);
+                            var filled = Number(counts.filled);
+                            var open = Math.max(0, total - filled);
+                            var filledPercentage = total ? Math.round((filled / total) * 100 * 10) / 10 : 0;
+                            return {
+                                department: deptName,
+                                total: total,
+                                filled: filled,
+                                open: open,
+                                filledPercentage: filledPercentage
+                            };
+                        });
+                        allJobCodeIds = recruitmentProcess.map(function (item) { return item.JobCodeId; }).filter(Boolean);
+                        portalItems = [];
+                        if (!(allJobCodeIds.length > 0)) return [3 /*break*/, 7];
+                        return [4 /*yield*/, spservice_1.default.SPReadItems({
+                                Listname: Config_1.ListNames.RecruitAppCareerPortalIntegration,
+                                Select: "*,JobCode/JobCode",
+                                Filter: [
+                                    { FilterKey: "JobCodeId", Operator: "in", FilterValue: allJobCodeIds },
+                                ],
+                                FilterCondition: "and",
+                                Expand: "JobCode",
+                                Topcount: 5000,
+                                Orderby: "ID",
+                                Orderbydecorasc: true,
+                            })];
+                    case 6:
+                        portalItems = (_b.sent());
+                        _b.label = 7;
+                    case 7:
+                        jobCodeIdToUniqueKey = portalItems.map(function (item) { return item.JobUniqueKey; }).filter(Boolean);
+                        ScreeningCount = 0;
+                        AppliedCount = 0;
+                        if (!(jobCodeIdToUniqueKey.length > 0)) return [3 /*break*/, 9];
+                        params = {
+                            jobCodes: jobCodeIdToUniqueKey,
+                            workflowStatus: [
+                                Config_1.workflowStatusApi.HRPending,
+                                Config_1.workflowStatusApi.LineManagerL1Pending,
+                                Config_1.workflowStatusApi.LineManagerL2Pending,
+                            ],
+                        };
+                        return [4 /*yield*/, CareerPortalAPI_1.getProfileData.GetJobAppliedCount(params)];
+                    case 8:
+                        response = _b.sent();
+                        data = Array.isArray((_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.data) ? response.data.data : [];
+                        AppliedCount = data.reduce(function (total, item) {
+                            var _a, _b;
+                            return ((_a = item.workflowStatus) === null || _a === void 0 ? void 0 : _a.includes(Config_1.workflowStatusApi.HRPending))
+                                ? total + ((_b = item.count) !== null && _b !== void 0 ? _b : 0)
+                                : total;
+                        }, 0);
+                        ScreeningCount = data.reduce(function (total, item) {
+                            var _a, _b;
+                            return ((_a = item.workflowStatus) === null || _a === void 0 ? void 0 : _a.some(function (status) { return [
+                                Config_1.workflowStatusApi.LineManagerL1Pending,
+                                Config_1.workflowStatusApi.LineManagerL2Pending,
+                                Config_1.workflowStatusApi.LineManagerLevel1OnHold,
+                                Config_1.workflowStatusApi.LineManagerLevel2OnHold,
+                            ].includes(status); }))
+                                ? total + ((_b = item.count) !== null && _b !== void 0 ? _b : 0)
+                                : total;
+                        }, 0);
+                        console.log("Applied Count:", AppliedCount);
+                        console.log("Screen Count:", ScreeningCount);
+                        _b.label = 9;
+                    case 9:
+                        InterviewCount = candidates.filter(function (item) {
+                            return [
+                                Config_1.StatusId.InterviewScheduled,
+                                Config_1.StatusId.InterviewInProcess,
+                                Config_1.StatusId.InterviewScheduledforLevel2,
+                                Config_1.StatusId.InterviewLevel2InProgress,
+                                Config_1.StatusId.InterviewLevel1InProgress
+                            ].includes(Number(item.StatusId));
+                        }).length;
+                        BackgroundCheckCount = Selectedcandidate_1.filter(function (item) {
+                            return [
+                                Config_1.StatusId.PendingHRBGVInitiation,
+                                Config_1.StatusId.PendingBGdocuploadedbycandidate,
+                                Config_1.StatusId.PendingHRReviewBGCheck
+                            ].includes(Number(item.StatusId));
+                        }).length;
+                        ResiProcessCount = Selectedcandidate_1.filter(function (item) {
+                            return [
+                                Config_1.StatusId.RESIProcessInitiatedforDRC,
+                                Config_1.StatusId.RESIProcessInitiatedforExpatriate,
+                                Config_1.StatusId.RESProcessInitiated
+                            ].includes(Number(item.StatusId));
+                        }).length;
+                        MedicalScreeningCount = Selectedcandidate_1.filter(function (item) {
+                            return [
+                                Config_1.StatusId.PendingwithTAforMedicalScreening,
+                            ].includes(Number(item.StatusId));
+                        }).length;
+                        OfferCount = Selectedcandidate_1.filter(function (item) {
+                            return [
+                                Config_1.StatusId.PendingHROfferInitiate,
+                                Config_1.StatusId.PendingCandidateOfferLetterUpload,
+                                Config_1.StatusId.PendingHRReviewOfferWorkPermitInit,
+                                Config_1.StatusId.PendingLabourHireOfferRelease,
+                                Config_1.StatusId.PendingHROfferReview,
+                                Config_1.StatusId.HROfferLetterProgress
+                            ].includes(Number(item.StatusId));
+                        }).length;
+                        EmploymentContractCount = Selectedcandidate_1.filter(function (item) {
+                            return [
+                                Config_1.StatusId.PendingCandidateEmploymentContractUpload,
+                                Config_1.StatusId.PendingHREmploymentContractVerification,
+                                Config_1.StatusId.PendingHREmploymentContractInit,
+                                Config_1.StatusId.PendingLHECRelease,
+                                Config_1.StatusId.PendingHREmploymentContractReview,
+                            ].includes(Number(item.StatusId));
+                        }).length;
+                        OnboardingInProcessCount = Selectedcandidate_1.filter(function (item) {
+                            return [
+                                Config_1.StatusId.onboardingInProcess,
+                                Config_1.StatusId.OnboardingProcessinitiatedforDRC,
+                                Config_1.StatusId.OnboardingProcessinitiatedforExpat,
+                            ].includes(Number(item.StatusId));
+                        }).length;
+                        OnboardingCompletedCount = recruitmentProcess.filter(function (item) {
+                            return [
+                                Config_1.StatusId.Onboarded,
+                            ].includes(Number(item.StatusId));
+                        }).length;
                         pipelineStages = [
-                            { name: "Applied", statusIds: [Config_1.StatusId.HRLeadtoAssignRecruitmentHR, Config_1.StatusId.PendingAssignHR] },
-                            { name: "Screening", statusIds: [Config_1.StatusId.PendingwithLineManagereviewAdv, Config_1.StatusId.Pending] },
-                            { name: "Interview", statusIds: [Config_1.StatusId.InterviewScheduled, Config_1.StatusId.InterviewInProcess, Config_1.StatusId.InterviewScheduledforLevel2, Config_1.StatusId.InterviewLevel2InProgress, Config_1.StatusId.InterviewLevel1InProgress] },
-                            { name: "Assessment", statusIds: [Config_1.StatusId.RESProcessInitiated, Config_1.StatusId.PendingHRBGVInitiation, Config_1.StatusId.PendingwithTAforMedicalScreening] },
-                            { name: "Offer", statusIds: [Config_1.StatusId.PendingHROfferInitiate, Config_1.StatusId.PendingCandidateOfferLetterUpload, Config_1.StatusId.PendingHREmploymentContractVerification] },
-                            { name: "Hired", statusIds: [Config_1.StatusId.Onboarded] }
+                            { name: "Applied", count: AppliedCount },
+                            { name: "Screening", count: ScreeningCount },
+                            { name: "Interview", count: InterviewCount },
+                            { name: "Background Checks", count: BackgroundCheckCount },
+                            { name: "RESI Process", count: ResiProcessCount },
+                            { name: "Medical Screening", count: MedicalScreeningCount },
+                            { name: "Offer & Employment Contract", count: OfferCount + EmploymentContractCount },
+                            { name: "Onboarding In Process", count: OnboardingInProcessCount },
+                            { name: "Onboarding", count: OnboardingCompletedCount }
                         ];
-                        totalCandidates_1 = candidates_1.length;
+                        totalCandidates_1 = pipelineStages.reduce(function (sum, stage) { return sum + stage.count; }, 0);
                         candidatePipeline = pipelineStages.map(function (stage) {
-                            var count = candidates_1.filter(function (c) { return stage.statusIds.includes(Number(c.StatusId)); }).length;
-                            var percentage = totalCandidates_1 ? Math.round((count / totalCandidates_1) * 100 * 10) / 10 : 0;
+                            var percentage = totalCandidates_1 ? Math.round((stage.count / totalCandidates_1) * 100 * 10) / 10 : 0;
                             return {
                                 stage: stage.name,
-                                count: count,
+                                count: stage.count,
                                 percentage: percentage
                             };
                         });
+                        activeRecruitments = recruitmentProcess.filter(function (item) { return Number(item.StatusId) !== Config_1.StatusId.Onboarded; });
+                        return [4 /*yield*/, Promise.all(activeRecruitments.map(function (item, index) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+                                var dateValue, dayaLeft, target, diffMs, diffDays, onboardedCandidatesCount, vacant, Positionstatus, target, diff;
+                                var _a, _b, _c, _d, _e, _f;
+                                return tslib_1.__generator(this, function (_g) {
+                                    dateValue = item.DateRequried;
+                                    dayaLeft = "0";
+                                    if (dateValue) {
+                                        target = new Date(dateValue);
+                                        if (!isNaN(target.getTime())) {
+                                            diffMs = target.getTime() - DashboardConfig_1.currentDate.getTime();
+                                            diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+                                            dayaLeft = diffDays > 0 ? "".concat(diffDays) : "0";
+                                        }
+                                    }
+                                    onboardedCandidatesCount = Selectedcandidate_1.filter(function (c) {
+                                        return Number(c.StatusId) === Config_1.StatusId.Onboarded;
+                                    }).length;
+                                    vacant = String(Math.max(0, (item.NumberOfPersonNeeded) - onboardedCandidatesCount));
+                                    Positionstatus = "On Track";
+                                    if (dateValue) {
+                                        target = new Date(dateValue);
+                                        if (!isNaN(target.getTime())) {
+                                            diff = (0, DashboardConfig_1.getMonthDifference)(DashboardConfig_1.currentDate, target);
+                                            if (diff < 0)
+                                                Positionstatus = "Overdue";
+                                            else if (diff <= 2)
+                                                Positionstatus = "At Risk";
+                                        }
+                                    }
+                                    return [2 /*return*/, {
+                                            id: index + 1,
+                                            JobCode: (_b = (_a = item.JobCode) === null || _a === void 0 ? void 0 : _a.JobCode) !== null && _b !== void 0 ? _b : "",
+                                            Jobtitle: (_d = (_c = item.JobCode) === null || _c === void 0 ? void 0 : _c.JobTitleInEnglish) !== null && _d !== void 0 ? _d : "",
+                                            department: (_f = (_e = item.Department) === null || _e === void 0 ? void 0 : _e.DepartmentName) !== null && _f !== void 0 ? _f : "",
+                                            dateRequired: dateValue
+                                                ? new Date(dateValue).toLocaleDateString("en-GB")
+                                                : "",
+                                            headcount: String(item.NumberOfPersonNeeded || 1),
+                                            filledcount: String(onboardedCandidatesCount),
+                                            vacant: vacant,
+                                            dayaLeft: dayaLeft,
+                                            Positionstatus: Positionstatus,
+                                        }];
+                                });
+                            }); }))];
+                    case 10:
+                        taskItems = _b.sent();
                         return [2 /*return*/, {
                                 data: {
                                     summary: summary,
@@ -1800,15 +1937,15 @@ var DashboardService = /** @class */ (function () {
                                 status: 200,
                                 message: "HR Dashboard data retrieved and aggregated successfully"
                             }];
-                    case 6:
-                        error_14 = _a.sent();
+                    case 11:
+                        error_14 = _b.sent();
                         console.error("GetHRDashboardData Error:", error_14);
                         return [2 /*return*/, {
                                 data: {},
                                 status: 500,
                                 message: "Error retrieving HR Dashboard data"
                             }];
-                    case 7: return [2 /*return*/];
+                    case 12: return [2 /*return*/];
                 }
             });
         });

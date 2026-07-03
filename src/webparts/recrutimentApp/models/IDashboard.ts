@@ -37,6 +37,7 @@ export interface BatchQuery {
 export interface ExternalApiCountItem {
     jobCode: string;
     count: number;
+    workflowStatus: string[];
 }
 
 export interface ExternalApiParams {

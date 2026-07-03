@@ -1,0 +1,93 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
+.chartCard {
+  background-color: var(--app-card-color, #ffffff);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--app-text-color, #0f172a);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.chartContainer {
+  flex: 1;
+  width: 100%;
+  min-height: 220px;
+}
+
+.chartPlaceholder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  user-select: none;
+}
+
+.pageArrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.2s;
+  line-height: 1;
+}
+.pageArrow:hover:not(:disabled) {
+  color: var(--app-button-color, #2563eb);
+}
+.pageArrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.pageNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: transparent;
+  color: var(--app-text-color, #334155);
+}
+.pageNumber:hover:not(.active) {
+  background-color: var(--app-sidenav-border, #f1f5f9);
+  color: var(--app-text-color, #0f172a);
+}
+.pageNumber.active {
+  background-color: var(--app-button-color, #2563eb);
+  color: #ffffff;
+  cursor: default;
+}

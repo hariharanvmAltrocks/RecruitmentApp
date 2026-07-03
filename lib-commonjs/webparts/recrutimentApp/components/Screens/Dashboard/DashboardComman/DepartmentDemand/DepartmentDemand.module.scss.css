@@ -1,0 +1,169 @@
+/*var(--app-text-color, );*/
+/*var(--app-text-color, #94a3b8);*/
+.deptCard {
+  background-color: var(--app-card-color, #ffffff);
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border-radius: 16px;
+  padding: clamp(14px, 1.5vw, 20px);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.deptCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+}
+.deptCard__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.deptCard__titleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.deptCard__titleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.deptCard__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--app-button-color, #2563eb);
+}
+.deptCard__title {
+  font-size: clamp(0.95rem, 1.2vw, 1.125rem);
+  font-weight: 700;
+  color: var(--app-text-color, #0f172a);
+  margin: 0;
+}
+.deptCard__subtitle {
+  font-size: clamp(0.7rem, 0.85vw, 0.775rem);
+  color: #94a3b8;
+  margin: 0;
+}
+.deptCard__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.deptCard__footer {
+  border-top: 1px solid var(--app-sidenav-border, #f1f5f9);
+  padding-top: 10px;
+  margin-top: 12px;
+}
+.deptCard__total {
+  font-size: clamp(0.725rem, 0.85vw, 0.8125rem);
+  font-weight: 700;
+  color: #64748b;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+.pagination__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--app-sidenav-border, #e2e8f0);
+  border-radius: 8px;
+  background-color: var(--app-card-color, #ffffff);
+  color: var(--app-text-color, #334155);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.pagination__btn--active:hover {
+  background-color: var(--app-secondary-color, #fdfdfd);
+  border-color: #cbd5e1;
+}
+.pagination__btn--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.pagination__info {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--app-text-color, #334155);
+}
+
+.rankedList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rankedRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rankedRow__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: clamp(0.725rem, 0.85vw, 0.8125rem);
+}
+.rankedRow__deptWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rankedRow__icon {
+  color: #94a3b8;
+}
+.rankedRow__name {
+  font-weight: 600;
+  color: var(--app-text-color, #0f172a);
+}
+.rankedRow__stats {
+  font-weight: 700;
+  color: var(--app-text-color, #334155);
+}
+.rankedRow__progressBg {
+  height: 6px;
+  background-color: var(--app-sidenav-border, #f1f5f9);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.rankedRow__progressFill {
+  height: 100%;
+  border-radius: 3px;
+  max-width: 100%;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 0;
+  text-align: center;
+}
+.emptyState__icon {
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+.emptyState__title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--app-text-color, #0f172a);
+  margin: 0 0 2px 0;
+}
+.emptyState__subtitle {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin: 0;
+}
