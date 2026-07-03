@@ -9,7 +9,6 @@ var RoleContext_1 = require("../../../utilities/hooks/RoleContext");
 var loading_1 = tslib_1.__importDefault(require("../../Comman/Loading/loading"));
 var HRLeadDashboard_1 = tslib_1.__importDefault(require("./RoleBased/HRLead/HRLeadDashboard"));
 var HRDashboard_1 = tslib_1.__importDefault(require("./RoleBased/HR/HRDashboard"));
-var DepartmentManagerDashboard_1 = tslib_1.__importDefault(require("./RoleBased/DepartmentManager/DepartmentManagerDashboard"));
 var LineManagerDashboard_1 = tslib_1.__importDefault(require("./RoleBased/LineManager/LineManagerDashboard"));
 var Config_1 = require("../../../utilities/Config");
 var ConditionConfig_1 = require("../../../utilities/ConditionConfig");
@@ -89,7 +88,7 @@ var Dashboard = function (props) {
             case Config_1.RoleID.RecruitmentHR:
                 return (react_1.default.createElement(HRDashboard_1.default, { userName: userName, metrics: MatricData, onCardClick: function (metric) { return onMetricChange(metric); }, loading: loading, handleRefresh: handleRefresh, active: activeMetric }));
             case Config_1.RoleID.HOD:
-                return (react_1.default.createElement(DepartmentManagerDashboard_1.default, { userName: userName }));
+                return (react_1.default.createElement(LineManagerDashboard_1.default, { userName: userName }));
             case Config_1.RoleID.LineManager:
                 return (react_1.default.createElement(LineManagerDashboard_1.default, { userName: userName }));
             default:

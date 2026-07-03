@@ -6,14 +6,14 @@ var react_1 = tslib_1.__importDefault(require("react"));
 var Lucide = tslib_1.__importStar(require("lucide-react"));
 var HRDashboard_module_scss_1 = tslib_1.__importDefault(require("./HRDashboard.module.scss"));
 var useHRDashboard_1 = tslib_1.__importDefault(require("../../Hooks/useHRDashboard"));
-var HRSummaryCards_1 = tslib_1.__importDefault(require("../../Shared/HRSummaryCards"));
 var PositionTrackerChart_1 = tslib_1.__importDefault(require("../../Charts/PositionTrackerChart"));
 var DepartmentChart_1 = tslib_1.__importDefault(require("../../Charts/DepartmentChart"));
 var CandidatePipelineChart_1 = tslib_1.__importDefault(require("../../Charts/CandidatePipelineChart"));
-var TaskTable_1 = tslib_1.__importDefault(require("../../Tables/TaskTable"));
 var framer_motion_1 = require("framer-motion");
 var matric_1 = tslib_1.__importDefault(require("../../../../Comman/MatricBox/matric"));
 var Dashboard_1 = require("../../Dashboard");
+var HRSummaryCards_1 = tslib_1.__importDefault(require("../../DashboardComman/HRSummaryCards"));
+var TaskTable_1 = tslib_1.__importDefault(require("../../DashboardComman/Tables/TaskTable"));
 var HRDashboard = function (_a) {
     var userName = _a.userName, metrics = _a.metrics, onCardClick = _a.onCardClick, loading = _a.loading, handleRefresh = _a.handleRefresh, active = _a.active;
     var _b = (0, useHRDashboard_1.default)(), data = _b.data, HRLoading = _b.loading, error = _b.error, hrRefresh = _b.refresh;

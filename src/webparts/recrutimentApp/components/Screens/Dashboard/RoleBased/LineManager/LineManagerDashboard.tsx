@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import useContractAllocation from "../../Hooks/useContractAllocation";
 import styles from "../../Dashboard.module.scss";
 import * as Lucide from "lucide-react";
 

@@ -6,7 +6,6 @@ import Loading from "../../Comman/Loading/loading";
 
 import HRLeadDashboard from "./RoleBased/HRLead/HRLeadDashboard";
 import HRDashboard from "./RoleBased/HR/HRDashboard";
-import DepartmentManagerDashboard from "./RoleBased/DepartmentManager/DepartmentManagerDashboard";
 import LineManagerDashboard from "./RoleBased/LineManager/LineManagerDashboard";
 
 import NotificationCenter from "./Common/NotificationCenter";
@@ -132,7 +131,7 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
         );
       case RoleID.HOD:
         return (
-          <DepartmentManagerDashboard 
+          <LineManagerDashboard 
             userName={userName} 
           />
         );

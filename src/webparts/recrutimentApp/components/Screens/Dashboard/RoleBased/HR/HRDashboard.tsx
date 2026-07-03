@@ -1,17 +1,16 @@
 import React from "react";
 import * as Lucide from "lucide-react";
 import styles from "./HRDashboard.module.scss";
-import useHRDashboard from "../../Hooks/useHRDashboard";
-
-import HRSummaryCards from "../../Shared/HRSummaryCards";
+import useHRDashboard from "../../Hooks/useHRDashboard"
 import PositionTrackerChart from "../../Charts/PositionTrackerChart";
 import DepartmentChart from "../../Charts/DepartmentChart";
 import CandidatePipelineChart from "../../Charts/CandidatePipelineChart";
-import TaskTable from "../../Tables/TaskTable";
 import { motion } from "framer-motion";
 import MetricDashboard from "../../../../Comman/MatricBox/matric";
 import { metricsContainer } from "../../Dashboard";
 import { Metric } from "../../../../../models/IDashboard";
+import HRSummaryCards from "../../DashboardComman/HRSummaryCards";
+import TaskTable from "../../DashboardComman/Tables/TaskTable";
 
 interface HRDashboardProps {
   userName: string;
