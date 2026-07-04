@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { ResponsiveContainer, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ComposedChart, Bar, Line } from "recharts";
 import styles from "./PositionTrackerChart.module.scss";
 import Card from "../Common/Card";
@@ -10,7 +10,16 @@ interface PositionTrackerChartProps {
 }
 
 export const PositionTrackerChart: React.FC<PositionTrackerChartProps> = ({ data, loading = false }) => {
-  const chartData = useMemo(() => data || [], [data]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+  const trackerList = data || [];
+
+  const totalPages = Math.ceil(trackerList.length / itemsPerPage);
+  const safeCurrentPage = Math.max(1, Math.min(currentPage, totalPages || 1));
+  const indexOfLastItem = safeCurrentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  const chartData = useMemo(() => trackerList.slice(indexOfFirstItem, indexOfLastItem), [trackerList, indexOfFirstItem, indexOfLastItem]);
 
   const memoizedOptions = useMemo(() => {
     return {
@@ -86,6 +95,45 @@ export const PositionTrackerChart: React.FC<PositionTrackerChartProps> = ({ data
           </ComposedChart>
         </ResponsiveContainer>
       </div>
+
+      {/* Pagination Controls */}
+      {trackerList.length > itemsPerPage && (
+        <div className={styles.pagination} role="navigation" aria-label="Pagination">
+          <button
+            className={styles.pageArrow}
+            type="button"
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            disabled={safeCurrentPage === 1}
+            aria-label="Previous page"
+          >
+            ‹
+          </button>
+
+          {Array.from({ length: totalPages }).map((_, idx) => {
+            const pageNum = idx + 1;
+            return (
+              <button
+                key={pageNum}
+                type="button"
+                className={`${styles.pageNumber} ${safeCurrentPage === pageNum ? styles.active : ""}`}
+                onClick={() => setCurrentPage(pageNum)}
+              >
+                {pageNum}
+              </button>
+            );
+          })}
+
+          <button
+            className={styles.pageArrow}
+            type="button"
+            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+            disabled={safeCurrentPage === totalPages}
+            aria-label="Next page"
+          >
+            ›
+          </button>
+        </div>
+      )}
     </Card>
   );
 };

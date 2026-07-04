@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./DepartmentChart.module.scss";
 import Card from "../Common/Card";
 import ProgressBar from "../Common/ProgressBar";
@@ -10,6 +10,10 @@ interface DepartmentChartProps {
 }
 
 export const DepartmentChart: React.FC<DepartmentChartProps> = ({ data, loading = false }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+  const deptList = data || [];
+
   if (loading || !data) {
     return (
       <Card className={styles.container}>
@@ -28,6 +32,12 @@ export const DepartmentChart: React.FC<DepartmentChartProps> = ({ data, loading 
     );
   }
 
+  const totalPages = Math.ceil(deptList.length / itemsPerPage);
+  const safeCurrentPage = Math.max(1, Math.min(currentPage, totalPages || 1));
+  const indexOfLastItem = safeCurrentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = deptList.slice(indexOfFirstItem, indexOfLastItem);
+
   return (
     <Card className={styles.container}>
       <div className={styles.header}>
@@ -45,7 +55,7 @@ export const DepartmentChart: React.FC<DepartmentChartProps> = ({ data, loading 
             </tr>
           </thead>
           <tbody>
-            {data.map((dept, index) => (
+            {currentItems.map((dept, index) => (
               <tr key={index}>
                 <td className={styles.tdDeptName}>{dept.department}</td>
                 <td className={styles.tdCount}>{dept.total}</td>
@@ -62,6 +72,45 @@ export const DepartmentChart: React.FC<DepartmentChartProps> = ({ data, loading 
           </tbody>
         </table>
       </div>
+
+      {/* Pagination Controls */}
+      {deptList.length > itemsPerPage && (
+        <div className={styles.pagination} role="navigation" aria-label="Pagination">
+          <button
+            className={styles.pageArrow}
+            type="button"
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            disabled={safeCurrentPage === 1}
+            aria-label="Previous page"
+          >
+            ‹
+          </button>
+
+          {Array.from({ length: totalPages }).map((_, idx) => {
+            const pageNum = idx + 1;
+            return (
+              <button
+                key={pageNum}
+                type="button"
+                className={`${styles.pageNumber} ${safeCurrentPage === pageNum ? styles.active : ""}`}
+                onClick={() => setCurrentPage(pageNum)}
+              >
+                {pageNum}
+              </button>
+            );
+          })}
+
+          <button
+            className={styles.pageArrow}
+            type="button"
+            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+            disabled={safeCurrentPage === totalPages}
+            aria-label="Next page"
+          >
+            ›
+          </button>
+        </div>
+      )}
     </Card>
   );
 };

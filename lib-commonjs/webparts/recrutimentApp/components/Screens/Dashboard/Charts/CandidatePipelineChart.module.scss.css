@@ -18,7 +18,7 @@
 .title {
   font-size: 0.875rem;
   font-weight: 700;
-  color: #1e3a8a;
+  color: var(--app-text-color, #0f172a);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 0;
@@ -99,4 +99,59 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  user-select: none;
+}
+
+.pageArrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.2s;
+  line-height: 1;
+}
+.pageArrow:hover:not(:disabled) {
+  color: #2563eb;
+}
+.pageArrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.pageNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: transparent;
+  color: #64748b;
+}
+.pageNumber:hover:not(.active) {
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+.pageNumber.active {
+  background-color: #2563eb;
+  color: #ffffff;
+  cursor: default;
 }
