@@ -470,14 +470,9 @@ export const useSubmitCandidateReview = (
       const res = await CandidateTable.UpdateCandidateStatus(candidateData);
 
       if (res.status === 200) {
-        if (
-          StatusId === workflowStatusApi.LineManagerL2Pending ||
-          StatusId === workflowStatusApi.PendingRecruitmentHRscheduleInterview
-        ) {
-          if (emailNot.templateCode) {
+        if (emailNot.templateCode) {
             await CandidateTable.SendEmailNotification(emailNot);
           }
-        }
 
         showModal({
           type: "success",

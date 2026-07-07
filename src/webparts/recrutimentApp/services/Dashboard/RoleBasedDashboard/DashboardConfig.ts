@@ -1,4 +1,4 @@
-import { StatusId } from "../../utilities/Config";
+import { StatusId } from "../../../utilities/Config";
 
 export const currentDate = new Date();
 export const currentYear = currentDate.getFullYear();
@@ -65,3 +65,48 @@ export const isFiveMonthsBeforeCurrent = (dateRequired: string) => {
         requiredDate.getFullYear() === currentDate.getFullYear()
     );
 };
+
+    export  const groupedHR = (rec: any) => {
+        return rec.reduce(
+        (acc: Record<string, any[]>, item: any) => {
+          const email = item.AssignedHR;
+          if (!email) return acc;
+          if (!acc[email]) acc[email] = [];
+          acc[email].push(item);
+          return acc;
+        },
+        {} as Record<string, any[]>
+      );
+    };
+
+    export  const groupedHRLead = (rec: any) => {
+        return rec.reduce(
+        (acc: Record<string, any[]>, item: any) => {
+          const email = item.RecruitmentHRLead;
+          if (!email) return acc;
+          if (!acc[email]) acc[email] = [];
+          acc[email].push(item);
+          return acc;
+        },
+        {} as Record<string, any[]>
+      );
+    };
+
+    // const _hrNameCache = new Map<string, string>();
+    
+    //   const _getHRName = async (email: string) => {
+    //     if (!email) return "N/A";
+    //     const normalizedEmail = email.toLowerCase().trim();
+    //     if (this._hrNameCache.has(normalizedEmail)) {
+    //       return this._hrNameCache.get(normalizedEmail)!;
+    //     }
+    //     try {
+    //       const hrRes = await CommonServices.GetUserName(email);
+    //       const name = hrRes.data ?? email;
+    //       this._hrNameCache.set(normalizedEmail, name);
+    //       return name;
+    //     } catch (error) {
+    //       console.error(`Error resolving HR name for ${email}:`, error);
+    //       return email;
+    //     }
+    //   }

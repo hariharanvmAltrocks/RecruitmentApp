@@ -53,6 +53,7 @@ export const useAssignMembers = (
           role: "Agency",
           initials:
             item.AgentName?.split(" ")[0]?.slice(0, 2)?.toUpperCase() || "",
+          emailid: "",
         })) ?? [];
 
       setMembers(mappedMembers);
@@ -87,6 +88,7 @@ export const useAssignMembers = (
             role: "Recruitment HR",
             initials:
               item.text?.split(" ")[0]?.slice(0, 2)?.toUpperCase() || "",
+              emailid: item.email || "",
           }));
 
           setMembers(mappedMembers);

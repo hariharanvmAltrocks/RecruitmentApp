@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import * as Lucide from "lucide-react";
 import styles from "./TaskTable.module.scss";
 import Card from "../../Common/Card";
 import Badge, { BadgeVariant } from "../../Common/Badge";
@@ -98,6 +99,7 @@ export const TaskTable: React.FC<TaskTableProps> = ({ data, loading = false }) =
   return (
     <Card className={styles.container}>
       <div className={styles.header}>
+        <Lucide.CheckSquare size={16} className={styles.iconBlue} />
         <h3 className={styles.title}>My Tasks Tracker</h3>
       </div>
       <div className={styles.tableWrapper}>

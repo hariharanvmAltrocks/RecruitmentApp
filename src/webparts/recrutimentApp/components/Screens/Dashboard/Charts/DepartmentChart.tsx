@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import * as Lucide from "lucide-react";
 import styles from "./DepartmentChart.module.scss";
 import Card from "../Common/Card";
 import ProgressBar from "../Common/ProgressBar";
@@ -41,7 +42,8 @@ export const DepartmentChart: React.FC<DepartmentChartProps> = ({ data, loading 
   return (
     <Card className={styles.container}>
       <div className={styles.header}>
-        <h3 className={styles.title}>My Positions by Department</h3>
+        <Lucide.Building2 size={16} className={styles.iconBlue} />
+        <h3 className={styles.title}>Positions by Department</h3>
       </div>
       <div className={styles.tableWrapper}>
         <table className={styles.table}>

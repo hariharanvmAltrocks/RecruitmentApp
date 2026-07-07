@@ -43,6 +43,7 @@ var useAssignMembers = function (Nationality) {
                             name: item.AgentName,
                             role: "Agency",
                             initials: ((_c = (_b = (_a = item.AgentName) === null || _a === void 0 ? void 0 : _a.split(" ")[0]) === null || _b === void 0 ? void 0 : _b.slice(0, 2)) === null || _c === void 0 ? void 0 : _c.toUpperCase()) || "",
+                            emailid: "",
                         });
                     })) !== null && _a !== void 0 ? _a : [];
                     setMembers(mappedMembers);
@@ -82,6 +83,7 @@ var useAssignMembers = function (Nationality) {
                                 name: item.text,
                                 role: "Recruitment HR",
                                 initials: ((_c = (_b = (_a = item.text) === null || _a === void 0 ? void 0 : _a.split(" ")[0]) === null || _b === void 0 ? void 0 : _b.slice(0, 2)) === null || _c === void 0 ? void 0 : _c.toUpperCase()) || "",
+                                emailid: item.email || "",
                             });
                         });
                         setMembers(mappedMembers);

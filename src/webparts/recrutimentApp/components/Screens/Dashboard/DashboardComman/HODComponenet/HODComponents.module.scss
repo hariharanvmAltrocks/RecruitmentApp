@@ -1,0 +1,303 @@
+@import "../../../../../styles/theme";
+
+.card {
+  background-color: $dashboard-card-bg;
+  border: 1px solid $dashboard-card-border;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  // height: 100%;
+}
+
+.header {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: $text-primary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.iconBlue {
+  color: #2563eb;
+}
+
+.chartWrapper {
+  flex: 1;
+  width: 100%;
+}
+
+.tableWrapper {
+  flex: 1;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+
+  th, td {
+    padding: 10px 8px;
+    text-align: center;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  th {
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    font-size: 0.675rem;
+    letter-spacing: 0.05em;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover {
+    background-color: #f8fafc;
+  }
+}
+
+.progressContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.progressBar {
+  width: 60px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: #e2e8f0;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    display: block;
+    height: 100%;
+    background-color: #10b981;
+    width: inherit;
+  }
+}
+
+.progressText {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.approvalCount {
+  font-weight: 700;
+  color: #ef4444;
+  background-color: #fef2f2;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+}
+
+/* Donut Chart styles */
+.donutBody {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex: 1;
+}
+
+.donutVisual {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.donutCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.donutCenterVal {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: $text-primary;
+  line-height: 1.1;
+}
+
+.donutCenterLabel {
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: $text-muted;
+  letter-spacing: 0.5px;
+}
+
+.donutLegend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.legendRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.725rem;
+}
+
+.legendLeft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legendName {
+  color: $text-secondary;
+  font-weight: 600;
+}
+
+.legendCount {
+  color: $text-muted;
+  font-weight: 600;
+}
+
+.cardFooter {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 8px;
+}
+
+.link {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #2563eb;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Skeleton Loaders */
+.skeletonChart {
+  flex: 1;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+  min-height: 200px;
+}
+
+.skeletonTable {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.skeletonDonut {
+  width: 100%;
+  height: 100px;
+  background: radial-gradient(circle, transparent 40%, #f1f5f9 41%);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+// Pagination styling
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  user-select: none;
+}
+
+.pageArrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.2s;
+  line-height: 1;
+
+  &:hover:not(:disabled) {
+    color: #2563eb;
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+.pageNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: transparent;
+  color: #64748b;
+
+  &:hover:not(.active) {
+    background-color: #f1f5f9;
+    color: #1e293b;
+  }
+
+  &.active {
+    background-color: #2563eb;
+    color: #ffffff;
+    cursor: default;
+  }
+}

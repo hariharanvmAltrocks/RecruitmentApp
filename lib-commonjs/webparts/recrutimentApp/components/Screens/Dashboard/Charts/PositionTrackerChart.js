@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PositionTrackerChart = void 0;
 var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importStar(require("react"));
+var Lucide = tslib_1.__importStar(require("lucide-react"));
 var recharts_1 = require("recharts");
 var PositionTrackerChart_module_scss_1 = tslib_1.__importDefault(require("./PositionTrackerChart.module.scss"));
 var Card_1 = tslib_1.__importDefault(require("../Common/Card"));
@@ -31,6 +32,7 @@ var PositionTrackerChart = function (_a) {
     }
     return (react_1.default.createElement(Card_1.default, { className: PositionTrackerChart_module_scss_1.default.chartCard },
         react_1.default.createElement("div", { className: PositionTrackerChart_module_scss_1.default.header },
+            react_1.default.createElement(Lucide.TrendingUp, { size: 16, className: PositionTrackerChart_module_scss_1.default.iconBlue }),
             react_1.default.createElement("h3", { className: PositionTrackerChart_module_scss_1.default.title }, "My Positions Tracker (Monthly)")),
         react_1.default.createElement("div", { className: PositionTrackerChart_module_scss_1.default.chartContainer },
             react_1.default.createElement(recharts_1.ResponsiveContainer, { width: "100%", height: 220 },

@@ -101,6 +101,7 @@ export const RoleID = {
   RecruitmentAppExternalAgency: 6,
   RecruitmentLineManager: 7,
   FinanceDepartment: 8,
+  SeniorHR: 9,
 };
 
 export const StatusId = {

@@ -12,11 +12,12 @@ var CandidatePipelineChart_1 = tslib_1.__importDefault(require("../../Charts/Can
 var framer_motion_1 = require("framer-motion");
 var matric_1 = tslib_1.__importDefault(require("../../../../Comman/MatricBox/matric"));
 var Dashboard_1 = require("../../Dashboard");
-var HRSummaryCards_1 = tslib_1.__importDefault(require("../../DashboardComman/HRSummaryCards"));
 var TaskTable_1 = tslib_1.__importDefault(require("../../DashboardComman/Tables/TaskTable"));
+var CommonSummaryCards_1 = tslib_1.__importDefault(require("../../DashboardComman/CommonSummaryCards"));
 var HRDashboard = function (_a) {
+    var _b;
     var userName = _a.userName, metrics = _a.metrics, onCardClick = _a.onCardClick, loading = _a.loading, handleRefresh = _a.handleRefresh, active = _a.active;
-    var _b = (0, useHRDashboard_1.default)(), data = _b.data, HRLoading = _b.loading, error = _b.error, hrRefresh = _b.refresh;
+    var _c = (0, useHRDashboard_1.default)(), data = _c.data, HRLoading = _c.loading, error = _c.error, hrRefresh = _c.refresh;
     if (error) {
         return (react_1.default.createElement("div", { className: HRDashboard_module_scss_1.default.errorContainer },
             react_1.default.createElement(Lucide.AlertCircle, { size: 40, className: HRDashboard_module_scss_1.default.errorIcon }),
@@ -35,16 +36,16 @@ var HRDashboard = function (_a) {
                 react_1.default.createElement(Lucide.RefreshCw, { size: 13, className: (loading || HRLoading) ? HRDashboard_module_scss_1.default.spin : undefined }),
                 react_1.default.createElement("span", null, "Refresh Dashboard Data"))),
         react_1.default.createElement("div", { className: HRDashboard_module_scss_1.default.summarySection },
-            react_1.default.createElement(HRSummaryCards_1.default, { summary: data === null || data === void 0 ? void 0 : data.summary, loading: loading })),
+            react_1.default.createElement(CommonSummaryCards_1.default, { cards: (_b = data === null || data === void 0 ? void 0 : data.summary) !== null && _b !== void 0 ? _b : [], loading: HRLoading })),
         react_1.default.createElement("div", { className: HRDashboard_module_scss_1.default.dashboardGrid },
             react_1.default.createElement("div", { className: HRDashboard_module_scss_1.default.gridItem },
-                react_1.default.createElement(PositionTrackerChart_1.default, { data: data === null || data === void 0 ? void 0 : data.monthlyTracker, loading: loading })),
+                react_1.default.createElement(PositionTrackerChart_1.default, { data: data === null || data === void 0 ? void 0 : data.monthlyTracker, loading: HRLoading })),
             react_1.default.createElement("div", { className: HRDashboard_module_scss_1.default.gridItem },
-                react_1.default.createElement(DepartmentChart_1.default, { data: data === null || data === void 0 ? void 0 : data.departmentPositions, loading: loading })),
+                react_1.default.createElement(DepartmentChart_1.default, { data: data === null || data === void 0 ? void 0 : data.departmentPositions, loading: HRLoading })),
             react_1.default.createElement("div", { className: HRDashboard_module_scss_1.default.gridItem },
-                react_1.default.createElement(CandidatePipelineChart_1.default, { data: data === null || data === void 0 ? void 0 : data.candidatePipeline, loading: loading }))),
+                react_1.default.createElement(CandidatePipelineChart_1.default, { data: data === null || data === void 0 ? void 0 : data.candidatePipeline, loading: HRLoading }))),
         react_1.default.createElement("div", { className: HRDashboard_module_scss_1.default.myTasksSection },
-            react_1.default.createElement(TaskTable_1.default, { data: data === null || data === void 0 ? void 0 : data.tasks, loading: loading }))));
+            react_1.default.createElement(TaskTable_1.default, { data: data === null || data === void 0 ? void 0 : data.tasks, loading: HRLoading }))));
 };
 exports.HRDashboard = HRDashboard;
 exports.default = exports.HRDashboard;

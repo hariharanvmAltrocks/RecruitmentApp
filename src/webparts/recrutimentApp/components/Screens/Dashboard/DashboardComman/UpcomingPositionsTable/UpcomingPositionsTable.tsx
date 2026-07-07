@@ -17,27 +17,33 @@ const AssignHRPopup = React.lazy(() =>
   ),
 );
 
-interface MockPosition {
-  id: string;
-  jobCode: string;
-  jobTitle: string;
-  department: string;
-  dateRequired: string;
-  headcount: number;
-  vacant: number;
-  assignedHR: string;
-  daysLeft: number;
-  status: "Overdue" | "At Risk" | "On Track";
-}
+// interface MockPosition {
+//   id: string;
+//   jobCode: string;
+//   jobTitle: string;
+//   department: string;
+//   dateRequired: string;
+//   headcount: number;
+//   vacant: number;
+//   assignedHR: string;
+//   daysLeft: number;
+//   status: "Overdue" | "At Risk" | "On Track";
+// }
 
 interface IUpcomingPositionsTableProps {
   data: IPositionDetails[] | null | undefined;
   onRefresh?: () => void;
   loading?: boolean;
+  onSuccessChangeHR?: () => void;
 }
 
-export const UpcomingPositionsTable: React.FC<IUpcomingPositionsTableProps> = ({ data, onRefresh, loading }) => {
-  const [positions, setPositions] = useState<MockPosition[]>([]);
+export const UpcomingPositionsTable: React.FC<IUpcomingPositionsTableProps> = ({
+  data,
+  onRefresh,
+  loading,
+  onSuccessChangeHR,
+}) => {
+  const [positions, setPositions] = useState<IPositionDetails[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDept, setSelectedDept] = useState("All");
   const [selectedStatus, setSelectedStatus] = useState("All");
@@ -50,17 +56,21 @@ export const UpcomingPositionsTable: React.FC<IUpcomingPositionsTableProps> = ({
 
   React.useEffect(() => {
     if (data && data.length > 0) {
-      const mapped: MockPosition[] = data.map((pos) => ({
-        id: String(pos.id || ""),
-        jobCode: pos.JobCode || "",
-        jobTitle: pos.Jobtitle || "",
+      const mapped: IPositionDetails[] = data.map((pos) => ({
+        id: pos.id || 0,
+        ItemID: pos.ItemID || 0,
+        JobCode: pos.JobCode || "",
+        Jobtitle: pos.Jobtitle || "",
         department: pos.department || "",
         dateRequired: pos.dateRequired || "",
-        headcount: Number(pos.headcount) || 1,
-        vacant: Number(pos.vacant) || 0,
-        assignedHR: pos.assignHR || "Unassigned",
-        daysLeft: Number(pos.dayaLeft) || 0,
-        status: pos.Positionstatus || "On Track",
+        headcount: pos.headcount || "",
+        vacant: pos.vacant || "",
+        assignHR: pos.assignHR || " ",
+        dayaLeft: pos.dayaLeft || "",
+        Positionstatus: pos.Positionstatus || "On Track",
+        nationality: pos.nationality || "N/A",
+        status: pos.status || "N/A",
+        statusId: pos.statusId || 0,
       }));
       setPositions(mapped);
     } else {
@@ -88,25 +98,24 @@ export const UpcomingPositionsTable: React.FC<IUpcomingPositionsTableProps> = ({
 
   // Change HR Dialog State
   const [isChangeHrOpen, setIsChangeHrOpen] = useState(false);
-  const [selectedPosition, setSelectedPosition] = useState<MockPosition | null>(null);
+  const [selectedPosition, setSelectedPosition] = useState<IPositionDetails | null>(null);
 
-  // Fetch HR Members list
-  const { members } = useAssignMembers("Congolese");
+  const { members } = useAssignMembers(data?.[0]?.nationality ?? "");
 
   const selectedItems = useMemo<RecruitmentItem[]>(() => {
     if (!selectedPosition) return [];
     return [
       {
-        id: selectedPosition.id,
-        ItemID: Number(selectedPosition.id.replace("POS-", "")) || 0,
-        jobCode: selectedPosition.jobCode,
-        title: selectedPosition.jobTitle,
+        id: String(selectedPosition.id),
+        ItemID: selectedPosition.ItemID,
+        jobCode: selectedPosition.JobCode,
+        title: selectedPosition.Jobtitle,
         department: selectedPosition.department,
-        count: selectedPosition.headcount,
+        count: Number(selectedPosition.headcount),
         requestType: "Position",
-        nationality: "Congolese",
-        status: selectedPosition.status,
-        statusId: 0,
+        nationality: selectedPosition.nationality || "N/A",
+        status: selectedPosition.Positionstatus,
+        statusId: selectedPosition.statusId || 0,
         jobCodeID: 0,
       },
     ];
@@ -114,10 +123,10 @@ export const UpcomingPositionsTable: React.FC<IUpcomingPositionsTableProps> = ({
 
   const selectedMember = useMemo<HrMember | null>(() => {
     if (!selectedPosition) return null;
-    return members.find((m) => m.name.toLowerCase() === selectedPosition.assignedHR.toLowerCase()) ?? null;
+    return members.find((m) => m.name.toLowerCase() === selectedPosition.assignHR.toLowerCase()) ?? null;
   }, [selectedPosition, members]);
 
-  const handleOpenChangeHR = (row: MockPosition) => {
+  const handleOpenChangeHR = (row: IPositionDetails) => {
     setSelectedPosition(row);
     setIsChangeHrOpen(true);
   };
@@ -127,13 +136,13 @@ export const UpcomingPositionsTable: React.FC<IUpcomingPositionsTableProps> = ({
 
     try {
       setIsUpdating(true);
-      const itemId = Number(selectedPosition.id.replace("POS-", "")) || Number(selectedPosition.id) || 0;
+      const itemId = selectedPosition.ItemID;
       if (itemId > 0) {
         await SPServices.SPUpdateItem({
           Listname: ListNames.HRMSRecruitmentDptDetails,
           ID: itemId,
           RequestJSON: {
-            AssignedHRId: Number(payload.member.id)
+            AssignedHR: payload.member.emailid,
           }
         });
       }
@@ -141,12 +150,15 @@ export const UpcomingPositionsTable: React.FC<IUpcomingPositionsTableProps> = ({
       setPositions(prev =>
         prev.map(p =>
           p.id === selectedPosition.id
-            ? { ...p, assignedHR: payload.member!.name }
+            ? { ...p, assignHR: payload.member!.name }
             : p
         )
       );
       if (onRefresh) {
         onRefresh();
+      }
+      if (onSuccessChangeHR) {
+        onSuccessChangeHR();
       }
     } catch (err) {
       console.error("Error reassigning HR:", err);
@@ -168,13 +180,13 @@ export const UpcomingPositionsTable: React.FC<IUpcomingPositionsTableProps> = ({
   const filteredItems = useMemo(() => {
     return positions.filter((p) => {
       const matchesSearch =
-        p.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.Jobtitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
         p.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.assignedHR.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.jobCode.toLowerCase().includes(searchTerm.toLowerCase());
+        p.assignHR.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.JobCode.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesDept = selectedDept === "All" || p.department === selectedDept;
-      const matchesStatus = selectedStatus === "All" || p.status === selectedStatus;
+      const matchesStatus = selectedStatus === "All" || p.Positionstatus === selectedStatus;
 
       return matchesSearch && matchesDept && matchesStatus;
     });
@@ -217,14 +229,14 @@ export const UpcomingPositionsTable: React.FC<IUpcomingPositionsTableProps> = ({
   }, [selectedStatus]);
 
   // Define DataTable Columns
-  const columns = useMemo<DataTableColumn<MockPosition>[]>(() => [
+  const columns = useMemo<DataTableColumn<IPositionDetails>[]>(() => [
     {
       id: "jobTitle",
       header: "Job Title",
-      render: (row: MockPosition) => (
+      render: (row: IPositionDetails) => (
         <div className="data-table__job-title">
-            <span>{row.jobTitle}</span>
-            <span className="data-table__job-dept">{row.jobCode}</span>
+            <span>{row.Jobtitle}</span>
+            <span className="data-table__job-dept">{row.JobCode}</span>
           </div>
       ),
       sortable: true
@@ -266,26 +278,26 @@ export const UpcomingPositionsTable: React.FC<IUpcomingPositionsTableProps> = ({
     {
       id: "assignedHR",
       header: "Assign HR",
-      accessor: "assignedHR",
+      accessor: "assignHR",
       sortable: true
     },
     {
       id: "daysLeft",
       header: "Days Left",
-      render: (row: MockPosition) => <span>{row.daysLeft} days</span>,
+      render: (row: IPositionDetails) => <span>{row.dayaLeft} days</span>,
       sortable: true,
       cellClassName: styles.weight600
     },
     {
       id: "status",
       header: "Status",
-      render: (row: MockPosition) => {
+      render: (row: IPositionDetails) => {
         let statusClass = styles.statusOnTrack;
-        if (row.status === "Overdue") statusClass = styles.statusOverdue;
-        else if (row.status === "At Risk") statusClass = styles.statusAtRisk;
+        if (row.Positionstatus === "Overdue") statusClass = styles.statusOverdue;
+        else if (row.Positionstatus === "At Risk") statusClass = styles.statusAtRisk;
         return (
           <span className={`${styles.statusBadge} ${statusClass}`}>
-            {row.status}
+            {row.Positionstatus}
           </span>
         );
       },
@@ -296,7 +308,7 @@ export const UpcomingPositionsTable: React.FC<IUpcomingPositionsTableProps> = ({
       header: "Action",
       //  align: "left",
       // cellClassName: "data-table__cell--actions",
-      render: (row: MockPosition) => (
+      render: (row: IPositionDetails) => (
         <button
           type="button"
           className={styles.changeHrBtn}
@@ -308,7 +320,7 @@ export const UpcomingPositionsTable: React.FC<IUpcomingPositionsTableProps> = ({
     }
   ], [members]);
 
-  const getRowId = (row: MockPosition) => row.id;
+  const getRowId = (row: IPositionDetails) => String(row.id);
 
   if (loading) {
     return (
@@ -358,8 +370,8 @@ export const UpcomingPositionsTable: React.FC<IUpcomingPositionsTableProps> = ({
       {/* Header & Filters Toolbar */}
       <div className={styles.tableCard__header}>
         <div className={styles.tableCard__titleRow}>
-          {/* <Lucide.AlertTriangle size={18} className={styles.warningIcon} /> */}
-          <h2 className={styles.tableCard__title}> Positions Details</h2>
+          <Lucide.Briefcase size={16} className={styles.iconBlue} />
+          <h3 className={styles.tableCard__title}> Positions Details</h3>
         </div>
 
         {/* Filters Toolbar */}

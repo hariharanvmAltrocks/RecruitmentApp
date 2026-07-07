@@ -13,13 +13,22 @@
 
 .header {
   margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .title {
   font-size: 0.875rem;
   font-weight: 700;
   color: var(--app-text-color, #0f172a);
+  text-transform: uppercase;
   letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.iconBlue {
+  color: #2563eb;
 }
 
 .tableWrapper {

@@ -7,8 +7,8 @@ import Loading from "../../Comman/Loading/loading";
 import HRLeadDashboard from "./RoleBased/HRLead/HRLeadDashboard";
 import HRDashboard from "./RoleBased/HR/HRDashboard";
 import LineManagerDashboard from "./RoleBased/LineManager/LineManagerDashboard";
-
-import NotificationCenter from "./Common/NotificationCenter";
+import HODashboard from "./RoleBased/HOD/HODashboard";
+import SeniorHRDashboard from "./RoleBased/SeniorHR/SeniorHRDashboard";
 import { RoleID } from "../../../utilities/Config";
 import { MetricConfig } from "../../../models/IDashboard";
 import { menuID } from "../../../utilities/ConditionConfig";
@@ -82,8 +82,10 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
     if (!roleIDs || roleIDs.length === 0) return RoleID.RecruitmentHRLead;
     if (roleIDs.includes(RoleID.RecruitmentHRLead)) return RoleID.RecruitmentHRLead;
     if (roleIDs.includes(RoleID.RecruitmentHR)) return RoleID.RecruitmentHR;
+     if (roleIDs.includes(RoleID.LineManager,RoleID.HOD)) return RoleID.LineManager;
     if (roleIDs.includes(RoleID.HOD))  return RoleID.HOD;
     if (roleIDs.includes(RoleID.LineManager)) return RoleID.LineManager;
+    if (roleIDs.includes(RoleID.SeniorHR)) return RoleID.SeniorHR;
     return  RoleID.RecruitmentHRLead;
   }, [userRole]);
 
@@ -129,16 +131,38 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
                     active={activeMetric}
           />
         );
-      case RoleID.HOD:
+        case RoleID.LineManager:
         return (
           <LineManagerDashboard 
             userName={userName} 
+            metrics={MatricData}
+            onCardClick={(metric) => onMetricChange(metric)}
+            loading={loading}
+            handleRefresh={handleRefresh}
+            active={activeMetric}
           />
         );
-      case RoleID.LineManager:
+      case RoleID.HOD:
         return (
-          <LineManagerDashboard 
+          <HODashboard 
             userName={userName} 
+            metrics={MatricData}
+            onCardClick={(metric) => onMetricChange(metric)}
+            loading={loading}
+            handleRefresh={handleRefresh}
+            active={activeMetric}
+          />
+        );
+      
+      case RoleID.SeniorHR:
+        return (
+          <SeniorHRDashboard 
+            userName={userName} 
+            metrics={MatricData}
+            onCardClick={(metric) => onMetricChange(metric)}
+            loading={loading}
+            handleRefresh={handleRefresh}
+            active={activeMetric}
           />
         );
       

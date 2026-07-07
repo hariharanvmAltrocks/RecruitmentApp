@@ -182,7 +182,7 @@ export default class CommonService implements ICommonService {
 
   GetADgruopsEmailIDs = async (
     ADGroupID: string,
-  ): Promise<ApiResponse<IDocFiles[]>> => {
+  ): Promise<ApiResponse<any[]>> => {
     try {
       const graphClient = GraphService.getGraphClient();
       const response = await graphClient
@@ -195,6 +195,8 @@ export default class CommonService implements ICommonService {
       });
       const userDetails = await Promise.all(userDetailsPromises);
       const validUserDetails = userDetails.filter((user) => user !== null);
+      console.log(validUserDetails,"vaildUserDetails");
+      
       return {
         data: validUserDetails,
         status: 200,
@@ -363,7 +365,7 @@ export default class CommonService implements ICommonService {
 
   async GetGradeLevel(PatersonGrade: string): Promise<ApiResponse<any | null>> {
     try {
-      let op: AutoCompleteItem[] = [];
+      let op: any[] = [];
       if (PatersonGrade) {
         await SPServices.SPReadItems({
           Listname: ListNames.HRMSGradeMaster,
@@ -477,6 +479,7 @@ async function getUserGuidByEmail(email: string) {
     return {
       key: user.Id,
       text: `${UserName?.FirstName || ""} ${UserName?.MiddleName || ""} ${UserName?.LastName || ""}`,
+      email: UserName?.EmailId || "",
     };
   } catch (error) {
     console.error("Error fetching user ID by email: ", error);

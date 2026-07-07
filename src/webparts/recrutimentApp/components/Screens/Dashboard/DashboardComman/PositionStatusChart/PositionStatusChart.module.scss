@@ -24,14 +24,18 @@
     margin-bottom: 8px;
     border-bottom: 1px solid $border-light;
     padding-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   &__title {
-    font-size: 0.725rem;
+    font-size: 0.875rem;
     font-weight: 700;
     color: $header-text-color;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin: 0;
   }
 
   &__body {
@@ -161,4 +165,8 @@
   100% {
     background-position: -200% 0;
   }
+}
+
+.iconBlue {
+  color: #2563eb;
 }

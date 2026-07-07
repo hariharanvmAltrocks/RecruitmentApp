@@ -13,6 +13,9 @@
 
 .header {
   margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .title {
@@ -22,6 +25,10 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 0;
+}
+
+.iconBlue {
+  color: #2563eb;
 }
 
 .chartContainer {

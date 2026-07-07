@@ -11,6 +11,7 @@ import { metricsContainer } from "../../Dashboard";
 import { Metric } from "../../../../../models/IDashboard";
 import HRSummaryCards from "../../DashboardComman/HRSummaryCards";
 import TaskTable from "../../DashboardComman/Tables/TaskTable";
+import CommonSummaryCards from "../../DashboardComman/CommonSummaryCards";
 
 interface HRDashboardProps {
   userName: string;
@@ -46,29 +47,6 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
 
   return (
     <div className={styles.container}>
-      {/* Local Page Header Row */}
-      {/* <div className={styles.headerRow}>
-        <div className={styles.welcomeSection}>
-          <h1 className={styles.welcomeTitle}>HR Dashboard</h1>
-          <p className={styles.welcomeSubtitle}>Manage your assigned positions and candidates</p>
-        </div>
-        <div className={styles.actionSection}>
-          <button
-            type="button"
-            className={styles.refreshBtn}
-            onClick={refresh}
-            disabled={loading}
-            aria-label="Refresh Dashboard"
-          >
-            <Lucide.RefreshCw size={13} className={loading ? styles.spin : undefined} />
-            <span>Refresh</span>
-          </button>
-          <div className={styles.datePill}>
-            <Lucide.Calendar size={13} />
-            <span>May 2026</span>
-          </div>
-        </div>
-      </div> */}
         <motion.div
                   className="metrics-grid"
                   variants={metricsContainer}
@@ -101,23 +79,24 @@ export const HRDashboard: React.FC<HRDashboardProps> = ({
       </div>
 
       <div className={styles.summarySection}>
-        <HRSummaryCards summary={data?.summary} loading={loading} />
+        {/* <HRSummaryCards summary={data?.summary} loading={loading} /> */}
+        <CommonSummaryCards cards={data?.summary ?? []} loading={HRLoading} />
       </div>
 
       <div className={styles.dashboardGrid}>
         <div className={styles.gridItem}>
-          <PositionTrackerChart data={data?.monthlyTracker} loading={loading} />
+          <PositionTrackerChart data={data?.monthlyTracker} loading={HRLoading} />
         </div>
         <div className={styles.gridItem}>
-          <DepartmentChart data={data?.departmentPositions} loading={loading} />
+          <DepartmentChart data={data?.departmentPositions} loading={HRLoading} />
         </div>
         <div className={styles.gridItem}>
-          <CandidatePipelineChart data={data?.candidatePipeline} loading={loading} />
+          <CandidatePipelineChart data={data?.candidatePipeline} loading={HRLoading} />
         </div>
        
       </div>
        <div className={styles.myTasksSection}>
-          <TaskTable data={data?.tasks} loading={loading} />
+          <TaskTable data={data?.tasks} loading={HRLoading} />
         </div>
     </div>
   );

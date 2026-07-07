@@ -16,28 +16,33 @@ var AssignHRPopup = react_1.default.lazy(function () {
     }); });
 });
 var UpcomingPositionsTable = function (_a) {
-    var data = _a.data, onRefresh = _a.onRefresh, loading = _a.loading;
-    var _b = (0, react_1.useState)([]), positions = _b[0], setPositions = _b[1];
-    var _c = (0, react_1.useState)(""), searchTerm = _c[0], setSearchTerm = _c[1];
-    var _d = (0, react_1.useState)("All"), selectedDept = _d[0], setSelectedDept = _d[1];
-    var _e = (0, react_1.useState)("All"), selectedStatus = _e[0], setSelectedStatus = _e[1];
-    var _f = (0, react_1.useState)(1), currentPage = _f[0], setCurrentPage = _f[1];
-    var _g = (0, react_1.useState)(10), pageSize = _g[0], setPageSize = _g[1];
-    var _h = (0, react_1.useState)(false), isLoading = _h[0], setIsLoading = _h[1];
-    var _j = (0, react_1.useState)(false), isUpdating = _j[0], setIsUpdating = _j[1];
+    var _b, _c;
+    var data = _a.data, onRefresh = _a.onRefresh, loading = _a.loading, onSuccessChangeHR = _a.onSuccessChangeHR;
+    var _d = (0, react_1.useState)([]), positions = _d[0], setPositions = _d[1];
+    var _e = (0, react_1.useState)(""), searchTerm = _e[0], setSearchTerm = _e[1];
+    var _f = (0, react_1.useState)("All"), selectedDept = _f[0], setSelectedDept = _f[1];
+    var _g = (0, react_1.useState)("All"), selectedStatus = _g[0], setSelectedStatus = _g[1];
+    var _h = (0, react_1.useState)(1), currentPage = _h[0], setCurrentPage = _h[1];
+    var _j = (0, react_1.useState)(10), pageSize = _j[0], setPageSize = _j[1];
+    var _k = (0, react_1.useState)(false), isLoading = _k[0], setIsLoading = _k[1];
+    var _l = (0, react_1.useState)(false), isUpdating = _l[0], setIsUpdating = _l[1];
     react_1.default.useEffect(function () {
         if (data && data.length > 0) {
             var mapped = data.map(function (pos) { return ({
-                id: String(pos.id || ""),
-                jobCode: pos.JobCode || "",
-                jobTitle: pos.Jobtitle || "",
+                id: pos.id || 0,
+                ItemID: pos.ItemID || 0,
+                JobCode: pos.JobCode || "",
+                Jobtitle: pos.Jobtitle || "",
                 department: pos.department || "",
                 dateRequired: pos.dateRequired || "",
-                headcount: Number(pos.headcount) || 1,
-                vacant: Number(pos.vacant) || 0,
-                assignedHR: pos.assignHR || "Unassigned",
-                daysLeft: Number(pos.dayaLeft) || 0,
-                status: pos.Positionstatus || "On Track",
+                headcount: pos.headcount || "",
+                vacant: pos.vacant || "",
+                assignHR: pos.assignHR || " ",
+                dayaLeft: pos.dayaLeft || "",
+                Positionstatus: pos.Positionstatus || "On Track",
+                nationality: pos.nationality || "N/A",
+                status: pos.status || "N/A",
+                statusId: pos.statusId || 0,
             }); });
             setPositions(mapped);
         }
@@ -61,25 +66,24 @@ var UpcomingPositionsTable = function (_a) {
         }, 600);
     };
     // Change HR Dialog State
-    var _k = (0, react_1.useState)(false), isChangeHrOpen = _k[0], setIsChangeHrOpen = _k[1];
-    var _l = (0, react_1.useState)(null), selectedPosition = _l[0], setSelectedPosition = _l[1];
-    // Fetch HR Members list
-    var members = (0, useAssignMembers_1.useAssignMembers)("Congolese").members;
+    var _m = (0, react_1.useState)(false), isChangeHrOpen = _m[0], setIsChangeHrOpen = _m[1];
+    var _o = (0, react_1.useState)(null), selectedPosition = _o[0], setSelectedPosition = _o[1];
+    var members = (0, useAssignMembers_1.useAssignMembers)((_c = (_b = data === null || data === void 0 ? void 0 : data[0]) === null || _b === void 0 ? void 0 : _b.nationality) !== null && _c !== void 0 ? _c : "").members;
     var selectedItems = (0, react_1.useMemo)(function () {
         if (!selectedPosition)
             return [];
         return [
             {
-                id: selectedPosition.id,
-                ItemID: Number(selectedPosition.id.replace("POS-", "")) || 0,
-                jobCode: selectedPosition.jobCode,
-                title: selectedPosition.jobTitle,
+                id: String(selectedPosition.id),
+                ItemID: selectedPosition.ItemID,
+                jobCode: selectedPosition.JobCode,
+                title: selectedPosition.Jobtitle,
                 department: selectedPosition.department,
-                count: selectedPosition.headcount,
+                count: Number(selectedPosition.headcount),
                 requestType: "Position",
-                nationality: "Congolese",
-                status: selectedPosition.status,
-                statusId: 0,
+                nationality: selectedPosition.nationality || "N/A",
+                status: selectedPosition.Positionstatus,
+                statusId: selectedPosition.statusId || 0,
                 jobCodeID: 0,
             },
         ];
@@ -88,7 +92,7 @@ var UpcomingPositionsTable = function (_a) {
         var _a;
         if (!selectedPosition)
             return null;
-        return (_a = members.find(function (m) { return m.name.toLowerCase() === selectedPosition.assignedHR.toLowerCase(); })) !== null && _a !== void 0 ? _a : null;
+        return (_a = members.find(function (m) { return m.name.toLowerCase() === selectedPosition.assignHR.toLowerCase(); })) !== null && _a !== void 0 ? _a : null;
     }, [selectedPosition, members]);
     var handleOpenChangeHR = function (row) {
         setSelectedPosition(row);
@@ -105,13 +109,13 @@ var UpcomingPositionsTable = function (_a) {
                 case 1:
                     _a.trys.push([1, 4, 5, 6]);
                     setIsUpdating(true);
-                    itemId = Number(selectedPosition.id.replace("POS-", "")) || Number(selectedPosition.id) || 0;
+                    itemId = selectedPosition.ItemID;
                     if (!(itemId > 0)) return [3 /*break*/, 3];
                     return [4 /*yield*/, spservice_1.default.SPUpdateItem({
                             Listname: Config_1.ListNames.HRMSRecruitmentDptDetails,
                             ID: itemId,
                             RequestJSON: {
-                                AssignedHRId: Number(payload.member.id)
+                                AssignedHR: payload.member.emailid,
                             }
                         })];
                 case 2:
@@ -121,11 +125,14 @@ var UpcomingPositionsTable = function (_a) {
                     setPositions(function (prev) {
                         return prev.map(function (p) {
                             return p.id === selectedPosition.id
-                                ? tslib_1.__assign(tslib_1.__assign({}, p), { assignedHR: payload.member.name }) : p;
+                                ? tslib_1.__assign(tslib_1.__assign({}, p), { assignHR: payload.member.name }) : p;
                         });
                     });
                     if (onRefresh) {
                         onRefresh();
+                    }
+                    if (onSuccessChangeHR) {
+                        onSuccessChangeHR();
                     }
                     return [3 /*break*/, 6];
                 case 4:
@@ -149,12 +156,12 @@ var UpcomingPositionsTable = function (_a) {
     // Filter items
     var filteredItems = (0, react_1.useMemo)(function () {
         return positions.filter(function (p) {
-            var matchesSearch = p.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            var matchesSearch = p.Jobtitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 p.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                p.assignedHR.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                p.jobCode.toLowerCase().includes(searchTerm.toLowerCase());
+                p.assignHR.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                p.JobCode.toLowerCase().includes(searchTerm.toLowerCase());
             var matchesDept = selectedDept === "All" || p.department === selectedDept;
-            var matchesStatus = selectedStatus === "All" || p.status === selectedStatus;
+            var matchesStatus = selectedStatus === "All" || p.Positionstatus === selectedStatus;
             return matchesSearch && matchesDept && matchesStatus;
         });
     }, [positions, searchTerm, selectedDept, selectedStatus]);
@@ -195,8 +202,8 @@ var UpcomingPositionsTable = function (_a) {
             id: "jobTitle",
             header: "Job Title",
             render: function (row) { return (react_1.default.createElement("div", { className: "data-table__job-title" },
-                react_1.default.createElement("span", null, row.jobTitle),
-                react_1.default.createElement("span", { className: "data-table__job-dept" }, row.jobCode))); },
+                react_1.default.createElement("span", null, row.Jobtitle),
+                react_1.default.createElement("span", { className: "data-table__job-dept" }, row.JobCode))); },
             sortable: true
         },
         {
@@ -232,14 +239,14 @@ var UpcomingPositionsTable = function (_a) {
         {
             id: "assignedHR",
             header: "Assign HR",
-            accessor: "assignedHR",
+            accessor: "assignHR",
             sortable: true
         },
         {
             id: "daysLeft",
             header: "Days Left",
             render: function (row) { return react_1.default.createElement("span", null,
-                row.daysLeft,
+                row.dayaLeft,
                 " days"); },
             sortable: true,
             cellClassName: UpcomingPositionsTable_module_scss_1.default.weight600
@@ -249,11 +256,11 @@ var UpcomingPositionsTable = function (_a) {
             header: "Status",
             render: function (row) {
                 var statusClass = UpcomingPositionsTable_module_scss_1.default.statusOnTrack;
-                if (row.status === "Overdue")
+                if (row.Positionstatus === "Overdue")
                     statusClass = UpcomingPositionsTable_module_scss_1.default.statusOverdue;
-                else if (row.status === "At Risk")
+                else if (row.Positionstatus === "At Risk")
                     statusClass = UpcomingPositionsTable_module_scss_1.default.statusAtRisk;
-                return (react_1.default.createElement("span", { className: "".concat(UpcomingPositionsTable_module_scss_1.default.statusBadge, " ").concat(statusClass) }, row.status));
+                return (react_1.default.createElement("span", { className: "".concat(UpcomingPositionsTable_module_scss_1.default.statusBadge, " ").concat(statusClass) }, row.Positionstatus));
             },
             sortable: true
         },
@@ -265,7 +272,7 @@ var UpcomingPositionsTable = function (_a) {
             render: function (row) { return (react_1.default.createElement("button", { type: "button", className: UpcomingPositionsTable_module_scss_1.default.changeHrBtn, onClick: function () { return handleOpenChangeHR(row); } }, "Change HR")); }
         }
     ]; }, [members]);
-    var getRowId = function (row) { return row.id; };
+    var getRowId = function (row) { return String(row.id); };
     if (loading) {
         return (react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.tableCard, "aria-label": "Positions Table Loading" },
             react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.tableCard__header },
@@ -292,7 +299,8 @@ var UpcomingPositionsTable = function (_a) {
     return (react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.tableCard, "aria-label": "Positions Table" },
         react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.tableCard__header },
             react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.tableCard__titleRow },
-                react_1.default.createElement("h2", { className: UpcomingPositionsTable_module_scss_1.default.tableCard__title }, " Positions Details")),
+                react_1.default.createElement(Lucide.Briefcase, { size: 16, className: UpcomingPositionsTable_module_scss_1.default.iconBlue }),
+                react_1.default.createElement("h3", { className: UpcomingPositionsTable_module_scss_1.default.tableCard__title }, " Positions Details")),
             react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.toolbar },
                 react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.filtersGroup },
                     react_1.default.createElement("div", { className: UpcomingPositionsTable_module_scss_1.default.searchWrap },

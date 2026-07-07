@@ -27,13 +27,17 @@
   }
 
   &__title {
-    font-size: 15px;
+    font-size: 0.875rem;
     font-weight: 700;
     color: $header-text-color;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin: 0;
   }
+}
+
+.iconBlue {
+  color: #2563eb;
 }
 
 .warningIcon {
@@ -142,10 +146,10 @@
   gap: 6px;
   height: 32px;
   padding: 6px 12px;
-  background-color: #ffffff;
+  background-color: $primary-color;
   border: 1px solid $border-base;
   border-radius: $radius-sm;
-  color: $text-secondary;
+  color:  #ffffff;
   font-size: 0.725rem;
   font-weight: 600;
   cursor: pointer;
@@ -169,8 +173,8 @@
   gap: 6px;
   height: 32px;
   padding: 6px 12px;
-  background-color: #2563eb;
-  border: 1px solid #1d4ed8;
+  background-color: $primary-color;
+  border: 1px solid $border-base;
   border-radius: $radius-sm;
   color: #ffffff;
   font-size: 0.725rem;

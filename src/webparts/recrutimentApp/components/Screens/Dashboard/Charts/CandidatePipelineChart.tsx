@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import * as Lucide from "lucide-react";
 import styles from "./CandidatePipelineChart.module.scss";
 import Card from "../Common/Card";
 import { ICandidatePipelineStage } from "../Types";
@@ -39,6 +40,7 @@ export const CandidatePipelineChart: React.FC<CandidatePipelineChartProps> = ({ 
   return (
     <Card className={styles.container}>
       <div className={styles.header}>
+        <Lucide.Users size={16} className={styles.iconBlue} />
         <h3 className={styles.title}>My Candidate Pipeline</h3>
       </div>
       <div className={styles.tableWrapper}>

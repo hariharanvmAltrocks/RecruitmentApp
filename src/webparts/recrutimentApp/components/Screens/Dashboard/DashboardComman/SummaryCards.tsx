@@ -1,10 +1,10 @@
 import React from "react";
 import * as Lucide from "lucide-react";
 import styles from "../DashboardComman/SummaryCards.module.scss";
-import { IHRLeadDashboard, IDueMonth } from "../Types";
+import { IHRLeadDashboard, IDueMonth, IHRLeadSummary } from "../Types";
 
 interface ISummaryCardProps {
-  data: IHRLeadDashboard | null | undefined;
+  data: IHRLeadSummary | null | undefined;
   loading?: boolean;
 }
 
@@ -99,7 +99,7 @@ export const SummaryCards: React.FC<ISummaryCardProps> = ({ data, loading }) => 
       <div className={styles.overviewCard}>
         <div className={styles.cardHeader}>
           <Lucide.TrendingUp size={16} className={styles.iconBlue} />
-          <span className={styles.cardTitle}>POSITIONS OVERVIEW</span>
+          <h3 className={styles.cardTitle}>POSITIONS OVERVIEW</h3>
         </div>
         <div className={styles.overviewGrid}>
           {/* Sub card 1: Total */}
@@ -136,7 +136,10 @@ export const SummaryCards: React.FC<ISummaryCardProps> = ({ data, loading }) => 
           >
             <Lucide.ChevronLeft size={16} />
           </button>
-          <span className={styles.cardTitle}>DUE {monthName} MONTH</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            {/* <Lucide.Calendar size={16} className={styles.iconBlue} /> */}
+            <h3 className={styles.cardTitle}>DUE {monthName} MONTH</h3>
+          </div>
           <button 
             type="button" 
             className={styles.navBtn} 
@@ -158,7 +161,8 @@ export const SummaryCards: React.FC<ISummaryCardProps> = ({ data, loading }) => 
       {/* 3. OVERDUE POSITIONS */}
       <div className={styles.kpiCard}>
         <div className={styles.cardHeader}>
-          <span className={styles.cardTitle}>OVERDUE POSITIONS</span>
+          {/* <Lucide.AlertCircle size={16} className={styles.iconRed} /> */}
+          <h3 className={styles.cardTitle}>OVERDUE POSITIONS</h3>
         </div>
         <div className={styles.kpiCardBody}>
           <div className={styles.iconContainerRed}>

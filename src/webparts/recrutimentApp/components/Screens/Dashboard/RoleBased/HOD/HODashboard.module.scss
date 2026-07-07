@@ -1,0 +1,84 @@
+@import "../../../../../styles/theme";
+
+.dashboardContainer {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: $secondary-color;
+  font-family: $font-family;
+  min-height: 100vh;
+}
+
+.refreshToolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.refreshBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: $button-color;
+  color: $white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 20px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 20px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gridFull {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.myTasksSection {
+  // margin-top: 20px;
+  width: 100%;
+}
+

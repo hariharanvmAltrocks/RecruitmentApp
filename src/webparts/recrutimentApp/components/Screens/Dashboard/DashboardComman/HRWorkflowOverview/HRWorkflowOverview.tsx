@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import * as Lucide from "lucide-react";
 import styles from "./HRWorkflowOverview.module.scss";
 import { IPositionSource } from "../../Types";
 
@@ -81,7 +82,8 @@ export const HRWorkflowOverview: React.FC<IHRWorkflowOverviewProps> = ({ data, l
     <div className={styles.containerCard} aria-label="HRs Performance">
       {/* Header */}
       <div className={styles.header}>
-        <span className={styles.title}>HRs Performance</span>
+        <Lucide.TrendingUp size={16} className={styles.iconBlue} />
+        <h3 className={styles.title}>HRs Performance</h3>
       </div>
 
       {/* Table representing recruiter performance */}

@@ -1,4 +1,5 @@
 import React from "react";
+import * as Lucide from "lucide-react";
 import { ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import styles from "./PositionStatusChart.module.scss";
 import { IPositionStatus } from "../../Types";
@@ -58,7 +59,8 @@ export const PositionStatusChart: React.FC<IPositionStatusChartProps> = ({ data,
   return (
     <div className={styles.chartCard} aria-label="Position Status Distribution">
       <div className={styles.chartCard__header}>
-        <span className={styles.chartCard__title}>POSITIONS BY STATUS</span>
+        <Lucide.PieChart size={16} className={styles.iconBlue} />
+        <h3 className={styles.chartCard__title}>POSITIONS BY STATUS</h3>
       </div>
 
       <div className={styles.chartCard__body}>

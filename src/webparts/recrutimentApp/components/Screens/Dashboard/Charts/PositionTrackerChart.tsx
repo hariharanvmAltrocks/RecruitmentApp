@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import * as Lucide from "lucide-react";
 import { ResponsiveContainer, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ComposedChart, Bar, Line } from "recharts";
 import styles from "./PositionTrackerChart.module.scss";
 import Card from "../Common/Card";
@@ -44,6 +45,7 @@ export const PositionTrackerChart: React.FC<PositionTrackerChartProps> = ({ data
   return (
     <Card className={styles.chartCard}>
       <div className={styles.header}>
+        <Lucide.TrendingUp size={16} className={styles.iconBlue} />
         <h3 className={styles.title}>My Positions Tracker (Monthly)</h3>
       </div>
       <div className={styles.chartContainer}>

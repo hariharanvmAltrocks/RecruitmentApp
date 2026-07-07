@@ -214,6 +214,7 @@ var CommonService = /** @class */ (function () {
                     case 2:
                         userDetails = _a.sent();
                         validUserDetails = userDetails.filter(function (user) { return user !== null; });
+                        console.log(validUserDetails, "vaildUserDetails");
                         return [2 /*return*/, {
                                 data: validUserDetails,
                                 status: 200,
@@ -555,6 +556,7 @@ function getUserGuidByEmail(email) {
                     return [2 /*return*/, {
                             key: user.Id,
                             text: "".concat((UserName === null || UserName === void 0 ? void 0 : UserName.FirstName) || "", " ").concat((UserName === null || UserName === void 0 ? void 0 : UserName.MiddleName) || "", " ").concat((UserName === null || UserName === void 0 ? void 0 : UserName.LastName) || ""),
+                            email: (UserName === null || UserName === void 0 ? void 0 : UserName.EmailId) || "",
                         }];
                 case 3:
                     error_15 = _a.sent();

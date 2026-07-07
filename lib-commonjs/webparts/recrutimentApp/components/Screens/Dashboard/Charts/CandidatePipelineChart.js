@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CandidatePipelineChart = void 0;
 var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importStar(require("react"));
+var Lucide = tslib_1.__importStar(require("lucide-react"));
 var CandidatePipelineChart_module_scss_1 = tslib_1.__importDefault(require("./CandidatePipelineChart.module.scss"));
 var Card_1 = tslib_1.__importDefault(require("../Common/Card"));
 var CandidatePipelineChart = function (_a) {
@@ -24,6 +25,7 @@ var CandidatePipelineChart = function (_a) {
     var currentItems = pipelineList.slice(indexOfFirstItem, indexOfLastItem);
     return (react_1.default.createElement(Card_1.default, { className: CandidatePipelineChart_module_scss_1.default.container },
         react_1.default.createElement("div", { className: CandidatePipelineChart_module_scss_1.default.header },
+            react_1.default.createElement(Lucide.Users, { size: 16, className: CandidatePipelineChart_module_scss_1.default.iconBlue }),
             react_1.default.createElement("h3", { className: CandidatePipelineChart_module_scss_1.default.title }, "My Candidate Pipeline")),
         react_1.default.createElement("div", { className: CandidatePipelineChart_module_scss_1.default.tableWrapper },
             react_1.default.createElement("table", { className: CandidatePipelineChart_module_scss_1.default.table },

@@ -296,8 +296,6 @@ var useSubmitCandidateReview = function (onClose, handleRefresh) {
                 case 4:
                     res = _b.sent();
                     if (!(res.status === 200)) return [3 /*break*/, 7];
-                    if (!(StatusId === Config_1.workflowStatusApi.LineManagerL2Pending ||
-                        StatusId === Config_1.workflowStatusApi.PendingRecruitmentHRscheduleInterview)) return [3 /*break*/, 6];
                     if (!emailNot.templateCode) return [3 /*break*/, 6];
                     return [4 /*yield*/, ServiceExport_1.CandidateTable.SendEmailNotification(emailNot)];
                 case 5:

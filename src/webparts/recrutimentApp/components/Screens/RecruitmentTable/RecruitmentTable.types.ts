@@ -84,6 +84,7 @@ export interface HrMember {
   name: string;
   role: string;
   initials: string;
+  emailid: string;
 }
 
 export interface AssignmentPayload {

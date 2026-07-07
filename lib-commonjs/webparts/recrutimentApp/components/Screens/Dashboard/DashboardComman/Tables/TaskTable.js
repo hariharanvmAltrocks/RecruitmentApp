@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TaskTable = void 0;
 var tslib_1 = require("tslib");
 var react_1 = tslib_1.__importStar(require("react"));
+var Lucide = tslib_1.__importStar(require("lucide-react"));
 var TaskTable_module_scss_1 = tslib_1.__importDefault(require("./TaskTable.module.scss"));
 var Card_1 = tslib_1.__importDefault(require("../../Common/Card"));
 var DataTable_1 = require("../../../../Comman/DataTable/DataTable");
@@ -83,6 +84,7 @@ var TaskTable = function (_a) {
     var tasksList = data || [];
     return (react_1.default.createElement(Card_1.default, { className: TaskTable_module_scss_1.default.container },
         react_1.default.createElement("div", { className: TaskTable_module_scss_1.default.header },
+            react_1.default.createElement(Lucide.CheckSquare, { size: 16, className: TaskTable_module_scss_1.default.iconBlue }),
             react_1.default.createElement("h3", { className: TaskTable_module_scss_1.default.title }, "My Tasks Tracker")),
         react_1.default.createElement("div", { className: TaskTable_module_scss_1.default.tableWrapper },
             react_1.default.createElement(DataTable_1.DataTable, { columns: columns, data: tasksList, getRowId: getRowId, pageSize: pageSize, currentPage: currentPage, totalCount: tasksList.length, onPageChange: setCurrentPage, onPageSizeChange: setPageSize, loading: loading })),

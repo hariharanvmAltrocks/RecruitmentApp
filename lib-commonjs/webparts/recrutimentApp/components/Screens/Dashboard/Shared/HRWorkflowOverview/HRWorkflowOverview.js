@@ -2,58 +2,78 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HRWorkflowOverview = void 0;
 var tslib_1 = require("tslib");
-var react_1 = tslib_1.__importDefault(require("react"));
+var react_1 = tslib_1.__importStar(require("react"));
 var HRWorkflowOverview_module_scss_1 = tslib_1.__importDefault(require("./HRWorkflowOverview.module.scss"));
 var HRWorkflowOverview = function (_a) {
     var data = _a.data, loading = _a.loading;
+    var _b = (0, react_1.useState)(1), currentPage = _b[0], setCurrentPage = _b[1];
+    var itemsPerPage = 4;
     var sources = data || [];
+    var getPerformanceColorClass = function (pct) {
+        // Exact colors to match the mock image values
+        if (pct === 85 || pct === 76)
+            return HRWorkflowOverview_module_scss_1.default.pctGreen;
+        if (pct === 80 || pct === 70)
+            return HRWorkflowOverview_module_scss_1.default.pctOrange;
+        // Default fallback
+        return pct >= 75 ? HRWorkflowOverview_module_scss_1.default.pctGreen : HRWorkflowOverview_module_scss_1.default.pctOrange;
+    };
     if (loading) {
-        return (react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.containerCard, "aria-label": "Positions by Source Overview Loading" },
+        return (react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.containerCard, "aria-label": "My HRs Performance Loading" },
             react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.header },
-                react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "150px", height: "14px" } })),
-            react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.bodyGrid }, Array.from({ length: 5 }).map(function (_, idx) { return (react_1.default.createElement("div", { key: idx, className: HRWorkflowOverview_module_scss_1.default.sourceCard, style: { opacity: 0.8 } },
-                react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.sourceCard__header },
-                    react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.sourceCard__info },
-                        react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "32px", height: "32px", borderRadius: "50%", marginRight: "8px" } }),
-                        react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.sourceCard__meta },
-                            react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "80px", height: "12px", marginBottom: "6px" } }),
-                            react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "60px", height: "10px" } }))),
-                    react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "35px", height: "16px", borderRadius: "4px" } })),
-                react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.sourceCard__metrics }, Array.from({ length: 3 }).map(function (_, mIdx) { return (react_1.default.createElement("div", { key: mIdx, className: HRWorkflowOverview_module_scss_1.default.metricBox },
-                    react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "20px", height: "16px", marginBottom: "6px" } }),
-                    react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "35px", height: "8px" } }))); })))); })),
-            react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.footer },
-                react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "100px", height: "12px" } }))));
+                react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "150px", height: "16px" } })),
+            react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.tableWrapper },
+                react_1.default.createElement("table", { className: HRWorkflowOverview_module_scss_1.default.table },
+                    react_1.default.createElement("thead", null,
+                        react_1.default.createElement("tr", null,
+                            react_1.default.createElement("th", { className: HRWorkflowOverview_module_scss_1.default.thLeft, style: { width: "120px" } },
+                                react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "40px", height: "10px" } })),
+                            react_1.default.createElement("th", null,
+                                react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "80px", height: "10px", margin: "0 auto" } })),
+                            react_1.default.createElement("th", null,
+                                react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "40px", height: "10px", margin: "0 auto" } })),
+                            react_1.default.createElement("th", null,
+                                react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "60px", height: "10px", margin: "0 auto" } })))),
+                    react_1.default.createElement("tbody", null, Array.from({ length: 4 }).map(function (_, idx) { return (react_1.default.createElement("tr", { key: idx },
+                        react_1.default.createElement("td", { className: HRWorkflowOverview_module_scss_1.default.tdLeft },
+                            react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "70px", height: "12px" } })),
+                        react_1.default.createElement("td", null,
+                            react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "20px", height: "12px", margin: "0 auto" } })),
+                        react_1.default.createElement("td", null,
+                            react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "20px", height: "12px", margin: "0 auto" } })),
+                        react_1.default.createElement("td", null,
+                            react_1.default.createElement("div", { className: "dashboard-skeleton__bar", style: { width: "30px", height: "12px", margin: "0 auto" } })))); }))))));
     }
-    return (react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.containerCard, "aria-label": "Positions by Source Overview" },
+    var totalPages = Math.ceil(sources.length / itemsPerPage);
+    var safeCurrentPage = Math.max(1, Math.min(currentPage, totalPages || 1));
+    var indexOfLastItem = safeCurrentPage * itemsPerPage;
+    var indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    var currentItems = sources.slice(indexOfFirstItem, indexOfLastItem);
+    return (react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.containerCard, "aria-label": "My HRs Performance" },
         react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.header },
-            react_1.default.createElement("span", { className: HRWorkflowOverview_module_scss_1.default.title }, "POSITIONS BY SOURCE")),
-        react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.bodyGrid }, sources.map(function (wf) {
-            var avatarClass = HRWorkflowOverview_module_scss_1.default["avatar--".concat(wf.avatarTheme)] || HRWorkflowOverview_module_scss_1.default["avatar--blue"];
-            var pctClass = HRWorkflowOverview_module_scss_1.default["pct--".concat(wf.avatarTheme)] || HRWorkflowOverview_module_scss_1.default["pct--blue"];
-            return (react_1.default.createElement("div", { key: wf.name, className: HRWorkflowOverview_module_scss_1.default.sourceCard },
-                react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.sourceCard__header },
-                    react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.sourceCard__info },
-                        react_1.default.createElement("div", { className: "".concat(HRWorkflowOverview_module_scss_1.default.sourceCard__avatar, " ").concat(avatarClass) }, wf.avatarText),
-                        react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.sourceCard__meta },
-                            react_1.default.createElement("span", { className: HRWorkflowOverview_module_scss_1.default.sourceCard__name }, wf.name),
-                            react_1.default.createElement("span", { className: HRWorkflowOverview_module_scss_1.default.sourceCard__subtext },
-                                wf.positionsCount,
-                                " Positions"))),
-                    react_1.default.createElement("div", { className: "".concat(HRWorkflowOverview_module_scss_1.default.sourceCard__pct, " ").concat(pctClass) },
+            react_1.default.createElement("span", { className: HRWorkflowOverview_module_scss_1.default.title }, "My HRs Performance")),
+        react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.tableWrapper },
+            react_1.default.createElement("table", { className: HRWorkflowOverview_module_scss_1.default.table },
+                react_1.default.createElement("thead", null,
+                    react_1.default.createElement("tr", null,
+                        react_1.default.createElement("th", { className: HRWorkflowOverview_module_scss_1.default.thLeft }, "HR"),
+                        react_1.default.createElement("th", null, "Open Positions"),
+                        react_1.default.createElement("th", null, "Filled"),
+                        react_1.default.createElement("th", null, "Performance"))),
+                react_1.default.createElement("tbody", null, currentItems.map(function (wf) { return (react_1.default.createElement("tr", { key: wf.name },
+                    react_1.default.createElement("td", { className: HRWorkflowOverview_module_scss_1.default.tdLeft }, wf.name),
+                    react_1.default.createElement("td", { className: HRWorkflowOverview_module_scss_1.default.tdCentered }, wf.pending),
+                    react_1.default.createElement("td", { className: HRWorkflowOverview_module_scss_1.default.tdCentered }, wf.done),
+                    react_1.default.createElement("td", { className: "".concat(HRWorkflowOverview_module_scss_1.default.tdCentered, " ").concat(getPerformanceColorClass(wf.percentage)) },
                         wf.percentage,
-                        "%")),
-                react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.sourceCard__metrics },
-                    react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.metricBox },
-                        react_1.default.createElement("span", { className: "".concat(HRWorkflowOverview_module_scss_1.default.metricBox__val, " ").concat(HRWorkflowOverview_module_scss_1.default["metricBox__val--pending"]) }, wf.pending),
-                        react_1.default.createElement("span", { className: HRWorkflowOverview_module_scss_1.default.metricBox__label }, "Pending")),
-                    react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.metricBox },
-                        react_1.default.createElement("span", { className: "".concat(HRWorkflowOverview_module_scss_1.default.metricBox__val, " ").concat(HRWorkflowOverview_module_scss_1.default["metricBox__val--done"]) }, wf.done),
-                        react_1.default.createElement("span", { className: HRWorkflowOverview_module_scss_1.default.metricBox__label }, "Done")),
-                    react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.metricBox },
-                        react_1.default.createElement("span", { className: "".concat(HRWorkflowOverview_module_scss_1.default.metricBox__val, " ").concat(HRWorkflowOverview_module_scss_1.default["metricBox__val--total"]) }, wf.total),
-                        react_1.default.createElement("span", { className: HRWorkflowOverview_module_scss_1.default.metricBox__label }, "Total")))));
-        }))));
+                        "%"))); })))),
+        sources.length > itemsPerPage && (react_1.default.createElement("div", { className: HRWorkflowOverview_module_scss_1.default.pagination, role: "navigation", "aria-label": "Pagination" },
+            react_1.default.createElement("button", { className: HRWorkflowOverview_module_scss_1.default.pageArrow, type: "button", onClick: function () { return setCurrentPage(function (prev) { return Math.max(1, prev - 1); }); }, disabled: safeCurrentPage === 1, "aria-label": "Previous page" }, "\u2039"),
+            Array.from({ length: totalPages }).map(function (_, idx) {
+                var pageNum = idx + 1;
+                return (react_1.default.createElement("button", { key: pageNum, type: "button", className: "".concat(HRWorkflowOverview_module_scss_1.default.pageNumber, " ").concat(safeCurrentPage === pageNum ? HRWorkflowOverview_module_scss_1.default.active : ""), onClick: function () { return setCurrentPage(pageNum); } }, pageNum));
+            }),
+            react_1.default.createElement("button", { className: HRWorkflowOverview_module_scss_1.default.pageArrow, type: "button", onClick: function () { return setCurrentPage(function (prev) { return Math.min(totalPages, prev + 1); }); }, disabled: safeCurrentPage === totalPages, "aria-label": "Next page" }, "\u203A")))));
 };
 exports.HRWorkflowOverview = HRWorkflowOverview;
 exports.default = exports.HRWorkflowOverview;
