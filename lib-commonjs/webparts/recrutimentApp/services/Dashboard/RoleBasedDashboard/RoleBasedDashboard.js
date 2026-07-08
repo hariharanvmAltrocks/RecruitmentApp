@@ -23,8 +23,8 @@ var RoleBasedDashboardService = /** @class */ (function () {
                                     data: {}
                                 }];
                         }
-                        OpenRecruitment = result[0] || [];
-                        recruitmentProcess = result[1] || [];
+                        OpenRecruitment = result[1] || [];
+                        recruitmentProcess = result[2] || [];
                         return [4 /*yield*/, (0, CommanService_1.GetCandidateData)(recruitmentProcess)];
                     case 2:
                         candidates = _a.sent();

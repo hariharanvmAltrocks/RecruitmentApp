@@ -55,8 +55,8 @@ export default class RoleBasedDashboardService implements IRoleBasedDashboard {
         };
       }
 
-      const OpenRecruitment = result[0] || [];
-      const recruitmentProcess = result[1] || [];
+      const OpenRecruitment = result[1] || [];
+      const recruitmentProcess = result[2] || [];
       const candidates = await GetCandidateData(recruitmentProcess);
       const candidateDetails = candidates || [];
 
