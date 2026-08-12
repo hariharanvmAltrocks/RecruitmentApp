@@ -308,8 +308,8 @@ function _assignPositionID(p) {
                                 RecruitmentHRLead: (_b = RecrutimentData.data[0]) === null || _b === void 0 ? void 0 : _b.AssignHRLead,
                                 IsLabourHire: ((_c = RecrutimentData.data[0]) === null || _c === void 0 ? void 0 : _c.EmploymentCategory) ===
                                     ConditionConfig_1.EmployeementCategory.LaborhireContractor
-                                    ? "Yes"
-                                    : "No",
+                                    ? true
+                                    : false,
                             },
                         })];
                 case 3:
@@ -470,7 +470,7 @@ var ReviewScoreCardServices = /** @class */ (function () {
                         _1 = _e.sent();
                         return [3 /*break*/, 7];
                     case 7: return [4 /*yield*/, Promise.all((res || []).map(function (item) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                            var candidateId, gpa;
+                            var candidateId, gpa, profilePhoto;
                             var _a, _b, _c, _d;
                             return tslib_1.__generator(this, function (_e) {
                                 switch (_e.label) {
@@ -479,6 +479,13 @@ var ReviewScoreCardServices = /** @class */ (function () {
                                         return [4 /*yield*/, _calculateGPA(candidateId)];
                                     case 1:
                                         gpa = _e.sent();
+                                        return [4 /*yield*/, ServiceExport_1.OfferServices.FetchCandidateDocument({
+                                                ListName: Config_1.DocumentLibraray.HRMSCareerPortalCandidateCV,
+                                                ProfileID: item.ProfileID,
+                                                DocumentType: ConditionConfig_1.DocumentFolderName.ProfilePicture,
+                                            })];
+                                    case 2:
+                                        profilePhoto = _e.sent();
                                         return [2 /*return*/, {
                                                 id: candidateId,
                                                 recruitmentID: ((_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.ID) || recruitmentID,
@@ -505,6 +512,9 @@ var ReviewScoreCardServices = /** @class */ (function () {
                                                 isExapt: (item === null || item === void 0 ? void 0 : item.NationalityCode) === ConditionConfig_1.NationalityCode.Nationals
                                                     ? false
                                                     : true,
+                                                profilePhoto: (profilePhoto === null || profilePhoto === void 0 ? void 0 : profilePhoto.data) && profilePhoto.data.length > 0
+                                                    ? profilePhoto.data[0]
+                                                    : null,
                                             }];
                                 }
                             });
@@ -1139,11 +1149,11 @@ var ReviewScoreCardServices = /** @class */ (function () {
     };
     ReviewScoreCardServices.prototype.submitHODDecision = function (params) {
         return tslib_1.__awaiter(this, void 0, void 0, function () {
-            var candidateId_1, hodDecision, comments, currentUserEmail, currentRoleId, gpa, positionId, lv2, jobCodeID, recruitmentID, statusId, jobRequestId, isExapt, currentUserGuid_2, allPanels, matchingPanels, userPanels, _i, userPanels_1, panel, refreshed, level2Panels, uploadedCount, BtnAction, StatusID_1, othersInterviewed, isLevel2StatusId, actionId, workflowStatus, successMsg, ActionID, StatusID, e_10;
+            var candidateId_1, hodDecision, comments, currentUserEmail, currentRoleId, gpa, positionId, lv2, jobCodeID, recruitmentID, statusId, jobRequestId, isExapt, currentUserGuid_2, allPanels, matchingPanels, userPanels, _i, userPanels_1, panel, refreshed, level2Panels, uploadedCount, BtnAction, StatusID_1, othersInterviewed, isLevel2StatusId, actionId, workflowStatus, successMsg, ActionID, StatusID, emailNot, e_10;
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 20, , 21]);
+                        _a.trys.push([0, 22, , 23]);
                         candidateId_1 = params.candidateId, hodDecision = params.hodDecision, comments = params.comments, currentUserEmail = params.currentUserEmail, currentRoleId = params.currentRoleId, gpa = params.gpa, positionId = params.positionId, lv2 = params.isLevel2, jobCodeID = params.jobCodeID, recruitmentID = params.recruitmentID, statusId = params.statusId, jobRequestId = params.jobRequestId, isExapt = params.isExapt;
                         if (!lv2) return [3 /*break*/, 11];
                         return [4 /*yield*/, _insertOrUpdateLevel2Comment(candidateId_1, currentRoleId, comments)];
@@ -1274,38 +1284,44 @@ var ReviewScoreCardServices = /** @class */ (function () {
                             })];
                     case 13:
                         _a.sent();
-                        return [4 /*yield*/, _updatePortalWorkflowStatus(workflowStatus, Number(jobRequestId), comments)];
+                        if (!(StatusID === Config_1.StatusId.Selected)) return [3 /*break*/, 15];
+                        emailNot = { jobRequestId: jobRequestId !== null && jobRequestId !== void 0 ? jobRequestId : 0, templateCode: ConditionConfig_1.EmailTemplateCodes.HODSelection };
+                        return [4 /*yield*/, ServiceExport_1.CandidateTable.SendEmailNotification(emailNot)];
                     case 14:
                         _a.sent();
-                        return [4 /*yield*/, _insertOrUpdateLevel1Comment(candidateId_1, currentRoleId, comments, "Level 1")];
-                    case 15:
+                        _a.label = 15;
+                    case 15: return [4 /*yield*/, _updatePortalWorkflowStatus(workflowStatus, Number(jobRequestId), comments)];
+                    case 16:
                         _a.sent();
-                        if (!(hodDecision === "Yes" && positionId)) return [3 /*break*/, 17];
+                        return [4 /*yield*/, _insertOrUpdateLevel1Comment(candidateId_1, currentRoleId, comments, "Level 1")];
+                    case 17:
+                        _a.sent();
+                        if (!(hodDecision === "Yes" && positionId)) return [3 /*break*/, 19];
                         return [4 /*yield*/, _assignPositionID({
                                 positionId: positionId,
                                 candidateId: candidateId_1,
                                 recruitmentID: recruitmentID,
                                 isExpat: params.isExapt,
                             })];
-                    case 16:
+                    case 18:
                         _a.sent();
-                        _a.label = 17;
-                    case 17:
-                        if (!((hodDecision === "No" || hodDecision === "On Hold") && positionId)) return [3 /*break*/, 19];
+                        _a.label = 19;
+                    case 19:
+                        if (!((hodDecision === "No" || hodDecision === "On Hold") && positionId)) return [3 /*break*/, 21];
                         return [4 /*yield*/, spservice_1.default.SPUpdateItem({
                                 Listname: Config_1.ListNames.HRMSPositionIDMaster,
                                 RequestJSON: { PositionIDStatus: "Recruitment Initiated" },
                                 ID: positionId,
                             })];
-                    case 18:
-                        _a.sent();
-                        _a.label = 19;
-                    case 19: return [2 /*return*/, { success: true, message: successMsg }];
                     case 20:
+                        _a.sent();
+                        _a.label = 21;
+                    case 21: return [2 /*return*/, { success: true, message: successMsg }];
+                    case 22:
                         e_10 = _a.sent();
                         console.error("[submitHODDecision]", e_10);
                         return [2 /*return*/, { success: false, message: ConditionConfig_1.RecuritmentHRMsg.APIErrorMsg }];
-                    case 21: return [2 /*return*/];
+                    case 23: return [2 /*return*/];
                 }
             });
         });

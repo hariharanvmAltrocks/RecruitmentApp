@@ -401,6 +401,8 @@ export const DocumentFolderName = {
   WorkPermit: "Work Permit",
   Vaccination: "Vaccination",
   PaymentBill: "Payment Bill",
+  BankStatement: "Bank Statement",
+  Payroll: "Payroll",
   PoliceClearanceCertificate: "Police Clearance Certificate",
   CovidVaccinationCertificate: "Covid Vaccination Certificate",
   YellowFeverVaccinationCertificate: "Yellow Fever Vaccination Certificate",
@@ -408,6 +410,7 @@ export const DocumentFolderName = {
   BGVConsentform: "BGVConsentForm",
   ProofOfDocument: "ProofOfPaymentDocument",
   BGVProofOfDocument: "BGVProofOfDocument",
+  ProfilePicture : "Profile Picture"
 };
 
 export const BGVDocumentName = {
@@ -447,6 +450,8 @@ export const DisplayFolderName = {
   PoliceClearanceCertificate: "Police Clearance Certificate",
   CovidVaccinationCertificate: "Covid Vaccination Certificate",
   YellowFeverVaccinationCertificate: "Yellow Fever Vaccination Certificate",
+  BankStatement: "Bank Statement",
+  Payroll: "Payroll"
 };
 
 export const DocumentPath = {

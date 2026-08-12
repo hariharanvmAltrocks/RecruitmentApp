@@ -8,9 +8,12 @@ import {
   WorkflowAction,
   StatusId,
   workflowStatusApi,
+  DocumentLibraray,
 } from "../../../../utilities/Config";
 import {
   ButtonAction,
+  DocumentFolderName,
+  EmailTemplateCodes,
   EmployeementCategory,
   NationalityCode,
   RecuritmentHRMsg,
@@ -18,9 +21,14 @@ import {
 } from "../../../../utilities/ConditionConfig";
 import { WorkflowCandidateListConfig } from "../../../Hooks/WorkflowConfig";
 import {
+  CandidateTable,
   DashboardServices,
+  OfferServices,
   RecruitmentServices,
 } from "../../../../services/ServiceExport";
+import { sendEmail } from "../../../../models/Icareerportal";
+import { GetCandidateDocument } from "../../../../services/OfferRelease/IOfferService";
+import { IDocFiles } from "../../../../services/SPService/Ispservice";
 const _common = new CommonService();
 const _master = new MasterService();
 const _questApi = new QuestionnaireApi();
@@ -55,6 +63,7 @@ export interface CandidateListItem {
   interviewDate: string;
   disability: string;
   jobTitle: string;
+  profilePhoto: IDocFiles;
 }
 
 export interface CommentEntry {
@@ -363,8 +372,8 @@ async function _assignPositionID(p: {
         IsLabourHire:
           RecrutimentData.data[0]?.EmploymentCategory ===
           EmployeementCategory.LaborhireContractor
-            ? "Yes"
-            : "No",
+            ? true
+            : false,
       },
     });
     await SPServices.SPUpdateItem({
@@ -495,6 +504,12 @@ class ReviewScoreCardServices {
         (res || []).map(async (item: any) => {
           const candidateId = item.ID;
           const gpa = await _calculateGPA(candidateId);
+             const profilePhoto = await OfferServices.FetchCandidateDocument({
+                                  ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
+                                  ProfileID: item.ProfileID,
+                                  DocumentType: DocumentFolderName.ProfilePicture,
+                                } as GetCandidateDocument)
+                                
           return {
             id: candidateId,
             recruitmentID: item.RecruitmentID?.ID || recruitmentID,
@@ -524,6 +539,10 @@ class ReviewScoreCardServices {
               item?.NationalityCode === NationalityCode.Nationals
                 ? false
                 : true,
+            profilePhoto:
+              profilePhoto?.data && profilePhoto.data.length > 0
+                ? profilePhoto.data[0]
+                : null,
           } as CandidateListItem;
         }),
       );
@@ -1257,6 +1276,10 @@ class ReviewScoreCardServices {
         ID: candidateId,
       });
 
+      if(StatusID === StatusId.Selected){
+             const emailNot: sendEmail = { jobRequestId: jobRequestId ?? 0, templateCode: EmailTemplateCodes.HODSelection};
+             await CandidateTable.SendEmailNotification(emailNot);
+          }
      
       await _updatePortalWorkflowStatus(
         workflowStatus,

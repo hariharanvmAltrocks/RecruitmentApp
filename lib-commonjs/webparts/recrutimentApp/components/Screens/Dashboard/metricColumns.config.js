@@ -656,11 +656,11 @@ var StatusFilter = function (_a) {
             FilterValue: emailId,
         });
     }
-    if (labourHire) {
+    if (labourHire === 1 || labourHire === 0) {
         filters.push({
             FilterKey: "IsLabourHire",
             Operator: "eq",
-            FilterValue: labourHire === ApiConfig_1.Choices.Yes ? ApiConfig_1.Choices.Yes : ApiConfig_1.Choices.No,
+            FilterValue: labourHire,
         });
     }
     if (questionBy) {
@@ -855,6 +855,8 @@ var MetricQueryConfig = function (EmailId, roles) {
         _a[ConditionConfig_1.MatricID.LabourHire] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter({
             status: [
                 Config_1.StatusId.PendingHROfferInitiate,
+                Config_1.StatusId.HROfferLetterProgress,
+                Config_1.StatusId.HREmploymentContractProgress,
                 Config_1.StatusId.PendingHROfferReview,
                 Config_1.StatusId.PendingHRReviewOfferWorkPermitInit,
                 Config_1.StatusId.PendingFinancePaymentReview,
@@ -866,7 +868,7 @@ var MetricQueryConfig = function (EmailId, roles) {
             ],
             columnName: "RecruitmentHR",
             emailId: EmailId,
-            labourHire: ApiConfig_1.Choices.Yes,
+            labourHire: 1,
         })),
         //KCSA
         _a[ConditionConfig_1.MatricID.Kcsa] = createQuery(Config_1.ListNames.HRMSSelectedCandidateDetailsByHOD, StatusFilter({
@@ -884,7 +886,7 @@ var MetricQueryConfig = function (EmailId, roles) {
             ],
             columnName: "RecruitmentHR",
             emailId: EmailId,
-            labourHire: ApiConfig_1.Choices.No,
+            labourHire: 0,
         })),
         //Reviewscordcard HOD
         _a[ConditionConfig_1.MatricID.ReviewScoredHOD] = createQuery(Config_1.ListNames.HRMSRecruitmentDptDetails, StatusFilter({

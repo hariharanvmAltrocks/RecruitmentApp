@@ -172,11 +172,11 @@ var OfferService = /** @class */ (function () {
             });
         }); };
         this.FetchCandidateDocument = function (DocumentName) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-            var response, _a, files, files, medical, vaccination, workPermit, allFiles, files, files, files, error_3;
+            var response, _a, files, files, medical, vaccination, workPermit, allFiles, files, files, files, files, files, error_3;
             return tslib_1.__generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _b.trys.push([0, 16, , 17]);
+                        _b.trys.push([0, 20, , 21]);
                         response = null;
                         _a = DocumentName.DocumentType;
                         switch (_a) {
@@ -187,23 +187,26 @@ var OfferService = /** @class */ (function () {
                             case ConditionConfig_1.DocumentFolderName.PoliceClearanceCertificate: return [3 /*break*/, 9];
                             case ConditionConfig_1.DocumentFolderName.YellowFeverVaccinationCertificate: return [3 /*break*/, 9];
                             case ConditionConfig_1.DocumentFolderName.PaymentBill: return [3 /*break*/, 9];
-                            case ConditionConfig_1.DocumentFolderName.EmploymentContractForm: return [3 /*break*/, 11];
+                            case ConditionConfig_1.DocumentFolderName.BankStatement: return [3 /*break*/, 11];
+                            case ConditionConfig_1.DocumentFolderName.Payroll: return [3 /*break*/, 11];
+                            case ConditionConfig_1.DocumentFolderName.EmploymentContractForm: return [3 /*break*/, 13];
+                            case ConditionConfig_1.DocumentFolderName.ProfilePicture: return [3 /*break*/, 15];
                         }
-                        return [3 /*break*/, 13];
+                        return [3 /*break*/, 17];
                     case 1: return [4 /*yield*/, spservice_1.default.getDocLibFiles({
                             FilePath: "".concat(DocumentName.ListName, "/").concat(DocumentName.ProfileID, "/").concat(DocumentName.DocumentType),
                         })];
                     case 2:
                         files = (_b.sent());
                         response = files;
-                        return [3 /*break*/, 15];
+                        return [3 /*break*/, 19];
                     case 3: return [4 /*yield*/, spservice_1.default.getDocLibFiles({
                             FilePath: "".concat(DocumentName.ListName, "/").concat(DocumentName.ProfileID, "/").concat(DocumentName.RequestID, "/").concat(DocumentName.DocumentType, "/").concat(DocumentName.UnsignedDoc),
                         })];
                     case 4:
                         files = (_b.sent());
                         response = files;
-                        return [3 /*break*/, 15];
+                        return [3 /*break*/, 19];
                     case 5: return [4 /*yield*/, spservice_1.default.getDocLibFiles({
                             FilePath: "".concat(DocumentName.ListName, "/").concat(DocumentName.ProfileID, "/").concat(DocumentName.RequestID, "/").concat(ConditionConfig_1.DocumentFolderName.Medical),
                         })];
@@ -221,36 +224,50 @@ var OfferService = /** @class */ (function () {
                         workPermit = (_b.sent());
                         allFiles = tslib_1.__spreadArray(tslib_1.__spreadArray(tslib_1.__spreadArray([], (medical || []), true), (vaccination || []), true), (workPermit || []), true);
                         response = allFiles;
-                        return [3 /*break*/, 15];
+                        return [3 /*break*/, 19];
                     case 9: return [4 /*yield*/, spservice_1.default.getDocLibFiles({
                             FilePath: "".concat(DocumentName.ListName, "/").concat(DocumentName.ProfileID, "/").concat(DocumentName.RequestID, "/").concat(DocumentName.DocumentType),
                         })];
                     case 10:
                         files = (_b.sent());
                         response = files;
-                        return [3 /*break*/, 15];
+                        return [3 /*break*/, 19];
                     case 11: return [4 /*yield*/, spservice_1.default.getDocLibFiles({
-                            FilePath: "".concat(DocumentName.ListName, "/").concat(DocumentName.ProfileID, "/").concat(DocumentName.RequestID, "/").concat(DocumentName.DocumentType, "/").concat(DocumentName.UnsignedDoc),
+                            FilePath: "".concat(DocumentName.ListName, "/").concat(DocumentName.ProfileID, "/").concat(DocumentName.DocumentType),
                         })];
                     case 12:
                         files = (_b.sent());
                         response = files;
-                        return [3 /*break*/, 15];
+                        return [3 /*break*/, 19];
                     case 13: return [4 /*yield*/, spservice_1.default.getDocLibFiles({
-                            FilePath: "".concat(DocumentName.ListName, "/").concat(DocumentName.ProfileID),
+                            FilePath: "".concat(DocumentName.ListName, "/").concat(DocumentName.ProfileID, "/").concat(DocumentName.RequestID, "/").concat(DocumentName.DocumentType, "/").concat(DocumentName.UnsignedDoc),
                         })];
                     case 14:
                         files = (_b.sent());
                         response = files;
-                        return [3 /*break*/, 15];
-                    case 15: return [2 /*return*/, {
+                        return [3 /*break*/, 19];
+                    case 15: return [4 /*yield*/, spservice_1.default.getDocLibFiles({
+                            FilePath: "".concat(DocumentName.ListName, "/").concat(DocumentName.ProfileID, "/").concat(DocumentName.DocumentType),
+                        })];
+                    case 16:
+                        files = (_b.sent());
+                        response = files;
+                        return [3 /*break*/, 19];
+                    case 17: return [4 /*yield*/, spservice_1.default.getDocLibFiles({
+                            FilePath: "".concat(DocumentName.ListName, "/").concat(DocumentName.ProfileID),
+                        })];
+                    case 18:
+                        files = (_b.sent());
+                        response = files;
+                        return [3 /*break*/, 19];
+                    case 19: return [2 /*return*/, {
                             data: response,
                             status: 200,
                             message: response
                                 ? "Latest file fetched successfully"
                                 : "No attachments provided",
                         }];
-                    case 16:
+                    case 20:
                         error_3 = _b.sent();
                         console.error("Error during file fetch:", error_3);
                         return [2 /*return*/, {
@@ -258,7 +275,7 @@ var OfferService = /** @class */ (function () {
                                 status: 500,
                                 message: "Error during file fetch: ".concat(error_3.message),
                             }];
-                    case 17: return [2 /*return*/];
+                    case 21: return [2 /*return*/];
                 }
             });
         }); };

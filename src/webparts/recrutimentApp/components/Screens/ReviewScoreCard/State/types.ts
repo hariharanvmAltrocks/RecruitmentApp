@@ -1,6 +1,9 @@
 // State/types.ts
 // All shared types for the ReviewScoreCard feature
 
+import { GetCandidateDocument } from "../../../../services/OfferRelease/IOfferService";
+import { IDocFiles } from "../../../../services/SPService/Ispservice";
+
 export interface ScorecardCandidateRow {
   id: number;
   recruitmentID: number;
@@ -20,6 +23,7 @@ export interface ScorecardCandidateRow {
   disability?: string;
   jobTitle?: string;
   isExapt: boolean;
+  ProfileImage: IDocFiles;
 }
 
 export interface RawScorecard {

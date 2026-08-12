@@ -34,6 +34,7 @@ import {
 import {
   agentCode,
   CategoryID,
+  DocumentFolderName,
   InterviewLevels,
   NationalityCode,
   quesContentId,
@@ -43,6 +44,7 @@ import {
   CareerPotalServices,
   CommonServices,
   masterService,
+  OfferServices,
 } from "../ServiceExport";
 import {
   calculateTotalExperienceYears,
@@ -66,6 +68,7 @@ import {
 import { COIAttach } from "../CareerPortal/ICareerPortal";
 import { count } from "../../utilities/ApiConfig";
 import { GetEmployeeDictionary } from "../SageData/SageService";
+import { GetCandidateDocument } from "../OfferRelease/IOfferService";
 
 export default class CandidateService implements ICandidateService {
   async getCandidateDetailsInJobCode(
@@ -282,6 +285,11 @@ export default class CandidateService implements ICandidateService {
           const FamilyDocument = await CommonServices.GetDocumentinUrl(
             FamilyLinkPath[0]?.document?.filePath,
           );
+        const profilePhoto = await OfferServices.FetchCandidateDocument({
+                ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
+                ProfileID:op?.profileId,
+                DocumentType: DocumentFolderName.ProfilePicture,
+              } as GetCandidateDocument)
 
           const ProofIdentity = await masterService.GetAllMaster(
             CategoryID.ProofofIdentity,
@@ -559,6 +567,10 @@ export default class CandidateService implements ICandidateService {
               op?.profile?.nationality?.value === NationalityCode.Nationals
                 ? "DRC"
                 : "EXPAT",
+            ProfileImage:
+              profilePhoto?.data && profilePhoto.data.length > 0
+                ? profilePhoto.data[0]
+                : null,
           };
 
           GetProfileByJobCodeData.push(GetProfileDahboard);
@@ -649,6 +661,11 @@ export default class CandidateService implements ICandidateService {
           const FamilyDocument = await CommonServices.GetDocumentinUrl(
             item?.FamilyLink,
           );
+           const profilePhoto = await OfferServices.FetchCandidateDocument({
+                ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
+                ProfileID: item.ProfileID,
+                DocumentType: DocumentFolderName.ProfilePicture,
+              } as GetCandidateDocument)
           const OverallAttachment: AttachmentDetails[] = [
             ...(CandidateCV.data.length > 0
               ? [toAttachment("Candidate Resume", CandidateCV.data)]
@@ -752,6 +769,10 @@ export default class CandidateService implements ICandidateService {
               item?.NationalityCode === NationalityCode.Nationals
                 ? "DRC"
                 : "EXPAT",
+            ProfileImage:
+              profilePhoto?.data && profilePhoto.data.length > 0
+                ? profilePhoto.data[0]
+                : null,
           } as CandidateProfile;
         }),
       );

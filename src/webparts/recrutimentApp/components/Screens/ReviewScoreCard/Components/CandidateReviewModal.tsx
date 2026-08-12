@@ -300,7 +300,16 @@ const CandidateReviewModal: React.FC<Props> = ({
         <aside className={styles.sidebar}>
           <div className={styles.avatarSection}>
             <div className={styles.avatar}>
-              {(candidate.fullName ?? "A").charAt(0)}
+             {candidate?.ProfileImage ? (
+                      <img
+                        src={candidate?.ProfileImage.downloadUrl}
+                        alt={candidate?.ProfileImage.name ?? "Candidate Profile"}
+                        className={styles.avatarImg}
+                        // onError={() => setImageError(true)}
+                      />
+                    ) : (
+                      (candidate?.fullName ?? "A").charAt(0)
+                    )}
             </div>
             <h3 className={styles.avatarName}>{candidate.fullName ?? "--"}</h3>
             <span className={styles.avatarNationality}>

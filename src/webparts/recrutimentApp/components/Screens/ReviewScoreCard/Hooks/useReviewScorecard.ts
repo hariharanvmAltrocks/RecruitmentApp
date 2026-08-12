@@ -158,6 +158,7 @@ export function useReviewScorecard(
         disability: c.disability || "",
         jobTitle: c.jobTitle || "",
         isExapt: c.isExapt,
+        ProfileImage: c.profilePhoto
       }));
       setCandidates(mapped);
     } catch (e) {

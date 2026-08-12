@@ -69,6 +69,18 @@ var CATEGORY_CONFIG = (_a = {},
         icon: "payment",
         accentColor: "#EC4899",
     },
+    _a[ConditionConfig_1.DisplayFolderName.BankStatement] = {
+        categoryId: "bank-statement",
+        categoryName: "Bank Statement",
+        icon: "contract",
+        accentColor: "#EC4899",
+    },
+    _a[ConditionConfig_1.DisplayFolderName.Payroll] = {
+        categoryId: "payment-bill",
+        categoryName: "Payment Bill",
+        icon: "vaccination",
+        accentColor: "#EC4899",
+    },
     _a);
 function mapSPFile(file, index) {
     var _a, _b, _c, _d, _e, _f, _g;
@@ -111,7 +123,7 @@ function buildCategory(titleKey, rawData, isBGV) {
 function fetchAllDocuments(ProfileID, jobRequestID) {
     var _a, _b, _c;
     return tslib_1.__awaiter(this, void 0, void 0, function () {
-        var vtRes, existingVT, lastId, verificationTypes, verificationCodes, base, _d, bgvRes, offerSignedRes, offerUnsignedRes, policeRes, covidRes, yellowFeverRes, ecSignedRes, ecUnsignedRes, workPermitRes, paymentBillRes, rawGroups, categories, totalFiles;
+        var vtRes, existingVT, lastId, verificationTypes, verificationCodes, base, _d, bgvRes, offerSignedRes, offerUnsignedRes, policeRes, covidRes, yellowFeverRes, ecSignedRes, ecUnsignedRes, workPermitRes, paymentBillRes, BankStatement, Payroll, rawGroups, categories, totalFiles;
         return tslib_1.__generator(this, function (_e) {
             switch (_e.label) {
                 case 0: return [4 /*yield*/, ServiceExport_1.masterService.GetAllMaster(ConditionConfig_1.CategoryID.VerificationType)];
@@ -146,9 +158,11 @@ function fetchAllDocuments(ProfileID, jobRequestID) {
                             ServiceExport_1.OfferServices.FetchCandidateDocument(tslib_1.__assign(tslib_1.__assign({}, base), { DocumentType: ConditionConfig_1.DocumentFolderName.EmploymentContractForm, UnsignedDoc: ConditionConfig_1.DocumentFolderName.UnsignedDoc })),
                             ServiceExport_1.OfferServices.FetchCandidateDocument(tslib_1.__assign(tslib_1.__assign({}, base), { DocumentType: ConditionConfig_1.DocumentFolderName.WorkPermit })),
                             ServiceExport_1.OfferServices.FetchCandidateDocument(tslib_1.__assign(tslib_1.__assign({}, base), { DocumentType: ConditionConfig_1.DocumentFolderName.PaymentBill })),
+                            ServiceExport_1.OfferServices.FetchCandidateDocument(tslib_1.__assign(tslib_1.__assign({}, base), { DocumentType: ConditionConfig_1.DocumentFolderName.BankStatement })),
+                            ServiceExport_1.OfferServices.FetchCandidateDocument(tslib_1.__assign(tslib_1.__assign({}, base), { DocumentType: ConditionConfig_1.DocumentFolderName.Payroll })),
                         ])];
                 case 2:
-                    _d = _e.sent(), bgvRes = _d[0], offerSignedRes = _d[1], offerUnsignedRes = _d[2], policeRes = _d[3], covidRes = _d[4], yellowFeverRes = _d[5], ecSignedRes = _d[6], ecUnsignedRes = _d[7], workPermitRes = _d[8], paymentBillRes = _d[9];
+                    _d = _e.sent(), bgvRes = _d[0], offerSignedRes = _d[1], offerUnsignedRes = _d[2], policeRes = _d[3], covidRes = _d[4], yellowFeverRes = _d[5], ecSignedRes = _d[6], ecUnsignedRes = _d[7], workPermitRes = _d[8], paymentBillRes = _d[9], BankStatement = _d[10], Payroll = _d[11];
                     rawGroups = [
                         [ConditionConfig_1.DisplayFolderName.BackgroundVerification, bgvRes.data, true],
                         [ConditionConfig_1.DisplayFolderName.Offerletter, offerSignedRes.data, false],
@@ -164,6 +178,8 @@ function fetchAllDocuments(ProfileID, jobRequestID) {
                         ["EmploymentContractSigned", ecSignedRes.data, false],
                         [ConditionConfig_1.DisplayFolderName.WorkPermitDocument, workPermitRes.data, false],
                         [ConditionConfig_1.DisplayFolderName.PaymentBill, paymentBillRes.data, false],
+                        [ConditionConfig_1.DisplayFolderName.BankStatement, BankStatement.data, false],
+                        [ConditionConfig_1.DisplayFolderName.Payroll, Payroll.data, false]
                     ];
                     categories = rawGroups
                         .map(function (_a) {

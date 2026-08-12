@@ -570,9 +570,29 @@ export default class OfferService implements IOfferService {
           break;
         }
 
+        case DocumentFolderName.BankStatement: 
+        case DocumentFolderName.Payroll: 
+        {
+          const files = (await SPServices.getDocLibFiles({
+            FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.DocumentType}`,
+          })) as IDocFiles[];
+
+          response = files;
+          break;
+        }
+
         case DocumentFolderName.EmploymentContractForm: {
           const files = (await SPServices.getDocLibFiles({
             FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.RequestID}/${DocumentName.DocumentType}/${DocumentName.UnsignedDoc}`,
+          })) as IDocFiles[];
+
+          response = files;
+          break;
+        }
+
+        case DocumentFolderName.ProfilePicture: {
+          const files = (await SPServices.getDocLibFiles({
+            FilePath: `${DocumentName.ListName}/${DocumentName.ProfileID}/${DocumentName.DocumentType}`,
           })) as IDocFiles[];
 
           response = files;

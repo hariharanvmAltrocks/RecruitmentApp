@@ -293,6 +293,21 @@ export const ShowCandidateDetailsPopup: React.FC<
   const [level1, setLevel1] = useState<ScheduleForm>(EMPTY_SCHEDULE);
   const [level2, setLevel2] = useState<ScheduleForm>(EMPTY_SCHEDULE);
   const [commentsflag, setCommentsflag] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  const profileImgUrl = useMemo(() => {
+    if (!data?.ProfileImage) return undefined;
+    return (
+      data.ProfileImage.downloadUrl ||
+      (typeof data.ProfileImage.content === "string" && data.ProfileImage.content
+        ? data.ProfileImage.content
+        : undefined)
+    );
+  }, [data?.ProfileImage]);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [data?.ProfileImage]);
 
   const loading = recordLoading || panelLoading;
 
@@ -647,7 +662,16 @@ const toPanel = (members: string[]): panelmembers[] =>
               <aside className={styles.sidebar}>
                 <div className={styles.avatarSection}>
                   <div className={styles.avatar}>
-                    {(data?.ApplicantName ?? "A").charAt(0)}
+                    {profileImgUrl && !imageError ? (
+                      <img
+                        src={profileImgUrl}
+                        alt={data?.ApplicantName ?? "Candidate Profile"}
+                        className={styles.avatarImg}
+                        onError={() => setImageError(true)}
+                      />
+                    ) : (
+                      (data?.ApplicantName ?? "A").charAt(0)
+                    )}
                   </div>
                   <h3 className={styles.avatarName}>
                     {data?.ApplicantName ?? "--"}

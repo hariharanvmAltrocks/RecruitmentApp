@@ -179,7 +179,7 @@ var CandidateService = /** @class */ (function () {
                         return [4 /*yield*/, CareerPortalAPI_1.getProfileData
                                 .getCandidateProfile(CandidateID)
                                 .then(function (res) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                                var op, CommentsData, CandidateCV, BusinessLinkPath, BusinessDocument, FamilyLinkPath, FamilyDocument, ProofIdentity, totalExperienceYears, CountryCode, profileExperiance, dob, today, age, monthDiff, dayDiff, getOptAnswers, profileXAgent, AgenName, IdentityID, familyDetails, emergencyContacts, employeeReferenceDetail, companyDetails, PPEData, PPEMaster, ppeMap_1, JobCode, willingRelocated, code, PreviousEmployer, candidateLanguages, _a, years, months, formattedExperience, ContactNumber, OverallAttachment, GetProfileDahboard;
+                                var op, CommentsData, CandidateCV, BusinessLinkPath, BusinessDocument, FamilyLinkPath, FamilyDocument, profilePhoto, ProofIdentity, totalExperienceYears, CountryCode, profileExperiance, dob, today, age, monthDiff, dayDiff, getOptAnswers, profileXAgent, AgenName, IdentityID, familyDetails, emergencyContacts, employeeReferenceDetail, companyDetails, PPEData, PPEMaster, ppeMap_1, JobCode, willingRelocated, code, PreviousEmployer, candidateLanguages, _a, years, months, formattedExperience, ContactNumber, OverallAttachment, GetProfileDahboard;
                                 var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, _31, _32, _33, _34, _35, _36, _37, _38, _39, _40, _41, _42, _43, _44, _45, _46, _47, _48, _49, _50, _51, _52, _53, _54, _55, _56, _57, _58, _59, _60, _61, _62, _63, _64, _65, _66, _67, _68, _69, _70, _71, _72, _73, _74, _75, _76, _77, _78, _79, _80, _81, _82, _83, _84, _85, _86, _87, _88, _89, _90, _91, _92, _93, _94, _95, _96, _97, _98, _99, _100, _101, _102, _103, _104, _105, _106, _107, _108, _109, _110, _111;
                                 return tslib_1.__generator(this, function (_112) {
                                     switch (_112.label) {
@@ -236,12 +236,19 @@ var CandidateService = /** @class */ (function () {
                                             return [4 /*yield*/, ServiceExport_1.CommonServices.GetDocumentinUrl((_h = (_g = FamilyLinkPath[0]) === null || _g === void 0 ? void 0 : _g.document) === null || _h === void 0 ? void 0 : _h.filePath)];
                                         case 3:
                                             FamilyDocument = _112.sent();
-                                            return [4 /*yield*/, ServiceExport_1.masterService.GetAllMaster(ConditionConfig_1.CategoryID.ProofofIdentity)];
+                                            return [4 /*yield*/, ServiceExport_1.OfferServices.FetchCandidateDocument({
+                                                    ListName: Config_1.DocumentLibraray.HRMSCareerPortalCandidateCV,
+                                                    ProfileID: op === null || op === void 0 ? void 0 : op.profileId,
+                                                    DocumentType: ConditionConfig_1.DocumentFolderName.ProfilePicture,
+                                                })];
                                         case 4:
+                                            profilePhoto = _112.sent();
+                                            return [4 /*yield*/, ServiceExport_1.masterService.GetAllMaster(ConditionConfig_1.CategoryID.ProofofIdentity)];
+                                        case 5:
                                             ProofIdentity = _112.sent();
                                             totalExperienceYears = (0, reusehooks_1.calculateTotalExperienceYears)((_j = op === null || op === void 0 ? void 0 : op.profile) === null || _j === void 0 ? void 0 : _j.profileDetailExperiences);
                                             return [4 /*yield*/, ServiceExport_1.masterService.GetCountryMaster()];
-                                        case 5:
+                                        case 6:
                                             CountryCode = _112.sent();
                                             profileExperiance = Array.isArray((_k = op === null || op === void 0 ? void 0 : op.profile) === null || _k === void 0 ? void 0 : _k.profileDetailExperiences) &&
                                                 op.profile.profileDetailExperiences.length > 0
@@ -305,9 +312,9 @@ var CandidateService = /** @class */ (function () {
                                                 region: (_10 = (_9 = op === null || op === void 0 ? void 0 : op.profile) === null || _9 === void 0 ? void 0 : _9.profileDetailEmploymentHistory) === null || _10 === void 0 ? void 0 : _10.territory,
                                             };
                                             PPEData = [];
-                                            if (!(op === null || op === void 0 ? void 0 : op.tblJobProfilePpeRequests)) return [3 /*break*/, 7];
+                                            if (!(op === null || op === void 0 ? void 0 : op.tblJobProfilePpeRequests)) return [3 /*break*/, 8];
                                             return [4 /*yield*/, CareerPortalAPI_1.PPEMasterTable.getPPEMaster()];
-                                        case 6:
+                                        case 7:
                                             PPEMaster = _112.sent();
                                             ppeMap_1 = new Map(PPEMaster.data.data.map(function (ppe) { return [ppe.id, ppe]; }));
                                             PPEData = op.tblJobProfilePpeRequests.map(function (item) {
@@ -319,8 +326,8 @@ var CandidateService = /** @class */ (function () {
                                                     PPESize: (_c = size === null || size === void 0 ? void 0 : size.sizeText) !== null && _c !== void 0 ? _c : "",
                                                 };
                                             });
-                                            _112.label = 7;
-                                        case 7:
+                                            _112.label = 8;
+                                        case 8:
                                             JobCode = (_11 = op === null || op === void 0 ? void 0 : op.jobCode) === null || _11 === void 0 ? void 0 : _11.split("-")[0];
                                             willingRelocated = getOptAnswers.filter(function (item) { var _a; return ((_a = item.question) === null || _a === void 0 ? void 0 : _a.quesContentId) === ConditionConfig_1.quesContentId.WillingRelocate; });
                                             code = (0, reusehooks_1.getcountryCode)((_12 = CountryCode === null || CountryCode === void 0 ? void 0 : CountryCode.data) !== null && _12 !== void 0 ? _12 : [], profileExperiance === null || profileExperiance === void 0 ? void 0 : profileExperiance.refMobile);
@@ -435,6 +442,9 @@ var CandidateService = /** @class */ (function () {
                                                 NationalityShort: ((_111 = (_110 = op === null || op === void 0 ? void 0 : op.profile) === null || _110 === void 0 ? void 0 : _110.nationality) === null || _111 === void 0 ? void 0 : _111.value) === ConditionConfig_1.NationalityCode.Nationals
                                                     ? "DRC"
                                                     : "EXPAT",
+                                                ProfileImage: (profilePhoto === null || profilePhoto === void 0 ? void 0 : profilePhoto.data) && profilePhoto.data.length > 0
+                                                    ? profilePhoto.data[0]
+                                                    : null,
                                             };
                                             GetProfileByJobCodeData_1.push(GetProfileDahboard);
                                             return [2 /*return*/];
@@ -532,7 +542,7 @@ var CandidateService = /** @class */ (function () {
                         _1 = _g.sent();
                         return [3 /*break*/, 7];
                     case 7: return [4 /*yield*/, Promise.all((res || []).map(function (item) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                            var CandidateCV, BusinessDocument, FamilyDocument, OverallAttachment;
+                            var CandidateCV, BusinessDocument, FamilyDocument, profilePhoto, OverallAttachment;
                             var _a, _b, _c, _d, _e;
                             return tslib_1.__generator(this, function (_f) {
                                 switch (_f.label) {
@@ -545,6 +555,13 @@ var CandidateService = /** @class */ (function () {
                                         return [4 /*yield*/, ServiceExport_1.CommonServices.GetDocumentinUrl(item === null || item === void 0 ? void 0 : item.FamilyLink)];
                                     case 3:
                                         FamilyDocument = _f.sent();
+                                        return [4 /*yield*/, ServiceExport_1.OfferServices.FetchCandidateDocument({
+                                                ListName: Config_1.DocumentLibraray.HRMSCareerPortalCandidateCV,
+                                                ProfileID: item.ProfileID,
+                                                DocumentType: ConditionConfig_1.DocumentFolderName.ProfilePicture,
+                                            })];
+                                    case 4:
+                                        profilePhoto = _f.sent();
                                         OverallAttachment = tslib_1.__spreadArray(tslib_1.__spreadArray(tslib_1.__spreadArray([], (CandidateCV.data.length > 0
                                             ? [(0, dateConfigfn_1.toAttachment)("Candidate Resume", CandidateCV.data)]
                                             : []), true), (((_a = FamilyDocument.data) === null || _a === void 0 ? void 0 : _a.length) > 0
@@ -630,6 +647,9 @@ var CandidateService = /** @class */ (function () {
                                                 NationalityShort: (item === null || item === void 0 ? void 0 : item.NationalityCode) === ConditionConfig_1.NationalityCode.Nationals
                                                     ? "DRC"
                                                     : "EXPAT",
+                                                ProfileImage: (profilePhoto === null || profilePhoto === void 0 ? void 0 : profilePhoto.data) && profilePhoto.data.length > 0
+                                                    ? profilePhoto.data[0]
+                                                    : null,
                                             }];
                                 }
                             });

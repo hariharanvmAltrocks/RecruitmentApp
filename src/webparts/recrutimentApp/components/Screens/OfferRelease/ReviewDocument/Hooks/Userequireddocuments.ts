@@ -117,6 +117,18 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
     icon: "payment",
     accentColor: "#EC4899",
   },
+   [DisplayFolderName.BankStatement]: {
+    categoryId: "bank-statement",
+    categoryName: "Bank Statement",
+    icon: "contract",
+    accentColor: "#EC4899",
+  },
+   [DisplayFolderName.Payroll]: {
+    categoryId: "payment-bill",
+    categoryName: "Payment Bill",
+    icon: "vaccination",
+    accentColor: "#EC4899",
+  },
 };
 
 function mapSPFile(file: any, index: number): CandidateDocument {
@@ -202,6 +214,8 @@ async function fetchAllDocuments(
     ecUnsignedRes,
     workPermitRes,
     paymentBillRes,
+    BankStatement,
+    Payroll
   ] = await Promise.all([
     OfferServices.FetchBGVerificationDOcs({
       ...base,
@@ -258,6 +272,17 @@ async function fetchAllDocuments(
       ...base,
       DocumentType: DocumentFolderName.PaymentBill,
     } as GetCandidateDocument),
+
+     OfferServices.FetchCandidateDocument({
+      ...base,
+      DocumentType: DocumentFolderName.BankStatement,
+    } as GetCandidateDocument),
+
+     OfferServices.FetchCandidateDocument({
+      ...base,
+      DocumentType: DocumentFolderName.Payroll,
+    } as GetCandidateDocument),
+
   ]);
 
   const rawGroups: [string, any, boolean][] = [
@@ -275,6 +300,8 @@ async function fetchAllDocuments(
     ["EmploymentContractSigned", ecSignedRes.data, false],
     [DisplayFolderName.WorkPermitDocument, workPermitRes.data, false],
     [DisplayFolderName.PaymentBill, paymentBillRes.data, false],
+    [DisplayFolderName.BankStatement, BankStatement.data, false],
+    [DisplayFolderName.Payroll, Payroll.data, false]
   ];
 
   const categories = rawGroups

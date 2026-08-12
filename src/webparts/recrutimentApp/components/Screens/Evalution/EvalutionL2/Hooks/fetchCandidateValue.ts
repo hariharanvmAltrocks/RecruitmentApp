@@ -111,6 +111,7 @@ export function fetchCandidateValue(
         disability: c.disability || "",
         jobTitle: c.jobTitle || "",
         isExapt: c.isExapt,
+        ProfileImage: c.profilePhoto
       }));
       setCandidates(mapped);
       setReviewingCandidate(mapped[0]);

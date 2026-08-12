@@ -10,9 +10,10 @@ import {
   CommentEntry,
   EMPTY,
 } from "../../components/Screens/ReviewScoreCard/ReviewScoreCardServies/ReviewScoreCardServices";
-import { InterviewLevels } from "../../utilities/ConditionConfig";
-import { ListNames, StatusId } from "../../utilities/Config";
-import { masterService } from "../ServiceExport";
+import { DocumentFolderName, InterviewLevels } from "../../utilities/ConditionConfig";
+import { DocumentLibraray, ListNames, StatusId } from "../../utilities/Config";
+import { GetCandidateDocument } from "../OfferRelease/IOfferService";
+import { masterService, OfferServices } from "../ServiceExport";
 import SPServices from "../SPService/spservice";
 import {
   IEvalutionL2,
@@ -85,6 +86,11 @@ export default class EvalutionL2Service implements IEvalutionL2 {
         (res || []).map(async (item: any) => {
           const candidateId = item.ID;
           const gpa = await _calculateGPA(candidateId);
+           const profilePhoto = await OfferServices.FetchCandidateDocument({
+                                            ListName: DocumentLibraray.HRMSCareerPortalCandidateCV,
+                                            ProfileID: item.ProfileID,
+                                            DocumentType: DocumentFolderName.ProfilePicture,
+                                          } as GetCandidateDocument)
           return {
             id: candidateId,
             recruitmentID: item.RecruitmentID?.ID || recruitmentID,
@@ -110,6 +116,10 @@ export default class EvalutionL2Service implements IEvalutionL2 {
             ).split("T")[0],
             disability: item.Disability || "",
             jobTitle: item.PositionTitle || "",
+             profilePhoto:
+              profilePhoto?.data && profilePhoto.data.length > 0
+                ? profilePhoto.data[0]
+                : null,
           } as CandidateListItem;
         }),
       );

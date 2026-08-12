@@ -62,7 +62,7 @@ var FilePreviewModal = function (_a) {
 // ─────────────────────────────────────────────────────────────────────────────
 var ShowCandidateDetailsPopup = function (_a) {
     // ── Derived flags ──────────────────────────────────────────────────────────
-    var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+    var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
     var isOpen = _a.isOpen, onClose = _a.onClose, candidateId = _a.candidateId, panelParams = _a.panelParams, positionDetails = _a.positionDetails, handleRefresh = _a.handleRefresh;
     var statusId = (_b = panelParams === null || panelParams === void 0 ? void 0 : panelParams.statusId) !== null && _b !== void 0 ? _b : "";
     var ReviewHRFlag = statusId === Config_1.workflowStatusApi.HRPending;
@@ -84,22 +84,34 @@ var ShowCandidateDetailsPopup = function (_a) {
         statusId === Config_1.workflowStatusApi.LineManagerLevel1Rejected ||
         statusId === Config_1.workflowStatusApi.LineManagerLevel2Rejected;
     // ── Data hooks ─────────────────────────────────────────────────────────────
-    var _q = (0, fetchPanelMembers_1.useFetchPanelMembers)((_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.BusinessUnitCodeId) !== null && _c !== void 0 ? _c : 0, (_d = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.AssignEMail) !== null && _d !== void 0 ? _d : "", (_e = panelParams === null || panelParams === void 0 ? void 0 : panelParams.candidateId) !== null && _e !== void 0 ? _e : 0, statusId, isEnabled), paneloptions = _q.data, panelLoading = _q.loading;
-    var _r = (0, fetchCandidateDetails_1.useFetchCandidateDetails)(candidateId, statusId), data = _r.data, recordLoading = _r.loading;
-    var _s = (0, Usesubmitcandidatereview_1.useSubmitCandidateReview)(onClose, handleRefresh), submitting = _s.submitting, submit = _s.submit, pageLoading = _s.pageLoading, submitModalState = _s.modalState, submitCloseModal = _s.closeModal;
-    var _t = (0, useModalPopup_1.useModalPopup)(), modalState = _t.modalState, showModal = _t.showModal, closeModal = _t.closeModal;
+    var _r = (0, fetchPanelMembers_1.useFetchPanelMembers)((_c = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.BusinessUnitCodeId) !== null && _c !== void 0 ? _c : 0, (_d = positionDetails === null || positionDetails === void 0 ? void 0 : positionDetails.AssignEMail) !== null && _d !== void 0 ? _d : "", (_e = panelParams === null || panelParams === void 0 ? void 0 : panelParams.candidateId) !== null && _e !== void 0 ? _e : 0, statusId, isEnabled), paneloptions = _r.data, panelLoading = _r.loading;
+    var _s = (0, fetchCandidateDetails_1.useFetchCandidateDetails)(candidateId, statusId), data = _s.data, recordLoading = _s.loading;
+    var _t = (0, Usesubmitcandidatereview_1.useSubmitCandidateReview)(onClose, handleRefresh), submitting = _t.submitting, submit = _t.submit, pageLoading = _t.pageLoading, submitModalState = _t.modalState, submitCloseModal = _t.closeModal;
+    var _u = (0, useModalPopup_1.useModalPopup)(), modalState = _u.modalState, showModal = _u.showModal, closeModal = _u.closeModal;
     // ── Local state ────────────────────────────────────────────────────────────
     var fileInputRef = (0, react_1.useRef)(null);
-    var _u = (0, react_1.useState)(null), decision = _u[0], setDecision = _u[1];
-    var _v = (0, react_1.useState)(""), decisionComments = _v[0], setDecisionComments = _v[1];
-    var _w = (0, react_1.useState)([]), consultoptions = _w[0], setConsultOptions = _w[1];
-    var _x = (0, react_1.useState)(null), previewFile = _x[0], setPreviewFile = _x[1];
-    var _y = (0, react_1.useState)(""), HRReview = _y[0], setHRReview = _y[1];
-    var _z = (0, react_1.useState)(false), dropdownOpen = _z[0], setDropdownOpen = _z[1];
-    var _0 = (0, react_1.useState)(EMPTY_COI), coi = _0[0], setCoi = _0[1];
-    var _1 = (0, react_1.useState)(EMPTY_SCHEDULE), level1 = _1[0], setLevel1 = _1[1];
-    var _2 = (0, react_1.useState)(EMPTY_SCHEDULE), level2 = _2[0], setLevel2 = _2[1];
-    var _3 = (0, react_1.useState)(false), commentsflag = _3[0], setCommentsflag = _3[1];
+    var _v = (0, react_1.useState)(null), decision = _v[0], setDecision = _v[1];
+    var _w = (0, react_1.useState)(""), decisionComments = _w[0], setDecisionComments = _w[1];
+    var _x = (0, react_1.useState)([]), consultoptions = _x[0], setConsultOptions = _x[1];
+    var _y = (0, react_1.useState)(null), previewFile = _y[0], setPreviewFile = _y[1];
+    var _z = (0, react_1.useState)(""), HRReview = _z[0], setHRReview = _z[1];
+    var _0 = (0, react_1.useState)(false), dropdownOpen = _0[0], setDropdownOpen = _0[1];
+    var _1 = (0, react_1.useState)(EMPTY_COI), coi = _1[0], setCoi = _1[1];
+    var _2 = (0, react_1.useState)(EMPTY_SCHEDULE), level1 = _2[0], setLevel1 = _2[1];
+    var _3 = (0, react_1.useState)(EMPTY_SCHEDULE), level2 = _3[0], setLevel2 = _3[1];
+    var _4 = (0, react_1.useState)(false), commentsflag = _4[0], setCommentsflag = _4[1];
+    var _5 = (0, react_1.useState)(false), imageError = _5[0], setImageError = _5[1];
+    var profileImgUrl = (0, react_1.useMemo)(function () {
+        if (!(data === null || data === void 0 ? void 0 : data.ProfileImage))
+            return undefined;
+        return (data.ProfileImage.downloadUrl ||
+            (typeof data.ProfileImage.content === "string" && data.ProfileImage.content
+                ? data.ProfileImage.content
+                : undefined));
+    }, [data === null || data === void 0 ? void 0 : data.ProfileImage]);
+    (0, react_1.useEffect)(function () {
+        setImageError(false);
+    }, [data === null || data === void 0 ? void 0 : data.ProfileImage]);
     var loading = recordLoading || panelLoading;
     // ── Memoised panel values ──────────────────────────────────────────────────
     var panelValue = (0, react_1.useMemo)(function () {
@@ -379,9 +391,9 @@ var ShowCandidateDetailsPopup = function (_a) {
                     react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.body },
                         react_1.default.createElement("aside", { className: ShowCandidateDetailsPopup_module_scss_1.default.sidebar },
                             react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.avatarSection },
-                                react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.avatar }, ((_f = data === null || data === void 0 ? void 0 : data.ApplicantName) !== null && _f !== void 0 ? _f : "A").charAt(0)),
-                                react_1.default.createElement("h3", { className: ShowCandidateDetailsPopup_module_scss_1.default.avatarName }, (_g = data === null || data === void 0 ? void 0 : data.ApplicantName) !== null && _g !== void 0 ? _g : "--"),
-                                react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.avatarNationality }, (_h = data === null || data === void 0 ? void 0 : data.NationalityShort) !== null && _h !== void 0 ? _h : "--")),
+                                react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.avatar }, profileImgUrl && !imageError ? (react_1.default.createElement("img", { src: profileImgUrl, alt: (_f = data === null || data === void 0 ? void 0 : data.ApplicantName) !== null && _f !== void 0 ? _f : "Candidate Profile", className: ShowCandidateDetailsPopup_module_scss_1.default.avatarImg, onError: function () { return setImageError(true); } })) : (((_g = data === null || data === void 0 ? void 0 : data.ApplicantName) !== null && _g !== void 0 ? _g : "A").charAt(0))),
+                                react_1.default.createElement("h3", { className: ShowCandidateDetailsPopup_module_scss_1.default.avatarName }, (_h = data === null || data === void 0 ? void 0 : data.ApplicantName) !== null && _h !== void 0 ? _h : "--"),
+                                react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.avatarNationality }, (_j = data === null || data === void 0 ? void 0 : data.NationalityShort) !== null && _j !== void 0 ? _j : "--")),
                             react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.infoGrid },
                                 react_1.default.createElement(reuseUI_1.InfoItem, { icon: react_1.default.createElement(lucide_react_1.Globe, { size: 14 }), label: strings.Nationality, value: data === null || data === void 0 ? void 0 : data.Nationality }),
                                 react_1.default.createElement(reuseUI_1.InfoItem, { icon: react_1.default.createElement(lucide_react_1.Users, { size: 14 }), label: strings.Gender, value: data === null || data === void 0 ? void 0 : data.Gender }),
@@ -390,15 +402,15 @@ var ShowCandidateDetailsPopup = function (_a) {
                                     react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.infoRowItem },
                                         react_1.default.createElement(reuseUI_1.InfoItem, { icon: react_1.default.createElement(lucide_react_1.Zap, { size: 14 }), label: strings.MiningExp, value: data === null || data === void 0 ? void 0 : data.ExperienceMining })),
                                     react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.infoRowItem },
-                                        react_1.default.createElement(reuseUI_1.InfoItem, { icon: react_1.default.createElement(lucide_react_1.Zap, { size: 14 }), label: strings.RelatedExp, value: String((_j = data === null || data === void 0 ? void 0 : data.ExperRelatedfield) !== null && _j !== void 0 ? _j : "") }))),
+                                        react_1.default.createElement(reuseUI_1.InfoItem, { icon: react_1.default.createElement(lucide_react_1.Zap, { size: 14 }), label: strings.RelatedExp, value: String((_k = data === null || data === void 0 ? void 0 : data.ExperRelatedfield) !== null && _k !== void 0 ? _k : "") }))),
                                 react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.infoRow },
                                     react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.infoRowItem },
-                                        react_1.default.createElement(reuseUI_1.InfoItem, { icon: react_1.default.createElement(lucide_react_1.AlertTriangle, { size: 14 }), label: strings.Conflicts, value: (_k = data === null || data === void 0 ? void 0 : data.ConflictsOfInterest) !== null && _k !== void 0 ? _k : "No" })),
+                                        react_1.default.createElement(reuseUI_1.InfoItem, { icon: react_1.default.createElement(lucide_react_1.AlertTriangle, { size: 14 }), label: strings.Conflicts, value: (_l = data === null || data === void 0 ? void 0 : data.ConflictsOfInterest) !== null && _l !== void 0 ? _l : "No" })),
                                     react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.infoRowItem },
-                                        react_1.default.createElement(reuseUI_1.InfoItem, { icon: react_1.default.createElement(lucide_react_1.Accessibility, { size: 14 }), label: strings.Disability, value: (_l = data === null || data === void 0 ? void 0 : data.disability) !== null && _l !== void 0 ? _l : "No" }))),
+                                        react_1.default.createElement(reuseUI_1.InfoItem, { icon: react_1.default.createElement(lucide_react_1.Accessibility, { size: 14 }), label: strings.Disability, value: (_m = data === null || data === void 0 ? void 0 : data.disability) !== null && _m !== void 0 ? _m : "No" }))),
                                 react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.infoRow },
                                     react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.infoRowItem },
-                                        react_1.default.createElement(reuseUI_1.InfoItem, { label: strings.TaxDependents, value: String((_m = data === null || data === void 0 ? void 0 : data.NumberOftax) !== null && _m !== void 0 ? _m : "") })),
+                                        react_1.default.createElement(reuseUI_1.InfoItem, { label: strings.TaxDependents, value: String((_o = data === null || data === void 0 ? void 0 : data.NumberOftax) !== null && _o !== void 0 ? _o : "") })),
                                     react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.infoRowItem },
                                         react_1.default.createElement(reuseUI_1.InfoItem, { label: strings.CurrentPosition, value: data === null || data === void 0 ? void 0 : data.CurrentPosition }))),
                                 (data === null || data === void 0 ? void 0 : data.hasIvanhoeZijinExperience) && (react_1.default.createElement(reuseUI_1.InfoItem, { label: strings.GroupPartnerCompanies, value: data.hasIvanhoeZijinExperience }))),
@@ -408,7 +420,7 @@ var ShowCandidateDetailsPopup = function (_a) {
                                     " ",
                                     strings.Attachments),
                                 react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.attachmentsBox },
-                                    react_1.default.createElement(RequiredAttachments_1.RequiredAttachments, { attachments: (_o = data === null || data === void 0 ? void 0 : data.OverallAtttachment) !== null && _o !== void 0 ? _o : [], isLoading: loading })))),
+                                    react_1.default.createElement(RequiredAttachments_1.RequiredAttachments, { attachments: (_p = data === null || data === void 0 ? void 0 : data.OverallAtttachment) !== null && _p !== void 0 ? _p : [], isLoading: loading })))),
                         react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.mainContent },
                             !PanelMember && (react_1.default.createElement(framer_motion_1.motion.section, { className: ShowCandidateDetailsPopup_module_scss_1.default.section, custom: 0, variants: reuseUI_1.sectionVariants, initial: "hidden", animate: "visible" },
                                 react_1.default.createElement(reuseUI_1.SectionHeader, { title: strings.ScreeningQuestions, subtitle: strings.CandidateResponses, accent: "orange" }),
@@ -471,7 +483,7 @@ var ShowCandidateDetailsPopup = function (_a) {
                                 react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.disabilityCard },
                                     react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.disabilityField },
                                         react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.disabilityFieldLabel }, strings.DisabilityStatus),
-                                        react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.disabilityFieldValue }, (_p = data === null || data === void 0 ? void 0 : data.disability) !== null && _p !== void 0 ? _p : "--")),
+                                        react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.disabilityFieldValue }, (_q = data === null || data === void 0 ? void 0 : data.disability) !== null && _q !== void 0 ? _q : "--")),
                                     (data === null || data === void 0 ? void 0 : data.disability) && (react_1.default.createElement("div", { className: ShowCandidateDetailsPopup_module_scss_1.default.disabilityDivider },
                                         react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.disabilityFieldLabel }, strings.Comments),
                                         react_1.default.createElement("span", { className: ShowCandidateDetailsPopup_module_scss_1.default.disabilityReason }, data.disabilityReason)))))),

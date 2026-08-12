@@ -187,6 +187,7 @@ export type CandidateProfile = {
   InterviewEndTime?: string | undefined;
 
   NationalityShort: string;
+  ProfileImage?: IDocFiles | null;
 };
 
 export type childrenDetails = {

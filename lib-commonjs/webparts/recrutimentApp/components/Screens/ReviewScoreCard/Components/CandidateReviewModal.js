@@ -37,11 +37,11 @@ var MField = function (_a) {
 };
 // ─── Main Component ───────────────────────────────────────────────────────────
 var CandidateReviewModal = function (_a) {
-    var _b, _c;
+    var _b, _c, _d;
     var candidate = _a.candidate, reviewData = _a.reviewData, reviewLoading = _a.reviewLoading, job = _a.job, scoreData = _a.scoreData, scoreLoading = _a.scoreLoading, showComments = _a.showComments, level1Comments = _a.level1Comments, level2Comments = _a.level2Comments, commentsLoading = _a.commentsLoading, onViewComments = _a.onViewComments, onCloseComments = _a.onCloseComments, hodDecision = _a.hodDecision, decisionComment = _a.decisionComment, confirmed = _a.confirmed, selectedPositionId = _a.selectedPositionId, selectedPositionText = _a.selectedPositionText, positionOptions = _a.positionOptions, submitting = _a.submitting, submitError = _a.submitError, successMessage = _a.successMessage, errors = _a.errors, shouldShowPositionId = _a.shouldShowPositionId, onDecisionChange = _a.onDecisionChange, onCommentChange = _a.onCommentChange, onConfirmChange = _a.onConfirmChange, onPositionChange = _a.onPositionChange, onClose = _a.onClose, currentRoleId = _a.currentRoleId, isLevel2Status = _a.isLevel2Status, submitDeps = _a.submitDeps;
     // ── Local state ────────────────────────────────────────────────────────────
-    var _d = React.useState(0), activePanelTab = _d[0], setActivePanelTab = _d[1];
-    var _e = React.useState("questions"), activeScorecardTab = _e[0], setActiveScorecardTab = _e[1];
+    var _e = React.useState(0), activePanelTab = _e[0], setActivePanelTab = _e[1];
+    var _f = React.useState("questions"), activeScorecardTab = _f[0], setActiveScorecardTab = _f[1];
     // ── Derived data ───────────────────────────────────────────────────────────
     var panelMembers = React.useMemo(function () {
         var fromReview = (reviewData === null || reviewData === void 0 ? void 0 : reviewData.panelMembers) || [];
@@ -158,8 +158,8 @@ var CandidateReviewModal = function (_a) {
         React.createElement("div", { className: ReviewScorecard_module_scss_1.default.mBody },
             React.createElement("aside", { className: ReviewScorecard_module_scss_1.default.sidebar },
                 React.createElement("div", { className: ReviewScorecard_module_scss_1.default.avatarSection },
-                    React.createElement("div", { className: ReviewScorecard_module_scss_1.default.avatar }, ((_b = candidate.fullName) !== null && _b !== void 0 ? _b : "A").charAt(0)),
-                    React.createElement("h3", { className: ReviewScorecard_module_scss_1.default.avatarName }, (_c = candidate.fullName) !== null && _c !== void 0 ? _c : "--"),
+                    React.createElement("div", { className: ReviewScorecard_module_scss_1.default.avatar }, (candidate === null || candidate === void 0 ? void 0 : candidate.ProfileImage) ? (React.createElement("img", { src: candidate === null || candidate === void 0 ? void 0 : candidate.ProfileImage.downloadUrl, alt: (_b = candidate === null || candidate === void 0 ? void 0 : candidate.ProfileImage.name) !== null && _b !== void 0 ? _b : "Candidate Profile", className: ReviewScorecard_module_scss_1.default.avatarImg })) : (((_c = candidate === null || candidate === void 0 ? void 0 : candidate.fullName) !== null && _c !== void 0 ? _c : "A").charAt(0))),
+                    React.createElement("h3", { className: ReviewScorecard_module_scss_1.default.avatarName }, (_d = candidate.fullName) !== null && _d !== void 0 ? _d : "--"),
                     React.createElement("span", { className: ReviewScorecard_module_scss_1.default.avatarNationality }, nationLabel !== null && nationLabel !== void 0 ? nationLabel : "--")),
                 React.createElement("div", { className: ReviewScorecard_module_scss_1.default.infoGrid },
                     React.createElement(reuseUI_1.InfoItem, { icon: React.createElement(lucide_react_1.Globe, { size: 14 }), label: strings.Nationality, value: raw.Nationality || candidate.nationality || "" }),

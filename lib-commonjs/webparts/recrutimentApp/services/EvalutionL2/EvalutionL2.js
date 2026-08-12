@@ -84,7 +84,7 @@ var EvalutionL2Service = /** @class */ (function () {
                         _1 = _e.sent();
                         return [3 /*break*/, 7];
                     case 7: return [4 /*yield*/, Promise.all((res || []).map(function (item) { return tslib_1.__awaiter(_this, void 0, void 0, function () {
-                            var candidateId, gpa;
+                            var candidateId, gpa, profilePhoto;
                             var _a, _b, _c, _d;
                             return tslib_1.__generator(this, function (_e) {
                                 switch (_e.label) {
@@ -93,6 +93,13 @@ var EvalutionL2Service = /** @class */ (function () {
                                         return [4 /*yield*/, (0, ReviewScoreCardServices_1._calculateGPA)(candidateId)];
                                     case 1:
                                         gpa = _e.sent();
+                                        return [4 /*yield*/, ServiceExport_1.OfferServices.FetchCandidateDocument({
+                                                ListName: Config_1.DocumentLibraray.HRMSCareerPortalCandidateCV,
+                                                ProfileID: item.ProfileID,
+                                                DocumentType: ConditionConfig_1.DocumentFolderName.ProfilePicture,
+                                            })];
+                                    case 2:
+                                        profilePhoto = _e.sent();
                                         return [2 /*return*/, {
                                                 id: candidateId,
                                                 recruitmentID: ((_a = item.RecruitmentID) === null || _a === void 0 ? void 0 : _a.ID) || recruitmentID,
@@ -116,6 +123,9 @@ var EvalutionL2Service = /** @class */ (function () {
                                                     "").split("T")[0],
                                                 disability: item.Disability || "",
                                                 jobTitle: item.PositionTitle || "",
+                                                profilePhoto: (profilePhoto === null || profilePhoto === void 0 ? void 0 : profilePhoto.data) && profilePhoto.data.length > 0
+                                                    ? profilePhoto.data[0]
+                                                    : null,
                                             }];
                                 }
                             });

@@ -138,6 +138,7 @@ function useReviewScorecard(recruitmentId, currentUserEmail, departmentFromRoute
                         disability: c.disability || "",
                         jobTitle: c.jobTitle || "",
                         isExapt: c.isExapt,
+                        ProfileImage: c.profilePhoto
                     }); });
                     setCandidates(mapped);
                     return [3 /*break*/, 5];

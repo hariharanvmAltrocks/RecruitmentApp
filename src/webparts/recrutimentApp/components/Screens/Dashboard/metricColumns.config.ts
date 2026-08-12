@@ -726,7 +726,7 @@ interface StatusFilterOptions {
   status?: number | number[];
   columnName?: string;
   emailId?: string;
-  labourHire?: string;
+  labourHire?: number;
   questionBy?: string;
   orFilters?: IOrFilter[];
 }
@@ -763,11 +763,11 @@ const StatusFilter = ({
     });
   }
 
-  if (labourHire) {
+  if (labourHire === 1 || labourHire === 0) {
     filters.push({
       FilterKey: "IsLabourHire",
       Operator: "eq",
-      FilterValue: labourHire === Choices.Yes ? Choices.Yes : Choices.No,
+      FilterValue: labourHire,
     });
   }
 
@@ -1089,6 +1089,8 @@ export const MetricQueryConfig = (
     StatusFilter({
       status: [
         StatusId.PendingHROfferInitiate,
+         StatusId.HROfferLetterProgress,
+         StatusId.HREmploymentContractProgress,
         StatusId.PendingHROfferReview,
         StatusId.PendingHRReviewOfferWorkPermitInit,
         StatusId.PendingFinancePaymentReview,
@@ -1100,7 +1102,7 @@ export const MetricQueryConfig = (
       ],
       columnName: "RecruitmentHR",
       emailId: EmailId,
-      labourHire: Choices.Yes,
+      labourHire: 1,
     }),
   ),
 
@@ -1122,7 +1124,7 @@ export const MetricQueryConfig = (
       ],
       columnName: "RecruitmentHR",
       emailId: EmailId,
-      labourHire: Choices.No,
+      labourHire: 0,
     }),
   ),
 

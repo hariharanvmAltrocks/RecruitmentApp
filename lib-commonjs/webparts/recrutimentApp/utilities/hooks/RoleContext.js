@@ -360,22 +360,14 @@ var RoleProvider = function (_a) {
     var isFullyReady = !combinedLoading &&
         !state.error &&
         state.userName !== "" &&
-        state.resolvedRoles.length > 0 &&
-        state.apiUrlsReady;
+        state.resolvedRoles.length > 0;
+    // state.apiUrlsReady;
     var hasNoRoles = !combinedLoading &&
         !state.error &&
         state.userName !== "" &&
         state.resolvedRoles.length === 0;
     return (React.createElement(RoleContext.Provider, { value: contextValue },
-        React.createElement(CustomLoader_1.default, { isLoading: combinedLoading, progress: progress, statusMessage: statusMessage, userName: state.userName }, 
-        // state.apiUrlsError ? (
-        //   // <ServerDownError message={state.apiUrlsError} />
-        //   <></>
-        // ) : state.error ? (
-        //   // <ErrorScreen message={state.error.message} />
-        //   <></>
-        // ) :
-        isFullyReady ? (React.createElement(React.Suspense, { fallback: React.createElement(CustomLoader_1.default, { isLoading: combinedLoading, progress: progress, statusMessage: statusMessage, userName: state.userName }) }, children)) : hasNoRoles ? (React.createElement(NoRoleScreen, null)) : null)));
+        React.createElement(CustomLoader_1.default, { isLoading: combinedLoading, progress: progress, statusMessage: statusMessage, userName: state.userName }, isFullyReady ? (React.createElement(React.Suspense, { fallback: React.createElement(CustomLoader_1.default, { isLoading: combinedLoading, progress: progress, statusMessage: statusMessage, userName: state.userName }) }, children)) : hasNoRoles ? (React.createElement(NoRoleScreen, null)) : null)));
 };
 exports.RoleProvider = RoleProvider;
 var useRoleContext = function () {

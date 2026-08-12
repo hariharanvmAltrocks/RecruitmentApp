@@ -304,6 +304,8 @@ exports.DocumentFolderName = {
     WorkPermit: "Work Permit",
     Vaccination: "Vaccination",
     PaymentBill: "Payment Bill",
+    BankStatement: "Bank Statement",
+    Payroll: "Payroll",
     PoliceClearanceCertificate: "Police Clearance Certificate",
     CovidVaccinationCertificate: "Covid Vaccination Certificate",
     YellowFeverVaccinationCertificate: "Yellow Fever Vaccination Certificate",
@@ -311,6 +313,7 @@ exports.DocumentFolderName = {
     BGVConsentform: "BGVConsentForm",
     ProofOfDocument: "ProofOfPaymentDocument",
     BGVProofOfDocument: "BGVProofOfDocument",
+    ProfilePicture: "Profile Picture"
 };
 exports.BGVDocumentName = {
     GQ: "Global University Qualification Verification",
@@ -348,6 +351,8 @@ exports.DisplayFolderName = {
     PoliceClearanceCertificate: "Police Clearance Certificate",
     CovidVaccinationCertificate: "Covid Vaccination Certificate",
     YellowFeverVaccinationCertificate: "Yellow Fever Vaccination Certificate",
+    BankStatement: "Bank Statement",
+    Payroll: "Payroll"
 };
 exports.DocumentPath = {
     offerLetterUnsigned: "Offer Letters (Unsigned)",
