@@ -95,9 +95,9 @@ exports.menuID = {
     PostSelectionProcess: 31,
     ReviewProfile: 32,
     RecruitmentProcess: 28,
-    AdminPanel: 35,
-    Agent: 39,
-    LabourHire: 40,
+    AdminPanel: 42, //SIT 35        // UAT 42,
+    Agent: 43, //SIT 39              //UAT 43,
+    LabourHire: 44, //SIT 40           // UAT 44,
     InterviewPanel: 29,
     Mytracker: 34,
 };
