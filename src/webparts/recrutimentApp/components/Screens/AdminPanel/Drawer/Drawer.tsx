@@ -114,26 +114,30 @@ export const Drawer: React.FC<DrawerProps> = ({
           ListNames.HRMSExternalAgents,
         );
 
-        let prefix = type === "agency" ? "ANT" : "LHC";
+        let prefix = type === "agency" ? "ANT" : "LCH";
 
-        let externalUsers = res.data.filter(
-          (item) =>
+        let externalUsers = (res?.data || []).filter(
+          (item: any) =>
             item.UserType ===
             (type === "agency"
               ? ExternalUserType.Agent
               : ExternalUserType.LabourHire),
         );
 
-        let lastCode = externalUsers.length
-          ? externalUsers[externalUsers.length - 1].AgentCode
-          : prefix + "001";
+        let maxNum = 0;
+        externalUsers.forEach((item: any) => {
+          const code = item?.AgentCode || item?.exUserCode || "";
+          if (code && typeof code === "string") {
+            const digits = code.replace(/^\D+/g, "");
+            const num = parseInt(digits, 10);
+            if (!isNaN(num) && num > maxNum) {
+              maxNum = num;
+            }
+          }
+        });
 
-        let numPart = parseInt(lastCode.replace(prefix, ""));
-        let newNum = numPart + 1;
-
-        let newCode =
-          prefix +
-          newNum.toString().padStart(lastCode.length - prefix.length, "0");
+        let newNum = maxNum + 1;
+        let newCode = `${prefix}${newNum.toString().padStart(3, "0")}`;
 
         const Filter = [
           { FilterKey: "EmailId", Operator: "eq", FilterValue: emailId },

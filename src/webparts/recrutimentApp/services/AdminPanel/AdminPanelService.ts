@@ -93,12 +93,12 @@ export default class AdminPanelService implements IAdminPanelService {
         status: 200,
         message: "Get Candidate details",
       };
-    } catch (error) {
-      console.error("Error Get Candidate details:", error);
+    } catch (error: any) {
+      console.error("Error UpsertExternalUser:", error);
       return {
-        data: [],
-        status: 500,
-        message: "Error Get Candidate details",
+        data: error?.response?.data || error,
+        status: error?.response?.status || 500,
+        message: error?.response?.data?.message || error?.message || "Error UpsertExternalUser",
       };
     }
   }

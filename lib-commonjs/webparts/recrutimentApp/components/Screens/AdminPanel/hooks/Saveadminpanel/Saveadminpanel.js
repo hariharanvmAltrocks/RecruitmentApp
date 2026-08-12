@@ -14,9 +14,7 @@ var reuse_1 = require("../../Drawer/reuse");
 var EMPTY_PAYLOAD = function (type) { return ({
     ID: 0,
     type: type,
-    userCode: type === "labour-hire"
-        ? "LH-".concat(Date.now().toString().slice(-4))
-        : "AG-".concat(Date.now().toString().slice(-4)),
+    userCode: type === "agency" ? "ANT001" : "LCH001",
     nationality: "Local",
     firstName: "",
     lastName: "",
@@ -198,15 +196,49 @@ var useSaveAdminPanel = function (initialType, onSuccess) {
                         AddUser: [],
                     };
                     return [4 /*yield*/, ServiceExport_1.AdminPanelServices.UpsertExternalUser(SubmitData).then(function (res) { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-                            var IsEdit, InsertList;
-                            return tslib_1.__generator(this, function (_a) {
-                                switch (_a.label) {
+                            var responseData, responseCode, responseMessage, isDuplicateEmail, isServerError, IsEdit, InsertList;
+                            var _a, _b, _c, _d, _e, _f;
+                            return tslib_1.__generator(this, function (_g) {
+                                switch (_g.label) {
                                     case 0:
-                                        if (!(res.status === ApiConfig_1.ResponeStatus.SUCCESS)) return [3 /*break*/, 2];
+                                        responseData = ((_a = res === null || res === void 0 ? void 0 : res.data) === null || _a === void 0 ? void 0 : _a.data) || (res === null || res === void 0 ? void 0 : res.data);
+                                        responseCode = (_c = (_b = responseData === null || responseData === void 0 ? void 0 : responseData.code) !== null && _b !== void 0 ? _b : responseData === null || responseData === void 0 ? void 0 : responseData.status) !== null && _c !== void 0 ? _c : res === null || res === void 0 ? void 0 : res.status;
+                                        responseMessage = (_f = (_e = (_d = responseData === null || responseData === void 0 ? void 0 : responseData.message) !== null && _d !== void 0 ? _d : responseData === null || responseData === void 0 ? void 0 : responseData.msg) !== null && _e !== void 0 ? _e : res === null || res === void 0 ? void 0 : res.message) !== null && _f !== void 0 ? _f : "";
+                                        isDuplicateEmail = responseCode === 400 ||
+                                            responseMessage === "ER102" ||
+                                            (typeof responseMessage === "string" && responseMessage.includes("ER102")) ||
+                                            (responseData === null || responseData === void 0 ? void 0 : responseData.code) === "ER102";
+                                        isServerError = responseCode === 500 || (res === null || res === void 0 ? void 0 : res.status) === 500;
+                                        if (!isDuplicateEmail) return [3 /*break*/, 1];
+                                        showModal({
+                                            type: "warning",
+                                            title: "Validation Error",
+                                            message: "This email is already created, try another email to create",
+                                            confirmLabel: "Ok",
+                                            onConfirm: function () {
+                                                closeModal();
+                                            },
+                                        });
+                                        return [3 /*break*/, 5];
+                                    case 1:
+                                        if (!isServerError) return [3 /*break*/, 2];
+                                        showModal({
+                                            type: "error",
+                                            title: "Server Error",
+                                            message: "Server is temporarily unavailable",
+                                            confirmLabel: "Ok",
+                                            onConfirm: function () {
+                                                closeModal();
+                                            },
+                                        });
+                                        return [3 /*break*/, 5];
+                                    case 2:
+                                        if (!(res.status === ApiConfig_1.ResponeStatus.SUCCESS &&
+                                            (responseCode === 200 || !responseCode || responseCode === 201))) return [3 /*break*/, 4];
                                         IsEdit = payload.isEdit ? true : false;
                                         return [4 /*yield*/, ServiceExport_1.AdminPanelServices.InsertExternalUser(Admindata_1, IsEdit)];
-                                    case 1:
-                                        InsertList = _a.sent();
+                                    case 3:
+                                        InsertList = _g.sent();
                                         if (InsertList.status === ApiConfig_1.ResponeStatus.SUCCESS) {
                                             showModal({
                                                 type: "success",
@@ -226,20 +258,30 @@ var useSaveAdminPanel = function (initialType, onSuccess) {
                                                 },
                                             });
                                         }
-                                        return [3 /*break*/, 3];
-                                    case 2:
+                                        else {
+                                            showModal({
+                                                type: "error",
+                                                title: "Server Error",
+                                                message: "Server is temporarily unavailable",
+                                                confirmLabel: "Ok",
+                                                onConfirm: function () {
+                                                    closeModal();
+                                                },
+                                            });
+                                        }
+                                        return [3 /*break*/, 5];
+                                    case 4:
                                         showModal({
                                             type: "error",
-                                            title: "Error",
-                                            message: "Something went wrong",
+                                            title: "Server Error",
+                                            message: "Server is temporarily unavailable",
                                             confirmLabel: "Ok",
                                             onConfirm: function () {
                                                 closeModal();
-                                                // navigate("/AdminPanelDashboard");
                                             },
                                         });
-                                        _a.label = 3;
-                                    case 3: return [2 /*return*/];
+                                        _g.label = 5;
+                                    case 5: return [2 /*return*/];
                                 }
                             });
                         }); })];

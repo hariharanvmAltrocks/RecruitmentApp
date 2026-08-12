@@ -141,7 +141,8 @@
   font-family: var(--app-font-family, "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif);
 }
 .searchInput::placeholder {
-  color: #64748b;
+  color: #94a3b8 !important;
+  font-weight: 400 !important;
 }
 .searchInput:hover {
   background: var(--app-secondary-color, #f8fafc);

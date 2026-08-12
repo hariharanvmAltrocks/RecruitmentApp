@@ -189,7 +189,8 @@ $space-xl:       32px;
   font-family: $font-family;
 
   &::placeholder {
-    color: $text-muted;
+    color: #94a3b8 !important;
+    font-weight: 400 !important;
   }
 
   &:hover {

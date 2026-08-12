@@ -46,7 +46,7 @@ var Drawer = function (_a) {
         if (!isOpen)
             return;
         var loadData = function () { return tslib_1.__awaiter(void 0, void 0, void 0, function () {
-            var res, prefix, externalUsers, lastCode, numPart, newNum, newCode, Filter, response;
+            var res, prefix, externalUsers, maxNum_1, newNum, newCode, Filter, response;
             var _a, _b, _c, _d, _e, _f, _g, _h;
             return tslib_1.__generator(this, function (_j) {
                 switch (_j.label) {
@@ -56,20 +56,26 @@ var Drawer = function (_a) {
                         return [4 /*yield*/, ServiceExport_1.CommonServices.GetMasterData(Config_1.ListNames.HRMSExternalAgents)];
                     case 1:
                         res = _j.sent();
-                        prefix = type === "agency" ? "ANT" : "LHC";
-                        externalUsers = res.data.filter(function (item) {
+                        prefix = type === "agency" ? "ANT" : "LCH";
+                        externalUsers = ((res === null || res === void 0 ? void 0 : res.data) || []).filter(function (item) {
                             return item.UserType ===
                                 (type === "agency"
                                     ? ConditionConfig_1.ExternalUserType.Agent
                                     : ConditionConfig_1.ExternalUserType.LabourHire);
                         });
-                        lastCode = externalUsers.length
-                            ? externalUsers[externalUsers.length - 1].AgentCode
-                            : prefix + "001";
-                        numPart = parseInt(lastCode.replace(prefix, ""));
-                        newNum = numPart + 1;
-                        newCode = prefix +
-                            newNum.toString().padStart(lastCode.length - prefix.length, "0");
+                        maxNum_1 = 0;
+                        externalUsers.forEach(function (item) {
+                            var code = (item === null || item === void 0 ? void 0 : item.AgentCode) || (item === null || item === void 0 ? void 0 : item.exUserCode) || "";
+                            if (code && typeof code === "string") {
+                                var digits = code.replace(/^\D+/g, "");
+                                var num = parseInt(digits, 10);
+                                if (!isNaN(num) && num > maxNum_1) {
+                                    maxNum_1 = num;
+                                }
+                            }
+                        });
+                        newNum = maxNum_1 + 1;
+                        newCode = "".concat(prefix).concat(newNum.toString().padStart(3, "0"));
                         Filter = [
                             { FilterKey: "EmailId", Operator: "eq", FilterValue: emailId },
                         ];

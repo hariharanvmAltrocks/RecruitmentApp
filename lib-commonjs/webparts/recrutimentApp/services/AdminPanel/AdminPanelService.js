@@ -67,12 +67,13 @@ var AdminPanelService = /** @class */ (function () {
         });
     };
     AdminPanelService.prototype.UpsertExternalUser = function (UpsetUserValue) {
+        var _a, _b, _c, _d;
         return tslib_1.__awaiter(this, void 0, void 0, function () {
             var UpsertUserDetails, response, error_2;
-            return tslib_1.__generator(this, function (_a) {
-                switch (_a.label) {
+            return tslib_1.__generator(this, function (_e) {
+                switch (_e.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
+                        _e.trys.push([0, 2, , 3]);
                         UpsertUserDetails = {
                             firstname: UpsetUserValue.firstname,
                             lastname: UpsetUserValue.lastname,
@@ -95,19 +96,19 @@ var AdminPanelService = /** @class */ (function () {
                         };
                         return [4 /*yield*/, CareerPortalAPI_1.AdminPanelServiceApi.UpsertExternalUser(UpsertUserDetails)];
                     case 1:
-                        response = _a.sent();
+                        response = _e.sent();
                         return [2 /*return*/, {
                                 data: response,
                                 status: 200,
                                 message: "Get Candidate details",
                             }];
                     case 2:
-                        error_2 = _a.sent();
-                        console.error("Error Get Candidate details:", error_2);
+                        error_2 = _e.sent();
+                        console.error("Error UpsertExternalUser:", error_2);
                         return [2 /*return*/, {
-                                data: [],
-                                status: 500,
-                                message: "Error Get Candidate details",
+                                data: ((_a = error_2 === null || error_2 === void 0 ? void 0 : error_2.response) === null || _a === void 0 ? void 0 : _a.data) || error_2,
+                                status: ((_b = error_2 === null || error_2 === void 0 ? void 0 : error_2.response) === null || _b === void 0 ? void 0 : _b.status) || 500,
+                                message: ((_d = (_c = error_2 === null || error_2 === void 0 ? void 0 : error_2.response) === null || _c === void 0 ? void 0 : _c.data) === null || _d === void 0 ? void 0 : _d.message) || (error_2 === null || error_2 === void 0 ? void 0 : error_2.message) || "Error UpsertExternalUser",
                             }];
                     case 3: return [2 /*return*/];
                 }

@@ -309,46 +309,74 @@ $space-xl:       32px;
 // ─── Inputs ───────────────────────────────────────────────────────────────────
 %inputBase {
   width: 100%;
-  padding: 12px 16px;
-  border: 1.5px solid $border-light;
-  border-radius: $radius-md;
+  padding: 11px 15px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
   font-size: 13px;
   font-weight: 600;
-  color: $text-primary;
-  background: $white;
+  color: #1e293b;
+  background: #ffffff;
   outline: none;
-  transition: $transition;
+  transition: all 0.2s ease-in-out;
   font-family: $font-family;
   box-sizing: border-box;
 
-  &::placeholder { color: $text-muted; font-weight: 500; }
+  &::placeholder {
+    color: #94a3b8 !important;
+    font-weight: 400 !important;
+    opacity: 1;
+  }
+
+  &::-webkit-input-placeholder {
+    color: #94a3b8 !important;
+    font-weight: 400 !important;
+  }
+
+  &::-moz-placeholder {
+    color: #94a3b8 !important;
+    font-weight: 400 !important;
+  }
+
+  &:-ms-input-placeholder {
+    color: #94a3b8 !important;
+    font-weight: 400 !important;
+  }
 
   &:hover:not(:read-only):not(:disabled) {
-    border-color: rgba($primary, 0.4);
+    border-color: #64748b;
   }
 
   &:focus:not(:read-only):not(:disabled) {
-    border-color: $border-focus;
-    box-shadow: 0 0 0 3px rgba($primary, 0.1);
-    background: $white;
+    border-color: #3f62ed;
+    box-shadow: 0 0 0 4px rgba(63, 98, 237, 0.12);
+    background: #ffffff;
   }
 
   &:read-only,
   &:disabled {
-    background: $bg-surface;
-    color: $text-muted;
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #64748b;
     cursor: not-allowed;
-    opacity: 0.7;
+    opacity: 0.85;
   }
 
   &.hasError {
     border-color: $danger;
-    box-shadow: 0 0 0 3px rgba($danger, 0.08);
+    box-shadow: 0 0 0 3px rgba($danger, 0.12);
   }
 }
 
 .input         { @extend %inputBase; }
-.select        { @extend %inputBase; appearance: none; cursor: pointer; }
+.select {
+  @extend %inputBase;
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
 .inputReadonly { @extend %inputBase; }
 
 // ─── Password Input Row ───────────────────────────────────────────────────────

@@ -40,10 +40,7 @@ export interface NewAdminUserPayload {
 export const EMPTY_PAYLOAD = (type: AdminPanelType): NewAdminUserPayload => ({
   ID: 0,
   type,
-  userCode:
-    type === "labour-hire"
-      ? `LH-${Date.now().toString().slice(-4)}`
-      : `AG-${Date.now().toString().slice(-4)}`,
+  userCode: type === "agency" ? "ANT001" : "LCH001",
   nationality: "Local",
   firstName: "",
   lastName: "",
@@ -258,7 +255,42 @@ export const useSaveAdminPanel = (
       };
       await AdminPanelServices.UpsertExternalUser(SubmitData).then(
         async (res) => {
-          if (res.status === ResponeStatus.SUCCESS) {
+          const responseData = res?.data?.data || res?.data;
+          const responseCode = responseData?.code ?? responseData?.status ?? res?.status;
+          const responseMessage = responseData?.message ?? responseData?.msg ?? res?.message ?? "";
+
+          const isDuplicateEmail =
+            responseCode === 400 ||
+            responseMessage === "ER102" ||
+            (typeof responseMessage === "string" && responseMessage.includes("ER102")) ||
+            responseData?.code === "ER102";
+
+          const isServerError = responseCode === 500 || res?.status === 500;
+
+          if (isDuplicateEmail) {
+            showModal({
+              type: "warning",
+              title: "Validation Error",
+              message: "This email is already created, try another email to create",
+              confirmLabel: "Ok",
+              onConfirm: () => {
+                closeModal();
+              },
+            });
+          } else if (isServerError) {
+            showModal({
+              type: "error",
+              title: "Server Error",
+              message: "Server is temporarily unavailable",
+              confirmLabel: "Ok",
+              onConfirm: () => {
+                closeModal();
+              },
+            });
+          } else if (
+            res.status === ResponeStatus.SUCCESS &&
+            (responseCode === 200 || !responseCode || responseCode === 201)
+          ) {
             let IsEdit = payload.isEdit ? true : false;
             const InsertList = await AdminPanelServices.InsertExternalUser(
               Admindata,
@@ -282,16 +314,25 @@ export const useSaveAdminPanel = (
                   onSuccess();
                 },
               });
+            } else {
+              showModal({
+                type: "error",
+                title: "Server Error",
+                message: "Server is temporarily unavailable",
+                confirmLabel: "Ok",
+                onConfirm: () => {
+                  closeModal();
+                },
+              });
             }
           } else {
             showModal({
               type: "error",
-              title: "Error",
-              message: "Something went wrong",
+              title: "Server Error",
+              message: "Server is temporarily unavailable",
               confirmLabel: "Ok",
               onConfirm: () => {
                 closeModal();
-                // navigate("/AdminPanelDashboard");
               },
             });
           }
